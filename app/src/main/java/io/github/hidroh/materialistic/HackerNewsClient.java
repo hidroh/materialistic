@@ -1,4 +1,4 @@
-package com.example.trung.material;
+package io.github.hidroh.materialistic;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -19,7 +19,7 @@ public class HackerNewsClient {
         void topStories(Callback<int[]> callback);
     }
 
-    private static interface ResponseListener<T> {
+    public static interface ResponseListener<T> {
         void onResponse(T response);
         void onError(String errorMessage);
     }

@@ -1,4 +1,4 @@
-package com.example.trung.material;
+package io.github.hidroh.materialistic;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

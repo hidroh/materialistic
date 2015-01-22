@@ -1,4 +1,4 @@
-package com.example.trung.material;
+package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
