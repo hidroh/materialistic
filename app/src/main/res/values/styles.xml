@@ -13,6 +13,8 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
+        <!-- style for spinners -->
+        <item name="android:spinnerStyle">@style/AppSpinner</item>
         <!-- Here we setting appcompat’s actionBarStyle -->
         <item name="actionBarStyle">@style/AppActionBar</item>
     </style>
@@ -26,4 +28,7 @@
         <!-- Customize action bar here -->
     </style>
 
+    <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/apptheme_spinner_background_holo_light</item>
+    </style>
 </resources>
