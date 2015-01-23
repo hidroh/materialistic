@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -10,14 +9,31 @@ import android.view.MenuItem;
 
 public class ItemActivity extends ActionBarActivity {
 
+    public static final String EXTRA_ID = "";
+    private static final String PARAM_ID = "id";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        Uri data = intent.getData();
-        Log.d("tag", action + " " + data);
+        final Intent intent = getIntent();
+        final String id;
+        if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null) {
+            id = intent.getData().getQueryParameter(PARAM_ID);
+        } else {
+            id = intent.getStringExtra(EXTRA_ID);
+        }
+        HackerNewsClient.getInstance().getItem(id, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+            @Override
+            public void onResponse(HackerNewsClient.Item response) {
+                Log.d("tag", response.getTitle());
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e("tag", errorMessage);
+            }
+        });
     }
 
 
