@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class ItemActivity extends ActionBarActivity {
 
@@ -26,7 +27,7 @@ public class ItemActivity extends ActionBarActivity {
         HackerNewsClient.getInstance().getItem(id, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
             @Override
             public void onResponse(HackerNewsClient.Item response) {
-                Log.d("tag", response.getTitle());
+                ((TextView) findViewById(android.R.id.text1)).setText(response.getTitle());
             }
 
             @Override

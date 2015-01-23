@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,8 +39,16 @@ public class ListActivity extends ActionBarActivity {
                     }
 
                     @Override
-                    public void onBindViewHolder(ItemViewHolder holder, int position) {
+                    public void onBindViewHolder(ItemViewHolder holder, final int position) {
                         holder.mTextView.setText(String.valueOf(response[position]));
+                        holder.mTextView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
+                                intent.putExtra(ItemActivity.EXTRA_ID, String.valueOf(response[position]));
+                                startActivity(intent);
+                            }
+                        });
                     }
 
                     @Override
