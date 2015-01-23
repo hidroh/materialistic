@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 public class ListActivity extends ActionBarActivity {
 
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +30,22 @@ public class ListActivity extends ActionBarActivity {
                 return LinearLayout.VERTICAL;
             }
         });
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                bindData();
+            }
+        });
+        bindData();
+    }
+
+    private void bindData() {
         HackerNewsClient.getInstance().getTopStories(new HackerNewsClient.ResponseListener<int[]>() {
             @Override
             public void onResponse(final int[] response) {
                 mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>(){
-
                     @Override
                     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                         return new ItemViewHolder(new TextView(ListActivity.this));
@@ -56,11 +69,13 @@ public class ListActivity extends ActionBarActivity {
                         return response.length;
                     }
                 });
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onError(String errorMessage) {
                 Log.e("tag", errorMessage);
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }
