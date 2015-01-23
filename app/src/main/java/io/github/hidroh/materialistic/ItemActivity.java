@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 public class ItemActivity extends ActionBarActivity {
 
-    public static final String EXTRA_ID = "";
+    public static final String EXTRA_ID = ItemActivity.class.getName() + ".EXTRA_ID";
     private static final String PARAM_ID = "id";
 
     @Override
