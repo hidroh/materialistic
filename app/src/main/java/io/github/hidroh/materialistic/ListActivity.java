@@ -33,6 +33,8 @@ public class ListActivity extends BaseActivity {
             }
         });
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
+        mSwipeRefreshLayout.setProgressBackgroundColor(R.color.colorAccent);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

@@ -10,7 +10,7 @@
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/colorAccent</item>
         <!-- text color for action bar -->
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
         <!-- style for spinners -->
