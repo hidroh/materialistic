@@ -25,14 +25,21 @@
         <activity
             android:name=".ItemActivity"
             android:label="@string/title_activity_item" >
-            <intent-filter android:label="@string/filter_title_item">
+            <intent-filter android:label="@string/filter_title_item" >
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https"
+
+                <data
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/item" />
+                    android:pathPrefix="/item"
+                    android:scheme="https" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".WebActivity"
+            android:label="@string/title_activity_web" >
         </activity>
     </application>
 

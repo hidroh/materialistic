@@ -80,7 +80,7 @@ public class ListActivity extends ActionBarActivity {
                                         }
                                     });
                         }
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
@@ -95,7 +95,7 @@ public class ListActivity extends ActionBarActivity {
                         return response.length;
                     }
 
-                    private void bindViewHolder(ItemViewHolder holder, HackerNewsClient.TopStory story) {
+                    private void bindViewHolder(ItemViewHolder holder, final HackerNewsClient.TopStory story) {
                         if (story == null) {
                             holder.mTitleTextView.setText(getString(R.string.loading_text));
                             holder.mPostedTextView.setText(getString(R.string.loading_text));
@@ -109,6 +109,15 @@ public class ListActivity extends ActionBarActivity {
                             } else {
                                 holder.mCommentButton.setVisibility(View.INVISIBLE);
                             }
+                            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(ListActivity.this, WebActivity.class);
+                                    intent.putExtra(WebActivity.EXTRA_TITLE, story.getTitle());
+                                    intent.putExtra(WebActivity.EXTRA_URL, story.getUrl());
+                                    startActivity(intent);
+                                }
+                            });
                         }
                     }
                 });

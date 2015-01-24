@@ -148,6 +148,7 @@ public class HackerNewsClient {
         private long time;
         private String by;
         private long[] kids;
+        private String url;
 
         private TopStory(long id) {
             this.id = id;
@@ -170,6 +171,7 @@ public class HackerNewsClient {
             time = info.time;
             by = info.by;
             kids = info.kids;
+            url = info.url;
         }
 
         public CharSequence getDisplayedTime(Context context) {
@@ -183,6 +185,10 @@ public class HackerNewsClient {
 
         public int getKidCount() {
             return kids != null ? kids.length : 0;
+        }
+
+        public String getUrl() {
+            return url;
         }
     }
 }
