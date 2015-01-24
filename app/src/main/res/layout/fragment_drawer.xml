@@ -1,11 +1,19 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="io.github.hidroh.materialistic.DrawerFragment">
 
     <TextView
         android:id="@+id/drawer_main"
         android:text="@string/title_activity_list"
+        android:drawableLeft="@drawable/ic_trending_up_grey600_24dp"
         style="@style/DrawerTextStyle"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/drawer_settings"
+        android:text="@string/action_settings"
+        android:drawableLeft="@drawable/ic_settings_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+</LinearLayout>
