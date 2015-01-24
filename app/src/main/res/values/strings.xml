@@ -7,5 +7,6 @@
     <string name="title_activity_list">ListActivity</string>
     <string name="title_activity_item">ItemActivity</string>
     <string name="filter_title_item">View with Materialistic</string>
+    <string name="loading_text">...</string>
 
 </resources>
