@@ -79,7 +79,7 @@ public class ListActivity extends ActionBarActivity {
                                         }
                                     });
                         }
-                        holder.mTitleTextView.setOnClickListener(new View.OnClickListener() {
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
