@@ -1,5 +1,8 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
+import android.text.format.DateUtils;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -142,6 +145,7 @@ public class HackerNewsClient {
     public static class TopStory {
         private int id;
         private String title;
+        private long time;
 
         private TopStory(int id) {
             this.id = id;
@@ -161,6 +165,14 @@ public class HackerNewsClient {
 
         public void populate(Item info) {
             title = info.title;
+            time = info.time;
+        }
+
+        public CharSequence getDisplayedTime(Context context) {
+            return DateUtils.getRelativeDateTimeString(context, time * 1000,
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.YEAR_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_MONTH);
         }
     }
 }

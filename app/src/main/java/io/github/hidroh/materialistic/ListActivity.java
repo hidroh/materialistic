@@ -62,7 +62,7 @@ public class ListActivity extends ActionBarActivity {
                         final HackerNewsClient.TopStory story = response[position];
                         holder.mRankTextView.setText(String.valueOf(position + 1));
                         if (!TextUtils.isEmpty(story.getTitle())) {
-                            holder.mTitleTextView.setText(story.getTitle());
+                            bindViewHolder(holder, story);
                         } else {
                             holder.mTitleTextView.setText(getString(R.string.loading_text));
                             HackerNewsClient.getInstance().getItem(String.valueOf(story.getId()),
@@ -70,7 +70,7 @@ public class ListActivity extends ActionBarActivity {
                                         @Override
                                         public void onResponse(HackerNewsClient.Item response) {
                                             story.populate(response);
-                                            holder.mTitleTextView.setText(story.getTitle());
+                                            bindViewHolder(holder, story);
                                         }
 
                                         @Override
@@ -92,6 +92,11 @@ public class ListActivity extends ActionBarActivity {
                     @Override
                     public int getItemCount() {
                         return response.length;
+                    }
+
+                    private void bindViewHolder(ItemViewHolder holder, HackerNewsClient.TopStory story) {
+                        holder.mTitleTextView.setText(story.getTitle());
+                        holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
                     }
                 });
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -131,11 +136,13 @@ public class ListActivity extends ActionBarActivity {
     private class ItemViewHolder extends RecyclerView.ViewHolder {
         private TextView mTitleTextView;
         private TextView mRankTextView;
+        private TextView mPostedTextView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             mRankTextView = (TextView) itemView.findViewById(android.R.id.text1);
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
+            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
         }
     }
 }

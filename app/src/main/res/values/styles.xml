@@ -36,4 +36,10 @@
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
     </style>
+
+    <style name="textTitleStyle">
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:lines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>
