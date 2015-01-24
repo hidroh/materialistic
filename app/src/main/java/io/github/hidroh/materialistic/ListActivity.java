@@ -48,7 +48,7 @@ public class ListActivity extends ActionBarActivity {
                 mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>(){
                     @Override
                     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                        return new ItemViewHolder(new TextView(ListActivity.this));
+                        return new ItemViewHolder(getLayoutInflater().inflate(R.layout.activity_list_item, parent, false));
                     }
 
                     @Override
@@ -107,7 +107,7 @@ public class ListActivity extends ActionBarActivity {
         private TextView mTextView;
         public ItemViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView;
+            mTextView = (TextView) itemView.findViewById(android.R.id.text1);
         }
     }
 }
