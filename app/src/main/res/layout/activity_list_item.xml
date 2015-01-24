@@ -28,8 +28,8 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@id/posted"
+            android:text="@string/loading_text"
             android:padding="@dimen/padding"
-            android:textColor="?android:attr/textColorSecondary"
             android:layout_toRightOf="@android:id/text1"
             android:layout_below="@android:id/text2"
             android:layout_width="match_parent"

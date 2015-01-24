@@ -146,6 +146,7 @@ public class HackerNewsClient {
         private int id;
         private String title;
         private long time;
+        private String by;
 
         private TopStory(int id) {
             this.id = id;
@@ -166,13 +167,16 @@ public class HackerNewsClient {
         public void populate(Item info) {
             title = info.title;
             time = info.time;
+            by = info.by;
         }
 
         public CharSequence getDisplayedTime(Context context) {
-            return DateUtils.getRelativeDateTimeString(context, time * 1000,
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.YEAR_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_MONTH);
+            return String.format("%s by %s",
+                    DateUtils.getRelativeDateTimeString(context, time * 1000,
+                            DateUtils.MINUTE_IN_MILLIS,
+                            DateUtils.YEAR_IN_MILLIS,
+                            DateUtils.FORMAT_ABBREV_MONTH),
+                    by);
         }
     }
 }

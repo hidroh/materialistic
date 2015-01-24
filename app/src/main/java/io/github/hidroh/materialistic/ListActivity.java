@@ -64,7 +64,7 @@ public class ListActivity extends ActionBarActivity {
                         if (!TextUtils.isEmpty(story.getTitle())) {
                             bindViewHolder(holder, story);
                         } else {
-                            holder.mTitleTextView.setText(getString(R.string.loading_text));
+                            bindViewHolder(holder, null);
                             HackerNewsClient.getInstance().getItem(String.valueOf(story.getId()),
                                     new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                                         @Override
@@ -95,8 +95,13 @@ public class ListActivity extends ActionBarActivity {
                     }
 
                     private void bindViewHolder(ItemViewHolder holder, HackerNewsClient.TopStory story) {
-                        holder.mTitleTextView.setText(story.getTitle());
-                        holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
+                        if (story == null) {
+                            holder.mTitleTextView.setText(getString(R.string.loading_text));
+                            holder.mPostedTextView.setText(getString(R.string.loading_text));
+                        } else {
+                            holder.mTitleTextView.setText(story.getTitle());
+                            holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
+                        }
                     }
                 });
                 mSwipeRefreshLayout.setRefreshing(false);
