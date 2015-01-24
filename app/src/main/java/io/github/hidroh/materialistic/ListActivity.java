@@ -60,16 +60,17 @@ public class ListActivity extends ActionBarActivity {
                     @Override
                     public void onBindViewHolder(final ItemViewHolder holder, final int position) {
                         final HackerNewsClient.TopStory story = response[position];
+                        holder.mRankTextView.setText(String.valueOf(position + 1));
                         if (!TextUtils.isEmpty(story.getTitle())) {
-                            holder.mTextView.setText(story.getTitle());
+                            holder.mTitleTextView.setText(story.getTitle());
                         } else {
-                            holder.mTextView.setText(getString(R.string.loading_text));
+                            holder.mTitleTextView.setText(getString(R.string.loading_text));
                             HackerNewsClient.getInstance().getItem(String.valueOf(story.getId()),
                                     new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                                         @Override
                                         public void onResponse(HackerNewsClient.Item response) {
                                             story.populate(response);
-                                            holder.mTextView.setText(story.getTitle());
+                                            holder.mTitleTextView.setText(story.getTitle());
                                         }
 
                                         @Override
@@ -78,7 +79,7 @@ public class ListActivity extends ActionBarActivity {
                                         }
                                     });
                         }
-                        holder.mTextView.setOnClickListener(new View.OnClickListener() {
+                        holder.mTitleTextView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
@@ -128,10 +129,13 @@ public class ListActivity extends ActionBarActivity {
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView mTextView;
+        private TextView mTitleTextView;
+        private TextView mRankTextView;
+
         public ItemViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView.findViewById(android.R.id.text1);
+            mRankTextView = (TextView) itemView.findViewById(android.R.id.text1);
+            mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
         }
     }
 }

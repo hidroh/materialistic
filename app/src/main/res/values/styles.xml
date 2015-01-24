@@ -4,11 +4,11 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <!--   your app branding color for the app bar -->
-        <item name="colorPrimary">#FF9800</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">#F57C00</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">#FF5252</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <!-- text color for action bar -->
         <item name="android:textColorPrimary">#FFFFFF</item>
         <!-- style for buttons -->
@@ -30,5 +30,10 @@
 
     <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/apptheme_spinner_background_holo_light</item>
+    </style>
+
+    <style name="textRankStyle">
+        <item name="android:gravity">center|center_vertical</item>
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
     </style>
 </resources>
