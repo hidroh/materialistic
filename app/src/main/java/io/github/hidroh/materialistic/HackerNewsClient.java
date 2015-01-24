@@ -143,12 +143,13 @@ public class HackerNewsClient {
     }
 
     public static class TopStory {
-        private int id;
+        private long id;
         private String title;
         private long time;
         private String by;
+        private long[] kids;
 
-        private TopStory(int id) {
+        private TopStory(long id) {
             this.id = id;
         }
 
@@ -160,7 +161,7 @@ public class HackerNewsClient {
             return title;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
@@ -168,6 +169,7 @@ public class HackerNewsClient {
             title = info.title;
             time = info.time;
             by = info.by;
+            kids = info.kids;
         }
 
         public CharSequence getDisplayedTime(Context context) {
@@ -177,6 +179,10 @@ public class HackerNewsClient {
                             DateUtils.YEAR_IN_MILLIS,
                             DateUtils.FORMAT_ABBREV_MONTH),
                     by);
+        }
+
+        public int getKidCount() {
+            return kids != null ? kids.length : 0;
         }
     }
 }

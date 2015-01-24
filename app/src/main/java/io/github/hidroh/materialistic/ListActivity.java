@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -98,9 +99,16 @@ public class ListActivity extends ActionBarActivity {
                         if (story == null) {
                             holder.mTitleTextView.setText(getString(R.string.loading_text));
                             holder.mPostedTextView.setText(getString(R.string.loading_text));
+                            holder.mCommentButton.setVisibility(View.INVISIBLE);
                         } else {
                             holder.mTitleTextView.setText(story.getTitle());
                             holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
+                            if (story.getKidCount() > 0) {
+                                holder.mCommentButton.setText(String.valueOf(story.getKidCount()));
+                                holder.mCommentButton.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.mCommentButton.setVisibility(View.INVISIBLE);
+                            }
                         }
                     }
                 });
@@ -142,12 +150,14 @@ public class ListActivity extends ActionBarActivity {
         private TextView mTitleTextView;
         private TextView mRankTextView;
         private TextView mPostedTextView;
+        private Button mCommentButton;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             mRankTextView = (TextView) itemView.findViewById(android.R.id.text1);
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
+            mCommentButton = (Button) itemView.findViewById(R.id.comment);
         }
     }
 }
