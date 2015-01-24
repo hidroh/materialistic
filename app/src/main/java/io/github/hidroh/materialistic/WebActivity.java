@@ -1,11 +1,14 @@
 package io.github.hidroh.materialistic;
 
-import android.support.v7.app.ActionBarActivity;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -33,9 +36,20 @@ public class WebActivity extends ActionBarActivity {
                 }
             }
         });
-        webView.getSettings().setJavaScriptEnabled(true);
+        setWebViewSettings(webView.getSettings());
         webView.loadUrl(getIntent().getStringExtra(EXTRA_URL));
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setWebViewSettings(WebSettings webSettings) {
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setBuiltInZoomControls(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            webSettings.setDisplayZoomControls(false);
+        }
     }
 
     @Override
