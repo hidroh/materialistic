@@ -9,5 +9,7 @@
     <string name="filter_title_item">View with Materialistic</string>
     <string name="loading_text">...</string>
     <string name="title_activity_web">Story</string>
+    <string name="open_drawer">Open drawer</string>
+    <string name="close_drawer">Close drawer</string>
 
 </resources>

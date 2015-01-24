@@ -26,6 +26,7 @@
 
     <style name="AppActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <!-- Customize action bar here -->
+        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
     </style>
 
     <style name="AppSpinner" parent="Widget.AppCompat.Spinner">

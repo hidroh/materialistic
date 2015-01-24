@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +13,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 
-public class WebActivity extends ActionBarActivity {
+public class WebActivity extends BaseActivity {
     public static final String EXTRA_URL = WebActivity.class.getName() + ".EXTRA_URL";
     public static final String EXTRA_TITLE = WebActivity.class.getName() + ".EXTRA_TITLE";
 

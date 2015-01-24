@@ -2,13 +2,12 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class ItemActivity extends ActionBarActivity {
+public class ItemActivity extends BaseActivity {
 
     public static final String EXTRA_ID = ItemActivity.class.getName() + ".EXTRA_ID";
     private static final String PARAM_ID = "id";
