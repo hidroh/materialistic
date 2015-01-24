@@ -23,7 +23,7 @@ public class DrawerFragment extends Fragment {
 
     private void navigate(Class<? extends BaseActivity> activityClass) {
         if (getActivity().getClass().equals(activityClass)) {
-            ((BaseActivity) getActivity()).mDrawerLayout.closeDrawers();
+            ((BaseActivity) getActivity()).closeDrawers();
         } else {
             final Intent intent = new Intent(getActivity(), activityClass);
             getActivity().startActivity(intent);
