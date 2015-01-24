@@ -4,9 +4,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 
 public class WebActivity extends ActionBarActivity {
@@ -17,9 +19,20 @@ public class WebActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
         final WebView webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient());
-        webView.setWebChromeClient(new WebChromeClient());
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                progressBar.setProgress(newProgress);
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(getIntent().getStringExtra(EXTRA_URL));
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
