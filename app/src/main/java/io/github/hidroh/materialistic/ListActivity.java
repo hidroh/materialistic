@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListActivity extends ActionBarActivity {
 
@@ -116,6 +117,14 @@ public class ListActivity extends ActionBarActivity {
                                     intent.putExtra(WebActivity.EXTRA_TITLE, story.getTitle());
                                     intent.putExtra(WebActivity.EXTRA_URL, story.getUrl());
                                     startActivity(intent);
+                                }
+                            });
+                            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                                @Override
+                                public boolean onLongClick(View v) {
+                                    Toast.makeText(getApplicationContext(), story.getUrl(),
+                                            Toast.LENGTH_SHORT).show();
+                                    return true;
                                 }
                             });
                         }
