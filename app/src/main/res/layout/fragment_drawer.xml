@@ -6,6 +6,14 @@
     tools:context="io.github.hidroh.materialistic.DrawerFragment">
 
     <TextView
+        android:text="@string/app_name"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textStyle="bold"
+        android:background="#E0E0E0"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
         android:id="@+id/drawer_main"
         android:text="@string/title_activity_list"
         android:drawableLeft="@drawable/ic_trending_up_grey600_24dp"
