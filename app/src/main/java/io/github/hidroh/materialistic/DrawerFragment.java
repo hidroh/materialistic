@@ -18,6 +18,12 @@ public class DrawerFragment extends Fragment {
                 navigate(ListActivity.class);
             }
         });
+        view.findViewById(R.id.drawer_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO
+            }
+        });
         return view;
     }
 
