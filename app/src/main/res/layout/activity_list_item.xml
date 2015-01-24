@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
     card_view:cardCornerRadius="4dp"
+    android:foreground="?android:attr/selectableItemBackground"
     card_view:cardElevation="2dp">
     <RelativeLayout
         android:layout_width="match_parent"
