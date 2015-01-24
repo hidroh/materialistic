@@ -1,0 +1,11 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.github.hidroh.materialistic.DrawerFragment">
+
+    <TextView
+        android:id="@+id/drawer_main"
+        android:text="@string/title_activity_list"
+        style="@style/DrawerTextStyle"/>
+
+</FrameLayout>

@@ -11,16 +11,17 @@ import android.view.ViewGroup;
 public abstract class BaseActivity extends ActionBarActivity {
     private ViewGroup mContentView;
     private ActionBarDrawerToggle mDrawerToggle;
+    protected DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         mContentView = (ViewGroup) findViewById(R.id.content_frame);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer,
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer,
                 R.string.close_drawer);
-        drawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
     @Override
