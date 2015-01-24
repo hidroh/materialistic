@@ -36,8 +36,30 @@ public class HackerNewsClient {
      * Gets array of top 100 stories
      * @param listener callback to be notified on response
      */
-    public void getTopStories(ResponseListener<int[]> listener) {
-        mRestService.topStories(makeCallback(listener));
+    public void getTopStories(final ResponseListener<TopStory[]> listener) {
+        mRestService.topStories(new Callback<int[]>() {
+            @Override
+            public void success(int[] ints, Response response) {
+                if (listener == null) {
+                    return;
+                }
+
+                TopStory[] topStories = new TopStory[ints.length];
+                for (int i = 0; i < ints.length; i++) {
+                    topStories[i] = new TopStory(ints[i]);
+                }
+                listener.onResponse(topStories);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (listener == null) {
+                    return;
+                }
+
+                listener.onError(error == null ? error.getMessage() : "");
+            }
+        });
     }
 
     /**
@@ -114,6 +136,31 @@ public class HackerNewsClient {
 
         public String getTitle() {
             return title;
+        }
+    }
+
+    public static class TopStory {
+        private int id;
+        private String title;
+
+        private TopStory(int id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String setTitle() {
+            return title;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void populate(Item info) {
+            title = info.title;
         }
     }
 }

@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,9 +48,9 @@ public class ListActivity extends ActionBarActivity {
     }
 
     private void bindData() {
-        HackerNewsClient.getInstance().getTopStories(new HackerNewsClient.ResponseListener<int[]>() {
+        HackerNewsClient.getInstance().getTopStories(new HackerNewsClient.ResponseListener<HackerNewsClient.TopStory[]>() {
             @Override
-            public void onResponse(final int[] response) {
+            public void onResponse(final HackerNewsClient.TopStory[] response) {
                 mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>(){
                     @Override
                     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -58,24 +59,30 @@ public class ListActivity extends ActionBarActivity {
 
                     @Override
                     public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-                        holder.mTextView.setText(getString(R.string.loading_text));
-                        HackerNewsClient.getInstance().getItem(String.valueOf(response[position]),
-                                new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
-                                    @Override
-                                    public void onResponse(HackerNewsClient.Item response) {
-                                        holder.mTextView.setText(response.getTitle());
-                                    }
+                        final HackerNewsClient.TopStory story = response[position];
+                        if (!TextUtils.isEmpty(story.getTitle())) {
+                            holder.mTextView.setText(story.getTitle());
+                        } else {
+                            holder.mTextView.setText(getString(R.string.loading_text));
+                            HackerNewsClient.getInstance().getItem(String.valueOf(story.getId()),
+                                    new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+                                        @Override
+                                        public void onResponse(HackerNewsClient.Item response) {
+                                            story.populate(response);
+                                            holder.mTextView.setText(story.getTitle());
+                                        }
 
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                        // do nothing
-                                    }
-                                });
+                                        @Override
+                                        public void onError(String errorMessage) {
+                                            // do nothing
+                                        }
+                                    });
+                        }
                         holder.mTextView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
-                                intent.putExtra(ItemActivity.EXTRA_ID, String.valueOf(response[position]));
+                                intent.putExtra(ItemActivity.EXTRA_ID, String.valueOf(story.getId()));
                                 startActivity(intent);
                             }
                         });
