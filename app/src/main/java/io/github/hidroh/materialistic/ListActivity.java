@@ -52,8 +52,20 @@ public class ListActivity extends ActionBarActivity {
                     }
 
                     @Override
-                    public void onBindViewHolder(ItemViewHolder holder, final int position) {
-                        holder.mTextView.setText(String.valueOf(response[position]));
+                    public void onBindViewHolder(final ItemViewHolder holder, final int position) {
+                        holder.mTextView.setText(null);
+                        HackerNewsClient.getInstance().getItem(String.valueOf(response[position]),
+                                new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+                                    @Override
+                                    public void onResponse(HackerNewsClient.Item response) {
+                                        holder.mTextView.setText(response.getTitle());
+                                    }
+
+                                    @Override
+                                    public void onError(String errorMessage) {
+                                        // do nothing
+                                    }
+                                });
                         holder.mTextView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
