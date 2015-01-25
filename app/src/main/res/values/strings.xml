@@ -15,5 +15,7 @@
     <string name="pref_external_summary">View stories using external browser instead of in-app browser (default).</string>
     <string name="pref_external">pref_external</string>
     <string name="view_in_browser">View in external browser</string>
+    <string name="share_format" formatted="false">%s - %s (via Materialistic)</string>
+    <string name="share_via">Share this story via</string>
 
 </resources>

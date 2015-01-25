@@ -1,8 +1,11 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +47,14 @@ public class WebActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_web, menu);
+        ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
+                menu.findItem(R.id.menu_share));
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_format),
+                getIntent().getStringExtra(EXTRA_TITLE),
+                getIntent().getStringExtra(EXTRA_URL)));
+        shareActionProvider.setShareIntent(intent);
         return super.onCreateOptionsMenu(menu);
     }
 
