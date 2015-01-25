@@ -7,10 +7,11 @@
 
     <TextView
         android:text="@string/app_name"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textSize="@dimen/abc_text_size_large_material"
         android:textStyle="bold"
         android:background="#E0E0E0"
+        android:drawableRight="@drawable/ic_app"
         style="@style/DrawerTextStyle"/>
 
     <TextView
