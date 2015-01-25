@@ -14,5 +14,6 @@
     <string name="pref_external_title">Use external browser</string>
     <string name="pref_external_summary">View stories using external browser instead of in-app browser (default).</string>
     <string name="pref_external">pref_external</string>
+    <string name="view_in_browser">View in external browser</string>
 
 </resources>

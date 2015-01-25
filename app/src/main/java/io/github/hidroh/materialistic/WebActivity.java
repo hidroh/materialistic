@@ -3,6 +3,8 @@ package io.github.hidroh.materialistic;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -37,6 +39,22 @@ public class WebActivity extends BaseActivity {
         setWebViewSettings(webView.getSettings());
         webView.loadUrl(getIntent().getStringExtra(EXTRA_URL));
         setTitle(getIntent().getStringExtra(EXTRA_TITLE));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_web, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_external) {
+            AppUtils.openWebUrlExternal(this, getIntent().getStringExtra(EXTRA_URL));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

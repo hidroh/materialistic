@@ -10,14 +10,18 @@ public class AppUtils {
         final boolean isExternal = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_external), false);
         if (isExternal) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            }
+            openWebUrlExternal(context, url);
         } else {
             final Intent intent = new Intent(context, WebActivity.class);
             intent.putExtra(WebActivity.EXTRA_TITLE, title);
             intent.putExtra(WebActivity.EXTRA_URL, url);
+            context.startActivity(intent);
+        }
+    }
+
+    public static void openWebUrlExternal(Context context, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         }
     }

@@ -20,6 +20,8 @@
         <item name="android:spinnerStyle">@style/AppSpinner</item>
         <!-- Here we setting appcompat’s actionBarStyle -->
         <item name="actionBarStyle">@style/AppActionBar</item>
+        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
+        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
     </style>
 
     <style name="AppButton" parent="android:Widget.Button">
@@ -30,6 +32,14 @@
     <style name="AppActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <!-- Customize action bar here -->
         <item name="displayOptions">showHome|homeAsUp|showTitle</item>
+    </style>
+
+    <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+    </style>
+
+    <style name="AppPopupMenuSmallTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
+        <item name="android:textColor">@color/textColorPrimaryInverse</item>
     </style>
 
     <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
