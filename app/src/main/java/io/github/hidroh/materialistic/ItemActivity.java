@@ -41,7 +41,9 @@ public class ItemActivity extends BaseActivity {
             return;
         }
 
-        ((TextView) findViewById(android.R.id.text2)).setText(story.getTitle());
+        final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
+        titleTextView.setMaxLines(Integer.MAX_VALUE);
+        titleTextView.setText(story.getTitle());
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
         if (story.getKidCount() > 0) {
             Button commentButton = (Button) findViewById(R.id.comment);
