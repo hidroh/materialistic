@@ -155,10 +155,7 @@ public class ListActivity extends BaseActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(ListActivity.this, WebActivity.class);
-                        intent.putExtra(WebActivity.EXTRA_TITLE, story.getTitle());
-                        intent.putExtra(WebActivity.EXTRA_URL, story.getUrl());
-                        startActivity(intent);
+                        AppUtils.openWebUrl(ListActivity.this, story.getUrl(), story.getTitle());
                     }
                 });
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

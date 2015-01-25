@@ -2,8 +2,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <io.github.hidroh.materialistic.CheckBoxPreference
-        android:key="pref_external"
-        android:title="@string/pref_external"
+        android:key="@string/pref_external"
+        android:title="@string/pref_external_title"
         android:summary="@string/pref_external_summary"
         android:defaultValue="false" />
 </PreferenceScreen>
