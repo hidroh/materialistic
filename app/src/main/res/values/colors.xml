@@ -5,4 +5,7 @@
     <color name="colorPrimaryLight">#FFE0B2</color>
     <color name="colorAccent">#FF5252</color>
     <color name="textColorPrimary">#FFFFFF</color>
+    <color name="textColorSecondary">#9E9E9E</color>
+    <color name="textColorPrimaryInverse">#000000</color>
+    <color name="textColorSecondaryInverse">#9E9E9E</color>
 </resources>

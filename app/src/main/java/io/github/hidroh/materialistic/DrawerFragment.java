@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,13 @@ public class DrawerFragment extends Fragment {
         view.findViewById(R.id.drawer_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
+                final Intent intent;
+                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    intent = new Intent(getActivity(), ActionBarSettingsActivity.class);
+                } else {
+                    intent = new Intent(getActivity(), SettingsActivity.class);
+                }
+                getActivity().startActivity(intent);
             }
         });
         return view;

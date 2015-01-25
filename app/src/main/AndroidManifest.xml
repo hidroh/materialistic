@@ -41,6 +41,14 @@
             android:name=".WebActivity"
             android:label="@string/title_activity_web" >
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/action_settings" >
+        </activity>
+        <activity
+            android:name=".ActionBarSettingsActivity"
+            android:label="@string/action_settings" >
+        </activity>
     </application>
 
 </manifest>

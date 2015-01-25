@@ -9,8 +9,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/colorAccent</item>
-        <!-- text color for action bar -->
+
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
+        <item name="android:textColorSecondaryInverse">@color/textColorSecondaryInverse</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
         <!-- style for spinners -->
