@@ -10,5 +10,6 @@
     <string name="title_activity_web">Story</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
+    <string name="transition_story">story</string>
 
 </resources>

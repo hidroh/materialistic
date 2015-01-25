@@ -1,7 +1,10 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +25,9 @@ public class ListActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -117,8 +124,11 @@ public class ListActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
-                    intent.putExtra(ItemActivity.EXTRA_ID, String.valueOf(story.getId()));
-                    startActivity(intent);
+                    intent.putExtra(ItemActivity.EXTRA_STORY, story);
+                    final ActivityOptionsCompat options = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(ListActivity.this,
+                                    holder.itemView, getString(R.string.transition_story));
+                    ActivityCompat.startActivity(ListActivity.this, intent, options.toBundle());
                 }
             });
         }

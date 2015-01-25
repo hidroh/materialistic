@@ -1,6 +1,8 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.format.DateUtils;
 
 import retrofit.Callback;
@@ -109,17 +111,17 @@ public class HackerNewsClient {
         void item(@Path("itemId") String itemId, Callback<Item> callback);
     }
 
-    public static class Item {
+    public static class Item implements ItemInterface {
         // The item's unique id. Required.
-        private long id;
+        protected long id;
         // true if the item is deleted.
         private boolean deleted;
         // The type of item. One of "job", "story", "comment", "poll", or "pollopt".
         private String type;
         // The username of the item's author.
-        private String by;
+        protected String by;
         // Creation date of the item, in Unix Time.
-        private long time;
+        protected long time;
         // The comment, Ask HN, or poll text. HTML.
         private String text;
         // true if the item is dead.
@@ -127,51 +129,22 @@ public class HackerNewsClient {
         // The item's parent. For comments, either another comment or the relevant story. For pollopts, the relevant poll.
         private long parent;
         // The ids of the item's comments, in ranked display order.
-        private long[] kids;
+        protected long[] kids;
         // The URL of the story.
-        private String url;
+        protected String url;
         // The story's score, or the votes for a pollopt.
         private int score;
         // The title of the story or poll.
-        private String title;
+        protected String title;
         // A list of related pollopts, in display order.
         private long[] parts;
-
-        public String getTitle() {
-            return title;
-        }
-    }
-
-    public static class TopStory {
-        private long id;
-        private String title;
-        private long time;
-        private String by;
-        private long[] kids;
-        private String url;
-
-        private TopStory(long id) {
-            this.id = id;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String setTitle() {
-            return title;
-        }
 
         public long getId() {
             return id;
         }
 
-        public void populate(Item info) {
-            title = info.title;
-            time = info.time;
-            by = info.by;
-            kids = info.kids;
-            url = info.url;
+        public String getTitle() {
+            return title;
         }
 
         public CharSequence getDisplayedTime(Context context) {
@@ -190,5 +163,63 @@ public class HackerNewsClient {
         public String getUrl() {
             return url;
         }
+    }
+
+    public static class TopStory extends Item implements Parcelable {
+        public static final Creator<TopStory> CREATOR = new Creator<TopStory>() {
+            @Override
+            public TopStory createFromParcel(Parcel source) {
+                return new TopStory(source);
+            }
+
+            @Override
+            public TopStory[] newArray(int size) {
+                return new TopStory[size];
+            }
+        };
+
+        private TopStory(long id) {
+            this.id = id;
+        }
+
+        private TopStory(Parcel source) {
+            id = source.readLong();
+            title = source.readString();
+            time = source.readLong();
+            by = source.readString();
+            kids = source.createLongArray();
+            url = source.readString();
+        }
+
+        public void populate(Item info) {
+            title = info.title;
+            time = info.time;
+            by = info.by;
+            kids = info.kids;
+            url = info.url;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(id);
+            dest.writeString(title);
+            dest.writeLong(time);
+            dest.writeString(by);
+            dest.writeLongArray(kids);
+            dest.writeString(url);
+        }
+    }
+
+    public interface ItemInterface {
+        long getId();
+        String getTitle();
+        CharSequence getDisplayedTime(Context context);
+        int getKidCount();
+        String getUrl();
     }
 }
