@@ -132,7 +132,7 @@ public class ListActivity extends BaseActivity {
             if (story == null) {
                 holder.mTitleTextView.setText(getString(R.string.loading_text));
                 holder.mPostedTextView.setText(getString(R.string.loading_text));
-                holder.mCommentButton.setVisibility(View.INVISIBLE);
+                holder.mCommentButton.setVisibility(View.GONE);
             } else {
                 holder.mTitleTextView.setText(story.getTitle());
                 holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
@@ -140,7 +140,7 @@ public class ListActivity extends BaseActivity {
                     holder.mCommentButton.setText(String.valueOf(story.getKidCount()));
                     holder.mCommentButton.setVisibility(View.VISIBLE);
                 } else {
-                    holder.mCommentButton.setVisibility(View.INVISIBLE);
+                    holder.mCommentButton.setVisibility(View.GONE);
                 }
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
