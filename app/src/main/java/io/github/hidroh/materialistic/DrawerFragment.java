@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class DrawerFragment extends Fragment {
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_drawer, container, false);
@@ -35,4 +36,5 @@ public class DrawerFragment extends Fragment {
             getActivity().startActivity(intent);
         }
     }
+
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public abstract class BaseActivity extends ActionBarActivity {
+
     private ViewGroup mContentView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -65,4 +66,5 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void closeDrawers() {
         mDrawerLayout.closeDrawers();
     }
+
 }
