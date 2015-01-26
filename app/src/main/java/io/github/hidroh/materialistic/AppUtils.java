@@ -6,15 +6,14 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 
 public class AppUtils {
-    public static void openWebUrl(Context context, String url, String title) {
+    public static void openWebUrl(Context context, HackerNewsClient.Item item) {
         final boolean isExternal = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_external), false);
         if (isExternal) {
-            openWebUrlExternal(context, url);
+            openWebUrlExternal(context, item.getUrl());
         } else {
             final Intent intent = new Intent(context, WebActivity.class);
-            intent.putExtra(WebActivity.EXTRA_TITLE, title);
-            intent.putExtra(WebActivity.EXTRA_URL, url);
+            intent.putExtra(WebActivity.EXTRA_ITEM, item);
             context.startActivity(intent);
         }
     }

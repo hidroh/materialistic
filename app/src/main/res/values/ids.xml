@@ -22,5 +22,6 @@
     <!-- menu -->
     <item type="id" name="menu_share" />
     <item type="id" name="menu_external" />
+    <item type="id" name="menu_comment" />
 
 </resources>

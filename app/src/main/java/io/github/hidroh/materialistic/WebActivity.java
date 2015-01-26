@@ -15,10 +15,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-public class WebActivity extends BaseActivity {
+public class WebActivity extends BaseItemActivity {
 
-    public static final String EXTRA_URL = WebActivity.class.getName() + ".EXTRA_URL";
-    public static final String EXTRA_TITLE = WebActivity.class.getName() + ".EXTRA_TITLE";
+    public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
+    private HackerNewsClient.Item mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +39,9 @@ public class WebActivity extends BaseActivity {
             }
         });
         setWebViewSettings(webView.getSettings());
-        webView.loadUrl(getIntent().getStringExtra(EXTRA_URL));
-        setTitle(getIntent().getStringExtra(EXTRA_TITLE));
+        mItem = getIntent().getParcelableExtra(EXTRA_ITEM);
+        webView.loadUrl(mItem.getUrl());
+        setTitle(mItem.getDisplayedTitle());
     }
 
     @Override
@@ -51,16 +52,36 @@ public class WebActivity extends BaseActivity {
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_format),
-                getIntent().getStringExtra(EXTRA_TITLE),
-                getIntent().getStringExtra(EXTRA_URL)));
+                mItem.getDisplayedTitle(),
+                mItem.getUrl()));
         shareActionProvider.setShareIntent(intent);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mItem.getKidCount() > 0) {
+            menu.findItem(R.id.menu_comment).setVisible(true);
+        }
+
+        if (!mItem.isShareable()) {
+            menu.findItem(R.id.menu_share).setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this, getIntent().getStringExtra(EXTRA_URL));
+            AppUtils.openWebUrlExternal(this, mItem.getUrl());
+            return true;
+        }
+
+        if (item.getItemId() == R.id.menu_comment) {
+            final Intent intent = new Intent(this, ItemActivity.class);
+            intent.putExtra(ItemActivity.EXTRA_ITEM, mItem);
+            startActivity(intent);
             return true;
         }
 

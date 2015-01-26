@@ -125,7 +125,7 @@ public class ListActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
-                    intent.putExtra(ItemActivity.EXTRA_STORY, story);
+                    intent.putExtra(ItemActivity.EXTRA_ITEM, story);
                     final ActivityOptionsCompat options = ActivityOptionsCompat
                             .makeSceneTransitionAnimation(ListActivity.this,
                                     holder.itemView, getString(R.string.transition_item_container));
@@ -156,7 +156,7 @@ public class ListActivity extends BaseActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AppUtils.openWebUrl(ListActivity.this, story.getUrl(), story.getTitle());
+                        AppUtils.openWebUrl(ListActivity.this, story);
                     }
                 });
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

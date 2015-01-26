@@ -18,10 +18,10 @@ import android.widget.TextView;
 
 public class ItemActivity extends BaseItemActivity {
 
-    public static final String EXTRA_STORY = ItemActivity.class.getName() + ".EXTRA_STORY";
+    public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     private static final String PARAM_ID = "id";
     private RecyclerView mRecyclerView;
-    private String mItemId;
+    private HackerNewsClient.Item mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +36,13 @@ public class ItemActivity extends BaseItemActivity {
         });
         final Intent intent = getIntent();
         if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null) {
-            mItemId = intent.getData().getQueryParameter(PARAM_ID);
-            HackerNewsClient.getInstance().getItem(mItemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+            String itemId = intent.getData().getQueryParameter(PARAM_ID);
+            HackerNewsClient.getInstance().getItem(itemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                 @Override
                 public void onResponse(HackerNewsClient.Item response) {
-                    bindData(response);
+                    mItem = response;
+                    supportInvalidateOptionsMenu();
+                    bindData(mItem);
                 }
 
                 @Override
@@ -49,9 +51,8 @@ public class ItemActivity extends BaseItemActivity {
                 }
             });
         } else {
-            HackerNewsClient.Item item = intent.getParcelableExtra(EXTRA_STORY);
-            mItemId = String.valueOf(item.getId());
-            bindData(item);
+            mItem = intent.getParcelableExtra(EXTRA_ITEM);
+            bindData(mItem);
         }
     }
 
@@ -62,9 +63,14 @@ public class ItemActivity extends BaseItemActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return mItem != null;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this, HackerNewsClient.getItemUrl(mItemId));
+            AppUtils.openWebUrl(this, mItem);
             return true;
         }
 
@@ -130,7 +136,7 @@ public class ItemActivity extends BaseItemActivity {
                             @Override
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
-                                intent.putExtra(ItemActivity.EXTRA_STORY, item);
+                                intent.putExtra(ItemActivity.EXTRA_ITEM, item);
                                 final ActivityOptionsCompat options = ActivityOptionsCompat
                                         .makeSceneTransitionAnimation(ItemActivity.this,
                                                 holder.itemView, getString(R.string.transition_item_container));

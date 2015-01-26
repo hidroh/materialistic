@@ -8,4 +8,10 @@
         android:id="@id/menu_share"
         android:title="@string/share_via"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+    <item
+        android:id="@id/menu_comment"
+        android:icon="@drawable/ic_comment_white_24dp"
+        android:title="@string/title_activity_item"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

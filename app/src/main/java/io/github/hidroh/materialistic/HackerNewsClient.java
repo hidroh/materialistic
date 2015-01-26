@@ -120,6 +120,7 @@ public class HackerNewsClient {
     }
 
     public static class Item implements Parcelable {
+        public enum Type { job, story, comment, poll, pollopt }
         // The item's unique id. Required.
         private long id;
         // true if the item is deleted.
@@ -248,6 +249,21 @@ public class HackerNewsClient {
 
         public CharSequence getText() {
             return TextUtils.isEmpty(text) ? null : Html.fromHtml(text);
+        }
+
+        public boolean isShareable() {
+            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
+            switch (itemType) {
+                case story:
+                case poll:
+                case job:
+                    return true;
+                case comment:
+                case pollopt:
+                    return false;
+                default:
+                    return false;
+            }
         }
     }
 }
