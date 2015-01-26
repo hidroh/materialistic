@@ -62,6 +62,9 @@ public class ListActivity extends BaseActivity {
             public void onResponse(final HackerNewsClient.Item[] response) {
                 mRecyclerView.setAdapter(new RecyclerViewAdapter(response));
                 mSwipeRefreshLayout.setRefreshing(false);
+                // TODO remember tinted drawable so we don't apply it again
+                AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
+                        R.color.colorAccent);
             }
 
             @Override

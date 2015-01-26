@@ -47,6 +47,8 @@
     </style>
 
     <style name="textRankStyle">
+        <item name="android:paddingTop">@dimen/padding</item>
+        <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
     </style>
@@ -93,6 +95,12 @@
         <item name="android:background">@drawable/abc_item_background_holo_light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
+    </style>
+
+    <style name="AppProgressBarHorizontalStyle" parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:progressDrawable">@drawable/progress</item>
     </style>
 
 </resources>
