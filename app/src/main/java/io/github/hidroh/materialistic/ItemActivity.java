@@ -75,7 +75,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        titleTextView.setMaxLines(Integer.MAX_VALUE);
+        titleTextView.setMaxLines(5);
         titleTextView.setText(story.getDisplayedTitle());
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
         if (story.getKidCount() > 0) {
