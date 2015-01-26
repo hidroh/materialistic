@@ -31,14 +31,14 @@ public class ListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.title_activity_list));
         setContentView(R.layout.activity_list);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public int getOrientation() {
                 return LinearLayout.VERTICAL;
             }
         });
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
         mSwipeRefreshLayout.setProgressBackgroundColor(R.color.colorAccent);
         mSwipeRefreshLayout.post(new Runnable() {

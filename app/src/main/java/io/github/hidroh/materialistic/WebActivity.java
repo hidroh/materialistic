@@ -25,7 +25,7 @@ public class WebActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-        final WebView webView = (WebView) findViewById(R.id.webView);
+        final WebView webView = (WebView) findViewById(R.id.web_view);
         webView.setWebViewClient(new WebViewClient());
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -47,7 +47,7 @@ public class WebActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_web, menu);
         ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
-                menu.findItem(R.id.menuShare));
+                menu.findItem(R.id.menu_share));
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_format),
@@ -59,7 +59,7 @@ public class WebActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menuExternal) {
+        if (item.getItemId() == R.id.menu_external) {
             AppUtils.openWebUrlExternal(this, getIntent().getStringExtra(EXTRA_URL));
             return true;
         }

@@ -2,9 +2,9 @@
 <resources>
 
     <!-- common views -->
-    <item type="id" name="recyclerView" />
-    <item type="id" name="swipeLayout" />
-    <item type="id" name="webView" />
+    <item type="id" name="recycler_view" />
+    <item type="id" name="swipe_layout" />
+    <item type="id" name="web_view" />
     <item type="id" name="progress" />
 
     <!-- item views -->
@@ -12,15 +12,15 @@
     <item type="id" name="comment" />
 
     <!-- drawer -->
-    <item type="id" name="drawerLayout" />
-    <item type="id" name="contentFrame"/>
+    <item type="id" name="drawer_layout" />
+    <item type="id" name="content_frame"/>
     <item type="id" name="drawer" />
-    <item type="id" name="drawerList" />
-    <item type="id" name="drawerSettings" />
-    <item type="id" name="drawerMain" />
+    <item type="id" name="drawer_list" />
+    <item type="id" name="drawer_settings" />
+    <item type="id" name="drawer_main" />
 
     <!-- menu -->
-    <item type="id" name="menuShare" />
-    <item type="id" name="menuExternal" />
+    <item type="id" name="menu_share" />
+    <item type="id" name="menu_external" />
 
 </resources>
