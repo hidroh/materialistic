@@ -2,6 +2,8 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -74,15 +76,8 @@ public class ItemActivity extends BaseItemActivity {
             return;
         }
 
-        final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        titleTextView.setMaxLines(5);
-        titleTextView.setText(story.getDisplayedTitle());
+        ((TextView) findViewById(android.R.id.text2)).setText(story.getDisplayedTitle());
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
-        if (story.getKidCount() > 0) {
-            Button commentButton = (Button) findViewById(R.id.comment);
-            commentButton.setText(String.valueOf(story.getKidCount()));
-            commentButton.setVisibility(View.VISIBLE);
-        }
         bindKidData(story.getKidItems());
     }
 
@@ -120,7 +115,7 @@ public class ItemActivity extends BaseItemActivity {
                 }
             }
 
-            private void bindKidItem(ItemViewHolder holder, final HackerNewsClient.Item item) {
+            private void bindKidItem(final ItemViewHolder holder, final HackerNewsClient.Item item) {
                 if (item == null) {
                     holder.mPostedTextView.setText(getString(R.string.loading_text));
                     holder.mContentTextView.setText(getString(R.string.loading_text));
@@ -136,8 +131,10 @@ public class ItemActivity extends BaseItemActivity {
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
                                 intent.putExtra(ItemActivity.EXTRA_STORY, item);
-                                // TODO add shared element transition
-                                startActivity(intent);
+                                final ActivityOptionsCompat options = ActivityOptionsCompat
+                                        .makeSceneTransitionAnimation(ItemActivity.this,
+                                                holder.itemView, getString(R.string.transition_item_container));
+                                ActivityCompat.startActivity(ItemActivity.this, intent, options.toBundle());
                             }
                         });
                     }

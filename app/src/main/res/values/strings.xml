@@ -10,7 +10,7 @@
     <string name="title_activity_web">Story</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
-    <string name="transition_story">story</string>
+    <string name="transition_item_container">transition_item_container</string>
     <string name="pref_external_title">Use external browser</string>
     <string name="pref_external_summary">View stories using external browser instead of in-app browser (default).</string>
     <string name="pref_external">pref_external</string>

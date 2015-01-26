@@ -62,6 +62,11 @@
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
 
+    <style name="AppCardView.Header">
+        <item name="android:foreground">@null</item>
+        <item name="cardBackgroundColor">@color/colorPrimaryLight</item>
+    </style>
+
     <style name="DrawerTextStyle">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingTop">@dimen/padding</item>

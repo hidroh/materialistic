@@ -128,7 +128,7 @@ public class ListActivity extends BaseActivity {
                     intent.putExtra(ItemActivity.EXTRA_STORY, story);
                     final ActivityOptionsCompat options = ActivityOptionsCompat
                             .makeSceneTransitionAnimation(ListActivity.this,
-                                    holder.itemView, getString(R.string.transition_story));
+                                    holder.itemView, getString(R.string.transition_item_container));
                     ActivityCompat.startActivity(ListActivity.this, intent, options.toBundle());
                 }
             });
