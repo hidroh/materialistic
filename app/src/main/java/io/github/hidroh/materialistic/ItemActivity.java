@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +19,7 @@ public class ItemActivity extends BaseItemActivity {
     public static final String EXTRA_STORY = ItemActivity.class.getName() + ".EXTRA_STORY";
     private static final String PARAM_ID = "id";
     private RecyclerView mRecyclerView;
+    private String mItemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +34,8 @@ public class ItemActivity extends BaseItemActivity {
         });
         final Intent intent = getIntent();
         if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null) {
-            final String id = intent.getData().getQueryParameter(PARAM_ID);
-            HackerNewsClient.getInstance().getItem(id, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+            mItemId = intent.getData().getQueryParameter(PARAM_ID);
+            HackerNewsClient.getInstance().getItem(mItemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                 @Override
                 public void onResponse(HackerNewsClient.Item response) {
                     bindData(response);
@@ -45,8 +48,25 @@ public class ItemActivity extends BaseItemActivity {
             });
         } else {
             HackerNewsClient.Item item = intent.getParcelableExtra(EXTRA_STORY);
+            mItemId = String.valueOf(item.getId());
             bindData(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_external) {
+            AppUtils.openWebUrlExternal(this, HackerNewsClient.getItemUrl(mItemId));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void bindData(HackerNewsClient.Item story) {

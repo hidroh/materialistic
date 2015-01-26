@@ -18,7 +18,9 @@ import retrofit.http.Path;
  * Client to retrieve Hacker News content asynchronously
  */
 public class HackerNewsClient {
-    private static final String BASE_URL = "https://hacker-news.firebaseio.com/v0";
+    private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0";
+    private static final String BASE_WEB_URL = "https://news.ycombinator.com";
+    private static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
     private static HackerNewsClient mInstance;
     private RestService mRestService;
 
@@ -31,12 +33,16 @@ public class HackerNewsClient {
             mInstance = new HackerNewsClient();
             mInstance.mRestService = new RestAdapter.Builder()
                     .setLogLevel(RestAdapter.LogLevel.BASIC)
-                    .setEndpoint(BASE_URL)
+                    .setEndpoint(BASE_API_URL)
                     .build()
                     .create(RestService.class);
         }
 
         return mInstance;
+    }
+
+    public static String getItemUrl(String itemId) {
+        return String.format(WEB_ITEM_PATH, itemId);
     }
 
     /**
