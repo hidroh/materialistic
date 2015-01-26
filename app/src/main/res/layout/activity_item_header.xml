@@ -18,7 +18,6 @@
             android:text="@string/loading_text"
             android:maxLines="5"
             android:ellipsize="end"
-            android:textColor="@color/textColorPrimaryInverse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -8,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -82,7 +84,14 @@ public class ItemActivity extends BaseItemActivity {
             return;
         }
 
-        ((TextView) findViewById(android.R.id.text2)).setText(story.getDisplayedTitle());
+        final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
+        titleTextView.setText(story.getDisplayedTitle());
+        if (story.isShareable()) {
+            titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    getResources().getDimension(R.dimen.abc_text_size_medium_material));
+            titleTextView.setTypeface(titleTextView.getTypeface(), Typeface.BOLD);
+        }
+
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
         bindKidData(story.getKidItems());
     }
