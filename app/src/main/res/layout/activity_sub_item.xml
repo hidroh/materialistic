@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
-    card_view:cardCornerRadius="8dp"
     style="@style/AppCardView"
-    card_view:cardElevation="1dp">
+    card_view:cardCornerRadius="@dimen/cardview_default_radius"
+    card_view:cardElevation="@dimen/cardview_default_elevation">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
-    card_view:cardCornerRadius="4dp"
     style="@style/AppCardView.Header"
-    card_view:cardElevation="5dp">
+    card_view:cardElevation="@dimen/cardview_header_elevation">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
