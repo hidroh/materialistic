@@ -15,7 +15,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-
 public class WebActivity extends BaseActivity {
 
     public static final String EXTRA_URL = WebActivity.class.getName() + ".EXTRA_URL";

@@ -18,7 +18,7 @@ public class DrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_drawer, container, false);
-        view.findViewById(R.id.drawer_main).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.drawer_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navigate(ListActivity.class);
@@ -32,6 +32,12 @@ public class DrawerFragment extends Fragment {
                 } else {
                     navigate(SettingsActivity.class);
                 }
+            }
+        });
+        view.findViewById(R.id.drawer_main).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(MainActivity.class);
             }
         });
         return view;

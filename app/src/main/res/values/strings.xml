@@ -17,5 +17,6 @@
     <string name="view_in_browser">View in external browser</string>
     <string name="share_format" formatted="false">%s - %s (via Materialistic)</string>
     <string name="share_via">Share this story via</string>
+    <string name="title_activity_main">Material Demo</string>
 
 </resources>

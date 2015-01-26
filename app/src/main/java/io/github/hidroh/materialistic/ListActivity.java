@@ -29,6 +29,7 @@ public class ListActivity extends BaseActivity {
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.title_activity_list));
         setContentView(R.layout.activity_list);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this) {
