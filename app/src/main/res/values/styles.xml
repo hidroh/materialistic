@@ -58,6 +58,13 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="textSubtitleStyle">
+        <item name="android:textStyle">italic</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:padding">@dimen/padding</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
     <style name="AppCardView">
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
