@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -61,15 +63,74 @@ public class ItemActivity extends BaseItemActivity {
             commentButton.setText(String.valueOf(story.getKidCount()));
             commentButton.setVisibility(View.VISIBLE);
         }
-        bindListData(story.getKids());
+        bindListData(story.getKidItems());
     }
 
-    private void bindListData(long[] itemIds) {
-        if (itemIds == null || itemIds.length == 0) {
+    private void bindListData(final HackerNewsClient.Item[] items) {
+        if (items == null || items.length == 0) {
             return;
         }
 
-        // TODO
+        mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>() {
+            @Override
+            public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ItemViewHolder(getLayoutInflater()
+                        .inflate(R.layout.activity_sub_item, parent, false));
+            }
+
+            @Override
+            public void onBindViewHolder(final ItemViewHolder holder, int position) {
+                final HackerNewsClient.Item item = items[position];
+                if (TextUtils.isEmpty(item.getText())) {
+                    HackerNewsClient.getInstance().getItem(String.valueOf(item.getId()),
+                            new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+                                @Override
+                                public void onResponse(HackerNewsClient.Item response) {
+                                    bindListItem(holder, response);
+                                }
+
+                                @Override
+                                public void onError(String errorMessage) {
+                                    // do nothing
+                                }
+                            });
+                } else {
+                    bindListItem(holder, item);
+                }
+            }
+
+            private void bindListItem(ItemViewHolder holder, HackerNewsClient.Item item) {
+                if (item == null) {
+                    holder.mPostedTextView.setText(getString(R.string.loading_text));
+                    holder.mContentTextView.setText(getString(R.string.loading_text));
+                    holder.mCommentButton.setVisibility(View.INVISIBLE);
+                } else {
+                    holder.mPostedTextView.setText(item.getDisplayedTime(ItemActivity.this));
+                    holder.mContentTextView.setText(item.getText());
+                    if (item.getKidCount() > 0) {
+                        holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
+                        holder.mCommentButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public int getItemCount() {
+                return items.length;
+            }
+        });
     }
 
+    private static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final TextView mPostedTextView;
+        private final TextView mContentTextView;
+        private final Button mCommentButton;
+
+        public ItemViewHolder(View itemView) {
+            super(itemView);
+            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
+            mContentTextView = (TextView) itemView.findViewById(android.R.id.text1);
+            mCommentButton = (Button) itemView.findViewById(R.id.comment);
+        }
+    }
 }

@@ -38,15 +38,12 @@
             android:layout_below="@android:id/text2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <Button
+        <include layout="@layout/button_comment"
             android:id="@id/comment"
-            android:background="@drawable/ic_mode_comment_grey600_48dp"
-            android:visibility="gone"
-            android:layout_gravity="center|center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/margin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_marginRight="@dimen/margin" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

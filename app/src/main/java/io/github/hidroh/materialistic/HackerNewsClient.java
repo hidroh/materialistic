@@ -3,6 +3,8 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 
 import retrofit.Callback;
@@ -138,6 +140,7 @@ public class HackerNewsClient {
         private String title;
         // A list of related pollopts, in display order.
         private long[] parts;
+        private Item[] kidItems;
 
         public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
             @Override
@@ -212,8 +215,23 @@ public class HackerNewsClient {
             return url;
         }
 
-        public long[] getKids() {
-            return kids;
+        public Item[] getKidItems() {
+            if (kids == null || kids.length == 0) {
+                return null;
+            }
+
+            if (kidItems == null) {
+                kidItems = new Item[kids.length];
+                for (int i = 0; i < kids.length; i++) {
+                    kidItems[i] = new Item(kids[i]);
+                }
+            }
+
+            return kidItems;
+        }
+
+        public CharSequence getText() {
+            return TextUtils.isEmpty(text) ? null : Html.fromHtml(text);
         }
     }
 }
