@@ -171,6 +171,8 @@ public class HackerNewsClient {
             by = source.readString();
             kids = source.createLongArray();
             url = source.readString();
+            text = source.readString();
+            type = source.readString();
         }
 
         public void populate(Item info) {
@@ -179,6 +181,8 @@ public class HackerNewsClient {
             by = info.by;
             kids = info.kids;
             url = info.url;
+            text = info.text;
+            type = info.type;
         }
 
         @Override
@@ -194,6 +198,8 @@ public class HackerNewsClient {
             dest.writeString(by);
             dest.writeLongArray(kids);
             dest.writeString(url);
+            dest.writeString(text);
+            dest.writeString(type);
         }
 
         public long getId() {
@@ -202,6 +208,10 @@ public class HackerNewsClient {
 
         public String getTitle() {
             return title;
+        }
+
+        public CharSequence getDisplayedTitle() {
+            return !TextUtils.isEmpty(title) ? title : getText();
         }
 
         public CharSequence getDisplayedTime(Context context) {

@@ -76,17 +76,17 @@ public class ItemActivity extends BaseItemActivity {
 
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         titleTextView.setMaxLines(Integer.MAX_VALUE);
-        titleTextView.setText(story.getTitle());
+        titleTextView.setText(story.getDisplayedTitle());
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
         if (story.getKidCount() > 0) {
             Button commentButton = (Button) findViewById(R.id.comment);
             commentButton.setText(String.valueOf(story.getKidCount()));
             commentButton.setVisibility(View.VISIBLE);
         }
-        bindListData(story.getKidItems());
+        bindKidData(story.getKidItems());
     }
 
-    private void bindListData(final HackerNewsClient.Item[] items) {
+    private void bindKidData(final HackerNewsClient.Item[] items) {
         if (items == null || items.length == 0) {
             return;
         }
@@ -106,7 +106,8 @@ public class ItemActivity extends BaseItemActivity {
                             new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                                 @Override
                                 public void onResponse(HackerNewsClient.Item response) {
-                                    bindListItem(holder, response);
+                                    item.populate(response);
+                                    bindKidItem(holder, item);
                                 }
 
                                 @Override
@@ -115,11 +116,11 @@ public class ItemActivity extends BaseItemActivity {
                                 }
                             });
                 } else {
-                    bindListItem(holder, item);
+                    bindKidItem(holder, item);
                 }
             }
 
-            private void bindListItem(ItemViewHolder holder, HackerNewsClient.Item item) {
+            private void bindKidItem(ItemViewHolder holder, final HackerNewsClient.Item item) {
                 if (item == null) {
                     holder.mPostedTextView.setText(getString(R.string.loading_text));
                     holder.mContentTextView.setText(getString(R.string.loading_text));
@@ -130,6 +131,15 @@ public class ItemActivity extends BaseItemActivity {
                     if (item.getKidCount() > 0) {
                         holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
                         holder.mCommentButton.setVisibility(View.VISIBLE);
+                        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
+                                intent.putExtra(ItemActivity.EXTRA_STORY, item);
+                                // TODO add shared element transition
+                                startActivity(intent);
+                            }
+                        });
                     }
                 }
             }
