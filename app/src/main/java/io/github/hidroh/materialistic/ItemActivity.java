@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class ItemActivity extends BaseActivity {
+public class ItemActivity extends BaseItemActivity {
 
     public static final String EXTRA_STORY = ItemActivity.class.getName() + ".EXTRA_STORY";
     private static final String PARAM_ID = "id";
