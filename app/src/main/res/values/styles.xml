@@ -65,7 +65,15 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    <style name="AppCardView">
+
+    <style name="BaseAppCardView">
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardPreventCornerOverlap">false</item>
+        <item name="cardElevation">@dimen/cardview_default_elevation</item>
+        <item name="cardCornerRadius">@dimen/cardview_default_radius</item>
+    </style>
+
+    <style name="AppCardView" parent="BaseAppCardView">
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
 
