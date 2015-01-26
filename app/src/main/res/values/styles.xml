@@ -82,6 +82,7 @@
     <style name="AppCardView.Header">
         <item name="android:foreground">@null</item>
         <item name="cardBackgroundColor">@color/colorPrimaryLight</item>
+        <item name="cardElevation">@dimen/cardview_header_elevation</item>
     </style>
 
     <style name="DrawerTextStyle">
