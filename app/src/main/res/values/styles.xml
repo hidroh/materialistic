@@ -25,7 +25,6 @@
     </style>
 
     <style name="AppButton" parent="android:Widget.Button">
-        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
@@ -43,7 +42,7 @@
     </style>
 
     <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
-        <item name="android:background">@drawable/apptheme_spinner_background_holo_light</item>
+        <!-- Customize spinner here -->
     </style>
 
     <style name="textRankStyle">

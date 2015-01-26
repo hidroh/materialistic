@@ -17,7 +17,6 @@
     <item type="id" name="drawer" />
     <item type="id" name="drawer_list" />
     <item type="id" name="drawer_settings" />
-    <item type="id" name="drawer_main" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />
