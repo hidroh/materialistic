@@ -57,9 +57,9 @@ public class ListActivity extends BaseActivity {
     }
 
     private void bindData() {
-        HackerNewsClient.getInstance().getTopStories(new HackerNewsClient.ResponseListener<HackerNewsClient.TopStory[]>() {
+        HackerNewsClient.getInstance().getTopStories(new HackerNewsClient.ResponseListener<HackerNewsClient.Item[]>() {
             @Override
-            public void onResponse(final HackerNewsClient.TopStory[] response) {
+            public void onResponse(final HackerNewsClient.Item[] response) {
                 mRecyclerView.setAdapter(new RecyclerViewAdapter(response));
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -88,9 +88,9 @@ public class ListActivity extends BaseActivity {
     }
 
     private class RecyclerViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
-        private final HackerNewsClient.TopStory[] mItems;
+        private final HackerNewsClient.Item[] mItems;
 
-        private RecyclerViewAdapter(HackerNewsClient.TopStory[] items) {
+        private RecyclerViewAdapter(HackerNewsClient.Item[] items) {
             mItems = items;
         }
 
@@ -101,7 +101,7 @@ public class ListActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-            final HackerNewsClient.TopStory story = mItems[position];
+            final HackerNewsClient.Item story = mItems[position];
             holder.mRankTextView.setText(String.valueOf(position + 1));
             if (!TextUtils.isEmpty(story.getTitle())) {
                 bindViewHolder(holder, story);
@@ -139,7 +139,7 @@ public class ListActivity extends BaseActivity {
             return mItems.length;
         }
 
-        private void bindViewHolder(ItemViewHolder holder, final HackerNewsClient.TopStory story) {
+        private void bindViewHolder(ItemViewHolder holder, final HackerNewsClient.Item story) {
             if (story == null) {
                 holder.mTitleTextView.setText(getString(R.string.loading_text));
                 holder.mPostedTextView.setText(getString(R.string.loading_text));

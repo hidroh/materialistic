@@ -7,5 +7,9 @@
     tools:context="io.github.hidroh.materialistic.ItemActivity">
 
     <include layout="@layout/activity_list_item" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
