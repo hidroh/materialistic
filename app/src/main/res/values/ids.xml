@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- common views -->
+    <item type="id" name="recyclerView" />
+    <item type="id" name="swipeLayout" />
+    <item type="id" name="webView" />
+    <item type="id" name="progress" />
+
+    <!-- item views -->
+    <item type="id" name="posted" />
+    <item type="id" name="comment" />
+
+    <!-- drawer -->
+    <item type="id" name="drawerLayout" />
+    <item type="id" name="contentFrame"/>
+    <item type="id" name="drawer" />
+    <item type="id" name="drawerList" />
+    <item type="id" name="drawerSettings" />
+    <item type="id" name="drawerMain" />
+
+    <!-- menu -->
+    <item type="id" name="menuShare" />
+    <item type="id" name="menuExternal" />
+
+</resources>

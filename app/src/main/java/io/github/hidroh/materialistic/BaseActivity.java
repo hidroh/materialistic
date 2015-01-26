@@ -20,9 +20,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
-        mContentView = (ViewGroup) findViewById(R.id.content_frame);
+        mContentView = (ViewGroup) findViewById(R.id.contentFrame);
         mDrawer = findViewById(R.id.drawer);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer,
                 R.string.close_drawer);
         mDrawerLayout.setDrawerListener(mDrawerToggle);

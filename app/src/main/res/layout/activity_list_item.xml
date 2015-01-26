@@ -19,14 +19,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignTop="@android:id/text2"
-            android:layout_alignBottom="@+id/posted"/>
+            android:layout_alignBottom="@id/posted"/>
         <TextView
             android:id="@android:id/text2"
             android:padding="@dimen/padding"
             android:text="@string/loading_text"
             style="@style/textTitleStyle"
             android:layout_toRightOf="@android:id/text1"
-            android:layout_toLeftOf="@+id/comment"
+            android:layout_toLeftOf="@id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView

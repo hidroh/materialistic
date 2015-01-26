@@ -47,7 +47,7 @@ public class WebActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_web, menu);
         ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
-                menu.findItem(R.id.menu_share));
+                menu.findItem(R.id.menuShare));
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_format),
@@ -59,7 +59,7 @@ public class WebActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_external) {
+        if (item.getItemId() == R.id.menuExternal) {
             AppUtils.openWebUrlExternal(this, getIntent().getStringExtra(EXTRA_URL));
             return true;
         }

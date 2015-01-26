@@ -4,12 +4,12 @@
     android:layout_height="match_parent"
     tools:context="io.github.hidroh.materialistic.WebActivity">
     <WebView
-        android:id="@+id/webView"
+        android:id="@id/webView"
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <ProgressBar
-        android:id="@+id/progress"
+        android:id="@id/progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="10dp"/>

@@ -18,13 +18,13 @@ public class DrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_drawer, container, false);
-        view.findViewById(R.id.drawer_list).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.drawerList).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navigate(ListActivity.class);
             }
         });
-        view.findViewById(R.id.drawer_settings).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.drawerSettings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -34,7 +34,7 @@ public class DrawerFragment extends Fragment {
                 }
             }
         });
-        view.findViewById(R.id.drawer_main).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.drawerMain).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 navigate(MainActivity.class);

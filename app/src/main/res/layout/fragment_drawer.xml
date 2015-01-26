@@ -15,19 +15,19 @@
         style="@style/DrawerTextStyle"/>
 
     <TextView
-        android:id="@+id/drawer_list"
+        android:id="@id/drawerList"
         android:text="@string/title_activity_list"
         android:drawableLeft="@drawable/ic_trending_up_grey600_24dp"
         style="@style/DrawerTextStyle"/>
 
     <TextView
-        android:id="@+id/drawer_settings"
+        android:id="@id/drawerSettings"
         android:text="@string/action_settings"
         android:drawableLeft="@drawable/ic_settings_grey600_24dp"
         style="@style/DrawerTextStyle"/>
 
     <TextView
-        android:id="@+id/drawer_main"
+        android:id="@id/drawerMain"
         android:text="@string/title_activity_main"
         android:drawableLeft="@drawable/ic_new_releases_grey600_24dp"
         style="@style/DrawerTextStyle"/>
