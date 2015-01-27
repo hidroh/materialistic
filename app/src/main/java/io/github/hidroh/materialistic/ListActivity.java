@@ -39,6 +39,7 @@ public class ListActivity extends BaseActivity {
                 return LinearLayout.VERTICAL;
             }
         });
+        mRecyclerView.setHasFixedSize(true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
         mSwipeRefreshLayout.setProgressBackgroundColor(R.color.colorAccent);

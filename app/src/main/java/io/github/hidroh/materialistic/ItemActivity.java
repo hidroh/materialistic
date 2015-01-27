@@ -36,6 +36,7 @@ public class ItemActivity extends BaseItemActivity {
                 return LinearLayout.VERTICAL;
             }
         });
+        mRecyclerView.setHasFixedSize(true);
         final Intent intent = getIntent();
         final String itemId;
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {

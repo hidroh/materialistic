@@ -36,6 +36,7 @@ public class FavoriteActivity extends BaseActivity
                 return LinearLayout.VERTICAL;
             }
         });
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
     }
 
