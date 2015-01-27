@@ -27,7 +27,8 @@ public class MaterialisticProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         if (URI_FAVORITE.equals(uri)) {
-            return db.query(FavoriteEntry.TABLE_NAME, null, null, null, null, null, null);
+            return db.query(FavoriteEntry.TABLE_NAME, null, null, null, null, null,
+                    FavoriteEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
         }
 
         return null;
@@ -104,6 +105,7 @@ public class MaterialisticProvider extends ContentProvider {
         private static final String INTEGER_TYPE = " INTEGER";
         private static final String PRIMARY_KEY = " PRIMARY KEY";
         private static final String COMMA_SEP = ",";
+        private static final String ORDER_DESC = " DESC";
         private static final String SQL_CREATE_DB =
                 "CREATE TABLE " + FavoriteEntry.TABLE_NAME + " (" +
                         FavoriteEntry._ID +                 INTEGER_TYPE +  PRIMARY_KEY + COMMA_SEP +
