@@ -37,6 +37,10 @@
             android:label="@string/title_activity_web" >
         </activity>
         <activity
+            android:name=".FavoriteActivity"
+            android:label="@string/title_activity_favorite" >
+        </activity>
+        <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
@@ -48,6 +52,10 @@
             android:name=".ActionBarSettingsActivity"
             android:label="@string/action_settings" >
         </activity>
+        <provider
+            android:authorities="io.github.hidroh.materialistic.provider"
+            android:name=".data.MaterialisticProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

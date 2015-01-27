@@ -9,7 +9,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,6 +16,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import io.github.hidroh.materialistic.data.FavoriteManager;
 
 public class ListActivity extends BaseActivity {
 
@@ -62,14 +63,10 @@ public class ListActivity extends BaseActivity {
             public void onResponse(final HackerNewsClient.Item[] response) {
                 mRecyclerView.setAdapter(new RecyclerViewAdapter(response));
                 mSwipeRefreshLayout.setRefreshing(false);
-                // TODO remember tinted drawable so we don't apply it again
-                AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
-                        R.color.colorAccent);
             }
 
             @Override
             public void onError(String errorMessage) {
-                Log.e("tag", errorMessage);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -87,6 +84,9 @@ public class ListActivity extends BaseActivity {
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mCommentButton = (Button) itemView.findViewById(R.id.comment);
+            // TODO remember tinted drawable so we don't apply it again
+            AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
+                    R.color.colorAccent);
         }
     }
 
@@ -165,8 +165,8 @@ public class ListActivity extends BaseActivity {
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        Toast.makeText(getApplicationContext(), story.getUrl(),
-                                Toast.LENGTH_SHORT).show();
+                        FavoriteManager.add(ListActivity.this, story);
+                        Toast.makeText(ListActivity.this, R.string.toast_saved, Toast.LENGTH_SHORT).show();
                         return true;
                     }
                 });

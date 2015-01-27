@@ -25,6 +25,12 @@
         style="@style/DrawerTextStyle"/>
 
     <TextView
+        android:id="@id/drawer_favorite"
+        android:text="@string/title_activity_favorite"
+        android:drawableLeft="@drawable/ic_bookmark_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
         android:id="@id/drawer_settings"
         android:text="@string/action_settings"
         android:drawableLeft="@drawable/ic_settings_grey600_24dp"

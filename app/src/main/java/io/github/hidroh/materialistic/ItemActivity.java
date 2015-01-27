@@ -8,7 +8,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +21,7 @@ public class ItemActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     private static final String PARAM_ID = "id";
+    public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     private RecyclerView mRecyclerView;
     private HackerNewsClient.Item mItem;
 
@@ -37,8 +37,14 @@ public class ItemActivity extends BaseItemActivity {
             }
         });
         final Intent intent = getIntent();
-        if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null) {
-            String itemId = intent.getData().getQueryParameter(PARAM_ID);
+        final String itemId;
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            itemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
+        } else {
+            itemId = getIntent().getStringExtra(EXTRA_ITEM_ID);
+        }
+
+        if (!TextUtils.isEmpty(itemId)) {
             HackerNewsClient.getInstance().getItem(itemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                 @Override
                 public void onResponse(HackerNewsClient.Item response) {
@@ -49,7 +55,7 @@ public class ItemActivity extends BaseItemActivity {
 
                 @Override
                 public void onError(String errorMessage) {
-                    Log.e("tag", errorMessage);
+                    // do nothing
                 }
             });
         } else {

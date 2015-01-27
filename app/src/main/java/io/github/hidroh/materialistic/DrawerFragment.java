@@ -40,6 +40,12 @@ public class DrawerFragment extends Fragment {
                 navigate(AboutActivity.class);
             }
         });
+        view.findViewById(R.id.drawer_favorite).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(FavoriteActivity.class);
+            }
+        });
         return view;
     }
 

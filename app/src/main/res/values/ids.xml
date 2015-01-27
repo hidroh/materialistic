@@ -18,11 +18,13 @@
     <item type="id" name="drawer_list" />
     <item type="id" name="drawer_settings" />
     <item type="id" name="drawer_about" />
+    <item type="id" name="drawer_favorite" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />
     <item type="id" name="menu_external" />
     <item type="id" name="menu_comment" />
+    <item type="id" name="menu_clear" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />
