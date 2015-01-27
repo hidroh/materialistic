@@ -30,4 +30,10 @@
         android:drawableLeft="@drawable/ic_settings_grey600_24dp"
         style="@style/DrawerTextStyle"/>
 
+    <TextView
+        android:id="@id/drawer_about"
+        android:text="@string/title_activity_about"
+        android:drawableLeft="@drawable/ic_info_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
 </LinearLayout>

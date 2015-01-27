@@ -103,4 +103,12 @@
         <item name="android:progressDrawable">@drawable/progress</item>
     </style>
 
+    <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">@dimen/padding</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>

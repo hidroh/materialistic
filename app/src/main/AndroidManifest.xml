@@ -37,6 +37,10 @@
             android:label="@string/title_activity_web" >
         </activity>
         <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings" >
         </activity>

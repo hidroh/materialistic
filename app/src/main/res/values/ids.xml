@@ -17,10 +17,17 @@
     <item type="id" name="drawer" />
     <item type="id" name="drawer_list" />
     <item type="id" name="drawer_settings" />
+    <item type="id" name="drawer_about" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />
     <item type="id" name="menu_external" />
     <item type="id" name="menu_comment" />
+
+    <!-- others -->
+    <item type="id" name="text_developer_info" />
+    <item type="id" name="text_application_info" />
+    <item type="id" name="text_license" />
+    <item type="id" name="text_libraries" />
 
 </resources>

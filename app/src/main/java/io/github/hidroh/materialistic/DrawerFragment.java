@@ -34,6 +34,12 @@ public class DrawerFragment extends Fragment {
                 }
             }
         });
+        view.findViewById(R.id.drawer_about).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(AboutActivity.class);
+            }
+        });
         return view;
     }
 
