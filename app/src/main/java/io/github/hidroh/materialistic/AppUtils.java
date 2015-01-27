@@ -9,6 +9,9 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 
 public class AppUtils {
     public static void openWebUrl(Context context, HackerNewsClient.Item item) {
@@ -44,5 +47,10 @@ public class AppUtils {
         }
 
         res.getDrawable(drawableResId).setColorFilter(res.getColor(colorResId), PorterDuff.Mode.SRC_IN);
+    }
+
+    public static void setTextWithLinks(TextView textView, String htmlText) {
+        textView.setText(Html.fromHtml(htmlText));
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

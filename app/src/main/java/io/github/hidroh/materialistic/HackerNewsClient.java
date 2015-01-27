@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
@@ -211,7 +210,7 @@ public class HackerNewsClient {
             return title;
         }
 
-        public CharSequence getDisplayedTitle() {
+        public String getDisplayedTitle() {
             return !TextUtils.isEmpty(title) ? title : getText();
         }
 
@@ -247,8 +246,8 @@ public class HackerNewsClient {
             return kidItems;
         }
 
-        public CharSequence getText() {
-            return TextUtils.isEmpty(text) ? null : Html.fromHtml(text);
+        public String getText() {
+            return text;
         }
 
         public boolean isShareable() {

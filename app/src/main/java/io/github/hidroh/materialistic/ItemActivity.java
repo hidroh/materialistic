@@ -85,7 +85,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        titleTextView.setText(story.getDisplayedTitle());
+        AppUtils.setTextWithLinks(titleTextView, story.getDisplayedTitle());
         if (story.isShareable()) {
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     getResources().getDimension(R.dimen.abc_text_size_medium_material));
@@ -137,7 +137,7 @@ public class ItemActivity extends BaseItemActivity {
                     holder.mCommentButton.setVisibility(View.INVISIBLE);
                 } else {
                     holder.mPostedTextView.setText(item.getDisplayedTime(ItemActivity.this));
-                    holder.mContentTextView.setText(item.getText());
+                    AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
                     if (item.getKidCount() > 0) {
                         holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
                         holder.mCommentButton.setVisibility(View.VISIBLE);

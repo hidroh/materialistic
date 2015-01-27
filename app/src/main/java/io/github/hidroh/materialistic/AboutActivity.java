@@ -3,8 +3,6 @@ package io.github.hidroh.materialistic;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 public class AboutActivity extends BaseActivity {
@@ -26,8 +24,6 @@ public class AboutActivity extends BaseActivity {
     }
 
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {
-        final TextView textView = (TextView) findViewById(textViewResId);
-        textView.setText(Html.fromHtml(htmlText));
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        AppUtils.setTextWithLinks((TextView) findViewById(textViewResId), htmlText);
     }
 }
