@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
@@ -50,7 +51,7 @@ public class AppUtils {
     }
 
     public static void setTextWithLinks(TextView textView, String htmlText) {
-        textView.setText(Html.fromHtml(htmlText));
+        textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
