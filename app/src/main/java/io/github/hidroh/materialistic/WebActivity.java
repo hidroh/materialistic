@@ -34,7 +34,6 @@ public class WebActivity extends BaseItemActivity {
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
-                    webView.setVisibility(View.VISIBLE);
                 }
             }
         });

@@ -11,21 +11,25 @@
             android:text="@string/loading_text"
             style="@style/textSubtitleStyle"
             android:gravity="center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_height="48dp" />
+            android:layout_toLeftOf="@id/comment"
+            android:layout_alignParentTop="true" />
         <TextView
             android:id="@android:id/text1"
             android:padding="@dimen/padding"
             android:text="@string/loading_text"
             android:layout_below="@id/posted"
+            android:layout_toLeftOf="@id/comment"
             style="@style/textTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <Button
+            android:id="@id/comment"
+            android:background="@drawable/ic_comment_grey600_48dp"
+            android:paddingTop="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
-    <Button
-        android:id="@id/comment"
-        android:background="@drawable/ic_comment_grey600_48dp"
-        android:layout_gravity="right|top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 </android.support.v7.widget.CardView>

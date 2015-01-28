@@ -64,6 +64,7 @@ public class FavoriteActivity extends BaseActivity
             FavoriteManager.clear(this);
             mCursor = null;
             mAdapter.notifyDataSetChanged();
+            supportInvalidateOptionsMenu();
             return true;
         }
 
