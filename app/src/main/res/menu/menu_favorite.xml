@@ -5,4 +5,7 @@
         android:title="@string/clear_all"
         android:icon="@drawable/ic_clear_all_white_24dp"
         app:showAsAction="always" />
+    <item android:id="@id/menu_email"
+        android:title="@string/email"
+        app:showAsAction="never" />
 </menu>

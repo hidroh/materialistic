@@ -26,6 +26,7 @@
     <item type="id" name="menu_external" />
     <item type="id" name="menu_comment" />
     <item type="id" name="menu_clear" />
+    <item type="id" name="menu_email" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

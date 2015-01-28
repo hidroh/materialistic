@@ -1,6 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,8 +12,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +30,8 @@ public class FavoriteActivity extends BaseActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private FavoriteManager.Cursor mCursor;
     private RecyclerViewAdapter mAdapter;
+    private BroadcastReceiver mBroadcastReceiver;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,27 @@ public class FavoriteActivity extends BaseActivity
                 supportInvalidateOptionsMenu();
             }
         });
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction() == null) {
+                    return;
+                }
+
+                if (FavoriteManager.ACTION_GET.equals(intent.getAction())) {
+                    mProgressDialog.dismiss();
+                    final Intent emailIntent = AppUtils.makeEmailIntent(
+                            getString(R.string.favorite_email_subject),
+                            makeEmailContent(
+                                    (FavoriteManager.Favorite[]) intent.getParcelableArrayExtra(
+                                            FavoriteManager.ACTION_GET_EXTRA_DATA)));
+                    if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(emailIntent);
+                    }
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, FavoriteManager.makeGetIntentFilter());
     }
 
     @Override
@@ -74,6 +102,7 @@ public class FavoriteActivity extends BaseActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_clear).setVisible(mAdapter.getItemCount() > 0);
+        menu.findItem(R.id.menu_email).setVisible(mAdapter.getItemCount() > 0);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -93,6 +122,15 @@ public class FavoriteActivity extends BaseActivity
                     .setNegativeButton(android.R.string.cancel, null)
                     .create().show();
             return true;
+        }
+
+        if (item.getItemId() == R.id.menu_email) {
+            if (mProgressDialog == null) {
+                mProgressDialog = ProgressDialog.show(this, null, getString(R.string.preparing), true, true);
+            } else {
+                mProgressDialog.show();
+            }
+            FavoriteManager.get(this);
         }
 
         return super.onOptionsItemSelected(item);
@@ -135,6 +173,17 @@ public class FavoriteActivity extends BaseActivity
 
         mCursor = null;
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        mBroadcastReceiver = null;
+        super.onDestroy();
+    }
+
+    private String makeEmailContent(FavoriteManager.Favorite[] favorites) {
+        return TextUtils.join("\n\n", favorites);
     }
 
     private class RecyclerViewAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {

@@ -48,12 +48,10 @@ public class WebActivity extends BaseItemActivity {
         getMenuInflater().inflate(R.menu.menu_web, menu);
         ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
                 menu.findItem(R.id.menu_share));
-        final Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_format),
-                mItem.getDisplayedTitle(),
-                mItem.getUrl()));
-        shareActionProvider.setShareIntent(intent);
+        shareActionProvider.setShareIntent(AppUtils.makeShareIntent(
+                getString(R.string.share_format,
+                        mItem.getDisplayedTitle(),
+                        mItem.getUrl())));
         return super.onCreateOptionsMenu(menu);
     }
 

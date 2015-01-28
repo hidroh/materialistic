@@ -16,6 +16,7 @@
     <string name="pref_external">pref_external</string>
     <string name="view_in_browser">View in external browser</string>
     <string name="share_format" formatted="false">%s - %s (via Materialistic)</string>
+    <string name="favorite_email_subject">Your Materialistic saved stories</string>
     <string name="share_via">Share this story via</string>
     <string name="title_activity_about">About</string>
     <string name="license_title">License</string>
@@ -64,5 +65,7 @@
     <string name="no_saved_stories">No saved stories so far.\nLong press one to save it for later!</string>
     <string name="no_comments">No replies found for this item</string>
     <string name="confirm_clear">Clear all saved stories?</string>
+    <string name="email">Email a copy of my saved stories</string>
+    <string name="preparing">Preparing...</string>
 
 </resources>

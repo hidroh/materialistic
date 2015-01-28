@@ -17,6 +17,34 @@ public class FavoriteManager {
 
     public static final int LOADER = 0;
     public static final String ACTION_CLEAR = FavoriteManager.class.getName() + ".ACTION_CLEAR";
+    public static final String ACTION_GET = FavoriteManager.class.getName() + ".ACTION_GET";
+    public static final String ACTION_GET_EXTRA_DATA = ACTION_GET + ".EXTRA_DATA";
+
+    public static void get(Context context) {
+        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+        new AsyncQueryHandler(context.getContentResolver()) {
+            @Override
+            protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
+                super.onQueryComplete(token, cookie, cursor);
+                if (cursor == null) {
+                    return;
+                }
+
+                Favorite[] favorites = new Favorite[cursor.getCount()];
+                int count = 0;
+                Cursor favoriteCursor = new Cursor(cursor);
+                boolean any = favoriteCursor.moveToFirst();
+                if (any) {
+                    do {
+                        favorites[count] = favoriteCursor.getFavorite();
+                        count++;
+                    } while (favoriteCursor.moveToNext());
+
+                }
+                broadcastManager.sendBroadcast(makeGetBroadcastIntent(favorites));
+            }
+        }.startQuery(0, null, MaterialisticProvider.URI_FAVORITE, null, null, null, null);
+    }
 
     public static void add(Context context, HackerNewsClient.Item story) {
         final ContentValues contentValues = new ContentValues();
@@ -94,6 +122,16 @@ public class FavoriteManager {
         return new Intent(ACTION_CLEAR);
     }
 
+    public static IntentFilter makeGetIntentFilter() {
+        return new IntentFilter(ACTION_GET);
+    }
+
+    private static Intent makeGetBroadcastIntent(Favorite[] favorites) {
+        final Intent intent = new Intent(ACTION_GET);
+        intent.putExtra(ACTION_GET_EXTRA_DATA, favorites);
+        return intent;
+    }
+
     public static class Favorite implements HackerNewsClient.WebItem {
         private String itemId;
         private String url;
@@ -150,6 +188,11 @@ public class FavoriteManager {
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.YEAR_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_MONTH));
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s - %s", title, url);
         }
 
         @Override

@@ -54,4 +54,19 @@ public class AppUtils {
         textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
     }
+
+    public static Intent makeEmailIntent(String subject, String text) {
+        final Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        return intent;
+    }
+
+    public static Intent makeShareIntent(String text) {
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        return intent;
+    }
 }
