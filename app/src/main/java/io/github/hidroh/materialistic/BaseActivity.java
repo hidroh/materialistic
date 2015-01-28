@@ -3,13 +3,12 @@ package io.github.hidroh.materialistic;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends TrackableActivity {
 
     protected ViewGroup mContentView;
     private ActionBarDrawerToggle mDrawerToggle;

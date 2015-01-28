@@ -1,9 +1,8 @@
 package io.github.hidroh.materialistic;
 
-import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public abstract class BaseItemActivity extends ActionBarActivity {
+public abstract class BaseItemActivity extends TrackableActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
