@@ -23,12 +23,14 @@ public class ItemActivity extends BaseItemActivity {
     private static final String PARAM_ID = "id";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     private RecyclerView mRecyclerView;
+    private View mEmptyView;
     private HackerNewsClient.Item mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
+        mEmptyView = findViewById(android.R.id.empty);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this) {
             @Override
@@ -116,6 +118,7 @@ public class ItemActivity extends BaseItemActivity {
 
     private void bindKidData(final HackerNewsClient.Item[] items) {
         if (items == null || items.length == 0) {
+            mEmptyView.setVisibility(View.VISIBLE);
             return;
         }
 

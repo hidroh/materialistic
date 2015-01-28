@@ -67,6 +67,16 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="textEmptyStyle">
+        <item name="android:textSize">@dimen/abc_text_size_headline_material</item>
+        <item name="android:padding">@dimen/padding</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="BaseAppCardView">
         <item name="cardUseCompatPadding">true</item>
         <item name="cardPreventCornerOverlap">false</item>
