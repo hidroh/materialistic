@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
     style="@style/AppCardView">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@id/posted"
-            android:text="@string/loading_text"
-            style="@style/textSubtitleStyle"
-            android:gravity="center_vertical"
-            android:layout_toLeftOf="@id/comment"
-            android:layout_alignParentTop="true" />
-        <TextView
             android:id="@android:id/text1"
-            android:padding="@dimen/padding"
             android:text="@string/loading_text"
-            android:layout_below="@id/posted"
+            android:padding="@dimen/padding"
+            android:layout_alignParentTop="true"
             android:layout_toLeftOf="@id/comment"
             style="@style/textTitleStyle"
+            android:lines="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@id/posted"
+            android:text="@string/loading_text"
+            android:padding="@dimen/padding"
+            android:gravity="center_vertical"
+            android:layout_below="@android:id/text1"
+            android:layout_toLeftOf="@id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button

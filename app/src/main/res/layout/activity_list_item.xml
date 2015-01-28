@@ -23,7 +23,7 @@
             android:tint="@color/colorPrimary" />
         <TextView
             android:id="@android:id/text1"
-            android:text="@string/loading_text"
+            android:text="46"
             style="@style/textRankStyle"
             android:layout_width="@dimen/min_cardview_height"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         <TextView
             android:id="@android:id/text2"
             android:padding="@dimen/padding"
-            android:text="@string/loading_text"
+            android:text="The quick brown fox jumps over the lazy dog"
             style="@style/textTitleStyle"
             android:layout_toRightOf="@android:id/text1"
             android:layout_toLeftOf="@id/comment"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:id="@id/posted"
-            android:text="@string/loading_text"
+            android:text="Since March 14, 1885"
             android:singleLine="true"
             android:padding="@dimen/padding"
             android:layout_toRightOf="@android:id/text1"
