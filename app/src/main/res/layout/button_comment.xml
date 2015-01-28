@@ -2,7 +2,6 @@
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@id/comment"
     android:background="@drawable/ic_mode_comment_grey600_48dp"
-    android:visibility="gone"
     android:layout_gravity="center|center_vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />

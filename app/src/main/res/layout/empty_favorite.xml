@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="bottom"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+    <TextView
+        android:id="@android:id/title"
+        android:text="@string/no_saved_stories"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:padding="@dimen/padding"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <include layout="@layout/activity_list_item"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@android:id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:src="@drawable/hand"
+        android:adjustViewBounds="true"
+        android:elevation="10dp"
+        android:maxHeight="300dp"
+        android:scaleType="fitCenter"
+        android:layout_below="@android:id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

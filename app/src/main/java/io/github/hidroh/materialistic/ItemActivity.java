@@ -191,6 +191,7 @@ public class ItemActivity extends BaseItemActivity {
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mContentTextView = (TextView) itemView.findViewById(android.R.id.text1);
             mCommentButton = (Button) itemView.findViewById(R.id.comment);
+            mCommentButton.setVisibility(View.INVISIBLE);
         }
     }
 }

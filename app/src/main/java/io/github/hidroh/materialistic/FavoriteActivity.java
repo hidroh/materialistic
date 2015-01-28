@@ -38,6 +38,23 @@ public class FavoriteActivity extends BaseActivity
         });
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
+        final View emptyView = getLayoutInflater().inflate(R.layout.empty_favorite, mContentView, false);
+        emptyView.setVisibility(View.INVISIBLE);
+        mContentView.addView(emptyView);
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (mAdapter.getItemCount() == 0) {
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.INVISIBLE);
+                }
+                supportInvalidateOptionsMenu();
+            }
+        });
     }
 
     @Override
@@ -64,7 +81,6 @@ public class FavoriteActivity extends BaseActivity
             FavoriteManager.clear(this);
             mCursor = null;
             mAdapter.notifyDataSetChanged();
-            supportInvalidateOptionsMenu();
             return true;
         }
 
@@ -89,11 +105,15 @@ public class FavoriteActivity extends BaseActivity
         if (data == null) {
             mCursor = null;
         } else {
-            data.moveToFirst();
+            boolean any = data.moveToFirst();
+            if (any) {
+
+            } else {
+
+            }
             mCursor = new FavoriteManager.Cursor(data);
         }
         mAdapter.notifyDataSetChanged();
-        supportInvalidateOptionsMenu();
     }
 
     @Override

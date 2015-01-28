@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
-    private ViewGroup mContentView;
+    protected ViewGroup mContentView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
