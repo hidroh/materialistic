@@ -148,6 +148,7 @@ public class HackerNewsClient {
         private long[] parts;
         private Item[] kidItems;
         private Boolean favorite;
+        public int localRevision = -1;
 
         public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
             @Override

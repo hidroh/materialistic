@@ -3,7 +3,10 @@ package io.github.hidroh.materialistic.data;
 import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.CursorWrapper;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 
 import io.github.hidroh.materialistic.HackerNewsClient;
@@ -12,6 +15,7 @@ import io.github.hidroh.materialistic.R;
 public class FavoriteManager {
 
     public static final int LOADER = 0;
+    public static final String ACTION_CLEAR = FavoriteManager.class.getName() + ".ACTION_CLEAR";
 
     public static void add(Context context, HackerNewsClient.Item story) {
         final ContentValues contentValues = new ContentValues();
@@ -24,8 +28,14 @@ public class FavoriteManager {
     }
 
     public static void clear(Context context) {
-        new AsyncQueryHandler(context.getContentResolver()) { }
-                .startDelete(0, null, MaterialisticProvider.URI_FAVORITE, null, null);
+        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+        new AsyncQueryHandler(context.getContentResolver()) {
+            @Override
+            protected void onDeleteComplete(int token, Object cookie, int result) {
+                super.onDeleteComplete(token, cookie, result);
+                broadcastManager.sendBroadcast(makeClearBroadcastIntent());
+            }
+        }.startDelete(0, null, MaterialisticProvider.URI_FAVORITE, null, null);
     }
 
     public static void check(Context context, final String itemId, final OperationCallbacks callbacks) {
@@ -73,6 +83,14 @@ public class FavoriteManager {
         }.startDelete(0, itemId, MaterialisticProvider.URI_FAVORITE,
                 MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
                 new String[]{itemId});
+    }
+
+    public static IntentFilter makeClearIntentFilter() {
+        return new IntentFilter(ACTION_CLEAR);
+    }
+
+    private static Intent makeClearBroadcastIntent() {
+        return new Intent(ACTION_CLEAR);
     }
 
     public static class Favorite {

@@ -1,10 +1,13 @@
 package io.github.hidroh.materialistic;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +26,8 @@ public class ListActivity extends BaseActivity {
 
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private BroadcastReceiver mBroadcastReceiver;
+    private int mLocalRevision = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,28 @@ public class ListActivity extends BaseActivity {
             }
         });
         bindData();
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (TextUtils.isEmpty(intent.getAction())) {
+                    return;
+                }
+
+                if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
+                    mLocalRevision++;
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
+                FavoriteManager.makeClearIntentFilter());;
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        mBroadcastReceiver = null;
+        super.onDestroy();
     }
 
     private void bindData() {
@@ -109,7 +136,8 @@ public class ListActivity extends BaseActivity {
         public void onBindViewHolder(final ItemViewHolder holder, final int position) {
             final HackerNewsClient.Item story = mItems[position];
             holder.mRankTextView.setText(String.valueOf(position + 1));
-            if (story.isFavorite() == null) {
+            if (story.localRevision < mLocalRevision) {
+                story.localRevision = mLocalRevision;
                 FavoriteManager.check(ListActivity.this, String.valueOf(story.getId()),
                         new FavoriteManager.OperationCallbacks() {
                             @Override
