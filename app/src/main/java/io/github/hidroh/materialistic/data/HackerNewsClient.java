@@ -1,4 +1,4 @@
-package io.github.hidroh.materialistic;
+package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Parcel;

@@ -15,6 +15,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import io.github.hidroh.materialistic.data.HackerNewsClient;
+
 public class WebActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";

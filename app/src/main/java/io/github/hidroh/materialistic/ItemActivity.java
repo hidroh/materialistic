@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import io.github.hidroh.materialistic.data.HackerNewsClient;
+
 public class ItemActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
@@ -92,7 +94,11 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrl(this, mItem);
+            if (mItem.isShareable()) {
+                AppUtils.openWebUrl(this, mItem);
+            } else {
+                AppUtils.openWebUrlExternal(this, HackerNewsClient.getItemUrl(mItem.getId()));
+            }
             return true;
         }
 

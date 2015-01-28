@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 
 public class ListActivity extends BaseActivity {
 

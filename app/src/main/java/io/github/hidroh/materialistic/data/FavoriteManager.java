@@ -14,7 +14,7 @@ import android.text.format.DateUtils;
 
 import java.util.Set;
 
-import io.github.hidroh.materialistic.HackerNewsClient;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.R;
 
 public class FavoriteManager {
