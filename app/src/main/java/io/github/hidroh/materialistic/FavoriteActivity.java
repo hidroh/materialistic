@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -78,9 +80,18 @@ public class FavoriteActivity extends BaseActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_clear) {
-            FavoriteManager.clear(this);
-            mCursor = null;
-            mAdapter.notifyDataSetChanged();
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.confirm_clear)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            FavoriteManager.clear(FavoriteActivity.this);
+                            mCursor = null;
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create().show();
             return true;
         }
 
