@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.CursorWrapper;
+import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 
@@ -19,9 +20,9 @@ public class FavoriteManager {
 
     public static void add(Context context, HackerNewsClient.Item story) {
         final ContentValues contentValues = new ContentValues();
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, String.valueOf(story.getId()));
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, String.valueOf(story.getUrl()));
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, String.valueOf(story.getTitle()));
+        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
+        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
+        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getTitle());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME, String.valueOf(System.currentTimeMillis()));
         new AsyncQueryHandler(context.getContentResolver()) { }
                 .startInsert(0, null, MaterialisticProvider.URI_FAVORITE, contentValues);
@@ -93,11 +94,23 @@ public class FavoriteManager {
         return new Intent(ACTION_CLEAR);
     }
 
-    public static class Favorite {
+    public static class Favorite implements HackerNewsClient.WebItem {
         private String itemId;
         private String url;
         private String title;
         private long time;
+
+        public static final Creator<Favorite> CREATOR = new Creator<Favorite>() {
+            @Override
+            public Favorite createFromParcel(Parcel source) {
+                return new Favorite(source);
+            }
+
+            @Override
+            public Favorite[] newArray(int size) {
+                return new Favorite[size];
+            }
+        };
 
         private Favorite(String itemId, String url, String title, long time) {
             this.itemId = itemId;
@@ -106,15 +119,29 @@ public class FavoriteManager {
             this.time = time;
         }
 
-        public String getItemId() {
-            return itemId;
+        private Favorite(Parcel source) {
+            itemId = source.readString();
+            url = source.readString();
+            title = source.readString();
         }
 
+        @Override
         public String getUrl() {
             return url;
         }
 
-        public String getTitle() {
+        @Override
+        public boolean isShareable() {
+            return true;
+        }
+
+        @Override
+        public String getId() {
+            return itemId;
+        }
+
+        @Override
+        public String getDisplayedTitle() {
             return title;
         }
 
@@ -123,6 +150,18 @@ public class FavoriteManager {
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.YEAR_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_MONTH));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(itemId);
+            dest.writeString(url);
+            dest.writeString(title);
         }
     }
 

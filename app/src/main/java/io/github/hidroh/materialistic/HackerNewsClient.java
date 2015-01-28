@@ -118,7 +118,7 @@ public class HackerNewsClient {
         void item(@Path("itemId") String itemId, Callback<Item> callback);
     }
 
-    public static class Item implements Parcelable {
+    public static class Item implements WebItem {
         public enum Type { job, story, comment, poll, pollopt }
         // The item's unique id. Required.
         private long id;
@@ -204,14 +204,16 @@ public class HackerNewsClient {
             dest.writeString(type);
         }
 
-        public long getId() {
-            return id;
+        @Override
+        public String getId() {
+            return String.valueOf(id);
         }
 
         public String getTitle() {
             return title;
         }
 
+        @Override
         public String getDisplayedTitle() {
             return !TextUtils.isEmpty(title) ? title : getText();
         }
@@ -229,6 +231,7 @@ public class HackerNewsClient {
             return kids != null ? kids.length : 0;
         }
 
+        @Override
         public String getUrl() {
             return url;
         }
@@ -252,6 +255,7 @@ public class HackerNewsClient {
             return text;
         }
 
+        @Override
         public boolean isShareable() {
             Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
             switch (itemType) {
@@ -274,5 +278,12 @@ public class HackerNewsClient {
         public void setFavorite(boolean favorite) {
             this.favorite = favorite;
         }
+    }
+
+    public interface WebItem extends Parcelable {
+        String getDisplayedTitle();
+        String getUrl();
+        boolean isShareable();
+        String getId();
     }
 }

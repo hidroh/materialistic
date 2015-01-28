@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 public class WebActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
-    private HackerNewsClient.Item mItem;
+    private HackerNewsClient.WebItem mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +60,6 @@ public class WebActivity extends BaseItemActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (mItem.getKidCount() > 0) {
-            menu.findItem(R.id.menu_comment).setVisible(true);
-        }
-
         if (!mItem.isShareable()) {
             menu.findItem(R.id.menu_share).setVisible(false);
         }

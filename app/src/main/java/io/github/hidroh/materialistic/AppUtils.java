@@ -15,7 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 public class AppUtils {
-    public static void openWebUrl(Context context, HackerNewsClient.Item item) {
+    public static void openWebUrl(Context context, HackerNewsClient.WebItem item) {
         final boolean isExternal = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_external), false);
         if (isExternal) {

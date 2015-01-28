@@ -138,7 +138,7 @@ public class ListActivity extends BaseActivity {
             holder.mRankTextView.setText(String.valueOf(position + 1));
             if (story.localRevision < mLocalRevision) {
                 story.localRevision = mLocalRevision;
-                FavoriteManager.check(ListActivity.this, String.valueOf(story.getId()),
+                FavoriteManager.check(ListActivity.this, story.getId(),
                         new FavoriteManager.OperationCallbacks() {
                             @Override
                             public void onCheckComplete(boolean isFavorite) {
@@ -154,7 +154,7 @@ public class ListActivity extends BaseActivity {
                 bindViewHolder(holder, story);
             } else {
                 bindViewHolder(holder, null);
-                HackerNewsClient.getInstance().getItem(String.valueOf(story.getId()),
+                HackerNewsClient.getInstance().getItem(story.getId(),
                         new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                             @Override
                             public void onResponse(HackerNewsClient.Item response) {
@@ -218,7 +218,7 @@ public class ListActivity extends BaseActivity {
                             FavoriteManager.add(ListActivity.this, story);
                             toastMessageResId = R.string.toast_saved;
                         } else {
-                            FavoriteManager.remove(ListActivity.this, String.valueOf(story.getId()));
+                            FavoriteManager.remove(ListActivity.this, story.getId());
                             toastMessageResId = R.string.toast_removed;
                         }
                         Toast.makeText(ListActivity.this, toastMessageResId, Toast.LENGTH_SHORT).show();

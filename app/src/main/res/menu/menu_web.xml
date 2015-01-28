@@ -12,6 +12,5 @@
         android:id="@id/menu_comment"
         android:icon="@drawable/ic_comment_white_24dp"
         android:title="@string/title_activity_item"
-        android:visible="false"
         app:showAsAction="always" />
 </menu>

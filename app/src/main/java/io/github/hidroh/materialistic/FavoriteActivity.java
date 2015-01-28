@@ -124,19 +124,18 @@ public class FavoriteActivity extends BaseActivity
 
             final FavoriteManager.Favorite favorite = mCursor.getFavorite();
             holder.mPostedTextView.setText(favorite.getCreated(FavoriteActivity.this));
-            holder.mTitleTextView.setText(favorite.getTitle());
+            holder.mTitleTextView.setText(favorite.getDisplayedTitle());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO consider opening in internal browser
-                    AppUtils.openWebUrlExternal(FavoriteActivity.this, favorite.getUrl());
+                    AppUtils.openWebUrl(FavoriteActivity.this, favorite);
                 }
             });
             holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final Intent intent = new Intent(FavoriteActivity.this, ItemActivity.class);
-                    intent.putExtra(ItemActivity.EXTRA_ITEM_ID, favorite.getItemId());
+                    intent.putExtra(ItemActivity.EXTRA_ITEM_ID, favorite.getId());
                     final ActivityOptionsCompat options = ActivityOptionsCompat
                             .makeSceneTransitionAnimation(FavoriteActivity.this,
                                     holder.itemView, getString(R.string.transition_item_container));

@@ -38,11 +38,25 @@ public class ItemActivity extends BaseItemActivity {
         });
         mRecyclerView.setHasFixedSize(true);
         final Intent intent = getIntent();
-        final String itemId;
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            itemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
-        } else {
+        String itemId = null;
+        if (intent.hasExtra(EXTRA_ITEM)) {
+            HackerNewsClient.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
+            itemId = item.getId();
+            if (item instanceof HackerNewsClient.Item) {
+                mItem = (HackerNewsClient.Item) item;
+                bindData(mItem);
+                return;
+            }
+        }
+
+        if (TextUtils.isEmpty(itemId)) {
             itemId = getIntent().getStringExtra(EXTRA_ITEM_ID);
+        }
+
+        if (TextUtils.isEmpty(itemId)) {
+            if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+                itemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
+            }
         }
 
         if (!TextUtils.isEmpty(itemId)) {
@@ -59,9 +73,6 @@ public class ItemActivity extends BaseItemActivity {
                     // do nothing
                 }
             });
-        } else {
-            mItem = intent.getParcelableExtra(EXTRA_ITEM);
-            bindData(mItem);
         }
     }
 
@@ -119,7 +130,7 @@ public class ItemActivity extends BaseItemActivity {
             public void onBindViewHolder(final ItemViewHolder holder, int position) {
                 final HackerNewsClient.Item item = items[position];
                 if (TextUtils.isEmpty(item.getText())) {
-                    HackerNewsClient.getInstance().getItem(String.valueOf(item.getId()),
+                    HackerNewsClient.getInstance().getItem(item.getId(),
                             new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                                 @Override
                                 public void onResponse(HackerNewsClient.Item response) {
