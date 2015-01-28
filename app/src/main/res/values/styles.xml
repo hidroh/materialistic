@@ -20,6 +20,7 @@
         <item name="android:spinnerStyle">@style/AppSpinner</item>
         <!-- Here we setting appcompat’s actionBarStyle -->
         <item name="actionBarStyle">@style/AppActionBar</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
     </style>

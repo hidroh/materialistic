@@ -1,14 +1,18 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.CursorWrapper;
+import android.os.AsyncTask;
 import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
+
+import java.util.Set;
 
 import io.github.hidroh.materialistic.HackerNewsClient;
 import io.github.hidroh.materialistic.R;
@@ -84,7 +88,6 @@ public class FavoriteManager {
                     return;
                 }
 
-                // TODO switch to local broadcast
                 if (itemId.equals(cookie)) {
                     callbacks.onCheckComplete(cursor.getCount() > 0);
                 }
@@ -99,19 +102,38 @@ public class FavoriteManager {
             return;
         }
 
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new AsyncQueryHandler(context.getContentResolver()) { }
+                .startDelete(0, itemId, MaterialisticProvider.URI_FAVORITE,
+                        MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                        new String[]{itemId});
+    }
+
+    public static void remove(Context context, Set<String> itemIds) {
+        if (itemIds == null || itemIds.isEmpty()) {
+            return;
+        }
+
+        final ContentResolver contentResolver = context.getContentResolver();
+        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+        new AsyncTask<String, Integer, Integer>() {
             @Override
-            protected void onDeleteComplete(int token, Object cookie, int result) {
-                super.onDeleteComplete(token, cookie, result);
-                if (cookie == null) {
-                    return;
+            protected Integer doInBackground(String... params) {
+                int deleted = 0;
+                for (String param : params) {
+                    deleted += contentResolver.delete(MaterialisticProvider.URI_FAVORITE,
+                            MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                            new String[]{param});
                 }
 
-                // TODO local broadcast
+                return deleted;
             }
-        }.startDelete(0, itemId, MaterialisticProvider.URI_FAVORITE,
-                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId});
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+                broadcastManager.sendBroadcast(makeClearBroadcastIntent());
+            }
+        }.execute(itemIds.toArray(new String[itemIds.size()]));
     }
 
     public static IntentFilter makeClearIntentFilter() {

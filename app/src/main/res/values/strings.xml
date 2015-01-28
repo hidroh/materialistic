@@ -67,5 +67,7 @@
     <string name="confirm_clear">Clear all saved stories?</string>
     <string name="email">Email a copy of my saved stories</string>
     <string name="preparing">Preparing...</string>
+    <string name="clear_selected">Clear selected</string>
+    <string name="confirm_clear_selected">Clear selected saved stories?</string>
 
 </resources>

@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,10 +22,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 
@@ -33,6 +37,9 @@ public class FavoriteActivity extends BaseActivity
     private RecyclerViewAdapter mAdapter;
     private BroadcastReceiver mBroadcastReceiver;
     private ProgressDialog mProgressDialog;
+    private ActionMode mActionMode;
+    private ActionMode.Callback mActionModeCallback;
+    private Set<String> mSelected = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +85,9 @@ public class FavoriteActivity extends BaseActivity
                 }
 
                 if (FavoriteManager.ACTION_GET.equals(intent.getAction())) {
-                    mProgressDialog.dismiss();
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
+                    }
                     final Intent emailIntent = AppUtils.makeEmailIntent(
                             getString(R.string.favorite_email_subject),
                             makeEmailContent(
@@ -87,10 +96,53 @@ public class FavoriteActivity extends BaseActivity
                     if (emailIntent.resolveActivity(getPackageManager()) != null) {
                         startActivity(emailIntent);
                     }
+                } else if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
+                    getSupportLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteActivity.this);
                 }
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, FavoriteManager.makeGetIntentFilter());
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
+        mActionModeCallback = new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_clear) {
+                    new AlertDialog.Builder(FavoriteActivity.this)
+                            .setMessage(getString(R.string.confirm_clear_selected))
+                            .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    FavoriteManager.remove(FavoriteActivity.this, mSelected);
+                                    actionMode.finish();
+                                }
+                            })
+                            .setNegativeButton(getString(android.R.string.cancel), null)
+                            .create()
+                            .show();
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                mSelected.clear();
+                mAdapter.notifyDataSetChanged();
+                mActionMode = null;
+            }
+        };
     }
 
     @Override
@@ -192,6 +244,15 @@ public class FavoriteActivity extends BaseActivity
         return TextUtils.join("\n\n", favorites);
     }
 
+    private void toggle(String itemId) {
+        if (mSelected.contains(itemId)) {
+            mSelected.remove(itemId);
+        } else {
+            mSelected.add(itemId);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
     private class RecyclerViewAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
         @Override
         public FavoriteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -200,7 +261,7 @@ public class FavoriteActivity extends BaseActivity
         }
 
         @Override
-        public void onBindViewHolder(final FavoriteViewHolder holder, int position) {
+        public void onBindViewHolder(final FavoriteViewHolder holder, final int position) {
             if (mCursor == null) {
                 return;
             }
@@ -212,10 +273,31 @@ public class FavoriteActivity extends BaseActivity
             final FavoriteManager.Favorite favorite = mCursor.getFavorite();
             holder.mPostedTextView.setText(favorite.getCreated(FavoriteActivity.this));
             holder.mTitleTextView.setText(favorite.getDisplayedTitle());
+            ((CardView) holder.itemView)
+                    .setCardBackgroundColor(getResources().getColor(
+                            mSelected.contains(favorite.getId()) ?
+                                    R.color.colorPrimaryLight :
+                                    R.color.cardview_light_background));
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppUtils.openWebUrl(FavoriteActivity.this, favorite);
+                    if (mActionMode == null) {
+                        AppUtils.openWebUrl(FavoriteActivity.this, favorite);
+                    } else {
+                        toggle(favorite.getId());
+                    }
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mActionMode == null) {
+                        mActionMode = startSupportActionMode(mActionModeCallback);
+                        toggle(favorite.getId());
+                        return true;
+                    }
+
+                    return false;
                 }
             });
             holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
