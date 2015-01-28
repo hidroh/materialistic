@@ -28,6 +28,33 @@ public class FavoriteManager {
                 .startDelete(0, null, MaterialisticProvider.URI_FAVORITE, null, null);
     }
 
+    public static void check(Context context, final String itemId, final OperationCallbacks callbacks) {
+        if (itemId == null) {
+            return;
+        }
+
+        new AsyncQueryHandler(context.getContentResolver()) {
+            @Override
+            protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
+                super.onQueryComplete(token, cookie, cursor);
+                if (cookie == null) {
+                    return;
+                }
+
+                if (callbacks == null) {
+                    return;
+                }
+
+
+                if (itemId.equals(cookie)) {
+                    callbacks.onCheckComplete(cursor.getCount() > 0);
+                }
+            }
+        }.startQuery(0, itemId, MaterialisticProvider.URI_FAVORITE, null,
+                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                new String[]{itemId}, null);
+    }
+
     public static class Favorite {
         private String itemId;
         private String url;
@@ -79,6 +106,10 @@ public class FavoriteManager {
         public CursorLoader(Context context) {
             super(context, MaterialisticProvider.URI_FAVORITE, null, null, null, null);
         }
+    }
+
+    public static abstract class OperationCallbacks {
+        public void onCheckComplete(boolean isFavorite) { }
     }
 
 }

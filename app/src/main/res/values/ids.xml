@@ -10,6 +10,7 @@
     <!-- item views -->
     <item type="id" name="posted" />
     <item type="id" name="comment" />
+    <item type="id" name="bookmarked" />
 
     <!-- drawer -->
     <item type="id" name="drawer_layout" />

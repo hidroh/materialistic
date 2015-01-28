@@ -7,16 +7,28 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <View
+            android:layout_width="@dimen/min_cardview_height"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryLight"
+            android:layout_alignTop="@android:id/text2"
+            android:layout_alignBottom="@id/posted" />
+        <ImageView
+            android:id="@id/bookmarked"
+            android:src="@drawable/ic_bookmark_grey600_24dp"
+            android:gravity="top|left"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorPrimary" />
         <TextView
             android:id="@android:id/text1"
             android:text="@string/loading_text"
-            android:background="@color/colorPrimaryLight"
             style="@style/textRankStyle"
             android:layout_width="@dimen/min_cardview_height"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignTop="@android:id/text2"
-            android:layout_alignBottom="@id/posted"/>
+            android:layout_centerInParent="true"/>
         <TextView
             android:id="@android:id/text2"
             android:padding="@dimen/padding"

@@ -74,6 +74,7 @@ public class ListActivity extends BaseActivity {
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final View mBookmarked;
         private TextView mTitleTextView;
         private TextView mRankTextView;
         private TextView mPostedTextView;
@@ -85,6 +86,7 @@ public class ListActivity extends BaseActivity {
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mCommentButton = (Button) itemView.findViewById(R.id.comment);
+            mBookmarked = itemView.findViewById(R.id.bookmarked);
             // TODO remember tinted drawable so we don't apply it again
             AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
                     R.color.colorAccent);
@@ -107,6 +109,19 @@ public class ListActivity extends BaseActivity {
         public void onBindViewHolder(final ItemViewHolder holder, final int position) {
             final HackerNewsClient.Item story = mItems[position];
             holder.mRankTextView.setText(String.valueOf(position + 1));
+            if (story.isFavorite() == null) {
+                FavoriteManager.check(ListActivity.this, String.valueOf(story.getId()),
+                        new FavoriteManager.OperationCallbacks() {
+                            @Override
+                            public void onCheckComplete(boolean isFavorite) {
+                                story.setFavorite(isFavorite);
+                                decorateFavorite(holder, story);
+                            }
+
+                        });
+            } else {
+                decorateFavorite(holder, story);
+            }
             if (!TextUtils.isEmpty(story.getTitle())) {
                 bindViewHolder(holder, story);
             } else {
@@ -143,7 +158,11 @@ public class ListActivity extends BaseActivity {
             return mItems.length;
         }
 
-        private void bindViewHolder(ItemViewHolder holder, final HackerNewsClient.Item story) {
+        private void decorateFavorite(ItemViewHolder holder, HackerNewsClient.Item story) {
+            holder.mBookmarked.setVisibility(story.isFavorite() ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        private void bindViewHolder(final ItemViewHolder holder, final HackerNewsClient.Item story) {
             if (story == null) {
                 holder.mTitleTextView.setText(getString(R.string.loading_text));
                 holder.mPostedTextView.setText(getString(R.string.loading_text));
@@ -167,6 +186,8 @@ public class ListActivity extends BaseActivity {
                     @Override
                     public boolean onLongClick(View v) {
                         FavoriteManager.add(ListActivity.this, story);
+                        story.setFavorite(true);
+                        decorateFavorite(holder, story);
                         Toast.makeText(ListActivity.this, R.string.toast_saved, Toast.LENGTH_SHORT).show();
                         return true;
                     }

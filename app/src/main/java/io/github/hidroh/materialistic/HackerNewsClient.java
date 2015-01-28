@@ -147,6 +147,7 @@ public class HackerNewsClient {
         // A list of related pollopts, in display order.
         private long[] parts;
         private Item[] kidItems;
+        private Boolean favorite;
 
         public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
             @Override
@@ -263,6 +264,14 @@ public class HackerNewsClient {
                 default:
                     return false;
             }
+        }
+
+        public Boolean isFavorite() {
+            return favorite;
+        }
+
+        public void setFavorite(boolean favorite) {
+            this.favorite = favorite;
         }
     }
 }
