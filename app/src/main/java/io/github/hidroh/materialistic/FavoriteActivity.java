@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,11 @@ public class FavoriteActivity extends BaseActivity
             @Override
             public int getOrientation() {
                 return LinearLayout.VERTICAL;
+            }
+
+            @Override
+            public void onItemsRemoved(RecyclerView recyclerView, int positionStart, int itemCount) {
+                super.onItemsRemoved(recyclerView, positionStart, itemCount);
             }
         });
         recyclerView.setHasFixedSize(true);
@@ -234,16 +240,13 @@ public class FavoriteActivity extends BaseActivity
     private class FavoriteViewHolder extends RecyclerView.ViewHolder {
         private final TextView mPostedTextView;
         private final TextView mTitleTextView;
-        private final Button mCommentButton;
+        private final ImageButton mCommentButton;
 
         private FavoriteViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text1);
-            mCommentButton = (Button) itemView.findViewById(R.id.comment);
-            // TODO remember tinted drawable so we don't apply it again
-            AppUtils.initTintedDrawable(getResources(), R.drawable.ic_comment_grey600_48dp,
-                    R.color.colorAccent);
+            mCommentButton = (ImageButton) itemView.findViewById(R.id.comment);
         }
     }
 }

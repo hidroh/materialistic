@@ -25,9 +25,11 @@
             android:layout_toLeftOf="@id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <Button
+        <ImageButton
             android:id="@id/comment"
-            android:background="@drawable/ic_comment_grey600_48dp"
+            android:src="@drawable/ic_comment_grey600_48dp"
+            android:tint="@color/colorAccent"
+            android:background="@null"
             android:paddingTop="@dimen/padding"
             android:paddingRight="@dimen/padding"
             android:layout_centerInParent="true"
