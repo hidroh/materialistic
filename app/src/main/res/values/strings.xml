@@ -60,5 +60,6 @@
     <string name="saved" formatted="false">Saved %s</string>
     <string name="toast_saved">Story saved!</string>
     <string name="clear_all">Clear all</string>
+    <string name="toast_removed">Story unsaved</string>
 
 </resources>

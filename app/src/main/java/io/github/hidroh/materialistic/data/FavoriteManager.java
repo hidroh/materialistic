@@ -45,7 +45,7 @@ public class FavoriteManager {
                     return;
                 }
 
-
+                // TODO switch to local broadcast
                 if (itemId.equals(cookie)) {
                     callbacks.onCheckComplete(cursor.getCount() > 0);
                 }
@@ -53,6 +53,26 @@ public class FavoriteManager {
         }.startQuery(0, itemId, MaterialisticProvider.URI_FAVORITE, null,
                 MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
                 new String[]{itemId}, null);
+    }
+
+    public static void remove(Context context, final String itemId) {
+        if (itemId == null) {
+            return;
+        }
+
+        new AsyncQueryHandler(context.getContentResolver()) {
+            @Override
+            protected void onDeleteComplete(int token, Object cookie, int result) {
+                super.onDeleteComplete(token, cookie, result);
+                if (cookie == null) {
+                    return;
+                }
+
+                // TODO local broadcast
+            }
+        }.startDelete(0, itemId, MaterialisticProvider.URI_FAVORITE,
+                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                new String[]{itemId});
     }
 
     public static class Favorite {

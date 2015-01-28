@@ -185,10 +185,17 @@ public class ListActivity extends BaseActivity {
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        FavoriteManager.add(ListActivity.this, story);
-                        story.setFavorite(true);
+                        final int toastMessageResId;
+                        if (!story.isFavorite()) {
+                            FavoriteManager.add(ListActivity.this, story);
+                            toastMessageResId = R.string.toast_saved;
+                        } else {
+                            FavoriteManager.remove(ListActivity.this, String.valueOf(story.getId()));
+                            toastMessageResId = R.string.toast_removed;
+                        }
+                        Toast.makeText(ListActivity.this, toastMessageResId, Toast.LENGTH_SHORT).show();
+                        story.setFavorite(!story.isFavorite());
                         decorateFavorite(holder, story);
-                        Toast.makeText(ListActivity.this, R.string.toast_saved, Toast.LENGTH_SHORT).show();
                         return true;
                     }
                 });
