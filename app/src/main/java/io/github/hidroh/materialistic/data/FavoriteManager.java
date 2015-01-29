@@ -14,7 +14,6 @@ import android.text.format.DateUtils;
 
 import java.util.Set;
 
-import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.R;
 
 public class FavoriteManager {
@@ -247,6 +246,12 @@ public class FavoriteManager {
     public static class CursorLoader extends android.support.v4.content.CursorLoader {
         public CursorLoader(Context context) {
             super(context, MaterialisticProvider.URI_FAVORITE, null, null, null, null);
+        }
+
+        public CursorLoader(Context context, String query) {
+            super(context, MaterialisticProvider.URI_FAVORITE, null,
+                    MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?",
+                    new String[]{"%" + query + "%"}, null);
         }
     }
 

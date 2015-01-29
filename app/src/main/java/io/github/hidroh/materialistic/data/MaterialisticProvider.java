@@ -27,7 +27,9 @@ public class MaterialisticProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         if (URI_FAVORITE.equals(uri)) {
-            return db.query(FavoriteEntry.TABLE_NAME, projection, selection, selectionArgs, null, null,
+            return db.query(FavoriteEntry.TABLE_NAME, projection,
+                    selection, selectionArgs,
+                    null, null,
                     FavoriteEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
         }
 

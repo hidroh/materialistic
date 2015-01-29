@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,10 +14,12 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,6 +43,9 @@ public class FavoriteActivity extends BaseActivity
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback;
     private Set<String> mSelected = new HashSet<>();
+    private String mFilter;
+    private SearchView mSearchView;
+    private boolean mSearchViewVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +69,25 @@ public class FavoriteActivity extends BaseActivity
         final View emptyView = getLayoutInflater().inflate(R.layout.empty_favorite, mContentView, false);
         emptyView.setVisibility(View.INVISIBLE);
         mContentView.addView(emptyView);
+        final View emptySearchView = getLayoutInflater()
+                .inflate(R.layout.empty_favorite_search, mContentView, false);
+        emptySearchView.setVisibility(View.INVISIBLE);
+        mContentView.addView(emptySearchView);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 super.onChanged();
                 if (mAdapter.getItemCount() == 0) {
                     recyclerView.setVisibility(View.INVISIBLE);
-                    emptyView.setVisibility(View.VISIBLE);
+                    if (TextUtils.isEmpty(mFilter)) {
+                        emptyView.setVisibility(View.VISIBLE);
+                    } else {
+                        emptySearchView.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     recyclerView.setVisibility(View.VISIBLE);
                     emptyView.setVisibility(View.INVISIBLE);
+                    emptySearchView.setVisibility(View.INVISIBLE);
                 }
                 supportInvalidateOptionsMenu();
             }
@@ -146,22 +161,61 @@ public class FavoriteActivity extends BaseActivity
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mFilter = intent.getStringExtra(SearchManager.QUERY);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         getSupportLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_favorite, menu);
+        final MenuItem menuSearch = menu.findItem(R.id.menu_search);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchViewVisible = true;
+                invalidateMenuItems(menu);
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mSearchViewVisible = false;
+                if (!TextUtils.isEmpty(mFilter)) {
+                    mFilter = null;
+                    getSupportLoaderManager()
+                            .restartLoader(FavoriteManager.LOADER, null, FavoriteActivity.this);
+                }
+                invalidateMenuItems(menu);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_clear).setVisible(mAdapter.getItemCount() > 0);
-        menu.findItem(R.id.menu_email).setVisible(mAdapter.getItemCount() > 0);
+        invalidateMenuItems(menu);
+        menu.findItem(R.id.menu_search).setVisible(!TextUtils.isEmpty(mFilter) ||
+                mAdapter.getItemCount() > 0);
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void invalidateMenuItems(Menu menu) {
+        final boolean menuEnabled = !mSearchViewVisible &&
+                TextUtils.isEmpty(mFilter) &&
+                mAdapter.getItemCount() > 0;
+        menu.findItem(R.id.menu_clear).setVisible(menuEnabled);
+        menu.findItem(R.id.menu_email).setVisible(menuEnabled);
     }
 
     @Override
@@ -200,7 +254,13 @@ public class FavoriteActivity extends BaseActivity
             return null;
         }
 
-        return new FavoriteManager.CursorLoader(this);
+        if (TextUtils.isEmpty(mFilter)) {
+            setTitle(getString(R.string.title_activity_favorite));
+            return new FavoriteManager.CursorLoader(this);
+        } else {
+            setTitle(getString(R.string.title_activity_favorite_search, mFilter));
+            return new FavoriteManager.CursorLoader(this, mFilter);
+        }
     }
 
     @Override

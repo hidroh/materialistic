@@ -69,5 +69,9 @@
     <string name="preparing">Preparing...</string>
     <string name="clear_selected">Clear selected</string>
     <string name="confirm_clear_selected">Clear selected saved stories?</string>
+    <string name="search">Search</string>
+    <string name="hint_search_saved_stories">Search saved stories</string>
+    <string name="no_saved_stories_search">No saved stories found matching your query</string>
+    <string name="title_activity_favorite_search" formatted="false">Saved \'%s\' stories</string>
 
 </resources>
