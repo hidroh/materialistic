@@ -65,7 +65,7 @@
     <string name="no_saved_stories">No saved stories so far.\nLong press one to save it for later!</string>
     <string name="no_comments">No replies found for this item</string>
     <string name="confirm_clear">Clear all saved stories?</string>
-    <string name="email">Email a copy of my saved stories</string>
+    <string name="email">Export via email</string>
     <string name="preparing">Preparing...</string>
     <string name="clear_selected">Clear selected</string>
     <string name="confirm_clear_selected">Clear selected saved stories?</string>

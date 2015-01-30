@@ -164,6 +164,7 @@ public class FavoriteActivity extends BaseActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         mFilter = intent.getStringExtra(SearchManager.QUERY);
+        mSearchViewVisible = false;
     }
 
     @Override
@@ -211,9 +212,7 @@ public class FavoriteActivity extends BaseActivity
     }
 
     private void invalidateMenuItems(Menu menu) {
-        final boolean menuEnabled = !mSearchViewVisible &&
-                TextUtils.isEmpty(mFilter) &&
-                mAdapter.getItemCount() > 0;
+        final boolean menuEnabled = !mSearchViewVisible && mAdapter.getItemCount() > 0;
         menu.findItem(R.id.menu_clear).setVisible(menuEnabled);
         menu.findItem(R.id.menu_email).setVisible(menuEnabled);
     }
@@ -226,7 +225,7 @@ public class FavoriteActivity extends BaseActivity
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            FavoriteManager.clear(FavoriteActivity.this);
+                            FavoriteManager.clear(FavoriteActivity.this, mFilter);
                             mCursor = null;
                             mAdapter.notifyDataSetChanged();
                         }
@@ -242,7 +241,7 @@ public class FavoriteActivity extends BaseActivity
             } else {
                 mProgressDialog.show();
             }
-            FavoriteManager.get(this);
+            FavoriteManager.get(this, mFilter);
         }
 
         return super.onOptionsItemSelected(item);
@@ -342,6 +341,7 @@ public class FavoriteActivity extends BaseActivity
                 @Override
                 public void onClick(View v) {
                     if (mActionMode == null) {
+                        mSearchViewVisible = false;
                         AppUtils.openWebUrl(FavoriteActivity.this, favorite);
                     } else {
                         toggle(favorite.getId(), position);
@@ -351,7 +351,7 @@ public class FavoriteActivity extends BaseActivity
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (mActionMode == null) {
+                    if (mActionMode == null && !mSearchViewVisible) {
                         mActionMode = startSupportActionMode(mActionModeCallback);
                         toggle(favorite.getId(), position);
                         return true;

@@ -10,6 +10,7 @@ import android.database.CursorWrapper;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 
 import java.util.Set;
@@ -23,7 +24,18 @@ public class FavoriteManager {
     public static final String ACTION_GET = FavoriteManager.class.getName() + ".ACTION_GET";
     public static final String ACTION_GET_EXTRA_DATA = ACTION_GET + ".EXTRA_DATA";
 
-    public static void get(Context context) {
+    public static void get(Context context, String query) {
+        final String selection;
+        final String[] selectionArgs;
+        if (TextUtils.isEmpty(query)) {
+            selection = null;
+            selectionArgs = null;
+
+        } else {
+            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
+            selectionArgs = new String[]{"%" + query + "%"};
+        }
+
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
         new AsyncQueryHandler(context.getContentResolver()) {
             @Override
@@ -46,7 +58,7 @@ public class FavoriteManager {
                 }
                 broadcastManager.sendBroadcast(makeGetBroadcastIntent(favorites));
             }
-        }.startQuery(0, null, MaterialisticProvider.URI_FAVORITE, null, null, null, null);
+        }.startQuery(0, null, MaterialisticProvider.URI_FAVORITE, null, selection, selectionArgs, null);
     }
 
     public static void add(Context context, HackerNewsClient.Item story) {
@@ -59,7 +71,18 @@ public class FavoriteManager {
                 .startInsert(0, null, MaterialisticProvider.URI_FAVORITE, contentValues);
     }
 
-    public static void clear(Context context) {
+    public static void clear(Context context, String query) {
+        final String selection;
+        final String[] selectionArgs;
+        if (TextUtils.isEmpty(query)) {
+            selection = null;
+            selectionArgs = null;
+
+        } else {
+            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
+            selectionArgs = new String[]{"%" + query + "%"};
+        }
+
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
         new AsyncQueryHandler(context.getContentResolver()) {
             @Override
@@ -67,7 +90,7 @@ public class FavoriteManager {
                 super.onDeleteComplete(token, cookie, result);
                 broadcastManager.sendBroadcast(makeClearBroadcastIntent());
             }
-        }.startDelete(0, null, MaterialisticProvider.URI_FAVORITE, null, null);
+        }.startDelete(0, null, MaterialisticProvider.URI_FAVORITE, selection, selectionArgs);
     }
 
     public static void check(Context context, final String itemId, final OperationCallbacks callbacks) {
