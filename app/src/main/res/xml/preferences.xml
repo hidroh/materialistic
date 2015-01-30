@@ -6,4 +6,9 @@
         android:title="@string/pref_external_title"
         android:summary="@string/pref_external_summary"
         android:defaultValue="false" />
+    <io.github.hidroh.materialistic.CheckBoxPreference
+        android:key="@string/pref_item_click"
+        android:title="@string/pref_item_click_title"
+        android:summary="@string/pref_item_click_summary"
+        android:defaultValue="false" />
 </PreferenceScreen>

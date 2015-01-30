@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -174,12 +175,7 @@ public class ListActivity extends BaseActivity {
             holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
-                    intent.putExtra(ItemActivity.EXTRA_ITEM, story);
-                    final ActivityOptionsCompat options = ActivityOptionsCompat
-                            .makeSceneTransitionAnimation(ListActivity.this,
-                                    holder.itemView, getString(R.string.transition_item_container));
-                    ActivityCompat.startActivity(ListActivity.this, intent, options.toBundle());
+                    openItem(story, holder);
                 }
             });
         }
@@ -212,7 +208,12 @@ public class ListActivity extends BaseActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AppUtils.openWebUrl(ListActivity.this, story);
+                        if (PreferenceManager.getDefaultSharedPreferences(ListActivity.this)
+                                .getBoolean(getString(R.string.pref_item_click), false)) {
+                            openItem(story, holder);
+                        } else {
+                            AppUtils.openWebUrl(ListActivity.this, story);
+                        }
                     }
                 });
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -233,6 +234,15 @@ public class ListActivity extends BaseActivity {
                     }
                 });
             }
+        }
+
+        private void openItem(HackerNewsClient.Item story, ItemViewHolder holder) {
+            final Intent intent = new Intent(ListActivity.this, ItemActivity.class);
+            intent.putExtra(ItemActivity.EXTRA_ITEM, story);
+            final ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(ListActivity.this,
+                            holder.itemView, getString(R.string.transition_item_container));
+            ActivityCompat.startActivity(ListActivity.this, intent, options.toBundle());
         }
     }
 

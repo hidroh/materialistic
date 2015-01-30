@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
@@ -342,7 +343,12 @@ public class FavoriteActivity extends BaseActivity
                 public void onClick(View v) {
                     if (mActionMode == null) {
                         mSearchViewVisible = false;
-                        AppUtils.openWebUrl(FavoriteActivity.this, favorite);
+                        if (PreferenceManager.getDefaultSharedPreferences(FavoriteActivity.this)
+                                .getBoolean(getString(R.string.pref_item_click), false)) {
+                            openItem(favorite, holder);
+                        } else {
+                            AppUtils.openWebUrl(FavoriteActivity.this, favorite);
+                        }
                     } else {
                         toggle(favorite.getId(), position);
                     }
@@ -363,14 +369,18 @@ public class FavoriteActivity extends BaseActivity
             holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final Intent intent = new Intent(FavoriteActivity.this, ItemActivity.class);
-                    intent.putExtra(ItemActivity.EXTRA_ITEM_ID, favorite.getId());
-                    final ActivityOptionsCompat options = ActivityOptionsCompat
-                            .makeSceneTransitionAnimation(FavoriteActivity.this,
-                                    holder.itemView, getString(R.string.transition_item_container));
-                    ActivityCompat.startActivity(FavoriteActivity.this, intent, options.toBundle());
+                    openItem(favorite, holder);
                 }
             });
+        }
+
+        private void openItem(FavoriteManager.Favorite favorite, FavoriteViewHolder holder) {
+            final Intent intent = new Intent(FavoriteActivity.this, ItemActivity.class);
+            intent.putExtra(ItemActivity.EXTRA_ITEM_ID, favorite.getId());
+            final ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(FavoriteActivity.this,
+                            holder.itemView, getString(R.string.transition_item_container));
+            ActivityCompat.startActivity(FavoriteActivity.this, intent, options.toBundle());
         }
 
         @Override

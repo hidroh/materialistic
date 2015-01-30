@@ -11,9 +11,6 @@
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="transition_item_container">transition_item_container</string>
-    <string name="pref_external_title">Use external browser</string>
-    <string name="pref_external_summary">View stories using external browser instead of in-app browser (default).</string>
-    <string name="pref_external">pref_external</string>
     <string name="view_in_browser">View in external browser</string>
     <string name="share_format" formatted="false">%s - %s (via Materialistic)</string>
     <string name="favorite_email_subject">Your Materialistic saved stories</string>
@@ -74,5 +71,13 @@
     <string name="no_saved_stories_search">No saved stories found matching your query</string>
     <string name="title_activity_favorite_search" formatted="false">Saved \'%s\' stories</string>
     <string name="view_in_hacker_news">View in Hacker News</string>
+
+    <!-- preferences -->
+    <string name="pref_external">pref_external</string>
+    <string name="pref_external_title">Use external browser</string>
+    <string name="pref_external_summary">View stories using external browser instead of in-app browser (default).</string>
+    <string name="pref_item_click">pref_item_click</string>
+    <string name="pref_item_click_title">Tap story to open comments</string>
+    <string name="pref_item_click_summary">Tap a story to view its comments instead of the original article (default).</string>
 
 </resources>
