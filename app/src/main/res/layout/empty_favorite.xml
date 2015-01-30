@@ -8,6 +8,7 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         style="@style/textEmptyStyle" />
     <include layout="@layout/activity_list_item"
+        android:id="@id/header_card_view"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_below="@android:id/title"

@@ -68,6 +68,14 @@ public class FavoriteActivity extends BaseActivity
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
         final View emptyView = getLayoutInflater().inflate(R.layout.empty_favorite, mContentView, false);
+        emptyView.findViewById(R.id.header_card_view).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final View bookmark = emptyView.findViewById(R.id.bookmarked);
+                bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                return true;
+            }
+        });
         emptyView.setVisibility(View.INVISIBLE);
         mContentView.addView(emptyView);
         final View emptySearchView = getLayoutInflater()
