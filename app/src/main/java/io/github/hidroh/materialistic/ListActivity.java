@@ -106,6 +106,7 @@ public class ListActivity extends BaseActivity {
         private TextView mTitleTextView;
         private TextView mRankTextView;
         private TextView mPostedTextView;
+        private TextView mSourceTextView;
         private Button mCommentButton;
 
         public ItemViewHolder(View itemView) {
@@ -114,6 +115,7 @@ public class ListActivity extends BaseActivity {
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mCommentButton = (Button) itemView.findViewById(R.id.comment);
+            mSourceTextView = (TextView) itemView.findViewById(R.id.source);
             mBookmarked = itemView.findViewById(R.id.bookmarked);
             // TODO remember tinted drawable so we don't apply it again
             AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
@@ -195,10 +197,12 @@ public class ListActivity extends BaseActivity {
             if (story == null) {
                 holder.mTitleTextView.setText(getString(R.string.loading_text));
                 holder.mPostedTextView.setText(getString(R.string.loading_text));
+                holder.mSourceTextView.setText(getString(R.string.loading_text));
                 holder.mCommentButton.setVisibility(View.GONE);
             } else {
                 holder.mTitleTextView.setText(story.getTitle());
                 holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
+                holder.mSourceTextView.setText(story.getSource());
                 if (story.getKidCount() > 0) {
                     holder.mCommentButton.setText(String.valueOf(story.getKidCount()));
                     holder.mCommentButton.setVisibility(View.VISIBLE);

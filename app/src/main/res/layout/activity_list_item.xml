@@ -32,19 +32,25 @@
         <TextView
             android:id="@android:id/text2"
             android:padding="@dimen/padding"
-            android:text="The quick brown fox jumps over the lazy dog"
+            android:text="A lil' bit of programming that matters"
             style="@style/textTitleStyle"
             android:layout_toRightOf="@android:id/text1"
             android:layout_toLeftOf="@id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
+            android:id="@id/source"
+            android:text="hidroh.github.io"
+            style="@style/textSubtitleStyle"
+            android:layout_toRightOf="@android:id/text1"
+            android:layout_below="@android:id/text2" />
+        <TextView
             android:id="@id/posted"
-            android:text="Since March 14, 1885"
+            android:text="Since January 01, 2015"
             android:singleLine="true"
             android:padding="@dimen/padding"
             android:layout_toRightOf="@android:id/text1"
-            android:layout_below="@android:id/text2"
+            android:layout_below="@id/source"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <include layout="@layout/button_comment"

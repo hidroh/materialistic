@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -234,6 +235,10 @@ public class HackerNewsClient {
         @Override
         public String getUrl() {
             return url;
+        }
+
+        public String getSource() {
+            return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
         }
 
         public Item[] getKidItems() {

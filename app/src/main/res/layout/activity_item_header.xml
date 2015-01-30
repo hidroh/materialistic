@@ -20,5 +20,12 @@
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <TextView
+            android:id="@id/source"
+            android:text="@string/loading_text"
+            android:visibility="gone"
+            style="@style/textSubtitleStyle"
+            android:layout_toRightOf="@android:id/text1"
+            android:layout_below="@android:id/text2" />
     </LinearLayout>
 </android.support.v7.widget.CardView>

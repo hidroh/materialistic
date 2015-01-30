@@ -112,6 +112,11 @@ public class ItemActivity extends BaseItemActivity {
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     getResources().getDimension(R.dimen.abc_text_size_medium_material));
             titleTextView.setTypeface(titleTextView.getTypeface(), Typeface.BOLD);
+            if (!TextUtils.isEmpty(story.getSource())) {
+                TextView sourceTextView = (TextView) findViewById(R.id.source);
+                sourceTextView.setText(story.getSource());
+                sourceTextView.setVisibility(View.VISIBLE);
+            }
         }
 
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));

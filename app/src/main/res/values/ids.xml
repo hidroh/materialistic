@@ -11,6 +11,7 @@
     <item type="id" name="posted" />
     <item type="id" name="comment" />
     <item type="id" name="bookmarked" />
+    <item type="id" name="source" />
 
     <!-- drawer -->
     <item type="id" name="drawer_layout" />
