@@ -53,8 +53,12 @@ public class AppUtils {
     }
 
     public static void setTextWithLinks(TextView textView, String htmlText) {
-        textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
+        setHtmlText(textView, htmlText);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    public static void setHtmlText(TextView textView, String htmlText) {
+        textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
     }
 
     public static Intent makeEmailIntent(String subject, String text) {

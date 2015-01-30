@@ -18,7 +18,7 @@
             android:id="@android:id/text2"
             android:padding="@dimen/padding"
             android:text="@string/loading_text"
-            android:maxLines="5"
+            android:maxLines="@integer/header_max_lines"
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

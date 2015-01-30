@@ -99,6 +99,10 @@
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
 
+    <style name="AppCardView.Disabled">
+        <item name="android:foreground">@null</item>
+    </style>
+
     <style name="AppCardView.Header">
         <item name="cardBackgroundColor">@color/colorPrimaryLight</item>
         <item name="cardElevation">@dimen/cardview_header_elevation</item>

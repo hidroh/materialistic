@@ -122,16 +122,27 @@ public class ItemActivity extends BaseItemActivity {
                 sourceTextView.setText(story.getSource());
                 sourceTextView.setVisibility(View.VISIBLE);
             }
-            headerCardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppUtils.openWebUrl(ItemActivity.this, story);
-                }
-            });
         } else {
-            AppUtils.setTextWithLinks(titleTextView, story.getDisplayedTitle());
-            headerCardView.setClickable(false);
+            AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
         }
+        headerCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (story.isShareable()) {
+                    AppUtils.openWebUrl(ItemActivity.this, story);
+                } else {
+                    toggle();
+                }
+            }
+
+            private void toggle() {
+                final boolean isExpanded = titleTextView.getEllipsize() == null;
+                titleTextView.setMaxLines(isExpanded ?
+                        getResources().getInteger(R.integer.header_max_lines) : Integer.MAX_VALUE);
+                titleTextView.setEllipsize(isExpanded ? TextUtils.TruncateAt.END : null);
+                AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
+            }
+        });
 
         int level = getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0);
         int stackResId = -1;
