@@ -6,12 +6,23 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
 
+import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+
+import java.io.IOException;
+
+import io.github.hidroh.materialistic.R;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.http.GET;
+import retrofit.http.Headers;
 import retrofit.http.Path;
 
 /**
@@ -21,6 +32,8 @@ public class HackerNewsClient {
     private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0";
     private static final String BASE_WEB_URL = "https://news.ycombinator.com";
     private static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
+    private static final long CACHE_SIZE = 1024 * 1024;
+    public static final String TAG_OK_HTTP = "OkHttp";
     private static HackerNewsClient mInstance;
     private RestService mRestService;
 
@@ -28,12 +41,28 @@ public class HackerNewsClient {
      * Gets singleton client instance
      * @return a hacker news client
      */
-    public static HackerNewsClient getInstance() {
+    public static HackerNewsClient getInstance(Context context) {
         if (mInstance == null) {
+            final OkHttpClient okHttpClient = new OkHttpClient();
+            final boolean loggingEnabled = context.getResources().getBoolean(R.bool.debug);
+            if (loggingEnabled) {
+                okHttpClient.networkInterceptors().add(new LoggingInterceptor());
+            }
+            try {
+                okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
+                        CACHE_SIZE));
+            } catch (IOException e) {
+                // do nothing
+            }
+
             mInstance = new HackerNewsClient();
-            mInstance.mRestService = new RestAdapter.Builder()
-                    .setLogLevel(RestAdapter.LogLevel.BASIC)
+            RestAdapter.Builder builder = new RestAdapter.Builder()
                     .setEndpoint(BASE_API_URL)
+                    .setClient(new OkClient(okHttpClient));
+            if (loggingEnabled) {
+                builder.setLogLevel(RestAdapter.LogLevel.BASIC);
+            }
+            mInstance.mRestService = builder
                     .build()
                     .create(RestService.class);
         }
@@ -79,7 +108,6 @@ public class HackerNewsClient {
      * Gets individual item by ID
      * @param itemId    item ID
      * @param listener  callback to be notified on response
-     * TODO consider subclassing Item
      */
     public void getItem(String itemId, ResponseListener<Item> listener) {
         mRestService.item(itemId, makeCallback(listener));
@@ -113,8 +141,10 @@ public class HackerNewsClient {
     }
 
     private static interface RestService {
+        @Headers("Cache-Control: max-age=600")
         @GET("/topstories.json")
         void topStories(Callback<int[]> callback);
+        @Headers("Cache-Control: max-age=300")
         @GET("/item/{itemId}.json")
         void item(@Path("itemId") String itemId, Callback<Item> callback);
     }
@@ -290,5 +320,24 @@ public class HackerNewsClient {
         String getUrl();
         boolean isShareable();
         String getId();
+    }
+
+    private static class LoggingInterceptor implements Interceptor {
+        @Override
+        public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+
+            long t1 = System.nanoTime();
+            Log.d(TAG_OK_HTTP, String.format("---> %s (%s)%n%s",
+                    request.url(), chain.connection(), request.headers()));
+
+            com.squareup.okhttp.Response response = chain.proceed(request);
+
+            long t2 = System.nanoTime();
+            Log.d(TAG_OK_HTTP, String.format("<--- %s (%.1fms)%n%s",
+                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+
+            return response;
+        }
     }
 }

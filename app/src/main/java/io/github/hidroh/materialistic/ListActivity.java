@@ -88,7 +88,7 @@ public class ListActivity extends BaseActivity {
     }
 
     private void bindData() {
-        HackerNewsClient.getInstance().getTopStories(new HackerNewsClient.ResponseListener<HackerNewsClient.Item[]>() {
+        HackerNewsClient.getInstance(this).getTopStories(new HackerNewsClient.ResponseListener<HackerNewsClient.Item[]>() {
             @Override
             public void onResponse(final HackerNewsClient.Item[] response) {
                 mRecyclerView.setAdapter(new RecyclerViewAdapter(response));
@@ -158,7 +158,7 @@ public class ListActivity extends BaseActivity {
                 bindViewHolder(holder, story);
             } else {
                 bindViewHolder(holder, null);
-                HackerNewsClient.getInstance().getItem(story.getId(),
+                HackerNewsClient.getInstance(ListActivity.this).getItem(story.getId(),
                         new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                             @Override
                             public void onResponse(HackerNewsClient.Item response) {

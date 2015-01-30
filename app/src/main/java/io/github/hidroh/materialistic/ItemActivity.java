@@ -30,6 +30,7 @@ public class ItemActivity extends BaseItemActivity {
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private HackerNewsClient.Item mItem;
+    private int mLocalRevision = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         if (!TextUtils.isEmpty(itemId)) {
-            HackerNewsClient.getInstance().getItem(itemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+            HackerNewsClient.getInstance(this).getItem(itemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                 @Override
                 public void onResponse(HackerNewsClient.Item response) {
                     mItem = response;
@@ -134,7 +135,7 @@ public class ItemActivity extends BaseItemActivity {
 
         int level = getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0);
         int stackResId = -1;
-        int marginTop = getResources().getDimensionPixelSize(R.dimen.margin) * level;
+        int marginTop = getResources().getDimensionPixelSize(R.dimen.margin) * Math.min(level, 4);
         // TODO can improve?
         switch (level) {
             case 0:
@@ -181,12 +182,14 @@ public class ItemActivity extends BaseItemActivity {
             @Override
             public void onBindViewHolder(final ItemViewHolder holder, int position) {
                 final HackerNewsClient.Item item = items[position];
-                if (TextUtils.isEmpty(item.getText())) {
-                    HackerNewsClient.getInstance().getItem(item.getId(),
+                if (item.localRevision < mLocalRevision) {
+                    bindKidItem(holder, null);
+                    HackerNewsClient.getInstance(ItemActivity.this).getItem(item.getId(),
                             new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
                                 @Override
                                 public void onResponse(HackerNewsClient.Item response) {
                                     item.populate(response);
+                                    item.localRevision = mLocalRevision;
                                     bindKidItem(holder, item);
                                 }
 
