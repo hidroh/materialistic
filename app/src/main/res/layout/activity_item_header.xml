@@ -13,6 +13,7 @@
         <TextView
             android:id="@id/posted"
             android:text="@string/loading_text"
+            android:drawablePadding="@dimen/padding"
             style="@style/textSubtitleStyle" />
         <TextView
             android:id="@android:id/text2"

@@ -194,11 +194,27 @@ public class ListActivity extends BaseActivity {
                 holder.mTitleTextView.setText(getString(R.string.loading_text));
                 holder.mPostedTextView.setText(getString(R.string.loading_text));
                 holder.mSourceTextView.setText(getString(R.string.loading_text));
+                holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
                 holder.mCommentButton.setVisibility(View.GONE);
             } else {
                 holder.mTitleTextView.setText(story.getTitle());
                 holder.mPostedTextView.setText(story.getDisplayedTime(ListActivity.this));
-                holder.mSourceTextView.setText(story.getSource());
+                switch (story.getType()) {
+                    case job:
+                        holder.mSourceTextView.setText(null);
+                        holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_work_grey600_18dp, 0, 0, 0);
+                        break;
+                    case poll:
+                        holder.mSourceTextView.setText(null);
+                        holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
+                        break;
+                    default:
+                        holder.mSourceTextView.setText(story.getSource());
+                        holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
+                        break;
+                }
                 if (story.getKidCount() > 0) {
                     holder.mCommentButton.setText(String.valueOf(story.getKidCount()));
                     holder.mCommentButton.setVisibility(View.VISIBLE);

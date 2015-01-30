@@ -242,8 +242,7 @@ public class HackerNewsClient {
 
         @Override
         public String getDisplayedTitle() {
-            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
-            switch (itemType) {
+            switch (getType()) {
                 case comment:
                     return text;
                 case job:
@@ -252,6 +251,10 @@ public class HackerNewsClient {
                 default:
                     return title;
             }
+        }
+
+        public Type getType() {
+            return !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
         }
 
         public CharSequence getDisplayedTime(Context context) {
@@ -269,8 +272,7 @@ public class HackerNewsClient {
 
         @Override
         public String getUrl() {
-            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
-            switch (itemType) {
+            switch (getType()) {
                 case job:
                 case poll:
                 case comment:

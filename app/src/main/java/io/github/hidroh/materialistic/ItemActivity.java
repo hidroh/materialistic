@@ -140,6 +140,7 @@ public class ItemActivity extends BaseItemActivity {
                 titleTextView.setMaxLines(isExpanded ?
                         getResources().getInteger(R.integer.header_max_lines) : Integer.MAX_VALUE);
                 titleTextView.setEllipsize(isExpanded ? TextUtils.TruncateAt.END : null);
+                // TODO need to be scrollable if text is very long
                 AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
             }
         });
@@ -173,7 +174,16 @@ public class ItemActivity extends BaseItemActivity {
             headerCardView.bringToFront();
         }
 
-        ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
+        final TextView postedTextView = (TextView) findViewById(R.id.posted);
+        postedTextView.setText(story.getDisplayedTime(this));
+        switch (story.getType()) {
+            case job:
+                postedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_work_grey600_18dp, 0, 0, 0);
+                break;
+            case poll:
+                postedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
+                break;
+        }
         bindKidData(story.getKidItems());
     }
 
