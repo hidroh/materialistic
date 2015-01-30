@@ -51,6 +51,7 @@
     <string name="libraries_text">
         <![CDATA[
             <p><a href="https://github.com/square/retrofit">Square Retrofit</a></p>
+            <p><a href="https://github.com/square/okhttp">Square OkHttp</a></p>
             <p><a href="http://developer.android.com/tools/support-library/index.html">Android Support</a></p>
         ]]>
     </string>
