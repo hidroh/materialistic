@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -8,6 +9,8 @@
     tools:context="io.github.hidroh.materialistic.ItemActivity">
 
     <include layout="@layout/activity_item_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@id/header_card_view" />
     <android.support.v7.widget.RecyclerView
         android:id="@id/recycler_view"

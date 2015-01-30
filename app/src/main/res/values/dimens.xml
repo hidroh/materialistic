@@ -7,4 +7,5 @@
     <dimen name="min_cardview_height">50dp</dimen>
     <dimen name="cardview_header_elevation">4dp</dimen>
     <dimen name="cardview_default_radius">4dp</dimen>
+    <dimen name="header_stack_card_height">15dp</dimen>
 </resources>

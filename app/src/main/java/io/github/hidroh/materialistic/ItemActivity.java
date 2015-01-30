@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
@@ -23,8 +24,9 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 public class ItemActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
-    private static final String PARAM_ID = "id";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
+    public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
+    private static final String PARAM_ID = "id";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private HackerNewsClient.Item mItem;
@@ -130,6 +132,35 @@ public class ItemActivity extends BaseItemActivity {
             headerCardView.setClickable(false);
         }
 
+        int level = getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0);
+        int stackResId = -1;
+        int marginTop = getResources().getDimensionPixelSize(R.dimen.margin) * level;
+        // TODO can improve?
+        switch (level) {
+            case 0:
+                break;
+            case 1:
+                stackResId = R.layout.header_stack_1;
+                break;
+            case 2:
+                stackResId = R.layout.header_stack_2;
+                break;
+            case 3:
+                stackResId = R.layout.header_stack_3;
+                break;
+            case 4:
+            default:
+                stackResId = R.layout.header_stack_4;
+                break;
+        }
+        if (stackResId != -1) {
+            getLayoutInflater().inflate(stackResId, (ViewGroup) findViewById(R.id.item_view), true);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) headerCardView.getLayoutParams();
+            params.topMargin = marginTop;
+            headerCardView.setLayoutParams(params);
+            headerCardView.bringToFront();
+        }
+
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
         bindKidData(story.getKidItems());
     }
@@ -185,6 +216,8 @@ public class ItemActivity extends BaseItemActivity {
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
                                 intent.putExtra(ItemActivity.EXTRA_ITEM, item);
+                                intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL,
+                                        getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0) + 1);
                                 final ActivityOptionsCompat options = ActivityOptionsCompat
                                         .makeSceneTransitionAnimation(ItemActivity.this,
                                                 holder.itemView, getString(R.string.transition_item_container));
