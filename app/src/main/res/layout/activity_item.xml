@@ -8,7 +8,7 @@
     tools:context="io.github.hidroh.materialistic.ItemActivity">
 
     <include layout="@layout/activity_item_header"
-        android:id="@+id/header_card_view" />
+        android:id="@id/header_card_view" />
     <android.support.v7.widget.RecyclerView
         android:id="@id/recycler_view"
         android:paddingTop="@dimen/cardview_header_elevation"

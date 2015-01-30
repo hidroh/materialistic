@@ -12,6 +12,7 @@
     <item type="id" name="comment" />
     <item type="id" name="bookmarked" />
     <item type="id" name="source" />
+    <item type="id" name="header_card_view" />
 
     <!-- drawer -->
     <item type="id" name="drawer_layout" />

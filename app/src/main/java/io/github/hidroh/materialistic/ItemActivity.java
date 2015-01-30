@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -101,14 +102,15 @@ public class ItemActivity extends BaseItemActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void bindData(HackerNewsClient.Item story) {
+    private void bindData(final HackerNewsClient.Item story) {
         if (story == null) {
             return;
         }
 
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        AppUtils.setTextWithLinks(titleTextView, story.getDisplayedTitle());
+        final CardView headerCardView = (CardView) findViewById(R.id.header_card_view);
         if (story.isShareable()) {
+            titleTextView.setText(story.getDisplayedTitle());
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     getResources().getDimension(R.dimen.abc_text_size_medium_material));
             titleTextView.setTypeface(titleTextView.getTypeface(), Typeface.BOLD);
@@ -117,6 +119,15 @@ public class ItemActivity extends BaseItemActivity {
                 sourceTextView.setText(story.getSource());
                 sourceTextView.setVisibility(View.VISIBLE);
             }
+            headerCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppUtils.openWebUrl(ItemActivity.this, story);
+                }
+            });
+        } else {
+            AppUtils.setTextWithLinks(titleTextView, story.getDisplayedTitle());
+            headerCardView.setClickable(false);
         }
 
         ((TextView) findViewById(R.id.posted)).setText(story.getDisplayedTime(this));
