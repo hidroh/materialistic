@@ -304,13 +304,13 @@ public class FavoriteActivity extends BaseActivity
         return TextUtils.join("\n\n", favorites);
     }
 
-    private void toggle(String itemId) {
+    private void toggle(String itemId, int position) {
         if (mSelected.contains(itemId)) {
             mSelected.remove(itemId);
         } else {
             mSelected.add(itemId);
         }
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemChanged(position);
     }
 
     private class RecyclerViewAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
@@ -344,7 +344,7 @@ public class FavoriteActivity extends BaseActivity
                     if (mActionMode == null) {
                         AppUtils.openWebUrl(FavoriteActivity.this, favorite);
                     } else {
-                        toggle(favorite.getId());
+                        toggle(favorite.getId(), position);
                     }
                 }
             });
@@ -353,7 +353,7 @@ public class FavoriteActivity extends BaseActivity
                 public boolean onLongClick(View v) {
                     if (mActionMode == null) {
                         mActionMode = startSupportActionMode(mActionModeCallback);
-                        toggle(favorite.getId());
+                        toggle(favorite.getId(), position);
                         return true;
                     }
 
