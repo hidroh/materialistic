@@ -94,11 +94,7 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            if (mItem.isShareable()) {
-                AppUtils.openWebUrl(this, mItem);
-            } else {
-                AppUtils.openWebUrlExternal(this, HackerNewsClient.getItemUrl(mItem.getId()));
-            }
+            AppUtils.openWebUrlExternal(this, HackerNewsClient.getItemUrl(mItem.getId()));
             return true;
         }
 

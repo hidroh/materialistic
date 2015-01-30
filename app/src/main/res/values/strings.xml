@@ -73,5 +73,6 @@
     <string name="hint_search_saved_stories">Search saved stories</string>
     <string name="no_saved_stories_search">No saved stories found matching your query</string>
     <string name="title_activity_favorite_search" formatted="false">Saved \'%s\' stories</string>
+    <string name="view_in_hacker_news">View in Hacker News</string>
 
 </resources>
