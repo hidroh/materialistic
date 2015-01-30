@@ -98,7 +98,7 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this, HackerNewsClient.getItemUrl(mItem.getId()));
+            AppUtils.openWebUrlExternal(this, mItem.getUrl());
             return true;
         }
 

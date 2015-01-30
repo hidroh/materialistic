@@ -70,10 +70,6 @@ public class HackerNewsClient {
         return mInstance;
     }
 
-    public static String getItemUrl(String itemId) {
-        return String.format(WEB_ITEM_PATH, itemId);
-    }
-
     /**
      * Gets array of top 100 stories
      * @param listener callback to be notified on response
@@ -246,7 +242,16 @@ public class HackerNewsClient {
 
         @Override
         public String getDisplayedTitle() {
-            return !TextUtils.isEmpty(title) ? title : getText();
+            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
+            switch (itemType) {
+                case comment:
+                    return text;
+                case job:
+                case story:
+                case poll: // TODO poll need to display options
+                default:
+                    return title;
+            }
         }
 
         public CharSequence getDisplayedTime(Context context) {
@@ -264,7 +269,19 @@ public class HackerNewsClient {
 
         @Override
         public String getUrl() {
-            return url;
+            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
+            switch (itemType) {
+                case job:
+                case poll:
+                case comment:
+                    return getItemUrl(getId());
+                default:
+                    return url;
+            }
+        }
+
+        private String getItemUrl(String itemId) {
+            return String.format(WEB_ITEM_PATH, itemId);
         }
 
         public String getSource() {
@@ -299,7 +316,6 @@ public class HackerNewsClient {
                 case job:
                     return true;
                 case comment:
-                case pollopt:
                     return false;
                 default:
                     return false;
