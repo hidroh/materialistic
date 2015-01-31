@@ -70,6 +70,7 @@ task jacocoTestReport(type: JacocoReport) {
     reports {
         xml.enabled true
         csv.enabled false
+        xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.destination "${buildDir}/reports/coverage"
     }
 
@@ -82,6 +83,7 @@ task jacocoTestReport(type: JacocoReport) {
     sourceDirectories = files(android.sourceSets.main.java.srcDirs)
     executionData = files("${buildDir}/jacoco/testDebug.exec")
     doLast {
+        println "coveralls report has been generated to file://${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         println "jacoco report has been generated to file://${reports.html.destination}/index.html"
     }
 }

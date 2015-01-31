@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
+[![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic) [![Coverage Status](https://coveralls.io/repos/hidroh/materialistic/badge.svg)](https://coveralls.io/r/hidroh/materialistic)
 
 Hacker News client for Android - Material Design
 ================================================
