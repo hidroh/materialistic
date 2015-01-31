@@ -51,7 +51,7 @@ robolectric {
     jvmArgs '-XX:MaxPermSize=512m', '-XX:-UseSplitVerifier'
 
     // Specify max number of processes (default is 1)
-    maxParallelForks = 4
+    maxParallelForks = 1
 
     // Specify max number of test classes to execute in a test process
     // before restarting the process (default is unlimited)
@@ -100,5 +100,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-base:6.5.87'
     androidTestCompile 'org.robolectric:robolectric:2.4',
             'com.squareup.assertj:assertj-android:1.0.0',
+            'org.mockito:mockito-core:1.9.5+',
             'junit:junit:4.11'
 }

@@ -4,7 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-public class TrackableActivity extends ActionBarActivity {
+public abstract class TrackableActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
