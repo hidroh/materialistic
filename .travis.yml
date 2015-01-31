@@ -11,8 +11,6 @@ android:
 
     # The SDK version used to compile your project
     - android-21
-    - android-18
-    - addon-google_apis-google-18
 
     # Additional components
     - extra-google-google_play_services
@@ -25,7 +23,7 @@ android:
     # - sys-img-armeabi-v7a-android-19
     # - sys-img-x86-android-17
 
-script: "./gradlew clean testDebug --info"
+script: "./gradlew clean assembleDebug testDebug"
 
 after_success:
 - ./gradlew jacocoTestReport coveralls
