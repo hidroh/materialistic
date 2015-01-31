@@ -58,7 +58,7 @@ robolectric {
     forkEvery = 150
 
     // configure whether failing tests should fail the build
-    ignoreFailures true
+    ignoreFailures false
 
     // use afterTest to listen to the test execution results
     afterTest { descriptor, result ->
