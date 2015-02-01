@@ -1,15 +1,21 @@
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="io.github.hidroh.materialistic.ListActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/empty_list"
+        android:id="@android:id/empty" />
+    <android.support.v4.widget.SwipeRefreshLayout
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    tools:context="io.github.hidroh.materialistic.ListActivity"
     android:id="@id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.widget.RecyclerView
-        android:id="@id/recycler_view"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:clipToPadding="false"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</android.support.v4.widget.SwipeRefreshLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/recycler_view"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</FrameLayout>

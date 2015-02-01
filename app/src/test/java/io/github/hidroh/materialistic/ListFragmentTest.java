@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 
+import org.assertj.android.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,12 +12,18 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -87,6 +94,7 @@ public class ListFragmentTest {
                 }))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
+        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
     }
 
     @Test
@@ -101,6 +109,46 @@ public class ListFragmentTest {
                 }))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
+        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isVisible();
+    }
+
+    @Test
+    public void testRefreshError() {
+        final List<Boolean> response = new ArrayList<>();
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
+                    @Override
+                    public void getTopStories(ResponseListener<Item[]> listener) {
+                        if (response.size() == 0) {
+                            response.add(true);
+                            listener.onResponse(new Item[]{new TestItem() {}});
+                        } else {
+                            response.add(false);
+                            listener.onError(null);
+                        }
+                    }
+                }))
+                .commit();
+        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = shadowOf_(activity.findViewById(R.id.swipe_layout));
+        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
+        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
+        assertNotNull(ShadowToast.getLatestToast());
+    }
+
+    @Test
+    public void testResponse() {
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
+                    @Override
+                    public void getTopStories(ResponseListener<Item[]> listener) {
+                        listener.onResponse(new Item[]{new TestItem() { }});
+                    }
+                }))
+                .commit();
+        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
     }
 
     @After

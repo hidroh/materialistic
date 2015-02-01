@@ -80,5 +80,6 @@
     <string name="pref_item_click">pref_item_click</string>
     <string name="pref_item_click_title">Tap story to open comments</string>
     <string name="pref_item_click_summary">Tap a story to view its comments instead of the original article (default).</string>
+    <string name="connection_error">Unable to connect to Hacker News.Check your connection or try again.</string>
 
 </resources>

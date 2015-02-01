@@ -35,6 +35,7 @@ public class ListFragment extends Fragment {
     private int mLocalRevision = 0;
     private ItemManager.Item[] mItems = new ItemManager.Item[0];
     private ItemManager mItemManager;
+    private View mEmptyView;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
@@ -71,6 +72,7 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.activity_list, container, false);
+        mEmptyView = view.findViewById(android.R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
@@ -129,6 +131,8 @@ public class ListFragment extends Fragment {
             @Override
             public void onResponse(final ItemManager.Item[] response) {
                 mItems = response;
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
                 mRecyclerView.getAdapter().notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -136,6 +140,14 @@ public class ListFragment extends Fragment {
             @Override
             public void onError(String errorMessage) {
                 mSwipeRefreshLayout.setRefreshing(false);
+                if (mItems == null || mItems.length == 0) {
+                    // TODO make refreshing indicator visible in empty view
+                    mRecyclerView.setVisibility(View.INVISIBLE);
+                    mEmptyView.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.connection_error),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
