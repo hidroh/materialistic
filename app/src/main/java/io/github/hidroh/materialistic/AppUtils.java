@@ -14,10 +14,10 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ItemManager;
 
 public class AppUtils {
-    public static void openWebUrl(Context context, HackerNewsClient.WebItem item) {
+    public static void openWebUrl(Context context, ItemManager.WebItem item) {
         final boolean isExternal = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_external), false);
         if (isExternal) {

@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ListFragment extends Fragment {
 
@@ -33,7 +33,14 @@ public class ListFragment extends Fragment {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private BroadcastReceiver mBroadcastReceiver;
     private int mLocalRevision = 0;
-    private HackerNewsClient.Item[] mItems = new HackerNewsClient.Item[0];
+    private ItemManager.Item[] mItems = new ItemManager.Item[0];
+    private ItemManager mItemManager;
+
+    public static ListFragment instantiate(Context context, ItemManager itemManager) {
+        ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
+        fragment.mItemManager = itemManager;
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +106,7 @@ public class ListFragment extends Fragment {
         if (savedInstanceState == null) {
             bindData();
         } else {
-            mItems =(HackerNewsClient.Item[]) savedInstanceState.getParcelableArray(EXTRA_ITEMS);
+            mItems =(ItemManager.Item[]) savedInstanceState.getParcelableArray(EXTRA_ITEMS);
             mRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }
@@ -118,20 +125,19 @@ public class ListFragment extends Fragment {
     }
 
     private void bindData() {
-        HackerNewsClient.getInstance(getActivity()).getTopStories(
-                new HackerNewsClient.ResponseListener<HackerNewsClient.Item[]>() {
-                    @Override
-                    public void onResponse(final HackerNewsClient.Item[] response) {
-                        mItems = response;
-                        mRecyclerView.getAdapter().notifyDataSetChanged();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
+        mItemManager.getTopStories(new ItemManager.ResponseListener<ItemManager.Item[]>() {
+            @Override
+            public void onResponse(final ItemManager.Item[] response) {
+                mItems = response;
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
 
-                    @Override
-                    public void onError(String errorMessage) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+            @Override
+            public void onError(String errorMessage) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -165,7 +171,7 @@ public class ListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-            final HackerNewsClient.Item story = mItems[position];
+            final ItemManager.Item story = mItems[position];
             holder.mRankTextView.setText(String.valueOf(position + 1));
             if (story.localRevision < mLocalRevision) {
                 story.localRevision = mLocalRevision;
@@ -185,19 +191,18 @@ public class ListFragment extends Fragment {
                 bindViewHolder(holder, story);
             } else {
                 bindViewHolder(holder, null);
-                HackerNewsClient.getInstance(getActivity()).getItem(story.getId(),
-                        new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
-                            @Override
-                            public void onResponse(HackerNewsClient.Item response) {
-                                story.populate(response);
-                                bindViewHolder(holder, story);
-                            }
+                mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
+                    @Override
+                    public void onResponse(ItemManager.Item response) {
+                        story.populate(response);
+                        bindViewHolder(holder, story);
+                    }
 
-                            @Override
-                            public void onError(String errorMessage) {
-                                // do nothing
-                            }
-                        });
+                    @Override
+                    public void onError(String errorMessage) {
+                        // do nothing
+                    }
+                });
             }
             holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -212,11 +217,11 @@ public class ListFragment extends Fragment {
             return mItems.length;
         }
 
-        private void decorateFavorite(ItemViewHolder holder, HackerNewsClient.Item story) {
+        private void decorateFavorite(ItemViewHolder holder, ItemManager.Item story) {
             holder.mBookmarked.setVisibility(story.isFavorite() ? View.VISIBLE : View.INVISIBLE);
         }
 
-        private void bindViewHolder(final ItemViewHolder holder, final HackerNewsClient.Item story) {
+        private void bindViewHolder(final ItemViewHolder holder, final ItemManager.Item story) {
             if (story == null) {
                 holder.mTitleTextView.setText(getString(R.string.loading_text));
                 holder.mPostedTextView.setText(getString(R.string.loading_text));
@@ -279,7 +284,7 @@ public class ListFragment extends Fragment {
             }
         }
 
-        private void openItem(HackerNewsClient.Item story, ItemViewHolder holder) {
+        private void openItem(ItemManager.Item story, ItemViewHolder holder) {
             final Intent intent = new Intent(getActivity(), ItemActivity.class);
             intent.putExtra(ItemActivity.EXTRA_ITEM, story);
             final ActivityOptionsCompat options = ActivityOptionsCompat

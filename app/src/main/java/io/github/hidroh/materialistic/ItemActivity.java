@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemActivity extends BaseItemActivity {
 
@@ -29,7 +30,7 @@ public class ItemActivity extends BaseItemActivity {
     private static final String PARAM_ID = "id";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
-    private HackerNewsClient.Item mItem;
+    private ItemManager.Item mItem;
     private int mLocalRevision = 0;
 
     @Override
@@ -48,10 +49,10 @@ public class ItemActivity extends BaseItemActivity {
         final Intent intent = getIntent();
         String itemId = null;
         if (intent.hasExtra(EXTRA_ITEM)) {
-            HackerNewsClient.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
+            ItemManager.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
             itemId = item.getId();
-            if (item instanceof HackerNewsClient.Item) {
-                mItem = (HackerNewsClient.Item) item;
+            if (item instanceof ItemManager.Item) {
+                mItem = (ItemManager.Item) item;
                 bindData(mItem);
                 return;
             }
@@ -68,9 +69,9 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         if (!TextUtils.isEmpty(itemId)) {
-            HackerNewsClient.getInstance(this).getItem(itemId, new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+            HackerNewsClient.getInstance(this).getItem(itemId, new ItemManager.ResponseListener<ItemManager.Item>() {
                 @Override
-                public void onResponse(HackerNewsClient.Item response) {
+                public void onResponse(ItemManager.Item response) {
                     mItem = response;
                     supportInvalidateOptionsMenu();
                     bindData(mItem);
@@ -105,7 +106,7 @@ public class ItemActivity extends BaseItemActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void bindData(final HackerNewsClient.Item story) {
+    private void bindData(final ItemManager.Item story) {
         if (story == null) {
             return;
         }
@@ -187,7 +188,7 @@ public class ItemActivity extends BaseItemActivity {
         bindKidData(story.getKidItems());
     }
 
-    private void bindKidData(final HackerNewsClient.Item[] items) {
+    private void bindKidData(final ItemManager.Item[] items) {
         if (items == null || items.length == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             return;
@@ -202,13 +203,13 @@ public class ItemActivity extends BaseItemActivity {
 
             @Override
             public void onBindViewHolder(final ItemViewHolder holder, int position) {
-                final HackerNewsClient.Item item = items[position];
+                final ItemManager.Item item = items[position];
                 if (item.localRevision < mLocalRevision) {
                     bindKidItem(holder, null);
                     HackerNewsClient.getInstance(ItemActivity.this).getItem(item.getId(),
-                            new HackerNewsClient.ResponseListener<HackerNewsClient.Item>() {
+                            new ItemManager.ResponseListener<ItemManager.Item>() {
                                 @Override
-                                public void onResponse(HackerNewsClient.Item response) {
+                                public void onResponse(ItemManager.Item response) {
                                     item.populate(response);
                                     item.localRevision = mLocalRevision;
                                     bindKidItem(holder, item);
@@ -224,7 +225,7 @@ public class ItemActivity extends BaseItemActivity {
                 }
             }
 
-            private void bindKidItem(final ItemViewHolder holder, final HackerNewsClient.Item item) {
+            private void bindKidItem(final ItemViewHolder holder, final ItemManager.Item item) {
                 if (item == null) {
                     holder.mPostedTextView.setText(getString(R.string.loading_text));
                     holder.mContentTextView.setText(getString(R.string.loading_text));

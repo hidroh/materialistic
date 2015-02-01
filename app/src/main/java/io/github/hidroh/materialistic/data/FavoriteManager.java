@@ -61,7 +61,7 @@ public class FavoriteManager {
         }.startQuery(0, null, MaterialisticProvider.URI_FAVORITE, null, selection, selectionArgs, null);
     }
 
-    public static void add(Context context, HackerNewsClient.Item story) {
+    public static void add(Context context, ItemManager.Item story) {
         final ContentValues contentValues = new ContentValues();
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
@@ -176,7 +176,7 @@ public class FavoriteManager {
         return intent;
     }
 
-    public static class Favorite implements HackerNewsClient.WebItem {
+    public static class Favorite implements ItemManager.WebItem {
         private String itemId;
         private String url;
         private String title;

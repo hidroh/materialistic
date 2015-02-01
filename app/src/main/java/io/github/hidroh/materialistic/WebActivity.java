@@ -15,12 +15,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ItemManager;
 
 public class WebActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
-    private HackerNewsClient.WebItem mItem;
+    private ItemManager.WebItem mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

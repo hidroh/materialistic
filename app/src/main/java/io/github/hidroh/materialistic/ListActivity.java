@@ -2,8 +2,9 @@ package io.github.hidroh.materialistic;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.Window;
+
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 
 public class ListActivity extends BaseActivity {
 
@@ -17,7 +18,7 @@ public class ListActivity extends BaseActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.content_frame,
-                            Fragment.instantiate(this, ListFragment.class.getName()),
+                            ListFragment.instantiate(this, HackerNewsClient.getInstance(this)),
                             ListFragment.class.getName())
                     .commit();
         }

@@ -23,7 +23,7 @@ import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowWebView;
 
 import static org.assertj.android.api.Assertions.assertThat;
@@ -38,11 +38,11 @@ import static org.robolectric.Robolectric.shadowOf;
 public class WebActivityTest {
     private WebActivity activity;
     private ActivityController<WebActivity> controller;
-    private HackerNewsClient.WebItem item;
+    private ItemManager.WebItem item;
 
     @Before
     public void setUp() {
-        item = mock(HackerNewsClient.WebItem.class);
+        item = mock(ItemManager.WebItem.class);
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);
