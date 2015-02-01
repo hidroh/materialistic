@@ -147,7 +147,7 @@ public interface ItemManager {
          * @return true if favorite, false otherwise
          * @see #setFavorite(boolean)
          */
-        Boolean isFavorite();
+        boolean isFavorite();
 
         /**
          * Updates item's favorite status to given status

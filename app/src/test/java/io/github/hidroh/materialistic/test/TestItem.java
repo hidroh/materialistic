@@ -72,8 +72,8 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public Boolean isFavorite() {
-        return null;
+    public boolean isFavorite() {
+        return false;
     }
 
     @Override

@@ -137,20 +137,6 @@ public class ListFragmentTest {
         assertNotNull(ShadowToast.getLatestToast());
     }
 
-    @Test
-    public void testResponse() {
-        activity.getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
-                    @Override
-                    public void getTopStories(ResponseListener<Item[]> listener) {
-                        listener.onResponse(new Item[]{new TestItem() { }});
-                    }
-                }))
-                .commit();
-        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
-    }
-
     @After
     public void tearDown() {
         controller.pause().stop().destroy();

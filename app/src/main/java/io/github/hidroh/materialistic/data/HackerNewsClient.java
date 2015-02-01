@@ -175,7 +175,7 @@ public class HackerNewsClient implements ItemManager {
         // A list of related pollopts, in display order.
         private long[] parts;
         private HackerNewsItem[] kidItems;
-        private Boolean favorite;
+        private boolean favorite;
         private int localRevision = -1;
 
         public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -359,7 +359,7 @@ public class HackerNewsClient implements ItemManager {
         }
 
         @Override
-        public Boolean isFavorite() {
+        public boolean isFavorite() {
             return favorite;
         }
 

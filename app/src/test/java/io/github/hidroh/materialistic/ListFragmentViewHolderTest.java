@@ -1,0 +1,148 @@
+package io.github.hidroh.materialistic;
+
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
+
+import org.assertj.android.api.Assertions;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.util.ActivityController;
+
+import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestItemManager;
+
+import static junit.framework.Assert.assertEquals;
+import static org.robolectric.Robolectric.shadowOf;
+
+@Config(emulateSdk = 18, reportSdk = 18)
+@RunWith(RobolectricTestRunner.class)
+public class ListFragmentViewHolderTest {
+    private ActivityController<FragmentActivity> controller;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.ViewHolder holder;
+    private FragmentActivity activity;
+    private TestStory item;
+
+    @Before
+    public void setUp() {
+        item = new TestStory();
+        controller = Robolectric.buildActivity(FragmentActivity.class)
+                .create().start().resume().visible();
+        activity = controller.get();
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
+                    @Override
+                    public void getTopStories(ResponseListener<Item[]> listener) {
+                        listener.onResponse(new Item[]{item});
+                    }
+
+                    @Override
+                    public void getItem(String itemId, ResponseListener<Item> listener) {
+                        item.title = "title";
+                        listener.onResponse(item);
+                    }
+                }))
+                .commit();
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        adapter = recyclerView.getAdapter();
+        holder = adapter.createViewHolder(recyclerView, 0);
+    }
+
+    @Test
+    public void testStory() {
+        adapter.bindViewHolder(holder, 0);
+        Assertions.assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
+        Assertions.assertThat((TextView) holder.itemView.findViewById(android.R.id.text2)).hasText("title");
+        Assertions.assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
+    }
+
+    @Test
+    public void testComment() {
+        item.kidCount = 1;
+        adapter.bindViewHolder(holder, 0);
+        View commentButton = holder.itemView.findViewById(R.id.comment);
+        Assertions.assertThat(commentButton).isVisible();
+        commentButton.performClick();
+        assertEquals(ItemActivity.class.getName(),
+                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+    }
+
+    @Test
+    public void testJob() {
+        item.type = ItemManager.Item.Type.job;
+        adapter.bindViewHolder(holder, 0);
+        assertEquals(R.drawable.ic_work_grey600_18dp,
+                shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
+                        .getCompoundDrawables()[0]).getCreatedFromResId());
+    }
+
+    @Test
+    public void testPoll() {
+        item.type = ItemManager.Item.Type.poll;
+        adapter.bindViewHolder(holder, 0);
+        assertEquals(R.drawable.ic_poll_grey600_18dp,
+                shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
+                        .getCompoundDrawables()[0]).getCreatedFromResId());
+    }
+
+    @Test
+    public void testItemClickOpenItem() {
+        PreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_item_click), true)
+                .commit();
+        adapter.bindViewHolder(holder, 0);
+        holder.itemView.performClick();
+        assertEquals(ItemActivity.class.getName(),
+                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+    }
+
+    @Test
+    public void testItemClickOpenWeb() {
+        adapter.bindViewHolder(holder, 0);
+        holder.itemView.performClick();
+        assertEquals(WebActivity.class.getName(),
+                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+    }
+
+    @After
+    public void tearDown() {
+        controller.pause().stop().destroy();
+    }
+
+    private class TestStory extends TestItem {
+        public Type type = Type.story;
+        public int kidCount = 0;
+        public String title = null;
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public Type getType() {
+            return type;
+        }
+
+        @Override
+        public int getKidCount() {
+            return kidCount;
+        }
+
+        @Override
+        public String getUrl() {
+            return "http://hidroh.github.io";
+        }
+    }
+}
