@@ -62,7 +62,7 @@ robolectric {
 
     // use afterTest to listen to the test execution results
     afterTest { descriptor, result ->
-        println "Executing test for ${descriptor.name} with result: ${result.resultType}"
+        println "${descriptor.className} > ${descriptor.name} ${result.resultType}"
     }
 }
 
@@ -100,6 +100,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-base:6.5.87'
     androidTestCompile 'org.robolectric:robolectric:2.4',
             'com.squareup.assertj:assertj-android:1.0.0',
+            'com.squareup.assertj:assertj-android-support-v4:1.0.0',
             'org.mockito:mockito-core:1.9.5+',
             'junit:junit:4.11'
 }
