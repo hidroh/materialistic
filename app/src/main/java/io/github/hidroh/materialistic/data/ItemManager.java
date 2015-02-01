@@ -1,225 +1,205 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 
+/**
+ * Data repository for {@link io.github.hidroh.materialistic.data.ItemManager.Item}
+ */
 public interface ItemManager {
-    String BASE_WEB_URL = "https://news.ycombinator.com";
-    String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
 
     /**
      * Gets array of top 100 stories
      * @param listener callback to be notified on response
      */
     void getTopStories(final ResponseListener<Item[]> listener);
+
     /**
      * Gets individual item by ID
      * @param itemId    item ID
      * @param listener  callback to be notified on response
      */
-    void getItem(String itemId, ItemManager.ResponseListener<ItemManager.Item> listener);
+    void getItem(String itemId, ItemManager.ResponseListener<Item> listener);
 
-    interface WebItem extends Parcelable {
-        String getDisplayedTitle();
-        String getUrl();
-        boolean isShareable();
-        String getId();
-    }
-
+    /**
+     * Callback interface for item requests
+     * @param <T> item type
+     */
     interface ResponseListener<T> {
+        /**
+         * Fired when request is successful
+         * @param response result
+         */
         void onResponse(T response);
+
+        /**
+         * Fired when request is failed
+         * @param errorMessage error message or null
+         */
         void onError(String errorMessage);
     }
 
-    class Item implements WebItem {
-        public enum Type { job, story, comment, poll, pollopt }
-        // The item's unique id. Required.
-        private long id;
-        // true if the item is deleted.
-        private boolean deleted;
-        // The type of item. One of "job", "story", "comment", "poll", or "pollopt".
-        private String type;
-        // The username of the item's author.
-        private String by;
-        // Creation date of the item, in Unix Time.
-        private long time;
-        // The comment, Ask HN, or poll text. HTML.
-        private String text;
-        // true if the item is dead.
-        private boolean dead;
-        // The item's parent. For comments, either another comment or the relevant story. For pollopts, the relevant poll.
-        private long parent;
-        // The ids of the item's comments, in ranked display order.
-        private long[] kids;
-        // The URL of the story.
-        private String url;
-        // The story's score, or the votes for a pollopt.
-        private int score;
-        // The title of the story or poll.
-        private String title;
-        // A list of related pollopts, in display order.
-        private long[] parts;
-        private Item[] kidItems;
-        private Boolean favorite;
-        public int localRevision = -1;
+    /**
+     * Represents an item that can be displayed as story/comment
+     */
+    interface Item extends WebItem {
+        /**
+         * Item types
+         */
+        public enum Type { job, story, comment, poll, pollopt;}
 
-        public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
-            @Override
-            public Item createFromParcel(Parcel source) {
-                return new Item(source);
-            }
+        /**
+         * Sets information from given item
+         * @param info source item
+         */
+        void populate(Item info);
 
-            @Override
-            public Item[] newArray(int size) {
-                return new Item[size];
-            }
-        };
+        /**
+         * Gets raw item type
+         * @return string type or null
+         * @see io.github.hidroh.materialistic.data.ItemManager.Item.Type
+         */
+        String getRawType();
 
-        Item(long id) {
-            this.id = id;
-        }
+        /**
+         * Gets raw URL
+         * @return string URL or null
+         * @see #getUrl()
+         */
+        String getRawUrl();
 
-        private Item(Parcel source) {
-            id = source.readLong();
-            title = source.readString();
-            time = source.readLong();
-            by = source.readString();
-            kids = source.createLongArray();
-            url = source.readString();
-            text = source.readString();
-            type = source.readString();
-        }
+        /**
+         * Gets array of kid IDs
+         * @return array of kid IDs or null
+         * @see #getKidCount()
+         * @see #getKidItems()
+         */
+        long[] getKids();
 
-        public void populate(Item info) {
-            title = info.title;
-            time = info.time;
-            by = info.by;
-            kids = info.kids;
-            url = info.url;
-            text = info.text;
-            type = info.type;
-        }
+        /**
+         * Gets author name
+         * @return author name or null
+         * @see #getDisplayedTime(android.content.Context)
+         */
+        String getBy();
 
-        @Override
-        public int describeContents() {
-            return 0;
-        }
+        /**
+         * Gets posted time
+         * @return posted time as Unix timestamp in seconds
+         * @see #getDisplayedTime(android.content.Context)
+         */
+        long getTime();
 
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(id);
-            dest.writeString(title);
-            dest.writeLong(time);
-            dest.writeString(by);
-            dest.writeLongArray(kids);
-            dest.writeString(url);
-            dest.writeString(text);
-            dest.writeString(type);
-        }
+        /**
+         * Gets title
+         * @return title or null
+         * @see #getDisplayedTitle()
+         */
+        String getTitle();
 
-        @Override
-        public String getId() {
-            return String.valueOf(id);
-        }
+        /**
+         * Gets item type, should be parsed from {@link #getRawType()}
+         * @return item type
+         * @see #getRawType()
+         */
+        Type getType();
 
-        public String getTitle() {
-            return title;
-        }
+        /**
+         * Gets item text
+         * @return item text or null
+         * @see #getDisplayedTitle()
+         */
+        String getText();
 
-        @Override
-        public String getDisplayedTitle() {
-            switch (getType()) {
-                case comment:
-                    return text;
-                case job:
-                case story:
-                case poll: // TODO poll need to display options
-                default:
-                    return title;
-            }
-        }
+        /**
+         * Gets item source
+         * @return item source or null
+         */
+        String getSource();
 
-        public Type getType() {
-            return !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
-        }
+        /**
+         * Gets formatted posted time for display
+         * @param context an instance of {@link android.content.Context}
+         * @return  displayed time
+         * @see #getTime()
+         * @see #getBy()
+         */
+        CharSequence getDisplayedTime(Context context);
 
-        public CharSequence getDisplayedTime(Context context) {
-            return String.format("%s by %s",
-                    DateUtils.getRelativeDateTimeString(context, time * 1000,
-                            DateUtils.MINUTE_IN_MILLIS,
-                            DateUtils.YEAR_IN_MILLIS,
-                            DateUtils.FORMAT_ABBREV_MONTH),
-                    by);
-        }
+        /**
+         * Gets number of kids, contained in {@link #getKids()}
+         * @return number of kids
+         * @see #getKids()
+         * @see #getKidItems()
+         */
+        int getKidCount();
 
-        public int getKidCount() {
-            return kids != null ? kids.length : 0;
-        }
+        /**
+         * Gets array of kids, with corresponding IDs in {@link #getKids()}
+         * @return array of kids or null
+         * @see #getKids()
+         * @see #getKidCount()
+         */
+        Item[] getKidItems();
 
-        @Override
-        public String getUrl() {
-            switch (getType()) {
-                case job:
-                case poll:
-                case comment:
-                    return getItemUrl(getId());
-                default:
-                    return url;
-            }
-        }
+        /**
+         * Checks if item is marked as favorite
+         * @return true if favorite, false otherwise
+         * @see #setFavorite(boolean)
+         */
+        Boolean isFavorite();
 
-        private String getItemUrl(String itemId) {
-            return String.format(WEB_ITEM_PATH, itemId);
-        }
+        /**
+         * Updates item's favorite status to given status
+         * @param favorite true if favorite, false otherwise
+         * @see #isFavorite()
+         */
+        void setFavorite(boolean favorite);
 
-        public String getSource() {
-            return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
-        }
+        /**
+         * Gets item's current revision. A revision can be used to determined if item state is stale
+         * and needs updated
+         * @return current revision
+         * @see #setLocalRevision(int)
+         * @see #populate(io.github.hidroh.materialistic.data.ItemManager.Item)
+         * @see #setFavorite(boolean)
+         */
+        int getLocalRevision();
 
-        public Item[] getKidItems() {
-            if (kids == null || kids.length == 0) {
-                return null;
-            }
+        /**
+         * Updates item's current revision to new one
+         * @param localRevision new item revision
+         * @see #getLocalRevision()
+         */
+        void setLocalRevision(int localRevision);
+    }
 
-            if (kidItems == null) {
-                kidItems = new Item[kids.length];
-                for (int i = 0; i < kids.length; i++) {
-                    kidItems[i] = new Item(kids[i]);
-                }
-            }
+    /**
+     * Represents an item that can be displayed by a {@link android.webkit.WebView}
+     */
+    interface WebItem extends Parcelable {
+        /**
+         * Gets formatted title to display
+         * @return formatted title or null
+         */
+        String getDisplayedTitle();
 
-            return kidItems;
-        }
+        /**
+         * Gets item URL to pass to {@link android.webkit.WebView#loadUrl(String)}
+         * @return URL or null
+         */
+        String getUrl();
 
-        public String getText() {
-            return text;
-        }
+        /**
+         * Checks if item can be shared
+         * @return true if shareable, false otherwise
+         */
+        boolean isShareable();
 
-        @Override
-        public boolean isShareable() {
-            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
-            switch (itemType) {
-                case story:
-                case poll:
-                case job:
-                    return true;
-                case comment:
-                    return false;
-                default:
-                    return false;
-            }
-        }
-
-        public Boolean isFavorite() {
-            return favorite;
-        }
-
-        public void setFavorite(boolean favorite) {
-            this.favorite = favorite;
-        }
+        /**
+         * Gets item ID
+         * @return item ID
+         */
+        String getId();
     }
 }

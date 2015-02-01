@@ -204,14 +204,18 @@ public class ItemActivity extends BaseItemActivity {
             @Override
             public void onBindViewHolder(final ItemViewHolder holder, int position) {
                 final ItemManager.Item item = items[position];
-                if (item.localRevision < mLocalRevision) {
+                if (item.getLocalRevision() < mLocalRevision) {
                     bindKidItem(holder, null);
                     HackerNewsClient.getInstance(ItemActivity.this).getItem(item.getId(),
                             new ItemManager.ResponseListener<ItemManager.Item>() {
                                 @Override
                                 public void onResponse(ItemManager.Item response) {
+                                    if (response == null) {
+                                        return;
+                                    }
+
                                     item.populate(response);
-                                    item.localRevision = mLocalRevision;
+                                    item.setLocalRevision(mLocalRevision);
                                     bindKidItem(holder, item);
                                 }
 

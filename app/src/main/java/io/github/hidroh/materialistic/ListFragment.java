@@ -173,8 +173,8 @@ public class ListFragment extends Fragment {
         public void onBindViewHolder(final ItemViewHolder holder, final int position) {
             final ItemManager.Item story = mItems[position];
             holder.mRankTextView.setText(String.valueOf(position + 1));
-            if (story.localRevision < mLocalRevision) {
-                story.localRevision = mLocalRevision;
+            if (story.getLocalRevision() < mLocalRevision) {
+                story.setLocalRevision(mLocalRevision);
                 FavoriteManager.check(getActivity(), story.getId(),
                         new FavoriteManager.OperationCallbacks() {
                             @Override
@@ -194,6 +194,10 @@ public class ListFragment extends Fragment {
                 mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
                     @Override
                     public void onResponse(ItemManager.Item response) {
+                        if (response == null) {
+                            return;
+                        }
+
                         story.populate(response);
                         bindViewHolder(holder, story);
                     }
@@ -228,6 +232,8 @@ public class ListFragment extends Fragment {
                 holder.mSourceTextView.setText(getString(R.string.loading_text));
                 holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
                 holder.mCommentButton.setVisibility(View.GONE);
+                holder.itemView.setOnClickListener(null);
+                holder.itemView.setOnLongClickListener(null);
             } else {
                 holder.mTitleTextView.setText(story.getTitle());
                 holder.mPostedTextView.setText(story.getDisplayedTime(getActivity()));
