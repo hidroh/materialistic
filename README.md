@@ -17,7 +17,7 @@
 
 **Build**
 
-    ./gradlew buildDebug
+    ./gradlew assembleDebug
 
 Supply your own release signing config to build release. Release signing config is left out on purpose.
 
