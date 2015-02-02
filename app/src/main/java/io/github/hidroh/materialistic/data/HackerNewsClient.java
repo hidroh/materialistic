@@ -311,7 +311,7 @@ public class HackerNewsClient implements ItemManager {
                 case comment:
                     return getItemUrl(getId());
                 default:
-                    return url;
+                    return TextUtils.isEmpty(url) ? getItemUrl(getId()) : url;
             }
         }
 
