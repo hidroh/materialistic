@@ -18,7 +18,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -32,6 +34,8 @@ public class ItemActivity extends BaseItemActivity {
     private View mEmptyView;
     private ItemManager.Item mItem;
     private int mLocalRevision = 0;
+    private CardView mHeaderCardView;
+    private boolean mFavoriteBound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class ItemActivity extends BaseItemActivity {
             }
         });
         mRecyclerView.setHasFixedSize(true);
+
         final Intent intent = getIntent();
         String itemId = null;
         if (intent.hasExtra(EXTRA_ITEM)) {
@@ -63,7 +68,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         if (TextUtils.isEmpty(itemId)) {
-            if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            if (intent.getAction() != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
                 itemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
             }
         }
@@ -75,6 +80,7 @@ public class ItemActivity extends BaseItemActivity {
                     mItem = response;
                     supportInvalidateOptionsMenu();
                     bindData(mItem);
+                    bindFavorite();
                 }
 
                 @Override
@@ -83,6 +89,60 @@ public class ItemActivity extends BaseItemActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindFavorite();
+    }
+
+    @Override
+    protected void onPause() {
+        mFavoriteBound = false;
+        super.onPause();
+    }
+
+    private void bindFavorite() {
+        if (mItem == null) {
+            return;
+        }
+
+        if (!mItem.isShareable()) {
+            return;
+        }
+
+        if (mFavoriteBound) { // prevent binding twice from onResponse and onResume
+            return;
+        }
+
+        mFavoriteBound = true;
+        FavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
+            @Override
+            public void onCheckComplete(boolean isFavorite) {
+                super.onCheckComplete(isFavorite);
+                decorateFavorite(isFavorite);
+                mItem.setFavorite(isFavorite);
+                mHeaderCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final int toastMessageResId;
+                        if (!mItem.isFavorite()) {
+                            FavoriteManager.add(ItemActivity.this, mItem);
+                            toastMessageResId = R.string.toast_saved;
+                        } else {
+                            FavoriteManager.remove(ItemActivity.this, mItem.getId());
+                            toastMessageResId = R.string.toast_removed;
+                        }
+                        Toast.makeText(ItemActivity.this, toastMessageResId, Toast.LENGTH_SHORT).show();
+                        mItem.setFavorite(!mItem.isFavorite());
+                        decorateFavorite(mItem.isFavorite());
+                        return true;
+                    }
+                });
+
+            }
+        });
     }
 
     @Override
@@ -112,7 +172,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        final CardView headerCardView = (CardView) findViewById(R.id.header_card_view);
+        mHeaderCardView = (CardView) findViewById(R.id.header_card_view);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -126,7 +186,7 @@ public class ItemActivity extends BaseItemActivity {
         } else {
             AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
         }
-        headerCardView.setOnClickListener(new View.OnClickListener() {
+        mHeaderCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (story.isShareable()) {
@@ -169,10 +229,10 @@ public class ItemActivity extends BaseItemActivity {
         }
         if (stackResId != -1) {
             getLayoutInflater().inflate(stackResId, (ViewGroup) findViewById(R.id.item_view), true);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) headerCardView.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHeaderCardView.getLayoutParams();
             params.topMargin = marginTop;
-            headerCardView.setLayoutParams(params);
-            headerCardView.bringToFront();
+            mHeaderCardView.setLayoutParams(params);
+            mHeaderCardView.bringToFront();
         }
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
@@ -186,6 +246,11 @@ public class ItemActivity extends BaseItemActivity {
                 break;
         }
         bindKidData(story.getKidItems());
+    }
+
+    private void decorateFavorite(boolean isFavorite) {
+        mHeaderCardView.findViewById(R.id.bookmarked)
+                .setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindKidData(final ItemManager.Item[] items) {

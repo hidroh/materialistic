@@ -36,6 +36,7 @@ public class ListFragment extends Fragment {
     private ItemManager.Item[] mItems = new ItemManager.Item[0];
     private ItemManager mItemManager;
     private View mEmptyView;
+    private boolean mResumed;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
@@ -59,14 +60,22 @@ public class ListFragment extends Fragment {
                     return;
                 }
 
-                if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
+                if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction()) ||
+                        FavoriteManager.ACTION_ADD.equals(intent.getAction()) ||
+                        FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
                     mLocalRevision++;
-                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                    if (!mResumed) { // only refresh view if in background
+                        mRecyclerView.getAdapter().notifyDataSetChanged();
+                    }
                 }
             }
         };
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver,
-                FavoriteManager.makeClearIntentFilter());
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(mBroadcastReceiver, FavoriteManager.makeAddIntentFilter());
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(mBroadcastReceiver, FavoriteManager.makeRemoveIntentFilter());
     }
 
     @Override
@@ -114,9 +123,21 @@ public class ListFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mResumed = true;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArray(EXTRA_ITEMS, mItems);
+    }
+
+    @Override
+    public void onPause() {
+        mResumed = false;
+        super.onPause();
     }
 
     @Override

@@ -203,6 +203,7 @@ public class HackerNewsClient implements ItemManager {
             url = source.readString();
             text = source.readString();
             type = source.readString();
+            favorite = source.readInt() == 0 ? false : true;
         }
 
         @Override
@@ -256,6 +257,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeString(url);
             dest.writeString(text);
             dest.writeString(type);
+            dest.writeInt(favorite ? 1 : 0);
         }
 
         @Override

@@ -14,6 +14,8 @@ public class ListActivity extends BaseActivity {
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
+        // delay setting title here to allow launcher to get app name
+        setTitle(getString(R.string.title_activity_list));
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
