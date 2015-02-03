@@ -14,13 +14,16 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class WebActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
+    private boolean mIsFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +61,39 @@ public class WebActivity extends BaseItemActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(final Menu menu) {
         if (!mItem.isShareable()) {
             menu.findItem(R.id.menu_share).setVisible(false);
+        } else {
+            FavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
+                @Override
+                public void onCheckComplete(boolean isFavorite) {
+                    super.onCheckComplete(isFavorite);
+                    final MenuItem menuFavorite = menu.findItem(R.id.menu_favorite);
+                    menuFavorite.setVisible(true);
+                    mIsFavorite = isFavorite;
+                    toggleFavorite(menuFavorite);
+                }
+            });
         }
 
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        supportInvalidateOptionsMenu();
+    }
+
+    private void toggleFavorite(MenuItem menuFavorite) {
+        if (mIsFavorite) {
+            menuFavorite.setIcon(R.drawable.ic_bookmark_white_24dp);
+            menuFavorite.setTitle(R.string.unsave_story);
+        } else {
+            menuFavorite.setIcon(R.drawable.ic_bookmark_outline_white_24dp);
+            menuFavorite.setTitle(R.string.save_story);
+        }
     }
 
     @Override
@@ -77,6 +107,21 @@ public class WebActivity extends BaseItemActivity {
             final Intent intent = new Intent(this, ItemActivity.class);
             intent.putExtra(ItemActivity.EXTRA_ITEM, mItem);
             startActivity(intent);
+            return true;
+        }
+
+        if (item.getItemId() == R.id.menu_favorite) {
+            final int toastMessageResId;
+            mIsFavorite = !mIsFavorite;
+            if (mIsFavorite) {
+                FavoriteManager.add(this, mItem);
+                toastMessageResId = R.string.toast_saved;
+            } else {
+                FavoriteManager.remove(this, mItem.getId());
+                toastMessageResId = R.string.toast_removed;
+            }
+            Toast.makeText(this, toastMessageResId, Toast.LENGTH_SHORT).show();
+            toggleFavorite(item);
             return true;
         }
 

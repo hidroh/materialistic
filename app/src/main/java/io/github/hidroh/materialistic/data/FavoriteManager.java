@@ -105,12 +105,12 @@ public class FavoriteManager {
      * @param story     story to be added as favorite
      * @see #makeAddIntentFilter()
      */
-    public static void add(Context context, final ItemManager.Item story) {
+    public static void add(Context context, final ItemManager.WebItem story) {
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
         final ContentValues contentValues = new ContentValues();
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getTitle());
+        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME, String.valueOf(System.currentTimeMillis()));
         new AsyncQueryHandler(context.getContentResolver()) {
             @Override
