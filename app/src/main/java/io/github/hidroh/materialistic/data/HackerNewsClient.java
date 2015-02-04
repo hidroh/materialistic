@@ -285,7 +285,11 @@ public class HackerNewsClient implements ItemManager {
 
         @Override
         public Type getType() {
-            return !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
+            try {
+                return !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
+            } catch (IllegalArgumentException e) {
+                return Type.story;
+            }
         }
 
         @Override
