@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -9,6 +10,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -39,6 +41,16 @@ public class WebActivity extends BaseItemActivity {
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition,
+                                        String mimetype, long contentLength) {
+                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
                 }
             }
         });
