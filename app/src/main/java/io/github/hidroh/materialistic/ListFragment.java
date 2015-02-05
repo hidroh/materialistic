@@ -49,12 +49,6 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mBroadcastReceiver = new BroadcastReceiver() {
@@ -83,7 +77,7 @@ public class ListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.activity_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_list, container, false);
         mEmptyView = view.findViewById(android.R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
@@ -200,7 +194,7 @@ public class ListFragment extends Fragment {
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ItemViewHolder(getLayoutInflater(null)
-                    .inflate(R.layout.activity_list_item, parent, false));
+                    .inflate(R.layout.fragment_list_item, parent, false));
         }
 
         @Override
