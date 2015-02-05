@@ -1,21 +1,11 @@
 package io.github.hidroh.materialistic;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.webkit.DownloadListener;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -30,34 +20,14 @@ public class WebActivity extends BaseItemActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web);
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-        final WebView webView = (WebView) findViewById(R.id.web_view);
-        webView.setWebViewClient(new WebViewClient());
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                progressBar.setProgress(newProgress);
-                if (newProgress == 100) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-        });
-        webView.setDownloadListener(new DownloadListener() {
-            @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition,
-                                        String mimetype, long contentLength) {
-                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                }
-            }
-        });
-        setWebViewSettings(webView.getSettings());
         mItem = getIntent().getParcelableExtra(EXTRA_ITEM);
-        webView.loadUrl(mItem.getUrl());
         setTitle(mItem.getDisplayedTitle());
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content,
+                        WebFragment.instantiate(this, mItem),
+                        WebFragment.class.getName())
+                .commit();
     }
 
     @Override
@@ -138,17 +108,6 @@ public class WebActivity extends BaseItemActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setWebViewSettings(WebSettings webSettings) {
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setBuiltInZoomControls(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webSettings.setDisplayZoomControls(false);
-        }
     }
 
 }

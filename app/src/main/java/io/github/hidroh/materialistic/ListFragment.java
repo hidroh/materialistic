@@ -41,6 +41,7 @@ public class ListFragment extends Fragment {
     private ItemManager mItemManager;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
+    private ItemOpenListener mItemOpenListener;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
@@ -51,6 +52,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mItemOpenListener = (ItemOpenListener) activity;
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -139,6 +141,7 @@ public class ListFragment extends Fragment {
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
+        mItemOpenListener = null;
         super.onDetach();
     }
 
@@ -291,11 +294,15 @@ public class ListFragment extends Fragment {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (PreferenceManager.getDefaultSharedPreferences(getActivity())
-                                .getBoolean(getString(R.string.pref_item_click), false)) {
-                            openItem(story, holder);
+                        if (getResources().getBoolean(R.bool.multi_pane)) {
+                            mItemOpenListener.onItemOpen(story);
                         } else {
-                            AppUtils.openWebUrl(getActivity(), story);
+                            if (PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                    .getBoolean(getString(R.string.pref_item_click), false)) {
+                                openItem(story, holder);
+                            } else {
+                                AppUtils.openWebUrl(getActivity(), story);
+                            }
                         }
                     }
                 });
@@ -327,5 +334,9 @@ public class ListFragment extends Fragment {
                             holder.itemView, getString(R.string.transition_item_container));
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         }
+    }
+
+    public interface ItemOpenListener {
+        void onItemOpen(ItemManager.Item story);
     }
 }

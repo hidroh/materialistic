@@ -83,5 +83,6 @@
     <string name="connection_error">Unable to connect to Hacker News.Check your connection or try again.</string>
     <string name="save_story">Save story</string>
     <string name="unsave_story">Unsave story</string>
+    <string name="select_story">Select a story to view</string>
 
 </resources>

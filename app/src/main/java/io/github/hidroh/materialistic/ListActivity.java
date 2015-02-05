@@ -3,11 +3,13 @@ package io.github.hidroh.materialistic;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ListActivity extends BaseActivity {
+public class ListActivity extends BaseActivity implements ListFragment.ItemOpenListener {
 
     private boolean mIsMultiPane;
 
@@ -49,5 +51,17 @@ public class ListActivity extends BaseActivity {
                             ListFragment.class.getName())
                     .commit();
         }
+    }
+
+    @Override
+    public void onItemOpen(ItemManager.Item story) {
+        findViewById(R.id.empty).setVisibility(View.GONE);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.web_view_container,
+                        WebFragment.instantiate(this, story),
+                        WebFragment.class.getName())
+                .commit();
     }
 }

@@ -7,9 +7,16 @@
         android:layout_width="480dp"
         android:layout_height="match_parent"/>
     <FrameLayout
-        android:background="@color/colorPrimaryLight"
+        android:id="@+id/web_view_container"
         android:elevation="8dp"
+        android:background="@color/colorPrimaryLight"
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" >
+        <TextView
+            android:id="@id/empty"
+            android:layout_gravity="center_vertical"
+            android:text="@string/select_story"
+            style="@style/textEmptyStyle" />
+    </FrameLayout>
 </LinearLayout>
