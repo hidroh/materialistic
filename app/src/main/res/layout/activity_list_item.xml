@@ -31,7 +31,6 @@
             android:layout_centerInParent="true"/>
         <TextView
             android:id="@android:id/text2"
-            android:padding="@dimen/padding"
             android:text="A lil' bit of programming that matters"
             style="@style/textTitleStyle"
             android:layout_toRightOf="@android:id/text1"
@@ -48,7 +47,9 @@
             android:id="@id/posted"
             android:text="Since January 01, 2015"
             android:singleLine="true"
-            android:padding="@dimen/padding"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:paddingBottom="@dimen/padding"
             android:layout_toRightOf="@android:id/text1"
             android:layout_below="@id/source"
             android:layout_width="match_parent"

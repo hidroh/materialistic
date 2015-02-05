@@ -4,27 +4,32 @@
     android:layout_marginBottom="@dimen/margin"
     style="@style/AppCardView">
     <RelativeLayout
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@id/posted"
+            android:text="@string/loading_text"
+            android:gravity="center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/comment"
+            style="@style/textSubtitleStyle" />
+        <TextView
             android:id="@android:id/text1"
             android:text="@string/loading_text"
-            android:padding="@dimen/padding"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/posted"
             android:layout_toLeftOf="@id/comment"
             style="@style/textTitleStyle"
             android:lines="@null"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@id/posted"
+            android:id="@id/source"
             android:text="@string/loading_text"
-            android:padding="@dimen/padding"
-            android:gravity="center_vertical"
             android:layout_below="@android:id/text1"
-            android:layout_toLeftOf="@id/comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:visibility="gone"
+            style="@style/textSubtitleStyle" />
         <ImageButton
             android:id="@id/comment"
             android:src="@drawable/ic_comment_grey600_48dp"

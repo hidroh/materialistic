@@ -341,6 +341,9 @@ public class FavoriteActivity extends BaseActivity
             final FavoriteManager.Favorite favorite = mCursor.getFavorite();
             holder.mPostedTextView.setText(favorite.getCreated(FavoriteActivity.this));
             holder.mTitleTextView.setText(favorite.getDisplayedTitle());
+            holder.mSourceTextView.setVisibility(TextUtils.isEmpty(favorite.getSource()) ?
+                    View.GONE : View.VISIBLE);
+            holder.mSourceTextView.setText(favorite.getSource());
             ((CardView) holder.itemView)
                     .setCardBackgroundColor(getResources().getColor(
                             mSelected.contains(favorite.getId()) ?
@@ -401,11 +404,13 @@ public class FavoriteActivity extends BaseActivity
         private final TextView mPostedTextView;
         private final TextView mTitleTextView;
         private final ImageButton mCommentButton;
+        private final TextView mSourceTextView;
 
         private FavoriteViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mTitleTextView = (TextView) itemView.findViewById(android.R.id.text1);
+            mSourceTextView = (TextView) itemView.findViewById(R.id.source);
             mCommentButton = (ImageButton) itemView.findViewById(R.id.comment);
         }
     }

@@ -379,6 +379,11 @@ public class FavoriteManager {
         }
 
         @Override
+        public String getSource() {
+            return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
+        }
+
+        @Override
         public String toString() {
             return String.format("%s - %s", title, url);
         }

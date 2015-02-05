@@ -112,12 +112,6 @@ public interface ItemManager {
         String getText();
 
         /**
-         * Gets item source
-         * @return item source or null
-         */
-        String getSource();
-
-        /**
          * Gets formatted posted time for display
          * @param context an instance of {@link android.content.Context}
          * @return  displayed time
@@ -201,5 +195,11 @@ public interface ItemManager {
          * @return item ID
          */
         String getId();
+
+        /**
+         * Gets item source
+         * @return item source or null
+         */
+        String getSource();
     }
 }

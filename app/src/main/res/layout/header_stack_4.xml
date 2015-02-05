@@ -12,7 +12,7 @@
 
     <View
         android:background="@drawable/header_card"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
 
     <View
         android:background="@drawable/header_card"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
 
     <View
         android:background="@drawable/header_card"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_width="match_parent"

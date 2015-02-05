@@ -8,6 +8,8 @@
     style="@style/AppCardView.Header">
     <LinearLayout
         android:orientation="vertical"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
@@ -17,7 +19,8 @@
             style="@style/textSubtitleStyle" />
         <TextView
             android:id="@android:id/text2"
-            android:padding="@dimen/padding"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
             android:text="@string/loading_text"
             android:maxLines="@integer/header_max_lines"
             android:ellipsize="end"

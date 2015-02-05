@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -9,7 +8,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -175,9 +173,7 @@ public class ItemActivity extends BaseItemActivity {
         mHeaderCardView = (CardView) findViewById(R.id.header_card_view);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
-            titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    getResources().getDimension(R.dimen.abc_text_size_medium_material));
-            titleTextView.setTypeface(titleTextView.getTypeface(), Typeface.BOLD);
+            titleTextView.setTextAppearance(this, R.style.textTitleStyle);
             if (!TextUtils.isEmpty(story.getSource())) {
                 TextView sourceTextView = (TextView) findViewById(R.id.source);
                 sourceTextView.setText(story.getSource());
@@ -208,7 +204,7 @@ public class ItemActivity extends BaseItemActivity {
 
         int level = getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0);
         int stackResId = -1;
-        int marginTop = getResources().getDimensionPixelSize(R.dimen.margin) * Math.min(level, 4);
+        int marginTop = getResources().getDimensionPixelSize(R.dimen.cardview_header_elevation) * Math.min(level, 4);
         // TODO can improve?
         switch (level) {
             case 0:
