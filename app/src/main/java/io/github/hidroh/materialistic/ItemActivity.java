@@ -301,17 +301,16 @@ public class ItemActivity extends BaseItemActivity {
                     if (item.getKidCount() > 0) {
                         holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
                         holder.mCommentButton.setVisibility(View.VISIBLE);
+                        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                openItem(holder, item);
+                            }
+                        });
                         holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
-                                intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-                                intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL,
-                                        getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0) + 1);
-                                final ActivityOptionsCompat options = ActivityOptionsCompat
-                                        .makeSceneTransitionAnimation(ItemActivity.this,
-                                                holder.itemView, getString(R.string.transition_item_container));
-                                ActivityCompat.startActivity(ItemActivity.this, intent, options.toBundle());
+                                openItem(holder, item);
                             }
                         });
                     }
@@ -321,6 +320,17 @@ public class ItemActivity extends BaseItemActivity {
             @Override
             public int getItemCount() {
                 return items.length;
+            }
+
+            private void openItem(ItemViewHolder holder, ItemManager.Item item) {
+                final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
+                intent.putExtra(ItemActivity.EXTRA_ITEM, item);
+                intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL,
+                        getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0) + 1);
+                final ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(ItemActivity.this,
+                                holder.itemView, getString(R.string.transition_item_container));
+                ActivityCompat.startActivity(ItemActivity.this, intent, options.toBundle());
             }
         });
     }
