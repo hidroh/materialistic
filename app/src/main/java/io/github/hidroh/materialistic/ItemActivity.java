@@ -301,7 +301,7 @@ public class ItemActivity extends BaseItemActivity {
                     if (item.getKidCount() > 0) {
                         holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
                         holder.mCommentButton.setVisibility(View.VISIBLE);
-                        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
