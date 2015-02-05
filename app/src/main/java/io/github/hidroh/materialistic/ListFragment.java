@@ -23,6 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -36,7 +39,7 @@ public class ListFragment extends Fragment {
     private ItemManager.Item[] mItems = new ItemManager.Item[0];
     private ItemManager mItemManager;
     private View mEmptyView;
-    private boolean mResumed;
+    private Set<String> mChangedFavorites = new HashSet<>();
 
     public static ListFragment instantiate(Context context, ItemManager itemManager) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
@@ -60,13 +63,12 @@ public class ListFragment extends Fragment {
                     return;
                 }
 
-                if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction()) ||
-                        FavoriteManager.ACTION_ADD.equals(intent.getAction()) ||
-                        FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
+                if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
                     mLocalRevision++;
-                    if (!mResumed) { // only refresh view if in background
-                        mRecyclerView.getAdapter().notifyDataSetChanged();
-                    }
+                } else if (FavoriteManager.ACTION_ADD.equals(intent.getAction())) {
+                    mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
+                } else if (FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
+                    mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_REMOVE_EXTRA_DATA));
                 }
             }
         };
@@ -125,19 +127,14 @@ public class ListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mResumed = true;
+        // refresh favorite state if any changes
+        mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArray(EXTRA_ITEMS, mItems);
-    }
-
-    @Override
-    public void onPause() {
-        mResumed = false;
-        super.onPause();
     }
 
     @Override
@@ -206,8 +203,9 @@ public class ListFragment extends Fragment {
         public void onBindViewHolder(final ItemViewHolder holder, final int position) {
             final ItemManager.Item story = mItems[position];
             holder.mRankTextView.setText(String.valueOf(position + 1));
-            if (story.getLocalRevision() < mLocalRevision) {
+            if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
                 story.setLocalRevision(mLocalRevision);
+                mChangedFavorites.remove(story.getId());
                 FavoriteManager.check(getActivity(), story.getId(),
                         new FavoriteManager.OperationCallbacks() {
                             @Override
