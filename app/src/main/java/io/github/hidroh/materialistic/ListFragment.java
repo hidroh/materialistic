@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -119,8 +120,11 @@ public class ListFragment extends Fragment {
         if (savedInstanceState == null) {
             bindData();
         } else {
-            mItems =(ItemManager.Item[]) savedInstanceState.getParcelableArray(EXTRA_ITEMS);
-            mRecyclerView.getAdapter().notifyDataSetChanged();
+            final Parcelable[] savedItems = savedInstanceState.getParcelableArray(EXTRA_ITEMS);
+            if (savedItems instanceof ItemManager.Item[]) {
+                mItems = (ItemManager.Item[]) savedItems;
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
         }
     }
 
