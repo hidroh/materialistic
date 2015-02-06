@@ -24,7 +24,9 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class WebFragment extends Fragment {
 
+    private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
+    private WebView mWebView;
 
     public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
@@ -36,9 +38,9 @@ public class WebFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.activity_web, container, false);
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        final WebView webView = (WebView) view.findViewById(R.id.web_view);
-        webView.setWebViewClient(new WebViewClient());
-        webView.setWebChromeClient(new WebChromeClient() {
+        mWebView = (WebView) view.findViewById(R.id.web_view);
+        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
@@ -48,7 +50,7 @@ public class WebFragment extends Fragment {
                 }
             }
         });
-        webView.setDownloadListener(new DownloadListener() {
+        mWebView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition,
                                         String mimetype, long contentLength) {
@@ -72,9 +74,28 @@ public class WebFragment extends Fragment {
                 }
             }
         });
-        setWebViewSettings(webView.getSettings());
-        webView.loadUrl(mItem.getUrl());
+        setWebViewSettings(mWebView.getSettings());
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            ItemManager.WebItem savedItem = savedInstanceState.getParcelable(EXTRA_ITEM);
+            if (savedItem != null) {
+                mItem = savedItem;
+            }
+        }
+        if (mItem != null) {
+            mWebView.loadUrl(mItem.getUrl());
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_ITEM, mItem);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

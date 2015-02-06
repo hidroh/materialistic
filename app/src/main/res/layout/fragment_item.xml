@@ -15,6 +15,7 @@
     <TextView
         android:id="@android:id/empty"
         android:text="@string/no_comments"
+        android:layout_centerInParent="true"
         android:visibility="gone"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         style="@style/textEmptyStyle" />
