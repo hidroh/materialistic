@@ -33,6 +33,7 @@
     <item type="id" name="menu_email" />
     <item type="id" name="menu_search" />
     <item type="id" name="menu_favorite" />
+    <item type="id" name="menu_story" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
@@ -21,6 +22,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemFragment extends Fragment {
 
+    public static final String EXTRA_MARGIN = ItemFragment.class.getName() + ".EXTRA_MARGIN";
     private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
@@ -40,6 +42,11 @@ public class ItemFragment extends Fragment {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
         mEmptyView = view.findViewById(android.R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        final int margin = getArguments().getInt(EXTRA_MARGIN, 0);
+        // TODO dirty trick to set margin, assuming parent is relative layout
+        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRecyclerView.getLayoutParams();
+        params.rightMargin = margin;
+        mRecyclerView.setLayoutParams(params);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
             public int getOrientation() {

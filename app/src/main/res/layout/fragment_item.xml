@@ -7,7 +7,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@id/recycler_view"
-        android:paddingTop="@dimen/cardview_header_elevation"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

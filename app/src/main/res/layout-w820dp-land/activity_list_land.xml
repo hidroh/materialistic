@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <FrameLayout
         android:id="@android:id/list"
@@ -9,14 +8,18 @@
     <RelativeLayout
         android:id="@id/content"
         android:elevation="8dp"
+        android:background="@android:color/white"
+        android:layout_toRightOf="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <TextView
+        android:id="@id/empty"
+        android:elevation="8dp"
+        android:layout_toRightOf="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|center_vertical"
         android:background="@color/colorPrimaryLight"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" >
-        <TextView
-            android:id="@id/empty"
-            android:layout_centerInParent="true"
-            android:text="@string/select_story"
-            style="@style/textEmptyStyle" />
-    </RelativeLayout>
-</LinearLayout>
+        android:text="@string/select_story"
+        android:textSize="@dimen/abc_text_size_headline_material"/>
+</RelativeLayout>
