@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +25,7 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
     private boolean mIsStoryMode = true;
     private RelativeLayout mContentContainer;
     private boolean mIsResumed;
+    private ItemManager.Item mSelectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +33,6 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
-        // delay setting title here to allow launcher to get app name
-        setTitle(getString(R.string.title_activity_list));
         createView();
     }
 
@@ -66,8 +67,17 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_comment).setVisible(mIsStoryMode && mWebFragment != null);
-        menu.findItem(R.id.menu_story).setVisible(!mIsStoryMode && mItemFragment != null);
+        menu.findItem(R.id.menu_comment).setVisible(mIsStoryMode && mSelectedItem != null);
+        menu.findItem(R.id.menu_story).setVisible(!mIsStoryMode && mSelectedItem != null);
+        menu.findItem(R.id.menu_share).setVisible(mSelectedItem != null);
+        if (mSelectedItem != null && mSelectedItem.isShareable()) {
+            ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
+                    menu.findItem(R.id.menu_share));
+            shareActionProvider.setShareIntent(AppUtils.makeShareIntent(
+                    getString(R.string.share_format,
+                            mSelectedItem.getDisplayedTitle(),
+                            mSelectedItem.getUrl())));
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -88,6 +98,8 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
 
     @Override
     public void onItemOpen(ItemManager.Item story) {
+        setTitle(story.getDisplayedTitle());
+        mSelectedItem = story;
         findViewById(R.id.empty).setVisibility(View.GONE);
         mWebFragment = WebFragment.instantiate(this, story);
         Bundle args = new Bundle();
@@ -118,6 +130,8 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
     }
 
     private void createView() {
+        // delay setting title here to allow launcher to get app name
+        setTitle(getString(R.string.title_activity_list));
         mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
         mContentView.removeAllViews();
         if (mIsMultiPane) {
@@ -132,6 +146,7 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
         } else {
             mItemFragment = null;
             mWebFragment = null;
+            mSelectedItem = null;
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.content_frame,

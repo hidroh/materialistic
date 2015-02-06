@@ -3,9 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@id/menu_comment"
         android:title="@string/title_activity_item"
-        app:showAsAction="always|withText" />
+        android:icon="@drawable/ic_mode_comment_white_36dp"
+        app:showAsAction="always" />
     <item android:id="@id/menu_story"
         android:title="@string/title_activity_web"
+        android:icon="@drawable/ic_subject_white_36dp"
         android:visible="false"
-        app:showAsAction="always|withText" />
+        app:showAsAction="always" />
+    <item android:id="@id/menu_share"
+        android:title="@string/share_via"
+        app:showAsAction="always"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
 </menu>
