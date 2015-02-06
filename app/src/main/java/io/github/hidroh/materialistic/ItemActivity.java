@@ -2,18 +2,12 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,10 +22,7 @@ public class ItemActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
     private static final String PARAM_ID = "id";
-    private RecyclerView mRecyclerView;
-    private View mEmptyView;
     private ItemManager.Item mItem;
-    private int mLocalRevision = 0;
     private CardView mHeaderCardView;
     private boolean mFavoriteBound;
 
@@ -39,15 +30,6 @@ public class ItemActivity extends BaseItemActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
-        mEmptyView = findViewById(android.R.id.empty);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this) {
-            @Override
-            public int getOrientation() {
-                return LinearLayout.VERTICAL;
-            }
-        });
-        mRecyclerView.setHasFixedSize(true);
 
         final Intent intent = getIntent();
         String itemId = null;
@@ -241,111 +223,19 @@ public class ItemActivity extends BaseItemActivity {
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
-        bindKidData(story.getKidItems());
+        final Bundle args = new Bundle();
+        args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
+        // TODO only add if not paused
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.sub_item_view,
+                        ItemFragment.instantiate(this, mItem, args),
+                        ItemFragment.class.getName())
+                .commit();
     }
 
     private void decorateFavorite(boolean isFavorite) {
         mHeaderCardView.findViewById(R.id.bookmarked)
                 .setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    private void bindKidData(final ItemManager.Item[] items) {
-        if (items == null || items.length == 0) {
-            mEmptyView.setVisibility(View.VISIBLE);
-            return;
-        }
-
-        mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>() {
-            @Override
-            public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new ItemViewHolder(getLayoutInflater()
-                        .inflate(R.layout.activity_sub_item, parent, false));
-            }
-
-            @Override
-            public void onBindViewHolder(final ItemViewHolder holder, int position) {
-                final ItemManager.Item item = items[position];
-                if (item.getLocalRevision() < mLocalRevision) {
-                    bindKidItem(holder, null);
-                    HackerNewsClient.getInstance(ItemActivity.this).getItem(item.getId(),
-                            new ItemManager.ResponseListener<ItemManager.Item>() {
-                                @Override
-                                public void onResponse(ItemManager.Item response) {
-                                    if (response == null) {
-                                        return;
-                                    }
-
-                                    item.populate(response);
-                                    item.setLocalRevision(mLocalRevision);
-                                    bindKidItem(holder, item);
-                                }
-
-                                @Override
-                                public void onError(String errorMessage) {
-                                    // do nothing
-                                }
-                            });
-                } else {
-                    bindKidItem(holder, item);
-                }
-            }
-
-            private void bindKidItem(final ItemViewHolder holder, final ItemManager.Item item) {
-                if (item == null) {
-                    holder.mPostedTextView.setText(getString(R.string.loading_text));
-                    holder.mContentTextView.setText(getString(R.string.loading_text));
-                    holder.mCommentButton.setVisibility(View.INVISIBLE);
-                } else {
-                    holder.mPostedTextView.setText(item.getDisplayedTime(ItemActivity.this));
-                    AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
-                    if (item.getKidCount() > 0) {
-                        holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
-                        holder.mCommentButton.setVisibility(View.VISIBLE);
-                        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                openItem(holder, item);
-                            }
-                        });
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                openItem(holder, item);
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public int getItemCount() {
-                return items.length;
-            }
-
-            private void openItem(ItemViewHolder holder, ItemManager.Item item) {
-                final Intent intent = new Intent(ItemActivity.this, ItemActivity.class);
-                intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-                intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL,
-                        getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0) + 1);
-                final ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(ItemActivity.this,
-                                holder.itemView, getString(R.string.transition_item_container));
-                ActivityCompat.startActivity(ItemActivity.this, intent, options.toBundle());
-            }
-        });
-    }
-
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private final TextView mPostedTextView;
-        private final TextView mContentTextView;
-        private final Button mCommentButton;
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mContentTextView = (TextView) itemView.findViewById(android.R.id.text1);
-            mCommentButton = (Button) itemView.findViewById(R.id.comment);
-            mCommentButton.setVisibility(View.INVISIBLE);
-        }
     }
 }

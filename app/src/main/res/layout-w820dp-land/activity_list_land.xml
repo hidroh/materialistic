@@ -6,8 +6,8 @@
         android:id="@android:id/list"
         android:layout_width="480dp"
         android:layout_height="match_parent"/>
-    <FrameLayout
-        android:id="@+id/web_view_container"
+    <RelativeLayout
+        android:id="@id/content"
         android:elevation="8dp"
         android:background="@color/colorPrimaryLight"
         android:layout_weight="1"
@@ -15,8 +15,8 @@
         android:layout_height="match_parent" >
         <TextView
             android:id="@id/empty"
-            android:layout_gravity="center_vertical"
+            android:layout_centerInParent="true"
             android:text="@string/select_story"
             style="@style/textEmptyStyle" />
-    </FrameLayout>
+    </RelativeLayout>
 </LinearLayout>

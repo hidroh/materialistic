@@ -59,7 +59,7 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(R.id.web_view_container,
+                .replace(R.id.content,
                         WebFragment.instantiate(this, story),
                         WebFragment.class.getName())
                 .commit();
