@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="multi_pane">false</bool>
+    <bool name="pref_external_enabled">true</bool>
 </resources>
