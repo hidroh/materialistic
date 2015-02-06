@@ -51,6 +51,10 @@ public class WebFragment extends Fragment {
             public void onDownloadStart(String url, String userAgent, String contentDisposition,
                                         String mimetype, long contentLength) {
                 final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                if (getActivity() == null) {
+                    return;
+                }
+
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(intent);
                 }

@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -42,6 +43,7 @@ public class ListFragment extends Fragment {
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
     private ItemOpenListener mItemOpenListener;
+    private String mSelectedItemId;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
@@ -246,6 +248,7 @@ public class ListFragment extends Fragment {
                     openItem(story, holder);
                 }
             });
+            decorateCardSelection(holder, story.getId());
         }
 
         @Override
@@ -295,6 +298,12 @@ public class ListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (getResources().getBoolean(R.bool.multi_pane)) {
+                            if (!TextUtils.isEmpty(mSelectedItemId) && story.getId().equals(mSelectedItemId)) {
+                                return;
+                            }
+
+                            mSelectedItemId = story.getId();
+                            notifyDataSetChanged();
                             mItemOpenListener.onItemOpen(story);
                         } else {
                             if (PreferenceManager.getDefaultSharedPreferences(getActivity())
@@ -333,6 +342,17 @@ public class ListFragment extends Fragment {
                     .makeSceneTransitionAnimation(getActivity(),
                             holder.itemView, getString(R.string.transition_item_container));
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        }
+
+        private void decorateCardSelection(ItemViewHolder holder, String itemId) {
+            if (!getResources().getBoolean(R.bool.multi_pane)) {
+                return;
+            }
+
+            ((CardView) holder.itemView).setCardBackgroundColor(
+                    getResources().getColor(
+                            !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ?
+                                    R.color.colorPrimaryLight : R.color.cardview_light_background));
         }
     }
 
