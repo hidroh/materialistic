@@ -1,7 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -56,7 +58,17 @@ public class WebFragment extends Fragment {
                 }
 
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(intent);
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage(R.string.confirm_download)
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .create()
+                            .show();
                 }
             }
         });

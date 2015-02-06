@@ -84,5 +84,6 @@
     <string name="save_story">Save story</string>
     <string name="unsave_story">Unsave story</string>
     <string name="select_story">Select a story to view</string>
+    <string name="confirm_download">View this file in another app?</string>
 
 </resources>
