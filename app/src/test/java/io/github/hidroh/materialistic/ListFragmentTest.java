@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import org.assertj.android.api.Assertions;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
@@ -35,12 +35,12 @@ import static org.robolectric.Robolectric.shadowOf_;
 @Config(emulateSdk = 18, reportSdk = 18, shadows = {ShadowSwipeRefreshLayout.class})
 @RunWith(RobolectricTestRunner.class)
 public class ListFragmentTest {
-    private ActivityController<FragmentActivity> controller;
-    private FragmentActivity activity;
+    private ActivityController<ListActivity> controller;
+    private ListActivity activity;
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(FragmentActivity.class)
+        controller = Robolectric.buildActivity(ListActivity.class)
                         .create().start().resume().visible();
         activity = controller.get();
     }

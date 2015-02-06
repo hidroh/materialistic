@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
@@ -15,20 +14,21 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
 @Config(emulateSdk = 18, reportSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class ListFragmentViewHolderEdgeTest {
-    private ActivityController<FragmentActivity> controller;
+    private ActivityController<ListActivity> controller;
     private RecyclerView.ViewHolder holder;
-    private FragmentActivity activity;
+    private ListActivity activity;
     public ItemManager.ResponseListener<ItemManager.Item> listener;
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(FragmentActivity.class)
+        controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
         activity = controller.get();
         activity.getSupportFragmentManager()
