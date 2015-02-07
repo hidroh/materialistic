@@ -3,7 +3,8 @@
     android:layout_gravity="center_vertical|center"
     android:gravity="center|center_vertical"
     android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:background="@color/background_material_light"
+    android:layout_width="match_parent" android:layout_height="match_parent">
     <TextView
         android:id="@android:id/title"
         android:text="@string/no_saved_stories"
@@ -18,7 +19,7 @@
         android:layout_height="wrap_content" />
     <ImageView
         android:src="@drawable/arrow"
-        android:layout_width="48dp"
+        android:layout_width="wrap_content"
         android:layout_height="48dp" />
     <TextView
         android:text="@string/try_me"

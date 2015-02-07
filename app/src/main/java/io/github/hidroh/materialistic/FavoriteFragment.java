@@ -25,7 +25,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +52,7 @@ public class FavoriteFragment extends Fragment
     private String mFilter;
     private SearchView mSearchView;
     private boolean mSearchViewVisible;
+    private boolean mIsResumed;
 
     @Override
     public void onAttach(final Activity activity) {
@@ -104,6 +104,11 @@ public class FavoriteFragment extends Fragment
                             .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    if (!mIsResumed) {
+                                        // TODO should dismiss dialog on orientation changed
+                                        return;
+                                    }
+
                                     FavoriteManager.remove(activity, mSelected);
                                     actionMode.finish();
                                 }
@@ -163,6 +168,10 @@ public class FavoriteFragment extends Fragment
             @Override
             public void onChanged() {
                 super.onChanged();
+                if (!mIsResumed) {
+                    return;
+                }
+
                 if (mAdapter.getItemCount() == 0) {
                     recyclerView.setVisibility(View.INVISIBLE);
                     if (TextUtils.isEmpty(mFilter)) {
@@ -184,6 +193,7 @@ public class FavoriteFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        mIsResumed = true;
         getLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
     }
 
@@ -305,9 +315,18 @@ public class FavoriteFragment extends Fragment
     }
 
     @Override
+    public void onPause() {
+        mIsResumed = false;
+        super.onPause();
+    }
+
+    @Override
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
         super.onDetach();
     }
 

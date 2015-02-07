@@ -42,6 +42,7 @@
         <activity
             android:name=".FavoriteActivity"
             android:label="@string/title_activity_favorite"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop" >
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
