@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.widget.RelativeLayout;
 
-public class FavoriteActivity extends BaseActivity {
+import io.github.hidroh.materialistic.data.ItemManager;
+
+public class FavoriteActivity extends BaseActivity implements ItemOpenListener {
 
     private FavoriteFragment mFavoriteFragment;
     private boolean mIsResumed;
@@ -47,6 +50,26 @@ public class FavoriteActivity extends BaseActivity {
         super.onPause();
     }
 
+    @Override
+    public void onItemOpen(ItemManager.WebItem item) {
+        if (item == null) {
+            setTitle(getString(R.string.title_activity_favorite));
+            findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            removeFragment(beginFragmentTransaction(), WebFragment.class.getName());
+        } else {
+            setTitle(item.getDisplayedTitle());
+            findViewById(R.id.empty).setVisibility(View.INVISIBLE);
+            mContentContainer.setBackgroundColor(getResources().getColor(android.R.color.white));
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .replace(R.id.content,
+                            WebFragment.instantiate(this, item),
+                            WebFragment.class.getName())
+                    .commit();
+        }
+    }
+
     private void handleConfigurationChanged() {
         if (!mIsResumed) {
             return;
@@ -58,6 +81,7 @@ public class FavoriteActivity extends BaseActivity {
     }
 
     private void createView() {
+        setTitle(getString(R.string.title_activity_favorite));
         mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
         mContentView.removeAllViews();
         if (mFavoriteFragment != null) {

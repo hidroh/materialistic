@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -17,7 +16,7 @@ import android.widget.RelativeLayout;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ListActivity extends BaseActivity implements ListFragment.ItemOpenListener {
+public class ListActivity extends BaseActivity implements ItemOpenListener {
 
     private boolean mIsMultiPane;
     private WebFragment mWebFragment;
@@ -25,7 +24,7 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
     private boolean mIsStoryMode = true;
     private RelativeLayout mContentContainer;
     private boolean mIsResumed;
-    private ItemManager.Item mSelectedItem;
+    private ItemManager.WebItem mSelectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +96,7 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
     }
 
     @Override
-    public void onItemOpen(ItemManager.Item story) {
+    public void onItemOpen(ItemManager.WebItem story) {
         setTitle(story.getDisplayedTitle());
         mSelectedItem = story;
         findViewById(R.id.empty).setVisibility(View.GONE);
@@ -105,7 +104,8 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
         Bundle args = new Bundle();
         args.putInt(ItemFragment.EXTRA_MARGIN,
                 getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin));
-        mItemFragment = ItemFragment.instantiate(this, story, args);
+        // TODO assume story is Item
+        mItemFragment = ItemFragment.instantiate(this, (ItemManager.Item) story, args);
         FragmentTransaction transaction = beginFragmentTransaction()
                 .add(R.id.content, mItemFragment, ItemFragment.class.getName())
                 .add(R.id.content, mWebFragment, WebFragment.class.getName());
@@ -169,19 +169,5 @@ public class ListActivity extends BaseActivity implements ListFragment.ItemOpenL
         mContentContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
         mIsStoryMode = false;
         supportInvalidateOptionsMenu();
-    }
-
-    private FragmentTransaction beginFragmentTransaction() {
-        final FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        return transaction;
-    }
-
-    private void removeFragment(FragmentTransaction transaction, String tag) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        if (fragment != null) {
-            transaction.remove(fragment);
-        }
     }
 }

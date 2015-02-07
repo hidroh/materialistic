@@ -53,11 +53,14 @@ public class FavoriteFragment extends Fragment
     private SearchView mSearchView;
     private boolean mSearchViewVisible;
     private boolean mIsResumed;
+    private String mSelectedItemId;
+    private ItemOpenListener mItemOpenListener;
 
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
+        mItemOpenListener = (ItemOpenListener) activity;
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -107,6 +110,10 @@ public class FavoriteFragment extends Fragment
                                     if (!mIsResumed) {
                                         // TODO should dismiss dialog on orientation changed
                                         return;
+                                    }
+
+                                    if (mSelected.contains(mSelectedItemId)) {
+                                        mItemOpenListener.onItemOpen(null);
                                     }
 
                                     FavoriteManager.remove(activity, mSelected);
@@ -324,6 +331,7 @@ public class FavoriteFragment extends Fragment
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
+        mItemOpenListener = null;
         if (mActionMode != null) {
             mActionMode.finish();
         }
@@ -386,11 +394,21 @@ public class FavoriteFragment extends Fragment
                 public void onClick(View v) {
                     if (mActionMode == null) {
                         mSearchViewVisible = false;
-                        if (PreferenceManager.getDefaultSharedPreferences(getActivity())
-                                .getBoolean(getString(R.string.pref_item_click), false)) {
-                            openItem(favorite, holder);
+                        if (getResources().getBoolean(R.bool.multi_pane)) {
+                            if (!TextUtils.isEmpty(mSelectedItemId) && favorite.getId().equals(mSelectedItemId)) {
+                                return;
+                            }
+
+                            mSelectedItemId = favorite.getId();
+                            notifyDataSetChanged();
+                            mItemOpenListener.onItemOpen(favorite);
                         } else {
-                            AppUtils.openWebUrl(getActivity(), favorite);
+                            if (PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                    .getBoolean(getString(R.string.pref_item_click), false)) {
+                                openItem(favorite, holder);
+                            } else {
+                                AppUtils.openWebUrl(getActivity(), favorite);
+                            }
                         }
                     } else {
                         toggle(favorite.getId(), position);
@@ -403,6 +421,9 @@ public class FavoriteFragment extends Fragment
                     if (mActionMode == null && !mSearchViewVisible) {
                         mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
                         toggle(favorite.getId(), position);
+                        if (mSelectedItemId != null) {
+                            mSelected.add(mSelectedItemId);
+                        }
                         return true;
                     }
 
@@ -415,6 +436,7 @@ public class FavoriteFragment extends Fragment
                     openItem(favorite, holder);
                 }
             });
+            decorateCardSelection(holder, favorite.getId());
         }
 
         private void openItem(FavoriteManager.Favorite favorite, FavoriteViewHolder holder) {
@@ -429,6 +451,21 @@ public class FavoriteFragment extends Fragment
         @Override
         public int getItemCount() {
             return mCursor == null ? 0 : mCursor.getCount();
+        }
+
+        private void decorateCardSelection(FavoriteViewHolder holder, String itemId) {
+            if (!getResources().getBoolean(R.bool.multi_pane)) {
+                return;
+            }
+
+            if (!TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ||
+                    mSelected.contains(itemId)) {
+                ((CardView) holder.itemView).setCardBackgroundColor(
+                        getResources().getColor(R.color.colorPrimaryLight));
+            } else {
+                ((CardView) holder.itemView).setCardBackgroundColor(
+                        getResources().getColor(R.color.cardview_light_background));
+            }
         }
     }
 

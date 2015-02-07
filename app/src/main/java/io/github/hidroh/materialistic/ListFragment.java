@@ -356,7 +356,4 @@ public class ListFragment extends Fragment {
         }
     }
 
-    public interface ItemOpenListener {
-        void onItemOpen(ItemManager.Item story);
-    }
 }

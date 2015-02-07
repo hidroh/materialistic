@@ -2,6 +2,8 @@ package io.github.hidroh.materialistic;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -62,11 +64,25 @@ public abstract class BaseActivity extends TrackableActivity {
         }
     }
 
+    public ViewGroup getContentView() {
+        return mContentView;
+    }
+
     protected void closeDrawers() {
         mDrawerLayout.closeDrawers();
     }
 
-    public ViewGroup getContentView() {
-        return mContentView;
+    protected FragmentTransaction beginFragmentTransaction() {
+        final FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        return transaction;
+    }
+
+    protected void removeFragment(FragmentTransaction transaction, String tag) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if (fragment != null) {
+            transaction.remove(fragment);
+        }
     }
 }
