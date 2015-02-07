@@ -66,4 +66,7 @@ public abstract class BaseActivity extends TrackableActivity {
         mDrawerLayout.closeDrawers();
     }
 
+    public ViewGroup getContentView() {
+        return mContentView;
+    }
 }
