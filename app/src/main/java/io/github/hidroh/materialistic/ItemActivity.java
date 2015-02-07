@@ -25,6 +25,7 @@ public class ItemActivity extends BaseItemActivity {
     private ItemManager.Item mItem;
     private CardView mHeaderCardView;
     private boolean mFavoriteBound;
+    private boolean mIsResumed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +79,36 @@ public class ItemActivity extends BaseItemActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return mItem != null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_external) {
+            AppUtils.openWebUrlExternal(this, mItem.getUrl());
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        mIsResumed = true;
+    }
+
+    @Override
     protected void onPause() {
         mFavoriteBound = false;
+        mIsResumed = false;
         super.onPause();
     }
 
@@ -123,27 +152,6 @@ public class ItemActivity extends BaseItemActivity {
 
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return mItem != null;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this, mItem.getUrl());
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void bindData(final ItemManager.Item story) {
@@ -225,13 +233,14 @@ public class ItemActivity extends BaseItemActivity {
         }
         final Bundle args = new Bundle();
         args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
-        // TODO only add if not paused
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.sub_item_view,
-                        ItemFragment.instantiate(this, mItem, args),
-                        ItemFragment.class.getName())
-                .commit();
+        if (mIsResumed) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.sub_item_view,
+                            ItemFragment.instantiate(this, mItem, args),
+                            ItemFragment.class.getName())
+                    .commit();
+        }
     }
 
     private void decorateFavorite(boolean isFavorite) {
