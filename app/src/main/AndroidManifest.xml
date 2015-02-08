@@ -22,7 +22,8 @@
         </activity>
         <activity
             android:name=".ItemActivity"
-            android:label="@string/title_activity_item" >
+            android:label="@string/title_activity_item"
+            android:configChanges="orientation|screenSize" >
             <intent-filter android:label="@string/filter_title_item" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -48,7 +49,8 @@
         </activity>
         <activity
             android:name=".WebActivity"
-            android:label="@string/title_activity_web" >
+            android:label="@string/title_activity_web"
+            android:configChanges="orientation|screenSize" >
         </activity>
         <activity
             android:name=".FavoriteActivity"
@@ -63,15 +65,18 @@
         </activity>
         <activity
             android:name=".AboutActivity"
-            android:label="@string/title_activity_about" >
+            android:label="@string/title_activity_about"
+            android:configChanges="orientation|screenSize" >
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings" >
+            android:label="@string/action_settings"
+            android:configChanges="orientation|screenSize" >
         </activity>
         <activity
             android:name=".ActionBarSettingsActivity"
-            android:label="@string/action_settings" >
+            android:label="@string/action_settings"
+            android:configChanges="orientation|screenSize" >
         </activity>
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"

@@ -236,7 +236,7 @@ public class ItemActivity extends BaseItemActivity {
         if (mIsResumed) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.sub_item_view,
+                    .replace(R.id.sub_item_view,
                             ItemFragment.instantiate(this, mItem, args),
                             ItemFragment.class.getName())
                     .commit();
