@@ -28,7 +28,6 @@
             android:id="@id/source"
             android:text="@string/loading_text"
             android:layout_below="@id/title"
-            android:visibility="gone"
             style="@style/textSubtitleStyle" />
         <ImageButton
             android:id="@id/comment"
