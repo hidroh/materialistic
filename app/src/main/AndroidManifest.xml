@@ -70,13 +70,11 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings"
-            android:configChanges="orientation|screenSize" >
+            android:label="@string/action_settings" >
         </activity>
         <activity
             android:name=".ActionBarSettingsActivity"
-            android:label="@string/action_settings"
-            android:configChanges="orientation|screenSize" >
+            android:label="@string/action_settings" >
         </activity>
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"
