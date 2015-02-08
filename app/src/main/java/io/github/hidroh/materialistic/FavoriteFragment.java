@@ -352,7 +352,7 @@ public class FavoriteFragment extends Fragment
         @Override
         public FavoriteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new FavoriteViewHolder(getLayoutInflater(null)
-                    .inflate(R.layout.activity_favorite_item, parent, false));
+                    .inflate(R.layout.item_favorite, parent, false));
         }
 
         @Override

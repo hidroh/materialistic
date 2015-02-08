@@ -199,7 +199,7 @@ public class ListFragment extends Fragment {
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ItemViewHolder(getLayoutInflater(null)
-                    .inflate(R.layout.fragment_list_item, parent, false));
+                    .inflate(R.layout.item_story, parent, false));
         }
 
         @Override

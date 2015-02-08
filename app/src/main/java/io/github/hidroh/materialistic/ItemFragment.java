@@ -140,7 +140,7 @@ public class ItemFragment extends Fragment {
             @Override
             public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 return new ItemViewHolder(getLayoutInflater(savedInstanceState)
-                        .inflate(R.layout.activity_sub_item, parent, false));
+                        .inflate(R.layout.item_comment, parent, false));
             }
 
             @Override
