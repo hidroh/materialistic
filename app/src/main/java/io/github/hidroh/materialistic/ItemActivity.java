@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -26,6 +27,7 @@ public class ItemActivity extends BaseItemActivity {
     private CardView mHeaderCardView;
     private boolean mFavoriteBound;
     private boolean mIsResumed = true;
+    private boolean mOrientationChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,12 @@ public class ItemActivity extends BaseItemActivity {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mOrientationChanged = !mOrientationChanged;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         bindFavorite();
@@ -110,6 +118,20 @@ public class ItemActivity extends BaseItemActivity {
         mFavoriteBound = false;
         mIsResumed = false;
         super.onPause();
+    }
+
+    @Override
+    public void supportFinishAfterTransition() {
+        if (mOrientationChanged && mItem.isShareable()) {
+            /**
+             * if item is a story and orientation changed, finishing activity with shared element
+             * transition may cause NPE if the original element is not visible in the returned
+             * activity due to new orientation, we just finish without transition here
+             */
+            finish();
+        } else {
+            super.supportFinishAfterTransition();
+        }
     }
 
     private void bindFavorite() {
