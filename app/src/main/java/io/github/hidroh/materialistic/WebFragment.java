@@ -36,7 +36,7 @@ public class WebFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.activity_web, container, false);
+        final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_web, container, false);
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setWebViewClient(new WebViewClient());

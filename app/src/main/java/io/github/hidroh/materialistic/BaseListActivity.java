@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.RelativeLayout;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -26,7 +25,6 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
     private WebFragment mWebFragment;
     private ItemFragment mItemFragment;
     private boolean mIsStoryMode = true;
-    private RelativeLayout mContentContainer;
     private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
 
@@ -91,12 +89,12 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_comment) {
-            openComment(beginAnimatedFragmentTransaction());
+            openComment(beginToggleFragmentTransaction());
             return true;
         }
 
         if (item.getItemId() == R.id.menu_story) {
-            openStory(beginAnimatedFragmentTransaction());
+            openStory(beginToggleFragmentTransaction());
             return true;
         }
 
@@ -105,7 +103,7 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
 
     @Override
     public void onItemOpen(ItemManager.WebItem item) {
-        FragmentTransaction transaction = beginAnimatedFragmentTransaction();
+        FragmentTransaction transaction = beginSwapFragmentTransaction();
         removeFragment(transaction, WebFragment.class.getName());
         removeFragment(transaction, ItemFragment.class.getName());
         if (item == null) {
@@ -177,7 +175,6 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
         final FragmentTransaction transaction = removeFragment(beginFragmentTransaction(), LIST_FRAGMENT_TAG);
         if (mIsMultiPane) {
             setContentView(R.layout.activity_list_land);
-            mContentContainer = (RelativeLayout) findViewById(R.id.content);
             transaction
                     .replace(android.R.id.list,
                             instantiateListFragment(),
@@ -198,15 +195,25 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
 
     private void openStory(FragmentTransaction transaction) {
         transaction.hide(mItemFragment).show(mWebFragment).commit();
-        mContentContainer.setBackgroundColor(getResources().getColor(android.R.color.white));
         mIsStoryMode = true;
         supportInvalidateOptionsMenu();
     }
 
     private void openComment(FragmentTransaction transaction) {
         transaction.hide(mWebFragment).show(mItemFragment).commit();
-        mContentContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
         mIsStoryMode = false;
         supportInvalidateOptionsMenu();
+    }
+
+    private FragmentTransaction beginSwapFragmentTransaction() {
+        final FragmentTransaction transaction = beginFragmentTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        return transaction;
+    }
+
+    private FragmentTransaction beginToggleFragmentTransaction() {
+        final FragmentTransaction transaction = beginFragmentTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right);
+        return transaction;
     }
 }

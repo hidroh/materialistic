@@ -77,16 +77,6 @@ public abstract class BaseActivity extends TrackableActivity {
     }
 
     /**
-     * Begins fragment transaction with fade animation
-     * @return fragment transaction
-     */
-    protected FragmentTransaction beginAnimatedFragmentTransaction() {
-        final FragmentTransaction transaction = beginFragmentTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        return transaction;
-    }
-
-    /**
      * Removes fragment with given tag if any
      * @param transaction   fragment transaction
      * @param tag           tag of fragment to be removed
