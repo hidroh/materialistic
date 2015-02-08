@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -177,6 +178,13 @@ public class FavoriteFragment extends Fragment
             }
         });
         return view;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mSelectedItemId = null;
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -441,10 +449,6 @@ public class FavoriteFragment extends Fragment
         }
 
         private void decorateCardSelection(FavoriteViewHolder holder, String itemId) {
-            if (!getResources().getBoolean(R.bool.multi_pane)) {
-                return;
-            }
-
             if (!TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ||
                     mSelected.contains(itemId)) {
                 ((CardView) holder.itemView).setCardBackgroundColor(

@@ -15,7 +15,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_width="480dp"
+        android:layout_width="@dimen/list_width"
         android:layout_height="wrap_content" />
     <ImageView
         android:src="@drawable/arrow"

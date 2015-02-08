@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.RelativeLayout;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -34,7 +35,14 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
-        createView();
+        setTitle(getDefaultTitle());
+        setContentView(R.layout.activity_list);
+        onCreateView();
+        beginFragmentTransaction()
+                .replace(android.R.id.list,
+                        instantiateListFragment(),
+                        LIST_FRAGMENT_TAG)
+                .commit();
     }
 
     @Override
@@ -112,7 +120,9 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
             mSelectedItem = null;
             findViewById(R.id.empty).setVisibility(View.VISIBLE);
         } else {
-            setTitle(item.getDisplayedTitle());
+            if (mIsMultiPane) {
+                setTitle(item.getDisplayedTitle());
+            }
             mSelectedItem = item;
             findViewById(R.id.empty).setVisibility(View.GONE);
             mWebFragment = WebFragment.instantiate(this, item);
@@ -163,34 +173,21 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
 
         // only recreate view if orientation change triggers layout change
         if (mIsMultiPane != getResources().getBoolean(R.bool.multi_pane)) {
-            createView();
+            mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
+            final RelativeLayout.LayoutParams params;
+            if (mIsMultiPane) {
+                params = new RelativeLayout.LayoutParams(
+                        getResources().getDimensionPixelSize(R.dimen.list_width),
+                        RelativeLayout.LayoutParams.MATCH_PARENT);
+            } else {
+                setTitle(getDefaultTitle());
+                params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.MATCH_PARENT,
+                        RelativeLayout.LayoutParams.MATCH_PARENT);
+            }
+            findViewById(android.R.id.list).setLayoutParams(params);
+            onItemOpen(null);
         }
-    }
-
-    private void createView() {
-        setTitle(getDefaultTitle());
-        mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
-        mContentView.removeAllViews();
-        onCreateView();
-        final FragmentTransaction transaction = removeFragment(beginFragmentTransaction(), LIST_FRAGMENT_TAG);
-        if (mIsMultiPane) {
-            setContentView(R.layout.activity_list_land);
-            transaction
-                    .replace(android.R.id.list,
-                            instantiateListFragment(),
-                            LIST_FRAGMENT_TAG)
-                    .commit();
-        } else {
-            mItemFragment = null;
-            mWebFragment = null;
-            mSelectedItem = null;
-            transaction
-                    .replace(R.id.content_frame,
-                            instantiateListFragment(),
-                            LIST_FRAGMENT_TAG)
-                    .commit();
-        }
-        supportInvalidateOptionsMenu();
     }
 
     private void openStory(FragmentTransaction transaction) {

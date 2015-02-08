@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -124,6 +125,13 @@ public class ListFragment extends Fragment {
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             }
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mSelectedItemId = null;
+        mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -345,10 +353,6 @@ public class ListFragment extends Fragment {
         }
 
         private void decorateCardSelection(ItemViewHolder holder, String itemId) {
-            if (!getResources().getBoolean(R.bool.multi_pane)) {
-                return;
-            }
-
             ((CardView) holder.itemView).setCardBackgroundColor(
                     getResources().getColor(
                             !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ?
