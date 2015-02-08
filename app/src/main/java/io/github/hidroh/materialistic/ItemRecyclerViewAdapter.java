@@ -14,6 +14,11 @@ import android.widget.TextView;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
+/**
+ * Base {@link android.support.v7.widget.RecyclerView.Adapter} class for list items
+ * @param <VH>  view holder type, should contain title, posted, source and comment views
+ * @param <T>   item type, should provide title, posted, source
+ */
 public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem> extends RecyclerView.Adapter<VH> {
 
     protected String mSelectedItemId;
@@ -31,6 +36,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         super.onDetachedFromRecyclerView(recyclerView);
     }
 
+    /**
+     * Populates view holder with data from given item
+     * @param holder    view holder to populate
+     * @param item      item that contains data
+     */
     protected void bindViewHolder(final VH holder, final T item) {
         holder.mTitleTextView.setText(item.getDisplayedTitle());
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
@@ -65,6 +75,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         decorateCardSelection(holder, item.getId());
     }
 
+    /**
+     * Handles item click
+     * @param item      clicked item
+     * @param holder    clicked item view holder
+     */
     protected void handleItemClick(T item, VH holder) {
         if (mContext.getResources().getBoolean(R.bool.multi_pane)) {
             if (!TextUtils.isEmpty(mSelectedItemId) && item.getId().equals(mSelectedItemId)) {
@@ -84,6 +99,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
     }
 
+    /**
+     * Clears previously bind data from given view holder
+     * @param holder    view holder to clear
+     */
     protected void clearViewHolder(VH holder) {
         holder.mTitleTextView.setText(mContext.getString(R.string.loading_text));
         holder.mPostedTextView.setText(mContext.getString(R.string.loading_text));
@@ -94,7 +113,18 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.itemView.setOnLongClickListener(null);
     }
 
+    /**
+     * Handles item selection
+     * @param item  item that has been selected
+     */
     protected abstract void onItemSelected(T item);
+
+    /**
+     * Checks if item with given ID has been selected
+     * @param itemId    item ID to check
+     * @return  true if selected, false otherwise or if selection is disabled
+     */
+    protected abstract boolean isSelected(String itemId);
 
     private void openItem(T item, ItemViewHolder holder) {
         final Intent intent = new Intent(mContext, ItemActivity.class);
@@ -111,8 +141,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                                 R.color.colorPrimaryLight : R.color.cardview_light_background));
     }
 
-    protected abstract boolean isSelected(String itemId);
-
+    /**
+     * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
+     */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         final TextView mPostedTextView;
         final TextView mTitleTextView;
