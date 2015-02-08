@@ -55,12 +55,21 @@ public class FavoriteFragment extends Fragment
     private boolean mIsResumed;
     private String mSelectedItemId;
     private ItemOpenListener mItemOpenListener;
+    private DataChangedListener mDataChangedListener;
+
+    public static FavoriteFragment instantiate(Context context, String filter) {
+        final FavoriteFragment fragment = (FavoriteFragment) Fragment.instantiate(context,
+                FavoriteFragment.class.getName());
+        fragment.mFilter = filter;
+        return fragment;
+    }
 
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
         mItemOpenListener = (ItemOpenListener) activity;
+        mDataChangedListener = (DataChangedListener) activity;
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -156,21 +165,6 @@ public class FavoriteFragment extends Fragment
         });
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
-        final View emptyView = getLayoutInflater(savedInstanceState).inflate(R.layout.empty_favorite, getBaseActivity().getContentView(), false);
-        emptyView.findViewById(R.id.header_card_view).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                final View bookmark = emptyView.findViewById(R.id.bookmarked);
-                bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-                return true;
-            }
-        });
-        emptyView.setVisibility(View.INVISIBLE);
-        getBaseActivity().getContentView().addView(emptyView);
-        final View emptySearchView = getLayoutInflater(savedInstanceState)
-                .inflate(R.layout.empty_favorite_search, getBaseActivity().getContentView(), false);
-        emptySearchView.setVisibility(View.INVISIBLE);
-        getBaseActivity().getContentView().addView(emptySearchView);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -179,19 +173,7 @@ public class FavoriteFragment extends Fragment
                     return;
                 }
 
-                if (mAdapter.getItemCount() == 0) {
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    if (TextUtils.isEmpty(mFilter)) {
-                        emptyView.setVisibility(View.VISIBLE);
-                    } else {
-                        emptySearchView.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    emptyView.setVisibility(View.INVISIBLE);
-                    emptySearchView.setVisibility(View.INVISIBLE);
-                }
-                getActivity().supportInvalidateOptionsMenu();
+                mDataChangedListener.onDataChanged(mAdapter.getItemCount() == 0, mFilter);
             }
         });
         return view;
@@ -332,12 +314,17 @@ public class FavoriteFragment extends Fragment
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
         mItemOpenListener = null;
+        mDataChangedListener = null;
         if (mActionMode != null) {
             mActionMode.finish();
         }
         super.onDetach();
     }
 
+    /**
+     * Filters list data by given query
+     * @param query query used to filter data
+     */
     public void filter(String query) {
         mFilter = query;
         mSearchViewVisible = false;
@@ -482,5 +469,9 @@ public class FavoriteFragment extends Fragment
             mSourceTextView = (TextView) itemView.findViewById(R.id.source);
             mCommentButton = (ImageButton) itemView.findViewById(R.id.comment);
         }
+    }
+
+    public interface DataChangedListener {
+        void onDataChanged(boolean isEmpty, String filter);
     }
 }

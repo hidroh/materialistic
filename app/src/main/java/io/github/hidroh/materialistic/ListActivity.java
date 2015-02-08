@@ -1,173 +1,23 @@
 package io.github.hidroh.materialistic;
 
-import android.content.res.Configuration;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.RelativeLayout;
+import android.support.v4.app.Fragment;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
-import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ListActivity extends BaseActivity implements ItemOpenListener {
-
-    private boolean mIsMultiPane;
-    private WebFragment mWebFragment;
-    private ItemFragment mItemFragment;
-    private boolean mIsStoryMode = true;
-    private RelativeLayout mContentContainer;
-    private boolean mIsResumed;
-    private ItemManager.WebItem mSelectedItem;
+public class ListActivity extends BaseListActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        }
-        super.onCreate(savedInstanceState);
-        createView();
+    protected String getDefaultTitle() {
+        return getString(R.string.title_activity_list);
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        handleConfigurationChanged();
+    protected Fragment instantiateListFragment() {
+        return ListFragment.instantiate(this, HackerNewsClient.getInstance(this));
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        mIsResumed = true;
-        handleConfigurationChanged();
-    }
-
-    @Override
-    protected void onPause() {
-        mIsResumed = false;
-        super.onPause();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!getResources().getBoolean(R.bool.multi_pane)) {
-            return false;
-        }
-
-        getMenuInflater().inflate(R.menu.menu_list_land, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_comment).setVisible(mIsStoryMode && mSelectedItem != null);
-        menu.findItem(R.id.menu_story).setVisible(!mIsStoryMode && mSelectedItem != null);
-        menu.findItem(R.id.menu_share).setVisible(mSelectedItem != null);
-        if (mSelectedItem != null && mSelectedItem.isShareable()) {
-            ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
-                    menu.findItem(R.id.menu_share));
-            shareActionProvider.setShareIntent(AppUtils.makeShareIntent(
-                    getString(R.string.share_format,
-                            mSelectedItem.getDisplayedTitle(),
-                            mSelectedItem.getUrl())));
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_comment) {
-            openComment(beginFragmentTransaction());
-            return true;
-        }
-
-        if (item.getItemId() == R.id.menu_story) {
-            openStory(beginFragmentTransaction());
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onItemOpen(ItemManager.WebItem story) {
-        setTitle(story.getDisplayedTitle());
-        mSelectedItem = story;
-        findViewById(R.id.empty).setVisibility(View.GONE);
-        mWebFragment = WebFragment.instantiate(this, story);
-        Bundle args = new Bundle();
-        args.putInt(ItemFragment.EXTRA_MARGIN,
-                getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin));
-        // TODO assume story is Item
-        mItemFragment = ItemFragment.instantiate(this, (ItemManager.Item) story, args);
-        FragmentTransaction transaction = beginFragmentTransaction()
-                .add(R.id.content, mItemFragment, ItemFragment.class.getName())
-                .add(R.id.content, mWebFragment, WebFragment.class.getName());
-        removeFragment(transaction, WebFragment.class.getName());
-        removeFragment(transaction, ItemFragment.class.getName());
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.pref_item_click), false)) {
-            openComment(transaction);
-        } else {
-            openStory(transaction);
-        }
-    }
-
-    private void handleConfigurationChanged() {
-        if (!mIsResumed) {
-            return;
-        }
-
-        if (mIsMultiPane != getResources().getBoolean(R.bool.multi_pane)) {
-            createView();
-        }
-    }
-
-    private void createView() {
-        // delay setting title here to allow launcher to get app name
-        setTitle(getString(R.string.title_activity_list));
-        mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
-        mContentView.removeAllViews();
-        if (mIsMultiPane) {
-            setContentView(R.layout.activity_list_land);
-            mContentContainer = (RelativeLayout) findViewById(R.id.content);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(android.R.id.list,
-                            ListFragment.instantiate(this, HackerNewsClient.getInstance(this)),
-                            ListFragment.class.getName())
-                    .commit();
-        } else {
-            mItemFragment = null;
-            mWebFragment = null;
-            mSelectedItem = null;
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_frame,
-                            ListFragment.instantiate(this, HackerNewsClient.getInstance(this)),
-                            ListFragment.class.getName())
-                    .commit();
-        }
-        supportInvalidateOptionsMenu();
-    }
-
-    private void openStory(FragmentTransaction transaction) {
-        transaction.hide(mItemFragment).show(mWebFragment).commit();
-        mContentContainer.setBackgroundColor(getResources().getColor(android.R.color.white));
-        mIsStoryMode = true;
-        supportInvalidateOptionsMenu();
-    }
-
-    private void openComment(FragmentTransaction transaction) {
-        transaction.hide(mWebFragment).show(mItemFragment).commit();
-        mContentContainer.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        mIsStoryMode = false;
-        supportInvalidateOptionsMenu();
+    protected boolean isItemOptionsMenuVisible() {
+        return mSelectedItem != null;
     }
 }

@@ -30,9 +30,49 @@ public class ItemFragment extends Fragment {
     private int mLocalRevision = 0;
     private boolean mIsResumed;
 
+    /**
+     * Instantiates fragment to display given web item (with missing kid data)
+     * @param context   an instance of {@link android.content.Context}
+     * @param item      web item to display
+     * @param args      fragment arguments or null
+     * @return  item fragment
+     */
+    public static ItemFragment instantiate(Context context, ItemManager.WebItem item, Bundle args) {
+        if (item instanceof ItemManager.Item) {
+            return instantiate(context, (ItemManager.Item) item, args);
+        } else {
+            final ItemFragment fragment = (ItemFragment) instantiate(context, ItemFragment.class.getName(), args);
+            HackerNewsClient.getInstance(context).getItem(item.getId(),
+                    new ItemManager.ResponseListener<ItemManager.Item>() {
+                        @Override
+                        public void onResponse(ItemManager.Item response) {
+                            if (!fragment.mIsResumed) {
+                                return;
+                            }
+
+                            fragment.mItem = response;
+                            fragment.bindKidData(fragment.mItem.getKidItems(), null);
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            // do nothing
+                        }
+                    });
+            return fragment;
+        }
+    }
+
+    /**
+     * Instantiates fragment to display given item
+     * @param context   an instance of {@link android.content.Context}
+     * @param item      item to display
+     * @param args      fragment arguments or null
+     * @return  item fragment
+     */
     public static ItemFragment instantiate(Context context, ItemManager.Item item, Bundle args) {
         final ItemFragment fragment = (ItemFragment) Fragment.instantiate(context,
-                ItemFragment.class.getName(), args);
+                ItemFragment.class.getName(), args == null ? new Bundle() : args);
         fragment.mItem = item;
         return fragment;
     }
@@ -67,7 +107,9 @@ public class ItemFragment extends Fragment {
             }
         }
 
-        bindKidData(mItem.getKidItems(), savedInstanceState);
+        if (mItem != null) {
+            bindKidData(mItem.getKidItems(), savedInstanceState);
+        }
     }
 
     @Override

@@ -64,25 +64,39 @@ public abstract class BaseActivity extends TrackableActivity {
         }
     }
 
-    public ViewGroup getContentView() {
-        return mContentView;
-    }
-
     protected void closeDrawers() {
         mDrawerLayout.closeDrawers();
     }
 
+    /**
+     * Begins fragment transaction with no custom animation
+     * @return fragment transaction
+     */
     protected FragmentTransaction beginFragmentTransaction() {
-        final FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        return getSupportFragmentManager().beginTransaction();
+    }
+
+    /**
+     * Begins fragment transaction with fade animation
+     * @return fragment transaction
+     */
+    protected FragmentTransaction beginAnimatedFragmentTransaction() {
+        final FragmentTransaction transaction = beginFragmentTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         return transaction;
     }
 
-    protected void removeFragment(FragmentTransaction transaction, String tag) {
+    /**
+     * Removes fragment with given tag if any
+     * @param transaction   fragment transaction
+     * @param tag           tag of fragment to be removed
+     * @return  fragment transaction
+     */
+    protected FragmentTransaction removeFragment(FragmentTransaction transaction, String tag) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if (fragment != null) {
             transaction.remove(fragment);
         }
+        return transaction;
     }
 }

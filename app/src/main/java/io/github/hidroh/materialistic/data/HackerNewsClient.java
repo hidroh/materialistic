@@ -294,12 +294,16 @@ public class HackerNewsClient implements ItemManager {
 
         @Override
         public CharSequence getDisplayedTime(Context context) {
-            return String.format("%s by %s",
-                    DateUtils.getRelativeDateTimeString(context, time * 1000,
-                            DateUtils.MINUTE_IN_MILLIS,
-                            DateUtils.YEAR_IN_MILLIS,
-                            DateUtils.FORMAT_ABBREV_MONTH),
-                    by);
+            try {
+                return String.format("%s by %s",
+                        DateUtils.getRelativeDateTimeString(context, time * 1000,
+                                DateUtils.MINUTE_IN_MILLIS,
+                                DateUtils.YEAR_IN_MILLIS,
+                                DateUtils.FORMAT_ABBREV_MONTH),
+                        by);
+            } catch (NullPointerException e) { // TODO should properly prevent this
+                return String.format("by %s", by);
+            }
         }
 
         @Override
