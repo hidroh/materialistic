@@ -15,7 +15,7 @@
             android:layout_alignParentTop="true"
             android:layout_height="48dp" />
         <TextView
-            android:id="@android:id/text1"
+            android:id="@id/text"
             android:padding="@dimen/padding"
             android:text="@string/loading_text"
             android:layout_below="@id/posted"

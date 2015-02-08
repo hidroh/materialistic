@@ -62,7 +62,7 @@ public class ListFragmentViewHolderTest {
     public void testStory() {
         adapter.bindViewHolder(holder, 0);
         Assertions.assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
-        Assertions.assertThat((TextView) holder.itemView.findViewById(android.R.id.text2)).hasText("title");
+        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
         Assertions.assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
     }
 
@@ -126,7 +126,7 @@ public class ListFragmentViewHolderTest {
         public String title = null;
 
         @Override
-        public String getTitle() {
+        public String getDisplayedTitle() {
             return title;
         }
 

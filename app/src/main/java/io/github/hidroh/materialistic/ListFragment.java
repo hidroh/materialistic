@@ -7,14 +7,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -36,6 +32,7 @@ public class ListFragment extends Fragment {
 
     private static final String EXTRA_ITEMS = ListFragment.class.getName() + ".EXTRA_ITEMS";
     private RecyclerView mRecyclerView;
+    private ItemRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private BroadcastReceiver mBroadcastReceiver;
     private int mLocalRevision = 0;
@@ -44,7 +41,6 @@ public class ListFragment extends Fragment {
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
     private ItemOpenListener mItemOpenListener;
-    private String mSelectedItemId;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
@@ -92,7 +88,8 @@ public class ListFragment extends Fragment {
             }
         });
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(new RecyclerViewAdapter());
+        mAdapter = new RecyclerViewAdapter();
+        mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
         mSwipeRefreshLayout.setProgressBackgroundColor(R.color.colorAccent);
@@ -122,7 +119,7 @@ public class ListFragment extends Fragment {
             final Parcelable[] savedItems = savedInstanceState.getParcelableArray(EXTRA_ITEMS);
             if (savedItems instanceof ItemManager.Item[]) {
                 mItems = (ItemManager.Item[]) savedItems;
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -130,15 +127,15 @@ public class ListFragment extends Fragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mSelectedItemId = null;
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        mAdapter.mSelectedItemId = null;
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         // refresh favorite state if any changes
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -162,7 +159,7 @@ public class ListFragment extends Fragment {
                 mItems = response;
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.GONE);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
 
@@ -181,21 +178,13 @@ public class ListFragment extends Fragment {
         });
     }
 
-    private class ItemViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
         private final View mBookmarked;
-        private TextView mTitleTextView;
         private TextView mRankTextView;
-        private TextView mPostedTextView;
-        private TextView mSourceTextView;
-        private Button mCommentButton;
 
-        public ItemViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            mRankTextView = (TextView) itemView.findViewById(android.R.id.text1);
-            mTitleTextView = (TextView) itemView.findViewById(android.R.id.text2);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mCommentButton = (Button) itemView.findViewById(R.id.comment);
-            mSourceTextView = (TextView) itemView.findViewById(R.id.source);
+            mRankTextView = (TextView) itemView.findViewById(R.id.rank);
             mBookmarked = itemView.findViewById(R.id.bookmarked);
             // TODO remember tinted drawable so we don't apply it again
             AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
@@ -203,17 +192,17 @@ public class ListFragment extends Fragment {
         }
     }
 
-    private class RecyclerViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
+    private class RecyclerViewAdapter extends ItemRecyclerViewAdapter<ViewHolder, ItemManager.Item> {
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ItemViewHolder(getLayoutInflater(null)
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(getLayoutInflater(null)
                     .inflate(R.layout.item_story, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-            final ItemManager.Item story = mItems[position];
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mRankTextView.setText(String.valueOf(position + 1));
+            final ItemManager.Item story = getItem(position);
             if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
                 story.setLocalRevision(mLocalRevision);
                 mChangedFavorites.remove(story.getId());
@@ -232,7 +221,7 @@ public class ListFragment extends Fragment {
             if (!TextUtils.isEmpty(story.getTitle())) {
                 bindViewHolder(holder, story);
             } else {
-                bindViewHolder(holder, null);
+                clearViewHolder(holder);
                 mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
                     @Override
                     public void onResponse(ItemManager.Item response) {
@@ -250,13 +239,6 @@ public class ListFragment extends Fragment {
                     }
                 });
             }
-            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openItem(story, holder);
-                }
-            });
-            decorateCardSelection(holder, story.getId());
         }
 
         @Override
@@ -264,99 +246,49 @@ public class ListFragment extends Fragment {
             return mItems.length;
         }
 
-        private void decorateFavorite(ItemViewHolder holder, ItemManager.Item story) {
+        @Override
+        protected void onItemSelected(ItemManager.Item item) {
+            mItemOpenListener.onItemOpen(item);
+        }
+
+        @Override
+        protected boolean isSelected(String itemId) {
+            return !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId);
+        }
+
+        private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {
             holder.mBookmarked.setVisibility(story.isFavorite() ? View.VISIBLE : View.INVISIBLE);
         }
 
-        private void bindViewHolder(final ItemViewHolder holder, final ItemManager.Item story) {
-            if (story == null) {
-                holder.mTitleTextView.setText(getString(R.string.loading_text));
-                holder.mPostedTextView.setText(getString(R.string.loading_text));
-                holder.mSourceTextView.setText(getString(R.string.loading_text));
-                holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
-                holder.mCommentButton.setVisibility(View.GONE);
-                holder.itemView.setOnClickListener(null);
-                holder.itemView.setOnLongClickListener(null);
+        protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
+            super.bindViewHolder(holder, story);
+            if (story.getKidCount() > 0) {
+                ((Button) holder.mCommentButton).setText(String.valueOf(story.getKidCount()));
+                holder.mCommentButton.setVisibility(View.VISIBLE);
             } else {
-                holder.mTitleTextView.setText(story.getTitle());
-                holder.mPostedTextView.setText(story.getDisplayedTime(getActivity()));
-                switch (story.getType()) {
-                    case job:
-                        holder.mSourceTextView.setText(null);
-                        holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
-                                R.drawable.ic_work_grey600_18dp, 0, 0, 0);
-                        break;
-                    case poll:
-                        holder.mSourceTextView.setText(null);
-                        holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
-                                R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
-                        break;
-                    default:
-                        holder.mSourceTextView.setText(story.getSource());
-                        holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
-                        break;
-                }
-                if (story.getKidCount() > 0) {
-                    holder.mCommentButton.setText(String.valueOf(story.getKidCount()));
-                    holder.mCommentButton.setVisibility(View.VISIBLE);
-                } else {
-                    holder.mCommentButton.setVisibility(View.GONE);
-                }
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (getResources().getBoolean(R.bool.multi_pane)) {
-                            if (!TextUtils.isEmpty(mSelectedItemId) && story.getId().equals(mSelectedItemId)) {
-                                return;
-                            }
-
-                            mSelectedItemId = story.getId();
-                            notifyDataSetChanged();
-                            mItemOpenListener.onItemOpen(story);
-                        } else {
-                            if (PreferenceManager.getDefaultSharedPreferences(getActivity())
-                                    .getBoolean(getString(R.string.pref_item_click), false)) {
-                                openItem(story, holder);
-                            } else {
-                                AppUtils.openWebUrl(getActivity(), story);
-                            }
-                        }
-                    }
-                });
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        final int toastMessageResId;
-                        if (!story.isFavorite()) {
-                            FavoriteManager.add(getActivity(), story);
-                            toastMessageResId = R.string.toast_saved;
-                        } else {
-                            FavoriteManager.remove(getActivity(), story.getId());
-                            toastMessageResId = R.string.toast_removed;
-                        }
-                        Toast.makeText(getActivity(), toastMessageResId, Toast.LENGTH_SHORT).show();
-                        story.setFavorite(!story.isFavorite());
-                        decorateFavorite(holder, story);
-                        return true;
-                    }
-                });
+                holder.mCommentButton.setVisibility(View.GONE);
             }
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    final int toastMessageResId;
+                    if (!story.isFavorite()) {
+                        FavoriteManager.add(getActivity(), story);
+                        toastMessageResId = R.string.toast_saved;
+                    } else {
+                        FavoriteManager.remove(getActivity(), story.getId());
+                        toastMessageResId = R.string.toast_removed;
+                    }
+                    Toast.makeText(getActivity(), toastMessageResId, Toast.LENGTH_SHORT).show();
+                    story.setFavorite(!story.isFavorite());
+                    decorateFavorite(holder, story);
+                    return true;
+                }
+            });
         }
 
-        private void openItem(ItemManager.Item story, ItemViewHolder holder) {
-            final Intent intent = new Intent(getActivity(), ItemActivity.class);
-            intent.putExtra(ItemActivity.EXTRA_ITEM, story);
-            final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(getActivity(),
-                            holder.itemView, getString(R.string.transition_item_container));
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-        }
-
-        private void decorateCardSelection(ItemViewHolder holder, String itemId) {
-            ((CardView) holder.itemView).setCardBackgroundColor(
-                    getResources().getColor(
-                            !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ?
-                                    R.color.colorPrimaryLight : R.color.cardview_light_background));
+        private ItemManager.Item getItem(int position) {
+            return mItems[position];
         }
     }
 

@@ -11,17 +11,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -32,9 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +48,6 @@ public class FavoriteFragment extends Fragment
     private SearchView mSearchView;
     private boolean mSearchViewVisible;
     private boolean mIsResumed;
-    private String mSelectedItemId;
     private ItemOpenListener mItemOpenListener;
     private DataChangedListener mDataChangedListener;
 
@@ -122,7 +115,7 @@ public class FavoriteFragment extends Fragment
                                         return;
                                     }
 
-                                    if (mSelected.contains(mSelectedItemId)) {
+                                    if (mSelected.contains(mAdapter.mSelectedItemId)) {
                                         mItemOpenListener.onItemOpen(null);
                                     }
 
@@ -183,7 +176,7 @@ public class FavoriteFragment extends Fragment
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mSelectedItemId = null;
+        mAdapter.mSelectedItemId = null;
         mAdapter.notifyDataSetChanged();
     }
 
@@ -343,104 +336,50 @@ public class FavoriteFragment extends Fragment
         return TextUtils.join("\n\n", favorites);
     }
 
-    private void toggle(String itemId, int position) {
-        if (mSelected.contains(itemId)) {
-            mSelected.remove(itemId);
-        } else {
-            mSelected.add(itemId);
-        }
-        mAdapter.notifyItemChanged(position);
-    }
-
     private BaseActivity getBaseActivity() {
         return (BaseActivity) getActivity();
     }
 
-    private class RecyclerViewAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
+    private class RecyclerViewAdapter extends ItemRecyclerViewAdapter<ItemRecyclerViewAdapter.ItemViewHolder, FavoriteManager.Favorite> {
         @Override
-        public FavoriteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new FavoriteViewHolder(getLayoutInflater(null)
+        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ItemViewHolder(getLayoutInflater(null)
                     .inflate(R.layout.item_favorite, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(final FavoriteViewHolder holder, final int position) {
-            if (mCursor == null) {
-                return;
-            }
-
-            if (!mCursor.moveToPosition(position)) {
-                return;
-            }
-
-            final FavoriteManager.Favorite favorite = mCursor.getFavorite();
-            holder.mPostedTextView.setText(favorite.getCreated(getActivity()));
-            holder.mTitleTextView.setText(favorite.getDisplayedTitle());
-            holder.mSourceTextView.setVisibility(TextUtils.isEmpty(favorite.getSource()) ?
-                    View.GONE : View.VISIBLE);
-            holder.mSourceTextView.setText(favorite.getSource());
-            ((CardView) holder.itemView)
-                    .setCardBackgroundColor(getResources().getColor(
-                            mSelected.contains(favorite.getId()) ?
-                                    R.color.colorPrimaryLight :
-                                    R.color.cardview_light_background));
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mActionMode == null) {
-                        mSearchViewVisible = false;
-                        if (getResources().getBoolean(R.bool.multi_pane)) {
-                            if (!TextUtils.isEmpty(mSelectedItemId) && favorite.getId().equals(mSelectedItemId)) {
-                                return;
+        public void onBindViewHolder(final ItemViewHolder holder, final int position) {
+            final FavoriteManager.Favorite favorite = getItem(position);
+            if (favorite == null) {
+                clearViewHolder(holder);
+            } else {
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        if (mActionMode == null && !mSearchViewVisible) {
+                            mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
+                            toggle(favorite.getId(), position);
+                            if (mSelectedItemId != null) {
+                                mSelected.add(mSelectedItemId);
                             }
-
-                            mSelectedItemId = favorite.getId();
-                            notifyDataSetChanged();
-                            mItemOpenListener.onItemOpen(favorite);
-                        } else {
-                            if (PreferenceManager.getDefaultSharedPreferences(getActivity())
-                                    .getBoolean(getString(R.string.pref_item_click), false)) {
-                                openItem(favorite, holder);
-                            } else {
-                                AppUtils.openWebUrl(getActivity(), favorite);
-                            }
+                            return true;
                         }
-                    } else {
-                        toggle(favorite.getId(), position);
-                    }
-                }
-            });
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (mActionMode == null && !mSearchViewVisible) {
-                        mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
-                        toggle(favorite.getId(), position);
-                        if (mSelectedItemId != null) {
-                            mSelected.add(mSelectedItemId);
-                        }
-                        return true;
-                    }
 
-                    return false;
-                }
-            });
-            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openItem(favorite, holder);
-                }
-            });
-            decorateCardSelection(holder, favorite.getId());
+                        return false;
+                    }
+                });
+                bindViewHolder(holder, favorite);
+            }
         }
 
-        private void openItem(FavoriteManager.Favorite favorite, FavoriteViewHolder holder) {
-            final Intent intent = new Intent(getActivity(), ItemActivity.class);
-            intent.putExtra(ItemActivity.EXTRA_ITEM_ID, favorite.getId());
-            final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(getActivity(),
-                            holder.itemView, getString(R.string.transition_item_container));
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        @Override
+        protected void handleItemClick(FavoriteManager.Favorite item, ItemViewHolder holder) {
+            if (mActionMode == null) {
+                mSearchViewVisible = false;
+                super.handleItemClick(item, holder);
+            } else {
+                toggle(item.getId(), holder.getPosition());
+            }
         }
 
         @Override
@@ -448,30 +387,36 @@ public class FavoriteFragment extends Fragment
             return mCursor == null ? 0 : mCursor.getCount();
         }
 
-        private void decorateCardSelection(FavoriteViewHolder holder, String itemId) {
-            if (!TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ||
-                    mSelected.contains(itemId)) {
-                ((CardView) holder.itemView).setCardBackgroundColor(
-                        getResources().getColor(R.color.colorPrimaryLight));
-            } else {
-                ((CardView) holder.itemView).setCardBackgroundColor(
-                        getResources().getColor(R.color.cardview_light_background));
-            }
+        @Override
+        protected void onItemSelected(FavoriteManager.Favorite item) {
+            mItemOpenListener.onItemOpen(item);
         }
-    }
 
-    private class FavoriteViewHolder extends RecyclerView.ViewHolder {
-        private final TextView mPostedTextView;
-        private final TextView mTitleTextView;
-        private final ImageButton mCommentButton;
-        private final TextView mSourceTextView;
+        private FavoriteManager.Favorite getItem(int position) {
+            if (mCursor == null) {
+                return null;
+            }
 
-        private FavoriteViewHolder(View itemView) {
-            super(itemView);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mTitleTextView = (TextView) itemView.findViewById(android.R.id.text1);
-            mSourceTextView = (TextView) itemView.findViewById(R.id.source);
-            mCommentButton = (ImageButton) itemView.findViewById(R.id.comment);
+            if (!mCursor.moveToPosition(position)) {
+                return null;
+            }
+
+            return mCursor.getFavorite();
+        }
+
+        @Override
+        protected boolean isSelected(String itemId) {
+            return !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ||
+                    mSelected.contains(itemId);
+        }
+
+        private void toggle(String itemId, int position) {
+            if (mSelected.contains(itemId)) {
+                mSelected.remove(itemId);
+            } else {
+                mSelected.add(itemId);
+            }
+            notifyItemChanged(position);
         }
     }
 

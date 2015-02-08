@@ -8,6 +8,9 @@
     <item type="id" name="progress" />
 
     <!-- item views -->
+    <item type="id" name="rank" />
+    <item type="id" name="title" />
+    <item type="id" name="text" />
     <item type="id" name="posted" />
     <item type="id" name="comment" />
     <item type="id" name="bookmarked" />

@@ -229,7 +229,7 @@ public class ItemFragment extends Fragment {
         public ItemViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mContentTextView = (TextView) itemView.findViewById(android.R.id.text1);
+            mContentTextView = (TextView) itemView.findViewById(R.id.text);
             mCommentButton = (Button) itemView.findViewById(R.id.comment);
             mCommentButton.setVisibility(View.INVISIBLE);
         }

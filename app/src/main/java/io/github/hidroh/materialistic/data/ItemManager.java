@@ -43,10 +43,6 @@ public interface ItemManager {
      * Represents an item that can be displayed as story/comment
      */
     interface Item extends WebItem {
-        /**
-         * Item types
-         */
-        public enum Type { job, story, comment, poll, pollopt;}
 
         /**
          * Sets information from given item
@@ -55,9 +51,9 @@ public interface ItemManager {
         void populate(Item info);
 
         /**
-         * Gets raw item type
+         * Gets raw item type, used to be parsed by {@link #getType()}
          * @return string type or null
-         * @see io.github.hidroh.materialistic.data.ItemManager.Item.Type
+         * @see io.github.hidroh.materialistic.data.ItemManager.WebItem.Type
          */
         String getRawType();
 
@@ -98,27 +94,11 @@ public interface ItemManager {
         String getTitle();
 
         /**
-         * Gets item type, should be parsed from {@link #getRawType()}
-         * @return item type
-         * @see #getRawType()
-         */
-        Type getType();
-
-        /**
          * Gets item text
          * @return item text or null
          * @see #getDisplayedTitle()
          */
         String getText();
-
-        /**
-         * Gets formatted posted time for display
-         * @param context an instance of {@link android.content.Context}
-         * @return  displayed time
-         * @see #getTime()
-         * @see #getBy()
-         */
-        CharSequence getDisplayedTime(Context context);
 
         /**
          * Gets number of kids, contained in {@link #getKids()}
@@ -173,6 +153,11 @@ public interface ItemManager {
      */
     interface WebItem extends Parcelable {
         /**
+         * Item types
+         */
+        public enum Type { job, story, comment, poll, pollopt;}
+
+        /**
          * Gets formatted title to display
          * @return formatted title or null
          */
@@ -201,5 +186,18 @@ public interface ItemManager {
          * @return item source or null
          */
         String getSource();
+
+        /**
+         * Gets formatted posted time for display
+         * @param context an instance of {@link android.content.Context}
+         * @return  displayed time
+         */
+        CharSequence getDisplayedTime(Context context);
+
+        /**
+         * Gets item type
+         * @return item type
+         */
+        Type getType();
     }
 }

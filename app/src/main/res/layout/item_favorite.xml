@@ -16,7 +16,7 @@
             android:layout_toLeftOf="@id/comment"
             style="@style/textSubtitleStyle" />
         <TextView
-            android:id="@android:id/text1"
+            android:id="@id/title"
             android:text="@string/loading_text"
             android:layout_below="@id/posted"
             android:layout_toLeftOf="@id/comment"
@@ -27,7 +27,7 @@
         <TextView
             android:id="@id/source"
             android:text="@string/loading_text"
-            android:layout_below="@android:id/text1"
+            android:layout_below="@id/title"
             android:visibility="gone"
             style="@style/textSubtitleStyle" />
         <ImageButton

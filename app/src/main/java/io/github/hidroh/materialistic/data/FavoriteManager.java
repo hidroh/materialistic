@@ -366,12 +366,8 @@ public class FavoriteManager {
             return title;
         }
 
-        /**
-         * Get formatted created time
-         * @param context    an instance of {@link android.content.Context}
-         * @return  formatted created time
-         */
-        public String getCreated(Context context) {
+        @Override
+        public String getDisplayedTime(Context context) {
             return context.getString(R.string.saved, DateUtils.getRelativeDateTimeString(context, time,
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.YEAR_IN_MILLIS,
@@ -381,6 +377,12 @@ public class FavoriteManager {
         @Override
         public String getSource() {
             return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
+        }
+
+        @Override
+        public Type getType() {
+            // TODO treating all saved items as stories for now
+            return Type.story;
         }
 
         @Override

@@ -54,14 +54,14 @@ public class ListFragmentViewHolderEdgeTest {
     @Test
     public void testNullResponse() {
         listener.onResponse(null);
-        Assertions.assertThat((TextView) holder.itemView.findViewById(android.R.id.text2))
+        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title))
                 .hasText(activity.getString(R.string.loading_text));
     }
 
     @Test
     public void testErrorResponse() {
         listener.onError(null);
-        Assertions.assertThat((TextView) holder.itemView.findViewById(android.R.id.text2))
+        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title))
                 .hasText(activity.getString(R.string.loading_text));
     }
 
