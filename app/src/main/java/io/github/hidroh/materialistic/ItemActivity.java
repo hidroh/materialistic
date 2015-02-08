@@ -25,7 +25,7 @@ public class ItemActivity extends BaseItemActivity {
     private ItemManager.Item mItem;
     private CardView mHeaderCardView;
     private boolean mFavoriteBound;
-    private boolean mIsResumed;
+    private boolean mIsResumed = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

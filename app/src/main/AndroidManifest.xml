@@ -34,6 +34,17 @@
                     android:pathPrefix="/item"
                     android:scheme="https" />
             </intent-filter>
+            <intent-filter android:label="@string/filter_title_item" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="news.ycombinator.com"
+                    android:pathPrefix="/item"
+                    android:scheme="http" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".WebActivity"
