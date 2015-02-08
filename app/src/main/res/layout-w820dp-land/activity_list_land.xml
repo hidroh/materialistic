@@ -8,6 +8,7 @@
     <RelativeLayout
         android:id="@id/content"
         android:elevation="8dp"
+        android:background="@color/colorBackgroundPanel"
         android:layout_toRightOf="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

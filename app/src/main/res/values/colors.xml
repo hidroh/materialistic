@@ -10,4 +10,5 @@
     <color name="textColorSecondaryInverse">#9E9E9E</color>
     <color name="colorDisabled">#1A000000</color>
     <color name="colorDivider">#0C000000</color>
+    <color name="colorBackgroundPanel">#FFE0E0E0</color>
 </resources>

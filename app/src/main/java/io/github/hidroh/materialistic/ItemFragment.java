@@ -86,6 +86,7 @@ public class ItemFragment extends Fragment {
         // TODO dirty trick to set margin, assuming parent is relative layout
         final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRecyclerView.getLayoutParams();
         params.rightMargin = margin;
+        params.leftMargin = margin;
         mRecyclerView.setLayoutParams(params);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
