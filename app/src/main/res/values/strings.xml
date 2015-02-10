@@ -55,7 +55,7 @@
             <p><a href="http://developer.android.com/tools/support-library/index.html">Android Support</a></p>
         ]]>
     </string>
-    <string name="title_activity_favorite">Saved stories</string>
+    <string name="title_activity_favorite">Saved Stories</string>
     <string name="saved" formatted="false">Saved %s</string>
     <string name="toast_saved">Story saved!</string>
     <string name="clear_all">Clear all</string>

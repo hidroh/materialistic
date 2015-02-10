@@ -122,9 +122,9 @@ public class ItemActivity extends BaseItemActivity {
 
     @Override
     public void supportFinishAfterTransition() {
-        if (mOrientationChanged && mItem.isShareable()) {
+        if (mOrientationChanged) {
             /**
-             * if item is a story and orientation changed, finishing activity with shared element
+             * if orientation changed, finishing activity with shared element
              * transition may cause NPE if the original element is not visible in the returned
              * activity due to new orientation, we just finish without transition here
              */
