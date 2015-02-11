@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="themedCardBackgroundColor" format="reference" />
+    <attr name="themedCardHighlightColor" format="reference" />
+    <attr name="themedDrawerBackgroundColor" format="reference" />
+    <attr name="themedPanelBackgroundColor" format="reference" />
+    <attr name="themedHeaderCardDrawable" format="reference" />
+    <attr name="themedMenuFavoriteOnDrawable" format="reference" />
+    <attr name="themedMenuFavoriteOffDrawable" format="reference" />
+    <attr name="themedMenuClearDrawable" format="reference" />
+    <attr name="themedMenuStoryDrawable" format="reference" />
+    <attr name="themedMenuCommentDrawable" format="reference" />
+</resources>

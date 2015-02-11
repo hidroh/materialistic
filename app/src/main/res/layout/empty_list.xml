@@ -7,6 +7,7 @@
     android:layout_height="wrap_content">
     <ImageView
         android:src="@drawable/ic_cloud_off_grey600_48dp"
+        android:tint="?android:attr/textColorSecondary"
         android:layout_width="64dp"
         android:layout_height="64dp" />
     <TextView

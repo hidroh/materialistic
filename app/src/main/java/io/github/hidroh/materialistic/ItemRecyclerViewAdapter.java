@@ -23,11 +23,15 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     protected String mSelectedItemId;
     private Context mContext;
+    private int mCardBackgroundColorResId;
+    private int mCardHighlightColorResId;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
+        mCardBackgroundColorResId = AppUtils.getThemedResId(mContext, R.attr.themedCardBackgroundColor);
+        mCardHighlightColorResId = AppUtils.getThemedResId(mContext, R.attr.themedCardHighlightColor);
     }
 
     @Override
@@ -138,7 +142,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private void decorateCardSelection(ItemViewHolder holder, String itemId) {
         ((CardView) holder.itemView).setCardBackgroundColor(
                 mContext.getResources().getColor(isSelected(itemId) ?
-                                R.color.colorPrimaryLight : R.color.cardview_light_background));
+                        mCardHighlightColorResId : mCardBackgroundColorResId));
     }
 
     /**

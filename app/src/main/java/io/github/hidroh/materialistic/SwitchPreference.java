@@ -1,21 +1,29 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-public class CheckBoxPreference extends android.preference.CheckBoxPreference {
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+public class SwitchPreference extends android.preference.SwitchPreference {
 
-    public CheckBoxPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    public SwitchPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public CheckBoxPreference(Context context, AttributeSet attrs) {
+    public SwitchPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CheckBoxPreference(Context context) {
+    public SwitchPreference(Context context) {
         super(context);
     }
 

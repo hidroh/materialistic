@@ -24,10 +24,55 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
+
+        <!-- custome themed attributes -->
+        <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
+        <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
+        <item name="themedDrawerBackgroundColor">@android:color/white</item>
+        <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
+        <item name="themedHeaderCardDrawable">@drawable/header_card</item>
+        <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_white_24dp</item>
+        <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_white_24dp</item>
+        <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
+        <item name="themedMenuStoryDrawable">@drawable/ic_subject_white_24dp</item>
+        <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_white_24dp</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:textColorPrimary">@color/textColorPrimaryInverse</item>
+        <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
+        <item name="android:textColorPrimaryInverse">@color/textColorPrimary</item>
+        <item name="android:textColorSecondaryInverse">@color/textColorSecondary</item>
+        <!-- style for buttons -->
+        <item name="android:buttonStyle">@style/AppButton</item>
+        <!-- style for spinners -->
+        <item name="android:spinnerStyle">@style/AppSpinner</item>
+        <!-- Here we setting appcompat’s actionBarStyle -->
+        <item name="actionBarStyle">@style/AppActionBar</item>
+        <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
+        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
+
+        <!-- custome themed attributes -->
+        <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
+        <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
+        <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
+        <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
+        <item name="themedHeaderCardDrawable">@drawable/header_card_dark</item>
+        <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_black_24dp</item>
+        <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_black_24dp</item>
+        <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
+        <item name="themedMenuStoryDrawable">@drawable/ic_subject_black_24dp</item>
+        <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_black_24dp</item>
     </style>
 
     <style name="AppButton" parent="android:Widget.Button">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColor">@color/textColorButton</item>
     </style>
 
     <style name="AppActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
@@ -40,15 +85,15 @@
     </style>
 
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
-        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
-        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <style name="AppPopupMenuSmallTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
-        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
@@ -64,7 +109,7 @@
 
     <style name="textTitleStyle">
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
-        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:lines">2</item>
         <item name="android:ellipsize">end</item>
@@ -82,6 +127,7 @@
     </style>
 
     <style name="textEmptyStyle">
+        <item name="android:textColor">@color/textColorSecondary</item>
         <item name="android:textSize">@dimen/abc_text_size_headline_material</item>
         <item name="android:padding">@dimen/padding</item>
         <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
@@ -92,6 +138,7 @@
     </style>
 
     <style name="BaseAppCardView">
+        <item name="cardBackgroundColor">?attr/themedCardBackgroundColor</item>
         <item name="cardUseCompatPadding">true</item>
         <item name="cardPreventCornerOverlap">false</item>
         <item name="cardElevation">@dimen/cardview_default_elevation</item>
@@ -103,7 +150,7 @@
     </style>
 
     <style name="AppCardView.Header">
-        <item name="cardBackgroundColor">@color/colorPrimaryLight</item>
+        <item name="cardBackgroundColor">?attr/themedCardHighlightColor</item>
         <item name="cardElevation">@dimen/cardview_header_elevation</item>
     </style>
 
@@ -127,7 +174,7 @@
     </style>
 
     <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
-        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>

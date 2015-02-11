@@ -16,6 +16,8 @@ public class WebActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
     private boolean mIsFavorite;
+    private int mFavoriteOnResId;
+    private int mFavoriteOffResId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,8 @@ public class WebActivity extends BaseItemActivity {
                         WebFragment.instantiate(this, mItem),
                         WebFragment.class.getName())
                 .commit();
+        mFavoriteOnResId = AppUtils.getThemedResId(this, R.attr.themedMenuFavoriteOnDrawable);
+        mFavoriteOffResId = AppUtils.getThemedResId(this, R.attr.themedMenuFavoriteOffDrawable);
     }
 
     @Override
@@ -70,10 +74,10 @@ public class WebActivity extends BaseItemActivity {
 
     private void toggleFavorite(MenuItem menuFavorite) {
         if (mIsFavorite) {
-            menuFavorite.setIcon(R.drawable.ic_bookmark_white_24dp);
+            menuFavorite.setIcon(mFavoriteOnResId);
             menuFavorite.setTitle(R.string.unsave_story);
         } else {
-            menuFavorite.setIcon(R.drawable.ic_bookmark_outline_white_24dp);
+            menuFavorite.setIcon(mFavoriteOffResId);
             menuFavorite.setTitle(R.string.save_story);
         }
     }

@@ -4,7 +4,7 @@
     tools:showIn="@layout/activity_item">
 
     <View
-        android:background="@drawable/header_card"
+        android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:elevation="2dp" />
 
     <View
-        android:background="@drawable/header_card"
+        android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"

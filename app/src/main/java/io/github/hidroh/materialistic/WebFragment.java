@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class WebFragment extends Fragment {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_web, container, false);
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
+        mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -47,6 +49,7 @@ public class WebFragment extends Fragment {
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
+                    mWebView.setBackgroundColor(Color.WHITE);
                 }
             }
         });

@@ -3,7 +3,7 @@
     android:layout_gravity="center_vertical|center"
     android:gravity="center|center_vertical"
     android:orientation="vertical"
-    android:background="@color/background_material_light"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <TextView
         android:id="@android:id/title"
@@ -20,11 +20,12 @@
     <ImageView
         android:src="@drawable/arrow"
         android:layout_width="wrap_content"
+        android:tint="?android:attr/textColorSecondary"
         android:layout_height="48dp" />
     <TextView
         android:text="@string/try_me"
         android:fontFamily="sans-serif-thin"
-        android:textColor="@android:color/black"
+        android:textColor="?android:attr/textColorSecondary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/abc_text_size_headline_material" />

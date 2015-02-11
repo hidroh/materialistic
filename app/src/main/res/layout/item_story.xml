@@ -10,7 +10,7 @@
         <View
             android:layout_width="@dimen/min_cardview_height"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryLight"
+            android:background="?attr/themedCardHighlightColor"
             android:layout_alignTop="@id/title"
             android:layout_alignBottom="@id/posted" />
         <ImageView

@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class AppUtils {
+
     public static void openWebUrl(Context context, ItemManager.WebItem item) {
         final boolean isExternal = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_external), false);
@@ -111,5 +113,12 @@ public class AppUtils {
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, text);
         return intent;
+    }
+
+    public static int getThemedResId(Context context, int attr) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
+        final int resId = a.getResourceId(0, 0);
+        a.recycle();
+        return resId;
     }
 }

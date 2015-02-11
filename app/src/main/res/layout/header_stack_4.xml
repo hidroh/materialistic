@@ -4,14 +4,14 @@
     tools:showIn="@layout/activity_item">
 
     <View
-        android:background="@drawable/header_card"
+        android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginLeft="64dp"
         android:layout_marginRight="64dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_stack_card_height" />
 
     <View
-        android:background="@drawable/header_card"
+        android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
@@ -20,7 +20,7 @@
         android:elevation="1dp" />
 
     <View
-        android:background="@drawable/header_card"
+        android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
@@ -29,7 +29,7 @@
         android:elevation="2dp" />
 
     <View
-        android:background="@drawable/header_card"
+        android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"

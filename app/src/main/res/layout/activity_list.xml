@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@id/content"
         android:elevation="8dp"
-        android:background="@color/colorBackgroundPanel"
+        android:background="?attr/themedPanelBackgroundColor"
         android:layout_toRightOf="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center|center_vertical"
-        android:background="@color/colorPrimaryLight"
+        android:background="?attr/themedCardHighlightColor"
         android:text="@string/select_story"
         android:textSize="@dimen/abc_text_size_headline_material"/>
 </RelativeLayout>
