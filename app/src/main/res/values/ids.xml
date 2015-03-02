@@ -27,6 +27,10 @@
     <item type="id" name="drawer_settings" />
     <item type="id" name="drawer_about" />
     <item type="id" name="drawer_favorite" />
+    <item type="id" name="drawer_job" />
+    <item type="id" name="drawer_show" />
+    <item type="id" name="drawer_ask" />
+    <item type="id" name="drawer_new" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />

@@ -41,10 +41,13 @@ public class ListFragment extends Fragment {
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
     private ItemOpenListener mItemOpenListener;
+    private ItemManager.FetchMode mFetchMode;
 
-    public static ListFragment instantiate(Context context, ItemManager itemManager) {
+    public static ListFragment instantiate(Context context, ItemManager itemManager,
+                                           ItemManager.FetchMode fetchMode) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
         fragment.mItemManager = itemManager;
+        fragment.mFetchMode = fetchMode;
         return fragment;
     }
 
@@ -153,7 +156,7 @@ public class ListFragment extends Fragment {
     }
 
     private void bindData() {
-        mItemManager.getTopStories(new ItemManager.ResponseListener<ItemManager.Item[]>() {
+        mItemManager.getStories(mFetchMode, new ItemManager.ResponseListener<ItemManager.Item[]>() {
             @Override
             public void onResponse(final ItemManager.Item[] response) {
                 mItems = response;

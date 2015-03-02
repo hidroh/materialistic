@@ -64,6 +64,26 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".NewActivity"
+            android:label="@string/title_activity_new"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+        <activity
+            android:name=".ShowActivity"
+            android:label="@string/title_activity_show"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+        <activity
+            android:name=".AskActivity"
+            android:label="@string/title_activity_ask"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+        <activity
+            android:name=".JobsActivity"
+            android:label="@string/title_activity_jobs"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+        <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about"
             android:configChanges="orientation|screenSize" >

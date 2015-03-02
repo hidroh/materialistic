@@ -49,7 +49,7 @@ public class ListFragmentTest {
     public void testOnCreate() {
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager()))
+                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager(), ItemManager.FetchMode.top))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isRefreshing();
     }
@@ -59,18 +59,19 @@ public class ListFragmentTest {
         ItemManager manager = mock(ItemManager.class);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, ListFragment.instantiate(activity, manager))
+                .add(android.R.id.content, ListFragment.instantiate(activity, manager, ItemManager.FetchMode.top))
                 .commit();
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = shadowOf_(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
-        verify(manager, times(2)).getTopStories(any(ItemManager.ResponseListener.class));
+        verify(manager, times(2)).getStories(any(ItemManager.FetchMode.class),
+                any(ItemManager.ResponseListener.class));
     }
 
     @Test
     public void testConfigurationChanged() {
         ItemManager manager = mock(ItemManager.class);
-        ListFragment fragment = ListFragment.instantiate(activity, manager);
+        ListFragment fragment = ListFragment.instantiate(activity, manager, ItemManager.FetchMode.top);
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .add(android.R.id.content, fragment)
@@ -79,7 +80,8 @@ public class ListFragmentTest {
         fragment.onSaveInstanceState(state);
         fragment.onActivityCreated(state);
         // should not trigger another data request
-        verify(manager).getTopStories(any(ItemManager.ResponseListener.class));
+        verify(manager).getStories(any(ItemManager.FetchMode.class),
+                any(ItemManager.ResponseListener.class));
     }
 
     @Test
@@ -88,10 +90,10 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
                     @Override
-                    public void getTopStories(ResponseListener<Item[]> listener) {
+                    public void getStories(FetchMode fetchMode, ResponseListener<Item[]> listener) {
                         listener.onResponse(new Item[0]);
                     }
-                }))
+                }, ItemManager.FetchMode.top))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
@@ -103,10 +105,10 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
                     @Override
-                    public void getTopStories(ResponseListener<Item[]> listener) {
+                    public void getStories(FetchMode fetchMode, ResponseListener<Item[]> listener) {
                         listener.onError(null);
                     }
-                }))
+                }, ItemManager.FetchMode.top))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isVisible();
@@ -119,7 +121,7 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
                     @Override
-                    public void getTopStories(ResponseListener<Item[]> listener) {
+                    public void getStories(FetchMode fetchMode, ResponseListener<Item[]> listener) {
                         if (response.size() == 0) {
                             response.add(true);
                             listener.onResponse(new Item[]{new TestItem() {}});
@@ -128,7 +130,7 @@ public class ListFragmentTest {
                             listener.onError(null);
                         }
                     }
-                }))
+                }, ItemManager.FetchMode.top))
                 .commit();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = shadowOf_(activity.findViewById(R.id.swipe_layout));

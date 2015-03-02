@@ -25,6 +25,35 @@
         style="@style/DrawerTextStyle"/>
 
     <TextView
+        android:id="@id/drawer_new"
+        android:text="@string/title_activity_new"
+        android:drawableLeft="@drawable/ic_new_releases_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
+        android:id="@id/drawer_show"
+        android:text="@string/title_activity_show"
+        android:drawableLeft="@drawable/ic_done_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
+        android:id="@id/drawer_ask"
+        android:text="@string/title_activity_ask"
+        android:drawableLeft="@drawable/ic_live_help_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
+        android:id="@id/drawer_job"
+        android:text="@string/title_activity_jobs"
+        android:drawableLeft="@drawable/ic_work_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <View
+        android:background="@color/colorDivider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp" />
+
+    <TextView
         android:id="@id/drawer_favorite"
         android:text="@string/title_activity_favorite"
         android:drawableLeft="@drawable/ic_bookmark_grey600_24dp"

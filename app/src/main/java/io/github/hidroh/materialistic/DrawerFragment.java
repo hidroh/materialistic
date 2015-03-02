@@ -24,6 +24,35 @@ public class DrawerFragment extends Fragment {
                 navigate(ListActivity.class);
             }
         });
+
+        view.findViewById(R.id.drawer_new).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(NewActivity.class);
+            }
+        });
+
+        view.findViewById(R.id.drawer_show).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(ShowActivity.class);
+            }
+        });
+
+        view.findViewById(R.id.drawer_ask).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(AskActivity.class);
+            }
+        });
+
+        view.findViewById(R.id.drawer_job).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(JobsActivity.class);
+            }
+        });
+
         view.findViewById(R.id.drawer_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

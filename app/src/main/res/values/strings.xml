@@ -90,5 +90,9 @@
     <string name="select_story">Select a story to view</string>
     <string name="confirm_download">View this file in another app?</string>
     <string name="try_me">try me!</string>
+    <string name="title_activity_jobs">Jobs</string>
+    <string name="title_activity_show">Show HN</string>
+    <string name="title_activity_ask">Ask HN</string>
+    <string name="title_activity_new">New Stories</string>
 
 </resources>

@@ -70,8 +70,8 @@ public class HackerNewsClient implements ItemManager {
     }
 
     @Override
-    public void getTopStories(final ItemManager.ResponseListener<Item[]> listener) {
-        mRestService.topStories(new Callback<int[]>() {
+    public void getStories(FetchMode fetchMode, final ResponseListener<Item[]> listener) {
+        final Callback<int[]> callback = new Callback<int[]>() {
             @Override
             public void success(int[] ints, Response response) {
                 if (listener == null) {
@@ -93,7 +93,24 @@ public class HackerNewsClient implements ItemManager {
 
                 listener.onError(error == null ? error.getMessage() : "");
             }
-        });
+        };
+        switch (fetchMode) {
+            case newest:
+                mRestService.newStories(callback);
+                break;
+            case show:
+                mRestService.showStories(callback);
+                break;
+            case ask:
+                mRestService.askStories(callback);
+                break;
+            case jobs:
+                mRestService.jobStories(callback);
+                break;
+            default:
+                mRestService.topStories(callback);
+                break;
+        }
     }
 
     @Override
@@ -123,6 +140,23 @@ public class HackerNewsClient implements ItemManager {
         @Headers("Cache-Control: max-age=600")
         @GET("/topstories.json")
         void topStories(Callback<int[]> callback);
+
+        @Headers("Cache-Control: max-age=600")
+        @GET("/newstories.json")
+        void newStories(Callback<int[]> callback);
+
+        @Headers("Cache-Control: max-age=600")
+        @GET("/showstories.json")
+        void showStories(Callback<int[]> callback);
+
+        @Headers("Cache-Control: max-age=600")
+        @GET("/askstories.json")
+        void askStories(Callback<int[]> callback);
+
+        @Headers("Cache-Control: max-age=600")
+        @GET("/jobstories.json")
+        void jobStories(Callback<int[]> callback);
+
         @Headers("Cache-Control: max-age=300")
         @GET("/item/{itemId}.json")
         void item(@Path("itemId") String itemId, Callback<HackerNewsItem> callback);
