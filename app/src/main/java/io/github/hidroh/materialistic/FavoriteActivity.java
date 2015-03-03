@@ -57,6 +57,11 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     }
 
     @Override
+    protected boolean isSearchable() {
+        return false;
+    }
+
+    @Override
     public void onDataChanged(boolean isEmpty, String filter) {
         mFilter = filter;
         mIsEmpty = isEmpty;

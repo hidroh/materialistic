@@ -23,6 +23,11 @@ public class AboutActivity extends BaseActivity {
         setTextWithLinks(R.id.text_license, getString(R.string.license_text));
     }
 
+    @Override
+    protected boolean isSearchable() {
+        return false;
+    }
+
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {
         AppUtils.setTextWithLinks((TextView) findViewById(textViewResId), htmlText);
     }

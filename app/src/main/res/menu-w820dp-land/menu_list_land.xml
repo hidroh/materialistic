@@ -14,4 +14,8 @@
         android:title="@string/share_via"
         app:showAsAction="always"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
+    <item android:id="@id/menu_search"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
 </menu>

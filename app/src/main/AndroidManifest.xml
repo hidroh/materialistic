@@ -58,7 +58,7 @@
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTop" >
             <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable_favorite" />
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -82,6 +82,16 @@
             android:name=".JobsActivity"
             android:label="@string/title_activity_jobs"
             android:configChanges="orientation|screenSize" >
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"
+            android:configChanges="orientation|screenSize" >
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable_stories" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".AboutActivity"

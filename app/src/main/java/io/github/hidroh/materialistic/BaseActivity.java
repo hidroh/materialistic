@@ -1,11 +1,17 @@
 package io.github.hidroh.materialistic;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +42,42 @@ public abstract class BaseActivity extends TrackableActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (isSearchable()) {
+            // close search view
+            supportInvalidateOptionsMenu();
+        }
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (isSearchable()) {
+            getMenuInflater().inflate(R.menu.menu_search, menu);
+            MenuItem menuSearch = menu.findItem(R.id.menu_search);
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(
+                    new ComponentName(this, SearchActivity.class)));
+            searchView.setIconified(true);
+            searchView.setQuery("", false);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isSearchable()) {
+            return true;
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -89,4 +128,10 @@ public abstract class BaseActivity extends TrackableActivity {
         }
         return transaction;
     }
+
+    /**
+     * Checks if activity should have search view
+     * @return true if is searchable, false otherwise
+     */
+    protected abstract boolean isSearchable();
 }

@@ -8,4 +8,9 @@ public class ActionBarSettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
     }
+
+    @Override
+    protected boolean isSearchable() {
+        return false;
+    }
 }

@@ -17,6 +17,7 @@
 
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API)
+- [Algolia Hacker News Search API](https://github.com/algolia/hn-search)
 - [appcompat-v7](https://developer.android.com/tools/support-library/features.html#v7-appcompat) / [recyclerview-v7](https://developer.android.com/tools/support-library/features.html#v7-recyclerview) / [cardview-v7](https://developer.android.com/tools/support-library/features.html#v7-cardview)
 - Square [Retrofit](https://github.com/square/retrofit) / [OkHttp](https://github.com/square/okhttp)
 - [Square AssertJ](https://github.com/square/assertj-android)

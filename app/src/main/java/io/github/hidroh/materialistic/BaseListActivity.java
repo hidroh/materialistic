@@ -67,7 +67,7 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!getResources().getBoolean(R.bool.multi_pane)) {
-            return false;
+            return super.onCreateOptionsMenu(menu);
         }
 
         getMenuInflater().inflate(R.menu.menu_list_land, menu);
@@ -77,7 +77,7 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!getResources().getBoolean(R.bool.multi_pane)) {
-            return false;
+            return super.onPrepareOptionsMenu(menu);
         }
 
         menu.findItem(R.id.menu_comment).setVisible(mIsStoryMode && isItemOptionsMenuVisible());
@@ -141,6 +141,11 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
             }
         }
         supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    protected boolean isSearchable() {
+        return true;
     }
 
     /**

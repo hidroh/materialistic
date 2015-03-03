@@ -53,6 +53,7 @@
             <p><a href="https://github.com/square/retrofit">Square Retrofit</a></p>
             <p><a href="https://github.com/square/okhttp">Square OkHttp</a></p>
             <p><a href="http://developer.android.com/tools/support-library/index.html">Android Support</a></p>
+            <p><a href="https://github.com/algolia/hn-search">algolia/hn-search</a></p>
         ]]>
     </string>
     <string name="title_activity_favorite">Saved Stories</string>
@@ -94,5 +95,7 @@
     <string name="title_activity_show">Show HN</string>
     <string name="title_activity_ask">Ask HN</string>
     <string name="title_activity_new">New Stories</string>
+    <string name="title_activity_search">Search HN</string>
+    <string name="title_activity_search_query" formatted="false">Search HN: \'%s\'</string>
 
 </resources>
