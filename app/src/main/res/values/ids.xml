@@ -41,6 +41,7 @@
     <item type="id" name="menu_search" />
     <item type="id" name="menu_favorite" />
     <item type="id" name="menu_story" />
+    <item type="id" name="menu_clear_recent" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

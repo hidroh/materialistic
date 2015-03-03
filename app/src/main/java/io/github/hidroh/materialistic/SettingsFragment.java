@@ -1,12 +1,20 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.content.IntentCompat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
+import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsFragment extends PreferenceFragment {

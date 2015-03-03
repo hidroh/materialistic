@@ -13,6 +13,7 @@ import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
 public class SearchActivity extends BaseListActivity {
 
+    private static final int MAX_RECENT_SUGGESTIONS = 10;
     private String mQuery;
 
     @Override
@@ -25,7 +26,13 @@ public class SearchActivity extends BaseListActivity {
             setTitle(getString(R.string.title_activity_search_query, mQuery));
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                     SearchRecentSuggestionsProvider.PROVIDER_AUTHORITY,
-                    SearchRecentSuggestionsProvider.MODE);
+                    SearchRecentSuggestionsProvider.MODE) {
+                @Override
+                public void saveRecentQuery(String queryString, String line2) {
+                    truncateHistory(getContentResolver(), MAX_RECENT_SUGGESTIONS - 1);
+                    super.saveRecentQuery(queryString, line2);
+                }
+            };
             suggestions.saveRecentQuery(mQuery, null);
         }
     }

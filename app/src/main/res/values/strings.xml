@@ -97,5 +97,7 @@
     <string name="title_activity_new">New Stories</string>
     <string name="title_activity_search">Search HN</string>
     <string name="title_activity_search_query" formatted="false">Search HN: \'%s\'</string>
+    <string name="clear_search_history">Clear search history</string>
+    <string name="clear_search_history_confirm">Clear search history?</string>
 
 </resources>
