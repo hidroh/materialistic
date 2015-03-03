@@ -14,6 +14,7 @@
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
         <item name="android:textColorSecondaryInverse">@color/textColorSecondaryInverse</item>
+        <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
         <!-- style for spinners -->
@@ -47,6 +48,7 @@
         <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
         <item name="android:textColorPrimaryInverse">@color/textColorPrimary</item>
         <item name="android:textColorSecondaryInverse">@color/textColorSecondary</item>
+        <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
         <!-- style for spinners -->
@@ -86,6 +88,10 @@
 
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">
+        <item name="android:textColor">@color/textColorSecondary</item>
     </style>
 
     <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">

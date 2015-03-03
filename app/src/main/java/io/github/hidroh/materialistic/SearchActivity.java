@@ -2,12 +2,14 @@ package io.github.hidroh.materialistic;
 
 import android.app.SearchManager;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
 public class SearchActivity extends BaseListActivity {
 
@@ -21,6 +23,10 @@ public class SearchActivity extends BaseListActivity {
         super.onCreate(savedInstanceState);
         if (!TextUtils.isEmpty(mQuery)) {
             setTitle(getString(R.string.title_activity_search_query, mQuery));
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchRecentSuggestionsProvider.PROVIDER_AUTHORITY,
+                    SearchRecentSuggestionsProvider.MODE);
+            suggestions.saveRecentQuery(mQuery, null);
         }
     }
 

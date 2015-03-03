@@ -110,6 +110,10 @@
             android:authorities="io.github.hidroh.materialistic.provider"
             android:name=".data.MaterialisticProvider"
             android:exported="false" />
+        <provider
+            android:authorities="io.github.hidroh.materialistic.recentprovider"
+            android:name=".data.SearchRecentSuggestionsProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
