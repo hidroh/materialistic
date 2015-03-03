@@ -38,6 +38,7 @@ public class ListFragment extends Fragment {
     private int mLocalRevision = 0;
     private ItemManager.Item[] mItems = new ItemManager.Item[0];
     private ItemManager mItemManager;
+    private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
     private ItemOpenListener mItemOpenListener;
@@ -82,7 +83,8 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_list, container, false);
-        mEmptyView = view.findViewById(android.R.id.empty);
+        mErrorView = view.findViewById(android.R.id.empty);
+        mEmptyView = view.findViewById(R.id.empty_search);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
@@ -160,8 +162,14 @@ public class ListFragment extends Fragment {
             @Override
             public void onResponse(final ItemManager.Item[] response) {
                 mItems = response;
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mEmptyView.setVisibility(View.GONE);
+                if (response == null || response.length == 0) {
+                    mEmptyView.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
+                } else {
+                    mEmptyView.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                }
+                mErrorView.setVisibility(View.GONE);
                 mAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -170,9 +178,10 @@ public class ListFragment extends Fragment {
             public void onError(String errorMessage) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 if (mItems == null || mItems.length == 0) {
-                    // TODO make refreshing indicator visible in empty view
+                    // TODO make refreshing indicator visible in error view
+                    mEmptyView.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.INVISIBLE);
-                    mEmptyView.setVisibility(View.VISIBLE);
+                    mErrorView.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(getActivity(), getString(R.string.connection_error),
                             Toast.LENGTH_SHORT).show();

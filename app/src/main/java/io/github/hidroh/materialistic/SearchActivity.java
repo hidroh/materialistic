@@ -15,6 +15,7 @@ public class SearchActivity extends BaseListActivity {
 
     private static final int MAX_RECENT_SUGGESTIONS = 10;
     private String mQuery;
+    private String mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +24,8 @@ public class SearchActivity extends BaseListActivity {
         }
         super.onCreate(savedInstanceState);
         if (!TextUtils.isEmpty(mQuery)) {
-            setTitle(getString(R.string.title_activity_search_query, mQuery));
+            mTitle = getString(R.string.title_activity_search_query, mQuery);
+            setTitle(mTitle);
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                     SearchRecentSuggestionsProvider.PROVIDER_AUTHORITY,
                     SearchRecentSuggestionsProvider.MODE) {
@@ -39,7 +41,11 @@ public class SearchActivity extends BaseListActivity {
 
     @Override
     protected String getDefaultTitle() {
-        return getString(R.string.title_activity_search);
+        if (TextUtils.isEmpty(mTitle)) {
+            return getString(R.string.title_activity_search);
+        }
+
+        return mTitle;
     }
 
     @Override
