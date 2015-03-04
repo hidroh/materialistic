@@ -67,6 +67,11 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public int getDescendants() {
+        return 0;
+    }
+
+    @Override
     public ItemManager.Item[] getKidItems() {
         return new ItemManager.Item[0];
     }

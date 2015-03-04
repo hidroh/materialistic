@@ -181,6 +181,9 @@ public class ItemActivity extends BaseItemActivity {
             return;
         }
 
+        if (story.getKidCount() > 0) {
+            setTitle(getString(R.string.title_activity_item_count, story.getKidCount()));
+        }
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         mHeaderCardView = (CardView) findViewById(R.id.header_card_view);
         if (story.isShareable()) {

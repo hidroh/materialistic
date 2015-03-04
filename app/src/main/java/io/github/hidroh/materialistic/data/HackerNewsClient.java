@@ -156,6 +156,8 @@ public class HackerNewsClient implements ItemManager {
         private String title;
         // A list of related pollopts, in display order.
         private long[] parts;
+        // In the case of stories or polls, the total comment count.
+        private int descendants = -1;
         private HackerNewsItem[] kidItems;
         private boolean favorite;
         private int localRevision = -1;
@@ -186,6 +188,7 @@ public class HackerNewsClient implements ItemManager {
             text = source.readString();
             type = source.readString();
             favorite = source.readInt() == 0 ? false : true;
+            descendants = source.readInt();
         }
 
         @Override
@@ -197,6 +200,7 @@ public class HackerNewsClient implements ItemManager {
             url = info.getRawUrl();
             text = info.getText();
             type = info.getRawType();
+            descendants = info.getDescendants();
         }
 
         @Override
@@ -240,6 +244,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeString(text);
             dest.writeString(type);
             dest.writeInt(favorite ? 1 : 0);
+            dest.writeInt(descendants);
         }
 
         @Override
@@ -290,6 +295,10 @@ public class HackerNewsClient implements ItemManager {
 
         @Override
         public int getKidCount() {
+            if (descendants > 0) {
+                return descendants;
+            }
+
             return kids != null ? kids.length : 0;
         }
 
@@ -368,6 +377,11 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public void setLocalRevision(int localRevision) {
             this.localRevision = localRevision;
+        }
+
+        @Override
+        public int getDescendants() {
+            return descendants;
         }
     }
 }

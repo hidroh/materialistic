@@ -149,6 +149,12 @@ public interface ItemManager {
          * @see #getLocalRevision()
          */
         void setLocalRevision(int localRevision);
+
+        /**
+         * Gets item's descendants if any
+         * @return  item's descendants or -1 if none
+         */
+        int getDescendants();
     }
 
     /**
