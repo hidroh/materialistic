@@ -71,7 +71,7 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
         }
 
         getMenuInflater().inflate(R.menu.menu_list_land, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
