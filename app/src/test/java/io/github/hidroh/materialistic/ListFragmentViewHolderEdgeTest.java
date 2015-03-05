@@ -36,7 +36,7 @@ public class ListFragmentViewHolderEdgeTest {
                 .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
 
                     @Override
-                    public void getStories(FetchMode fetchMode, ResponseListener<Item[]> listener) {
+                    public void getStories(String filter, ResponseListener<Item[]> listener) {
                         listener.onResponse(new Item[]{new TestItem() {}});
                     }
 
@@ -44,7 +44,7 @@ public class ListFragmentViewHolderEdgeTest {
                     public void getItem(String itemId, ResponseListener<Item> listener) {
                         ListFragmentViewHolderEdgeTest.this.listener = listener;
                     }
-                }, ItemManager.FetchMode.top))
+                }, ItemManager.FetchMode.top.name()))
                 .commit();
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         holder = recyclerView.getAdapter().createViewHolder(recyclerView, 0);

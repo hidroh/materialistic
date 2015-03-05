@@ -4,7 +4,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class TestItemManager implements ItemManager {
     @Override
-    public void getStories(FetchMode fetchMode, ResponseListener<Item[]> listener) {
+    public void getStories(String filter, ResponseListener<Item[]> listener) {
 
     }
 

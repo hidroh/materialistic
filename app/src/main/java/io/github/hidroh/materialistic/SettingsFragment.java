@@ -1,20 +1,14 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.provider.SearchRecentSuggestions;
 import android.support.v4.content.IntentCompat;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
-import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
+import io.github.hidroh.materialistic.data.AlgoliaClient;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsFragment extends PreferenceFragment {
@@ -33,14 +27,15 @@ public class SettingsFragment extends PreferenceFragment {
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (!key.equals(getActivity().getString(R.string.pref_dark_theme))) {
-                    return;
+                if (key.equals(getActivity().getString(R.string.pref_dark_theme))) {
+                    getActivity().finish();
+                    final Intent intent = getActivity().getIntent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                    getActivity().startActivity(intent);
+                } else if (key.equals(getActivity().getString(R.string.pref_item_search_recent))) {
+                    AlgoliaClient.getInstance(getActivity()).setSortByTime(
+                            sharedPreferences.getBoolean(key, true));
                 }
-
-                getActivity().finish();
-                final Intent intent = getActivity().getIntent();
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                getActivity().startActivity(intent);
             }
         };
     }

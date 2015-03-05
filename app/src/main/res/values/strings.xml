@@ -75,15 +75,20 @@
     <string name="view_in_hacker_news">View in Hacker News</string>
 
     <!-- preferences -->
+    <string name="pref_category_reading">Reading</string>
+    <string name="pref_category_search">Search</string>
     <string name="pref_external">pref_external</string>
     <string name="pref_external_title">Use external browser</string>
-    <string name="pref_external_summary">View stories using external browser instead of in-app browser (default).</string>
+    <string name="pref_external_summary">Read articles in your browser of choice</string>
     <string name="pref_item_click">pref_item_click</string>
     <string name="pref_item_click_title">Tap story to open comments</string>
-    <string name="pref_item_click_summary">Tap a story to view its comments instead of the original article (default).</string>
+    <string name="pref_item_click_summary">Default to open article</string>
     <string name="pref_dark_theme">pref_dark_theme</string>
     <string name="pref_dark_theme_title">Enable dark theme</string>
     <string name="pref_dark_theme_summary">Go stealthy, embrace the night!</string>
+    <string name="pref_item_search_recent">pref_item_search_recent</string>
+    <string name="pref_item_search_recent_title">Sort by more recent first</string>
+    <string name="pref_item_search_recent_summary">Turn off to sort by popularity</string>
 
     <string name="connection_error">Unable to connect to Hacker News.Check your connection or try again.</string>
     <string name="save_story">Save story</string>

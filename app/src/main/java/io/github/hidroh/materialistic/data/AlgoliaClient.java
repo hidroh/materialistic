@@ -1,7 +1,9 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 
+import io.github.hidroh.materialistic.R;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -14,39 +16,28 @@ public class AlgoliaClient implements ItemManager {
     private static final String BASE_API_URL = "https://hn.algolia.com/api/v1";
     private static AlgoliaClient mInstance;
     private RestService mRestService;
-    private String mQuery = "";
     private HackerNewsClient mHackerNewsClient;
+    private boolean mSortByTime = true;
 
     public static AlgoliaClient getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new AlgoliaClient();
             mInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
             mInstance.mHackerNewsClient = HackerNewsClient.getInstance(context);
+            mInstance.mSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(context.getString(R.string.pref_item_search_recent), true);
         }
 
         return mInstance;
     }
 
-    @Override
-    public void getStories(FetchMode fetchMode, ResponseListener<Item[]> listener) {
-        getStories(mQuery, listener);
+    public void setSortByTime(boolean sortByTime) {
+        mSortByTime = sortByTime;
     }
 
     @Override
-    public void getItem(String itemId, ResponseListener<Item> listener) {
-        mHackerNewsClient.getItem(itemId, listener);
-    }
-
-    public void setQuery(String query) {
-        if (query == null) {
-            query = "";
-        }
-
-        mQuery = query;
-    }
-
-    private void getStories(String query, final ResponseListener<Item[]> listener) {
-        mRestService.search(query, new Callback<AlgoliaHits>() {
+    public void getStories(String filter, final ResponseListener<Item[]> listener) {
+        Callback<AlgoliaHits> callback = new Callback<AlgoliaHits>() {
             @Override
             public void success(AlgoliaHits algoliaHits, Response response) {
                 if (listener == null) {
@@ -69,12 +60,26 @@ public class AlgoliaClient implements ItemManager {
 
                 listener.onError(error == null ? error.getMessage() : "");
             }
-        });
+        };
+        if (mSortByTime) {
+            mRestService.searchByDate(filter, callback);
+        } else {
+            mRestService.search(filter, callback);
+        }
+    }
+
+    @Override
+    public void getItem(String itemId, ResponseListener<Item> listener) {
+        mHackerNewsClient.getItem(itemId, listener);
     }
 
     private static interface RestService {
         @Headers("Cache-Control: max-age=600")
         @GET("/search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        void searchByDate(@Query("query") String query, Callback<AlgoliaHits> callback);
+
+        @Headers("Cache-Control: max-age=600")
+        @GET("/search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         void search(@Query("query") String query, Callback<AlgoliaHits> callback);
     }
 

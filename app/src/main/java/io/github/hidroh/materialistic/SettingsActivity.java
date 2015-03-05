@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.content.IntentCompat;
 
+import io.github.hidroh.materialistic.data.AlgoliaClient;
+
 public class SettingsActivity extends PreferenceActivity {
 
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
@@ -19,15 +21,16 @@ public class SettingsActivity extends PreferenceActivity {
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (!key.equals(getString(R.string.pref_dark_theme))) {
-                    return;
+                if (key.equals(getString(R.string.pref_dark_theme))) {
+                    finish();
+                    final Intent intent = IntentCompat.makeMainActivity(new ComponentName(
+                            SettingsActivity.this, ListActivity.class));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                } else if (key.equals(getString(R.string.pref_item_search_recent))) {
+                    AlgoliaClient.getInstance(SettingsActivity.this).setSortByTime(
+                            sharedPreferences.getBoolean(key, true));
                 }
-
-                finish();
-                final Intent intent = IntentCompat.makeMainActivity(new ComponentName(
-                        SettingsActivity.this, ListActivity.class));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
             }
         };
     }

@@ -50,14 +50,12 @@ public class SearchActivity extends BaseListActivity {
 
     @Override
     protected Fragment instantiateListFragment() {
-        final ItemManager itemManager;
         if (TextUtils.isEmpty(mQuery)) {
-            itemManager = HackerNewsClient.getInstance(this);
+            return ListFragment.instantiate(this, HackerNewsClient.getInstance(this),
+                    ItemManager.FetchMode.top.name());
         } else {
-            itemManager = AlgoliaClient.getInstance(this);
-            ((AlgoliaClient) itemManager).setQuery(mQuery);
+            return ListFragment.instantiate(this, AlgoliaClient.getInstance(this), mQuery);
         }
-        return ListFragment.instantiate(this, itemManager, ItemManager.FetchMode.top);
     }
 
     @Override

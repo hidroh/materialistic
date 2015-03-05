@@ -8,14 +8,14 @@ import android.os.Parcelable;
  */
 public interface ItemManager {
 
-    enum FetchMode { top, newest, ask, show, jobs }
+    enum FetchMode { top, newest, ask, show, fetchMode, jobs }
 
     /**
      * Gets array of top stories
-     * @param fetchMode type of stories to fetch
+     * @param filter    filter of stories to fetch
      * @param listener  callback to be notified on response
      */
-    void getStories(FetchMode fetchMode, final ResponseListener<Item[]> listener);
+    void getStories(String filter, final ResponseListener<Item[]> listener);
 
     /**
      * Gets individual item by ID

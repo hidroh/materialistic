@@ -37,7 +37,7 @@ public class HackerNewsClient implements ItemManager {
     }
 
     @Override
-    public void getStories(FetchMode fetchMode, final ResponseListener<Item[]> listener) {
+    public void getStories(String filter, final ResponseListener<Item[]> listener) {
         final Callback<int[]> callback = new Callback<int[]>() {
             @Override
             public void success(int[] ints, Response response) {
@@ -61,6 +61,15 @@ public class HackerNewsClient implements ItemManager {
                 listener.onError(error == null ? error.getMessage() : "");
             }
         };
+        final FetchMode fetchMode;
+        try {
+            fetchMode = FetchMode.valueOf(filter);
+        } catch (IllegalArgumentException e) {
+            return;
+        } catch (NullPointerException e) {
+            return;
+        }
+
         switch (fetchMode) {
             case newest:
                 mRestService.newStories(callback);

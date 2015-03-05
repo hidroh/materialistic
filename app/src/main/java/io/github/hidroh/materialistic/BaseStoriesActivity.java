@@ -11,7 +11,8 @@ public abstract class BaseStoriesActivity extends BaseListActivity {
 
     @Override
     protected Fragment instantiateListFragment() {
-        return ListFragment.instantiate(this, HackerNewsClient.getInstance(this), getFetchMode());
+        return ListFragment.instantiate(this, HackerNewsClient.getInstance(this),
+                getFetchMode().name());
     }
 
     @Override
