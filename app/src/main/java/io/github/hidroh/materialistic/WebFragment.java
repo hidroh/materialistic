@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class WebFragment extends Fragment {
@@ -28,15 +31,22 @@ public class WebFragment extends Fragment {
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
     private WebView mWebView;
+    private boolean mIsHackerNewsUrl;
 
     public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
         fragment.mItem = item;
+        fragment.mIsHackerNewsUrl = !TextUtils.isEmpty(item.getUrl()) &&
+                item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (mIsHackerNewsUrl) {
+            return createLocalView(container, savedInstanceState);
+        }
+
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_web, container, false);
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
@@ -81,9 +91,39 @@ public class WebFragment extends Fragment {
         return view;
     }
 
+    private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
+        final View view = getLayoutInflater(savedInstanceState)
+                .inflate(R.layout.fragment_web_hn, container, false);
+        ((TextView) view.findViewById(R.id.posted)).setText(mItem.getDisplayedTime(getActivity()));
+        ((TextView) view.findViewById(R.id.title)).setText(mItem.getDisplayedTitle());
+        if (mItem instanceof ItemManager.Item) {
+            AppUtils.setTextWithLinks((TextView) view.findViewById(R.id.text),
+                    ((ItemManager.Item) mItem).getText());
+        } else {
+            HackerNewsClient.getInstance(getActivity()).getItem(mItem.getId(),
+                    new ItemManager.ResponseListener<ItemManager.Item>() {
+                        @Override
+                        public void onResponse(ItemManager.Item response) {
+                            AppUtils.setTextWithLinks((TextView) view.findViewById(R.id.text),
+                                    response.getText());
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            // do nothing
+                        }
+                    });
+        }
+        return view;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (mIsHackerNewsUrl) {
+            return;
+        }
+
         if (savedInstanceState != null) {
             ItemManager.WebItem savedItem = savedInstanceState.getParcelable(EXTRA_ITEM);
             if (savedItem != null) {
