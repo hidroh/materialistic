@@ -14,21 +14,24 @@ import retrofit.http.Query;
 public class AlgoliaClient implements ItemManager {
 
     private static final String BASE_API_URL = "https://hn.algolia.com/api/v1";
+    private static final Object sLock = new Object();
     private static AlgoliaClient sInstance;
     private RestService mRestService;
     private HackerNewsClient mHackerNewsClient;
     private boolean mSortByTime = true;
 
     public static AlgoliaClient getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new AlgoliaClient();
-            sInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
-            sInstance.mHackerNewsClient = HackerNewsClient.getInstance(context);
-            sInstance.mSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean(context.getString(R.string.pref_item_search_recent), true);
-        }
+        synchronized (sLock) {
+            if (sInstance == null) {
+                sInstance = new AlgoliaClient();
+                sInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
+                sInstance.mHackerNewsClient = HackerNewsClient.getInstance(context);
+                sInstance.mSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(context.getString(R.string.pref_item_search_recent), true);
+            }
 
-        return sInstance;
+            return sInstance;
+        }
     }
 
     public void setSortByTime(boolean sortByTime) {
