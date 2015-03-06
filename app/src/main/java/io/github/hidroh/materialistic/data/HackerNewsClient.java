@@ -20,7 +20,7 @@ public class HackerNewsClient implements ItemManager {
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
     private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0";
-    private static HackerNewsClient mInstance;
+    private static HackerNewsClient sInstance;
     private RestService mRestService;
 
     /**
@@ -28,12 +28,12 @@ public class HackerNewsClient implements ItemManager {
      * @return a hacker news client
      */
     public static HackerNewsClient getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new HackerNewsClient();
-            mInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
+        if (sInstance == null) {
+            sInstance = new HackerNewsClient();
+            sInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
         }
 
-        return mInstance;
+        return sInstance;
     }
 
     @Override
