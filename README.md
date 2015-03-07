@@ -41,6 +41,6 @@ Supply your own release signing config to build release. Release signing config 
 <img src="assets/screenshot-1.png" width="300px" />
 <img src="assets/screenshot-2.png" width="300px" />
 <img src="assets/screenshot-3.png" width="300px" />
-<img src="assets/screenshot-10.png" width="300px" />
-<img src="assets/screenshot-5.png" width="600px" />
-<img src="assets/screenshot-11.png" width="600px" />
+<img src="assets/screenshot-8.png" width="300px" />
+<img src="assets/screenshot-10.png" width="600px" />
+<img src="assets/screenshot-12.png" width="600px" />
