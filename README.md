@@ -9,7 +9,7 @@
 - Latest Android SDK tools
 - Latest Android platform tools
 - Android SDK Build tools 21.1.2
-- Android SDK 21
+- Android SDK 22
 - Android Support Repository
 - Android Support Library 21.0.3
 - Google Repository
