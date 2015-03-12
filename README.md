@@ -11,7 +11,7 @@
 - Android SDK Build tools 21.1.2
 - Android SDK 22
 - Android Support Repository
-- Android Support Library 21.0.3
+- Android Support Library 22.0.0
 - Google Repository
 - Google Play services
 
