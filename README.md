@@ -13,7 +13,7 @@
 - Android Support Repository
 - Android Support Library 22.0.0
 - Google Repository
-- Google Play services
+- Google Play services 7.0.0
 
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API)
