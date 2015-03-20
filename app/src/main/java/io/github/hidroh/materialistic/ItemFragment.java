@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -185,7 +184,7 @@ public class ItemFragment extends Fragment {
                     holder.mPostedTextView.setText(item.getDisplayedTime(getActivity()));
                     AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
                     if (item.getKidCount() > 0) {
-                        holder.mCommentButton.setText(String.valueOf(item.getKidCount()));
+                        holder.mCommentText.setText(String.valueOf(item.getKidCount()));
                         holder.mCommentButton.setVisibility(View.VISIBLE);
                         holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -224,13 +223,15 @@ public class ItemFragment extends Fragment {
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final TextView mPostedTextView;
         private final TextView mContentTextView;
-        private final Button mCommentButton;
+        private final View mCommentButton;
+        private final TextView mCommentText;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mContentTextView = (TextView) itemView.findViewById(R.id.text);
-            mCommentButton = (Button) itemView.findViewById(R.id.comment);
+            mCommentButton = itemView.findViewById(R.id.comment);
+            mCommentText = (TextView) mCommentButton.findViewById(R.id.text);
             mCommentButton.setVisibility(View.INVISIBLE);
         }
     }

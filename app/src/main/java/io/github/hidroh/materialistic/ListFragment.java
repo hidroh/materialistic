@@ -17,7 +17,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -192,15 +191,14 @@ public class ListFragment extends Fragment {
 
     private class ViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
         private final View mBookmarked;
-        private TextView mRankTextView;
+        private final TextView mCommentText;
+        private final TextView mRankTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mRankTextView = (TextView) itemView.findViewById(R.id.rank);
             mBookmarked = itemView.findViewById(R.id.bookmarked);
-            // TODO remember tinted drawable so we don't apply it again
-            AppUtils.initTintedDrawable(getResources(), R.drawable.ic_mode_comment_grey600_48dp,
-                    R.color.colorAccent);
+            mCommentText = (TextView) mCommentButton.findViewById(R.id.text);
         }
     }
 
@@ -275,7 +273,7 @@ public class ListFragment extends Fragment {
         protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
             super.bindViewHolder(holder, story);
             if (story.getKidCount() > 0) {
-                ((Button) holder.mCommentButton).setText(String.valueOf(story.getKidCount()));
+                holder.mCommentText.setText(String.valueOf(story.getKidCount()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
             } else {
                 holder.mCommentButton.setVisibility(View.GONE);

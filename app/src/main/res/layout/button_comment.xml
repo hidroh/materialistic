@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Button xmlns:android="http://schemas.android.com/apk/res/android"
-    android:text="@string/loading_text"
-    android:textColor="@color/textColorButton"
-    android:id="@id/comment"
-    android:background="@drawable/ic_mode_comment_grey600_48dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_gravity="center|center_vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content">
+    <ImageView
+        android:src="@drawable/ic_mode_comment_grey600_48dp"
+        android:tint="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@id/text"
+        android:text="@string/loading_text"
+        android:textColor="@color/textColorButton"
+        android:layout_centerInParent="true"
+        android:gravity="center|center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>
