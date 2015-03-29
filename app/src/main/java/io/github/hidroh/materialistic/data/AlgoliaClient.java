@@ -76,7 +76,7 @@ public class AlgoliaClient implements ItemManager {
         mHackerNewsClient.getItem(itemId, listener);
     }
 
-    private static interface RestService {
+    private interface RestService {
         @Headers("Cache-Control: max-age=600")
         @GET("/search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         void searchByDate(@Query("query") String query, Callback<AlgoliaHits> callback);

@@ -8,7 +8,7 @@ import android.os.Parcelable;
  */
 public interface ItemManager {
 
-    enum FetchMode { top, newest, ask, show, fetchMode, jobs }
+    enum FetchMode { top, newest, ask, show, jobs }
 
     /**
      * Gets array of top stories
@@ -164,7 +164,7 @@ public interface ItemManager {
         /**
          * Item types
          */
-        public enum Type { job, story, comment, poll, pollopt;}
+        enum Type { job, story, comment, poll, pollopt;}
 
         /**
          * Gets formatted title to display

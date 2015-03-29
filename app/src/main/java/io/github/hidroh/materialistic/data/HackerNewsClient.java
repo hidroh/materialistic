@@ -115,7 +115,7 @@ public class HackerNewsClient implements ItemManager {
         });
     }
 
-    private static interface RestService {
+    private interface RestService {
         @Headers("Cache-Control: max-age=600")
         @GET("/topstories.json")
         void topStories(Callback<int[]> callback);

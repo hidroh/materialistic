@@ -92,12 +92,12 @@ public class MaterialisticProvider extends ContentProvider {
     }
 
     interface FavoriteEntry extends BaseColumns {
-        static final String TABLE_NAME = "favorite";
-        static final String MIME_TYPE = "vnd.android.cursor.dir/vnd." + PROVIDER_AUTHORITY + "." + TABLE_NAME;
-        static final String COLUMN_NAME_ITEM_ID = "itemid";
-        static final String COLUMN_NAME_URL = "url";
-        static final String COLUMN_NAME_TITLE = "title";
-        static final String COLUMN_NAME_TIME = "time";
+        String TABLE_NAME = "favorite";
+        String MIME_TYPE = "vnd.android.cursor.dir/vnd." + PROVIDER_AUTHORITY + "." + TABLE_NAME;
+        String COLUMN_NAME_ITEM_ID = "itemid";
+        String COLUMN_NAME_URL = "url";
+        String COLUMN_NAME_TITLE = "title";
+        String COLUMN_NAME_TIME = "time";
     }
 
     private static class DbHelper extends SQLiteOpenHelper {
