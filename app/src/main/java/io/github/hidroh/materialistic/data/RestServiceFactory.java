@@ -24,12 +24,8 @@ public class RestServiceFactory {
         if (loggingEnabled) {
             okHttpClient.networkInterceptors().add(new LoggingInterceptor());
         }
-        try {
-            okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
-                    CACHE_SIZE));
-        } catch (IOException e) {
-            // do nothing
-        }
+        okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
+                CACHE_SIZE));
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
                 .setEndpoint(baseUrl)
