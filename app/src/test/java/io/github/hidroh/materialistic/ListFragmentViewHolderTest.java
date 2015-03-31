@@ -21,7 +21,7 @@ import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
 import static junit.framework.Assert.assertEquals;
-import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.Shadows.shadowOf;
 
 @Config(emulateSdk = 18, reportSdk = 18)
 @RunWith(RobolectricTestRunner.class)

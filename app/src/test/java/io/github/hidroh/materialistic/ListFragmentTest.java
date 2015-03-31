@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
@@ -29,7 +30,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.Robolectric.shadowOf_;
 
 
 @Config(emulateSdk = 18, reportSdk = 18, shadows = {ShadowSwipeRefreshLayout.class})
@@ -61,7 +61,8 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.content, ListFragment.instantiate(activity, manager, ItemManager.FetchMode.top.name()))
                 .commit();
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = shadowOf_(activity.findViewById(R.id.swipe_layout));
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
+                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
         verify(manager, times(2)).getStories(any(String.class),
@@ -133,7 +134,8 @@ public class ListFragmentTest {
                 }, ItemManager.FetchMode.top.name()))
                 .commit();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = shadowOf_(activity.findViewById(R.id.swipe_layout));
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
+                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
         assertNotNull(ShadowToast.getLatestToast());

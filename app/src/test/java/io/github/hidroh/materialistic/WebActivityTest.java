@@ -16,11 +16,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenu;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowResolveInfo;
-import org.robolectric.tester.android.view.TestMenu;
-import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -31,7 +32,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.Shadows.shadowOf;
 
 @Config(emulateSdk = 18, reportSdk = 18, shadows = {ShadowWebView.class})
 @RunWith(RobolectricTestRunner.class)
@@ -52,7 +53,7 @@ public class WebActivityTest {
     @Test
     public void testCreateOptionsMenu() {
         final ShareActionProvider actionProvider = mock(ShareActionProvider.class);
-        activity.onCreateOptionsMenu(new TestMenu() {
+        activity.onCreateOptionsMenu(new RoboMenu() {
             @Override
             public MenuItem findItem(int id) {
                 if (id == R.id.menu_share) {
@@ -61,7 +62,7 @@ public class WebActivityTest {
                     when(menuItem.getSupportActionProvider()).thenReturn(actionProvider);
                     return menuItem;
                 }
-                return new TestMenuItem(id);
+                return new RoboMenuItem(id);
             }
         });
         verify(actionProvider).setShareIntent(any(Intent.class));
@@ -69,8 +70,8 @@ public class WebActivityTest {
 
     @Test
     public void testPrepareOptionsMenu() {
-        final MenuItem menuItem = new TestMenuItem();
-        Menu menu = new TestMenu() {
+        final MenuItem menuItem = new RoboMenuItem();
+        Menu menu = new RoboMenu() {
             @Override
             public MenuItem findItem(int id) {
                 if (id == R.id.menu_share) {
@@ -93,19 +94,19 @@ public class WebActivityTest {
     @Test
     public void testOptionsItemSelectedExternal() {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                Robolectric.application.getPackageManager();
+                RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW, Uri.parse("http://hidroh.github.io")),
                 ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(), WebActivity.class.getName()));
         when(item.getUrl()).thenReturn("http://hidroh.github.io");
-        activity.onOptionsItemSelected(new TestMenuItem(R.id.menu_external));
+        activity.onOptionsItemSelected(new RoboMenuItem(R.id.menu_external));
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual).hasAction(Intent.ACTION_VIEW);
     }
 
     @Test
     public void testOptionsItemSelectedComment() {
-        activity.onOptionsItemSelected(new TestMenuItem(R.id.menu_comment));
+        activity.onOptionsItemSelected(new RoboMenuItem(R.id.menu_comment));
         Intent actual = shadowOf(activity).getNextStartedActivity();
         Assertions.assertThat(actual.getComponent().getClassName()).isEqualTo(ItemActivity.class.getName());
     }
