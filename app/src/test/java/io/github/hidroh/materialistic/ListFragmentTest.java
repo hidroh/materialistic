@@ -32,7 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-@Config(emulateSdk = 18, reportSdk = 18, shadows = {ShadowSwipeRefreshLayout.class})
+@Config(emulateSdk = 21, reportSdk = 21, shadows = {ShadowSwipeRefreshLayout.class})
 @RunWith(RobolectricTestRunner.class)
 public class ListFragmentTest {
     private ActivityController<ListActivity> controller;

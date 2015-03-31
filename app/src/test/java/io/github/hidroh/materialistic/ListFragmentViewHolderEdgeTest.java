@@ -18,7 +18,7 @@ import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
-@Config(emulateSdk = 18, reportSdk = 18)
+@Config(emulateSdk = 21, reportSdk = 21)
 @RunWith(RobolectricTestRunner.class)
 public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;

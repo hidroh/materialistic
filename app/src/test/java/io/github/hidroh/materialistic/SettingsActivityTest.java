@@ -10,7 +10,7 @@ import org.robolectric.util.ActivityController;
 import static org.assertj.android.api.Assertions.assertThat;
 
 
-@Config(emulateSdk = 18, reportSdk = 18)
+@Config(emulateSdk = 21, reportSdk = 21)
 @RunWith(RobolectricTestRunner.class)
 public class SettingsActivityTest {
     @Test
