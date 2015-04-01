@@ -132,6 +132,10 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="textContentStyle">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+    </style>
+
     <style name="textEmptyStyle">
         <item name="android:textColor">@color/textColorSecondary</item>
         <item name="android:textSize">@dimen/abc_text_size_headline_material</item>

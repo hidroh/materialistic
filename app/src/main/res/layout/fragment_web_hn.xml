@@ -31,6 +31,7 @@
             android:paddingLeft="@dimen/padding"
             android:paddingRight="@dimen/padding"
             android:text="@string/loading_text"
+            style="@style/textContentStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </ScrollView>
