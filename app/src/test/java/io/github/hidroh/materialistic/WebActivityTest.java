@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(emulateSdk = 21, reportSdk = 21, shadows = {ShadowWebView.class})
+@Config(shadows = {ShadowWebView.class})
 @RunWith(RobolectricTestRunner.class)
 public class WebActivityTest {
     private WebActivity activity;

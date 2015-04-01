@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -18,7 +17,6 @@ import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
-@Config(emulateSdk = 21, reportSdk = 21)
 @RunWith(RobolectricTestRunner.class)
 public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;

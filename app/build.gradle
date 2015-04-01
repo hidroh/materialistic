@@ -39,6 +39,7 @@ android {
         // Move the tests to test/java, test/res, etc...
         androidTest {
             java.srcDirs = ['src/test/java']
+            resources.srcDirs = ['src/test/resources']
         }
     }
 }
