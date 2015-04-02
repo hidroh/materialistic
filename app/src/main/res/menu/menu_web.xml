@@ -5,8 +5,7 @@
         android:id="@id/menu_favorite"
         android:title="@string/save_story"
         android:visible="false"
-        android:icon="@drawable/ic_bookmark_outline_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@id/menu_comment"
         android:title="@string/title_activity_item"
