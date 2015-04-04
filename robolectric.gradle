@@ -1,0 +1,39 @@
+apply plugin: 'robolectric'
+
+robolectric {
+    // configure the set of classes for JUnit tests
+    include '**/*Test.class'
+    exclude '**/espresso/**/*.class'
+
+    // configure max heap size of the test JVM
+    maxHeapSize = '2048m'
+
+    // configure the test JVM arguments
+    jvmArgs '-XX:MaxPermSize=512m', '-XX:-UseSplitVerifier'
+
+    // Specify max number of processes (default is 1)
+    maxParallelForks = 1
+
+    // Specify max number of test classes to execute in a test process
+    // before restarting the process (default is unlimited)
+    forkEvery = 150
+
+    // configure whether failing tests should fail the build
+    ignoreFailures false
+
+    // use afterTest to listen to the test execution results
+    afterTest { descriptor, result ->
+        println "${descriptor.className} > ${descriptor.name} ${result.resultType}"
+    }
+}
+
+dependencies {
+    androidTestCompile('org.robolectric:robolectric:3.0-rc2') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0',
+            'com.squareup.assertj:assertj-android-support-v4:1.0.0',
+            'org.mockito:mockito-core:1.9.5+',
+            'junit:junit:4.11'
+}

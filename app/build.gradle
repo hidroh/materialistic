@@ -1,7 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'robolectric'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 
 android {
     compileSdkVersion 22
@@ -44,69 +41,6 @@ android {
     }
 }
 
-robolectric {
-    // configure the set of classes for JUnit tests
-    include '**/*Test.class'
-    exclude '**/espresso/**/*.class'
-
-    // configure max heap size of the test JVM
-    maxHeapSize = '2048m'
-
-    // configure the test JVM arguments
-    jvmArgs '-XX:MaxPermSize=512m', '-XX:-UseSplitVerifier'
-
-    // Specify max number of processes (default is 1)
-    maxParallelForks = 1
-
-    // Specify max number of test classes to execute in a test process
-    // before restarting the process (default is unlimited)
-    forkEvery = 150
-
-    // configure whether failing tests should fail the build
-    ignoreFailures false
-
-    // use afterTest to listen to the test execution results
-    afterTest { descriptor, result ->
-        println "${descriptor.className} > ${descriptor.name} ${result.resultType}"
-    }
-}
-
-task jacocoTestReport(type: JacocoReport) {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-        html.destination "${buildDir}/reports/coverage"
-    }
-
-    classDirectories = fileTree(
-            dir: "${buildDir}/intermediates/classes/debug",
-            exclude: [
-                    '**/R.class',
-                    '**/R$*.class',
-                    '**/*$InjectAdapter.class',
-                    '**/*$ModuleAdapter.class',
-                    '**/*$ViewInjector*.class'
-            ])
-    sourceDirectories = files android.sourceSets.main.java.srcDirs
-    executionData = files "${buildDir}/jacoco/testDebug.exec"
-
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
-    doFirst {
-        new File("${buildDir}/intermediates/classes/debug").eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
-            }
-        }
-    }
-
-    doLast {
-        println "coveralls report has been generated to file://${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-        println "jacoco report has been generated to file://${reports.html.destination}/index.html"
-    }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.0.0'
@@ -119,12 +53,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.google.android.gms:play-services-analytics:7.0.0'
     provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-    androidTestCompile('org.robolectric:robolectric:3.0-rc2') {
-        exclude group: 'commons-logging', module: 'commons-logging'
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-    }
-    androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0',
-            'com.squareup.assertj:assertj-android-support-v4:1.0.0',
-            'org.mockito:mockito-core:1.9.5+',
-            'junit:junit:4.11'
 }
+
+apply from: "${rootProject.getRootDir()}/robolectric.gradle"
+apply from: "${rootProject.getRootDir()}/jacoco.gradle"
