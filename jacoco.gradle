@@ -1,6 +1,8 @@
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
+def jacocoDaggerMap = [:]
+
 task jacocoTestReport(type: JacocoReport) {
     reports {
         xml.enabled true
@@ -26,12 +28,18 @@ task jacocoTestReport(type: JacocoReport) {
     doFirst {
         new File("${buildDir}/intermediates/classes/debug").eachFileRecurse { file ->
             if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
+                def renamed = file.path.replace '$$', '$'
+                jacocoDaggerMap[renamed] = file.path
+                file.renameTo renamed
             }
         }
     }
 
     doLast {
+        // Revert renamed files back to their generated names
+        jacocoDaggerMap.each { renamed, original ->
+            new File(renamed).renameTo original
+        }
         println "coveralls report has been generated to file://${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         println "jacoco report has been generated to file://${reports.html.destination}/index.html"
     }
