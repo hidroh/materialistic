@@ -6,6 +6,8 @@ import android.os.Parcel;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
+import javax.inject.Inject;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -31,12 +33,16 @@ public class HackerNewsClient implements ItemManager {
     public static HackerNewsClient getInstance(Context context) {
         synchronized (sLock) {
             if (sInstance == null) {
-                sInstance = new HackerNewsClient();
-                sInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
+                sInstance = new HackerNewsClient(context);
             }
 
             return sInstance;
         }
+    }
+
+    @Inject
+    public HackerNewsClient(Context context) {
+        mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
     }
 
     @Override

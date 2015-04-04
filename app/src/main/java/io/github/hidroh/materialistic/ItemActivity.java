@@ -13,6 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -28,6 +30,7 @@ public class ItemActivity extends BaseItemActivity {
     private boolean mFavoriteBound;
     private boolean mIsResumed = true;
     private boolean mOrientationChanged = false;
+    @Inject HackerNewsClient mHackerNewsClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         if (!TextUtils.isEmpty(itemId)) {
-            HackerNewsClient.getInstance(this).getItem(itemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+            mHackerNewsClient.getItem(itemId, new ItemManager.ResponseListener<ItemManager.Item>() {
                 @Override
                 public void onResponse(ItemManager.Item response) {
                     mItem = response;

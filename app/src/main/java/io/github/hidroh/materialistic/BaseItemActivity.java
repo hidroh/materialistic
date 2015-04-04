@@ -1,8 +1,21 @@
 package io.github.hidroh.materialistic;
 
+import android.os.Bundle;
 import android.view.MenuItem;
 
-public abstract class BaseItemActivity extends TrackableActivity {
+import dagger.ObjectGraph;
+
+public abstract class BaseItemActivity extends TrackableActivity implements Injectable {
+    private ObjectGraph mActivityGraph;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActivityGraph = ((Application) getApplication()).getApplicationGraph()
+                .plus(new ActivityModule(this));
+        mActivityGraph.inject(this);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -11,5 +24,16 @@ public abstract class BaseItemActivity extends TrackableActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mActivityGraph = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void inject(Object object) {
+        mActivityGraph.inject(object);
     }
 }

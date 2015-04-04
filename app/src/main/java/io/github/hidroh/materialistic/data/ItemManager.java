@@ -164,7 +164,7 @@ public interface ItemManager {
         /**
          * Item types
          */
-        enum Type { job, story, comment, poll, pollopt;}
+        enum Type { job, story, comment, poll }
 
         /**
          * Gets formatted title to display

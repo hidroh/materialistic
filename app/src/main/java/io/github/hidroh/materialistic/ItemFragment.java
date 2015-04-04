@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,51 +17,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ItemFragment extends Fragment {
+public class ItemFragment extends BaseFragment {
 
     public static final String EXTRA_MARGIN = ItemFragment.class.getName() + ".EXTRA_MARGIN";
     private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private ItemManager.Item mItem;
+    private String mItemId;
     private int mLocalRevision = 0;
     private boolean mIsResumed;
-
-    /**
-     * Instantiates fragment to display given web item (with missing kid data)
-     * @param context   an instance of {@link android.content.Context}
-     * @param item      web item to display
-     * @param args      fragment arguments or null
-     * @return  item fragment
-     */
-    public static ItemFragment instantiate(Context context, ItemManager.WebItem item, Bundle args) {
-        if (item instanceof ItemManager.Item) {
-            return instantiate(context, (ItemManager.Item) item, args);
-        } else {
-            final ItemFragment fragment = (ItemFragment) instantiate(context, ItemFragment.class.getName(), args);
-            HackerNewsClient.getInstance(context).getItem(item.getId(),
-                    new ItemManager.ResponseListener<ItemManager.Item>() {
-                        @Override
-                        public void onResponse(ItemManager.Item response) {
-                            if (!fragment.mIsResumed) {
-                                return;
-                            }
-
-                            fragment.mItem = response;
-                            fragment.bindKidData(fragment.mItem.getKidItems(), null);
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            // do nothing
-                        }
-                    });
-            return fragment;
-        }
-    }
+    @Inject HackerNewsClient mHackerNewsClient;
 
     /**
      * Instantiates fragment to display given item
@@ -69,10 +41,14 @@ public class ItemFragment extends Fragment {
      * @param args      fragment arguments or null
      * @return  item fragment
      */
-    public static ItemFragment instantiate(Context context, ItemManager.Item item, Bundle args) {
+    public static ItemFragment instantiate(Context context, ItemManager.WebItem item, Bundle args) {
         final ItemFragment fragment = (ItemFragment) Fragment.instantiate(context,
                 ItemFragment.class.getName(), args == null ? new Bundle() : args);
-        fragment.mItem = item;
+        if (item instanceof ItemManager.Item) {
+            fragment.mItem = (ItemManager.Item) item;
+        } else {
+            fragment.mItemId = item.getId();
+        }
         return fragment;
     }
 
@@ -109,6 +85,23 @@ public class ItemFragment extends Fragment {
 
         if (mItem != null) {
             bindKidData(mItem.getKidItems(), savedInstanceState);
+        } else if (!TextUtils.isEmpty(mItemId)) {
+            mHackerNewsClient.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+                @Override
+                public void onResponse(ItemManager.Item response) {
+                    if (!mIsResumed) {
+                        return;
+                    }
+
+                    mItem = response;
+                    bindKidData(mItem.getKidItems(), null);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    // do nothing
+                }
+            });
         }
     }
 
@@ -148,7 +141,7 @@ public class ItemFragment extends Fragment {
                 final ItemManager.Item item = items[position];
                 if (item.getLocalRevision() < mLocalRevision) {
                     bindKidItem(holder, null);
-                    HackerNewsClient.getInstance(getActivity()).getItem(item.getId(),
+                    mHackerNewsClient.getItem(item.getId(),
                             new ItemManager.ResponseListener<ItemManager.Item>() {
                                 @Override
                                 public void onResponse(ItemManager.Item response) {

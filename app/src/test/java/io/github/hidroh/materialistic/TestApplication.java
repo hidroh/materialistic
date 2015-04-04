@@ -5,7 +5,7 @@ import org.robolectric.shadows.ShadowApplication;
 
 import java.lang.reflect.Method;
 
-public class TestApplication extends android.app.Application implements TestLifecycleApplication {
+public class TestApplication extends Application implements TestLifecycleApplication {
     @Override
     public void beforeTest(Method method) {
         ShadowApplication.getInstance().declareActionUnbindable("com.google.android.gms.analytics.service.START");
