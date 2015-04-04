@@ -62,7 +62,7 @@ public class FavoriteManager {
      * @param query     query to filter stories to be retrieved
      * @see #makeGetIntentFilter()
      */
-    public static void get(Context context, String query) {
+    public void get(Context context, String query) {
         final String selection;
         final String[] selectionArgs;
         if (TextUtils.isEmpty(query)) {
@@ -105,7 +105,7 @@ public class FavoriteManager {
      * @param story     story to be added as favorite
      * @see #makeAddIntentFilter()
      */
-    public static void add(Context context, final ItemManager.WebItem story) {
+    public void add(Context context, final ItemManager.WebItem story) {
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
         final ContentValues contentValues = new ContentValues();
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
@@ -134,7 +134,7 @@ public class FavoriteManager {
      * @param query     query to filter stories to be cleared
      * @see #makeClearIntentFilter()
      */
-    public static void clear(Context context, String query) {
+    public void clear(Context context, String query) {
         final String selection;
         final String[] selectionArgs;
         if (TextUtils.isEmpty(query)) {
@@ -162,7 +162,7 @@ public class FavoriteManager {
      * @param itemId    story ID to check
      * @param callbacks listener to be informed upon checking completed
      */
-    public static void check(Context context, final String itemId, final OperationCallbacks callbacks) {
+    public void check(Context context, final String itemId, final OperationCallbacks callbacks) {
         if (itemId == null) {
             return;
         }
@@ -195,7 +195,7 @@ public class FavoriteManager {
      * @param itemId    story ID to be removed from favorites
      * @see #makeRemoveIntentFilter()
      */
-    public static void remove(Context context, final String itemId) {
+    public void remove(Context context, final String itemId) {
         if (itemId == null) {
             return;
         }
@@ -225,7 +225,7 @@ public class FavoriteManager {
      * @param itemIds   array of story IDs to be removed from favorites
      * @see #makeClearIntentFilter()
      */
-    public static void remove(Context context, Set<String> itemIds) {
+    public void remove(Context context, Set<String> itemIds) {
         if (itemIds == null || itemIds.isEmpty()) {
             return;
         }
@@ -275,7 +275,7 @@ public class FavoriteManager {
     /**
      * Creates an intent filter for add action broadcast
      * @return add intent filter
-     * @see #add(android.content.Context, io.github.hidroh.materialistic.data.ItemManager.Item)
+     * @see #add(android.content.Context, io.github.hidroh.materialistic.data.ItemManager.WebItem)
      */
     public static IntentFilter makeAddIntentFilter() {
         return new IntentFilter(ACTION_ADD);

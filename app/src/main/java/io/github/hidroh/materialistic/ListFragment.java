@@ -24,10 +24,12 @@ import android.widget.Toast;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ListFragment extends Fragment {
+public class ListFragment extends BaseFragment {
 
     private static final String EXTRA_ITEMS = ListFragment.class.getName() + ".EXTRA_ITEMS";
     private RecyclerView mRecyclerView;
@@ -42,6 +44,7 @@ public class ListFragment extends Fragment {
     private Set<String> mChangedFavorites = new HashSet<>();
     private ItemOpenListener mItemOpenListener;
     private String mFilter;
+    @Inject FavoriteManager mFavoriteManager;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager,
                                            String filter) {
@@ -216,7 +219,7 @@ public class ListFragment extends Fragment {
             if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
                 story.setLocalRevision(mLocalRevision);
                 mChangedFavorites.remove(story.getId());
-                FavoriteManager.check(getActivity(), story.getId(),
+                mFavoriteManager.check(getActivity(), story.getId(),
                         new FavoriteManager.OperationCallbacks() {
                             @Override
                             public void onCheckComplete(boolean isFavorite) {
@@ -283,10 +286,10 @@ public class ListFragment extends Fragment {
                 public boolean onLongClick(View v) {
                     final int toastMessageResId;
                     if (!story.isFavorite()) {
-                        FavoriteManager.add(getActivity(), story);
+                        mFavoriteManager.add(getActivity(), story);
                         toastMessageResId = R.string.toast_saved;
                     } else {
-                        FavoriteManager.remove(getActivity(), story.getId());
+                        mFavoriteManager.remove(getActivity(), story.getId());
                         toastMessageResId = R.string.toast_removed;
                     }
                     Toast.makeText(getActivity(), toastMessageResId, Toast.LENGTH_SHORT).show();

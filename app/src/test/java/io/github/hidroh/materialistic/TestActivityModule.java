@@ -5,15 +5,17 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 import static org.mockito.Mockito.mock;
 
 @Module(
         injects = {
+                // source classes
                 ActionBarSettingsActivity.class, // TODO remove
                 AskActivity.class,
-                FavoriteActivity.class, // TODO remove
+                FavoriteActivity.class,
                 ItemActivity.class,
                 JobsActivity.class,
                 ListActivity.class,
@@ -21,8 +23,11 @@ import static org.mockito.Mockito.mock;
                 SearchActivity.class,
                 ShowActivity.class,
                 WebActivity.class,
+                FavoriteFragment.class,
                 ItemFragment.class,
+                ListFragment.class,
                 WebFragment.class,
+                // test classes
                 ItemActivityTest.class
         },
         library = true,
@@ -31,6 +36,7 @@ import static org.mockito.Mockito.mock;
 public class TestActivityModule {
     private final ItemManager hackerNewsClient = mock(ItemManager.class);
     private final ItemManager algoliaClient = mock(ItemManager.class);
+    private final FavoriteManager favoriteManager = mock(FavoriteManager.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -40,5 +46,10 @@ public class TestActivityModule {
     @Provides @Singleton @Named(ActivityModule.ALGOLIA)
     public ItemManager provideAlgoliaClient() {
         return algoliaClient;
+    }
+
+    @Provides @Singleton
+    public FavoriteManager provideFavoriteManager() {
+        return favoriteManager;
     }
 }

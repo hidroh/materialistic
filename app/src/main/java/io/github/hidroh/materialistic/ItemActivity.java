@@ -31,6 +31,7 @@ public class ItemActivity extends BaseItemActivity {
     private boolean mIsResumed = true;
     private boolean mOrientationChanged = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    @Inject FavoriteManager mFavoriteManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +152,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         mFavoriteBound = true;
-        FavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
+        mFavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
             @Override
             public void onCheckComplete(boolean isFavorite) {
                 super.onCheckComplete(isFavorite);
@@ -162,10 +163,10 @@ public class ItemActivity extends BaseItemActivity {
                     public boolean onLongClick(View v) {
                         final int toastMessageResId;
                         if (!mItem.isFavorite()) {
-                            FavoriteManager.add(ItemActivity.this, mItem);
+                            mFavoriteManager.add(ItemActivity.this, mItem);
                             toastMessageResId = R.string.toast_saved;
                         } else {
-                            FavoriteManager.remove(ItemActivity.this, mItem.getId());
+                            mFavoriteManager.remove(ItemActivity.this, mItem.getId());
                             toastMessageResId = R.string.toast_removed;
                         }
                         Toast.makeText(ItemActivity.this, toastMessageResId, Toast.LENGTH_SHORT).show();

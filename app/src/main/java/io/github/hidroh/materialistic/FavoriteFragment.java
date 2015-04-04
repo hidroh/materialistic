@@ -33,9 +33,11 @@ import android.widget.LinearLayout;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.FavoriteManager;
 
-public class FavoriteFragment extends Fragment
+public class FavoriteFragment extends BaseFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private FavoriteManager.Cursor mCursor;
     private RecyclerViewAdapter mAdapter;
@@ -50,6 +52,7 @@ public class FavoriteFragment extends Fragment
     private boolean mIsResumed;
     private ItemOpenListener mItemOpenListener;
     private DataChangedListener mDataChangedListener;
+    @Inject FavoriteManager mFavoriteManager;
 
     public static FavoriteFragment instantiate(Context context, String filter) {
         final FavoriteFragment fragment = (FavoriteFragment) Fragment.instantiate(context,
@@ -119,7 +122,7 @@ public class FavoriteFragment extends Fragment
                                         mItemOpenListener.onItemOpen(null);
                                     }
 
-                                    FavoriteManager.remove(activity, mSelected);
+                                    mFavoriteManager.remove(activity, mSelected);
                                     actionMode.finish();
                                 }
                             })
@@ -237,7 +240,7 @@ public class FavoriteFragment extends Fragment
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            FavoriteManager.clear(getActivity(), mFilter);
+                            mFavoriteManager.clear(getActivity(), mFilter);
                             mCursor = null;
                             mAdapter.notifyDataSetChanged();
                         }
@@ -253,7 +256,7 @@ public class FavoriteFragment extends Fragment
             } else {
                 mProgressDialog.show();
             }
-            FavoriteManager.get(getActivity(), mFilter);
+            mFavoriteManager.get(getActivity(), mFilter);
         }
 
         return super.onOptionsItemSelected(item);

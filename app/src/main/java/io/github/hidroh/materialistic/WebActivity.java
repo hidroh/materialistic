@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -18,6 +20,7 @@ public class WebActivity extends BaseItemActivity {
     private boolean mIsFavorite;
     private int mFavoriteOnResId;
     private int mFavoriteOffResId;
+    @Inject FavoriteManager mFavoriteManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class WebActivity extends BaseItemActivity {
         if (!mItem.isShareable()) {
             menu.findItem(R.id.menu_share).setVisible(false);
         } else {
-            FavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
+            mFavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
                 @Override
                 public void onCheckComplete(boolean isFavorite) {
                     super.onCheckComplete(isFavorite);
@@ -100,10 +103,10 @@ public class WebActivity extends BaseItemActivity {
             final int toastMessageResId;
             mIsFavorite = !mIsFavorite;
             if (mIsFavorite) {
-                FavoriteManager.add(this, mItem);
+                mFavoriteManager.add(this, mItem);
                 toastMessageResId = R.string.toast_saved;
             } else {
-                FavoriteManager.remove(this, mItem.getId());
+                mFavoriteManager.remove(this, mItem.getId());
                 toastMessageResId = R.string.toast_removed;
             }
             Toast.makeText(this, toastMessageResId, Toast.LENGTH_SHORT).show();

@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -15,7 +16,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
         injects = {
                 ActionBarSettingsActivity.class, // TODO remove
                 AskActivity.class,
-                FavoriteActivity.class, // TODO remove
+                FavoriteActivity.class,
                 ItemActivity.class,
                 JobsActivity.class,
                 ListActivity.class,
@@ -23,7 +24,9 @@ import io.github.hidroh.materialistic.data.ItemManager;
                 SearchActivity.class,
                 ShowActivity.class,
                 WebActivity.class,
+                FavoriteFragment.class,
                 ItemFragment.class,
+                ListFragment.class,
                 WebFragment.class
         },
         library = true
@@ -51,5 +54,10 @@ public class ActivityModule {
     @Provides @Singleton @Named(ALGOLIA)
     public ItemManager provideAlgoliaClient(AlgoliaClient client) {
         return client;
+    }
+
+    @Provides @Singleton
+    public FavoriteManager provideFavoriteManager() {
+        return new FavoriteManager();
     }
 }
