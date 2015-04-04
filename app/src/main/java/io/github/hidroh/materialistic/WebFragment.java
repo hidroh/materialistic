@@ -24,6 +24,9 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -33,6 +36,7 @@ public class WebFragment extends Fragment {
     private ItemManager.WebItem mItem;
     private WebView mWebView;
     private boolean mIsHackerNewsUrl;
+    @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
 
     public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
@@ -115,7 +119,7 @@ public class WebFragment extends Fragment {
             AppUtils.setTextWithLinks((TextView) view.findViewById(R.id.text),
                     ((ItemManager.Item) mItem).getText());
         } else {
-            HackerNewsClient.getInstance(getActivity()).getItem(mItem.getId(),
+            mItemManager.getItem(mItem.getId(),
                     new ItemManager.ResponseListener<ItemManager.Item>() {
                         @Override
                         public void onResponse(ItemManager.Item response) {

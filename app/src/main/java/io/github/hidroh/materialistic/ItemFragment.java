@@ -18,8 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemFragment extends BaseFragment {
@@ -32,7 +32,7 @@ public class ItemFragment extends BaseFragment {
     private String mItemId;
     private int mLocalRevision = 0;
     private boolean mIsResumed;
-    @Inject HackerNewsClient mHackerNewsClient;
+    @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
 
     /**
      * Instantiates fragment to display given item
@@ -86,7 +86,7 @@ public class ItemFragment extends BaseFragment {
         if (mItem != null) {
             bindKidData(mItem.getKidItems(), savedInstanceState);
         } else if (!TextUtils.isEmpty(mItemId)) {
-            mHackerNewsClient.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+            mItemManager.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
                 @Override
                 public void onResponse(ItemManager.Item response) {
                     if (!mIsResumed) {
@@ -141,7 +141,7 @@ public class ItemFragment extends BaseFragment {
                 final ItemManager.Item item = items[position];
                 if (item.getLocalRevision() < mLocalRevision) {
                     bindKidItem(holder, null);
-                    mHackerNewsClient.getItem(item.getId(),
+                    mItemManager.getItem(item.getId(),
                             new ItemManager.ResponseListener<ItemManager.Item>() {
                                 @Override
                                 public void onResponse(ItemManager.Item response) {

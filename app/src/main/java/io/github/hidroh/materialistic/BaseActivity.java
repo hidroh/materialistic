@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public abstract class BaseActivity extends TrackableActivity {
+public abstract class BaseActivity extends InjectableActivity {
 
     protected ViewGroup mContentView;
     private ActionBarDrawerToggle mDrawerToggle;

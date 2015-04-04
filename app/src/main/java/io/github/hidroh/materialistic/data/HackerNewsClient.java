@@ -22,23 +22,8 @@ public class HackerNewsClient implements ItemManager {
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
     private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0";
-    private static final Object sLock = new Object();
     private static HackerNewsClient sInstance;
     private RestService mRestService;
-
-    /**
-     * Gets singleton client instance
-     * @return a hacker news client
-     */
-    public static HackerNewsClient getInstance(Context context) {
-        synchronized (sLock) {
-            if (sInstance == null) {
-                sInstance = new HackerNewsClient(context);
-            }
-
-            return sInstance;
-        }
-    }
 
     @Inject
     public HackerNewsClient(Context context) {

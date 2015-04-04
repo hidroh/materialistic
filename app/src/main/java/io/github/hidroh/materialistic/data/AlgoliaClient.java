@@ -3,6 +3,10 @@ package io.github.hidroh.materialistic.data;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.R;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -13,29 +17,17 @@ import retrofit.http.Query;
 
 public class AlgoliaClient implements ItemManager {
 
+    public static boolean sSortByTime = true;
     private static final String BASE_API_URL = "https://hn.algolia.com/api/v1";
     private static final Object sLock = new Object();
-    private static AlgoliaClient sInstance;
     private RestService mRestService;
-    private HackerNewsClient mHackerNewsClient;
-    private boolean mSortByTime = true;
+    @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
 
-    public static AlgoliaClient getInstance(Context context) {
-        synchronized (sLock) {
-            if (sInstance == null) {
-                sInstance = new AlgoliaClient();
-                sInstance.mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
-                sInstance.mHackerNewsClient = HackerNewsClient.getInstance(context);
-                sInstance.mSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context.getString(R.string.pref_item_search_recent), true);
-            }
-
-            return sInstance;
-        }
-    }
-
-    public void setSortByTime(boolean sortByTime) {
-        mSortByTime = sortByTime;
+    @Inject
+    public AlgoliaClient(Context context) {
+        mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
+        sSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_item_search_recent), true);
     }
 
     @Override
@@ -64,7 +56,7 @@ public class AlgoliaClient implements ItemManager {
                 listener.onError(error == null ? error.getMessage() : "");
             }
         };
-        if (mSortByTime) {
+        if (sSortByTime) {
             mRestService.searchByDate(filter, callback);
         } else {
             mRestService.search(filter, callback);

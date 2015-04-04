@@ -33,8 +33,7 @@ public class SettingsFragment extends PreferenceFragment {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                     getActivity().startActivity(intent);
                 } else if (key.equals(getActivity().getString(R.string.pref_item_search_recent))) {
-                    AlgoliaClient.getInstance(getActivity()).setSortByTime(
-                            sharedPreferences.getBoolean(key, true));
+                    AlgoliaClient.sSortByTime = sharedPreferences.getBoolean(key, true);
                 }
             }
         };
