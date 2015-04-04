@@ -2,7 +2,7 @@ apply plugin: 'robolectric'
 
 robolectric {
     // configure the set of classes for JUnit tests
-    include '**/*Test.class'
+    include project.hasProperty("testFilter") ? "**/*${project.ext.testFilter}*Test.class" : '**/*Test.class'
     exclude '**/espresso/**/*.class'
 
     // configure max heap size of the test JVM
