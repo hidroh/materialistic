@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
@@ -41,7 +43,9 @@ public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
     private ItemActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
+    @Inject FavoriteManager favoriteManager;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
 
     @Before
     public void setUp() {
@@ -205,9 +209,64 @@ public class ItemActivityTest {
         assertThat(titleTextView).hasEllipsize(TextUtils.TruncateAt.END);
     }
 
+    @Test
+    public void testFavoriteStory() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @Override
+            public Type getType() {
+                return Type.story;
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+        verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
+        callbacks.getValue().onCheckComplete(true);
+        assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
+        activity.findViewById(R.id.header_card_view).performLongClick();
+        assertThat(activity.findViewById(R.id.bookmarked)).isNotVisible();
+    }
+
+    @Test
+    public void testNonFavoriteStory() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @Override
+            public Type getType() {
+                return Type.story;
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+        verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
+        callbacks.getValue().onCheckComplete(false);
+        assertThat(activity.findViewById(R.id.bookmarked)).isNotVisible();
+        activity.findViewById(R.id.header_card_view).performLongClick();
+        assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
+    }
+
     @After
     public void tearDown() {
         reset(hackerNewsClient);
+        reset(favoriteManager);
         controller.pause().stop().destroy();
     }
 }

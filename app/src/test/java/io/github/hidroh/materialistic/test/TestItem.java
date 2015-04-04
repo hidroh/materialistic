@@ -6,6 +6,8 @@ import android.os.Parcel;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public abstract class TestItem implements ItemManager.Item {
+    private boolean favorite;
+
     @Override
     public void populate(ItemManager.Item info) {
 
@@ -78,12 +80,12 @@ public abstract class TestItem implements ItemManager.Item {
 
     @Override
     public boolean isFavorite() {
-        return false;
+        return favorite;
     }
 
     @Override
     public void setFavorite(boolean favorite) {
-
+        this.favorite = favorite;
     }
 
     @Override
