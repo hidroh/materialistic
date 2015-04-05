@@ -6,15 +6,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.TestListActivity;
 
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(qualifiers = "w820dp-land")
 @RunWith(RobolectricTestRunner.class)
-public class BaseListActivityTest {
+public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;
 
@@ -25,10 +27,10 @@ public class BaseListActivityTest {
     }
 
     @Test
-    public void testCreate() {
-        assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
-        assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
-        assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
+    public void testCreateLand() {
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
     }
 
     @After
