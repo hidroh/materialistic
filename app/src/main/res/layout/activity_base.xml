@@ -8,5 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <!-- The navigation drawer -->
-    <include layout="@layout/drawer" />
+    <ScrollView
+        android:id="@id/drawer"
+        android:layout_gravity="left"
+        android:background="?attr/themedDrawerBackgroundColor"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <fragment
+            android:name="io.github.hidroh.materialistic.DrawerFragment"
+            android:tag="io.github.hidroh.materialistic.DrawerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ScrollView>
 </android.support.v4.widget.DrawerLayout>
