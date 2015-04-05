@@ -7,6 +7,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.TestInjectableActivity;
 
 import static org.mockito.Mockito.mock;
 
@@ -28,7 +29,9 @@ import static org.mockito.Mockito.mock;
                 ListFragment.class,
                 WebFragment.class,
                 // test classes
-                ItemActivityTest.class
+                ItemActivityTest.class,
+                ItemFragmentTest.class,
+                TestInjectableActivity.class
         },
         library = true,
         overrides = true
