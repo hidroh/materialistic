@@ -50,7 +50,7 @@ public class FavoriteFragment extends BaseFragment
     private SearchView mSearchView;
     private boolean mSearchViewVisible;
     private boolean mIsResumed;
-    private ItemOpenListener mItemOpenListener;
+    private MultiPaneListener mMultiPaneListener;
     private DataChangedListener mDataChangedListener;
     @Inject FavoriteManager mFavoriteManager;
 
@@ -65,7 +65,7 @@ public class FavoriteFragment extends BaseFragment
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
         setHasOptionsMenu(true);
-        mItemOpenListener = (ItemOpenListener) activity;
+        mMultiPaneListener = (MultiPaneListener) activity;
         mDataChangedListener = (DataChangedListener) activity;
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -118,10 +118,7 @@ public class FavoriteFragment extends BaseFragment
                                         return;
                                     }
 
-                                    if (mSelected.contains(mAdapter.mSelectedItemId)) {
-                                        mItemOpenListener.onItemOpen(null);
-                                    }
-
+                                    mMultiPaneListener.clearSelection();
                                     mFavoriteManager.remove(activity, mSelected);
                                     actionMode.finish();
                                 }
@@ -179,7 +176,6 @@ public class FavoriteFragment extends BaseFragment
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mAdapter.mSelectedItemId = null;
         mAdapter.notifyDataSetChanged();
     }
 
@@ -317,7 +313,7 @@ public class FavoriteFragment extends BaseFragment
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
-        mItemOpenListener = null;
+        mMultiPaneListener = null;
         mDataChangedListener = null;
         if (mActionMode != null) {
             mActionMode.finish();
@@ -362,8 +358,8 @@ public class FavoriteFragment extends BaseFragment
                         if (mActionMode == null && !mSearchViewVisible) {
                             mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
                             toggle(favorite.getId(), position);
-                            if (mSelectedItemId != null) {
-                                mSelected.add(mSelectedItemId);
+                            if (mMultiPaneListener.getSelectedItem() != null) {
+                                mSelected.add(mMultiPaneListener.getSelectedItem().getId());
                             }
                             return true;
                         }
@@ -381,7 +377,7 @@ public class FavoriteFragment extends BaseFragment
                 mSearchViewVisible = false;
                 super.handleItemClick(item, holder);
             } else {
-                toggle(item.getId(), holder.getPosition());
+                toggle(item.getId(), holder.getLayoutPosition());
             }
         }
 
@@ -391,8 +387,8 @@ public class FavoriteFragment extends BaseFragment
         }
 
         @Override
-        protected void onItemSelected(FavoriteManager.Favorite item) {
-            mItemOpenListener.onItemOpen(item);
+        protected void onItemSelected(FavoriteManager.Favorite item, View itemView) {
+            mMultiPaneListener.onItemSelected(item, itemView);
         }
 
         private FavoriteManager.Favorite getItem(int position) {
@@ -409,7 +405,8 @@ public class FavoriteFragment extends BaseFragment
 
         @Override
         protected boolean isSelected(String itemId) {
-            return !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId) ||
+            return mMultiPaneListener.getSelectedItem() != null &&
+                    itemId.equals(mMultiPaneListener.getSelectedItem().getId()) ||
                     mSelected.contains(itemId);
         }
 

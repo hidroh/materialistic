@@ -1,9 +1,12 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -19,7 +22,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 /**
  * List activity that renders alternative layouts for portrait/landscape
  */
-public abstract class BaseListActivity extends BaseActivity implements ItemOpenListener {
+public abstract class BaseListActivity extends BaseActivity implements MultiPaneListener {
 
     private static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() + ".LIST_FRAGMENT_TAG";
     private boolean mIsMultiPane;
@@ -110,37 +113,46 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
     }
 
     @Override
-    public void onItemOpen(ItemManager.WebItem item) {
-        FragmentTransaction transaction = beginSwapFragmentTransaction();
-        removeFragment(transaction, WebFragment.class.getName());
-        removeFragment(transaction, ItemFragment.class.getName());
-        if (item == null) {
-            setTitle(getDefaultTitle());
-            transaction.commit();
-            mSelectedItem = null;
-            findViewById(R.id.empty).setVisibility(View.VISIBLE);
+    public void onItemSelected(ItemManager.WebItem item, View sharedElement) {
+        if (mSelectedItem != null && item.getId().equals(mSelectedItem.getId())) {
+            return;
+        }
+
+        mSelectedItem = item;
+        if (mIsMultiPane) {
+            handleMultiPaneItemSelected(item);
         } else {
-            if (mIsMultiPane) {
-                setTitle(item.getDisplayedTitle());
-            }
-            mSelectedItem = item;
-            findViewById(R.id.empty).setVisibility(View.GONE);
-            mWebFragment = WebFragment.instantiate(this, item);
-            Bundle args = new Bundle();
-            args.putInt(ItemFragment.EXTRA_MARGIN,
-                    getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin));
-            mItemFragment = ItemFragment.instantiate(this, item, args);
-            transaction
-                    .add(R.id.content, mItemFragment, ItemFragment.class.getName())
-                    .add(R.id.content, mWebFragment, WebFragment.class.getName());
             if (PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(getString(R.string.pref_item_click), false)) {
-                openComment(transaction);
+                openItem(item, sharedElement);
             } else {
-                openStory(transaction);
+                AppUtils.openWebUrl(this, item);
             }
         }
         supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public void clearSelection() {
+        mSelectedItem = null;
+        if (mIsMultiPane) {
+            setTitle(getDefaultTitle());
+            FragmentTransaction transaction = beginSwapFragmentTransaction();
+            removeFragment(transaction, WebFragment.class.getName());
+            removeFragment(transaction, ItemFragment.class.getName());
+            transaction.commit();
+            findViewById(R.id.empty).setVisibility(View.VISIBLE);
+        }
+        supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public ItemManager.WebItem getSelectedItem() {
+        if (!mIsMultiPane) {
+            return null; // item selection not applicable for single pane
+        }
+
+        return mSelectedItem;
     }
 
     @Override
@@ -191,8 +203,39 @@ public abstract class BaseListActivity extends BaseActivity implements ItemOpenL
                         RelativeLayout.LayoutParams.MATCH_PARENT);
             }
             findViewById(android.R.id.list).setLayoutParams(params);
-            onItemOpen(null);
+            clearSelection();
         }
+    }
+
+    private void handleMultiPaneItemSelected(ItemManager.WebItem item) {
+        setTitle(item.getDisplayedTitle());
+        findViewById(R.id.empty).setVisibility(View.GONE);
+        mWebFragment = WebFragment.instantiate(this, item);
+        Bundle args = new Bundle();
+        args.putInt(ItemFragment.EXTRA_MARGIN,
+                getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin));
+        mItemFragment = ItemFragment.instantiate(this, item, args);
+        FragmentTransaction transaction = beginSwapFragmentTransaction();
+        removeFragment(transaction, WebFragment.class.getName());
+        removeFragment(transaction, ItemFragment.class.getName());
+        transaction
+                .add(R.id.content, mItemFragment, ItemFragment.class.getName())
+                .add(R.id.content, mWebFragment, WebFragment.class.getName());
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_item_click), false)) {
+            openComment(transaction);
+        } else {
+            openStory(transaction);
+        }
+    }
+
+    private void openItem(ItemManager.WebItem item, View sharedElement) {
+        final Intent intent = new Intent(this, ItemActivity.class);
+        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
+        final ActivityOptionsCompat options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this,
+                        sharedElement, getString(R.string.transition_item_container));
+        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
     private void openStory(FragmentTransaction transaction) {

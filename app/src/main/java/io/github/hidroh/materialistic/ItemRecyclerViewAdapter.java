@@ -1,14 +1,8 @@
 package io.github.hidroh.materialistic;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,7 +15,6 @@ import io.github.hidroh.materialistic.data.ItemManager;
  */
 public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem> extends RecyclerView.Adapter<VH> {
 
-    protected String mSelectedItemId;
     private Context mContext;
     private int mCardBackgroundColorResId;
     private int mCardHighlightColorResId;
@@ -73,7 +66,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openItem(item, holder);
+                onItemSelected(item, holder.itemView);
             }
         });
         decorateCardSelection(holder, item.getId());
@@ -85,21 +78,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
      * @param holder    clicked item view holder
      */
     protected void handleItemClick(T item, VH holder) {
-        if (mContext.getResources().getBoolean(R.bool.multi_pane)) {
-            if (!TextUtils.isEmpty(mSelectedItemId) && item.getId().equals(mSelectedItemId)) {
-                return;
-            }
-
-            mSelectedItemId = item.getId();
-            notifyDataSetChanged();
-            onItemSelected(item);
-        } else {
-            if (PreferenceManager.getDefaultSharedPreferences(mContext)
-                    .getBoolean(mContext.getString(R.string.pref_item_click), false)) {
-                openItem(item, holder);
-            } else {
-                AppUtils.openWebUrl(mContext, item);
-            }
+        onItemSelected(item, holder.itemView);
+        if (isSelected(item.getId())) {
+            notifyDataSetChanged(); // switch selection decorator
         }
     }
 
@@ -120,8 +101,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     /**
      * Handles item selection
      * @param item  item that has been selected
+     * @param itemView
      */
-    protected abstract void onItemSelected(T item);
+    protected abstract void onItemSelected(T item, View itemView);
 
     /**
      * Checks if item with given ID has been selected
@@ -129,15 +111,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
      * @return  true if selected, false otherwise or if selection is disabled
      */
     protected abstract boolean isSelected(String itemId);
-
-    private void openItem(T item, ItemViewHolder holder) {
-        final Intent intent = new Intent(mContext, ItemActivity.class);
-        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        final ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation((Activity) mContext,
-                        holder.itemView, mContext.getString(R.string.transition_item_container));
-        ActivityCompat.startActivity((Activity) mContext, intent, options.toBundle());
-    }
 
     private void decorateCardSelection(ItemViewHolder holder, String itemId) {
         ((CardView) holder.itemView).setCardBackgroundColor(

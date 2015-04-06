@@ -42,7 +42,7 @@ public class ListFragment extends BaseFragment {
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
-    private ItemOpenListener mItemOpenListener;
+    private MultiPaneListener mMultiPaneListener;
     private String mFilter;
     @Inject FavoriteManager mFavoriteManager;
 
@@ -57,7 +57,7 @@ public class ListFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mItemOpenListener = (ItemOpenListener) activity;
+        mMultiPaneListener = (MultiPaneListener) activity;
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -134,7 +134,6 @@ public class ListFragment extends BaseFragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mAdapter.mSelectedItemId = null;
         mAdapter.notifyDataSetChanged();
     }
 
@@ -155,7 +154,7 @@ public class ListFragment extends BaseFragment {
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
-        mItemOpenListener = null;
+        mMultiPaneListener = null;
         super.onDetach();
     }
 
@@ -260,13 +259,14 @@ public class ListFragment extends BaseFragment {
         }
 
         @Override
-        protected void onItemSelected(ItemManager.Item item) {
-            mItemOpenListener.onItemOpen(item);
+        protected void onItemSelected(ItemManager.Item item, View itemView) {
+            mMultiPaneListener.onItemSelected(item, itemView);
         }
 
         @Override
         protected boolean isSelected(String itemId) {
-            return !TextUtils.isEmpty(mSelectedItemId) && itemId.equals(mSelectedItemId);
+            return mMultiPaneListener.getSelectedItem() != null &&
+                    itemId.equals(mMultiPaneListener.getSelectedItem().getId());
         }
 
         private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {

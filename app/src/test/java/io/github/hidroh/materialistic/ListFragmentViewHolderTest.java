@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +19,8 @@ import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
@@ -71,8 +72,8 @@ public class ListFragmentViewHolderTest {
         View commentButton = holder.itemView.findViewById(R.id.comment);
         Assertions.assertThat(commentButton).isVisible();
         commentButton.performClick();
-        assertEquals(ItemActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+        verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class),
+                any(View.class));
     }
 
     @Test
@@ -94,23 +95,11 @@ public class ListFragmentViewHolderTest {
     }
 
     @Test
-    public void testItemClickOpenItem() {
-        PreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putBoolean(activity.getString(R.string.pref_item_click), true)
-                .commit();
+    public void testItemClick() {
         adapter.bindViewHolder(holder, 0);
         holder.itemView.performClick();
-        assertEquals(ItemActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
-    }
-
-    @Test
-    public void testItemClickOpenWeb() {
-        adapter.bindViewHolder(holder, 0);
-        holder.itemView.performClick();
-        assertEquals(WebActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+        verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class),
+                any(View.class));
     }
 
     @After
