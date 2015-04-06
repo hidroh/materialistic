@@ -117,8 +117,7 @@
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:lines">2</item>
-        <item name="android:ellipsize">end</item>
+        <item name="android:minLines">2</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
