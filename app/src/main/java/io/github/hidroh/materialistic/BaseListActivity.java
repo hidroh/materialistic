@@ -189,22 +189,27 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         }
 
         // only recreate view if orientation change triggers layout change
-        if (mIsMultiPane != getResources().getBoolean(R.bool.multi_pane)) {
-            mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
-            final RelativeLayout.LayoutParams params;
-            if (mIsMultiPane) {
-                params = new RelativeLayout.LayoutParams(
-                        getResources().getDimensionPixelSize(R.dimen.list_width),
-                        RelativeLayout.LayoutParams.MATCH_PARENT);
-            } else {
-                setTitle(getDefaultTitle());
-                params = new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.MATCH_PARENT,
-                        RelativeLayout.LayoutParams.MATCH_PARENT);
-            }
-            findViewById(android.R.id.list).setLayoutParams(params);
-            clearSelection();
+        if (mIsMultiPane == getResources().getBoolean(R.bool.multi_pane)) {
+            return;
         }
+
+        mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
+        final RelativeLayout.LayoutParams params;
+        if (mIsMultiPane) {
+            params = new RelativeLayout.LayoutParams(
+                    getResources().getDimensionPixelSize(R.dimen.list_width),
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+            if (mSelectedItem != null) {
+                handleMultiPaneItemSelected(mSelectedItem);
+            }
+        } else {
+            setTitle(getDefaultTitle());
+            params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+        }
+        findViewById(android.R.id.list).setLayoutParams(params);
+        supportInvalidateOptionsMenu();
     }
 
     private void handleMultiPaneItemSelected(ItemManager.WebItem item) {
