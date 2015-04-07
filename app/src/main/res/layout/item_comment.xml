@@ -18,6 +18,7 @@
             android:id="@id/text"
             android:padding="@dimen/padding"
             android:text="@string/loading_text"
+            style="@style/textContentStyle"
             android:layout_below="@id/posted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

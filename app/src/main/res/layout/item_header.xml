@@ -23,6 +23,7 @@
             android:paddingRight="@dimen/padding"
             android:text="@string/loading_text"
             android:maxLines="@integer/header_max_lines"
+            style="@style/textContentStyle"
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
