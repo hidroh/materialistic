@@ -9,12 +9,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -34,6 +36,15 @@ public class BaseListActivityTest {
         assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
         assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
         assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
+    }
+
+    @Test
+    public void testRotate() {
+        RuntimeEnvironment.setQualifiers("w820dp-land");
+        activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
     }
 
     @Test

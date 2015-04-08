@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
@@ -40,6 +41,30 @@ public class BaseListActivityLandTest {
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share).isVisible());
+    }
+
+    @Test
+    public void testRotate() {
+        activity.onItemSelected(new TestWebItem() {
+            @Override
+            public String getDisplayedTitle() {
+                return "item title";
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        }, new View(activity));
+        assertThat(activity).hasTitle("item title");
+
+        RuntimeEnvironment.setQualifiers("");
+        activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
+        assertThat(activity).hasTitle(activity.getString(R.string.title_activity_list));
+
+        RuntimeEnvironment.setQualifiers("w820dp-land");
+        activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
+        assertThat(activity).hasTitle("item title");
     }
 
     @Test
