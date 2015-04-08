@@ -114,7 +114,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
 
     @Override
     public void onItemSelected(ItemManager.WebItem item, View sharedElement) {
-        if (mSelectedItem != null && item.getId().equals(mSelectedItem.getId())) {
+        if (getSelectedItem() != null && item.getId().equals(getSelectedItem().getId())) {
             return;
         }
 
