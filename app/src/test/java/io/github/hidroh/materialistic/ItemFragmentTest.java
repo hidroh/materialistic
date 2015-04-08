@@ -39,6 +39,7 @@ public class ItemFragmentTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
+        reset(hackerNewsClient);
     }
 
     @Test
@@ -65,7 +66,6 @@ public class ItemFragmentTest {
             }
         });
         assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
-        reset(hackerNewsClient);
     }
 
     @Test
@@ -124,7 +124,6 @@ public class ItemFragmentTest {
         listener.getValue().onResponse(remoteKidItem);
         verify(kidItem).populate(eq(remoteKidItem));
         verify(kidItem).setLocalRevision(eq(0));
-        reset(hackerNewsClient);
     }
 
     @Test
@@ -154,5 +153,6 @@ public class ItemFragmentTest {
 
     @After
     public void tearDown() {
+        reset(hackerNewsClient);
     }
 }

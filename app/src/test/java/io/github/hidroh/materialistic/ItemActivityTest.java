@@ -51,6 +51,8 @@ public class ItemActivityTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
+        reset(hackerNewsClient);
+        reset(favoriteManager);
         controller = Robolectric.buildActivity(ItemActivity.class);
         activity = controller.get();
     }
