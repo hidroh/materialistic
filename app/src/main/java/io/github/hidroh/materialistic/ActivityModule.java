@@ -15,6 +15,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 @Module(
         injects = {
                 ActionBarSettingsActivity.class, // TODO remove
+                AboutActivity.class, // TODO remove
                 AskActivity.class,
                 FavoriteActivity.class,
                 ItemActivity.class,
