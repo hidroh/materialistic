@@ -99,7 +99,7 @@ public class ListFragment extends BaseFragment {
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
-        mSwipeRefreshLayout.setProgressBackgroundColor(R.color.colorAccent);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorAccent);
         if (savedInstanceState == null) {
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
