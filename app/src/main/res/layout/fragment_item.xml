@@ -5,13 +5,19 @@
     android:layout_height="match_parent"
     tools:context="io.github.hidroh.materialistic.ItemActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@id/recycler_view"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:clipToPadding="false"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@id/swipe_layout"
+        android:paddingLeft="@dimen/item_horizontal_margin"
+        android:paddingRight="@dimen/item_horizontal_margin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/recycler_view"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.v4.widget.SwipeRefreshLayout>
     <TextView
         android:id="@android:id/empty"
         android:text="@string/no_comments"

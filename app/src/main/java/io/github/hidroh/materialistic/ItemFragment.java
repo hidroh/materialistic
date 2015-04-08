@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -33,6 +33,7 @@ public class ItemFragment extends BaseFragment {
     private int mLocalRevision = 0;
     private boolean mIsResumed;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     /**
      * Instantiates fragment to display given item
@@ -46,23 +47,16 @@ public class ItemFragment extends BaseFragment {
                 ItemFragment.class.getName(), args == null ? new Bundle() : args);
         if (item instanceof ItemManager.Item) {
             fragment.mItem = (ItemManager.Item) item;
-        } else {
-            fragment.mItemId = item.getId();
         }
+        fragment.mItemId = item.getId();
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
         mEmptyView = view.findViewById(android.R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        final int margin = getArguments().getInt(EXTRA_MARGIN, 0);
-        // TODO dirty trick to set margin, assuming parent is relative layout
-        final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRecyclerView.getLayoutParams();
-        params.rightMargin = margin;
-        params.leftMargin = margin;
-        mRecyclerView.setLayoutParams(params);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
             public int getOrientation() {
@@ -70,6 +64,19 @@ public class ItemFragment extends BaseFragment {
             }
         });
         mRecyclerView.setHasFixedSize(true);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorAccent);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (TextUtils.isEmpty(mItemId)) {
+                    return;
+                }
+
+                loadKidData();
+            }
+        });
         return view;
     }
 
@@ -86,22 +93,7 @@ public class ItemFragment extends BaseFragment {
         if (mItem != null) {
             bindKidData(mItem.getKidItems(), savedInstanceState);
         } else if (!TextUtils.isEmpty(mItemId)) {
-            mItemManager.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
-                @Override
-                public void onResponse(ItemManager.Item response) {
-                    if (!mIsResumed) {
-                        return;
-                    }
-
-                    mItem = response;
-                    bindKidData(mItem.getKidItems(), null);
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    // do nothing
-                }
-            });
+            loadKidData();
         }
     }
 
@@ -121,6 +113,26 @@ public class ItemFragment extends BaseFragment {
     public void onPause() {
         mIsResumed = false;
         super.onPause();
+    }
+
+    private void loadKidData() {
+        mItemManager.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+            @Override
+            public void onResponse(ItemManager.Item response) {
+                if (!mIsResumed) {
+                    return;
+                }
+
+                mSwipeRefreshLayout.setRefreshing(false);
+                mItem = response;
+                bindKidData(mItem.getKidItems(), null);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     private void bindKidData(final ItemManager.Item[] items, final @Nullable Bundle savedInstanceState) {
