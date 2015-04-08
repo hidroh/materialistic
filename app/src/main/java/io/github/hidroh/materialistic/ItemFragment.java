@@ -24,7 +24,6 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemFragment extends BaseFragment {
 
-    public static final String EXTRA_MARGIN = ItemFragment.class.getName() + ".EXTRA_MARGIN";
     private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
