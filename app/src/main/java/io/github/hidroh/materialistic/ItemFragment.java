@@ -24,6 +24,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemFragment extends BaseFragment {
 
+    public static final String EXTRA_PADDING = ItemFragment.class.getName() + ".EXTRA_PADDING";
     private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
@@ -64,6 +65,9 @@ public class ItemFragment extends BaseFragment {
         });
         mRecyclerView.setHasFixedSize(true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+        int padding = getArguments().getInt(EXTRA_PADDING, 0);
+        mSwipeRefreshLayout.setPadding(padding, mSwipeRefreshLayout.getPaddingTop(),
+                padding, mSwipeRefreshLayout.getPaddingBottom());
         mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorAccent);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
