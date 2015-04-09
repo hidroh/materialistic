@@ -45,6 +45,7 @@ public class ListFragment extends BaseFragment {
     private MultiPaneListener mMultiPaneListener;
     private String mFilter;
     @Inject FavoriteManager mFavoriteManager;
+    private boolean mResumed;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager,
                                            String filter) {
@@ -140,6 +141,7 @@ public class ListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mResumed = true;
         // refresh favorite state if any changes
         mAdapter.notifyDataSetChanged();
     }
@@ -148,6 +150,12 @@ public class ListFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArray(EXTRA_ITEMS, mItems);
+    }
+
+    @Override
+    public void onPause() {
+        mResumed = false;
+        super.onPause();
     }
 
     @Override
@@ -237,6 +245,10 @@ public class ListFragment extends BaseFragment {
                 mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
                     @Override
                     public void onResponse(ItemManager.Item response) {
+                        if (!mResumed) {
+                            return;
+                        }
+
                         if (response == null) {
                             return;
                         }
