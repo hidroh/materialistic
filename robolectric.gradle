@@ -39,5 +39,5 @@ dependencies {
     androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0',
             'com.squareup.assertj:assertj-android-support-v4:1.0.0',
             'org.mockito:mockito-core:1.9.5+',
-            'junit:junit:4.11'
+            'junit:junit:4.12'
 }
