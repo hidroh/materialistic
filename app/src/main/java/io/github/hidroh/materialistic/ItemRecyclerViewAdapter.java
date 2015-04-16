@@ -1,6 +1,10 @@
 package io.github.hidroh.materialistic;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -66,7 +70,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemSelected(item, holder.itemView);
+                openItem(item, holder.itemView);
             }
         });
         decorateCardSelection(holder, item.getId());
@@ -116,6 +120,15 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         ((CardView) holder.itemView).setCardBackgroundColor(
                 mContext.getResources().getColor(isSelected(itemId) ?
                         mCardHighlightColorResId : mCardBackgroundColorResId));
+    }
+
+    private void openItem(T item, View sharedElement) {
+        final Intent intent = new Intent(mContext, ItemActivity.class);
+        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
+        final ActivityOptionsCompat options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation((Activity) mContext,
+                        sharedElement, mContext.getString(R.string.transition_item_container));
+        ActivityCompat.startActivity((Activity) mContext, intent, options.toBundle());
     }
 
     /**

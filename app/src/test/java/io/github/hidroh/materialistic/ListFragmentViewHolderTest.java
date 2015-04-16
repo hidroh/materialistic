@@ -20,6 +20,7 @@ import io.github.hidroh.materialistic.test.TestItemManager;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -72,8 +73,10 @@ public class ListFragmentViewHolderTest {
         View commentButton = holder.itemView.findViewById(R.id.comment);
         Assertions.assertThat(commentButton).isVisible();
         commentButton.performClick();
-        verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class),
+        verify(activity.multiPaneListener, never()).onItemSelected(any(ItemManager.WebItem.class),
                 any(View.class));
+        assertEquals(ItemActivity.class.getName(),
+                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
 
     @Test
