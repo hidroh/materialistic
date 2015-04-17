@@ -135,31 +135,6 @@ public class ItemFragmentTest {
     }
 
     @Test
-    public void testKidItemClick() {
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
-                    @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{new TestItem() {
-                            @Override
-                            public int getKidCount() {
-                                return 1;
-                            }
-                        }};
-                    }
-                }, null);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
-                android.R.id.content);
-        RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
-        viewHolder.itemView.performClick();
-        assertEquals(ItemActivity.class.getName(),
-                shadowOf(fragment.getActivity()).getNextStartedActivity().getComponent().getClassName());
-    }
-
-    @Test
     public void testRefresh() {
         ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
         when(webItem.getId()).thenReturn("1");

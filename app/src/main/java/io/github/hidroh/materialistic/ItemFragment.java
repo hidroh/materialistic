@@ -200,12 +200,6 @@ public class ItemFragment extends BaseFragment {
                                 openItem(holder, item);
                             }
                         });
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                openItem(holder, item);
-                            }
-                        });
                     }
                 }
             }
