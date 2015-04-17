@@ -216,10 +216,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
         mWebFragment = WebFragment.instantiate(this, item);
-        Bundle args = new Bundle();
-        args.putInt(ItemFragment.EXTRA_PADDING,
-                getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin));
-        mItemFragment = ItemFragment.instantiate(this, item, args);
+        mItemFragment = ItemFragment.instantiate(this, item, null);
         FragmentTransaction transaction = beginSwapFragmentTransaction();
         removeFragment(transaction, WebFragment.class.getName());
         removeFragment(transaction, ItemFragment.class.getName());

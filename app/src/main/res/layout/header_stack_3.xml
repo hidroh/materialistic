@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:showIn="@layout/activity_item">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <View
         android:background="?attr/themedHeaderCardDrawable"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_stack_card_height"
         android:elevation="1dp" />
@@ -14,8 +10,6 @@
     <View
         android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginTop="4dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_stack_card_height"
         android:elevation="2dp" />
@@ -23,8 +17,6 @@
     <View
         android:background="?attr/themedHeaderCardDrawable"
         android:layout_marginTop="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_stack_card_height"
         android:elevation="3dp" />

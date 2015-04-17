@@ -2,5 +2,4 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/colorPrimaryLight" />
     <stroke android:width="1dp" android:color="@color/colorDisabled" />
-    <corners android:radius="@dimen/cardview_default_radius" />
 </shape>

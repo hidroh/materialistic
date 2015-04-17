@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +25,7 @@ public class ItemActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
     private static final String PARAM_ID = "id";
     private ItemManager.Item mItem;
-    private CardView mHeaderCardView;
+    private View mHeaderCardView;
     private boolean mFavoriteBound;
     private boolean mIsResumed = true;
     private boolean mOrientationChanged = false;
@@ -189,7 +188,7 @@ public class ItemActivity extends BaseItemActivity {
             setTitle(getString(R.string.title_activity_item_count, story.getKidCount()));
         }
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        mHeaderCardView = (CardView) findViewById(R.id.header_card_view);
+        mHeaderCardView = findViewById(R.id.header_card_view);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
             titleTextView.setTextAppearance(this, R.style.textTitleStyle);

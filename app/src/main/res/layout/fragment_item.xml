@@ -11,8 +11,6 @@
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
             android:id="@id/recycler_view"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -21,7 +19,6 @@
         android:text="@string/no_comments"
         android:layout_centerInParent="true"
         android:visibility="gone"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         style="@style/textEmptyStyle" />
 
 </RelativeLayout>
