@@ -44,6 +44,7 @@ public class WebActivityTest {
     @Before
     public void setUp() {
         item = mock(ItemManager.WebItem.class);
+        when(item.getType()).thenReturn(ItemManager.WebItem.Type.story);
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);

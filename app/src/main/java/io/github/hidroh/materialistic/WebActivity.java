@@ -26,7 +26,11 @@ public class WebActivity extends BaseItemActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mItem = getIntent().getParcelableExtra(EXTRA_ITEM);
-        setTitle(mItem.getDisplayedTitle());
+        if (mItem.getType() == ItemManager.WebItem.Type.comment) {
+            setTitle(null);
+        } else {
+            setTitle(mItem.getDisplayedTitle());
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(android.R.id.content,

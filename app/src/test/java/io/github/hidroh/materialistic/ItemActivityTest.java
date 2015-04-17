@@ -189,29 +189,6 @@ public class ItemActivityTest {
     }
 
     @Test
-    public void testCommentToggle() {
-        Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 4);
-        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
-            @Override
-            public Type getType() {
-                return Type.comment;
-            }
-
-            @Override
-            public boolean isShareable() {
-                return false;
-            }
-        });
-        controller.withIntent(intent).create().start().resume();
-        TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
-        activity.findViewById(R.id.header_card_view).performClick();
-        assertThat(titleTextView).hasEllipsize(null);
-        activity.findViewById(R.id.header_card_view).performClick();
-        assertThat(titleTextView).hasEllipsize(TextUtils.TruncateAt.END);
-    }
-
-    @Test
     public void testFavoriteStory() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {

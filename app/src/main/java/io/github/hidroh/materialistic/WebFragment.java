@@ -114,7 +114,11 @@ public class WebFragment extends Fragment {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web_hn, container, false);
         ((TextView) view.findViewById(R.id.posted)).setText(mItem.getDisplayedTime(getActivity()));
-        ((TextView) view.findViewById(R.id.title)).setText(mItem.getDisplayedTitle());
+        if (mItem.getType() == ItemManager.WebItem.Type.comment) {
+            view.findViewById(R.id.title).setVisibility(View.GONE);
+        } else {
+            ((TextView) view.findViewById(R.id.title)).setText(mItem.getDisplayedTitle());
+        }
         if (mItem instanceof ItemManager.Item) {
             AppUtils.setTextWithLinks((TextView) view.findViewById(R.id.text),
                     ((ItemManager.Item) mItem).getText());

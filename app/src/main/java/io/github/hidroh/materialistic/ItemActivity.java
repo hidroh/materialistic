@@ -203,20 +203,7 @@ public class ItemActivity extends BaseItemActivity {
         mHeaderCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (story.isShareable()) {
-                    AppUtils.openWebUrl(ItemActivity.this, story);
-                } else {
-                    toggle();
-                }
-            }
-
-            private void toggle() {
-                final boolean isExpanded = titleTextView.getEllipsize() == null;
-                titleTextView.setMaxLines(isExpanded ?
-                        getResources().getInteger(R.integer.header_max_lines) : Integer.MAX_VALUE);
-                titleTextView.setEllipsize(isExpanded ? TextUtils.TruncateAt.END : null);
-                // TODO need to be scrollable if text is very long
-                AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
+                AppUtils.openWebUrl(ItemActivity.this, story);
             }
         });
 
