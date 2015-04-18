@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/empty_favorite_search"
-        android:id="@+id/empty_search" />
+        android:id="@id/empty_search" />
     <include layout="@layout/empty_list"
         android:id="@android:id/empty" />
     <android.support.v4.widget.SwipeRefreshLayout

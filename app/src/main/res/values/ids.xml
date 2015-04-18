@@ -49,6 +49,7 @@
     <item type="id" name="text_license" />
     <item type="id" name="text_libraries" />
     <item type="id" name="empty" />
+    <item type="id" name="empty_search" />
     <item type="id" name="content" />
 
 </resources>

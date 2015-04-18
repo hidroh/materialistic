@@ -36,7 +36,8 @@ import static org.mockito.Mockito.mock;
                 TestInjectableActivity.class,
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
-                ListFragmentViewHolderTest.class
+                ListFragmentViewHolderTest.class,
+                FavoriteActivityTest.class
         },
         library = true,
         overrides = true
