@@ -70,7 +70,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openItem(item, holder.itemView);
+                handleCommentButtonClick(item, holder);
             }
         });
         decorateCardSelection(holder, item.getId());
@@ -86,6 +86,15 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         if (isSelected(item.getId())) {
             notifyDataSetChanged(); // switch selection decorator
         }
+    }
+
+    /**
+     * Handles comment button click
+     * @param item      clicked item
+     * @param holder    clicked item view holder
+     */
+    protected void handleCommentButtonClick(T item, VH holder) {
+        openItem(item, holder.itemView);
     }
 
     /**

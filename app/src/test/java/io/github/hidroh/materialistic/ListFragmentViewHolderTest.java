@@ -108,6 +108,7 @@ public class ListFragmentViewHolderTest {
                 any(View.class));
         assertEquals(ItemActivity.class.getName(),
                 shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+        assertViewed();
     }
 
     @Test

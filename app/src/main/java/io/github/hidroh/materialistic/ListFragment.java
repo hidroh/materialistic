@@ -302,9 +302,13 @@ public class ListFragment extends BaseFragment {
         @Override
         protected void handleItemClick(ItemManager.Item item, ViewHolder holder) {
             super.handleItemClick(item, holder);
-            mSessionManager.view(getActivity(), item.getId());
-            item.setIsViewed(true);
-            decorateViewed(holder, item);
+            markAsViewed(item, holder);
+        }
+
+        @Override
+        protected void handleCommentButtonClick(ItemManager.Item item, ViewHolder holder) {
+            super.handleCommentButtonClick(item, holder);
+            markAsViewed(item, holder);
         }
 
         @Override
@@ -316,6 +320,12 @@ public class ListFragment extends BaseFragment {
         protected boolean isSelected(String itemId) {
             return mMultiPaneListener.getSelectedItem() != null &&
                     itemId.equals(mMultiPaneListener.getSelectedItem().getId());
+        }
+
+        private void markAsViewed(ItemManager.Item item, ViewHolder holder) {
+            mSessionManager.view(getActivity(), item.getId());
+            item.setIsViewed(true);
+            decorateViewed(holder, item);
         }
 
         private void decorateViewed(ViewHolder holder, ItemManager.Item story) {
