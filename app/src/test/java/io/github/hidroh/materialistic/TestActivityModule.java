@@ -37,7 +37,8 @@ import static org.mockito.Mockito.mock;
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
                 ListFragmentViewHolderTest.class,
-                FavoriteActivityTest.class
+                FavoriteActivityTest.class,
+                FavoriteActivityEmptyTest.class
         },
         library = true,
         overrides = true
