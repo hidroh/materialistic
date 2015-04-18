@@ -40,7 +40,8 @@ import static org.mockito.Mockito.mock;
                 ListFragmentViewHolderTest.class,
                 FavoriteActivityTest.class,
                 FavoriteActivityEmptyTest.class,
-                TestFavoriteActivity.class
+                TestFavoriteActivity.class,
+                WebActivityLocalTest.class
         },
         library = true,
         overrides = true

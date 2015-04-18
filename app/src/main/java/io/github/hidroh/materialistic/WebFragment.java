@@ -28,7 +28,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class WebFragment extends Fragment {
+public class WebFragment extends BaseFragment {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
@@ -116,24 +116,6 @@ public class WebFragment extends Fragment {
         } else {
             ((TextView) view.findViewById(R.id.title)).setText(mItem.getDisplayedTitle());
         }
-        if (mItem instanceof ItemManager.Item) {
-            AppUtils.setTextWithLinks((TextView) view.findViewById(R.id.text),
-                    ((ItemManager.Item) mItem).getText());
-        } else {
-            mItemManager.getItem(mItem.getId(),
-                    new ItemManager.ResponseListener<ItemManager.Item>() {
-                        @Override
-                        public void onResponse(ItemManager.Item response) {
-                            AppUtils.setTextWithLinks((TextView) view.findViewById(R.id.text),
-                                    response.getText());
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            // do nothing
-                        }
-                    });
-        }
         return view;
     }
 
@@ -141,6 +123,7 @@ public class WebFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mIsHackerNewsUrl) {
+            bindContent();
             return;
         }
 
@@ -152,6 +135,27 @@ public class WebFragment extends Fragment {
         }
         if (mItem != null) {
             mWebView.loadUrl(mItem.getUrl());
+        }
+    }
+
+    private void bindContent() {
+        if (mItem instanceof ItemManager.Item) {
+            AppUtils.setTextWithLinks((TextView) getView().findViewById(R.id.text),
+                    ((ItemManager.Item) mItem).getText());
+        } else {
+            mItemManager.getItem(mItem.getId(),
+                    new ItemManager.ResponseListener<ItemManager.Item>() {
+                        @Override
+                        public void onResponse(ItemManager.Item response) {
+                            AppUtils.setTextWithLinks((TextView) getView().findViewById(R.id.text),
+                                    response.getText());
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            // do nothing
+                        }
+                    });
         }
     }
 
