@@ -1,5 +1,8 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -9,20 +12,32 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.shadows.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.support.v4.Shadows.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class ListFragmentViewHolderTest {
@@ -31,9 +46,14 @@ public class ListFragmentViewHolderTest {
     private RecyclerView.ViewHolder holder;
     private ListActivity activity;
     private TestStory item;
+    @Inject SessionManager sessionManager;
+    @Captor ArgumentCaptor<SessionManager.OperationCallbacks> callbacks;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        TestApplication.applicationGraph.inject(this);
+        reset(sessionManager);
         item = new TestStory();
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
@@ -62,8 +82,12 @@ public class ListFragmentViewHolderTest {
     public void testStory() {
         adapter.bindViewHolder(holder, 0);
         Assertions.assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
+        assertNotViewed();
         Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
         Assertions.assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
+        verify(sessionManager).isViewed(any(Context.class), anyString(), callbacks.capture());
+        callbacks.getValue().onCheckComplete(true);
+        assertViewed();
     }
 
     @Test
@@ -82,10 +106,12 @@ public class ListFragmentViewHolderTest {
     @Test
     public void testJob() {
         item.type = ItemManager.Item.Type.job;
+        item.setIsViewed(true);
         adapter.bindViewHolder(holder, 0);
         assertEquals(R.drawable.ic_work_grey600_18dp,
                 shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
+        assertViewed();
     }
 
     @Test
@@ -101,8 +127,24 @@ public class ListFragmentViewHolderTest {
     public void testItemClick() {
         adapter.bindViewHolder(holder, 0);
         holder.itemView.performClick();
+        assertViewed();
         verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class),
                 any(View.class));
+    }
+
+    @Test
+    public void testViewedBroadcast() {
+        item.setIsViewed(false);
+        adapter.bindViewHolder(holder, 0);
+        assertNotViewed();
+
+        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
+        List<ShadowLocalBroadcastManager.Wrapper> receivers = manager.getRegisteredBroadcastReceivers();
+        Intent intent = new Intent(SessionManager.ACTION_ADD);
+        intent.putExtra(SessionManager.ACTION_ADD_EXTRA_DATA, "1");
+        receivers.get(0).broadcastReceiver.onReceive(activity, intent);
+        adapter.bindViewHolder(holder, 0);
+        assertViewed();
     }
 
     @After
@@ -110,10 +152,25 @@ public class ListFragmentViewHolderTest {
         controller.pause().stop().destroy();
     }
 
+    private void assertViewed() {
+        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(activity.getResources().getColor(R.color.textColorSecondaryInverse));
+    }
+
+    private void assertNotViewed() {
+        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(activity.getResources().getColor(R.color.textColorPrimaryInverse));
+    }
+
     private class TestStory extends TestItem {
         public Type type = Type.story;
         public int kidCount = 0;
         public String title = null;
+
+        @Override
+        public String getId() {
+            return "1";
+        }
 
         @Override
         public String getDisplayedTitle() {

@@ -155,6 +155,18 @@ public interface ItemManager {
          * @return  item's descendants or -1 if none
          */
         int getDescendants();
+
+        /**
+         * Indicates if this item has been viewed
+         * @return true if viewed, falst if not, null if unknown
+         */
+        Boolean isViewed();
+
+        /**
+         * Set item view status
+         * @param isViewed  true if has been viewed, false otherwise
+         */
+        void setIsViewed(boolean isViewed);
     }
 
     /**

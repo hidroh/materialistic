@@ -11,6 +11,7 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SessionManager;
 
 @Module(
         injects = {
@@ -60,5 +61,10 @@ public class ActivityModule {
     @Provides @Singleton
     public FavoriteManager provideFavoriteManager() {
         return new FavoriteManager();
+    }
+
+    @Provides @Singleton
+    public SessionManager provideSessionManager() {
+        return new SessionManager();
     }
 }

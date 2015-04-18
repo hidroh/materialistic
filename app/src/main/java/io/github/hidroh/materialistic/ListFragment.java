@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SessionManager;
 
 public class ListFragment extends BaseFragment {
 
@@ -42,16 +44,27 @@ public class ListFragment extends BaseFragment {
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
+    private Set<String> mViewed = new HashSet<>();
     private MultiPaneListener mMultiPaneListener;
     private String mFilter;
     @Inject FavoriteManager mFavoriteManager;
+    @Inject SessionManager mSessionManager;
     private boolean mResumed;
+    private int mPrimaryTextColorResId;
+    private int mSecondaryTextColorResId;
 
     public static ListFragment instantiate(Context context, ItemManager itemManager,
                                            String filter) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());
         fragment.mItemManager = itemManager;
         fragment.mFilter = filter;
+        TypedArray ta = context.obtainStyledAttributes(new int[]{
+                R.attr.themedTextColorPrimaryInverse,
+                R.attr.themedTextColorSecondaryInverse
+        });
+        fragment.mPrimaryTextColorResId = ta.getInt(0, 0);
+        fragment.mSecondaryTextColorResId = ta.getInt(1, 0);
+        ta.recycle();
         return fragment;
     }
 
@@ -72,6 +85,8 @@ public class ListFragment extends BaseFragment {
                     mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
                 } else if (FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
                     mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_REMOVE_EXTRA_DATA));
+                } else if (SessionManager.ACTION_ADD.equals(intent.getAction())) {
+                    mViewed.add(intent.getStringExtra(SessionManager.ACTION_ADD_EXTRA_DATA));
                 }
             }
         };
@@ -81,6 +96,8 @@ public class ListFragment extends BaseFragment {
                 .registerReceiver(mBroadcastReceiver, FavoriteManager.makeAddIntentFilter());
         LocalBroadcastManager.getInstance(getActivity())
                 .registerReceiver(mBroadcastReceiver, FavoriteManager.makeRemoveIntentFilter());
+        LocalBroadcastManager.getInstance(getActivity())
+                .registerReceiver(mBroadcastReceiver, SessionManager.makeAddIntentFilter());
     }
 
     @Override
@@ -142,7 +159,7 @@ public class ListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         mResumed = true;
-        // refresh favorite state if any changes
+        // refresh favorite/viewed state if any changes
         mAdapter.notifyDataSetChanged();
     }
 
@@ -223,6 +240,18 @@ public class ListFragment extends BaseFragment {
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mRankTextView.setText(String.valueOf(position + 1));
             final ItemManager.Item story = getItem(position);
+            if (story.isViewed() == null) {
+                mSessionManager.isViewed(getActivity(), story.getId(),
+                        new SessionManager.OperationCallbacks() {
+                            @Override
+                            public void onCheckComplete(boolean isViewed) {
+                                story.setIsViewed(isViewed);
+                                decorateViewed(holder, story);
+                            }
+                        });
+            } else {
+                decorateViewed(holder, story);
+            }
             if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
                 story.setLocalRevision(mLocalRevision);
                 mChangedFavorites.remove(story.getId());
@@ -271,6 +300,14 @@ public class ListFragment extends BaseFragment {
         }
 
         @Override
+        protected void handleItemClick(ItemManager.Item item, ViewHolder holder) {
+            super.handleItemClick(item, holder);
+            mSessionManager.view(getActivity(), item.getId());
+            item.setIsViewed(true);
+            decorateViewed(holder, item);
+        }
+
+        @Override
         protected void onItemSelected(ItemManager.Item item, View itemView) {
             mMultiPaneListener.onItemSelected(item, itemView);
         }
@@ -279,6 +316,12 @@ public class ListFragment extends BaseFragment {
         protected boolean isSelected(String itemId) {
             return mMultiPaneListener.getSelectedItem() != null &&
                     itemId.equals(mMultiPaneListener.getSelectedItem().getId());
+        }
+
+        private void decorateViewed(ViewHolder holder, ItemManager.Item story) {
+            boolean viewed = mViewed.contains(story.getId()) ||
+                    story.isViewed() != null && story.isViewed();
+            holder.mTitleTextView.setTextColor(viewed ? mSecondaryTextColorResId : mPrimaryTextColorResId);
         }
 
         private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {

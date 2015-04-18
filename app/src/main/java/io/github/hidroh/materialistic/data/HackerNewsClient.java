@@ -162,6 +162,7 @@ public class HackerNewsClient implements ItemManager {
         private int descendants = -1;
         private HackerNewsItem[] kidItems;
         private boolean favorite;
+        private Boolean viewed;
         private int localRevision = -1;
 
         public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -384,6 +385,16 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public int getDescendants() {
             return descendants;
+        }
+
+        @Override
+        public Boolean isViewed() {
+            return viewed;
+        }
+
+        @Override
+        public void setIsViewed(boolean isViewed) {
+            viewed = isViewed;
         }
     }
 }

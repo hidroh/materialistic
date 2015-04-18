@@ -7,6 +7,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public abstract class TestItem implements ItemManager.Item {
     private boolean favorite;
+    private Boolean viewed;
 
     @Override
     public void populate(ItemManager.Item info) {
@@ -86,6 +87,16 @@ public abstract class TestItem implements ItemManager.Item {
     @Override
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+    }
+
+    @Override
+    public Boolean isViewed() {
+        return viewed;
+    }
+
+    @Override
+    public void setIsViewed(boolean isViewed) {
+        viewed = isViewed;
     }
 
     @Override

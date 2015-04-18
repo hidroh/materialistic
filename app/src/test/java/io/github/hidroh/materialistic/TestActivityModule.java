@@ -7,6 +7,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
@@ -33,7 +34,9 @@ import static org.mockito.Mockito.mock;
                 ItemActivityTest.class,
                 ItemFragmentTest.class,
                 TestInjectableActivity.class,
-                TestListActivity.class
+                TestListActivity.class,
+                io.github.hidroh.materialistic.test.ListActivity.class,
+                ListFragmentViewHolderTest.class
         },
         library = true,
         overrides = true
@@ -42,6 +45,7 @@ public class TestActivityModule {
     private final ItemManager hackerNewsClient = mock(ItemManager.class);
     private final ItemManager algoliaClient = mock(ItemManager.class);
     private final FavoriteManager favoriteManager = mock(FavoriteManager.class);
+    private final SessionManager sessionManager = mock(SessionManager.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -56,5 +60,10 @@ public class TestActivityModule {
     @Provides @Singleton
     public FavoriteManager provideFavoriteManager() {
         return favoriteManager;
+    }
+
+    @Provides @Singleton
+    public SessionManager provideSessionManager() {
+        return sessionManager;
     }
 }

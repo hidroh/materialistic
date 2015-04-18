@@ -26,7 +26,7 @@
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
 
-        <!-- custome themed attributes -->
+        <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
         <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
         <item name="themedDrawerBackgroundColor">@android:color/white</item>
@@ -37,6 +37,8 @@
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
         <item name="themedMenuStoryDrawable">@drawable/ic_subject_white_24dp</item>
         <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_white_24dp</item>
+        <item name="themedTextColorPrimaryInverse">@color/textColorPrimaryInverse</item>
+        <item name="themedTextColorSecondaryInverse">@color/textColorSecondaryInverse</item>
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
@@ -60,7 +62,7 @@
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
 
-        <!-- custome themed attributes -->
+        <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
         <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
         <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
@@ -71,6 +73,8 @@
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
         <item name="themedMenuStoryDrawable">@drawable/ic_subject_black_24dp</item>
         <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_black_24dp</item>
+        <item name="themedTextColorPrimaryInverse">@color/textColorPrimary</item>
+        <item name="themedTextColorSecondaryInverse">@color/textColorSecondary</item>
     </style>
 
     <style name="AppButton" parent="android:Widget.Button">
@@ -115,7 +119,7 @@
 
     <style name="textTitleStyle">
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:minLines">2</item>
         <item name="android:paddingLeft">@dimen/padding</item>

@@ -10,4 +10,6 @@
     <attr name="themedMenuClearDrawable" format="reference" />
     <attr name="themedMenuStoryDrawable" format="reference" />
     <attr name="themedMenuCommentDrawable" format="reference" />
+    <attr name="themedTextColorPrimaryInverse" format="reference" />
+    <attr name="themedTextColorSecondaryInverse" format="reference" />
 </resources>
