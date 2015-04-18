@@ -3,6 +3,8 @@ package io.github.hidroh.materialistic;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -208,8 +210,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         mHeaderCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO add transition
-                AppUtils.openWebUrl(ItemActivity.this, story);
+                if (AppUtils.isHackerNewsUrl(story)) {
+                    openWeb(story);
+                } else {
+                    AppUtils.openWebUrl(ItemActivity.this, story);
+                }
             }
         });
 
@@ -236,6 +241,15 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                             ItemFragment.class.getName())
                     .commit();
         }
+    }
+
+    private void openWeb(ItemManager.Item item) {
+        final Intent intent = new Intent(this, WebActivity.class);
+        intent.putExtra(WebActivity.EXTRA_ITEM, item);
+        final ActivityOptionsCompat options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this,
+                        mHeaderCardView, getString(R.string.transition_item_container));
+        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
     private void decorateHeaderStack() {

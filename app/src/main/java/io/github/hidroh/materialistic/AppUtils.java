@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class AppUtils {
@@ -99,5 +100,10 @@ public class AppUtils {
         final int resId = a.getResourceId(0, 0);
         a.recycle();
         return resId;
+    }
+
+    public static boolean isHackerNewsUrl(ItemManager.WebItem item) {
+        return !TextUtils.isEmpty(item.getUrl()) &&
+                item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
     }
 }

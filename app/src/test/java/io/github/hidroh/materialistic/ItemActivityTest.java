@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
@@ -125,6 +126,16 @@ public class ItemActivityTest {
             }
 
             @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public String getUrl() {
+                return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
+            }
+
+            @Override
             public boolean isShareable() {
                 return true;
             }
@@ -133,6 +144,9 @@ public class ItemActivityTest {
         assertEquals(R.drawable.ic_work_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
+        activity.findViewById(R.id.header_card_view).performClick();
+        assertEquals(WebActivity.class.getName(),
+                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
 
     @Test

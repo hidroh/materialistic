@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class WebFragment extends Fragment {
@@ -41,8 +39,7 @@ public class WebFragment extends Fragment {
     public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
         fragment.mItem = item;
-        fragment.mIsHackerNewsUrl = !TextUtils.isEmpty(item.getUrl()) &&
-                item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
+        fragment.mIsHackerNewsUrl = AppUtils.isHackerNewsUrl(item);
         return fragment;
     }
 
