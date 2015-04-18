@@ -203,47 +203,22 @@ public class ItemActivity extends BaseItemActivity {
         mHeaderCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO add transition
                 AppUtils.openWebUrl(ItemActivity.this, story);
             }
         });
 
-        int level = getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0);
-        int stackResId = -1;
-        int marginTop = getResources().getDimensionPixelSize(R.dimen.cardview_header_elevation) * Math.min(level, 4);
-        // TODO can improve?
-        switch (level) {
-            case 0:
-                break;
-            case 1:
-                stackResId = R.layout.header_stack_1;
-                break;
-            case 2:
-                stackResId = R.layout.header_stack_2;
-                break;
-            case 3:
-                stackResId = R.layout.header_stack_3;
-                break;
-            case 4:
-            default:
-                stackResId = R.layout.header_stack_4;
-                break;
-        }
-        if (stackResId != -1) {
-            getLayoutInflater().inflate(stackResId, (ViewGroup) findViewById(R.id.item_view), true);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mHeaderCardView.getLayoutParams();
-            params.topMargin = marginTop;
-            mHeaderCardView.setLayoutParams(params);
-            mHeaderCardView.bringToFront();
-        }
-
+        decorateHeaderStack();
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this));
         switch (story.getType()) {
             case job:
-                postedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_work_grey600_18dp, 0, 0, 0);
+                postedTextView.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_work_grey600_18dp, 0, 0, 0);
                 break;
             case poll:
-                postedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
+                postedTextView.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
         final Bundle args = new Bundle();
@@ -256,6 +231,25 @@ public class ItemActivity extends BaseItemActivity {
                             ItemFragment.class.getName())
                     .commit();
         }
+    }
+
+    private void decorateHeaderStack() {
+        int level = Math.min(getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0), 4);
+        int stackMargin = getResources().getDimensionPixelSize(R.dimen.cardview_header_margin);
+        ViewGroup itemView = (ViewGroup) findViewById(R.id.item_view);
+        for (int i = 0; i < level; i++) {
+            View stackView = getLayoutInflater().inflate(R.layout.header_stack, itemView, false);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) stackView.getLayoutParams();
+            params.topMargin = stackMargin * i;
+            stackView.setLayoutParams(params);
+            itemView.addView(stackView);
+        }
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)
+                mHeaderCardView.getLayoutParams();
+        params.topMargin = stackMargin * level;
+        mHeaderCardView.setLayoutParams(params);
+        mHeaderCardView.bringToFront();
     }
 
     private void decorateFavorite(boolean isFavorite) {
