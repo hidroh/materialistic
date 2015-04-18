@@ -47,7 +47,6 @@ public class FavoriteFragment extends BaseFragment
     private ActionMode.Callback mActionModeCallback;
     private Set<String> mSelected = new HashSet<>();
     private String mFilter;
-    private SearchView mSearchView;
     private boolean mSearchViewVisible;
     private boolean mIsResumed;
     private MultiPaneListener mMultiPaneListener;
@@ -70,10 +69,6 @@ public class FavoriteFragment extends BaseFragment
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction() == null) {
-                    return;
-                }
-
                 if (FavoriteManager.ACTION_GET.equals(intent.getAction())) {
                     if (mProgressDialog != null) {
                         mProgressDialog.dismiss();
@@ -191,16 +186,19 @@ public class FavoriteFragment extends BaseFragment
         inflater.inflate(R.menu.menu_favorite, menu);
         final MenuItem menuSearch = menu.findItem(R.id.menu_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+        if (searchView == null) {
+            return; // TODO remove this, only happens in test
+        }
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSearchViewVisible = true;
                 invalidateMenuItems(menu);
             }
         });
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
                 mSearchViewVisible = false;

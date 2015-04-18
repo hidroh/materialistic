@@ -8,6 +8,7 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
@@ -38,7 +39,8 @@ import static org.mockito.Mockito.mock;
                 io.github.hidroh.materialistic.test.ListActivity.class,
                 ListFragmentViewHolderTest.class,
                 FavoriteActivityTest.class,
-                FavoriteActivityEmptyTest.class
+                FavoriteActivityEmptyTest.class,
+                TestFavoriteActivity.class
         },
         library = true,
         overrides = true

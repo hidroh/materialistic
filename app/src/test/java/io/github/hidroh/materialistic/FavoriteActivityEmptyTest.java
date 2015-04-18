@@ -8,7 +8,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.util.ActivityController;
 
+import static junit.framework.Assert.assertFalse;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class FavoriteActivityEmptyTest {
@@ -18,7 +20,7 @@ public class FavoriteActivityEmptyTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(FavoriteActivity.class);
-        activity = controller.create().start().resume().get(); // skip menu due to search view
+        activity = controller.create().start().resume().visible().get(); // skip menu due to search view
     }
 
     @Test
@@ -30,6 +32,8 @@ public class FavoriteActivityEmptyTest {
         activity.findViewById(R.id.header_card_view).performLongClick();
         assertThat(activity.findViewById(R.id.header_card_view)
                 .findViewById(R.id.bookmarked)).isNotVisible();
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_search).isVisible());
     }
 
     @Test

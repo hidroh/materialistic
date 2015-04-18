@@ -75,10 +75,6 @@ public class ListFragment extends BaseFragment {
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (TextUtils.isEmpty(intent.getAction())) {
-                    return;
-                }
-
                 if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
                     mLocalRevision++;
                 } else if (FavoriteManager.ACTION_ADD.equals(intent.getAction())) {
