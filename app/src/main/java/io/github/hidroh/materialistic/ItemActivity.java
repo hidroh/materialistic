@@ -18,7 +18,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ItemActivity extends BaseItemActivity {
+public class ItemActivity extends BaseItemActivity implements ItemObserver {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
@@ -177,6 +177,11 @@ public class ItemActivity extends BaseItemActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onKidChanged(int kidCount) {
+        setTitle(getString(R.string.title_activity_item_count, kidCount));
     }
 
     private void bindData(final ItemManager.Item story) {
