@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.ListActivity;
@@ -31,8 +32,11 @@ import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemManager;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -47,13 +51,16 @@ public class ListFragmentViewHolderTest {
     private ListActivity activity;
     private TestStory item;
     @Inject SessionManager sessionManager;
-    @Captor ArgumentCaptor<SessionManager.OperationCallbacks> callbacks;
+    @Inject FavoriteManager favoriteManager;
+    @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallbacks;
+    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(sessionManager);
+        reset(favoriteManager);
         item = new TestStory();
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
@@ -85,8 +92,8 @@ public class ListFragmentViewHolderTest {
         assertNotViewed();
         Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
         Assertions.assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
-        verify(sessionManager).isViewed(any(Context.class), anyString(), callbacks.capture());
-        callbacks.getValue().onCheckComplete(true);
+        verify(sessionManager).isViewed(any(Context.class), anyString(), sessionCallbacks.capture());
+        sessionCallbacks.getValue().onCheckComplete(true);
         assertViewed();
     }
 
@@ -145,6 +152,29 @@ public class ListFragmentViewHolderTest {
         receivers.get(0).broadcastReceiver.onReceive(activity, intent);
         adapter.bindViewHolder(holder, 0);
         assertViewed();
+    }
+
+    @Test
+    public void testFavoriteClearedBroadcast() {
+        assertFalse(item.isFavorite());
+        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
+        List<ShadowLocalBroadcastManager.Wrapper> receivers = manager.getRegisteredBroadcastReceivers();
+        receivers.get(0).broadcastReceiver.onReceive(activity, new Intent(FavoriteManager.ACTION_CLEAR));
+        adapter.bindViewHolder(holder, 0);
+        verify(favoriteManager).check(any(Context.class), eq("1"), favoriteCallbacks.capture());
+        favoriteCallbacks.getValue().onCheckComplete(true);
+        assertTrue(item.isFavorite());
+    }
+
+    @Test
+    public void testItemLongClick() {
+        adapter.bindViewHolder(holder, 0);
+        holder.itemView.performLongClick();
+        verify(favoriteManager).add(any(Context.class), eq(item));
+        assertTrue(item.isFavorite());
+        holder.itemView.performLongClick();
+        verify(favoriteManager).remove(any(Context.class), eq("1"));
+        assertFalse(item.isFavorite());
     }
 
     @After
