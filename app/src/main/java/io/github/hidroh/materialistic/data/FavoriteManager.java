@@ -167,15 +167,15 @@ public class FavoriteManager {
             return;
         }
 
+        if (callbacks == null) {
+            return;
+        }
+
         new AsyncQueryHandler(context.getContentResolver()) {
             @Override
             protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
                 super.onQueryComplete(token, cookie, cursor);
                 if (cookie == null) {
-                    return;
-                }
-
-                if (callbacks == null) {
                     return;
                 }
 
