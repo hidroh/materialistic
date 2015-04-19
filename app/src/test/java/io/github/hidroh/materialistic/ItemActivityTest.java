@@ -63,7 +63,7 @@ public class ItemActivityTest {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM_ID, "1");
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 2);
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
@@ -107,7 +107,7 @@ public class ItemActivityTest {
         ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
         when(webItem.getId()).thenReturn("1");
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         verify(hackerNewsClient).getItem(eq("1"), any(ItemManager.ResponseListener.class));
     }
 
@@ -117,7 +117,7 @@ public class ItemActivityTest {
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 1);
         intent.setData(Uri.parse("https://news.ycombinator.com/item?id=1"));
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
@@ -164,7 +164,7 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         assertThat(activity.findViewById(R.id.source)).isNotVisible();
         assertEquals(R.drawable.ic_poll_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
@@ -191,7 +191,7 @@ public class ItemActivityTest {
                 return "http://example.com";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         activity.onOptionsItemSelected(new RoboMenuItem() {
             @Override
             public int getItemId() {
@@ -221,7 +221,7 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(true);
         assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
@@ -248,12 +248,23 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller.withIntent(intent).create().start().resume().visible();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(false);
         assertThat(activity.findViewById(R.id.bookmarked)).isNotVisible();
         activity.findViewById(R.id.header_card_view).performLongClick();
         assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
+    }
+
+    @Test
+    public void testOnKidChanged() {
+        Intent intent = new Intent();
+        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
+        when(webItem.getId()).thenReturn("1");
+        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
+        controller.withIntent(intent).create().start().resume().visible();
+        activity.onKidChanged(10);
+        assertEquals(activity.getString(R.string.title_activity_item_count, 10), activity.getTitle());
     }
 
     @After
