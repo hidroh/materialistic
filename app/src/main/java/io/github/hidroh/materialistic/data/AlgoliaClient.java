@@ -19,13 +19,12 @@ public class AlgoliaClient implements ItemManager {
 
     public static boolean sSortByTime = true;
     private static final String BASE_API_URL = "https://hn.algolia.com/api/v1";
-    private static final Object sLock = new Object();
     private RestService mRestService;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
 
     @Inject
-    public AlgoliaClient(Context context) {
-        mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
+    public AlgoliaClient(Context context, RestServiceFactory factory) {
+        mRestService = factory.create(BASE_API_URL, RestService.class);
         sSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_item_search_recent), true);
     }
@@ -68,7 +67,7 @@ public class AlgoliaClient implements ItemManager {
         mHackerNewsClient.getItem(itemId, listener);
     }
 
-    private interface RestService {
+    interface RestService {
         @Headers("Cache-Control: max-age=600")
         @GET("/search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         void searchByDate(@Query("query") String query, Callback<AlgoliaHits> callback);

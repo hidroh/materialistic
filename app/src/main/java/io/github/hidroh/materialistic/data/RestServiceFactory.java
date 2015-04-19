@@ -14,47 +14,56 @@ import io.github.hidroh.materialistic.R;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
-public class RestServiceFactory {
-    private static final String TAG_OK_HTTP = "OkHttp";
-    private static final long CACHE_SIZE = 1024 * 1024;
+public interface RestServiceFactory {
+    <T> T create(String baseUrl, Class<T> clazz);
 
-    public static <T> T create(Context context, String baseUrl, Class<T> clazz) {
-        final OkHttpClient okHttpClient = new OkHttpClient();
-        final boolean loggingEnabled = context.getResources().getBoolean(R.bool.debug);
-        if (loggingEnabled) {
-            okHttpClient.networkInterceptors().add(new LoggingInterceptor());
+    class Impl implements RestServiceFactory {
+        private static final String TAG_OK_HTTP = "OkHttp";
+        private static final long CACHE_SIZE = 1024 * 1024;
+        private final RestAdapter.Builder mBuilder;
+
+        public Impl(Context context) {
+            final OkHttpClient okHttpClient = new OkHttpClient();
+            final boolean loggingEnabled = context.getResources().getBoolean(R.bool.debug);
+            if (loggingEnabled) {
+                okHttpClient.networkInterceptors().add(new LoggingInterceptor());
+            }
+            okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
+                    CACHE_SIZE));
+
+            RestAdapter.Builder builder = new RestAdapter.Builder()
+                    .setClient(new OkClient(okHttpClient));
+            if (loggingEnabled) {
+                builder.setLogLevel(RestAdapter.LogLevel.BASIC);
+            }
+            mBuilder = builder;
         }
-        okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
-                CACHE_SIZE));
 
-        RestAdapter.Builder builder = new RestAdapter.Builder()
-                .setEndpoint(baseUrl)
-                .setClient(new OkClient(okHttpClient));
-        if (loggingEnabled) {
-            builder.setLogLevel(RestAdapter.LogLevel.BASIC);
-        }
-        return builder
-                .build()
-                .create(clazz);
-
-    }
-
-    private static class LoggingInterceptor implements Interceptor {
         @Override
-        public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
-            Request request = chain.request();
+        public <T> T create(String baseUrl, Class<T> clazz) {
+            return mBuilder
+                    .setEndpoint(baseUrl)
+                    .build()
+                    .create(clazz);
+        }
 
-            long t1 = System.nanoTime();
-            Log.d(TAG_OK_HTTP, String.format("---> %s (%s)%n%s",
-                    request.url(), chain.connection(), request.headers()));
+        private static class LoggingInterceptor implements Interceptor {
+            @Override
+            public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
 
-            com.squareup.okhttp.Response response = chain.proceed(request);
+                long t1 = System.nanoTime();
+                Log.d(TAG_OK_HTTP, String.format("---> %s (%s)%n%s",
+                        request.url(), chain.connection(), request.headers()));
 
-            long t2 = System.nanoTime();
-            Log.d(TAG_OK_HTTP, String.format("<--- %s (%.1fms)%n%s",
-                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+                com.squareup.okhttp.Response response = chain.proceed(request);
 
-            return response;
+                long t2 = System.nanoTime();
+                Log.d(TAG_OK_HTTP, String.format("<--- %s (%.1fms)%n%s",
+                        response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+
+                return response;
+            }
         }
     }
 }

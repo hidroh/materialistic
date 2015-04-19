@@ -11,6 +11,7 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 
 @Module(
@@ -66,5 +67,10 @@ public class ActivityModule {
     @Provides @Singleton
     public SessionManager provideSessionManager() {
         return new SessionManager();
+    }
+
+    @Provides @Singleton
+    public RestServiceFactory provideRestServiceFactory(Context context) {
+        return new RestServiceFactory.Impl(context);
     }
 }

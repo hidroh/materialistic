@@ -25,19 +25,19 @@ public class HackerNewsClient implements ItemManager {
     private RestService mRestService;
 
     @Inject
-    public HackerNewsClient(Context context) {
-        mRestService = RestServiceFactory.create(context, BASE_API_URL, RestService.class);
+    public HackerNewsClient(RestServiceFactory factory) {
+        mRestService = factory.create(BASE_API_URL, RestService.class);
     }
 
     @Override
     public void getStories(String filter, final ResponseListener<Item[]> listener) {
+        if (listener == null) {
+            return;
+        }
+
         final Callback<int[]> callback = new Callback<int[]>() {
             @Override
             public void success(int[] ints, Response response) {
-                if (listener == null) {
-                    return;
-                }
-
                 Item[] topStories = new Item[ints == null ? 0 : ints.length];
                 for (int i = 0; i < topStories.length; i++) {
                     topStories[i] = new HackerNewsItem(ints[i]);
@@ -47,11 +47,7 @@ public class HackerNewsClient implements ItemManager {
 
             @Override
             public void failure(RetrofitError error) {
-                if (listener == null) {
-                    return;
-                }
-
-                listener.onError(error == null ? error.getMessage() : "");
+                listener.onError(error != null ? error.getMessage() : "");
             }
         };
         final FetchMode fetchMode;
@@ -84,28 +80,24 @@ public class HackerNewsClient implements ItemManager {
 
     @Override
     public void getItem(String itemId, final ItemManager.ResponseListener<Item> listener) {
+        if (listener == null) {
+            return;
+        }
+
         mRestService.item(itemId, new Callback<HackerNewsItem>() {
             @Override
             public void success(HackerNewsItem item, Response response) {
-                if (listener == null) {
-                    return;
-                }
-
                 listener.onResponse(item);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                if (listener == null) {
-                    return;
-                }
-
-                listener.onError(error == null ? error.getMessage() : "");
+                listener.onError(error != null ? error.getMessage() : "");
             }
         });
     }
 
-    private interface RestService {
+    interface RestService {
         @Headers("Cache-Control: max-age=600")
         @GET("/topstories.json")
         void topStories(Callback<int[]> callback);
