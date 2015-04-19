@@ -31,13 +31,13 @@ public class AlgoliaClient implements ItemManager {
 
     @Override
     public void getStories(String filter, final ResponseListener<Item[]> listener) {
+        if (listener == null) {
+            return;
+        }
+
         Callback<AlgoliaHits> callback = new Callback<AlgoliaHits>() {
             @Override
             public void success(AlgoliaHits algoliaHits, Response response) {
-                if (listener == null) {
-                    return;
-                }
-
                 Hit[] hits = algoliaHits.hits;
                 Item[] stories = new Item[hits == null ? 0 : hits.length];
                 for (int i = 0; i < stories.length; i++) {
@@ -48,11 +48,7 @@ public class AlgoliaClient implements ItemManager {
 
             @Override
             public void failure(RetrofitError error) {
-                if (listener == null) {
-                    return;
-                }
-
-                listener.onError(error == null ? error.getMessage() : "");
+                listener.onError(error != null ? error.getMessage() : "");
             }
         };
         if (sSortByTime) {
@@ -77,11 +73,11 @@ public class AlgoliaClient implements ItemManager {
         void search(@Query("query") String query, Callback<AlgoliaHits> callback);
     }
 
-    private class AlgoliaHits {
+    static class AlgoliaHits {
         private Hit[] hits;
     }
 
-    private class Hit {
+    private static class Hit {
         private String objectID;
     }
 }
