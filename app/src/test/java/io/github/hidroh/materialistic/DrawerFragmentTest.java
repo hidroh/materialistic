@@ -29,7 +29,7 @@ public class DrawerFragmentTest {
     }
 
     @ParameterizedRobolectricTestRunner.Parameters
-    public  static List<Object[]> provideParameters() {
+    public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{R.id.drawer_list, ListActivity.class},
                 new Object[]{R.id.drawer_new, NewActivity.class},
