@@ -1,4 +1,4 @@
-package io.github.hidroh.materialistic;
+package io.github.hidroh.materialistic.preference;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import io.github.hidroh.materialistic.AppUtils;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class SwitchPreference extends android.preference.SwitchPreference {

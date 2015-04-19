@@ -3,25 +3,25 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <PreferenceCategory
         android:title="@string/pref_category_reading">
-        <io.github.hidroh.materialistic.CheckBoxPreference
+        <io.github.hidroh.materialistic.preference.CheckBoxPreference
             android:key="@string/pref_dark_theme"
             android:title="@string/pref_dark_theme_title"
             android:summary="@string/pref_dark_theme_summary"
             android:defaultValue="false" />
-        <io.github.hidroh.materialistic.CheckBoxPreference
+        <io.github.hidroh.materialistic.preference.CheckBoxPreference
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"
             android:enabled="@bool/pref_external_enabled"
             android:summary="@string/pref_external_summary"
             android:defaultValue="false" />
-        <io.github.hidroh.materialistic.CheckBoxPreference
+        <io.github.hidroh.materialistic.preference.CheckBoxPreference
             android:key="@string/pref_item_click"
             android:title="@string/pref_item_click_title"
             android:defaultValue="false" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_category_search">
-        <io.github.hidroh.materialistic.CheckBoxPreference
+        <io.github.hidroh.materialistic.preference.CheckBoxPreference
             android:key="@string/pref_item_search_recent"
             android:title="@string/pref_item_search_recent_title"
             android:summary="@string/pref_item_search_recent_summary"

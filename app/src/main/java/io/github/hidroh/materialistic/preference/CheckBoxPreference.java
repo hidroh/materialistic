@@ -1,9 +1,11 @@
-package io.github.hidroh.materialistic;
+package io.github.hidroh.materialistic.preference;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import io.github.hidroh.materialistic.AppUtils;
 
 public class CheckBoxPreference extends android.preference.CheckBoxPreference {
 
