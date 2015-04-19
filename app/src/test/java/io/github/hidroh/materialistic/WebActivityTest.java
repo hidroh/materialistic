@@ -1,7 +1,12 @@
 package io.github.hidroh.materialistic;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v7.widget.ShareActionProvider;
@@ -24,7 +29,9 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.fakes.RoboMenuItem;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
@@ -34,6 +41,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowWebView;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -172,6 +180,27 @@ public class WebActivityTest {
         assertThat(progressBar).isVisible();
         shadowOf(webView).getWebChromeClient().onProgressChanged(webView, 100);
         assertThat(progressBar).isNotVisible();
+    }
+
+    @Test
+    public void testDownloadPDF() {
+        ResolveInfo resolverInfo = new ResolveInfo();
+        resolverInfo.activityInfo = new ActivityInfo();
+        resolverInfo.activityInfo.applicationInfo = new ApplicationInfo();
+        resolverInfo.activityInfo.applicationInfo.packageName =
+                ListActivity.class.getPackage().getName();
+        resolverInfo.activityInfo.name = ListActivity.class.getName();
+        RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
+        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://example.com/file.pdf")), resolverInfo);
+
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
+        shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.pdf", "", "", "", 0l);
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
     @After
