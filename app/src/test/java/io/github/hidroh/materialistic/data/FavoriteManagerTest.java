@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic.data;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.ShadowAsyncQueryHandler;
+import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.junit.Before;
@@ -21,6 +22,8 @@ import java.util.Set;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -154,6 +157,30 @@ public class FavoriteManagerTest {
     public void testRemoveMultiple() {
         manager.remove(RuntimeEnvironment.application, new HashSet<String>(){{add("1");add("2");}});
         assertThat(getBroadcastIntent()).hasAction(FavoriteManager.ACTION_CLEAR);
+    }
+
+    @Test
+    public void testFavorite() {
+        Parcel parcel = Parcel.obtain();
+        parcel.writeString("1");
+        parcel.writeString("http://example.com");
+        parcel.writeString("title");
+        parcel.setDataPosition(0);
+        FavoriteManager.Favorite favorite = FavoriteManager.Favorite.CREATOR.createFromParcel(parcel);
+        assertEquals("title", favorite.getDisplayedTitle());
+        assertEquals("example.com", favorite.getSource());
+        assertEquals("http://example.com", favorite.getUrl());
+        assertEquals("1", favorite.getId());
+        assertNotNull(favorite.getDisplayedTime(RuntimeEnvironment.application));
+        assertEquals(ItemManager.WebItem.Type.story, favorite.getType());
+        assertTrue(favorite.isShareable());
+        assertEquals("title - http://example.com", favorite.toString());
+        assertEquals(0, favorite.describeContents());
+        Parcel output = Parcel.obtain();
+        favorite.writeToParcel(output, 0);
+        output.setDataPosition(0);
+        assertEquals("1", output.readString());
+        assertThat(FavoriteManager.Favorite.CREATOR.newArray(1)).hasSize(1);
     }
 
     private Intent getBroadcastIntent() {
