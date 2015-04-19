@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.internal.view.SupportMenuItem;
@@ -14,6 +15,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -24,12 +28,17 @@ import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
+import javax.inject.Inject;
+
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowWebView;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
@@ -40,9 +49,14 @@ public class WebActivityTest {
     private WebActivity activity;
     private ActivityController<WebActivity> controller;
     private ItemManager.WebItem item;
+    @Inject FavoriteManager favoriteManager;
+    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        TestApplication.applicationGraph.inject(this);
+        reset(favoriteManager);
         item = mock(ItemManager.WebItem.class);
         when(item.getType()).thenReturn(ItemManager.WebItem.Type.story);
         Intent intent = new Intent();
@@ -90,6 +104,44 @@ public class WebActivityTest {
         when(item.isShareable()).thenReturn(false);
         activity.onPrepareOptionsMenu(menu);
         assertThat(menuItem).isNotVisible();
+    }
+
+    @Test
+    public void testOptionsMenuFavorite() {
+        final MenuItem menuFavorite = new RoboMenuItem(){
+            @Override
+            public int getItemId() {
+                return R.id.menu_favorite;
+            }
+
+            @Override
+            public MenuItem setTitle(int title) {
+                setTitle(activity.getString(title));
+                return this;
+            }
+        };
+        Menu menu = new RoboMenu() {
+            @Override
+            public MenuItem findItem(int id) {
+                if (id == R.id.menu_favorite) {
+                    return menuFavorite;
+                }
+                return super.findItem(id);
+            }
+        };
+        when(item.isShareable()).thenReturn(true);
+        activity.onPrepareOptionsMenu(menu);
+        verify(favoriteManager).check(any(Context.class), anyString(), callbacks.capture());
+        callbacks.getValue().onCheckComplete(true);
+        assertThat(menuFavorite).isVisible().hasTitle(activity.getString(R.string.unsave_story));
+
+        activity.onOptionsItemSelected(menuFavorite);
+        verify(favoriteManager).remove(any(Context.class), anyString());
+        assertThat(menuFavorite).isVisible().hasTitle(activity.getString(R.string.save_story));
+
+        activity.onOptionsItemSelected(menuFavorite);
+        verify(favoriteManager).add(any(Context.class), any(ItemManager.WebItem.class));
+        assertThat(menuFavorite).isVisible().hasTitle(activity.getString(R.string.unsave_story));
     }
 
     @Test

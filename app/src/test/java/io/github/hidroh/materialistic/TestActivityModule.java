@@ -41,7 +41,8 @@ import static org.mockito.Mockito.mock;
                 FavoriteActivityTest.class,
                 FavoriteActivityEmptyTest.class,
                 TestFavoriteActivity.class,
-                WebActivityLocalTest.class
+                WebActivityLocalTest.class,
+                WebActivityTest.class
         },
         library = true,
         overrides = true
