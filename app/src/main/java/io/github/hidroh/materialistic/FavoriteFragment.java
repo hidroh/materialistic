@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +51,7 @@ public class FavoriteFragment extends BaseFragment
     private MultiPaneListener mMultiPaneListener;
     private DataChangedListener mDataChangedListener;
     @Inject FavoriteManager mFavoriteManager;
+    @Inject ActionViewResolver mActionViewResolver;
 
     public static FavoriteFragment instantiate(Context context, String filter) {
         final FavoriteFragment fragment = (FavoriteFragment) Fragment.instantiate(context,
@@ -146,11 +146,6 @@ public class FavoriteFragment extends BaseFragment
             public int getOrientation() {
                 return LinearLayout.VERTICAL;
             }
-
-            @Override
-            public void onItemsRemoved(RecyclerView recyclerView, int positionStart, int itemCount) {
-                super.onItemsRemoved(recyclerView, positionStart, itemCount);
-            }
         });
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(mAdapter);
@@ -186,10 +181,7 @@ public class FavoriteFragment extends BaseFragment
         inflater.inflate(R.menu.menu_favorite, menu);
         final MenuItem menuSearch = menu.findItem(R.id.menu_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
-        if (searchView == null) {
-            return; // TODO remove this, only happens in test
-        }
+        SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override

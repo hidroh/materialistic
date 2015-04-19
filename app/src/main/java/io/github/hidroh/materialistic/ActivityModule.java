@@ -73,4 +73,9 @@ public class ActivityModule {
     public RestServiceFactory provideRestServiceFactory(Context context) {
         return new RestServiceFactory.Impl(context);
     }
+
+    @Provides @Singleton
+    public ActionViewResolver provideActionViewResolver() {
+        return new ActionViewResolver();
+    }
 }

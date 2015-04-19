@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
@@ -16,12 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 public abstract class BaseActivity extends InjectableActivity {
 
     protected ViewGroup mContentView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
+    @Inject
+    ActionViewResolver mActionViewResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,7 @@ public abstract class BaseActivity extends InjectableActivity {
             getMenuInflater().inflate(R.menu.menu_search, menu);
             MenuItem menuSearch = menu.findItem(R.id.menu_search);
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+            SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(
                     new ComponentName(this, SearchActivity.class)));
             searchView.setIconified(true);

@@ -6,11 +6,6 @@ import static org.robolectric.Shadows.shadowOf;
 
 public class TestListActivity extends io.github.hidroh.materialistic.ListActivity {
     @Override
-    protected boolean isSearchable() {
-        return false; // TODO remove once Robolectric supports this
-    }
-
-    @Override
     public void supportInvalidateOptionsMenu() {
         Menu optionsMenu = shadowOf(this).getOptionsMenu();
         if (optionsMenu != null) {

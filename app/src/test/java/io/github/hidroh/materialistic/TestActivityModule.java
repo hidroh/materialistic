@@ -1,5 +1,8 @@
 package io.github.hidroh.materialistic;
 
+import android.support.v7.widget.SearchView;
+import android.view.MenuItem;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -12,7 +15,9 @@ import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Module(
         injects = {
@@ -52,6 +57,7 @@ public class TestActivityModule {
     private final ItemManager algoliaClient = mock(ItemManager.class);
     private final FavoriteManager favoriteManager = mock(FavoriteManager.class);
     private final SessionManager sessionManager = mock(SessionManager.class);
+    private final SearchView searchView = mock(SearchView.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -71,5 +77,12 @@ public class TestActivityModule {
     @Provides @Singleton
     public SessionManager provideSessionManager() {
         return sessionManager;
+    }
+
+    @Provides @Singleton
+    public ActionViewResolver provideActionViewResolver() {
+        ActionViewResolver resolver = mock(ActionViewResolver.class);
+        when(resolver.getActionView(any(MenuItem.class))).thenReturn(searchView);
+        return resolver;
     }
 }
