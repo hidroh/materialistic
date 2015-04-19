@@ -348,7 +348,6 @@ public class HackerNewsClient implements ItemManager {
                 case job:
                     return true;
                 case comment:
-                    return false;
                 default:
                     return false;
             }
