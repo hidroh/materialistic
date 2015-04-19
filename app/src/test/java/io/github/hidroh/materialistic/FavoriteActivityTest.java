@@ -14,7 +14,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,6 +46,7 @@ import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
@@ -65,7 +68,10 @@ public class FavoriteActivityTest {
     private RecyclerView recyclerView;
     private Fragment fragment;
     @Inject FavoriteManager favoriteManager;
+    @Inject ActionViewResolver actionViewResolver;
     @Captor ArgumentCaptor<Set<String>> selection;
+    @Captor ArgumentCaptor<View.OnClickListener> searchViewClickListener;
+    @Captor ArgumentCaptor<SearchView.OnCloseListener> searchViewCloseListener;
     private ShadowContentResolver resolver;
 
     @Before
@@ -73,6 +79,7 @@ public class FavoriteActivityTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(favoriteManager);
+        reset(actionViewResolver.getActionView(mock(MenuItem.class)));
         controller = Robolectric.buildActivity(TestFavoriteActivity.class);
         resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
         ContentValues cv = new ContentValues();
@@ -106,6 +113,25 @@ public class FavoriteActivityTest {
         dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertEquals(0, adapter.getItemCount());
+    }
+
+    @Test
+    public void testSearchView() {
+        SearchView searchView = (SearchView) actionViewResolver.getActionView(mock(MenuItem.class));
+        verify(searchView).setOnSearchClickListener(searchViewClickListener.capture());
+        verify(searchView).setOnCloseListener(searchViewCloseListener.capture());
+
+        searchViewClickListener.getValue().onClick(searchView);
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
+
+        searchViewCloseListener.getValue().onClose();
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
+
+        assertEquals(2, adapter.getItemCount());
+        ((FavoriteFragment) fragment).filter("ask");
+        assertEquals(1, adapter.getItemCount());
+        searchViewCloseListener.getValue().onClose();
+        assertEquals(2, adapter.getItemCount());
     }
 
     @Test
