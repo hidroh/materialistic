@@ -10,6 +10,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -41,5 +42,10 @@ public class AppUtilsTest {
         when(event.getY()).thenReturn(0f);
         assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
         assertNotNull(ShadowApplication.getInstance().getNextStartedActivity());
+    }
+
+    @Test
+    public void testResolveTextSizeResId() {
+        assertEquals(R.style.AppTextSize, AppUtils.resolveTextSizeResId(RuntimeEnvironment.application));
     }
 }

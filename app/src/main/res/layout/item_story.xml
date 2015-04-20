@@ -40,20 +40,17 @@
         <TextView
             android:id="@id/source"
             android:text="hidroh.github.io"
-            style="@style/textSubtitleStyle"
+            style="@style/textSubtitleStyle.Italic"
             android:layout_toRightOf="@id/rank"
             android:layout_below="@id/title" />
         <TextView
             android:id="@id/posted"
             android:text="Since January 01, 2015"
+            style="@style/textSubtitleStyle"
             android:singleLine="true"
-            android:paddingLeft="@dimen/padding"
-            android:paddingRight="@dimen/padding"
             android:paddingBottom="@dimen/padding"
             android:layout_toRightOf="@id/rank"
-            android:layout_below="@id/source"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_below="@id/source" />
         <include layout="@layout/button_comment"
             android:id="@id/comment"
             android:layout_width="wrap_content"

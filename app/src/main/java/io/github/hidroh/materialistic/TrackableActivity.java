@@ -13,6 +13,7 @@ public abstract class TrackableActivity extends ActionBarActivity {
                 .getBoolean(getString(R.string.pref_dark_theme), false)) {
             setTheme(R.style.AppTheme_Dark);
         }
+        getTheme().applyStyle(AppUtils.resolveTextSizeResId(this), true);
         super.onCreate(savedInstanceState);
     }
 

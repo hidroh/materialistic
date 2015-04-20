@@ -16,7 +16,7 @@
             android:id="@id/posted"
             android:text="@string/loading_text"
             android:drawablePadding="@dimen/padding"
-            style="@style/textSubtitleStyle" />
+            style="@style/textSubtitleStyle.Italic" />
         <TextView
             android:id="@android:id/text2"
             android:paddingLeft="@dimen/padding"
@@ -31,7 +31,7 @@
             android:id="@id/source"
             android:text="@string/loading_text"
             android:visibility="gone"
-            style="@style/textSubtitleStyle" />
+            style="@style/textSubtitleStyle.Italic" />
     </LinearLayout>
     <ImageView
         android:id="@id/bookmarked"

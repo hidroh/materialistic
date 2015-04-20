@@ -67,6 +67,16 @@ public class ActionBarSettingsActivityTest {
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
+    @Test
+    public void testPrefFont() {
+        String key = activity.getString(R.string.pref_text_size);
+        activity.getSharedPreferences("io.github.hidroh.materialistic_preferences", Context.MODE_PRIVATE)
+                .edit()
+                .putString(key, "1")
+                .commit();
+        assertNotNull(shadowOf(activity).getNextStartedActivity());
+    }
+
     @After
     public void tearDown() {
         AlgoliaClient.sSortByTime = true;

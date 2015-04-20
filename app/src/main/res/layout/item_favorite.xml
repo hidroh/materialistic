@@ -14,7 +14,7 @@
             android:gravity="center_vertical"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@id/comment"
-            style="@style/textSubtitleStyle" />
+            style="@style/textSubtitleStyle.Italic" />
         <TextView
             android:id="@id/title"
             android:text="@string/loading_text"
@@ -28,7 +28,7 @@
             android:id="@id/source"
             android:text="@string/loading_text"
             android:layout_below="@id/title"
-            style="@style/textSubtitleStyle" />
+            style="@style/textSubtitleStyle.Italic" />
         <ImageButton
             android:id="@id/comment"
             android:src="@drawable/ic_comment_grey600_48dp"

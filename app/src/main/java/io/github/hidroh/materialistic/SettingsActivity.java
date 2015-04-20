@@ -21,7 +21,8 @@ public class SettingsActivity extends PreferenceActivity {
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(getString(R.string.pref_dark_theme))) {
+                if (key.equals(getString(R.string.pref_dark_theme)) ||
+                        key.equals(getString(R.string.pref_text_size))) {
                     finish();
                     final Intent intent = IntentCompat.makeMainActivity(new ComponentName(
                             SettingsActivity.this, ListActivity.class));

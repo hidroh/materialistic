@@ -106,4 +106,21 @@ public class AppUtils {
         return !TextUtils.isEmpty(item.getUrl()) &&
                 item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
     }
+
+    public static int resolveTextSizeResId(Context context) {
+        String[] choices = context.getResources().getStringArray(R.array.pref_text_size_values);
+        String choice = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_text_size), choices[0]);
+        switch (Integer.parseInt(choice)) {
+            case 0:
+            default:
+                return R.style.AppTextSize;
+            case 1:
+                return R.style.AppTextSize_Medium;
+            case 2:
+                return R.style.AppTextSize_Large;
+            case 3:
+                return R.style.AppTextSize_XLarge;
+        }
+    }
 }

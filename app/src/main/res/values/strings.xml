@@ -90,6 +90,8 @@
     <string name="pref_item_search_recent">pref_item_search_recent</string>
     <string name="pref_item_search_recent_title">Sort by more recent first</string>
     <string name="pref_item_search_recent_summary">Turn off to sort by popularity</string>
+    <string name="pref_text_size">pref_text_size</string>
+    <string name="pref_text_size_title">Adjust font size</string>
 
     <string name="connection_error">Unable to connect to Hacker News.Check your connection or try again.</string>
     <string name="save_story">Save story</string>

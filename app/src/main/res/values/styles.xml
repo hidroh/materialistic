@@ -118,7 +118,7 @@
     </style>
 
     <style name="textTitleStyle">
-        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:textSize">?attr/titleTextSize</item>
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:minLines">2</item>
@@ -127,7 +127,7 @@
     </style>
 
     <style name="textSubtitleStyle">
-        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">?attr/subtitleTextSize</item>
         <item name="android:singleLine">true</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
@@ -135,7 +135,12 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="textSubtitleStyle.Italic">
+        <item name="android:textStyle">italic</item>
+    </style>
+
     <style name="textContentStyle">
+        <item name="android:textSize">?attr/contentTextSize</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
@@ -201,4 +206,27 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="AppTextSize">
+        <item name="titleTextSize">18sp</item>
+        <item name="subtitleTextSize">14sp</item>
+        <item name="contentTextSize">14sp</item>
+    </style>
+
+    <style name="AppTextSize.Medium">
+        <item name="titleTextSize">20sp</item>
+        <item name="subtitleTextSize">16sp</item>
+        <item name="contentTextSize">16sp</item>
+    </style>
+
+    <style name="AppTextSize.Large">
+        <item name="titleTextSize">22sp</item>
+        <item name="subtitleTextSize">18sp</item>
+        <item name="contentTextSize">18sp</item>
+    </style>
+
+    <style name="AppTextSize.XLarge">
+        <item name="titleTextSize">24sp</item>
+        <item name="subtitleTextSize">20sp</item>
+        <item name="contentTextSize">20sp</item>
+    </style>
 </resources>
