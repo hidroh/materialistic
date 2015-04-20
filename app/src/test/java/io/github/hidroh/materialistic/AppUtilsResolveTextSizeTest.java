@@ -24,6 +24,7 @@ public class AppUtilsResolveTextSizeTest {
     @ParameterizedRobolectricTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
+                new Object[]{"-1", R.style.AppTextSize_XSmall},
                 new Object[]{"1", R.style.AppTextSize_Medium},
                 new Object[]{"2", R.style.AppTextSize_Large},
                 new Object[]{"3", R.style.AppTextSize_XLarge}

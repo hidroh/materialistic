@@ -108,10 +108,11 @@ public class AppUtils {
     }
 
     public static int resolveTextSizeResId(Context context) {
-        String[] choices = context.getResources().getStringArray(R.array.pref_text_size_values);
         String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_text_size), choices[0]);
+                .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
         switch (Integer.parseInt(choice)) {
+            case -1:
+                return R.style.AppTextSize_XSmall;
             case 0:
             default:
                 return R.style.AppTextSize;

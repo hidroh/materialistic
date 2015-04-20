@@ -212,6 +212,12 @@
         <item name="contentTextSize">14sp</item>
     </style>
 
+    <style name="AppTextSize.XSmall">
+        <item name="titleTextSize">16sp</item>
+        <item name="subtitleTextSize">12sp</item>
+        <item name="contentTextSize">12sp</item>
+    </style>
+
     <style name="AppTextSize.Medium">
         <item name="titleTextSize">20sp</item>
         <item name="subtitleTextSize">16sp</item>
