@@ -21,7 +21,7 @@
 - [appcompat-v7](https://developer.android.com/tools/support-library/features.html#v7-appcompat) / [recyclerview-v7](https://developer.android.com/tools/support-library/features.html#v7-recyclerview) / [cardview-v7](https://developer.android.com/tools/support-library/features.html#v7-cardview)
 - Square [Retrofit](https://github.com/square/retrofit) / [OkHttp](https://github.com/square/okhttp)
 - [Square AssertJ](https://github.com/square/assertj-android)
-- [Square Dagger](https://https://github.com/square/dagger)
+- [Square Dagger](https://github.com/square/dagger)
 - [Robolectric](https://github.com/robolectric/robolectric)
 
 **Build**
