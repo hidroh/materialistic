@@ -9,10 +9,10 @@
         android:layout_height="wrap_content">
         <View
             android:layout_width="@dimen/min_cardview_height"
-            android:layout_height="wrap_content"
-            android:background="?attr/themedCardHighlightColor"
+            android:layout_height="match_parent"
             android:layout_alignTop="@id/title"
-            android:layout_alignBottom="@id/posted" />
+            android:layout_alignBottom="@+id/meta_container"
+            android:background="?attr/themedCardHighlightColor" />
         <ImageView
             android:id="@id/bookmarked"
             android:src="@drawable/ic_bookmark_grey600_24dp"
@@ -34,29 +34,34 @@
             android:text="A lil' bit of programming that matters"
             style="@style/textTitleStyle"
             android:layout_toRightOf="@id/rank"
-            android:layout_toLeftOf="@id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <TextView
-            android:id="@id/source"
-            android:text="hidroh.github.io"
-            style="@style/textSubtitleStyle.Italic"
-            android:layout_toRightOf="@id/rank"
-            android:layout_below="@id/title" />
-        <TextView
-            android:id="@id/posted"
-            android:text="Since January 01, 2015"
-            style="@style/textSubtitleStyle"
-            android:singleLine="true"
-            android:paddingBottom="@dimen/padding"
-            android:layout_toRightOf="@id/rank"
-            android:layout_below="@id/source" />
-        <include layout="@layout/button_comment"
-            android:id="@id/comment"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/meta_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/margin" />
+            android:layout_toRightOf="@id/rank"
+            android:layout_below="@id/title">
+            <TextView
+                android:id="@id/source"
+                android:text="hidroh.github.io"
+                style="@style/textSubtitleStyle.Italic"
+                android:paddingTop="@dimen/padding"
+                android:layout_toLeftOf="@id/comment" />
+            <TextView
+                android:id="@id/posted"
+                android:text="Since January 01, 2015"
+                style="@style/textSubtitleStyle"
+                android:paddingBottom="@dimen/padding"
+                android:layout_toLeftOf="@id/comment"
+                android:layout_below="@id/source" />
+            <include layout="@layout/button_comment"
+                android:id="@id/comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/margin" />
+        </RelativeLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

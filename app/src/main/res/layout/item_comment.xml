@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
     style="@style/FlatCardView">
-    <RelativeLayout
+    <TextView
+        android:id="@id/posted"
+        android:text="@string/loading_text"
+        style="@style/textSubtitleStyle.Italic"
+        android:gravity="center_vertical"
+        android:layout_toLeftOf="@id/comment"
+        android:layout_alignTop="@id/comment"
+        android:layout_alignBottom="@id/comment"
+        android:layout_alignParentTop="true"
+        android:layout_height="48dp" />
+    <TextView
+        android:id="@id/text"
+        android:padding="@dimen/padding"
+        android:text="@string/loading_text"
+        style="@style/textContentStyle"
+        android:layout_below="@id/posted"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@id/posted"
-            android:text="@string/loading_text"
-            style="@style/textSubtitleStyle.Italic"
-            android:gravity="center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_height="48dp" />
-        <TextView
-            android:id="@id/text"
-            android:padding="@dimen/padding"
-            android:text="@string/loading_text"
-            style="@style/textContentStyle"
-            android:layout_below="@id/posted"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+        android:layout_height="wrap_content" />
     <include layout="@layout/button_comment"
         android:id="@id/comment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
+        android:layout_width="@dimen/comment_button_small_size"
+        android:layout_height="@dimen/comment_button_small_size"
+        android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/margin" />
-</FrameLayout>
+</RelativeLayout>

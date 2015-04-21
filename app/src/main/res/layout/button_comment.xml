@@ -6,8 +6,8 @@
     <ImageView
         android:src="@drawable/ic_mode_comment_grey600_48dp"
         android:tint="@color/colorAccent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="@dimen/comment_button_default_size"
+        android:layout_height="@dimen/comment_button_default_size" />
     <TextView
         android:id="@id/text"
         android:text="@string/loading_text"
