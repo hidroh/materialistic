@@ -15,6 +15,11 @@
             android:defaultValue="0"
             android:title="@string/pref_text_size_title" />
         <io.github.hidroh.materialistic.preference.SwitchPreference
+            android:key="@string/pref_comment_single_page"
+            android:title="@string/pref_comment_single_page_title"
+            android:summary="@string/pref_comment_single_page_summary"
+            android:defaultValue="false" />
+        <io.github.hidroh.materialistic.preference.SwitchPreference
             android:key="@string/pref_item_click"
             android:title="@string/pref_item_click_title"
             android:summary="@string/pref_item_click_summary"
