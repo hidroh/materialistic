@@ -5,4 +5,5 @@
     <dimen name="activity_horizontal_margin">32dp</dimen>
     <dimen name="flat_card_horizontal_margin">16dp</dimen>
     <dimen name="list_width">480dp</dimen>
+    <dimen name="level_indicator_width">48dp</dimen>
 </resources>

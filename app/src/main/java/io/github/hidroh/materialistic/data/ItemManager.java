@@ -163,10 +163,16 @@ public interface ItemManager {
         Boolean isViewed();
 
         /**
-         * Set item view status
+         * Sets item view status
          * @param isViewed  true if has been viewed, false otherwise
          */
         void setIsViewed(boolean isViewed);
+
+        /**
+         * Gets item level, i.e. how many ascendants it has
+         * @return item level
+         */
+        int getLevel();
     }
 
     /**

@@ -156,6 +156,7 @@ public class HackerNewsClient implements ItemManager {
         private boolean favorite;
         private Boolean viewed;
         private int localRevision = -1;
+        private int level = 0;
 
         public static final Creator<Item> CREATOR = new Creator<Item>() {
             @Override
@@ -171,6 +172,11 @@ public class HackerNewsClient implements ItemManager {
 
         HackerNewsItem(long id) {
             this.id = id;
+        }
+
+        private HackerNewsItem(long id, int level) {
+            this(id);
+            this.level = level;
         }
 
         private HackerNewsItem(Parcel source) {
@@ -327,7 +333,7 @@ public class HackerNewsClient implements ItemManager {
             if (kidItems == null) {
                 kidItems = new HackerNewsItem[kids.length];
                 for (int i = 0; i < kids.length; i++) {
-                    kidItems[i] = new HackerNewsItem(kids[i]);
+                    kidItems[i] = new HackerNewsItem(kids[i], level + 1);
                 }
             }
 
@@ -386,6 +392,11 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public void setIsViewed(boolean isViewed) {
             viewed = isViewed;
+        }
+
+        @Override
+        public int getLevel() {
+            return level;
         }
     }
 }

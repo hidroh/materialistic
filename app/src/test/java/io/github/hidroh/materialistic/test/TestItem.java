@@ -130,6 +130,11 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public int getLevel() {
+        return 0;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.DimenRes;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -123,5 +124,10 @@ public class AppUtils {
             case 3:
                 return R.style.AppTextSize_XLarge;
         }
+    }
+
+    public static int getDimensionInDp(Context context, @DimenRes int dimenResId) {
+        return (int) (context.getResources().getDimension(dimenResId) /
+                        context.getResources().getDisplayMetrics().density);
     }
 }

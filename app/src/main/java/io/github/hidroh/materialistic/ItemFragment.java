@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -16,6 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,6 +39,7 @@ public class ItemFragment extends BaseFragment {
     private boolean mIsResumed;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private boolean mSinglePage;
 
     /**
      * Instantiates fragment to display given item
@@ -89,6 +96,8 @@ public class ItemFragment extends BaseFragment {
             }
         }
 
+        mSinglePage = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getBoolean(getString(R.string.pref_comment_single_page), false);
         if (mItem != null) {
             bindKidData(mItem.getKidItems(), savedInstanceState);
         } else if (!TextUtils.isEmpty(mItemId)) {
@@ -144,7 +153,10 @@ public class ItemFragment extends BaseFragment {
             return;
         }
 
+        final ArrayList<ItemManager.Item> list = new ArrayList<>(Arrays.asList(items));
         mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>() {
+            private final Set<String> loaded = new HashSet<>();
+
             @Override
             public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 return new ItemViewHolder(getLayoutInflater(savedInstanceState)
@@ -153,7 +165,7 @@ public class ItemFragment extends BaseFragment {
 
             @Override
             public void onBindViewHolder(final ItemViewHolder holder, int position) {
-                final ItemManager.Item item = items[position];
+                final ItemManager.Item item = list.get(position);
                 if (item.getLocalRevision() < mLocalRevision) {
                     bindKidItem(holder, null);
                     mItemManager.getItem(item.getId(),
@@ -184,29 +196,44 @@ public class ItemFragment extends BaseFragment {
             }
 
             private void bindKidItem(final ItemViewHolder holder, final ItemManager.Item item) {
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)
+                        holder.itemView.getLayoutParams();
+                params.leftMargin = AppUtils.getDimensionInDp(getActivity(),
+                        R.dimen.level_indicator_width) * (item == null ? 0 : item.getLevel() - 1);
+                holder.itemView.setLayoutParams(params);
+                holder.mCommentButton.setVisibility(View.INVISIBLE);
                 if (item == null) {
                     holder.mPostedTextView.setText(getString(R.string.loading_text));
                     holder.mContentTextView.setText(getString(R.string.loading_text));
-                    holder.mCommentButton.setVisibility(View.INVISIBLE);
                 } else {
                     holder.mPostedTextView.setText(item.getDisplayedTime(getActivity()));
                     AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
                     if (item.getKidCount() > 0) {
-                        holder.mCommentText.setText(String.valueOf(item.getKidCount()));
-                        holder.mCommentButton.setVisibility(View.VISIBLE);
-                        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                openItem(holder, item);
+                        if (mSinglePage) {
+                            if (!loaded.contains(item.getId())) {
+                                loaded.add(item.getId());
+                                // recursive here!!!
+                                int index = list.indexOf(item) + 1;
+                                list.addAll(index, Arrays.asList(item.getKidItems()));
+                                notifyItemRangeInserted(index, item.getKidCount());
                             }
-                        });
+                        } else {
+                            holder.mCommentText.setText(String.valueOf(item.getKidCount()));
+                            holder.mCommentButton.setVisibility(View.VISIBLE);
+                            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    openItem(holder, item);
+                                }
+                            });
+                        }
                     }
                 }
             }
 
             @Override
             public int getItemCount() {
-                return items.length;
+                return list.size();
             }
 
             private void openItem(ItemViewHolder holder, ItemManager.Item item) {
