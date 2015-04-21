@@ -18,18 +18,20 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        Preferences.sync(getPreferenceManager());
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(getString(R.string.pref_dark_theme)) ||
+                Preferences.sync(getPreferenceManager(), key);
+                if (key.equals(getString(R.string.pref_theme)) ||
                         key.equals(getString(R.string.pref_text_size))) {
                     finish();
                     final Intent intent = IntentCompat.makeMainActivity(new ComponentName(
                             SettingsActivity.this, ListActivity.class));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                } else if (key.equals(getString(R.string.pref_item_search_recent))) {
-                    AlgoliaClient.sSortByTime = sharedPreferences.getBoolean(key, true);
+                } else if (key.equals(getString(R.string.pref_search_sort))) {
+                    AlgoliaClient.sSortByTime = Preferences.isSortByRecent(SettingsActivity.this);
                 }
             }
         };

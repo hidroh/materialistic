@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.preference.PreferenceManager;
 import android.view.View;
 
 import org.junit.After;
@@ -11,6 +10,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.TestListActivity;
@@ -84,10 +84,12 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testSelectItemOpenComment() {
-        PreferenceManager.getDefaultSharedPreferences(activity)
+        ShadowPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
-                .putBoolean(activity.getString(R.string.pref_item_click), true)
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_comments))
                 .commit();
+        controller.pause().resume();
         activity.onItemSelected(new TestWebItem() {
             @Override
             public String getId() {

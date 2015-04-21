@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
@@ -31,20 +32,27 @@ public class SettingsActivityTest {
     @Test
     public void testPrefSearch() {
         assertTrue(AlgoliaClient.sSortByTime);
-        String key = activity.getString(R.string.pref_item_search_recent);
+        String key = activity.getString(R.string.pref_search_sort);
+        // change
+        ShadowPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(key, activity.getString(R.string.pref_search_sort_value_default))
+                .commit();
+        // trigger listener
         activity.getSharedPreferences("io.github.hidroh.materialistic_preferences", Context.MODE_PRIVATE)
                 .edit()
-                .putBoolean(key, false)
+                .putString(key, activity.getString(R.string.pref_search_sort_value_default))
                 .commit();
         assertFalse(AlgoliaClient.sSortByTime);
     }
 
     @Test
     public void testPrefTheme() {
-        String key = activity.getString(R.string.pref_dark_theme);
+        String key = activity.getString(R.string.pref_theme);
+        // trigger listener
         activity.getSharedPreferences("io.github.hidroh.materialistic_preferences", Context.MODE_PRIVATE)
                 .edit()
-                .putBoolean(key, true)
+                .putString(key, activity.getString(R.string.pref_theme_value_dark))
                 .commit();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
@@ -52,6 +60,7 @@ public class SettingsActivityTest {
     @Test
     public void testPrefFont() {
         String key = activity.getString(R.string.pref_text_size);
+        // trigger listener
         activity.getSharedPreferences("io.github.hidroh.materialistic_preferences", Context.MODE_PRIVATE)
                 .edit()
                 .putString(key, "1")

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Font size -->
     <string-array name="text_size_options">
-        <item>Extra Small</item>
+        <item>Extra small</item>
         <item>Small</item>
         <item>Medium</item>
         <item>Large</item>
-        <item>Extra Large</item>
+        <item>Extra large</item>
     </string-array>
     <string-array name="pref_text_size_values">
         <item>-1</item>
@@ -14,4 +15,53 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+
+    <!-- Theme -->
+    <string-array name="pref_theme_options">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="pref_theme_values">
+        <item>@string/pref_theme_value_light</item>
+        <item>@string/pref_theme_value_dark</item>
+    </string-array>
+    <string name="pref_theme_value_light">light</string>
+    <string name="pref_theme_value_dark">dark</string>
+
+    <!-- Comment display -->
+    <string-array name="pref_comment_display_options">
+        <item>Multiple pages</item>
+        <item>Single page</item>
+    </string-array>
+    <string-array name="pref_comment_display_values">
+        <item>@string/pref_comment_display_value_multiple</item>
+        <item>@string/pref_comment_display_value_single</item>
+    </string-array>
+    <string name="pref_comment_display_value_multiple">multiple</string>
+    <string name="pref_comment_display_value_single">single</string>
+
+    <!-- Story display -->
+    <string-array name="pref_story_display_options">
+        <item>Article</item>
+        <item>Comments</item>
+    </string-array>
+    <string-array name="pref_story_display_values">
+        <item>@string/pref_story_display_value_article</item>
+        <item>@string/pref_story_display_value_comments</item>
+    </string-array>
+    <string name="pref_story_display_value_article">article</string>
+    <string name="pref_story_display_value_comments">comments</string>
+
+    <!-- Sort -->
+    <string-array name="pref_search_sort_options">
+        <item>More recent</item>
+        <item>Popularity</item>
+    </string-array>
+    <string-array name="pref_search_sort_values">
+        <item>@string/pref_search_sort_value_recent</item>
+        <item>@string/pref_search_sort_value_default</item>
+    </string-array>
+    <string name="pref_search_sort_value_recent">recent</string>
+    <string name="pref_search_sort_value_default">default</string>
+
 </resources>

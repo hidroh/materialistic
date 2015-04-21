@@ -17,6 +17,7 @@ public class Application extends android.app.Application {
         }
         GoogleAnalytics.getInstance(this).newTracker(R.xml.ga_config);
         mApplicationGraph = ObjectGraph.create();
+        Preferences.migrate(this);
     }
 
     public ObjectGraph getApplicationGraph() {

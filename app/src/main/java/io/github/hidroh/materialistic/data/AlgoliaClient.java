@@ -1,13 +1,12 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
-import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.Preferences;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -25,8 +24,7 @@ public class AlgoliaClient implements ItemManager {
     @Inject
     public AlgoliaClient(Context context, RestServiceFactory factory) {
         mRestService = factory.create(BASE_API_URL, RestService.class);
-        sSortByTime = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_item_search_recent), true);
+        sSortByTime = Preferences.isSortByRecent(context);
     }
 
     @Override

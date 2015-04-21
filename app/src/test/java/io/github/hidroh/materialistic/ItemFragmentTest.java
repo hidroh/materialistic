@@ -155,8 +155,10 @@ public class ItemFragmentTest {
     public void testBindMultiLevel() {
         ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
-                .putBoolean(RuntimeEnvironment.application
-                        .getString(R.string.pref_comment_single_page), true)
+                .putString(RuntimeEnvironment.application
+                                .getString(R.string.pref_comment_display),
+                        RuntimeEnvironment.application
+                                .getString(R.string.pref_comment_display_value_single))
                 .commit();
         ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
                 new TestItem() {

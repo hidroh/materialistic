@@ -12,11 +12,11 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 
 @RunWith(ParameterizedRobolectricTestRunner.class)
-public class AppUtilsResolveTextSizeTest {
+public class PreferencesResolveTextSizeTest {
     private final String choice;
     private final int resId;
 
-    public AppUtilsResolveTextSizeTest(String choice, int resId) {
+    public PreferencesResolveTextSizeTest(String choice, int resId) {
         this.choice = choice;
         this.resId = resId;
     }
@@ -37,6 +37,6 @@ public class AppUtilsResolveTextSizeTest {
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_text_size), choice)
                 .commit();
-        assertEquals(resId, AppUtils.resolveTextSizeResId(RuntimeEnvironment.application));
+        assertEquals(resId, Preferences.resolveTextSizeResId(RuntimeEnvironment.application));
     }
 }

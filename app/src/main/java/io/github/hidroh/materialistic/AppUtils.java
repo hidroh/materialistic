@@ -21,8 +21,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class AppUtils {
 
     public static void openWebUrl(Context context, ItemManager.WebItem item) {
-        final boolean isExternal = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_external), false);
+        final boolean isExternal = Preferences.externalBrowserEnabled(context);
         if (isExternal) {
             openWebUrlExternal(context, item.getUrl());
         } else {
@@ -106,24 +105,6 @@ public class AppUtils {
     public static boolean isHackerNewsUrl(ItemManager.WebItem item) {
         return !TextUtils.isEmpty(item.getUrl()) &&
                 item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
-    }
-
-    public static int resolveTextSizeResId(Context context) {
-        String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
-        switch (Integer.parseInt(choice)) {
-            case -1:
-                return R.style.AppTextSize_XSmall;
-            case 0:
-            default:
-                return R.style.AppTextSize;
-            case 1:
-                return R.style.AppTextSize_Medium;
-            case 2:
-                return R.style.AppTextSize_Large;
-            case 3:
-                return R.style.AppTextSize_XLarge;
-        }
     }
 
     public static int getDimensionInDp(Context context, @DimenRes int dimenResId) {

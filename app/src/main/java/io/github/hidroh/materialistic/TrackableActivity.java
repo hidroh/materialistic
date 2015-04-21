@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -9,11 +8,10 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 public abstract class TrackableActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.pref_dark_theme), false)) {
+        if (Preferences.darkThemeEnabled(this)) {
             setTheme(R.style.AppTheme_Dark);
         }
-        getTheme().applyStyle(AppUtils.resolveTextSizeResId(this), true);
+        getTheme().applyStyle(Preferences.resolveTextSizeResId(this), true);
         super.onCreate(savedInstanceState);
     }
 

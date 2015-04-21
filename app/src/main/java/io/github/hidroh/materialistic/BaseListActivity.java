@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -31,6 +30,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     private boolean mIsStoryMode = true;
     private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
+    private boolean mDefaultOpenComments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,12 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         handleConfigurationChanged();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDefaultOpenComments = Preferences.isDefaultOpenComments(this);
     }
 
     @Override
@@ -122,8 +128,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         if (mIsMultiPane) {
             handleMultiPaneItemSelected(item);
         } else {
-            if (PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(getString(R.string.pref_item_click), false)) {
+            if (mDefaultOpenComments) {
                 openItem(item, sharedElement);
             } else {
                 AppUtils.openWebUrl(this, item);
@@ -223,8 +228,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         transaction
                 .add(R.id.content, mItemFragment, ItemFragment.class.getName())
                 .add(R.id.content, mWebFragment, WebFragment.class.getName());
-        if (PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.pref_item_click), false)) {
+        if (mDefaultOpenComments) {
             openComment(transaction);
         } else {
             openStory(transaction);

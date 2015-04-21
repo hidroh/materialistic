@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -55,6 +54,7 @@ public class ItemFragment extends BaseFragment {
             fragment.mItem = (ItemManager.Item) item;
         }
         fragment.mItemId = item.getId();
+        fragment.mSinglePage = Preferences.isDefaultSinglePageComments(context);
         return fragment;
     }
 
@@ -96,8 +96,6 @@ public class ItemFragment extends BaseFragment {
             }
         }
 
-        mSinglePage = PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getBoolean(getString(R.string.pref_comment_single_page), false);
         if (mItem != null) {
             bindKidData(mItem.getKidItems(), savedInstanceState);
         } else if (!TextUtils.isEmpty(mItemId)) {

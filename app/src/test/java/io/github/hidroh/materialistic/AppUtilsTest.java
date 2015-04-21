@@ -46,6 +46,6 @@ public class AppUtilsTest {
 
     @Test
     public void testResolveTextSizeResId() {
-        assertEquals(R.style.AppTextSize, AppUtils.resolveTextSizeResId(RuntimeEnvironment.application));
+        assertEquals(R.style.AppTextSize, Preferences.resolveTextSizeResId(RuntimeEnvironment.application));
     }
 }
