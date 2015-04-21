@@ -12,7 +12,7 @@
     <attr name="themedMenuCommentDrawable" format="reference" />
     <attr name="themedTextColorPrimaryInverse" format="reference" />
     <attr name="themedTextColorSecondaryInverse" format="reference" />
-    <attr name="titleTextSize" format="dimension" />
-    <attr name="subtitleTextSize" format="dimension" />
-    <attr name="contentTextSize" format="dimension" />
+    <attr name="titleTextSize" format="dimension|reference" />
+    <attr name="subtitleTextSize" format="dimension|reference" />
+    <attr name="contentTextSize" format="dimension|reference" />
 </resources>

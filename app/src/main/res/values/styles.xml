@@ -39,6 +39,11 @@
         <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_white_24dp</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimaryInverse</item>
         <item name="themedTextColorSecondaryInverse">@color/textColorSecondaryInverse</item>
+
+        <!-- default text size -->
+        <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
+        <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
+        <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
@@ -75,6 +80,11 @@
         <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_black_24dp</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimary</item>
         <item name="themedTextColorSecondaryInverse">@color/textColorSecondary</item>
+
+        <!-- default text size -->
+        <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
+        <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
+        <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
     </style>
 
     <style name="AppButton" parent="android:Widget.Button">
@@ -207,9 +217,7 @@
     </style>
 
     <style name="AppTextSize">
-        <item name="titleTextSize">18sp</item>
-        <item name="subtitleTextSize">14sp</item>
-        <item name="contentTextSize">14sp</item>
+        <!-- default text size, should be specified in theme -->
     </style>
 
     <style name="AppTextSize.XSmall">
