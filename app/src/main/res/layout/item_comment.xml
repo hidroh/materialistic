@@ -11,8 +11,7 @@
         android:layout_toLeftOf="@id/comment"
         android:layout_alignTop="@id/comment"
         android:layout_alignBottom="@id/comment"
-        android:layout_alignParentTop="true"
-        android:layout_height="48dp" />
+        android:layout_alignParentTop="true" />
     <TextView
         android:id="@id/text"
         android:padding="@dimen/padding"

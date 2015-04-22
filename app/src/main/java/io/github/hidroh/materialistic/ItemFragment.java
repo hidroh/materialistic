@@ -203,7 +203,7 @@ public class ItemFragment extends BaseFragment {
                 // higher level item gets higher elevation, max 10dp
                 ViewCompat.setElevation(holder.itemView,
                         10f - 1f * (item == null ? 0 : item.getLevel() - 1));
-                holder.mCommentButton.setVisibility(View.INVISIBLE);
+                holder.mCommentButton.setVisibility(View.GONE);
                 if (item == null) {
                     holder.mPostedTextView.setText(getString(R.string.loading_text));
                     holder.mContentTextView.setText(getString(R.string.loading_text));
