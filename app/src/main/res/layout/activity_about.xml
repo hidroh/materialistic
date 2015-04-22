@@ -16,6 +16,7 @@
             style="@style/HeadlineTextStyle" />
         <TextView
             android:id="@id/text_application_info"
+            style="@style/textContentStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
@@ -23,6 +24,7 @@
             style="@style/HeadlineTextStyle" />
         <TextView
             android:id="@id/text_developer_info"
+            style="@style/textContentStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
@@ -30,6 +32,7 @@
             style="@style/HeadlineTextStyle" />
         <TextView
             android:id="@id/text_libraries"
+            style="@style/textContentStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
@@ -37,6 +40,7 @@
             style="@style/HeadlineTextStyle" />
         <TextView
             android:id="@id/text_license"
+            style="@style/textContentStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
