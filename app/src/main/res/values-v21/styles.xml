@@ -4,4 +4,8 @@
         <item name="android:backgroundTint">?android:attr/colorAccent</item>
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
     </style>
+
+    <style name="FlatCardView" parent="BaseFlatCardView">
+        <item name="android:background">?attr/themedCardBackgroundColor</item>
+    </style>
 </resources>

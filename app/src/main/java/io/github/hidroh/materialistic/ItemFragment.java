@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -198,7 +199,10 @@ public class ItemFragment extends BaseFragment {
                         holder.itemView.getLayoutParams();
                 params.leftMargin = AppUtils.getDimensionInDp(getActivity(),
                         R.dimen.level_indicator_width) * (item == null ? 0 : item.getLevel() - 1);
-                holder.itemView.setLayoutParams(params);
+                params.bottomMargin = AppUtils.getDimensionInDp(getActivity(), R.dimen.margin);
+                // higher level item gets higher elevation, max 10dp
+                ViewCompat.setElevation(holder.itemView,
+                        10f - 1f * (item == null ? 0 : item.getLevel() - 1));
                 holder.mCommentButton.setVisibility(View.INVISIBLE);
                 if (item == null) {
                     holder.mPostedTextView.setText(getString(R.string.loading_text));
@@ -208,6 +212,7 @@ public class ItemFragment extends BaseFragment {
                     AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
                     if (item.getKidCount() > 0) {
                         if (mSinglePage) {
+                            params.bottomMargin = 0;
                             if (!loaded.contains(item.getId())) {
                                 loaded.add(item.getId());
                                 // recursive here!!!
@@ -227,6 +232,7 @@ public class ItemFragment extends BaseFragment {
                         }
                     }
                 }
+                holder.itemView.setLayoutParams(params);
             }
 
             @Override
