@@ -16,7 +16,6 @@ public class SearchActivity extends BaseListActivity {
 
     private static final int MAX_RECENT_SUGGESTIONS = 10;
     private String mQuery;
-    private String mTitle;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaClient;
 
@@ -27,8 +26,7 @@ public class SearchActivity extends BaseListActivity {
         }
         super.onCreate(savedInstanceState);
         if (!TextUtils.isEmpty(mQuery)) {
-            mTitle = getString(R.string.title_activity_search_query, mQuery);
-            setTitle(mTitle);
+            getSupportActionBar().setSubtitle(mQuery);
             SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                     SearchRecentSuggestionsProvider.PROVIDER_AUTHORITY,
                     SearchRecentSuggestionsProvider.MODE) {
@@ -44,11 +42,7 @@ public class SearchActivity extends BaseListActivity {
 
     @Override
     protected String getDefaultTitle() {
-        if (TextUtils.isEmpty(mTitle)) {
-            return getString(R.string.title_activity_search);
-        }
-
-        return mTitle;
+        return getString(R.string.title_activity_search);
     }
 
     @Override

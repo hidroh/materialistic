@@ -15,6 +15,7 @@ import io.github.hidroh.materialistic.test.ShadowSearchRecentSuggestions;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Config(shadows = ShadowSearchRecentSuggestions.class)
@@ -36,8 +37,9 @@ public class SearchActivityTest {
         intent.putExtra(SearchManager.QUERY, "filter");
         controller.withIntent(intent).create().start().resume(); // skip menu inflation
         assertThat(ShadowSearchRecentSuggestions.recentQueries).contains("filter");
-        assertEquals(activity.getString(R.string.title_activity_search_query, "filter"),
+        assertEquals(activity.getString(R.string.title_activity_search),
                 activity.getDefaultTitle());
+        assertEquals("filter", activity.getSupportActionBar().getSubtitle());
         assertFalse(activity.isItemOptionsMenuVisible());
         controller.pause().stop().destroy();
     }
@@ -49,6 +51,7 @@ public class SearchActivityTest {
         assertThat(ShadowSearchRecentSuggestions.recentQueries).isEmpty();
         assertEquals(activity.getString(R.string.title_activity_search),
                 activity.getDefaultTitle());
+        assertNull(activity.getSupportActionBar().getSubtitle());
         assertFalse(activity.isItemOptionsMenuVisible());
         controller.pause().stop().destroy();
     }

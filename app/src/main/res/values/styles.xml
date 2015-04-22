@@ -98,6 +98,11 @@
     <style name="AppActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <!-- Customize action bar here -->
         <item name="displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="subtitleTextStyle">@style/AppActionBarSubtitleTextStyle</item>
+    </style>
+
+    <style name="AppActionBarSubtitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">?attr/themedTextColorPrimary</item>
     </style>
 
     <style name="AppActionBarWidget" parent="Widget.AppCompat.Light.ActionBar.Solid">

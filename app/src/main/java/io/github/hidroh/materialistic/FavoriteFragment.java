@@ -255,10 +255,10 @@ public class FavoriteFragment extends BaseFragment
         }
 
         if (TextUtils.isEmpty(mFilter)) {
-            getActivity().setTitle(getString(R.string.title_activity_favorite));
+            ((BaseActivity) getActivity()).getSupportActionBar().setSubtitle(null);
             return new FavoriteManager.CursorLoader(getActivity());
         } else {
-            getActivity().setTitle(getString(R.string.title_activity_favorite_search, mFilter));
+            ((BaseActivity) getActivity()).getSupportActionBar().setSubtitle(mFilter);
             return new FavoriteManager.CursorLoader(getActivity(), mFilter);
         }
     }
