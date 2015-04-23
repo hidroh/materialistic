@@ -329,7 +329,7 @@ public class FavoriteFragment extends BaseFragment
         return (BaseActivity) getActivity();
     }
 
-    private class RecyclerViewAdapter extends ItemRecyclerViewAdapter<ItemRecyclerViewAdapter.ItemViewHolder, FavoriteManager.Favorite> {
+    private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, FavoriteManager.Favorite> {
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ItemViewHolder(getLayoutInflater(null)

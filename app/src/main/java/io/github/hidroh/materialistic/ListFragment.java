@@ -35,7 +35,7 @@ public class ListFragment extends BaseFragment {
 
     private static final String EXTRA_ITEMS = ListFragment.class.getName() + ".EXTRA_ITEMS";
     private RecyclerView mRecyclerView;
-    private ItemRecyclerViewAdapter mAdapter;
+    private ListRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private BroadcastReceiver mBroadcastReceiver;
     private int mLocalRevision = 0;
@@ -212,7 +212,7 @@ public class ListFragment extends BaseFragment {
         });
     }
 
-    private class ViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
+    private class ViewHolder extends ListRecyclerViewAdapter.ItemViewHolder {
         private final View mBookmarked;
         private final TextView mCommentText;
         private final TextView mRankTextView;
@@ -225,7 +225,7 @@ public class ListFragment extends BaseFragment {
         }
     }
 
-    private class RecyclerViewAdapter extends ItemRecyclerViewAdapter<ViewHolder, ItemManager.Item> {
+    private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ViewHolder, ItemManager.Item> {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ViewHolder(getLayoutInflater(null)
