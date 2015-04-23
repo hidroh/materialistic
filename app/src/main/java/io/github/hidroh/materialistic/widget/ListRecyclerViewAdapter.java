@@ -1,4 +1,4 @@
-package io.github.hidroh.materialistic;
+package io.github.hidroh.materialistic.widget;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.ItemActivity;
+import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 /**
@@ -144,10 +147,10 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
      */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        final TextView mPostedTextView;
-        final TextView mTitleTextView;
-        final View mCommentButton;
-        final TextView mSourceTextView;
+        public final TextView mPostedTextView;
+        public final TextView mTitleTextView;
+        public final View mCommentButton;
+        public final TextView mSourceTextView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);

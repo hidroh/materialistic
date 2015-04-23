@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class ListFragment extends BaseFragment {
 

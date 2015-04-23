@@ -1,13 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,17 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 
 public class ItemFragment extends BaseFragment {
 
@@ -35,7 +30,6 @@ public class ItemFragment extends BaseFragment {
     private View mEmptyView;
     private ItemManager.Item mItem;
     private String mItemId;
-    private int mLocalRevision = 0;
     private boolean mIsResumed;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -98,7 +92,7 @@ public class ItemFragment extends BaseFragment {
         }
 
         if (mItem != null) {
-            bindKidData(mItem.getKidItems(), savedInstanceState);
+            bindKidData(mItem.getKidItems());
         } else if (!TextUtils.isEmpty(mItemId)) {
             loadKidData();
         }
@@ -136,7 +130,7 @@ public class ItemFragment extends BaseFragment {
 
                 mSwipeRefreshLayout.setRefreshing(false);
                 mItem = response;
-                bindKidData(mItem.getKidItems(), null);
+                bindKidData(mItem.getKidItems());
             }
 
             @Override
@@ -146,126 +140,19 @@ public class ItemFragment extends BaseFragment {
         });
     }
 
-    private void bindKidData(final ItemManager.Item[] items, final @Nullable Bundle savedInstanceState) {
+    private void bindKidData(final ItemManager.Item[] items) {
         if (items == null || items.length == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             return;
         }
 
-        final ArrayList<ItemManager.Item> list = new ArrayList<>(Arrays.asList(items));
-        mRecyclerView.setAdapter(new RecyclerView.Adapter<ItemViewHolder>() {
-            private final Set<String> loaded = new HashSet<>();
-
-            @Override
-            public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new ItemViewHolder(getLayoutInflater(savedInstanceState)
-                        .inflate(R.layout.item_comment, parent, false));
-            }
-
-            @Override
-            public void onBindViewHolder(final ItemViewHolder holder, int position) {
-                final ItemManager.Item item = list.get(position);
-                if (item.getLocalRevision() < mLocalRevision) {
-                    bindKidItem(holder, null);
-                    mItemManager.getItem(item.getId(),
-                            new ItemManager.ResponseListener<ItemManager.Item>() {
-                                @Override
-                                public void onResponse(ItemManager.Item response) {
-                                    if (response == null) {
-                                        return;
-                                    }
-
-                                    if (!mIsResumed) {
-                                        return;
-                                    }
-
-                                    item.populate(response);
-                                    item.setLocalRevision(mLocalRevision);
-                                    bindKidItem(holder, item);
-                                }
-
-                                @Override
-                                public void onError(String errorMessage) {
-                                    // do nothing
-                                }
-                            });
-                } else {
-                    bindKidItem(holder, item);
-                }
-            }
-
-            private void bindKidItem(final ItemViewHolder holder, final ItemManager.Item item) {
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)
-                        holder.itemView.getLayoutParams();
-                params.leftMargin = AppUtils.getDimensionInDp(getActivity(),
-                        R.dimen.level_indicator_width) * (item == null ? 0 : item.getLevel() - 1);
-                params.bottomMargin = AppUtils.getDimensionInDp(getActivity(), R.dimen.margin);
-                // higher level item gets higher elevation, max 10dp
-                ViewCompat.setElevation(holder.itemView,
-                        10f - 1f * (item == null ? 0 : item.getLevel() - 1));
-                holder.mCommentButton.setVisibility(View.GONE);
-                if (item == null) {
-                    holder.mPostedTextView.setText(getString(R.string.loading_text));
-                    holder.mContentTextView.setText(getString(R.string.loading_text));
-                } else {
-                    holder.mPostedTextView.setText(item.getDisplayedTime(getActivity()));
-                    AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
-                    if (item.getKidCount() > 0) {
-                        if (mSinglePage) {
-                            params.bottomMargin = 0;
-                            if (!loaded.contains(item.getId())) {
-                                loaded.add(item.getId());
-                                // recursive here!!!
-                                int index = list.indexOf(item) + 1;
-                                list.addAll(index, Arrays.asList(item.getKidItems()));
-                                notifyItemRangeInserted(index, item.getKidCount());
-                            }
-                        } else {
-                            holder.mCommentText.setText(String.valueOf(item.getKidCount()));
-                            holder.mCommentButton.setVisibility(View.VISIBLE);
-                            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    openItem(holder, item);
-                                }
-                            });
-                        }
-                    }
-                }
-                holder.itemView.setLayoutParams(params);
-            }
-
-            @Override
-            public int getItemCount() {
-                return list.size();
-            }
-
-            private void openItem(ItemViewHolder holder, ItemManager.Item item) {
-                final Intent intent = new Intent(getActivity(), ItemActivity.class);
-                intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-                intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL,
-                        getArguments().getInt(ItemActivity.EXTRA_ITEM_LEVEL, 0) + 1);
-                final ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(getActivity(),
-                                holder.itemView, getString(R.string.transition_item_container));
-                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-            }
-        });
-    }
-
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private final TextView mPostedTextView;
-        private final TextView mContentTextView;
-        private final View mCommentButton;
-        private final TextView mCommentText;
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mContentTextView = (TextView) itemView.findViewById(R.id.text);
-            mCommentButton = itemView.findViewById(R.id.comment);
-            mCommentText = (TextView) mCommentButton.findViewById(R.id.text);
-            mCommentButton.setVisibility(View.INVISIBLE);
+        if (mSinglePage) {
+            final ArrayList<ItemManager.Item> list = new ArrayList<>(Arrays.asList(items));
+            mRecyclerView.setAdapter(new SinglePageItemRecyclerViewAdapter(mItemManager, list));
+        } else {
+            mRecyclerView.setAdapter(new MultiPageItemRecyclerViewAdapter(mItemManager, items,
+                    getArguments().getInt(ItemActivity.EXTRA_ITEM_LEVEL, 0)));
         }
     }
+
 }

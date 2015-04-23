@@ -35,6 +35,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class FavoriteFragment extends BaseFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
