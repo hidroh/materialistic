@@ -105,9 +105,9 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * @param holder    view holder to clear
      */
     protected void clearViewHolder(VH holder) {
-        holder.mTitleTextView.setText(mContext.getString(R.string.loading_text));
-        holder.mPostedTextView.setText(mContext.getString(R.string.loading_text));
-        holder.mSourceTextView.setText(mContext.getString(R.string.loading_text));
+        holder.mTitleTextView.setText(R.string.loading_text);
+        holder.mPostedTextView.setText(R.string.loading_text);
+        holder.mSourceTextView.setText(R.string.loading_text);
         holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
         holder.mCommentButton.setVisibility(View.GONE);
         holder.itemView.setOnClickListener(null);

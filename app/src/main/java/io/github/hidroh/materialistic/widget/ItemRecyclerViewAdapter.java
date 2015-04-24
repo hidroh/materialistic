@@ -4,16 +4,15 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public abstract class ItemRecyclerViewAdapter
-        extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ItemViewHolder> {
+public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter.ItemViewHolder>
+        extends RecyclerView.Adapter<VH> {
     private int mLocalRevision = 0;
-    private LayoutInflater mLayoutInflater;
+    protected LayoutInflater mLayoutInflater;
     private ItemManager mItemManager;
     protected Context mContext;
 
@@ -35,12 +34,7 @@ public abstract class ItemRecyclerViewAdapter
     }
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemViewHolder(mLayoutInflater.inflate(R.layout.item_comment, parent, false));
-    }
-
-    @Override
-    public void onBindViewHolder(final ItemViewHolder holder, int position) {
+    public void onBindViewHolder(final VH holder, int position) {
         final ItemManager.Item item = getItem(position);
         if (item.getLocalRevision() < mLocalRevision) {
             bind(holder, null);
@@ -73,7 +67,7 @@ public abstract class ItemRecyclerViewAdapter
 
     protected abstract ItemManager.Item getItem(int position);
 
-    protected abstract void bind(ItemViewHolder holder, ItemManager.Item item);
+    protected abstract void bind(VH holder, ItemManager.Item item);
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         final TextView mPostedTextView;
