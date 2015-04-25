@@ -108,5 +108,7 @@
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
     <string name="title_activity_item_count" formatted="false">Comments (%s)</string>
+    <string name="hide_replies" formatted="false">Hide replies (%s)</string>
+    <string name="show_replies" formatted="false">Show replies (%s)</string>
 
 </resources>
