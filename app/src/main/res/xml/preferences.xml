@@ -26,7 +26,7 @@
             android:title="@string/pref_comment_display_title"
             android:entries="@array/pref_comment_display_options"
             android:entryValues="@array/pref_comment_display_values"
-            android:defaultValue="@string/pref_comment_display_value_multiple" />
+            android:defaultValue="@string/pref_comment_display_value_collapsed" />
         <io.github.hidroh.materialistic.preference.CheckBoxPreference
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"

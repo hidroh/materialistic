@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -23,6 +24,7 @@ public class SinglePageItemRecyclerViewAdapter
     private Set<String> mCollapsed = new HashSet<>();
     private int mLevelIndicatorWidth = 0;
     private int mDefaultItemVerticalMargin = 0;
+    private boolean mAutoExpand = true;
 
     public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, ArrayList<ItemManager.Item> list) {
         super(itemManager);
@@ -34,6 +36,7 @@ public class SinglePageItemRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
         mDefaultItemVerticalMargin = AppUtils.getDimensionInDp(mContext, R.dimen.margin);
+        mAutoExpand = Preferences.shouldAutoExpandComments(mContext);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class SinglePageItemRecyclerViewAdapter
         }
 
         holder.mToggle.setVisibility(View.VISIBLE);
-        if (!mCollapsed.contains(item.getId())) {
+        if (!mCollapsed.contains(item.getId()) && mAutoExpand) {
             expand(item);
         }
         if(mExpanded.containsKey(item.getId())) {

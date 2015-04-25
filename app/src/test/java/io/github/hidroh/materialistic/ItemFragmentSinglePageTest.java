@@ -183,6 +183,51 @@ public class ItemFragmentSinglePageTest {
         assertEquals(3, adapter.getItemCount());
     }
 
+    @Test
+    public void testDefaultCollapsed() {
+        ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+                .edit()
+                .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
+                        RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_collapsed))
+                .commit();
+        final TestItem item0 = new TestItem() { // level 0
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public int getKidCount() {
+                return 1;
+            }
+
+            @Override
+            public ItemManager.Item[] getKidItems() {
+                return new ItemManager.Item[]{new TestItem() {
+                    @Override
+                    public String getId() {
+                        return "2";
+                    }
+                }};
+            }
+        };
+        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
+                new TestItem() {
+                    @Override
+                    public ItemManager.Item[] getKidItems() {
+                        return new ItemManager.Item[]{item0};
+                    }
+                }, null);
+        SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
+                android.R.id.content);
+        recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
+        adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
+        assertEquals(1, adapter.getItemCount());
+        ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
+        adapter.bindViewHolder(viewHolder, 0);
+        assertEquals(1, adapter.getItemCount()); // should not add kid to adapter
+
+    }
     @After
     public void tearDown() {
         reset(hackerNewsClient);

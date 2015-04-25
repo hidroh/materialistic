@@ -80,6 +80,13 @@ public class Preferences {
     }
 
     public static boolean isDefaultSinglePageComments(Context context) {
+        return !PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_comment_display),
+                        context.getString(R.string.pref_comment_display_value_multiple))
+                .equals(context.getString(R.string.pref_comment_display_value_multiple));
+    }
+
+    public static boolean shouldAutoExpandComments(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_comment_display),
                         context.getString(R.string.pref_comment_display_value_multiple))
