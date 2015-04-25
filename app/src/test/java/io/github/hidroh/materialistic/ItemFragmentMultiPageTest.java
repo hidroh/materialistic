@@ -15,7 +15,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.SupportFragmentTestUtil;
 
 import javax.inject.Inject;
@@ -39,7 +38,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSwipeRefreshLayout.class})
 @RunWith(RobolectricTestRunner.class)
-public class ItemFragmentTest {
+public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
 
@@ -53,7 +52,8 @@ public class ItemFragmentTest {
     @Test
     public void testEmptyView() {
         ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {}, null);
+                new TestItem() {
+                }, null);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         assertThat(fragment.getView().findViewById(android.R.id.empty)).isVisible();
@@ -149,49 +149,6 @@ public class ItemFragmentTest {
         listener.getAllValues().get(1).onError(null);
         assertThat((SwipeRefreshLayout) fragment.getView().findViewById(R.id.swipe_layout))
                 .isNotRefreshing();
-    }
-
-    @Test
-    public void testBindMultiLevel() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
-                .edit()
-                .putString(RuntimeEnvironment.application
-                                .getString(R.string.pref_comment_display),
-                        RuntimeEnvironment.application
-                                .getString(R.string.pref_comment_display_value_single))
-                .commit();
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
-                    @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{new TestItem() {
-                            @Override
-                            public String getText() {
-                                return "text";
-                            }
-
-                            @Override
-                            public int getKidCount() {
-                                return 1;
-                            }
-
-                            @Override
-                            public ItemManager.Item[] getKidItems() {
-                                return new ItemManager.Item[]{new TestItem() {}};
-                            }
-                        }};
-                    }
-                }, null);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
-                android.R.id.content);
-        RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        assertEquals(1, adapter.getItemCount());
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(2, adapter.getItemCount()); // should add kid to adapter
-        adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(2, adapter.getItemCount()); // should not add again
     }
 
     @After

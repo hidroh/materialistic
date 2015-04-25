@@ -31,14 +31,17 @@
     <!-- Comment display -->
     <string-array name="pref_comment_display_options">
         <item>Multiple pages</item>
-        <item>Single page</item>
+        <item>Single page - auto expand</item>
+        <item>Single page - collapsed</item>
     </string-array>
     <string-array name="pref_comment_display_values">
         <item>@string/pref_comment_display_value_multiple</item>
         <item>@string/pref_comment_display_value_single</item>
+        <item>@string/pref_comment_display_value_collapsed</item>
     </string-array>
     <string name="pref_comment_display_value_multiple">multiple</string>
     <string name="pref_comment_display_value_single">single</string>
+    <string name="pref_comment_display_value_collapsed">collapsed</string>
 
     <!-- Story display -->
     <string-array name="pref_story_display_options">

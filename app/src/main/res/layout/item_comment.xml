@@ -21,6 +21,13 @@
         android:layout_below="@id/posted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/toggle"
+        android:visibility="gone"
+        style="@style/textSubtitleStyle"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical|center"
+        android:layout_below="@id/text" />
     <include layout="@layout/button_comment"
         android:id="@id/comment"
         android:layout_width="@dimen/comment_button_small_size"

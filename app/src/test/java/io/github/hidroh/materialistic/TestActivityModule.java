@@ -38,7 +38,8 @@ import static org.mockito.Mockito.when;
                 WebFragment.class,
                 // test classes
                 ItemActivityTest.class,
-                ItemFragmentTest.class,
+                ItemFragmentMultiPageTest.class,
+                ItemFragmentSinglePageTest.class,
                 TestInjectableActivity.class,
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
