@@ -32,7 +32,13 @@ Supply your own release signing config to build release. Release signing config 
 
 **Test**
 
+Run all tests:
+
     ./gradlew test
+
+Run a single test class, for example HackerNewsClientTest:
+
+	./gradlew testDebug --tests "*HackerNewsClientTest"
 
 **Coverage**
 
