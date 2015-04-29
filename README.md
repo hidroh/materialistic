@@ -8,12 +8,12 @@
 **Requirements**
 - Latest Android SDK tools
 - Latest Android platform tools
-- Android SDK Build tools 21.1.2
+- Android SDK Build tools 22.0.1
 - Android SDK 22
 - Android Support Repository
 - Android Support Library 22.0.0
 - Google Repository
-- Google Play services 7.0.0
+- Google Play services 7.3.0
 
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API)
@@ -38,7 +38,7 @@ Run all tests:
 
 Run a single test class, for example HackerNewsClientTest:
 
-	./gradlew testDebug --tests "*HackerNewsClientTest"
+    ./gradlew testDebug --tests "*HackerNewsClientTest"
 
 **Coverage**
 
