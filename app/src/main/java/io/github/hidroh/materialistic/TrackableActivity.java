@@ -1,11 +1,11 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-public abstract class TrackableActivity extends ActionBarActivity {
+public abstract class TrackableActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (Preferences.darkThemeEnabled(this)) {
