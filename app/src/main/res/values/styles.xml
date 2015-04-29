@@ -25,6 +25,7 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
+        <item name="actionBarTheme">@style/AppActionBarTheme</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
@@ -69,6 +70,7 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
+        <item name="actionBarTheme">@style/AppActionBarTheme</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
@@ -103,6 +105,14 @@
         <item name="subtitleTextStyle">@style/AppActionBarSubtitleTextStyle</item>
     </style>
 
+    <style name="AppActionBarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="searchViewStyle">@style/AppActionBarSearchView</item>
+    </style>
+
+    <style name="AppActionBarSearchView" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="queryHint">@string/title_activity_search</item>
+    </style>
+
     <style name="AppActionBarSubtitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
     </style>
@@ -113,6 +123,7 @@
 
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
+        <item name="android:textColorHint">?attr/themedTextColorPrimary</item>
     </style>
 
     <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">

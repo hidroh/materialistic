@@ -23,7 +23,8 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(qualifiers = "w820dp-land")
+// TODO switch to API 21 once ShareActionProvider is fixed
+@Config(qualifiers = "w820dp-land", emulateSdk = 18, reportSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;

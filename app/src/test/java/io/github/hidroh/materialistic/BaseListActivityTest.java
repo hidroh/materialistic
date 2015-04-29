@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.ActivityController;
 
@@ -20,6 +21,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
+// TODO switch to API 21 once ShareActionProvider is fixed
+@Config(emulateSdk = 19, reportSdk = 19)
 @RunWith(RobolectricTestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;
