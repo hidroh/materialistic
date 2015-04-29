@@ -123,7 +123,6 @@
 
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
-        <item name="android:textColorHint">?attr/themedTextColorPrimary</item>
     </style>
 
     <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">
