@@ -6,7 +6,8 @@
 
 ### Articles
 - [Supporting multiple themes in your Android app (Part 1)](http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/)
-- [Supporting multiple themes in your Android app (Part 2)](http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/)
+- [Supporting multiple themes in your Android app (Part 2)](http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/) [![Android Weekly](https://img.shields.io/badge/android--weekly-144-blue.svg)](http://androidweekly.net/issues/issue-144)
+
 
 ### Setup
 **Requirements**
