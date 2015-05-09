@@ -28,6 +28,7 @@
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
+        <item name="windowActionModeOverlay">true</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
@@ -72,6 +73,7 @@
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
+        <item name="windowActionModeOverlay">true</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
