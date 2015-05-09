@@ -33,7 +33,7 @@ public class WebActivity extends BaseItemActivity {
         }
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content,
+                .add(R.id.content_frame,
                         WebFragment.instantiate(this, mItem),
                         WebFragment.class.getName())
                 .commit();
