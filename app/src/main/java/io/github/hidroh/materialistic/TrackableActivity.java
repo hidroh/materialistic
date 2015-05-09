@@ -8,10 +8,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 public abstract class TrackableActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (Preferences.darkThemeEnabled(this)) {
-            setTheme(R.style.AppTheme_Dark);
-        }
-        getTheme().applyStyle(Preferences.resolveTextSizeResId(this), true);
+        Preferences.applyTheme(this);
         super.onCreate(savedInstanceState);
     }
 

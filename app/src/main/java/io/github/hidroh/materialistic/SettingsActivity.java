@@ -24,9 +24,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (Preferences.darkThemeEnabled(this)) {
-            setTheme(R.style.AppTheme_Dark);
-        }
+        Preferences.applyTheme(this);
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
