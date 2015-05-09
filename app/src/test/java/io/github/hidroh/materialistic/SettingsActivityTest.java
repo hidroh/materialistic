@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.ActivityController;
 
@@ -16,6 +17,7 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
@@ -26,7 +28,7 @@ public class SettingsActivityTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(SettingsActivity.class);
-        activity = controller.create().start().resume().visible().get();
+        activity = controller.create().postCreate(null).start().resume().visible().get();
     }
 
     @Test
@@ -66,6 +68,13 @@ public class SettingsActivityTest {
                 .putString(key, "1")
                 .commit();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
+    }
+
+    @Test
+    public void testToolbarNavigation() {
+        assertFalse(activity.onOptionsItemSelected(new RoboMenuItem(R.id.menu_clear_recent)));
+        assertTrue(activity.onOptionsItemSelected(new RoboMenuItem(android.R.id.home)));
+        assertThat(activity).isFinishing();
     }
 
     @After
