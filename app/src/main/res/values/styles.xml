@@ -1,7 +1,9 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <!-- ========================= -->
+    <!-- Application themes        -->
+    <!-- ========================= -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <!--   your app branding color for the app bar -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -20,12 +22,12 @@
         <!-- style for spinners -->
         <item name="android:spinnerStyle">@style/AppSpinner</item>
         <!-- Here we setting appcompat’s actionBarStyle -->
-        <item name="actionBarStyle">@style/AppActionBar</item>
+        <item name="toolbarStyle">@style/AppToolbar</item>
         <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
-        <item name="actionBarTheme">@style/AppActionBarTheme</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
@@ -49,8 +51,7 @@
         <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
         <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
     </style>
-
-    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -65,12 +66,12 @@
         <!-- style for spinners -->
         <item name="android:spinnerStyle">@style/AppSpinner</item>
         <!-- Here we setting appcompat’s actionBarStyle -->
-        <item name="actionBarStyle">@style/AppActionBar</item>
+        <item name="toolbarStyle">@style/AppToolbar</item>
         <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
-        <item name="actionBarTheme">@style/AppActionBarTheme</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
@@ -95,52 +96,64 @@
         <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
     </style>
 
-    <style name="AppButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/textColorButton</item>
+    <!-- ========================= -->
+    <!-- Action bar/toolbar styles -->
+    <!-- ========================= -->
+    <style name="AppToolbar" parent="Widget.AppCompat.Toolbar">
+        <!-- force subtitle text color for v21+ -->
+        <item name="subtitleTextAppearance">@style/AppToolbarSubtitleTextAppearance</item>
     </style>
-
-    <style name="AppActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
-        <!-- Customize action bar here -->
-        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
-        <item name="subtitleTextStyle">@style/AppActionBarSubtitleTextStyle</item>
+    <style name="AppToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="searchViewStyle">@style/AppToolbarSearchView</item>
     </style>
-
-    <style name="AppActionBarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="searchViewStyle">@style/AppActionBarSearchView</item>
-    </style>
-
-    <style name="AppActionBarSearchView" parent="Widget.AppCompat.SearchView.ActionBar">
-        <item name="queryHint">@string/title_activity_search</item>
-    </style>
-
-    <style name="AppActionBarSubtitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+    <style name="AppToolbarSubtitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
     </style>
 
+    <!-- ================== -->
+    <!-- Search view styles -->
+    <!-- ================== -->
+    <style name="AppToolbarSearchView" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="queryHint">@string/title_activity_search</item>
+    </style>
     <style name="AppActionBarWidget" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
     </style>
-
+    <style name="AppAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <!-- force item selectable background for v10- -->
+        <item name="android:dropDownSelector">?attr/listChoiceBackgroundIndicator</item>
+    </style>
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
     </style>
-
     <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
     </style>
-
     <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
     </style>
-
     <style name="AppPopupMenuSmallTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
     </style>
 
+    <!-- ============= -->
+    <!-- Widget styles -->
+    <!-- ============= -->
+    <style name="AppButton" parent="android:Widget.Button">
+        <item name="android:textColor">@color/textColorButton</item>
+    </style>
     <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
         <!-- Customize spinner here -->
     </style>
+    <style name="AppProgressBarHorizontalStyle" parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">4dp</item>
+        <item name="android:progressDrawable">@drawable/progress</item>
+    </style>
 
+    <!-- =========== -->
+    <!-- Text styles -->
+    <!-- =========== -->
     <style name="textRankStyle">
         <item name="android:paddingTop">@dimen/padding</item>
         <item name="android:paddingBottom">@dimen/padding</item>
@@ -148,7 +161,6 @@
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
         <item name="android:textColor">?attr/themedTextColorSecondaryInverse</item>
     </style>
-
     <style name="textTitleStyle">
         <item name="android:textSize">?attr/titleTextSize</item>
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
@@ -157,7 +169,6 @@
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
-
     <style name="textSubtitleStyle">
         <item name="android:textSize">?attr/subtitleTextSize</item>
         <item name="android:textColor">?attr/themedTextColorSecondaryInverse</item>
@@ -168,16 +179,13 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
     <style name="textSubtitleStyle.Italic">
         <item name="android:textStyle">italic</item>
     </style>
-
     <style name="textContentStyle">
         <item name="android:textSize">?attr/contentTextSize</item>
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
     </style>
-
     <style name="textEmptyStyle">
         <item name="android:textColor">@color/textColorSecondary</item>
         <item name="android:textSize">@dimen/abc_text_size_headline_material</item>
@@ -188,34 +196,6 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
-    <style name="BaseAppCardView">
-        <item name="cardBackgroundColor">?attr/themedCardBackgroundColor</item>
-        <item name="cardUseCompatPadding">true</item>
-        <item name="cardPreventCornerOverlap">false</item>
-        <item name="cardElevation">@dimen/cardview_default_elevation</item>
-        <item name="cardCornerRadius">@dimen/cardview_default_radius</item>
-    </style>
-
-    <style name="AppCardView" parent="BaseAppCardView">
-        <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
-    </style>
-
-    <style name="BaseFlatCardView">
-        <item name="android:paddingTop">@dimen/padding</item>
-        <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
-        <item name="android:paddingRight">@dimen/flat_card_horizontal_margin</item>
-    </style>
-
-    <style name="FlatCardView" parent="BaseFlatCardView">
-        <item name="android:background">?attr/themedCardDrawable</item>
-    </style>
-
-    <style name="FlatCardView.Header">
-        <item name="android:background">?attr/themedHeaderCardDrawable</item>
-        <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
-    </style>
-
     <style name="DrawerTextStyle">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingTop">@dimen/padding</item>
@@ -229,13 +209,6 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
     </style>
-
-    <style name="AppProgressBarHorizontalStyle" parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">4dp</item>
-        <item name="android:progressDrawable">@drawable/progress</item>
-    </style>
-
     <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
         <item name="android:paddingTop">8dp</item>
@@ -244,31 +217,57 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <!-- ========== -->
+    <!-- Text sizes -->
+    <!-- ========== -->
     <style name="AppTextSize">
         <!-- default text size, should be specified in theme -->
     </style>
-
     <style name="AppTextSize.XSmall">
         <item name="titleTextSize">16sp</item>
         <item name="subtitleTextSize">12sp</item>
         <item name="contentTextSize">12sp</item>
     </style>
-
     <style name="AppTextSize.Medium">
         <item name="titleTextSize">20sp</item>
         <item name="subtitleTextSize">16sp</item>
         <item name="contentTextSize">16sp</item>
     </style>
-
     <style name="AppTextSize.Large">
         <item name="titleTextSize">22sp</item>
         <item name="subtitleTextSize">18sp</item>
         <item name="contentTextSize">18sp</item>
     </style>
-
     <style name="AppTextSize.XLarge">
         <item name="titleTextSize">24sp</item>
         <item name="subtitleTextSize">20sp</item>
         <item name="contentTextSize">20sp</item>
     </style>
+
+    <!-- =========== -->
+    <!-- Card styles -->
+    <!-- =========== -->
+    <style name="BaseAppCardView">
+        <item name="cardBackgroundColor">?attr/themedCardBackgroundColor</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="cardPreventCornerOverlap">false</item>
+        <item name="cardElevation">@dimen/cardview_default_elevation</item>
+        <item name="cardCornerRadius">@dimen/cardview_default_radius</item>
+    </style>
+    <style name="AppCardView" parent="BaseAppCardView">
+        <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
+    </style>
+    <style name="BaseFlatCardView">
+        <item name="android:paddingTop">@dimen/padding</item>
+        <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/flat_card_horizontal_margin</item>
+    </style>
+    <style name="FlatCardView" parent="BaseFlatCardView">
+        <item name="android:background">?attr/themedCardDrawable</item>
+    </style>
+    <style name="FlatCardView.Header">
+        <item name="android:background">?attr/themedHeaderCardDrawable</item>
+        <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
+    </style>
+
 </resources>

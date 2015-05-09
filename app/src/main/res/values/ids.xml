@@ -6,6 +6,7 @@
     <item type="id" name="swipe_layout" />
     <item type="id" name="web_view" />
     <item type="id" name="progress" />
+    <item type="id" name="toolbar" />
 
     <!-- item views -->
     <item type="id" name="rank" />
