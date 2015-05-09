@@ -6,6 +6,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
+import android.view.ContextThemeWrapper;
 
 import java.util.Map;
 
@@ -93,14 +94,22 @@ public class Preferences {
                 .equals(context.getString(R.string.pref_comment_display_value_single));
     }
 
-    public static boolean darkThemeEnabled(Context context) {
+    public static void applyTheme(ContextThemeWrapper contextThemeWrapper) {
+        if (Preferences.darkThemeEnabled(contextThemeWrapper)) {
+            contextThemeWrapper.setTheme(R.style.AppTheme_Dark);
+        }
+
+        contextThemeWrapper.getTheme().applyStyle(Preferences.resolveTextSizeResId(contextThemeWrapper), true);
+    }
+
+    private static boolean darkThemeEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_theme),
                         context.getString(R.string.pref_theme_value_light))
                 .equals(context.getString(R.string.pref_theme_value_dark));
     }
 
-    public static int resolveTextSizeResId(Context context) {
+    private static int resolveTextSizeResId(Context context) {
         String choice = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
         switch (Integer.parseInt(choice)) {

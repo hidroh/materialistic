@@ -1,11 +1,13 @@
 package io.github.hidroh.materialistic;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
@@ -45,7 +47,10 @@ public class AppUtilsTest {
     }
 
     @Test
-    public void testResolveTextSizeResId() {
-        assertEquals(R.style.AppTextSize, Preferences.resolveTextSizeResId(RuntimeEnvironment.application));
+    public void testDefaultTextSize() {
+        Activity activity = Robolectric.setupActivity(Activity.class);
+        shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
+        Preferences.applyTheme(activity);
+        assertEquals(R.style.AppTextSize, shadowOf(activity.getTheme()).getStyleResourceId());
     }
 }
