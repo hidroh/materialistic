@@ -54,6 +54,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -118,19 +119,23 @@ public class FavoriteActivityTest {
     @Test
     public void testSearchView() {
         SearchView searchView = (SearchView) actionViewResolver.getActionView(mock(MenuItem.class));
-        verify(searchView).setOnSearchClickListener(searchViewClickListener.capture());
-        verify(searchView).setOnCloseListener(searchViewCloseListener.capture());
+        verify(searchView, atLeastOnce()).setOnSearchClickListener(searchViewClickListener.capture());
+        verify(searchView, atLeastOnce()).setOnCloseListener(searchViewCloseListener.capture());
 
-        searchViewClickListener.getValue().onClick(searchView);
+        View.OnClickListener clickListener =
+                searchViewClickListener.getAllValues().get(searchViewClickListener.getAllValues().size() - 1);
+        clickListener.onClick(searchView);
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
 
-        searchViewCloseListener.getValue().onClose();
+        SearchView.OnCloseListener closeListener =
+                searchViewCloseListener.getAllValues().get(searchViewCloseListener.getAllValues().size() - 1);
+        closeListener.onClose();
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
 
         assertEquals(2, adapter.getItemCount());
         ((FavoriteFragment) fragment).filter("ask");
         assertEquals(1, adapter.getItemCount());
-        searchViewCloseListener.getValue().onClose();
+        closeListener.onClose();
         assertEquals(2, adapter.getItemCount());
     }
 
