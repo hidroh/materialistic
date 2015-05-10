@@ -1,15 +1,18 @@
 package io.github.hidroh.materialistic;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
 public class ActionBarSettingsActivity extends BaseActivity {
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,10 +28,10 @@ public class ActionBarSettingsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_clear_recent) {
-            new AlertDialog.Builder(this)
-                    .setMessage(getString(R.string.clear_search_history_confirm))
-                    .setNegativeButton(getString(android.R.string.cancel), null)
-                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+            mAlertDialogBuilder
+                    .setMessage(R.string.clear_search_history_confirm)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             new SearchRecentSuggestions(ActionBarSettingsActivity.this,

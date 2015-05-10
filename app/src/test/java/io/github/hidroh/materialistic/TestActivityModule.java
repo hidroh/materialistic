@@ -1,7 +1,13 @@
 package io.github.hidroh.materialistic;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
+
+import org.robolectric.RuntimeEnvironment;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -22,7 +28,7 @@ import static org.mockito.Mockito.when;
 @Module(
         injects = {
                 // source classes
-                ActionBarSettingsActivity.class, // TODO remove
+                ActionBarSettingsActivity.class,
                 AskActivity.class,
                 FavoriteActivity.class,
                 ItemActivity.class,
@@ -37,6 +43,7 @@ import static org.mockito.Mockito.when;
                 ListFragment.class,
                 WebFragment.class,
                 // test classes
+                ActionBarSettingsActivityTest.class,
                 ItemActivityTest.class,
                 ItemFragmentMultiPageTest.class,
                 ItemFragmentSinglePageTest.class,
@@ -85,5 +92,41 @@ public class TestActivityModule {
         ActionViewResolver resolver = mock(ActionViewResolver.class);
         when(resolver.getActionView(any(MenuItem.class))).thenReturn(searchView);
         return resolver;
+    }
+
+    @Provides
+    public AlertDialogBuilder provideAlertDialogBuilder() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(RuntimeEnvironment.application);
+        return new AlertDialogBuilder() {
+            @Override
+            public AlertDialogBuilder setMessage(@StringRes int messageId) {
+                builder.setMessage(messageId);
+                return this;
+            }
+
+            @Override
+            public AlertDialogBuilder setNegativeButton(@StringRes int textId,
+                                                        DialogInterface.OnClickListener listener) {
+                builder.setNegativeButton(textId, listener);
+                return this;
+            }
+
+            @Override
+            public AlertDialogBuilder setPositiveButton(@StringRes int textId,
+                                                        DialogInterface.OnClickListener listener) {
+                builder.setPositiveButton(textId, listener);
+                return this;
+            }
+
+            @Override
+            public Dialog create() {
+                return builder.create();
+            }
+
+            @Override
+            public Dialog show() {
+                return builder.show();
+            }
+        };
     }
 }

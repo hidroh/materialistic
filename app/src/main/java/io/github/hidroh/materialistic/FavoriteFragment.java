@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -53,6 +52,7 @@ public class FavoriteFragment extends BaseFragment
     private DataChangedListener mDataChangedListener;
     @Inject FavoriteManager mFavoriteManager;
     @Inject ActionViewResolver mActionViewResolver;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
 
     public static FavoriteFragment instantiate(Context context, String filter) {
         final FavoriteFragment fragment = (FavoriteFragment) Fragment.instantiate(context,
@@ -104,9 +104,9 @@ public class FavoriteFragment extends BaseFragment
             @Override
             public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.menu_clear) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage(getString(R.string.confirm_clear_selected))
-                            .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    mAlertDialogBuilder
+                            .setMessage(R.string.confirm_clear_selected)
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (!mIsResumed) {
@@ -119,7 +119,7 @@ public class FavoriteFragment extends BaseFragment
                                     actionMode.finish();
                                 }
                             })
-                            .setNegativeButton(getString(android.R.string.cancel), null)
+                            .setNegativeButton(android.R.string.cancel, null)
                             .create()
                             .show();
                     return true;
@@ -222,7 +222,7 @@ public class FavoriteFragment extends BaseFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_clear) {
-            new AlertDialog.Builder(getActivity())
+            mAlertDialogBuilder
                     .setMessage(R.string.confirm_clear)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override

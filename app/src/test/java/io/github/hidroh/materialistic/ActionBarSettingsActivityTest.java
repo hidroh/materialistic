@@ -32,6 +32,7 @@ public class ActionBarSettingsActivityTest {
 
     @Before
     public void setUp() {
+        TestApplication.applicationGraph.inject(this);
         controller = Robolectric.buildActivity(ActionBarSettingsActivity.class);
         activity = controller.create().start().resume().visible().get();
     }

@@ -16,7 +16,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
 
 @Module(
         injects = {
-                ActionBarSettingsActivity.class, // TODO remove
+                ActionBarSettingsActivity.class,
                 AboutActivity.class, // TODO remove
                 AskActivity.class,
                 FavoriteActivity.class,
@@ -77,5 +77,10 @@ public class ActivityModule {
     @Provides @Singleton
     public ActionViewResolver provideActionViewResolver() {
         return new ActionViewResolver();
+    }
+
+    @Provides
+    public AlertDialogBuilder provideAlertDialogBuilder(Context context) {
+        return new AlertDialogBuilder.Impl(context);
     }
 }

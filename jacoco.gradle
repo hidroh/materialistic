@@ -21,7 +21,9 @@ task jacocoTestReport(type: JacocoReport) {
                     '**/*$ViewInjector*.class',
                     '**/RestServiceFactory*.class',
                     '**/ActivityModule*.class',
-                    '**/preference/*.class'
+                    '**/preference/*.class',
+                    '**/AlertDialogBuilder.class',
+                    '**/AlertDialogBuilder$Impl.class'
             ])
     sourceDirectories = files android.sourceSets.main.java.srcDirs
     executionData = files "${buildDir}/jacoco/testDebug.exec"

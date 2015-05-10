@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +34,7 @@ public class WebFragment extends BaseFragment {
     private WebView mWebView;
     private boolean mIsHackerNewsUrl;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
 
     public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
@@ -76,7 +76,7 @@ public class WebFragment extends BaseFragment {
                 }
 
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    new AlertDialog.Builder(getActivity())
+                    mAlertDialogBuilder
                             .setMessage(R.string.confirm_download)
                             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override

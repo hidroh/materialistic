@@ -29,6 +29,7 @@
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
@@ -74,6 +75,7 @@
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
 
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
@@ -110,6 +112,16 @@
     </style>
     <style name="AppToolbarSubtitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
+    </style>
+
+    <!-- =================== -->
+    <!-- Alert dialog themes -->
+    <!-- =================== -->
+    <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="AppAlertDialog.Dark" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!-- ================== -->

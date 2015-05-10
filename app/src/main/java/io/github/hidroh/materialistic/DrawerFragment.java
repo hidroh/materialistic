@@ -56,7 +56,7 @@ public class DrawerFragment extends Fragment {
         view.findViewById(R.id.drawer_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     navigate(ActionBarSettingsActivity.class);
                 } else {
                     navigate(SettingsActivity.class);
