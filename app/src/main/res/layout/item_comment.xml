@@ -8,6 +8,7 @@
         android:id="@id/posted"
         android:text="@string/loading_text"
         style="@style/textSubtitleStyle.Italic"
+        android:singleLine="false"
         android:gravity="center_vertical"
         android:layout_toLeftOf="@id/comment"
         android:layout_alignTop="@id/comment"
