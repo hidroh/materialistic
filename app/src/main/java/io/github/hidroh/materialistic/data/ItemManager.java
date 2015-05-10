@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.text.Spannable;
 
 /**
  * Data repository for {@link io.github.hidroh.materialistic.data.ItemManager.Item}
@@ -179,6 +180,18 @@ public interface ItemManager {
          * @return parent ID or 0 if none
          */
         String getParent();
+
+        /**
+         * Checks if item has been deleted
+         * @return true if deleted, false otherwise
+         */
+        boolean isDeleted();
+
+        /**
+         * Checks if item is dead
+         * @return true if dead, false otherwise
+         */
+        boolean isDead();
     }
 
     /**
@@ -225,7 +238,7 @@ public interface ItemManager {
          * @param context an instance of {@link android.content.Context}
          * @return  displayed time
          */
-        CharSequence getDisplayedTime(Context context);
+        Spannable getDisplayedTime(Context context);
 
         /**
          * Gets item type

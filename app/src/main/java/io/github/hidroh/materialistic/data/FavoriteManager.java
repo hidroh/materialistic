@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
@@ -367,11 +369,12 @@ public class FavoriteManager {
         }
 
         @Override
-        public String getDisplayedTime(Context context) {
-            return context.getString(R.string.saved, DateUtils.getRelativeDateTimeString(context, time,
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.YEAR_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_MONTH));
+        public Spannable getDisplayedTime(Context context) {
+            return new SpannableString(context.getString(R.string.saved,
+                    DateUtils.getRelativeDateTimeString(context, time,
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.YEAR_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_MONTH)));
         }
 
         @Override

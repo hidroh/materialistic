@@ -200,7 +200,7 @@
     </style>
     <style name="textContentStyle">
         <item name="android:textSize">?attr/contentTextSize</item>
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textAppearance">@style/textAppearanceContentNormal</item>
     </style>
     <style name="textEmptyStyle">
         <item name="android:textColor">@color/textColorSecondary</item>
@@ -231,6 +231,12 @@
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="textAppearanceContentNormal">
+        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+    </style>
+    <style name="textAppearanceContentDisabled">
+        <item name="android:textColor">?attr/themedTextColorSecondaryInverse</item>
     </style>
 
     <!-- ========== -->

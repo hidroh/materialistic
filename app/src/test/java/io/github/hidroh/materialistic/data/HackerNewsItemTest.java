@@ -95,6 +95,16 @@ public class HackerNewsItemTest {
             }
 
             @Override
+            public boolean isDead() {
+                return true;
+            }
+
+            @Override
+            public boolean isDeleted() {
+                return true;
+            }
+
+            @Override
             public int getDescendants() {
                 return 1;
             }
@@ -107,6 +117,9 @@ public class HackerNewsItemTest {
         assertEquals("1", item.getParent());
         assertEquals(1234l, item.getTime());
         assertEquals(1, item.getDescendants());
+        assertTrue(item.isDead());
+        assertTrue(item.isDeleted());
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application)).doesNotContain("by");
         assertThat(item.getKids()).hasSize(1);
         assertEquals(1, item.getKidItems()[0].getLevel());
     }

@@ -3,8 +3,12 @@ package io.github.hidroh.materialistic.data;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.text.style.StrikethroughSpan;
 
 import javax.inject.Inject;
 
@@ -203,6 +207,8 @@ public class HackerNewsClient implements ItemManager {
             type = info.getRawType();
             descendants = info.getDescendants();
             parent = Long.parseLong(info.getParent());
+            deleted = info.isDeleted();
+            dead = info.isDead();
         }
 
         @Override
@@ -282,17 +288,24 @@ public class HackerNewsClient implements ItemManager {
         }
 
         @Override
-        public CharSequence getDisplayedTime(Context context) {
+        public Spannable getDisplayedTime(Context context) {
+            CharSequence relativeTime = "";
             try {
-                return String.format("%s by %s",
-                        DateUtils.getRelativeDateTimeString(context, time * 1000,
+                relativeTime = DateUtils.getRelativeDateTimeString(context, time * 1000,
                                 DateUtils.MINUTE_IN_MILLIS,
                                 DateUtils.YEAR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_MONTH),
-                        by);
-            } catch (NullPointerException e) { // TODO should properly prevent this
-                return String.format("by %s", by);
+                                DateUtils.FORMAT_ABBREV_MONTH);
+            } catch (NullPointerException e) {
+                // TODO should properly prevent this
             }
+            if (deleted) {
+                Spannable spannable = new SpannableString(relativeTime);
+                spannable.setSpan(new StrikethroughSpan(), 0, relativeTime.length(),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                return spannable;
+            }
+
+            return new SpannableString(String.format("%s by %s", relativeTime, by));
         }
 
         @Override
@@ -403,6 +416,16 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public String getParent() {
             return String.valueOf(parent);
+        }
+
+        @Override
+        public boolean isDeleted() {
+            return deleted;
+        }
+
+        @Override
+        public boolean isDead() {
+            return dead;
         }
     }
 }

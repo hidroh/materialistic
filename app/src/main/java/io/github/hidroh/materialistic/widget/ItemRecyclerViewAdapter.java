@@ -53,6 +53,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                             item.populate(response);
                             item.setLocalRevision(mLocalRevision);
                             bind(holder, item);
+                            decorateDead(holder, item);
                         }
 
                         @Override
@@ -62,12 +63,20 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                     });
         } else {
             bind(holder, item);
+            decorateDead(holder, item);
         }
     }
 
     protected abstract ItemManager.Item getItem(int position);
 
     protected abstract void bind(VH holder, ItemManager.Item item);
+
+    private void decorateDead(VH holder, ItemManager.Item item) {
+        holder.mContentTextView.setTextAppearance(mContext,
+                item.isDead() ?
+                        R.style.textAppearanceContentDisabled :
+                        R.style.textAppearanceContentNormal);
+    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         final TextView mPostedTextView;

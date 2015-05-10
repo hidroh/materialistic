@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic.test;
 
 import android.content.Context;
 import android.os.Parcel;
+import android.text.Spannable;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -65,7 +66,7 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public CharSequence getDisplayedTime(Context context) {
+    public Spannable getDisplayedTime(Context context) {
         return null;
     }
 
@@ -147,5 +148,15 @@ public abstract class TestItem implements ItemManager.Item {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+    }
+
+    @Override
+    public boolean isDead() {
+        return false;
+    }
+
+    @Override
+    public boolean isDeleted() {
+        return false;
     }
 }

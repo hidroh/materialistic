@@ -80,7 +80,7 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
 
-        if (!mExpanded.containsKey(item.getParent())) {
+        if (item.isDeleted() || !mExpanded.containsKey(item.getParent())) {
             holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
             holder.mPostedTextView.setOnClickListener(null);
         } else {

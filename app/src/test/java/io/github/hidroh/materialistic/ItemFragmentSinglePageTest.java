@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,7 +28,10 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
+import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowRecyclerView.class})
 @RunWith(RobolectricTestRunner.class)
@@ -39,6 +43,9 @@ public class ItemFragmentSinglePageTest {
     ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
     private RecyclerView recyclerView;
     private SinglePageItemRecyclerViewAdapter adapter;
+    private ToggleItemViewHolder viewHolder;
+    private ToggleItemViewHolder viewHolder1;
+    private ToggleItemViewHolder viewHolder2;
 
     @Before
     public void setUp() {
@@ -67,6 +74,11 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
+            public boolean isDead() {
+                return true;
+            }
+
+            @Override
             public ItemManager.Item[] getKidItems() {
                 return new ItemManager.Item[]{};
             }
@@ -80,6 +92,11 @@ public class ItemFragmentSinglePageTest {
             @Override
             public String getParent() {
                 return "1";
+            }
+
+            @Override
+            public boolean isDeleted() {
+                return true;
             }
 
             @Override
@@ -134,16 +151,18 @@ public class ItemFragmentSinglePageTest {
                 android.R.id.content);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
+        // auto expand all
+        viewHolder = adapter.createViewHolder(recyclerView, 0);
+        adapter.bindViewHolder(viewHolder, 0);
+        viewHolder1 = adapter.createViewHolder(recyclerView, 1);
+        adapter.bindViewHolder(viewHolder1, 1);
+        viewHolder2 = adapter.createViewHolder(recyclerView, 2);
+        adapter.bindViewHolder(viewHolder2, 2);
     }
 
     @Test
     public void testExpand() {
-        assertEquals(1, adapter.getItemCount());
-        ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(2, adapter.getItemCount()); // should add kid to adapter
-        adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(2, adapter.getItemCount()); // should not add again
+        assertEquals(3, adapter.getItemCount());
     }
 
     @Test
@@ -175,15 +194,6 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testToggle() {
-        // expand all
-        ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
-        ToggleItemViewHolder viewHolder1 = adapter.createViewHolder(recyclerView, 1);
-        adapter.bindViewHolder(viewHolder1, 1);
-        ToggleItemViewHolder viewHolder2 = adapter.createViewHolder(recyclerView, 2);
-        adapter.bindViewHolder(viewHolder2, 2);
-        assertEquals(3, adapter.getItemCount());
-
         // collapse all
         viewHolder.itemView.findViewById(R.id.toggle).performClick();
         adapter.bindViewHolder(viewHolder, 0);
@@ -195,13 +205,31 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder1, 1);
         adapter.bindViewHolder(viewHolder2, 2);
         assertEquals(3, adapter.getItemCount());
+    }
 
+    @Test
+    public void testScrollToParent() {
         // test smooth scroll
         ShadowRecyclerView shadowRecyclerView =
                 (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
         assertEquals(-1, shadowRecyclerView.getSmoothScrollToPosition());
         viewHolder2.itemView.findViewById(R.id.posted).performClick();
         assertEquals(1, shadowRecyclerView.getSmoothScrollToPosition());
+    }
+
+    @Test
+    public void testDeleted() {
+        assertNull(shadowOf(viewHolder1.itemView.findViewById(R.id.posted)).getOnClickListener());
+    }
+
+    @Test
+    public void testDead() {
+        assertThat(((TextView) viewHolder.itemView.findViewById(R.id.text)))
+                .hasCurrentTextColor(RuntimeEnvironment.application.getResources()
+                        .getColor(R.color.textColorPrimaryInverse));
+        assertThat(((TextView) viewHolder2.itemView.findViewById(R.id.text)))
+                .hasCurrentTextColor(RuntimeEnvironment.application.getResources()
+                        .getColor(R.color.textColorSecondaryInverse));
     }
 
     @Test
@@ -249,6 +277,7 @@ public class ItemFragmentSinglePageTest {
         assertEquals(1, adapter.getItemCount()); // should not add kid to adapter
 
     }
+
     @After
     public void tearDown() {
         recyclerView.setAdapter(null);
