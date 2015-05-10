@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.DimenRes;
 import android.text.Html;
 import android.text.Layout;

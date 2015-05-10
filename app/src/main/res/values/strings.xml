@@ -110,5 +110,10 @@
     <string name="title_activity_item_count" formatted="false">Comments (%s)</string>
     <string name="hide_replies" formatted="false">Hide replies (%s)</string>
     <string name="show_replies" formatted="false">Show replies (%s)</string>
+    <string name="posted_reply" formatted="false">
+        <![CDATA[
+            %s <a href="#">in reply to %s</a>
+        ]]>
+    </string>
 
 </resources>

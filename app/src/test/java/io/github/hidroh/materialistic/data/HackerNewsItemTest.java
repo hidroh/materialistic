@@ -90,6 +90,11 @@ public class HackerNewsItemTest {
             }
 
             @Override
+            public String getParent() {
+                return "1";
+            }
+
+            @Override
             public int getDescendants() {
                 return 1;
             }
@@ -99,9 +104,11 @@ public class HackerNewsItemTest {
         assertEquals("rawType", item.getRawType());
         assertEquals("rawUrl", item.getRawUrl());
         assertEquals("by", item.getBy());
+        assertEquals("1", item.getParent());
         assertEquals(1234l, item.getTime());
         assertEquals(1, item.getDescendants());
         assertThat(item.getKids()).hasSize(1);
+        assertEquals(1, item.getKidItems()[0].getLevel());
     }
 
     @Test

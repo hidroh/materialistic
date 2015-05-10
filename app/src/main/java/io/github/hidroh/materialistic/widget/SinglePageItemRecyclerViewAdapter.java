@@ -25,6 +25,7 @@ public class SinglePageItemRecyclerViewAdapter
     private int mLevelIndicatorWidth = 0;
     private int mDefaultItemVerticalMargin = 0;
     private boolean mAutoExpand = true;
+    private RecyclerView mRecyclerView;
 
     public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, ArrayList<ItemManager.Item> list) {
         super(itemManager);
@@ -37,6 +38,13 @@ public class SinglePageItemRecyclerViewAdapter
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
         mDefaultItemVerticalMargin = AppUtils.getDimensionInDp(mContext, R.dimen.margin);
         mAutoExpand = Preferences.shouldAutoExpandComments(mContext);
+        mRecyclerView = recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        mRecyclerView = null;
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     @Override
@@ -72,7 +80,21 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
 
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+        if (!mExpanded.containsKey(item.getParent())) {
+            holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+            holder.mPostedTextView.setOnClickListener(null);
+        } else {
+            final ItemManager.Item parent = mExpanded.get(item.getParent());
+            AppUtils.setHtmlText(holder.mPostedTextView, mContext.getString(R.string.posted_reply,
+                            item.getDisplayedTime(mContext),
+                            parent.getBy()));
+            holder.mPostedTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mRecyclerView.smoothScrollToPosition(mList.indexOf(parent));
+                }
+            });
+        }
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
         if (item.getKidCount() == 0) {
             return;

@@ -202,6 +202,7 @@ public class HackerNewsClient implements ItemManager {
             text = info.getText();
             type = info.getRawType();
             descendants = info.getDescendants();
+            parent = Long.parseLong(info.getParent());
         }
 
         @Override
@@ -397,6 +398,11 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public int getLevel() {
             return level;
+        }
+
+        @Override
+        public String getParent() {
+            return String.valueOf(parent);
         }
     }
 }

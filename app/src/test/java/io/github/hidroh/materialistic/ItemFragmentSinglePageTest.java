@@ -11,6 +11,8 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.SupportFragmentTestUtil;
 
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -26,6 +29,7 @@ import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.reset;
 
+@Config(shadows = {ShadowRecyclerView.class})
 @RunWith(RobolectricTestRunner.class)
 public class ItemFragmentSinglePageTest {
     @Inject
@@ -58,6 +62,11 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
+            public String getParent() {
+                return "2";
+            }
+
+            @Override
             public ItemManager.Item[] getKidItems() {
                 return new ItemManager.Item[]{};
             }
@@ -66,6 +75,11 @@ public class ItemFragmentSinglePageTest {
             @Override
             public String getId() {
                 return "2";
+            }
+
+            @Override
+            public String getParent() {
+                return "1";
             }
 
             @Override
@@ -181,6 +195,13 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder1, 1);
         adapter.bindViewHolder(viewHolder2, 2);
         assertEquals(3, adapter.getItemCount());
+
+        // test smooth scroll
+        ShadowRecyclerView shadowRecyclerView =
+                (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
+        assertEquals(-1, shadowRecyclerView.getSmoothScrollToPosition());
+        viewHolder2.itemView.findViewById(R.id.posted).performClick();
+        assertEquals(1, shadowRecyclerView.getSmoothScrollToPosition());
     }
 
     @Test
@@ -230,6 +251,7 @@ public class ItemFragmentSinglePageTest {
     }
     @After
     public void tearDown() {
+        recyclerView.setAdapter(null);
         reset(hackerNewsClient);
     }
 }

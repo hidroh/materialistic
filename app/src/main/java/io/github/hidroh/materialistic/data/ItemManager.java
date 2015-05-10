@@ -173,6 +173,12 @@ public interface ItemManager {
          * @return item level
          */
         int getLevel();
+
+        /**
+         * Gets parent ID if any
+         * @return parent ID or 0 if none
+         */
+        String getParent();
     }
 
     /**

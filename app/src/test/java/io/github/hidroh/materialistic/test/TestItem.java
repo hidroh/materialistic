@@ -10,6 +10,11 @@ public abstract class TestItem implements ItemManager.Item {
     private Boolean viewed;
 
     @Override
+    public String getParent() {
+        return "0";
+    }
+
+    @Override
     public void populate(ItemManager.Item info) {
 
     }
