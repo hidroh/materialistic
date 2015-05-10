@@ -112,7 +112,7 @@
     <string name="show_replies" formatted="false">Show replies (%s)</string>
     <string name="posted_reply" formatted="false">
         <![CDATA[
-            %s <a href="#">in reply to %s</a>
+            %s <a href="#">in response to %s</a>
         ]]>
     </string>
 
