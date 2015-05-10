@@ -17,6 +17,7 @@
         <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
         <item name="android:textColorSecondaryInverse">@color/textColorSecondaryInverse</item>
         <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
+        <item name="android:textColorLink">?colorAccent</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
         <!-- style for spinners -->
@@ -56,13 +57,14 @@
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccentLight</item>
 
         <item name="android:textColorPrimary">@color/textColorPrimaryInverse</item>
         <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
         <item name="android:textColorPrimaryInverse">@color/textColorPrimary</item>
         <item name="android:textColorSecondaryInverse">@color/textColorSecondary</item>
         <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
+        <item name="android:textColorLink">?colorAccent</item>
         <!-- style for buttons -->
         <item name="android:buttonStyle">@style/AppButton</item>
         <!-- style for spinners -->
@@ -121,7 +123,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="AppAlertDialog.Dark" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccentLight</item>
     </style>
 
     <!-- ================== -->
