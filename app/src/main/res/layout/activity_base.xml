@@ -4,7 +4,7 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <!-- The main content view -->
-    <LinearLayout
+    <RelativeLayout
         android:id="@id/content_frame"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary" />
-    </LinearLayout>
+    </RelativeLayout>
     <!-- The navigation drawer -->
     <ScrollView
         android:id="@id/drawer"

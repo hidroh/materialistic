@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -15,13 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import javax.inject.Inject;
 
 public abstract class BaseActivity extends InjectableActivity {
 
-    protected ViewGroup mContentView;
+    private RelativeLayout mContentView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
@@ -35,7 +36,7 @@ public abstract class BaseActivity extends InjectableActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
-        mContentView = (ViewGroup) findViewById(R.id.content_frame);
+        mContentView = (RelativeLayout) findViewById(R.id.content_frame);
         mDrawer = findViewById(R.id.drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer,
@@ -99,7 +100,7 @@ public abstract class BaseActivity extends InjectableActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        mContentView.addView(getLayoutInflater().inflate(layoutResID, mContentView, false));
+        addContentView(layoutResID);
     }
 
     @Override
@@ -109,6 +110,15 @@ public abstract class BaseActivity extends InjectableActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    protected View addContentView(@LayoutRes int layoutResID) {
+        View view = getLayoutInflater().inflate(layoutResID, mContentView, false);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        params.addRule(RelativeLayout.BELOW, R.id.toolbar);
+        view.setLayoutParams(params);
+        mContentView.addView(view);
+        return view;
     }
 
     protected void closeDrawers() {

@@ -24,7 +24,7 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
 
     @Override
     protected void onCreateView() {
-        mEmptyView = getLayoutInflater().inflate(R.layout.empty_favorite, mContentView, false);
+        mEmptyView = addContentView(R.layout.empty_favorite);
         mEmptyView.findViewById(R.id.header_card_view).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -34,10 +34,8 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
             }
         });
         mEmptyView.setVisibility(View.INVISIBLE);
-        mContentView.addView(mEmptyView);
-        mEmptySearchView = getLayoutInflater().inflate(R.layout.empty_favorite_search, mContentView, false);
+        mEmptySearchView = addContentView(R.layout.empty_favorite_search);
         mEmptySearchView.setVisibility(View.INVISIBLE);
-        mContentView.addView(mEmptySearchView);
     }
 
     @Override
