@@ -1,13 +1,7 @@
-[![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic) [![Coverage Status](https://coveralls.io/repos/hidroh/materialistic/badge.svg?branch=master)](https://coveralls.io/r/hidroh/materialistic?branch=master) [![Join the chat at https://gitter.im/hidroh/materialistic](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hidroh/materialistic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+## Materialistic for Hacker News
+Material design [Hacker News](https://news.ycombinator.com/) client for Android, uses official [HackerNews/API](https://github.com/HackerNews/API), [Dagger](http://square.github.io/dagger/) for dependency injection and [Robolectric](http://robolectric.org/) for unit testing.
 
 [![Get it on Google Play](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic&referrer=utm_source%3Dgithub)
-
-## Hacker News client for Android - Material Design
-
-### Articles
-- [Supporting multiple themes in your Android app (Part 1)](http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/)
-- [Supporting multiple themes in your Android app (Part 2)](http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/) [![Android Weekly](https://img.shields.io/badge/android--weekly-144-blue.svg)](http://androidweekly.net/issues/issue-144)
-
 
 ### Setup
 **Requirements**
@@ -29,7 +23,7 @@
 - [Square Dagger](https://github.com/square/dagger)
 - [Robolectric](https://github.com/robolectric/robolectric)
 
-**Build**
+**Build** [![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
 
     ./gradlew assembleDebug
 
@@ -45,9 +39,13 @@ Run a single test class, for example HackerNewsClientTest:
 
     ./gradlew testDebug --tests "*HackerNewsClientTest"
 
-**Coverage**
+**Coverage** [![Coverage Status](https://coveralls.io/repos/hidroh/materialistic/badge.svg?branch=master)](https://coveralls.io/r/hidroh/materialistic?branch=master)
 
     ./gradlew jacocoTestReport
+
+### Articles
+- [Supporting multiple themes in your Android app (Part 1)](http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/)
+- [Supporting multiple themes in your Android app (Part 2)](http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/) [![Android Weekly](https://img.shields.io/badge/android--weekly-144-blue.svg)](http://androidweekly.net/issues/issue-144)
 
 ### Screenshots
 <img src="assets/screenshot-1.png" width="300px" />
