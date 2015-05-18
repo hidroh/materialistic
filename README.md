@@ -23,13 +23,13 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 - [Square Dagger](https://github.com/square/dagger)
 - [Robolectric](https://github.com/robolectric/robolectric)
 
-**Build** [![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
+**Build**
 
     ./gradlew assembleDebug
 
 Supply your own release signing config to build release. Release signing config is left out on purpose.
 
-**Test**
+**Test** [![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
 
 Run all tests:
 
