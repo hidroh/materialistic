@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.ActivityController;
 
@@ -72,8 +71,8 @@ public class SettingsActivityTest {
 
     @Test
     public void testToolbarNavigation() {
-        assertFalse(activity.onOptionsItemSelected(new RoboMenuItem(R.id.menu_clear_recent)));
-        assertTrue(activity.onOptionsItemSelected(new RoboMenuItem(android.R.id.home)));
+        assertFalse(shadowOf(activity).clickMenuItem(R.id.menu_clear_recent));
+        assertTrue(shadowOf(activity).clickMenuItem(android.R.id.home));
         assertThat(activity).isFinishing();
     }
 

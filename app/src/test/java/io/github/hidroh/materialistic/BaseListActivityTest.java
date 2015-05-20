@@ -22,7 +22,7 @@ import static junit.framework.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
-@Config(emulateSdk = 19, reportSdk = 19)
+@Config(sdk = 19)
 @RunWith(RobolectricTestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;

@@ -16,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
@@ -192,12 +191,7 @@ public class ItemActivityTest {
             }
         });
         controller.withIntent(intent).create().start().resume().visible();
-        activity.onOptionsItemSelected(new RoboMenuItem() {
-            @Override
-            public int getItemId() {
-                return R.id.menu_external;
-            }
-        });
+        shadowOf(activity).clickMenuItem(R.id.menu_external);
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual).hasAction(Intent.ACTION_VIEW);
     }

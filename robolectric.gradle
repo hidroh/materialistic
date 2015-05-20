@@ -28,15 +28,9 @@ robolectric {
 }
 
 dependencies {
-    androidTestCompile('org.robolectric:robolectric:3.0-rc2') {
-        exclude group: 'commons-logging', module: 'commons-logging'
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-    }
-    androidTestCompile('org.robolectric:shadows-support-v4:3.0-rc2') {
-        exclude group: 'commons-logging', module: 'commons-logging'
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-    }
-    androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0',
+    androidTestCompile 'org.robolectric:robolectric:3.0-rc3',
+            'org.robolectric:shadows-support-v4:3.0-rc3',
+            'com.squareup.assertj:assertj-android:1.0.0',
             'com.squareup.assertj:assertj-android-support-v4:1.0.0',
             'org.mockito:mockito-core:1.9.5+',
             'junit:junit:4.12'

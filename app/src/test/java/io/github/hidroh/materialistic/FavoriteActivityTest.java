@@ -104,13 +104,12 @@ public class FavoriteActivityTest {
     @Test
     public void testOptionsMenuClear() {
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
-        MenuItem menuClear = shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear);
-        fragment.onOptionsItemSelected(menuClear);
+        shadowOf(activity).clickMenuItem(R.id.menu_clear);
         AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         assertEquals(2, adapter.getItemCount());
 
-        fragment.onOptionsItemSelected(menuClear);
+        shadowOf(activity).clickMenuItem(R.id.menu_clear);
         dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertEquals(0, adapter.getItemCount());
@@ -195,8 +194,7 @@ public class FavoriteActivityTest {
 
     @Test
     public void testEmail() {
-        MenuItem menuEmail = shadowOf(activity).getOptionsMenu().findItem(R.id.menu_email);
-        fragment.onOptionsItemSelected(menuEmail);
+        shadowOf(activity).clickMenuItem(R.id.menu_email);
         verify(favoriteManager).get(any(Context.class), anyString());
         AlertDialog progressDialog = ShadowProgressDialog.getLatestAlertDialog();
         assertThat(progressDialog).isShowing();
