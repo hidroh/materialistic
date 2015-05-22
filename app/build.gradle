@@ -31,14 +31,6 @@ android {
     lintOptions {
         abortOnError false
     }
-
-    sourceSets {
-        // Move the tests to test/java, test/res, etc...
-        androidTest {
-            java.srcDirs = ['src/test/java']
-            resources.srcDirs = ['src/test/resources']
-        }
-    }
 }
 
 dependencies {
