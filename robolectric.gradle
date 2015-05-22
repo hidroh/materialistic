@@ -1,6 +1,6 @@
-apply plugin: 'robolectric'
+apply plugin: 'org.robolectric'
 
-robolectric {
+android.testOptions.unitTests.all {
     // configure the set of classes for JUnit tests
     include project.hasProperty("testFilter") ? "**/*${project.ext.testFilter}*Test.class" : '**/*Test.class'
     exclude '**/espresso/**/*.class'
@@ -28,10 +28,15 @@ robolectric {
 }
 
 dependencies {
-    androidTestCompile 'org.robolectric:robolectric:3.0-rc3',
+    testCompile 'org.robolectric:robolectric:3.0-rc3',
             'org.robolectric:shadows-support-v4:3.0-rc3',
-            'com.squareup.assertj:assertj-android:1.0.0',
-            'com.squareup.assertj:assertj-android-support-v4:1.0.0',
             'org.mockito:mockito-core:1.9.5+',
             'junit:junit:4.12'
+    testCompile('com.squareup.assertj:assertj-android:1.0.0') {
+            exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    testCompile('com.squareup.assertj:assertj-android-support-v4:1.0.0') {
+            exclude group: 'com.android.support', module: 'support-annotations'
+            exclude group: 'com.android.support', module: 'support-v4' // see robolectric/robolectric#1633
+    }
 }

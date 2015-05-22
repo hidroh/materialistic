@@ -9,7 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
@@ -35,7 +35,7 @@ import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowAsyncQueryHandler.class})
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
     private FavoriteManager manager;

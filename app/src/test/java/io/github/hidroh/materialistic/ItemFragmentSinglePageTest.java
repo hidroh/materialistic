@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.reset;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowRecyclerView.class})
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
     @Inject
     @Named(ActivityModule.HN)

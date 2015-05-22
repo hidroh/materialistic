@@ -33,7 +33,11 @@ Supply your own release signing config to build release. Release signing config 
 
 Run all tests:
 
-    ./gradlew test
+    ./gradlew testDebug
+
+You may need to set up Android Studio for unit test, by changing 'Build Variants -> Test Artifact' to 'Unit Tests'. See [technical docs](http://tools.android.com/tech-docs/unit-testing-support#TOC-Setting-up-Android-Studio).
+
+![Build Variants](http://tools.android.com/_/rsrc/1423155717194/tech-docs/unit-testing-support/qSxL68MPv5.png?height=365&width=400)
 
 Run a single test class, for example HackerNewsClientTest:
 
