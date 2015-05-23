@@ -31,17 +31,12 @@ Supply your own release signing config to build release. Release signing config 
 
 **Test** [![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
 
-Run all tests:
+Run all/selective tests:
 
     ./gradlew testDebug
+    ./gradlew testDebug --tests "*HackerNewsClientTest"
 
 You may need to set up Android Studio for unit test, by changing 'Build Variants -> Test Artifact' to 'Unit Tests'. See [technical docs](http://tools.android.com/tech-docs/unit-testing-support#TOC-Setting-up-Android-Studio).
-
-![Build Variants](http://tools.android.com/_/rsrc/1423155717194/tech-docs/unit-testing-support/qSxL68MPv5.png?height=365&width=400)
-
-Run a single test class, for example HackerNewsClientTest:
-
-    ./gradlew testDebug --tests "*HackerNewsClientTest"
 
 **Coverage** [![Coverage Status](https://coveralls.io/repos/hidroh/materialistic/badge.svg?branch=master)](https://coveralls.io/r/hidroh/materialistic?branch=master)
 
