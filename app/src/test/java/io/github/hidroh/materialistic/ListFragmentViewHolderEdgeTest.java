@@ -42,7 +42,7 @@ public class ListFragmentViewHolderEdgeTest {
                     public void getItem(String itemId, ResponseListener<Item> listener) {
                         ListFragmentViewHolderEdgeTest.this.listener = listener;
                     }
-                }, ItemManager.FetchMode.top.name()))
+                }, ItemManager.TOP_FETCH_MODE))
                 .commit();
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         holder = recyclerView.getAdapter().createViewHolder(recyclerView, 0);

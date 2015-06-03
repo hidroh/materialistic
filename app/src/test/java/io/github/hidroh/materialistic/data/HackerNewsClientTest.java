@@ -86,21 +86,13 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetStoriesNoListener() {
-        client.getStories(ItemManager.FetchMode.top.name(), null);
-        verify(TestRestServiceFactory.hnRestService, never()).topStories(getStoriesCallback.capture());
-    }
-
-    @Test
-    public void testGetStoriesInvalidFilter() {
-        client.getStories("invalid", storiesListener);
-        verify(TestRestServiceFactory.hnRestService, never()).topStories(getStoriesCallback.capture());
-        client.getStories(null, storiesListener);
+        client.getStories(ItemManager.TOP_FETCH_MODE, null);
         verify(TestRestServiceFactory.hnRestService, never()).topStories(getStoriesCallback.capture());
     }
 
     @Test
     public void testGetTopStoriesSuccess() {
-        client.getStories(ItemManager.FetchMode.top.name(), storiesListener);
+        client.getStories(ItemManager.TOP_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).topStories(getStoriesCallback.capture());
         getStoriesCallback.getValue().success(new int[]{1, 2}, createResponse(200));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
@@ -109,7 +101,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetNewStoriesNull() {
-        client.getStories(ItemManager.FetchMode.newest.name(), storiesListener);
+        client.getStories(ItemManager.NEW_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).newStories(getStoriesCallback.capture());
         getStoriesCallback.getValue().success(null, createResponse(200));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
@@ -118,7 +110,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetAskEmpty() {
-        client.getStories(ItemManager.FetchMode.ask.name(), storiesListener);
+        client.getStories(ItemManager.ASK_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).askStories(getStoriesCallback.capture());
         getStoriesCallback.getValue().success(new int[]{}, createResponse(200));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
@@ -127,7 +119,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetShowFailure() {
-        client.getStories(ItemManager.FetchMode.show.name(), storiesListener);
+        client.getStories(ItemManager.SHOW_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).showStories(getStoriesCallback.capture());
         RetrofitError retrofitError = mock(RetrofitError.class);
         when(retrofitError.getMessage()).thenReturn("message");
@@ -137,7 +129,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetJobsFailureNoMessage() {
-        client.getStories(ItemManager.FetchMode.jobs.name(), storiesListener);
+        client.getStories(ItemManager.JOBS_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).jobStories(getStoriesCallback.capture());
         getStoriesCallback.getValue().failure(null);
         verify(storiesListener).onError(eq(""));

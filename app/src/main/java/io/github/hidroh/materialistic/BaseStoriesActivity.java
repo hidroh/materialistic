@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
@@ -10,11 +11,13 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public abstract class BaseStoriesActivity extends BaseListActivity {
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
 
-    protected abstract ItemManager.FetchMode getFetchMode();
+    @NonNull
+    @ItemManager.FetchMode
+    protected abstract String getFetchMode();
 
     @Override
     protected Fragment instantiateListFragment() {
-        return ListFragment.instantiate(this, mItemManager, getFetchMode().name());
+        return ListFragment.instantiate(this, mItemManager, getFetchMode());
     }
 
     @Override

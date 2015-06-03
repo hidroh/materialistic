@@ -2,14 +2,32 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 import android.text.Spannable;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Data repository for {@link io.github.hidroh.materialistic.data.ItemManager.Item}
  */
 public interface ItemManager {
 
-    enum FetchMode { top, newest, ask, show, jobs }
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({
+            TOP_FETCH_MODE,
+            NEW_FETCH_MODE,
+            ASK_FETCH_MODE,
+            SHOW_FETCH_MODE,
+            JOBS_FETCH_MODE
+    })
+    @interface FetchMode {}
+    String TOP_FETCH_MODE = "top";
+    String NEW_FETCH_MODE = "new";
+    String ASK_FETCH_MODE = "ask";
+    String SHOW_FETCH_MODE = "show";
+    String JOBS_FETCH_MODE = "jobs";
 
     /**
      * Gets array of top stories
@@ -198,10 +216,21 @@ public interface ItemManager {
      * Represents an item that can be displayed by a {@link android.webkit.WebView}
      */
     interface WebItem extends Parcelable {
+        @Retention(RetentionPolicy.SOURCE)
+        @StringDef({
+                JOB_TYPE,
+                STORY_TYPE,
+                COMMENT_TYPE,
+                POLL_TYPE
+        })
         /**
          * Item types
          */
-        enum Type { job, story, comment, poll }
+        @interface Type {}
+        String JOB_TYPE = "job";
+        String STORY_TYPE = "story";
+        String COMMENT_TYPE = "comment";
+        String POLL_TYPE = "poll";
 
         /**
          * Gets formatted title to display
@@ -244,6 +273,8 @@ public interface ItemManager {
          * Gets item type
          * @return item type
          */
-        Type getType();
+        @NonNull
+        @Type
+        String getType();
     }
 }

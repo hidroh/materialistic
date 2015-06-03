@@ -111,7 +111,7 @@ public class WebFragment extends BaseFragment {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web_hn, container, false);
         ((TextView) view.findViewById(R.id.posted)).setText(mItem.getDisplayedTime(getActivity()));
-        if (mItem.getType() == ItemManager.WebItem.Type.comment) {
+        if (mItem.getType() == ItemManager.Item.COMMENT_TYPE) {
             view.findViewById(R.id.title).setVisibility(View.GONE);
         } else {
             ((TextView) view.findViewById(R.id.title)).setText(mItem.getDisplayedTitle());

@@ -66,7 +66,7 @@ public class WebActivityTest {
         TestApplication.applicationGraph.inject(this);
         reset(favoriteManager);
         item = mock(ItemManager.WebItem.class);
-        when(item.getType()).thenReturn(ItemManager.WebItem.Type.story);
+        when(item.getType()).thenReturn(ItemManager.Item.STORY_TYPE);
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);

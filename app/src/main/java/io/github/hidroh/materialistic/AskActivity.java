@@ -10,8 +10,8 @@ public class AskActivity extends BaseStoriesActivity {
     }
 
     @Override
-    protected ItemManager.FetchMode getFetchMode() {
-        return ItemManager.FetchMode.ask;
+    protected @ItemManager.FetchMode String getFetchMode() {
+        return ItemManager.ASK_FETCH_MODE;
     }
 
 }

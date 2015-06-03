@@ -222,11 +222,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this));
         switch (story.getType()) {
-            case job:
+            case ItemManager.Item.JOB_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_work_grey600_18dp, 0, 0, 0);
                 break;
-            case poll:
+            case ItemManager.Item.POLL_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;

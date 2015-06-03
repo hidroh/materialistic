@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic.data;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -34,7 +35,7 @@ public class HackerNewsClient implements ItemManager {
     }
 
     @Override
-    public void getStories(String filter, final ResponseListener<Item[]> listener) {
+    public void getStories(@FetchMode String filter, final ResponseListener<Item[]> listener) {
         if (listener == null) {
             return;
         }
@@ -54,26 +55,17 @@ public class HackerNewsClient implements ItemManager {
                 listener.onError(error != null ? error.getMessage() : "");
             }
         };
-        final FetchMode fetchMode;
-        try {
-            fetchMode = FetchMode.valueOf(filter);
-        } catch (IllegalArgumentException e) {
-            return;
-        } catch (NullPointerException e) {
-            return;
-        }
-
-        switch (fetchMode) {
-            case newest:
+        switch (filter) {
+            case NEW_FETCH_MODE:
                 mRestService.newStories(callback);
                 break;
-            case show:
+            case SHOW_FETCH_MODE:
                 mRestService.showStories(callback);
                 break;
-            case ask:
+            case ASK_FETCH_MODE:
                 mRestService.askStories(callback);
                 break;
-            case jobs:
+            case JOBS_FETCH_MODE:
                 mRestService.jobStories(callback);
                 break;
             default:
@@ -268,23 +260,20 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public String getDisplayedTitle() {
             switch (getType()) {
-                case comment:
+                case COMMENT_TYPE:
                     return text;
-                case job:
-                case story:
-                case poll: // TODO poll need to display options
+                case JOB_TYPE:
+                case STORY_TYPE:
+                case POLL_TYPE: // TODO poll need to display options
                 default:
                     return title;
             }
         }
 
+        @NonNull
         @Override
-        public Type getType() {
-            try {
-                return !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
-            } catch (IllegalArgumentException e) {
-                return Type.story;
-            }
+        public String getType() {
+            return !TextUtils.isEmpty(type) ? type : STORY_TYPE;
         }
 
         @Override
@@ -320,9 +309,9 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public String getUrl() {
             switch (getType()) {
-                case job:
-                case poll:
-                case comment:
+                case JOB_TYPE:
+                case POLL_TYPE:
+                case COMMENT_TYPE:
                     return getItemUrl(getId());
                 default:
                     return TextUtils.isEmpty(url) ? getItemUrl(getId()) : url;
@@ -361,13 +350,12 @@ public class HackerNewsClient implements ItemManager {
 
         @Override
         public boolean isShareable() {
-            Type itemType = !TextUtils.isEmpty(type) ? Type.valueOf(type) : Type.story;
-            switch (itemType) {
-                case story:
-                case poll:
-                case job:
+            switch (getType()) {
+                case STORY_TYPE:
+                case POLL_TYPE:
+                case JOB_TYPE:
                     return true;
-                case comment:
+                case COMMENT_TYPE:
                 default:
                     return false;
             }

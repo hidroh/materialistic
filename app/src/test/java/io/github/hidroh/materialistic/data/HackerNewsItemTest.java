@@ -132,7 +132,7 @@ public class HackerNewsItemTest {
                 return null;
             }
         });
-        assertEquals(ItemManager.WebItem.Type.story, item.getType());
+        assertEquals(ItemManager.Item.STORY_TYPE, item.getType());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class HackerNewsItemTest {
                 return "poll";
             }
         });
-        assertEquals(ItemManager.WebItem.Type.poll, item.getType());
+        assertEquals(ItemManager.Item.POLL_TYPE, item.getType());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class HackerNewsItemTest {
                 return "blah";
             }
         });
-        assertEquals(ItemManager.WebItem.Type.story, item.getType());
+        assertEquals("blah", item.getType());
     }
 
     @Test

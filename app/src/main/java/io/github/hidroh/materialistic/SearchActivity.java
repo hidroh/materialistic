@@ -48,7 +48,7 @@ public class SearchActivity extends BaseListActivity {
     @Override
     protected Fragment instantiateListFragment() {
         if (TextUtils.isEmpty(mQuery)) {
-            return ListFragment.instantiate(this, mHackerNewsClient, ItemManager.FetchMode.top.name());
+            return ListFragment.instantiate(this, mHackerNewsClient, ItemManager.TOP_FETCH_MODE);
         } else {
             return ListFragment.instantiate(this, mAlgoliaClient, mQuery);
         }

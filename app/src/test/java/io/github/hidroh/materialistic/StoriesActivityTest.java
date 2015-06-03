@@ -17,7 +17,7 @@ public class StoriesActivityTest {
         ActivityController<ShowActivity> controller = Robolectric.buildActivity(ShowActivity.class);
         ShowActivity activity = controller.create().start().resume().get();
         assertEquals(activity.getString(R.string.title_activity_show), activity.getDefaultTitle());
-        assertEquals(ItemManager.FetchMode.show, activity.getFetchMode());
+        assertEquals(ItemManager.SHOW_FETCH_MODE, activity.getFetchMode());
         controller.pause().stop().destroy();
     }
 
@@ -26,7 +26,7 @@ public class StoriesActivityTest {
         ActivityController<NewActivity> controller = Robolectric.buildActivity(NewActivity.class);
         NewActivity activity = controller.create().start().resume().get();
         assertEquals(activity.getString(R.string.title_activity_new), activity.getDefaultTitle());
-        assertEquals(ItemManager.FetchMode.newest, activity.getFetchMode());
+        assertEquals(ItemManager.NEW_FETCH_MODE, activity.getFetchMode());
         controller.pause().stop().destroy();
     }
 
@@ -35,7 +35,7 @@ public class StoriesActivityTest {
         ActivityController<AskActivity> controller = Robolectric.buildActivity(AskActivity.class);
         AskActivity activity = controller.create().start().resume().get();
         assertEquals(activity.getString(R.string.title_activity_ask), activity.getDefaultTitle());
-        assertEquals(ItemManager.FetchMode.ask, activity.getFetchMode());
+        assertEquals(ItemManager.ASK_FETCH_MODE, activity.getFetchMode());
         controller.pause().stop().destroy();
     }
 
@@ -44,7 +44,7 @@ public class StoriesActivityTest {
         ActivityController<JobsActivity> controller = Robolectric.buildActivity(JobsActivity.class);
         JobsActivity activity = controller.create().start().resume().get();
         assertEquals(activity.getString(R.string.title_activity_jobs), activity.getDefaultTitle());
-        assertEquals(ItemManager.FetchMode.jobs, activity.getFetchMode());
+        assertEquals(ItemManager.JOBS_FETCH_MODE, activity.getFetchMode());
         controller.pause().stop().destroy();
     }
 }
