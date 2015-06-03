@@ -78,7 +78,7 @@ public class ListFragmentViewHolderTest {
                         item.title = "title";
                         listener.onResponse(item);
                     }
-                }, ItemManager.FetchMode.top.name()))
+                }, ItemManager.TOP_FETCH_MODE))
                 .commit();
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
@@ -113,7 +113,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testJob() {
-        item.type = ItemManager.Item.Type.job;
+        item.type = ItemManager.Item.JOB_TYPE;
         item.setIsViewed(true);
         adapter.bindViewHolder(holder, 0);
         assertEquals(R.drawable.ic_work_grey600_18dp,
@@ -124,7 +124,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testPoll() {
-        item.type = ItemManager.Item.Type.poll;
+        item.type = ItemManager.Item.POLL_TYPE;
         adapter.bindViewHolder(holder, 0);
         assertEquals(R.drawable.ic_poll_grey600_18dp,
                 shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
@@ -194,7 +194,7 @@ public class ListFragmentViewHolderTest {
     }
 
     private class TestStory extends TestItem {
-        public Type type = Type.story;
+        public @Type String type = STORY_TYPE;
         public int kidCount = 0;
         public String title = null;
 
@@ -209,7 +209,7 @@ public class ListFragmentViewHolderTest {
         }
 
         @Override
-        public Type getType() {
+        public String getType() {
             return type;
         }
 

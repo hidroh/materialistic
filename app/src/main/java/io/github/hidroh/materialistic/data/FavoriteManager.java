@@ -10,6 +10,7 @@ import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -382,10 +383,11 @@ public class FavoriteManager {
             return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
         }
 
+        @NonNull
         @Override
-        public Type getType() {
+        public String getType() {
             // TODO treating all saved items as stories for now
-            return Type.story;
+            return STORY_TYPE;
         }
 
         @Override

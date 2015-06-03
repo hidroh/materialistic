@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -46,9 +47,10 @@ public class WebActivityLocalTest {
     @Test
     public void testStory() {
         TestWebItem item = new TestWebItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.story;
+            public String getType() {
+                return STORY_TYPE;
             }
 
             @Override
@@ -83,9 +85,10 @@ public class WebActivityLocalTest {
     @Test
     public void testComment() {
         TestItem item = new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.comment;
+            public String getType() {
+                return COMMENT_TYPE;
             }
 
             @Override

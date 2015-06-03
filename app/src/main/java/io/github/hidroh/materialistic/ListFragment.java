@@ -54,6 +54,17 @@ public class ListFragment extends BaseFragment {
     private int mPrimaryTextColorResId;
     private int mSecondaryTextColorResId;
 
+    /**
+     * Constructs an instance of {@link ListFragment} with given filter
+     * @param context       an instance of {@link Context}
+     * @param itemManager   item manager that fetches items remotely, either a
+     *                      {@link io.github.hidroh.materialistic.data.HackerNewsClient} or
+     *                      {@link io.github.hidroh.materialistic.data.AlgoliaClient}
+     * @param filter        either a
+     *                      {@link io.github.hidroh.materialistic.data.ItemManager.FetchMode} or
+     *                      a freetext filter
+     * @return  list fragment
+     */
     public static ListFragment instantiate(Context context, ItemManager itemManager,
                                            String filter) {
         ListFragment fragment = (ListFragment) Fragment.instantiate(context, ListFragment.class.getName());

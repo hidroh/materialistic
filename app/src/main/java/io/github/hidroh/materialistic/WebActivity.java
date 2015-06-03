@@ -26,7 +26,7 @@ public class WebActivity extends BaseItemActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mItem = getIntent().getParcelableExtra(EXTRA_ITEM);
-        if (mItem.getType() == ItemManager.WebItem.Type.comment) {
+        if (mItem.getType() == ItemManager.Item.COMMENT_TYPE) {
             setTitle(null);
         } else {
             setTitle(mItem.getDisplayedTitle());

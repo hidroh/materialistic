@@ -49,12 +49,12 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         holder.mTitleTextView.setText(item.getDisplayedTitle());
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
         switch (item.getType()) {
-            case job:
+            case ItemManager.Item.JOB_TYPE:
                 holder.mSourceTextView.setText(null);
                 holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_work_grey600_18dp, 0, 0, 0);
                 break;
-            case poll:
+            case ItemManager.Item.POLL_TYPE:
                 holder.mSourceTextView.setText(null);
                 holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);

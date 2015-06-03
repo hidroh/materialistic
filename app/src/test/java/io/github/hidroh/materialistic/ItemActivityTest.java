@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -65,9 +66,10 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume().visible();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.story;
+            public String getType() {
+                return STORY_TYPE;
             }
 
             @Override
@@ -119,9 +121,10 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume().visible();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.job;
+            public String getType() {
+                return JOB_TYPE;
             }
 
             @Override
@@ -153,9 +156,10 @@ public class ItemActivityTest {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 3);
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.poll;
+            public String getType() {
+                return POLL_TYPE;
             }
 
             @Override
@@ -180,9 +184,10 @@ public class ItemActivityTest {
                         WebActivity.class.getName()));
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.comment;
+            public String getType() {
+                return COMMENT_TYPE;
             }
 
             @Override
@@ -200,9 +205,10 @@ public class ItemActivityTest {
     public void testFavoriteStory() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.story;
+            public String getType() {
+                return STORY_TYPE;
             }
 
             @Override
@@ -227,9 +233,10 @@ public class ItemActivityTest {
     public void testNonFavoriteStory() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
             @Override
-            public Type getType() {
-                return Type.story;
+            public String getType() {
+                return STORY_TYPE;
             }
 
             @Override

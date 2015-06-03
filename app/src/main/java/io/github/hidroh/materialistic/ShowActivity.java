@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.support.annotation.NonNull;
+
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ShowActivity extends BaseStoriesActivity {
@@ -9,9 +11,9 @@ public class ShowActivity extends BaseStoriesActivity {
         return getString(R.string.title_activity_show);
     }
 
+    @NonNull
     @Override
-    protected ItemManager.FetchMode getFetchMode() {
-        return ItemManager.FetchMode.show;
+    protected String getFetchMode() {
+        return ItemManager.SHOW_FETCH_MODE;
     }
-
 }

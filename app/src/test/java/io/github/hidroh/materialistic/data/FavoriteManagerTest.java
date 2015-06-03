@@ -172,7 +172,7 @@ public class FavoriteManagerTest {
         assertEquals("http://example.com", favorite.getUrl());
         assertEquals("1", favorite.getId());
         assertNotNull(favorite.getDisplayedTime(RuntimeEnvironment.application));
-        assertEquals(ItemManager.WebItem.Type.story, favorite.getType());
+        assertEquals(ItemManager.Item.STORY_TYPE, favorite.getType());
         assertTrue(favorite.isShareable());
         assertEquals("title - http://example.com", favorite.toString());
         assertEquals(0, favorite.describeContents());
