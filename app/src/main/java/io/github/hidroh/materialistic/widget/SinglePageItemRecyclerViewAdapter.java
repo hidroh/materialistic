@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.widget;
 
+import android.support.v4.util.SimpleArrayMap;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,9 +8,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.AppUtils;
@@ -20,7 +19,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class SinglePageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ToggleItemViewHolder> {
     private final ArrayList<ItemManager.Item> mList;
-    private Map<String, ItemManager.Item> mExpanded = new HashMap<>();
+    private SimpleArrayMap<String, ItemManager.Item> mExpanded = new SimpleArrayMap<>();
     private Set<String> mCollapsed = new HashSet<>();
     private int mLevelIndicatorWidth = 0;
     private int mDefaultItemVerticalMargin = 0;
