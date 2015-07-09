@@ -17,7 +17,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.shadows.ShadowLocalBroadcastManager;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
 import java.util.List;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.support.v4.Shadows.shadowOf;
+import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {

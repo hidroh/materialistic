@@ -14,7 +14,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.ShadowLocalBroadcastManager;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.support.v4.Shadows.shadowOf;
+import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowAsyncQueryHandler.class})
 @RunWith(RobolectricGradleTestRunner.class)
