@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.shadows.ShadowLooper;
-import org.robolectric.util.SupportFragmentTestUtil;
+import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import java.util.Arrays;
 import java.util.List;

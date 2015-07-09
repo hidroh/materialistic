@@ -33,7 +33,7 @@ import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.ShadowLocalBroadcastManager;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.util.ActivityController;
 
@@ -59,7 +59,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.support.v4.Shadows.shadowOf;
+import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityTest {
