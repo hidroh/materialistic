@@ -5,19 +5,19 @@ import android.app.Activity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static org.robolectric.Shadows.shadowOf;
 
-@RunWith(ParameterizedRobolectricTestRunner.class)
+@RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class DrawerFragmentTest {
     private final int drawerResId;
     private final Class<? extends Activity> startedActivity;
@@ -28,7 +28,7 @@ public class DrawerFragmentTest {
         this.startedActivity = startedActivity;
     }
 
-    @ParameterizedRobolectricTestRunner.Parameters
+    @ParameterizedRobolectricGradleTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{R.id.drawer_list, ListActivity.class},
