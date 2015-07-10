@@ -1,5 +1,3 @@
-apply plugin: 'org.robolectric'
-
 android.testOptions.unitTests.all {
     // configure the set of classes for JUnit tests
     include project.hasProperty("testFilter") ? "**/*${project.ext.testFilter}*Test.class" : '**/*Test.class'
