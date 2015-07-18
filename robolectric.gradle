@@ -19,9 +19,8 @@ android.testOptions.unitTests.all {
     // configure whether failing tests should fail the build
     ignoreFailures false
 
-    // use afterTest to listen to the test execution results
-    afterTest { descriptor, result ->
-        println "${descriptor.className} > ${descriptor.name} ${result.resultType}"
+    testLogging {
+        events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
     }
 }
 
