@@ -12,7 +12,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 - Android Support Repository
 - Android Support Library 22.2.1
 - Google Repository
-- Google Play services 7.5.0
+- Google Play services 7.8.0
 
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API)
