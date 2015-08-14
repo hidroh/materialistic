@@ -126,14 +126,6 @@ public abstract class BaseActivity extends InjectableActivity {
     }
 
     /**
-     * Begins fragment transaction with no custom animation
-     * @return fragment transaction
-     */
-    protected FragmentTransaction beginFragmentTransaction() {
-        return getSupportFragmentManager().beginTransaction();
-    }
-
-    /**
      * Removes fragment with given tag if any
      * @param transaction   fragment transaction
      * @param tag           tag of fragment to be removed

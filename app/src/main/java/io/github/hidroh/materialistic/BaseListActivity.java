@@ -41,7 +41,8 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         setTitle(getDefaultTitle());
         setContentView(R.layout.activity_list);
         onCreateView();
-        beginFragmentTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(android.R.id.list,
                         instantiateListFragment(),
                         LIST_FRAGMENT_TAG)
@@ -257,13 +258,13 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     }
 
     private FragmentTransaction beginSwapFragmentTransaction() {
-        final FragmentTransaction transaction = beginFragmentTransaction();
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         return transaction;
     }
 
     private FragmentTransaction beginToggleFragmentTransaction() {
-        final FragmentTransaction transaction = beginFragmentTransaction();
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right);
         return transaction;
     }
