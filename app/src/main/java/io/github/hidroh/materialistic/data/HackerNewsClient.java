@@ -184,7 +184,7 @@ public class HackerNewsClient implements ItemManager {
             url = source.readString();
             text = source.readString();
             type = source.readString();
-            favorite = source.readInt() == 0 ? false : true;
+            favorite = source.readInt() != 0;
             descendants = source.readInt();
         }
 

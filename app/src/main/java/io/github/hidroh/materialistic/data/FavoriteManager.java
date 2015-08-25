@@ -17,6 +17,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.R;
@@ -78,28 +79,13 @@ public class FavoriteManager {
         }
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
-            protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
-                super.onQueryComplete(token, cookie, cursor);
-                if (cursor == null) {
-                    return;
-                }
-
-                Favorite[] favorites = new Favorite[cursor.getCount()];
-                int count = 0;
-                Cursor favoriteCursor = new Cursor(cursor);
-                boolean any = favoriteCursor.moveToFirst();
-                if (any) {
-                    do {
-                        favorites[count] = favoriteCursor.getFavorite();
-                        count++;
-                    } while (favoriteCursor.moveToNext());
-
-                }
+            void onQueryComplete(Favorite[] favorites) {
                 broadcastManager.sendBroadcast(makeGetBroadcastIntent(favorites));
             }
-        }.startQuery(0, null, MaterialisticProvider.URI_FAVORITE, null, selection, selectionArgs, null);
+        }).startQuery(0, null, MaterialisticProvider.URI_FAVORITE,
+                null, selection, selectionArgs, null);
     }
 
     /**
@@ -115,19 +101,12 @@ public class FavoriteManager {
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME, String.valueOf(System.currentTimeMillis()));
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
-            protected void onInsertComplete(int token, Object cookie, Uri uri) {
-                super.onInsertComplete(token, cookie, uri);
-                if (cookie == null || story.getId() == null) {
-                    return;
-                }
-
-                if (cookie.equals(story.getId())) {
-                    broadcastManager.sendBroadcast(makeAddBroadcastIntent(story.getId()));
-                }
+            void onInsertComplete() {
+                broadcastManager.sendBroadcast(makeAddBroadcastIntent(story.getId()));
             }
-        }.startInsert(0, story.getId(), MaterialisticProvider.URI_FAVORITE, contentValues);
+        }).startInsert(0, story.getId(), MaterialisticProvider.URI_FAVORITE, contentValues);
     }
 
     /**
@@ -150,13 +129,12 @@ public class FavoriteManager {
         }
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
-            protected void onDeleteComplete(int token, Object cookie, int result) {
-                super.onDeleteComplete(token, cookie, result);
+            void onClearComplete() {
                 broadcastManager.sendBroadcast(makeClearBroadcastIntent());
             }
-        }.startDelete(0, null, MaterialisticProvider.URI_FAVORITE, selection, selectionArgs);
+        }).startDelete(0, null, MaterialisticProvider.URI_FAVORITE, selection, selectionArgs);
     }
 
     /**
@@ -174,19 +152,12 @@ public class FavoriteManager {
             return;
         }
 
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
-            protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
-                super.onQueryComplete(token, cookie, cursor);
-                if (cookie == null) {
-                    return;
-                }
-
-                if (itemId.equals(cookie)) {
-                    callbacks.onCheckComplete(cursor.getCount() > 0);
-                }
+            void onCheckComplete(boolean isFavorite) {
+                callbacks.onCheckComplete(isFavorite);
             }
-        }.startQuery(0, itemId, MaterialisticProvider.URI_FAVORITE, null,
+        }).startQuery(0, itemId, MaterialisticProvider.URI_FAVORITE, null,
                 MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
                 new String[]{itemId}, null);
     }
@@ -204,19 +175,12 @@ public class FavoriteManager {
         }
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
-            protected void onDeleteComplete(int token, Object cookie, int result) {
-                super.onDeleteComplete(token, cookie, result);
-                if (cookie == null || itemId == null) {
-                    return;
-                }
-
-                if (cookie.equals(itemId)) {
-                    broadcastManager.sendBroadcast(makeRemoveBroadcastIntent(itemId));
-                }
+            void onDeleteComplete() {
+                broadcastManager.sendBroadcast(makeRemoveBroadcastIntent(itemId));
             }
-        }.startDelete(0, itemId, MaterialisticProvider.URI_FAVORITE,
+        }).startDelete(0, itemId, MaterialisticProvider.URI_FAVORITE,
                 MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
                 new String[]{itemId});
     }
@@ -461,4 +425,68 @@ public class FavoriteManager {
         public void onCheckComplete(boolean isFavorite) { }
     }
 
+    private static class FavoriteHandler extends AsyncQueryHandler {
+        private final WeakReference<FavoriteCallback> mCallback;
+
+        public FavoriteHandler(ContentResolver cr, FavoriteCallback callback) {
+            super(cr);
+            mCallback = new WeakReference<>(callback);
+        }
+
+        @Override
+        protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
+            if (cursor == null) {
+                return;
+            }
+            // cookie represents itemId
+            if (cookie != null) {
+                if (mCallback.get() != null) {
+                    mCallback.get().onCheckComplete(cursor.getCount() > 0);
+                }
+            } else {
+                Favorite[] favorites = new Favorite[cursor.getCount()];
+                int count = 0;
+                Cursor favoriteCursor = new Cursor(cursor);
+                boolean any = favoriteCursor.moveToFirst();
+                if (any) {
+                    do {
+                        favorites[count] = favoriteCursor.getFavorite();
+                        count++;
+                    } while (favoriteCursor.moveToNext());
+
+                }
+                if (mCallback.get() != null) {
+                    mCallback.get().onQueryComplete(favorites);
+                }
+            }
+        }
+
+        @Override
+        protected void onInsertComplete(int token, Object cookie, Uri uri) {
+            if (mCallback.get() != null) {
+                mCallback.get().onInsertComplete();
+            }
+        }
+
+        @Override
+        protected void onDeleteComplete(int token, Object cookie, int result) {
+            if (mCallback.get() == null) {
+                return;
+            }
+            // cookie represents itemId
+            if (cookie != null) {
+                mCallback.get().onDeleteComplete();
+            } else {
+                mCallback.get().onClearComplete();
+            }
+        }
+    }
+
+    private static abstract class FavoriteCallback {
+        void onQueryComplete(Favorite[] favorites) {}
+        void onCheckComplete(boolean isFavorite) {}
+        void onInsertComplete() {}
+        void onClearComplete() {}
+        void onDeleteComplete() {}
+    }
 }
