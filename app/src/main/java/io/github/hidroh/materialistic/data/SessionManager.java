@@ -1,13 +1,18 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Data repository for session state
@@ -33,24 +38,15 @@ public class SessionManager {
         if (TextUtils.isEmpty(itemId)) {
             return;
         }
-
         if (callbacks == null) {
             return;
         }
-
-        new AsyncQueryHandler(context.getContentResolver()) {
+        new SessionHandler(context.getContentResolver(), itemId, new SessionCallback() {
             @Override
-            protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
-                super.onQueryComplete(token, cookie, cursor);
-                if (cookie == null) {
-                    return;
-                }
-
-                if (itemId.equals(cookie)) {
-                    callbacks.onCheckComplete(cursor.getCount() > 0);
-                }
+            public void onQueryComplete(boolean isViewed) {
+                callbacks.onCheckComplete(isViewed);
             }
-        }.startQuery(0, itemId, MaterialisticProvider.URI_VIEWED, null,
+        }).startQuery(0, itemId, MaterialisticProvider.URI_VIEWED, null,
                 MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID + " = ?",
                 new String[]{itemId}, null);
     }
@@ -64,23 +60,17 @@ public class SessionManager {
         if (TextUtils.isEmpty(itemId)) {
             return;
         }
-
-        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
         final ContentValues contentValues = new ContentValues();
         contentValues.put(MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID, itemId);
-        new AsyncQueryHandler(context.getContentResolver()) {
+        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
+        new SessionHandler(context.getContentResolver(), itemId, new SessionCallback() {
             @Override
-            protected void onInsertComplete(int token, Object cookie, Uri uri) {
-                super.onInsertComplete(token, cookie, uri);
-                if (cookie == null || itemId == null) {
-                    return;
-                }
-
-                if (cookie.equals(itemId)) {
-                    broadcastManager.sendBroadcast(makeAddBroadcastIntent(itemId));
-                }
+            public void onInsertComplete() {
+                final Intent intent = new Intent(ACTION_ADD);
+                intent.putExtra(ACTION_ADD_EXTRA_DATA, itemId);
+                broadcastManager.sendBroadcast(intent);
             }
-        }.startInsert(0, itemId, MaterialisticProvider.URI_VIEWED, contentValues);
+        }).startInsert(0, itemId, MaterialisticProvider.URI_VIEWED, contentValues);
     }
 
     /**
@@ -89,12 +79,6 @@ public class SessionManager {
      */
     public static IntentFilter makeAddIntentFilter() {
         return new IntentFilter(ACTION_ADD);
-    }
-
-    private static Intent makeAddBroadcastIntent(String itemId) {
-        final Intent intent = new Intent(ACTION_ADD);
-        intent.putExtra(ACTION_ADD_EXTRA_DATA, itemId);
-        return intent;
     }
 
     /**
@@ -108,4 +92,48 @@ public class SessionManager {
         public void onCheckComplete(boolean isViewed) { }
     }
 
+    private static class SessionHandler extends AsyncQueryHandler {
+        private final String mItemId;
+        private final WeakReference<SessionCallback> mCallback;
+
+        public SessionHandler(ContentResolver cr, @NonNull String itemId,
+                              @NonNull SessionCallback callback) {
+            super(cr);
+            mItemId = itemId;
+            mCallback = new WeakReference<>(callback);
+        }
+
+        @Override
+        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+            super.onQueryComplete(token, cookie, cursor);
+            if (cookie == null) {
+                return;
+            }
+            if (mCallback.get() == null) {
+                return;
+            }
+            if (cookie.equals(mItemId)) {
+                mCallback.get().onQueryComplete(cursor.getCount() > 0);
+            }
+        }
+
+        @Override
+        protected void onInsertComplete(int token, Object cookie, Uri uri) {
+            super.onInsertComplete(token, cookie, uri);
+            if (cookie == null) {
+                return;
+            }
+            if (mCallback.get() == null) {
+                return;
+            }
+            if (cookie.equals(mItemId)) {
+                mCallback.get().onInsertComplete();
+            }
+        }
+    }
+
+    private static abstract class SessionCallback {
+        void onQueryComplete(boolean isViewed) {}
+        void onInsertComplete() {}
+    }
 }

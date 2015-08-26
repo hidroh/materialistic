@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 public class MaterialisticProvider extends ContentProvider {
@@ -25,7 +26,7 @@ public class MaterialisticProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         if (URI_FAVORITE.equals(uri)) {
             return db.query(FavoriteEntry.TABLE_NAME, projection,
@@ -43,7 +44,7 @@ public class MaterialisticProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         if (URI_FAVORITE.equals(uri)) {
             return FavoriteEntry.MIME_TYPE;
         } else if (URI_VIEWED.equals(uri)) {
@@ -53,7 +54,7 @@ public class MaterialisticProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         if (URI_FAVORITE.equals(uri)) {
             int updated = update(uri, values, FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
@@ -79,7 +80,7 @@ public class MaterialisticProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String table = null;
         if (URI_FAVORITE.equals(uri)) {
@@ -96,7 +97,7 @@ public class MaterialisticProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String table = null;
         if (URI_FAVORITE.equals(uri)) {
