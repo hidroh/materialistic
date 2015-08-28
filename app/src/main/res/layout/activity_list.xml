@@ -3,13 +3,24 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <include layout="@layout/list"
         android:id="@android:id/list" />
-    <RelativeLayout
+    <ViewSwitcher
         android:id="@id/content"
+        android:inAnimation="@anim/slide_in_right"
+        android:outAnimation="@anim/slide_out_right"
         android:elevation="8dp"
         android:background="?attr/themedPanelBackgroundColor"
         android:layout_toRightOf="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/first"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <FrameLayout
+            android:id="@+id/second"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ViewSwitcher>
     <TextView
         android:id="@id/empty"
         android:elevation="8dp"
