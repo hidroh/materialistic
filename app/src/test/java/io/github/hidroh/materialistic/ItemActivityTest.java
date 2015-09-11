@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
@@ -39,6 +40,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
+// TODO switch to API 21 once ShareActionProvider is fixed
+@Config(sdk = 19)
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -179,7 +182,8 @@ public class ItemActivityTest {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
-                new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com")),
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(String.format(HackerNewsClient.WEB_ITEM_PATH, "1"))),
                 ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
                         WebActivity.class.getName()));
         Intent intent = new Intent();
@@ -191,8 +195,8 @@ public class ItemActivityTest {
             }
 
             @Override
-            public String getUrl() {
-                return "http://example.com";
+            public String getId() {
+                return "1";
             }
         });
         controller.withIntent(intent).create().start().resume().visible();

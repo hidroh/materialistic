@@ -14,9 +14,4 @@
         android:id="@id/menu_external"
         android:title="@string/view_in_browser"
         app:showAsAction="never" />
-    <item
-        android:id="@id/menu_share"
-        android:title="@string/share_via"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="never" />
 </menu>
