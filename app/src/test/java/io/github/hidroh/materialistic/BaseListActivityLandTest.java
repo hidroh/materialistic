@@ -97,7 +97,9 @@ public class BaseListActivityLandTest {
                 return "1";
             }
         }, new View(activity));
-        assertCommentMode();
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
+        assertThat(activity.findViewById(R.id.first)).isVisible(); // comment is now default view
     }
 
     @Test
@@ -157,19 +159,13 @@ public class BaseListActivityLandTest {
     private void assertCommentMode() {
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
-        assertThat(activity.getSupportFragmentManager()
-                .findFragmentByTag(ItemFragment.class.getName())).isVisible();
-        assertThat(activity.getSupportFragmentManager()
-                .findFragmentByTag(WebFragment.class.getName())).isNotVisible();
+        assertThat(activity.findViewById(R.id.second)).isVisible(); // story is default view
     }
 
     private void assertStoryMode() {
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
-        assertThat(activity.getSupportFragmentManager()
-                .findFragmentByTag(WebFragment.class.getName())).isVisible();
-        assertThat(activity.getSupportFragmentManager()
-                .findFragmentByTag(ItemFragment.class.getName())).isNotVisible();
+        assertThat(activity.findViewById(R.id.first)).isVisible(); // story is default view
     }
 
     @After
