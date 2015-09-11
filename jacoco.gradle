@@ -3,7 +3,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 
 def jacocoDaggerMap = [:]
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebug']) {
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     reports {
         xml.enabled true
         csv.enabled false
@@ -26,7 +26,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebug']) {
                     '**/AlertDialogBuilder$Impl.class'
             ])
     sourceDirectories = files android.sourceSets.main.java.srcDirs
-    executionData = files "${buildDir}/jacoco/testDebug.exec"
+    executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
 
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
     // We iterate through the compiled .class tree and rename $$ to $.
