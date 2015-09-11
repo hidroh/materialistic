@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -123,20 +121,6 @@ public abstract class BaseActivity extends InjectableActivity {
 
     protected void closeDrawers() {
         mDrawerLayout.closeDrawers();
-    }
-
-    /**
-     * Removes fragment with given tag if any
-     * @param transaction   fragment transaction
-     * @param tag           tag of fragment to be removed
-     * @return  fragment transaction
-     */
-    protected FragmentTransaction removeFragment(FragmentTransaction transaction, String tag) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-        if (fragment != null) {
-            transaction.remove(fragment);
-        }
-        return transaction;
     }
 
     /**

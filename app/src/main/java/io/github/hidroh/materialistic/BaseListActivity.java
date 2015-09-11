@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
@@ -15,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -25,12 +25,11 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
 
     private static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() + ".LIST_FRAGMENT_TAG";
     private boolean mIsMultiPane;
-    private WebFragment mWebFragment;
-    private ItemFragment mItemFragment;
-    private boolean mIsStoryMode = true;
     private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
     private boolean mDefaultOpenComments;
+    private boolean mStoryMode;
+    private ViewSwitcher mViewSwitcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +39,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         super.onCreate(savedInstanceState);
         setTitle(getDefaultTitle());
         setContentView(R.layout.activity_list);
+        mViewSwitcher = (ViewSwitcher) findViewById(R.id.content);
         onCreateView();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -59,6 +59,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     protected void onResume() {
         super.onResume();
         mDefaultOpenComments = Preferences.isDefaultOpenComments(this);
+        mStoryMode = !mDefaultOpenComments;
     }
 
     @Override
@@ -90,8 +91,8 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
             return super.onPrepareOptionsMenu(menu);
         }
 
-        menu.findItem(R.id.menu_comment).setVisible(mIsStoryMode && isItemOptionsMenuVisible());
-        menu.findItem(R.id.menu_story).setVisible(!mIsStoryMode && isItemOptionsMenuVisible());
+        menu.findItem(R.id.menu_comment).setVisible(isItemOptionsMenuVisible() && mStoryMode);
+        menu.findItem(R.id.menu_story).setVisible(isItemOptionsMenuVisible() && !mStoryMode);
         menu.findItem(R.id.menu_share).setVisible(isItemOptionsMenuVisible());
         if (mSelectedItem != null && mSelectedItem.isShareable()) {
             ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
@@ -106,13 +107,11 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_comment) {
-            openComment(beginToggleFragmentTransaction());
-            return true;
-        }
-
-        if (item.getItemId() == R.id.menu_story) {
-            openStory(beginToggleFragmentTransaction());
+        if (item.getItemId() == R.id.menu_comment ||
+                item.getItemId() == R.id.menu_story) {
+            mStoryMode = !mStoryMode;
+            mViewSwitcher.showNext();
+            supportInvalidateOptionsMenu();
             return true;
         }
 
@@ -128,6 +127,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         mSelectedItem = item;
         if (mIsMultiPane) {
             handleMultiPaneItemSelected(item);
+            mStoryMode = !mDefaultOpenComments;
         } else {
             if (mDefaultOpenComments) {
                 openItem(item, sharedElement);
@@ -143,10 +143,6 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         mSelectedItem = null;
         if (mIsMultiPane) {
             setTitle(getDefaultTitle());
-            FragmentTransaction transaction = beginSwapFragmentTransaction();
-            removeFragment(transaction, WebFragment.class.getName());
-            removeFragment(transaction, ItemFragment.class.getName());
-            transaction.commit();
             findViewById(R.id.empty).setVisibility(View.VISIBLE);
         }
         supportInvalidateOptionsMenu();
@@ -168,13 +164,13 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
 
     /**
      * Gets default title to be displayed in list-only layout
-     * @return
+     * @return displayed title
      */
     protected abstract String getDefaultTitle();
 
     /**
      * Creates list fragment to host list data
-     * @return
+     * @return list fragment
      */
     protected abstract Fragment instantiateListFragment();
 
@@ -221,19 +217,18 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     private void handleMultiPaneItemSelected(ItemManager.WebItem item) {
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
-        mWebFragment = WebFragment.instantiate(this, item);
-        mItemFragment = ItemFragment.instantiate(this, item, null);
-        FragmentTransaction transaction = beginSwapFragmentTransaction();
-        removeFragment(transaction, WebFragment.class.getName());
-        removeFragment(transaction, ItemFragment.class.getName());
-        transaction
-                .add(R.id.content, mItemFragment, ItemFragment.class.getName())
-                .add(R.id.content, mWebFragment, WebFragment.class.getName());
-        if (mDefaultOpenComments) {
-            openComment(transaction);
-        } else {
-            openStory(transaction);
-        }
+        mViewSwitcher.reset();
+        mViewSwitcher.setAnimateFirstView(false);
+        mViewSwitcher.setDisplayedChild(0);
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(mDefaultOpenComments ? R.id.first : R.id.second,
+                        ItemFragment.instantiate(this, item, null),
+                        ItemFragment.class.getName())
+                .replace(mDefaultOpenComments ? R.id.second : R.id.first,
+                        WebFragment.instantiate(this, item),
+                        WebFragment.class.getName())
+                .commit();
     }
 
     private void openItem(ItemManager.WebItem item, View sharedElement) {
@@ -243,29 +238,5 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
                 .makeSceneTransitionAnimation(this,
                         sharedElement, getString(R.string.transition_item_container));
         ActivityCompat.startActivity(this, intent, options.toBundle());
-    }
-
-    private void openStory(FragmentTransaction transaction) {
-        transaction.hide(mItemFragment).show(mWebFragment).commit();
-        mIsStoryMode = true;
-        supportInvalidateOptionsMenu();
-    }
-
-    private void openComment(FragmentTransaction transaction) {
-        transaction.hide(mWebFragment).show(mItemFragment).commit();
-        mIsStoryMode = false;
-        supportInvalidateOptionsMenu();
-    }
-
-    private FragmentTransaction beginSwapFragmentTransaction() {
-        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        return transaction;
-    }
-
-    private FragmentTransaction beginToggleFragmentTransaction() {
-        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right);
-        return transaction;
     }
 }
