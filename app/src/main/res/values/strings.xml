@@ -14,7 +14,7 @@
     <string name="view_in_browser">View in external browser</string>
     <string name="share_format" formatted="false">%s - %s (via Materialistic)</string>
     <string name="favorite_email_subject">Your Materialistic saved stories</string>
-    <string name="share_via">Share this story via</string>
+    <string name="share">Share</string>
     <string name="title_activity_about">About</string>
     <string name="license_title">License</string>
     <string name="license_text">

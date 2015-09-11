@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemActivity extends BaseItemActivity implements ItemObserver {
@@ -94,18 +97,29 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_item, menu);
+        getMenuInflater().inflate(R.menu.menu_share, menu);
+        if (mItem != null) {
+            ((ShareActionProvider) MenuItemCompat.getActionProvider(
+                    menu.findItem(R.id.menu_share)))
+                    .setShareIntent(AppUtils.makeShareIntent(
+                            getString(R.string.share_format,
+                                    mItem.getDisplayedTitle(),
+                                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()))));
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.menu_share).setVisible(mItem != null);
         return mItem != null;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this, mItem.getUrl());
+            AppUtils.openWebUrlExternal(this,
+                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
             return true;
         }
 

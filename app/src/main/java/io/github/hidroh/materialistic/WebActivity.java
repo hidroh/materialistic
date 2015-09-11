@@ -26,7 +26,7 @@ public class WebActivity extends BaseItemActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mItem = getIntent().getParcelableExtra(EXTRA_ITEM);
-        if (mItem.getType() == ItemManager.Item.COMMENT_TYPE) {
+        if (mItem.getType().equals(ItemManager.Item.COMMENT_TYPE)) {
             setTitle(null);
         } else {
             setTitle(mItem.getDisplayedTitle());
@@ -44,6 +44,7 @@ public class WebActivity extends BaseItemActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_web, menu);
+        getMenuInflater().inflate(R.menu.menu_share, menu);
         ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
                 menu.findItem(R.id.menu_share));
         shareActionProvider.setShareIntent(AppUtils.makeShareIntent(
