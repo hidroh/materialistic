@@ -9,6 +9,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -355,6 +356,8 @@ public class ListFragment extends BaseFragment {
                 holder.mCommentButton.setVisibility(View.GONE);
             }
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                private boolean mUndo;
+
                 @Override
                 public boolean onLongClick(View v) {
                     final int toastMessageResId;
@@ -365,9 +368,20 @@ public class ListFragment extends BaseFragment {
                         mFavoriteManager.remove(getActivity(), story.getId());
                         toastMessageResId = R.string.toast_removed;
                     }
-                    Toast.makeText(getActivity(), toastMessageResId, Toast.LENGTH_SHORT).show();
+                    if (!mUndo) {
+                        Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
+                                .setAction(R.string.undo, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mUndo = true;
+                                        holder.itemView.performLongClick();
+                                    }
+                                })
+                                .show();
+                    }
                     story.setFavorite(!story.isFavorite());
                     decorateFavorite(holder, story);
+                    mUndo = false;
                     return true;
                 }
             });

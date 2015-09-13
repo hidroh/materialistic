@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import org.assertj.android.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +33,7 @@ import io.github.hidroh.materialistic.test.TestItemManager;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -88,10 +88,10 @@ public class ListFragmentViewHolderTest {
     @Test
     public void testStory() {
         adapter.bindViewHolder(holder, 0);
-        Assertions.assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
+        assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         assertNotViewed();
-        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
-        Assertions.assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
+        assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
+        assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
         verify(sessionManager).isViewed(any(Context.class), anyString(), sessionCallbacks.capture());
         sessionCallbacks.getValue().onCheckComplete(true);
         assertViewed();
@@ -102,7 +102,7 @@ public class ListFragmentViewHolderTest {
         item.kidCount = 1;
         adapter.bindViewHolder(holder, 0);
         View commentButton = holder.itemView.findViewById(R.id.comment);
-        Assertions.assertThat(commentButton).isVisible();
+        assertThat(commentButton).isVisible();
         commentButton.performClick();
         verify(activity.multiPaneListener, never()).onItemSelected(any(ItemManager.WebItem.class),
                 any(View.class));
@@ -173,7 +173,10 @@ public class ListFragmentViewHolderTest {
         holder.itemView.performLongClick();
         verify(favoriteManager).add(any(Context.class), eq(item));
         assertTrue(item.isFavorite());
-        holder.itemView.performLongClick();
+        assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+                .isNotNull()
+                .containsText(R.string.toast_saved);
+        activity.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
         assertFalse(item.isFavorite());
     }
@@ -184,12 +187,12 @@ public class ListFragmentViewHolderTest {
     }
 
     private void assertViewed() {
-        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title))
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
                 .hasCurrentTextColor(activity.getResources().getColor(R.color.textColorSecondaryInverse));
     }
 
     private void assertNotViewed() {
-        Assertions.assertThat((TextView) holder.itemView.findViewById(R.id.title))
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
                 .hasCurrentTextColor(activity.getResources().getColor(R.color.textColorPrimaryInverse));
     }
 

@@ -2,11 +2,12 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,7 @@ public class WebActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
     private boolean mIsFavorite;
+    private boolean mUndo;
     private int mFavoriteOnResId;
     private int mFavoriteOffResId;
     @Inject FavoriteManager mFavoriteManager;
@@ -91,7 +93,7 @@ public class WebActivity extends BaseItemActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
             AppUtils.openWebUrlExternal(this, mItem.getUrl());
             return true;
@@ -114,12 +116,23 @@ public class WebActivity extends BaseItemActivity {
                 mFavoriteManager.remove(this, mItem.getId());
                 toastMessageResId = R.string.toast_removed;
             }
-            Toast.makeText(this, toastMessageResId, Toast.LENGTH_SHORT).show();
+            if (!mUndo) {
+                Snackbar.make(findViewById(android.R.id.content), toastMessageResId,
+                        Snackbar.LENGTH_SHORT)
+                        .setAction(R.string.undo, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mUndo = true;
+                                onOptionsItemSelected(item);
+                            }
+                        })
+                        .show();
+            }
             toggleFavorite(item);
+            mUndo = false;
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
 }

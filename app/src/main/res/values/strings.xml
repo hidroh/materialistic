@@ -115,5 +115,6 @@
             %s <a href="#">in response to %s</a>
         ]]>
     </string>
+    <string name="undo">Undo</string>
 
 </resources>
