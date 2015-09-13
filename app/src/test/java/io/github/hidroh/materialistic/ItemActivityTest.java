@@ -231,6 +231,11 @@ public class ItemActivityTest {
         assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
         activity.findViewById(R.id.header_card_view).performLongClick();
         assertThat(activity.findViewById(R.id.bookmarked)).isNotVisible();
+        assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+                .isNotNull()
+                .containsText(R.string.toast_removed);
+        activity.findViewById(R.id.snackbar_action).performClick();
+        assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
     }
 
     @Test

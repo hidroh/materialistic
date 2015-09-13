@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.assertj.core.api.Assertions;
 import org.junit.After;
@@ -51,7 +52,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowWebView.class})
+// TODO switch to API 21 once ShareActionProvider is fixed
+@Config(shadows = {ShadowWebView.class}, sdk = 19)
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebActivityTest {
     private WebActivity activity;
@@ -147,7 +149,10 @@ public class WebActivityTest {
         verify(favoriteManager).remove(any(Context.class), anyString());
         assertThat(menuFavorite).isVisible().hasTitle(activity.getString(R.string.save_story));
 
-        activity.onOptionsItemSelected(menuFavorite);
+        assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+                .isNotNull()
+                .containsText(R.string.toast_removed);
+        activity.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).add(any(Context.class), any(ItemManager.WebItem.class));
         assertThat(menuFavorite).isVisible().hasTitle(activity.getString(R.string.unsave_story));
     }

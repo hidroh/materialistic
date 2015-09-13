@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -174,6 +174,8 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                 decorateFavorite(isFavorite);
                 mItem.setFavorite(isFavorite);
                 mHeaderCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                    private boolean mUndo;
+
                     @Override
                     public boolean onLongClick(View v) {
                         final int toastMessageResId;
@@ -184,9 +186,20 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                             mFavoriteManager.remove(ItemActivity.this, mItem.getId());
                             toastMessageResId = R.string.toast_removed;
                         }
-                        Toast.makeText(ItemActivity.this, toastMessageResId, Toast.LENGTH_SHORT).show();
+                        if (!mUndo) {
+                            Snackbar.make(v, toastMessageResId, Snackbar.LENGTH_SHORT)
+                                    .setAction(R.string.undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            mUndo = true;
+                                            mHeaderCardView.performLongClick();
+                                        }
+                                    })
+                                    .show();
+                        }
                         mItem.setFavorite(!mItem.isFavorite());
                         decorateFavorite(mItem.isFavorite());
+                        mUndo = false;
                         return true;
                     }
                 });
