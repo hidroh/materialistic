@@ -116,5 +116,6 @@
         ]]>
     </string>
     <string name="undo">Undo</string>
+    <string name="score">%s pts</string>
 
 </resources>

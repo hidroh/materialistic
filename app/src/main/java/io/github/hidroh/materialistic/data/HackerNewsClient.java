@@ -186,6 +186,7 @@ public class HackerNewsClient implements ItemManager {
             type = source.readString();
             favorite = source.readInt() != 0;
             descendants = source.readInt();
+            score = source.readInt();
         }
 
         @Override
@@ -201,6 +202,7 @@ public class HackerNewsClient implements ItemManager {
             parent = Long.parseLong(info.getParent());
             deleted = info.isDeleted();
             dead = info.isDead();
+            score = info.getScore();
         }
 
         @Override
@@ -245,6 +247,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeString(type);
             dest.writeInt(favorite ? 1 : 0);
             dest.writeInt(descendants);
+            dest.writeInt(score);
         }
 
         @Override
@@ -414,6 +417,11 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public boolean isDead() {
             return dead;
+        }
+
+        @Override
+        public int getScore() {
+            return score;
         }
     }
 }
