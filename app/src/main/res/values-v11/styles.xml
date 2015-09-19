@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppCardView" parent="BaseAppCardView">
-        <item name="android:foreground">?android:attr/selectableItemBackground</item>
-    </style>
-
     <style name="FlatCardView.Header">
         <item name="android:background">?attr/themedHeaderCardDrawable</item>
         <item name="android:foreground">?android:attr/selectableItemBackground</item>
