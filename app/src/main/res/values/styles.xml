@@ -269,16 +269,6 @@
     <!-- =========== -->
     <!-- Card styles -->
     <!-- =========== -->
-    <style name="BaseAppCardView">
-        <item name="cardBackgroundColor">?attr/themedCardBackgroundColor</item>
-        <item name="cardUseCompatPadding">true</item>
-        <item name="cardPreventCornerOverlap">false</item>
-        <item name="cardElevation">@dimen/cardview_default_elevation</item>
-        <item name="cardCornerRadius">@dimen/cardview_default_radius</item>
-    </style>
-    <style name="AppCardView" parent="BaseAppCardView">
-        <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
-    </style>
     <style name="BaseFlatCardView">
         <item name="android:paddingTop">@dimen/padding</item>
         <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
