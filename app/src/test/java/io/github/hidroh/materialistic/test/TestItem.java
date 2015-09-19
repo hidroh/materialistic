@@ -161,4 +161,9 @@ public abstract class TestItem implements ItemManager.Item {
     public boolean isDeleted() {
         return false;
     }
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

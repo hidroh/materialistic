@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
@@ -21,35 +22,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tint="@color/colorPrimary" />
-        <TextView
-            android:id="@id/rank"
-            android:text="46"
-            style="@style/textRankStyle"
-            android:layout_width="@dimen/min_cardview_height"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/rank_container"
+            android:orientation="vertical"
+            android:gravity="center|center_vertical"
             android:layout_alignParentLeft="true"
-            android:layout_centerInParent="true"/>
+            android:layout_alignTop="@id/title"
+            android:layout_alignBottom="@id/meta_container"
+            android:layout_width="@dimen/min_cardview_height"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@id/rank"
+                tools:text="46"
+                style="@style/textRankStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@id/score"
+                tools:text="128 pts"
+                style="@style/textSubtitleStyle"
+                android:singleLine="false"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
         <TextView
             android:id="@id/title"
-            android:text="A lil' bit of programming that matters"
+            tools:text="A lil' bit of programming that matters"
             style="@style/textTitleStyle"
-            android:layout_toRightOf="@id/rank"
+            android:layout_toRightOf="@id/rank_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <RelativeLayout
             android:id="@+id/meta_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/rank"
+            android:layout_toRightOf="@id/rank_container"
             android:layout_below="@id/title">
             <TextView
                 android:id="@id/source"
-                android:text="hidroh.github.io"
+                tools:text="hidroh.github.io"
                 style="@style/textSubtitleStyle.Italic"
                 android:layout_toLeftOf="@id/comment" />
             <TextView
                 android:id="@id/posted"
-                android:text="Since January 01, 2015"
+                tools:text="Since January 01, 2015"
                 style="@style/textSubtitleStyle"
                 android:singleLine="false"
                 android:paddingBottom="@dimen/padding"

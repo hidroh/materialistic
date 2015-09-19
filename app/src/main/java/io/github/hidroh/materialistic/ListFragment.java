@@ -229,10 +229,12 @@ public class ListFragment extends BaseFragment {
         private final View mBookmarked;
         private final TextView mCommentText;
         private final TextView mRankTextView;
+        private final TextView mScoreTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mRankTextView = (TextView) itemView.findViewById(R.id.rank);
+            mScoreTextView = (TextView) itemView.findViewById(R.id.score);
             mBookmarked = itemView.findViewById(R.id.bookmarked);
             mCommentText = (TextView) mCommentButton.findViewById(R.id.text);
         }
@@ -349,6 +351,7 @@ public class ListFragment extends BaseFragment {
 
         protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
             super.bindViewHolder(holder, story);
+            holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
                 holder.mCommentText.setText(String.valueOf(story.getKidCount()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);

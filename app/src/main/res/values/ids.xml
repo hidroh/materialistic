@@ -19,6 +19,7 @@
     <item type="id" name="header_card_view" />
     <item type="id" name="item_view" />
     <item type="id" name="sub_item_view" />
+    <item type="id" name="score" />
 
     <!-- drawer -->
     <item type="id" name="drawer_layout" />

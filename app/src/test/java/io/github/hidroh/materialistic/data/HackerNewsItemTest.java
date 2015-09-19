@@ -108,6 +108,11 @@ public class HackerNewsItemTest {
             public int getDescendants() {
                 return 1;
             }
+
+            @Override
+            public int getScore() {
+                return 5;
+            }
         });
         assertEquals("title", item.getTitle());
         assertEquals("text", item.getText());
@@ -117,6 +122,7 @@ public class HackerNewsItemTest {
         assertEquals("1", item.getParent());
         assertEquals(1234l, item.getTime());
         assertEquals(1, item.getDescendants());
+        assertEquals(5, item.getScore());
         assertTrue(item.isDead());
         assertTrue(item.isDeleted());
         assertThat(item.getDisplayedTime(RuntimeEnvironment.application)).doesNotContain("by");

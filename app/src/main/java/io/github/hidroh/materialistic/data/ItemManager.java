@@ -210,6 +210,12 @@ public interface ItemManager {
          * @return true if dead, false otherwise
          */
         boolean isDead();
+
+        /**
+         * Get item's score
+         * @return item's score
+         */
+        int getScore();
     }
 
     /**
