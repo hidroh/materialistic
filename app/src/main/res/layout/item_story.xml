@@ -10,6 +10,7 @@
         android:id="@+id/rank_container"
         android:orientation="vertical"
         android:background="?attr/themedCardHighlightColor"
+        android:layout_gravity="center_vertical"
         android:gravity="center|center_vertical"
         android:layout_width="@dimen/min_cardview_height"
         android:layout_height="match_parent">
@@ -37,11 +38,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:tint="@color/colorPrimary" />
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/meta_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/min_cardview_height">
+        android:paddingLeft="@dimen/min_cardview_height"
+        android:paddingRight="56dp">
         <TextView
             android:id="@id/title"
             tools:text="A lil' bit of programming that matters"
@@ -51,24 +54,18 @@
         <TextView
             android:id="@id/source"
             tools:text="hidroh.github.io"
-            style="@style/textSubtitleStyle.Italic"
-            android:layout_below="@id/title"
-            android:layout_toLeftOf="@id/comment" />
+            style="@style/textSubtitleStyle.Italic" />
         <TextView
             android:id="@id/posted"
             tools:text="Since January 01, 2015"
             style="@style/textSubtitleStyle"
             android:singleLine="false"
-            android:paddingBottom="@dimen/padding"
-            android:layout_toLeftOf="@id/comment"
-            android:layout_below="@id/source" />
-        <include layout="@layout/button_comment"
-            android:id="@id/comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/title"
-            android:layout_marginRight="@dimen/margin" />
-    </RelativeLayout>
+            android:paddingBottom="@dimen/padding" />
+    </LinearLayout>
+    <include layout="@layout/button_comment"
+        android:id="@id/comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="@dimen/margin" />
 </FrameLayout>

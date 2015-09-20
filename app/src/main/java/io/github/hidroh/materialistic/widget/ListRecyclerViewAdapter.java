@@ -131,7 +131,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
 
     private void decorateCardSelection(ItemViewHolder holder, String itemId) {
         holder.itemView.setBackgroundColor(isSelected(itemId) ?
-                        mCardHighlightColorResId : mCardBackgroundColorResId);
+                mCardHighlightColorResId : mCardBackgroundColorResId);
     }
 
     private void openItem(T item, View sharedElement) {
