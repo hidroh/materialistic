@@ -108,13 +108,13 @@ public class SinglePageItemRecyclerViewAdapter
             holder.itemView.setLayoutParams(params);
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_less_grey600_24dp, 0);
-            holder.mToggle.setText(mContext.getString(R.string.hide_replies, item.getKidCount()));
+            holder.mToggle.setText(mContext.getString(R.string.hide_comments, item.getKidCount()));
         } else {
             params.bottomMargin = mDefaultItemVerticalMargin;
             holder.itemView.setLayoutParams(params);
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_more_grey600_24dp, 0);
-            holder.mToggle.setText(mContext.getString(R.string.show_replies, item.getKidCount()));
+            holder.mToggle.setText(mContext.getString(R.string.show_comments, item.getKidCount()));
         }
         holder.mToggle.setOnClickListener(new View.OnClickListener() {
             @Override
