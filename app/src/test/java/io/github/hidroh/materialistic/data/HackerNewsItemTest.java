@@ -209,7 +209,7 @@ public class HackerNewsItemTest {
             }
         });
         assertThat(item.getDisplayedTime(RuntimeEnvironment.application))
-                .contains("by author");
+                .contains("author");
     }
 
     @Test

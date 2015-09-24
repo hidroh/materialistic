@@ -63,7 +63,7 @@
     <string name="clear_all">Clear all</string>
     <string name="toast_removed">Story unsaved</string>
     <string name="no_saved_stories">No saved stories so far.\nLong press one to save it for later!</string>
-    <string name="no_comments">No replies found for this item</string>
+    <string name="no_comments">No comments found for this item</string>
     <string name="confirm_clear">Clear all saved stories?</string>
     <string name="email">Export via email</string>
     <string name="preparing">Preparing...</string>
@@ -108,14 +108,15 @@
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
     <string name="title_activity_item_count" formatted="false">Comments (%s)</string>
-    <string name="hide_replies" formatted="false">Hide replies (%s)</string>
-    <string name="show_replies" formatted="false">Show replies (%s)</string>
+    <string name="hide_comments" formatted="false">Hide comments (%s)</string>
+    <string name="show_comments" formatted="false">Show comments (%s)</string>
     <string name="posted_reply" formatted="false">
         <![CDATA[
             %s <a href="#">in response to %s</a>
         ]]>
     </string>
     <string name="undo">Undo</string>
-    <string name="score">%s pts</string>
+    <string name="score" formatted="false">%s pts</string>
+    <string name="comments" formatted="false">%s Comments</string>
 
 </resources>
