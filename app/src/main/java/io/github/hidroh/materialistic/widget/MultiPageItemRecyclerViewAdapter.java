@@ -45,7 +45,7 @@ public class MultiPageItemRecyclerViewAdapter
             holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
             AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
             if (item.getKidCount() > 0) {
-                holder.mCommentText.setText(String.valueOf(item.getKidCount()));
+                holder.mCommentText.setText(mContext.getString(R.string.comments, item.getKidCount()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
                 holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                     @Override

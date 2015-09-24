@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding"
+    android:paddingBottom="@dimen/padding"
     android:layout_marginBottom="@dimen/margin"
     style="@style/FlatCardView">
     <TextView
         android:id="@id/posted"
+        tools:text="2 days ago"
         android:text="@string/loading_text"
         style="@style/textSubtitleStyle.Italic"
         android:singleLine="false"
-        android:gravity="center_vertical"
-        android:layout_toLeftOf="@id/comment"
-        android:layout_alignTop="@id/comment"
-        android:layout_alignBottom="@id/comment"
-        android:layout_alignParentTop="true" />
+        android:gravity="center_vertical" />
     <TextView
         android:id="@id/text"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         android:padding="@dimen/padding"
         android:text="@string/loading_text"
         style="@style/textContentStyle"
-        android:layout_below="@id/posted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <TextView
@@ -27,12 +28,11 @@
         android:visibility="gone"
         style="@style/textSubtitleStyle"
         android:background="?attr/selectableItemBackground"
-        android:gravity="center_vertical|center"
-        android:layout_below="@id/text" />
+        android:gravity="center_vertical|center" />
     <include layout="@layout/button_comment"
         android:id="@id/comment"
-        android:layout_width="@dimen/comment_button_small_size"
-        android:layout_height="@dimen/comment_button_small_size"
-        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:layout_marginRight="@dimen/margin" />
-</RelativeLayout>
+</LinearLayout>

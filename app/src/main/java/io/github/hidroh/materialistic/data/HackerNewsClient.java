@@ -283,10 +283,10 @@ public class HackerNewsClient implements ItemManager {
         public Spannable getDisplayedTime(Context context) {
             CharSequence relativeTime = "";
             try {
-                relativeTime = DateUtils.getRelativeDateTimeString(context, time * 1000,
+                relativeTime = DateUtils.getRelativeTimeSpanString(time * 1000,
+                        System.currentTimeMillis(),
                                 DateUtils.MINUTE_IN_MILLIS,
-                                DateUtils.YEAR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_MONTH);
+                                DateUtils.FORMAT_ABBREV_ALL);
             } catch (NullPointerException e) {
                 // TODO should properly prevent this
             }
@@ -297,7 +297,7 @@ public class HackerNewsClient implements ItemManager {
                 return spannable;
             }
 
-            return new SpannableString(String.format("%s by %s", relativeTime, by));
+            return new SpannableString(String.format("%s - %s", relativeTime, by));
         }
 
         @Override

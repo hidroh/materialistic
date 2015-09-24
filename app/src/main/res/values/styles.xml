@@ -181,7 +181,6 @@
         <item name="android:textSize">?attr/titleTextSize</item>
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:minLines">2</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>

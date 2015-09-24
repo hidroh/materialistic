@@ -3,13 +3,13 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="flat_card_horizontal_margin">8dp</dimen>
+    <dimen name="padding_text">4dp</dimen>
     <dimen name="padding">8dp</dimen>
     <dimen name="margin">8dp</dimen>
-    <dimen name="min_cardview_height">48dp</dimen>
+    <dimen name="min_cardview_height">56dp</dimen>
     <dimen name="cardview_header_margin">8dp</dimen>
     <dimen name="cardview_default_radius">4dp</dimen>
     <dimen name="header_stack_card_height">16dp</dimen>
-    <dimen name="comment_button_default_size">56dp</dimen>
     <dimen name="comment_button_small_size">48dp</dimen>
     <dimen name="level_indicator_width">24dp</dimen>
 </resources>

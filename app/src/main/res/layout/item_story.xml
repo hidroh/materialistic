@@ -11,8 +11,8 @@
         <View
             android:layout_width="@dimen/min_cardview_height"
             android:layout_height="match_parent"
-            android:layout_alignTop="@id/title"
-            android:layout_alignBottom="@+id/meta_container"
+            android:layout_alignTop="@+id/meta_container"
+            android:layout_alignBottom="@id/meta_container"
             android:background="?attr/themedCardHighlightColor" />
         <ImageView
             android:id="@id/bookmarked"
@@ -27,7 +27,7 @@
             android:orientation="vertical"
             android:gravity="center|center_vertical"
             android:layout_alignParentLeft="true"
-            android:layout_alignTop="@id/title"
+            android:layout_alignTop="@id/meta_container"
             android:layout_alignBottom="@id/meta_container"
             android:layout_width="@dimen/min_cardview_height"
             android:layout_height="wrap_content">
@@ -46,39 +46,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-        <TextView
-            android:id="@id/title"
-            tools:text="A lil' bit of programming that matters"
-            style="@style/textTitleStyle"
-            android:layout_toRightOf="@id/rank_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/meta_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_toRightOf="@id/rank_container"
-            android:layout_below="@id/title">
+            android:paddingTop="@dimen/padding"
+            android:paddingBottom="@dimen/padding">
+            <TextView
+                android:id="@id/title"
+                tools:text="A lil' bit of programming that matters"
+                style="@style/textTitleStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <TextView
                 android:id="@id/source"
                 tools:text="hidroh.github.io"
-                style="@style/textSubtitleStyle.Italic"
-                android:layout_toLeftOf="@id/comment" />
+                style="@style/textSubtitleStyle.Italic" />
             <TextView
                 android:id="@id/posted"
                 tools:text="Since January 01, 2015"
                 style="@style/textSubtitleStyle"
-                android:singleLine="false"
-                android:paddingBottom="@dimen/padding"
-                android:layout_toLeftOf="@id/comment"
-                android:layout_below="@id/source" />
+                android:singleLine="false" />
             <include layout="@layout/button_comment"
                 android:id="@id/comment"
+                android:layout_marginRight="@dimen/padding"
+                android:layout_gravity="right"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/margin" />
-        </RelativeLayout>
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </RelativeLayout>
 </android.support.v7.widget.CardView>

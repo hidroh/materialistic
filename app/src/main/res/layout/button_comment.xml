@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center|center_vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
-    <ImageView
-        android:src="@drawable/ic_mode_comment_grey600_48dp"
-        android:tint="@color/colorAccent"
-        android:layout_width="@dimen/comment_button_default_size"
-        android:layout_height="@dimen/comment_button_default_size" />
     <TextView
         android:id="@id/text"
+        tools:text="128 Comments"
+        android:background="?attr/selectableItemBackground"
         android:text="@string/loading_text"
-        android:textColor="@color/textColorButton"
+        android:textColor="?attr/colorAccent"
+        android:padding="@dimen/padding_text"
         android:layout_centerInParent="true"
         android:gravity="center|center_vertical"
         android:layout_width="wrap_content"
