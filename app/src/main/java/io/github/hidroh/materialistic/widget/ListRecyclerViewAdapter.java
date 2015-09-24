@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -29,10 +30,8 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
-        mCardBackgroundColorResId = mContext.getResources().getColor(
-                AppUtils.getThemedResId(mContext, R.attr.themedCardBackgroundColor));
-        mCardHighlightColorResId = mContext.getResources().getColor(
-                AppUtils.getThemedResId(mContext, R.attr.themedCardHighlightColor));
+        mCardBackgroundColorResId = AppUtils.getThemedResId(mContext, R.attr.themedCardBackgroundColor);
+        mCardHighlightColorResId = AppUtils.getThemedResId(mContext, R.attr.themedCardHighlightColor);
     }
 
     @Override
@@ -130,8 +129,9 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     protected abstract boolean isSelected(String itemId);
 
     private void decorateCardSelection(ItemViewHolder holder, String itemId) {
-        holder.itemView.setBackgroundColor(isSelected(itemId) ?
-                mCardHighlightColorResId : mCardBackgroundColorResId);
+        ((CardView) holder.itemView).setCardBackgroundColor(
+                mContext.getResources().getColor(isSelected(itemId) ?
+                        mCardHighlightColorResId : mCardBackgroundColorResId));
     }
 
     private void openItem(T item, View sharedElement) {

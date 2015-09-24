@@ -17,6 +17,4 @@
     <color name="colorHighlightInverse">#424242</color>
     <color name="colorShadow">#E0E0E0</color>
     <color name="colorShadowInverse">#181818</color>
-    <color name="cardview_dark_background">#FF202020</color>
-    <color name="cardview_light_background">#FFFAFAFA</color>
 </resources>
