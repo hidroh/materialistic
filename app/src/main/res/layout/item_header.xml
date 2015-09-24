@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:transitionName="@string/transition_item_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:id="@id/header_card_view"
+    android:paddingLeft="56dp"
+    android:paddingRight="56dp"
+    android:paddingBottom="@dimen/fab_content_size"
+    tools:background="@color/colorPrimary"
     style="@style/FlatCardView.Header">
     <LinearLayout
         android:orientation="vertical"
@@ -13,32 +18,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@id/posted"
-            android:text="@string/loading_text"
-            android:drawablePadding="@dimen/padding"
-            style="@style/textSubtitleStyle.Italic" />
-        <TextView
             android:id="@android:id/text2"
-            android:paddingLeft="@dimen/padding"
-            android:paddingRight="@dimen/padding"
             android:text="@string/loading_text"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             android:maxLines="@integer/header_max_lines"
-            style="@style/textContentStyle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@id/source"
             android:text="@string/loading_text"
+            tools:text="example.com"
+            tools:visibility="visible"
             android:visibility="gone"
-            style="@style/textSubtitleStyle.Italic" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            android:textColor="?attr/themedTextColorPrimary"
+            android:textStyle="italic" />
+        <TextView
+            android:id="@id/posted"
+            android:text="@string/loading_text"
+            tools:text="2 days ago"
+            android:drawablePadding="@dimen/padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            android:textColor="?attr/themedTextColorPrimary"/>
+        <TextView
+            android:id="@id/comment"
+            tools:text="128 Comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            android:textColor="?attr/themedTextColorPrimary"
+            android:layout_gravity="right" />
     </LinearLayout>
-    <ImageView
-        android:id="@id/bookmarked"
-        android:src="@drawable/ic_bookmark_grey600_24dp"
-        android:visibility="invisible"
-        android:layout_gravity="top|right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:tint="@color/colorPrimary" />
 </FrameLayout>
