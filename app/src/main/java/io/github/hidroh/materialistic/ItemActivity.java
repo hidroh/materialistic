@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +40,6 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     private ImageView mBookmark;
     private TextView mComment;
     private boolean mFavoriteBound;
-    private boolean mIsResumed = true;
     private boolean mOrientationChanged = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
@@ -136,15 +139,8 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        mIsResumed = true;
-    }
-
-    @Override
     protected void onPause() {
         mFavoriteBound = false;
-        mIsResumed = false;
         super.onPause();
     }
 
@@ -268,16 +264,37 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         final Bundle args = new Bundle();
         args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
-        if (mIsResumed) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.sub_item_view,
-                            ItemFragment.instantiate(this, mItem, args),
-                            ItemFragment.class.getName())
-                    .commit();
-        }
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                if (position == 0) {
+                    return ItemFragment.instantiate(ItemActivity.this, mItem, args);
+                } else {
+                    return WebFragment.instantiate(ItemActivity.this, mItem);
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                if (position == 0) {
+                    return getString(R.string.comments, story.getKidCount());
+                } else {
+                    return getString(R.string.article);
+                }
+            }
+        });
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void openWeb(ItemManager.Item item) {

@@ -20,6 +20,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
@@ -67,7 +69,7 @@ public class ItemActivityTest {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM_ID, "1");
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 2);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @NonNull
@@ -123,7 +125,7 @@ public class ItemActivityTest {
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 1);
         intent.setData(Uri.parse("https://news.ycombinator.com/item?id=1"));
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @NonNull
@@ -172,7 +174,7 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         assertThat(activity.findViewById(R.id.source)).isNotVisible();
         assertEquals(R.drawable.ic_poll_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
@@ -201,7 +203,13 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
+
+        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+
         shadowOf(activity).clickMenuItem(R.id.menu_external);
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual).hasAction(Intent.ACTION_VIEW);
@@ -227,7 +235,7 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(true);
         assertEquals(R.drawable.ic_bookmark_white_24dp,
@@ -266,7 +274,7 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(false);
         assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
