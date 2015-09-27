@@ -38,6 +38,7 @@ public class ItemActivity extends BaseItemActivity {
     private boolean mOrientationChanged = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,9 @@ public class ItemActivity extends BaseItemActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final Intent intent = getIntent();
         String itemId = null;
         if (intent.hasExtra(EXTRA_ITEM)) {
@@ -123,8 +127,13 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this,
-                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
+            final String url;
+            if (mTabLayout.getSelectedTabPosition() == 0) {
+                url = String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId());
+            } else {
+                url = mItem.getUrl();
+            }
+            AppUtils.openWebUrlExternal(this, url);
             return true;
         }
 
@@ -262,10 +271,7 @@ public class ItemActivity extends BaseItemActivity {
                 }
             }
         });
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(viewPager);
     }
 
     private void decorateFavorite(boolean isFavorite) {

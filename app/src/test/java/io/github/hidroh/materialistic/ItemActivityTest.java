@@ -177,7 +177,7 @@ public class ItemActivityTest {
     }
 
     @Test
-    public void testOptionExternal() {
+    public void testOptionExternalOpenItem() {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
@@ -205,6 +205,51 @@ public class ItemActivityTest {
         controller.visible();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
 
+        shadowOf(activity).clickMenuItem(R.id.menu_external);
+        Intent actual = shadowOf(activity).getNextStartedActivity();
+        assertThat(actual).hasAction(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    public void testOptionExternalOpenUrl() {
+        RobolectricPackageManager packageManager = (RobolectricPackageManager)
+                RuntimeEnvironment.application.getPackageManager();
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
+                        WebActivity.class.getName()));
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+
+        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+
+        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
         shadowOf(activity).clickMenuItem(R.id.menu_external);
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual).hasAction(Intent.ACTION_VIEW);
