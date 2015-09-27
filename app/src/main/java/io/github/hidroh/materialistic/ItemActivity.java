@@ -7,13 +7,15 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -31,6 +33,8 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     private static final String PARAM_ID = "id";
     private ItemManager.Item mItem;
     private View mHeaderCardView;
+    private ImageView mBookmark;
+    private TextView mComment;
     private boolean mFavoriteBound;
     private boolean mIsResumed = true;
     private boolean mOrientationChanged = false;
@@ -41,7 +45,12 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
-
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
+                ActionBar.DISPLAY_HOME_AS_UP);
+        mHeaderCardView = findViewById(R.id.header_card_view);
+        mComment = (TextView) findViewById(R.id.comment);
+        mBookmark = (ImageView) findViewById(R.id.bookmarked);
         final Intent intent = getIntent();
         String itemId = null;
         if (intent.hasExtra(EXTRA_ITEM)) {
@@ -162,6 +171,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
             return;
         }
 
+        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        // inflate FAB here as its visibility cannot be controlled due to anchoring
+        mBookmark = (ImageView) getLayoutInflater().inflate(R.layout.button_bookmark,
+                contentFrame, false);
+        contentFrame.addView(mBookmark);
         if (mFavoriteBound) { // prevent binding twice from onResponse and onResume
             return;
         }
@@ -173,11 +187,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                 super.onCheckComplete(isFavorite);
                 decorateFavorite(isFavorite);
                 mItem.setFavorite(isFavorite);
-                mHeaderCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                mBookmark.setOnClickListener(new View.OnClickListener() {
                     private boolean mUndo;
 
                     @Override
-                    public boolean onLongClick(View v) {
+                    public void onClick(View v) {
                         final int toastMessageResId;
                         if (!mItem.isFavorite()) {
                             mFavoriteManager.add(ItemActivity.this, mItem);
@@ -192,7 +206,7 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                                         @Override
                                         public void onClick(View v) {
                                             mUndo = true;
-                                            mHeaderCardView.performLongClick();
+                                            mBookmark.performClick();
                                         }
                                     })
                                     .show();
@@ -200,7 +214,6 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                         mItem.setFavorite(!mItem.isFavorite());
                         decorateFavorite(mItem.isFavorite());
                         mUndo = false;
-                        return true;
                     }
                 });
 
@@ -210,7 +223,7 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
 
     @Override
     public void onKidChanged(int kidCount) {
-        setTitle(getString(R.string.title_activity_item_count, kidCount));
+        bindCommentCount(kidCount);
     }
 
     private void bindData(final ItemManager.Item story) {
@@ -219,13 +232,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         }
 
         if (story.getKidCount() > 0) {
-            setTitle(getString(R.string.title_activity_item_count, story.getKidCount()));
+            bindCommentCount(story.getKidCount());
         }
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        mHeaderCardView = findViewById(R.id.header_card_view);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
-            titleTextView.setTextAppearance(this, R.style.textTitleStyle);
             if (!TextUtils.isEmpty(story.getSource())) {
                 TextView sourceTextView = (TextView) findViewById(R.id.source);
                 sourceTextView.setText(story.getSource());
@@ -245,7 +256,6 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
             }
         });
 
-        decorateHeaderStack();
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this));
         switch (story.getType()) {
@@ -279,27 +289,12 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
-    private void decorateHeaderStack() {
-        int level = Math.min(getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0), 4);
-        int stackMargin = getResources().getDimensionPixelSize(R.dimen.cardview_header_margin);
-        ViewGroup itemView = (ViewGroup) findViewById(R.id.item_view);
-        for (int i = 0; i < level; i++) {
-            View stackView = getLayoutInflater().inflate(R.layout.header_stack, itemView, false);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) stackView.getLayoutParams();
-            params.topMargin = stackMargin * i;
-            stackView.setLayoutParams(params);
-            itemView.addView(stackView);
-        }
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)
-                mHeaderCardView.getLayoutParams();
-        params.topMargin = stackMargin * level;
-        mHeaderCardView.setLayoutParams(params);
-        mHeaderCardView.bringToFront();
+    private void decorateFavorite(boolean isFavorite) {
+        mBookmark.setImageResource(isFavorite ?
+                R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_outline_white_24dp);
     }
 
-    private void decorateFavorite(boolean isFavorite) {
-        mHeaderCardView.findViewById(R.id.bookmarked)
-                .setVisibility(isFavorite ? View.VISIBLE : View.INVISIBLE);
+    private void bindCommentCount(int count) {
+        mComment.setText(getString(R.string.comments, count));
     }
 }

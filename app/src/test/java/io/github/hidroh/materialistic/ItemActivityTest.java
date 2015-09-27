@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -95,7 +96,8 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        assertThat(activity).hasTitle(activity.getString(R.string.title_activity_item_count, 1));
+        assertThat((TextView) activity.findViewById(R.id.comment))
+                .hasText(activity.getString(R.string.comments, 1));
         assertThat((TextView) activity.findViewById(R.id.source)).hasTextString("http://example.com");
         TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
         assertThat(titleTextView).hasTextString("title")
@@ -228,14 +230,20 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume().visible();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(true);
-        assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
-        activity.findViewById(R.id.header_card_view).performLongClick();
-        assertThat(activity.findViewById(R.id.bookmarked)).isNotVisible();
+        assertEquals(R.drawable.ic_bookmark_white_24dp,
+                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
+                        .getCreatedFromResId());
+        activity.findViewById(R.id.bookmarked).performClick();
+        assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
+                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
+                        .getCreatedFromResId());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
-        assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
+        assertEquals(R.drawable.ic_bookmark_white_24dp,
+                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
+                        .getCreatedFromResId());
     }
 
     @Test
@@ -261,9 +269,13 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume().visible();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(false);
-        assertThat(activity.findViewById(R.id.bookmarked)).isNotVisible();
-        activity.findViewById(R.id.header_card_view).performLongClick();
-        assertThat(activity.findViewById(R.id.bookmarked)).isVisible();
+        assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
+                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
+                        .getCreatedFromResId());
+        activity.findViewById(R.id.bookmarked).performClick();
+        assertEquals(R.drawable.ic_bookmark_white_24dp,
+                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
+                        .getCreatedFromResId());
     }
 
     @Test
@@ -274,7 +286,8 @@ public class ItemActivityTest {
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
         controller.withIntent(intent).create().start().resume().visible();
         activity.onKidChanged(10);
-        assertEquals(activity.getString(R.string.title_activity_item_count, 10), activity.getTitle());
+        assertThat((TextView) activity.findViewById(R.id.comment))
+                .hasText(activity.getString(R.string.comments, 10));
     }
 
     @After

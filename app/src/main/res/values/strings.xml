@@ -107,7 +107,6 @@
     <string name="title_activity_search">Search HN</string>
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
-    <string name="title_activity_item_count" formatted="false">Comments (%s)</string>
     <string name="hide_comments" formatted="false">Hide comments (%s)</string>
     <string name="show_comments" formatted="false">Show comments (%s)</string>
     <string name="posted_reply" formatted="false">

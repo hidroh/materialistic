@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -227,7 +228,6 @@ public class ListFragment extends BaseFragment {
 
     private class ViewHolder extends ListRecyclerViewAdapter.ItemViewHolder {
         private final View mBookmarked;
-        private final TextView mCommentText;
         private final TextView mRankTextView;
         private final TextView mScoreTextView;
 
@@ -236,7 +236,6 @@ public class ListFragment extends BaseFragment {
             mRankTextView = (TextView) itemView.findViewById(R.id.rank);
             mScoreTextView = (TextView) itemView.findViewById(R.id.score);
             mBookmarked = itemView.findViewById(R.id.bookmarked);
-            mCommentText = (TextView) mCommentButton.findViewById(R.id.text);
         }
     }
 
@@ -354,7 +353,8 @@ public class ListFragment extends BaseFragment {
             super.bindViewHolder(holder, story);
             holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
-                holder.mCommentText.setText(getString(R.string.comments, story.getKidCount()));
+                ((Button) holder.mCommentButton)
+                        .setText(getString(R.string.comments, story.getKidCount()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
             } else {
                 holder.mCommentButton.setVisibility(View.GONE);

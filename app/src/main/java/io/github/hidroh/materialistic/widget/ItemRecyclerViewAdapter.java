@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.R;
@@ -81,15 +82,13 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         final TextView mPostedTextView;
         final TextView mContentTextView;
-        final View mCommentButton;
-        final TextView mCommentText;
+        final Button mCommentButton;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mContentTextView = (TextView) itemView.findViewById(R.id.text);
-            mCommentButton = itemView.findViewById(R.id.comment);
-            mCommentText = (TextView) mCommentButton.findViewById(R.id.text);
+            mCommentButton = (Button) itemView.findViewById(R.id.comment);
             mCommentButton.setVisibility(View.INVISIBLE);
         }
     }

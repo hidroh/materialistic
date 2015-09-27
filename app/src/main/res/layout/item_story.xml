@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin"
@@ -33,13 +32,13 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@id/rank"
-                tools:text="46"
+                android:text="46"
                 style="@style/textRankStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@id/score"
-                tools:text="128 pts"
+                android:text="128 pts"
                 style="@style/textSubtitleStyle"
                 android:singleLine="false"
                 android:gravity="center"
@@ -56,17 +55,17 @@
             android:paddingBottom="@dimen/padding">
             <TextView
                 android:id="@id/title"
-                tools:text="A lil' bit of programming that matters"
+                android:text="A lil' bit of programming that matters"
                 style="@style/textTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@id/source"
-                tools:text="hidroh.github.io"
+                android:text="hidroh.github.io"
                 style="@style/textSubtitleStyle.Italic" />
             <TextView
                 android:id="@id/posted"
-                tools:text="Since January 01, 2015"
+                android:text="Since January 01, 2015"
                 style="@style/textSubtitleStyle"
                 android:singleLine="false" />
             <include layout="@layout/button_comment"

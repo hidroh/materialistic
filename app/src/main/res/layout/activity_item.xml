@@ -1,18 +1,43 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/item_view"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/content_frame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.github.hidroh.materialistic.ItemActivity">
-
-    <include layout="@layout/item_header"
+    android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@id/header_card_view" />
+        android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@id/sub_item_view"
-        android:layout_below="@id/header_card_view"
+        <android.support.v7.widget.Toolbar
+            android:id="@id/toolbar"
+            android:theme="@style/AppToolbarTheme"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:background="?attr/colorPrimary" />
+
+        <include layout="@layout/item_header"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@id/header_card_view" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@id/item_view"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</RelativeLayout>
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@id/sub_item_view"
+            android:foreground="@drawable/bottom_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
