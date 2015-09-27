@@ -264,7 +264,7 @@ public class ItemActivity extends BaseItemActivity {
 
             @Override
             public int getCount() {
-                return 2;
+                return story.isShareable() ? 2 : 1;
             }
 
             @Override
