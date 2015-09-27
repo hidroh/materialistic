@@ -18,7 +18,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -167,11 +166,7 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
             return;
         }
 
-        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
-        // inflate FAB here as its visibility cannot be controlled due to anchoring
-        mBookmark = (ImageView) getLayoutInflater().inflate(R.layout.button_bookmark,
-                contentFrame, false);
-        contentFrame.addView(mBookmark);
+        mBookmark.setVisibility(View.VISIBLE);
         if (mFavoriteBound) { // prevent binding twice from onResponse and onResume
             return;
         }
