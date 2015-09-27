@@ -8,7 +8,6 @@
     android:id="@id/header_card_view"
     android:paddingLeft="56dp"
     android:paddingRight="56dp"
-    android:paddingBottom="@dimen/fab_content_size"
     tools:background="@color/colorPrimary"
     style="@style/FlatCardView.Header">
     <LinearLayout
@@ -46,13 +45,5 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             android:textColor="?attr/themedTextColorPrimary"/>
-        <TextView
-            android:id="@id/comment"
-            tools:text="128 Comments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            android:textColor="?attr/themedTextColorPrimary"
-            android:layout_gravity="right" />
     </LinearLayout>
 </FrameLayout>

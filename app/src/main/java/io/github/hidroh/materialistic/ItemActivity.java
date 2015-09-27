@@ -28,7 +28,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ItemActivity extends BaseItemActivity implements ItemObserver {
+public class ItemActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
@@ -37,7 +37,6 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     private ItemManager.Item mItem;
     private View mHeaderCardView;
     private ImageView mBookmark;
-    private TextView mComment;
     private boolean mFavoriteBound;
     private boolean mOrientationChanged = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
@@ -51,7 +50,6 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mHeaderCardView = findViewById(R.id.header_card_view);
-        mComment = (TextView) findViewById(R.id.comment);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         final Intent intent = getIntent();
         String itemId = null;
@@ -212,19 +210,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         });
     }
 
-    @Override
-    public void onKidChanged(int kidCount) {
-        bindCommentCount(kidCount);
-    }
-
     private void bindData(final ItemManager.Item story) {
         if (story == null) {
             return;
         }
 
-        if (story.getKidCount() > 0) {
-            bindCommentCount(story.getKidCount());
-        }
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
@@ -304,9 +294,5 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     private void decorateFavorite(boolean isFavorite) {
         mBookmark.setImageResource(isFavorite ?
                 R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_outline_white_24dp);
-    }
-
-    private void bindCommentCount(int count) {
-        mComment.setText(getString(R.string.comments, count));
     }
 }

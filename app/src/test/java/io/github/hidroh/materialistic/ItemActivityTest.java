@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -98,8 +99,8 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        assertThat((TextView) activity.findViewById(R.id.comment))
-                .hasText(activity.getString(R.string.comments, 1));
+        assertEquals(activity.getString(R.string.comments, 1),
+                ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
         assertThat((TextView) activity.findViewById(R.id.source)).hasTextString("http://example.com");
         TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
         assertThat(titleTextView).hasTextString("title")
@@ -284,18 +285,6 @@ public class ItemActivityTest {
         assertEquals(R.drawable.ic_bookmark_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
-    }
-
-    @Test
-    public void testOnKidChanged() {
-        Intent intent = new Intent();
-        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
-        when(webItem.getId()).thenReturn("1");
-        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
-        activity.onKidChanged(10);
-        assertThat((TextView) activity.findViewById(R.id.comment))
-                .hasText(activity.getString(R.string.comments, 10));
     }
 
     @After
