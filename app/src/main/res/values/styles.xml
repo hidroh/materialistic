@@ -286,9 +286,5 @@
     <style name="FlatCardView" parent="BaseFlatCardView">
         <item name="android:background">?attr/themedCardDrawable</item>
     </style>
-    <style name="FlatCardView.Header">
-        <item name="android:background">@null</item>
-        <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
-    </style>
 
 </resources>

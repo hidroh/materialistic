@@ -105,9 +105,6 @@ public class ItemActivityTest {
         TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
         assertThat(titleTextView).hasTextString("title")
                 .hasEllipsize(TextUtils.TruncateAt.END);
-        activity.findViewById(R.id.header_card_view).performClick();
-        assertEquals(WebActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
 
     @Test
@@ -154,9 +151,6 @@ public class ItemActivityTest {
         assertEquals(R.drawable.ic_work_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
-        activity.findViewById(R.id.header_card_view).performClick();
-        assertEquals(WebActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
 
     @Test

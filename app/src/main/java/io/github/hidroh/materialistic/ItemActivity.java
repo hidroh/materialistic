@@ -5,8 +5,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
@@ -35,7 +33,6 @@ public class ItemActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
     private static final String PARAM_ID = "id";
     private ItemManager.Item mItem;
-    private View mHeaderCardView;
     private ImageView mBookmark;
     private boolean mFavoriteBound;
     private boolean mOrientationChanged = false;
@@ -49,7 +46,6 @@ public class ItemActivity extends BaseItemActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
-        mHeaderCardView = findViewById(R.id.header_card_view);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         final Intent intent = getIntent();
         String itemId = null;
@@ -226,16 +222,6 @@ public class ItemActivity extends BaseItemActivity {
         } else {
             AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
         }
-        mHeaderCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (AppUtils.isHackerNewsUrl(story)) {
-                    openWeb(story);
-                } else {
-                    AppUtils.openWebUrl(ItemActivity.this, story);
-                }
-            }
-        });
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this));
@@ -280,15 +266,6 @@ public class ItemActivity extends BaseItemActivity {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    private void openWeb(ItemManager.Item item) {
-        final Intent intent = new Intent(this, WebActivity.class);
-        intent.putExtra(WebActivity.EXTRA_ITEM, item);
-        final ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(this,
-                        mHeaderCardView, getString(R.string.transition_item_container));
-        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
     private void decorateFavorite(boolean isFavorite) {
