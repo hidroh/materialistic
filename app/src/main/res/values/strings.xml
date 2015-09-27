@@ -72,7 +72,6 @@
     <string name="search">Search</string>
     <string name="hint_search_saved_stories">Search saved stories</string>
     <string name="no_stories_search">No stories found matching your query</string>
-    <string name="view_in_hacker_news">View in Hacker News</string>
 
     <!-- preferences -->
     <string name="pref_category_reading">Reading</string>
@@ -117,5 +116,6 @@
     <string name="undo">Undo</string>
     <string name="score" formatted="false">%s pts</string>
     <string name="comments" formatted="false">%s Comments</string>
+    <string name="article">Article</string>
 
 </resources>

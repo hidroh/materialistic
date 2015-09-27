@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +21,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
@@ -67,7 +70,7 @@ public class ItemActivityTest {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM_ID, "1");
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 2);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @NonNull
@@ -96,15 +99,12 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        assertThat((TextView) activity.findViewById(R.id.comment))
-                .hasText(activity.getString(R.string.comments, 1));
+        assertEquals(activity.getString(R.string.comments, 1),
+                ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
         assertThat((TextView) activity.findViewById(R.id.source)).hasTextString("http://example.com");
         TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
         assertThat(titleTextView).hasTextString("title")
                 .hasEllipsize(TextUtils.TruncateAt.END);
-        activity.findViewById(R.id.header_card_view).performClick();
-        assertEquals(WebActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class ItemActivityTest {
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 1);
         intent.setData(Uri.parse("https://news.ycombinator.com/item?id=1"));
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @NonNull
@@ -151,9 +151,6 @@ public class ItemActivityTest {
         assertEquals(R.drawable.ic_work_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
-        activity.findViewById(R.id.header_card_view).performClick();
-        assertEquals(WebActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
 
     @Test
@@ -172,7 +169,7 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         assertThat(activity.findViewById(R.id.source)).isNotVisible();
         assertEquals(R.drawable.ic_poll_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
@@ -180,7 +177,7 @@ public class ItemActivityTest {
     }
 
     @Test
-    public void testOptionExternal() {
+    public void testOptionExternalOpenItem() {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
@@ -201,7 +198,58 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
+
+        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+
+        shadowOf(activity).clickMenuItem(R.id.menu_external);
+        Intent actual = shadowOf(activity).getNextStartedActivity();
+        assertThat(actual).hasAction(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    public void testOptionExternalOpenUrl() {
+        RobolectricPackageManager packageManager = (RobolectricPackageManager)
+                RuntimeEnvironment.application.getPackageManager();
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
+                        WebActivity.class.getName()));
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+
+        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+
+        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
         shadowOf(activity).clickMenuItem(R.id.menu_external);
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual).hasAction(Intent.ACTION_VIEW);
@@ -227,7 +275,7 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(true);
         assertEquals(R.drawable.ic_bookmark_white_24dp,
@@ -266,7 +314,7 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.withIntent(intent).create().start().resume();
         verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
         callbacks.getValue().onCheckComplete(false);
         assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
@@ -276,18 +324,6 @@ public class ItemActivityTest {
         assertEquals(R.drawable.ic_bookmark_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
-    }
-
-    @Test
-    public void testOnKidChanged() {
-        Intent intent = new Intent();
-        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
-        when(webItem.getId()).thenReturn("1");
-        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
-        activity.onKidChanged(10);
-        assertThat((TextView) activity.findViewById(R.id.comment))
-                .hasText(activity.getString(R.string.comments, 10));
     }
 
     @After

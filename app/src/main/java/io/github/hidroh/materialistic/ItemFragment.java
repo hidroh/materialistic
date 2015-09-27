@@ -124,10 +124,6 @@ public class ItemFragment extends BaseFragment {
                     return;
                 }
 
-                if (getActivity() instanceof ItemObserver) {
-                    ((ItemObserver) getActivity()).onKidChanged(response.getKidCount());
-                }
-
                 mSwipeRefreshLayout.setRefreshing(false);
                 mItem = response;
                 bindKidData(mItem.getKidItems());

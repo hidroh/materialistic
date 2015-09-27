@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +16,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,21 +26,19 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ItemActivity extends BaseItemActivity implements ItemObserver {
+public class ItemActivity extends BaseItemActivity {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
     private static final String PARAM_ID = "id";
     private ItemManager.Item mItem;
-    private View mHeaderCardView;
     private ImageView mBookmark;
-    private TextView mComment;
     private boolean mFavoriteBound;
-    private boolean mIsResumed = true;
     private boolean mOrientationChanged = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +47,10 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
-        mHeaderCardView = findViewById(R.id.header_card_view);
-        mComment = (TextView) findViewById(R.id.comment);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final Intent intent = getIntent();
         String itemId = null;
         if (intent.hasExtra(EXTRA_ITEM)) {
@@ -127,8 +127,13 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openWebUrlExternal(this,
-                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
+            final String url;
+            if (mTabLayout.getSelectedTabPosition() == 0) {
+                url = String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId());
+            } else {
+                url = mItem.getUrl();
+            }
+            AppUtils.openWebUrlExternal(this, url);
             return true;
         }
 
@@ -136,15 +141,8 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        mIsResumed = true;
-    }
-
-    @Override
     protected void onPause() {
         mFavoriteBound = false;
-        mIsResumed = false;
         super.onPause();
     }
 
@@ -171,11 +169,7 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
             return;
         }
 
-        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
-        // inflate FAB here as its visibility cannot be controlled due to anchoring
-        mBookmark = (ImageView) getLayoutInflater().inflate(R.layout.button_bookmark,
-                contentFrame, false);
-        contentFrame.addView(mBookmark);
+        mBookmark.setVisibility(View.VISIBLE);
         if (mFavoriteBound) { // prevent binding twice from onResponse and onResume
             return;
         }
@@ -221,19 +215,11 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         });
     }
 
-    @Override
-    public void onKidChanged(int kidCount) {
-        bindCommentCount(kidCount);
-    }
-
     private void bindData(final ItemManager.Item story) {
         if (story == null) {
             return;
         }
 
-        if (story.getKidCount() > 0) {
-            bindCommentCount(story.getKidCount());
-        }
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
@@ -245,16 +231,6 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
         } else {
             AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
         }
-        mHeaderCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (AppUtils.isHackerNewsUrl(story)) {
-                    openWeb(story);
-                } else {
-                    AppUtils.openWebUrl(ItemActivity.this, story);
-                }
-            }
-        });
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this));
@@ -268,33 +244,38 @@ public class ItemActivity extends BaseItemActivity implements ItemObserver {
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         final Bundle args = new Bundle();
         args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
-        if (mIsResumed) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.sub_item_view,
-                            ItemFragment.instantiate(this, mItem, args),
-                            ItemFragment.class.getName())
-                    .commit();
-        }
-    }
+        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                if (position == 0) {
+                    return ItemFragment.instantiate(ItemActivity.this, mItem, args);
+                } else {
+                    return WebFragment.instantiate(ItemActivity.this, mItem);
+                }
+            }
 
-    private void openWeb(ItemManager.Item item) {
-        final Intent intent = new Intent(this, WebActivity.class);
-        intent.putExtra(WebActivity.EXTRA_ITEM, item);
-        final ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(this,
-                        mHeaderCardView, getString(R.string.transition_item_container));
-        ActivityCompat.startActivity(this, intent, options.toBundle());
+            @Override
+            public int getCount() {
+                return story.isShareable() ? 2 : 1;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                if (position == 0) {
+                    return getString(R.string.comments, story.getKidCount());
+                } else {
+                    return getString(R.string.article);
+                }
+            }
+        });
+        mTabLayout.setupWithViewPager(viewPager);
     }
 
     private void decorateFavorite(boolean isFavorite) {
         mBookmark.setImageResource(isFavorite ?
                 R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_outline_white_24dp);
-    }
-
-    private void bindCommentCount(int count) {
-        mComment.setText(getString(R.string.comments, count));
     }
 }
