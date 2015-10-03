@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -12,6 +13,8 @@ import static junit.framework.Assert.assertFalse;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
+// TODO enable this once https://github.com/robolectric/robolectric/issues/2020 is fixed
+@Ignore
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityEmptyTest {
     private ActivityController<FavoriteActivity> controller;
