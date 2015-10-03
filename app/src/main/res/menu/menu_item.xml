@@ -4,5 +4,6 @@
     <item
         android:id="@id/menu_external"
         android:title="@string/view_in_browser"
-        app:showAsAction="never"/>
+        android:icon="?attr/themedMenuExternalDrawable"
+        app:showAsAction="ifRoom"/>
 </menu>

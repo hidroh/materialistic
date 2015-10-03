@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
@@ -99,7 +101,7 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        assertEquals(activity.getString(R.string.comments, 1),
+        assertEquals(activity.getString(R.string.comments_count, 1),
                 ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
         assertThat((TextView) activity.findViewById(R.id.source)).hasTextString("http://example.com");
         TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
@@ -177,46 +179,17 @@ public class ItemActivityTest {
     }
 
     @Test
-    public void testOptionExternalOpenItem() {
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
-        packageManager.addResolveInfoForIntent(
-                new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(String.format(HackerNewsClient.WEB_ITEM_PATH, "1"))),
-                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
-                        WebActivity.class.getName()));
-        Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
-            @NonNull
-            @Override
-            public String getType() {
-                return COMMENT_TYPE;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
-            }
-        });
-        controller.withIntent(intent).create().start().resume();
-
-        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
-        ShadowLooper.pauseMainLooper();
-        controller.visible();
-        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
-
-        shadowOf(activity).clickMenuItem(R.id.menu_external);
-        Intent actual = shadowOf(activity).getNextStartedActivity();
-        assertThat(actual).hasAction(Intent.ACTION_VIEW);
-    }
-
-    @Test
-    public void testOptionExternalOpenUrl() {
+    public void testOptionExternal() {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
+                        WebActivity.class.getName()));
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(String.format(HackerNewsClient.WEB_ITEM_PATH, "1"))),
                 ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
                         WebActivity.class.getName()));
         Intent intent = new Intent();
@@ -249,10 +222,19 @@ public class ItemActivityTest {
         controller.visible();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
 
-        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
+        // open article
         shadowOf(activity).clickMenuItem(R.id.menu_external);
-        Intent actual = shadowOf(activity).getNextStartedActivity();
-        assertThat(actual).hasAction(Intent.ACTION_VIEW);
+        ShadowAlertDialog.getLatestAlertDialog()
+                .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+
+        // open item
+        shadowOf(activity).clickMenuItem(R.id.menu_external);
+        ShadowAlertDialog.getLatestAlertDialog()
+                .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class ItemActivity extends BaseItemActivity {
     private boolean mOrientationChanged = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TabLayout mTabLayout;
 
     @Override
@@ -106,8 +108,8 @@ public class ItemActivity extends BaseItemActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item, menu);
         getMenuInflater().inflate(R.menu.menu_share, menu);
+        getMenuInflater().inflate(R.menu.menu_item, menu);
         if (mItem != null) {
             ((ShareActionProvider) MenuItemCompat.getActionProvider(
                     menu.findItem(R.id.menu_share)))
@@ -128,13 +130,23 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            final String url;
-            if (mTabLayout.getSelectedTabPosition() == 0) {
-                url = String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId());
-            } else {
-                url = mItem.getUrl();
-            }
-            AppUtils.openWebUrlExternal(this, url);
+            mAlertDialogBuilder
+                    .setMessage(R.string.view_in_browser)
+                    .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AppUtils.openWebUrlExternal(ItemActivity.this, mItem.getUrl());
+                        }
+                    })
+                    .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AppUtils.openWebUrlExternal(ItemActivity.this,
+                                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
+                        }
+                    })
+                    .create()
+                    .show();
             return true;
         }
 
@@ -266,7 +278,7 @@ public class ItemActivity extends BaseItemActivity {
             @Override
             public CharSequence getPageTitle(int position) {
                 if (position == 0) {
-                    return getString(R.string.comments, story.getKidCount());
+                    return getString(R.string.comments_count, story.getKidCount());
                 } else {
                     return getString(R.string.article);
                 }
