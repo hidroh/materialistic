@@ -34,6 +34,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
-@Config(sdk = 19)
+@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -234,6 +235,47 @@ public class ItemActivityTest {
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    public void testHeaderOpenExternal() {
+        RobolectricPackageManager packageManager = (RobolectricPackageManager)
+                RuntimeEnvironment.application.getPackageManager();
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
+                        WebActivity.class.getName()));
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_external), true)
+                .commit();
+        controller.withIntent(intent).create().start().resume();
+        activity.findViewById(R.id.header_card_view).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 

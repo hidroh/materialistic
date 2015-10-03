@@ -38,6 +38,7 @@ public class ItemActivity extends BaseItemActivity {
     private ImageView mBookmark;
     private boolean mFavoriteBound;
     private boolean mOrientationChanged = false;
+    private boolean mExternalBrowser;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
@@ -46,6 +47,7 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         setContentView(R.layout.activity_item);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
@@ -272,7 +274,7 @@ public class ItemActivity extends BaseItemActivity {
 
             @Override
             public int getCount() {
-                return story.isShareable() ? 2 : 1;
+                return story.isShareable() && !mExternalBrowser ? 2 : 1;
             }
 
             @Override
@@ -289,6 +291,16 @@ public class ItemActivity extends BaseItemActivity {
             AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
             p.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
             mTabLayout.setLayoutParams(p);
+        }
+        if (story.isShareable() && mExternalBrowser) {
+            findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppUtils.openWebUrlExternal(ItemActivity.this, story.getUrl());
+                }
+            });
+        } else {
+            findViewById(R.id.header_card_view).setClickable(false);
         }
     }
 
