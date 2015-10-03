@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.DimenRes;
+import android.support.v4.app.BundleCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -18,6 +21,15 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class AppUtils {
+    //  Must have. Extra used to match the session. Its value is an IBinder passed
+    //  whilst creating a news session. See newSession() below. Even if the service is not
+    //  used and there is no valid session id to be provided, this extra has to be present
+    //  with a null value to launch a custom tab.
+    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+
+    // Extra that changes the background color for the omnibox. colorInt is an int
+    // that specifies a Color.
+    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
 
     public static void openWebUrl(Context context, ItemManager.WebItem item) {
         final boolean isExternal = Preferences.externalBrowserEnabled(context);
@@ -32,6 +44,11 @@ public class AppUtils {
 
     public static void openWebUrlExternal(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        Bundle extras = new Bundle();
+        BundleCompat.putBinder(extras, EXTRA_CUSTOM_TABS_SESSION, null);
+        intent.putExtras(extras);
+        intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+                ContextCompat.getColor(context, R.color.colorPrimary));
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         }
