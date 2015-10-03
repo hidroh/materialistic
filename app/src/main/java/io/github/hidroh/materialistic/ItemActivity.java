@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -272,6 +273,11 @@ public class ItemActivity extends BaseItemActivity {
             }
         });
         mTabLayout.setupWithViewPager(viewPager);
+        if (viewPager.getAdapter().getCount() < 2) {
+            AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
+            p.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
+            mTabLayout.setLayoutParams(p);
+        }
     }
 
     private void decorateFavorite(boolean isFavorite) {
