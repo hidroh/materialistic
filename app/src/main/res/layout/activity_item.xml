@@ -15,8 +15,8 @@
             android:theme="@style/AppToolbarTheme"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:minHeight="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"
+            android:minHeight="0dp"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             android:background="?attr/colorPrimary">
 
             <include layout="@layout/item_header"
@@ -25,7 +25,6 @@
                 android:id="@id/header_card_view" />
 
         </android.support.v7.widget.Toolbar>
-
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"

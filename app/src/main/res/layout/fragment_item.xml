@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="io.github.hidroh.materialistic.ItemActivity">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout
         android:id="@id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -14,7 +14,7 @@
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout>
     <TextView
         android:id="@android:id/empty"
         android:text="@string/no_comments"
