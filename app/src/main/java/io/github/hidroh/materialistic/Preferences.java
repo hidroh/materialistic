@@ -2,10 +2,10 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceManager;
 import android.view.ContextThemeWrapper;
 
 import java.util.Map;

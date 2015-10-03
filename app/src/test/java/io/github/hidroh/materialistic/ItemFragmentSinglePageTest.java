@@ -14,7 +14,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import javax.inject.Inject;
@@ -22,6 +21,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -33,7 +33,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowRecyclerView.class})
+@Config(shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
     @Inject
@@ -52,7 +52,7 @@ public class ItemFragmentSinglePageTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(hackerNewsClient);
-        ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_single))
@@ -234,7 +234,7 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testDefaultCollapsed() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_collapsed))

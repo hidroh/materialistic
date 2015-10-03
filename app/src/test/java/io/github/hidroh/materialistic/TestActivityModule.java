@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 @Module(
         injects = {
                 // source classes
-                ActionBarSettingsActivity.class,
+                SettingsActivity.class,
                 AskActivity.class,
                 FavoriteActivity.class,
                 ItemActivity.class,
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
                 ListFragment.class,
                 WebFragment.class,
                 // test classes
-                ActionBarSettingsActivityTest.class,
+                SettingsActivityTest.class,
                 ItemActivityTest.class,
                 ItemFragmentMultiPageTest.class,
                 ItemFragmentSinglePageTest.class,

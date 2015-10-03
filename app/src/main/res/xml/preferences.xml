@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:title="@string/pref_category_reading">
-        <io.github.hidroh.materialistic.preference.ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="@string/pref_theme"
             android:title="@string/pref_theme_title"
             android:entries="@array/pref_theme_options"
             android:entryValues="@array/pref_theme_values"
             android:defaultValue="@string/pref_theme_value_light" />
-        <io.github.hidroh.materialistic.preference.ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="@string/pref_text_size"
             android:entries="@array/text_size_options"
             android:entryValues="@array/pref_text_size_values"
             android:defaultValue="0"
             android:title="@string/pref_text_size_title" />
-        <io.github.hidroh.materialistic.preference.ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="@string/pref_story_display"
             android:title="@string/pref_story_display_title"
             android:entries="@array/pref_story_display_options"
             android:entryValues="@array/pref_story_display_values"
             android:defaultValue="@string/pref_story_display_value_article" />
-        <io.github.hidroh.materialistic.preference.ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="@string/pref_comment_display"
             android:title="@string/pref_comment_display_title"
             android:entries="@array/pref_comment_display_options"
             android:entryValues="@array/pref_comment_display_values"
             android:defaultValue="@string/pref_comment_display_value_collapsed" />
-        <io.github.hidroh.materialistic.preference.CheckBoxPreference
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"
             android:enabled="@bool/pref_external_enabled"
             android:summary="@string/pref_external_summary"
             android:defaultValue="false" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory
         android:title="@string/pref_category_search">
-        <io.github.hidroh.materialistic.preference.ListPreference
+        <android.support.v7.preference.ListPreference
             android:key="@string/pref_search_sort"
             android:title="@string/pref_search_sort_title"
             android:entries="@array/pref_search_sort_options"
             android:entryValues="@array/pref_search_sort_values"
             android:defaultValue="@string/pref_search_sort_value_recent" />
-    </PreferenceCategory>
-</PreferenceScreen>
+    </android.support.v7.preference.PreferenceCategory>
+</android.support.v7.preference.PreferenceScreen>

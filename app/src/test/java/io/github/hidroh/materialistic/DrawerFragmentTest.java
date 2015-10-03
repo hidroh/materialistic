@@ -36,7 +36,7 @@ public class DrawerFragmentTest {
                 new Object[]{R.id.drawer_show, ShowActivity.class},
                 new Object[]{R.id.drawer_ask, AskActivity.class},
                 new Object[]{R.id.drawer_job, JobsActivity.class},
-                new Object[]{R.id.drawer_settings, ActionBarSettingsActivity.class},
+                new Object[]{R.id.drawer_settings, SettingsActivity.class},
                 new Object[]{R.id.drawer_about, AboutActivity.class},
                 new Object[]{R.id.drawer_favorite, FavoriteActivity.class}
         );

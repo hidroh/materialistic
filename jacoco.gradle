@@ -21,7 +21,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
                     '**/*$ViewInjector*.class',
                     '**/RestServiceFactory*.class',
                     '**/ActivityModule*.class',
-                    '**/preference/*.class',
                     '**/AlertDialogBuilder.class',
                     '**/AlertDialogBuilder$Impl.class'
             ])

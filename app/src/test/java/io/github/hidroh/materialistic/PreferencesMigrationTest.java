@@ -5,18 +5,20 @@ import android.support.annotation.StringRes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowPreferenceManager;
+import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class PreferencesMigrationTest {
     private final int oldKey;
@@ -46,48 +48,48 @@ public class PreferencesMigrationTest {
 
     @Test
     public void testMigrate() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putBoolean(RuntimeEnvironment.application.getString(oldKey), oldValue)
                 .commit();
-        assertTrue(ShadowPreferenceManager
+        assertTrue(ShadowSupportPreferenceManager
                 .getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         Preferences.migrate(RuntimeEnvironment.application);
-        assertFalse(ShadowPreferenceManager
+        assertFalse(ShadowSupportPreferenceManager
                 .getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         assertEquals(RuntimeEnvironment.application.getString(newValue),
-                ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+                ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
         .getString(RuntimeEnvironment.application.getString(newKey), null));
     }
 
     @Test
     public void testNoMigrate() {
-        assertFalse(ShadowPreferenceManager
+        assertFalse(ShadowSupportPreferenceManager
                 .getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         Preferences.migrate(RuntimeEnvironment.application);
         assertNull(RuntimeEnvironment.application.getString(newValue),
-                ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+                ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                         .getString(RuntimeEnvironment.application.getString(newKey), null));
     }
 
     @Test
     public void testNoMigrateDefault() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putBoolean(RuntimeEnvironment.application.getString(oldKey), !oldValue)
                 .commit();
-        assertTrue(ShadowPreferenceManager
+        assertTrue(ShadowSupportPreferenceManager
                 .getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         Preferences.migrate(RuntimeEnvironment.application);
-        assertFalse(ShadowPreferenceManager
+        assertFalse(ShadowSupportPreferenceManager
                 .getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         assertNull(RuntimeEnvironment.application.getString(newValue),
-                ShadowPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+                ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                         .getString(RuntimeEnvironment.application.getString(newKey), null));
     }
 }

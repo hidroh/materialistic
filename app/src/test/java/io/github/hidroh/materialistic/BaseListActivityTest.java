@@ -10,9 +10,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowPreferenceManager;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
@@ -22,7 +22,7 @@ import static junit.framework.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
-@Config(sdk = 19)
+@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;
@@ -64,7 +64,7 @@ public class BaseListActivityTest {
 
     @Test
     public void testSelectItemOpenItem() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(activity)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                         .edit()
                         .putString(activity.getString(R.string.pref_story_display),
                                 activity.getString(R.string.pref_story_display_value_comments))
