@@ -7,11 +7,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.shadows.ShadowPreferenceManager;
+import org.robolectric.annotation.Config;
+
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class PreferencesThemeTest {
 
@@ -32,7 +35,7 @@ public class PreferencesThemeTest {
 
     @Test
     public void testDarkTheme() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(activity)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_theme),
                         activity.getString(R.string.pref_theme_value_dark))

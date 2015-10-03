@@ -16,7 +16,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
 
 @Module(
         injects = {
-                ActionBarSettingsActivity.class,
+                SettingsActivity.class,
                 AboutActivity.class, // TODO remove
                 AskActivity.class,
                 FavoriteActivity.class,

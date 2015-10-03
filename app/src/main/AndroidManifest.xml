@@ -102,10 +102,6 @@
             android:name=".SettingsActivity"
             android:label="@string/action_settings" >
         </activity>
-        <activity
-            android:name=".ActionBarSettingsActivity"
-            android:label="@string/action_settings" >
-        </activity>
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"
             android:name=".data.MaterialisticProvider"

@@ -32,6 +32,8 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
 
+        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
+
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
         <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
@@ -79,6 +81,8 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
 
+        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
+
         <!-- custom themed attributes -->
         <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
         <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
@@ -114,6 +118,16 @@
     </style>
     <style name="AppToolbarSubtitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
         <item name="android:textColor">?attr/themedTextColorPrimary</item>
+    </style>
+
+    <!-- =================== -->
+    <!-- Preference themes   -->
+    <!-- =================== -->
+    <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
+        <item name="preferenceStyle">@style/AppPreference</item>
+    </style>
+    <style name="AppPreference" parent="Preference">
+        <item name="layout">@layout/preference</item>
     </style>
 
     <!-- =================== -->

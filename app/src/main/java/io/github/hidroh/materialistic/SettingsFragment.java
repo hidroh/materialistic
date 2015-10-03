@@ -1,25 +1,28 @@
 package io.github.hidroh.materialistic;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.IntentCompat;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private SharedPreferences.OnSharedPreferenceChangeListener mListener;
+    @VisibleForTesting
+    protected SharedPreferences.OnSharedPreferenceChangeListener mListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
         Preferences.sync(getPreferenceManager());
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle bundle, String s) {
+        addPreferencesFromResource(R.xml.preferences);
     }
 
     @Override

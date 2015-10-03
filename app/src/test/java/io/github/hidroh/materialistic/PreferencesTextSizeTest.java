@@ -6,16 +6,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.shadows.ShadowPreferenceManager;
+import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertEquals;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class PreferencesTextSizeTest {
     private final String choice;
@@ -45,7 +47,7 @@ public class PreferencesTextSizeTest {
 
     @Test
     public void testResolveTextSizeResId() {
-        ShadowPreferenceManager.getDefaultSharedPreferences(activity)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_text_size), choice)
                 .commit();
