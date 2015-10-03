@@ -8,6 +8,7 @@
     android:id="@id/header_card_view"
     android:paddingLeft="56dp"
     android:paddingRight="56dp"
+    android:foreground="?attr/selectableItemBackground"
     tools:background="@color/colorPrimary">
     <LinearLayout
         android:orientation="vertical"

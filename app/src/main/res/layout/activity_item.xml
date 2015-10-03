@@ -17,14 +17,14 @@
             android:layout_width="match_parent"
             android:minHeight="0dp"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            android:background="?attr/colorPrimary">
+            android:background="?attr/colorPrimary" />
 
-            <include layout="@layout/item_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@id/header_card_view" />
-
-        </android.support.v7.widget.Toolbar>
+        <include layout="@layout/item_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+            android:id="@id/header_card_view" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
