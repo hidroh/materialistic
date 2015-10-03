@@ -115,7 +115,8 @@
     </string>
     <string name="undo">Undo</string>
     <string name="score" formatted="false">%s pts</string>
-    <string name="comments" formatted="false">%s Comments</string>
+    <string name="comments">Comments</string>
+    <string name="comments_count" formatted="false">%s Comments</string>
     <string name="article">Article</string>
 
 </resources>

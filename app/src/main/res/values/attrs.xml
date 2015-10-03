@@ -11,6 +11,7 @@
     <attr name="themedMenuClearDrawable" format="reference" />
     <attr name="themedMenuStoryDrawable" format="reference" />
     <attr name="themedMenuCommentDrawable" format="reference" />
+    <attr name="themedMenuExternalDrawable" format="reference" />
     <attr name="themedTextColorPrimary" format="reference" />
     <attr name="themedTextColorSecondary" format="reference" />
     <attr name="themedTextColorPrimaryInverse" format="reference" />

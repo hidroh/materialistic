@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 
 import org.junit.After;
@@ -10,15 +12,20 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.WebActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
@@ -58,8 +65,33 @@ public class BaseListActivityTest {
                 return "http://example.com";
             }
         }, new View(activity));
-        assertEquals(WebActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+        Intent actual = shadowOf(activity).getNextStartedActivity();
+        assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
+        assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_ARTICLE);
+        assertTrue(actual.getBooleanExtra(ItemActivity.EXTRA_OPEN_ARTICLE, false));
+    }
+
+    @Test
+    public void testSelectItemOpenExternal() {
+        RobolectricPackageManager packageManager = (RobolectricPackageManager)
+                RuntimeEnvironment.application.getPackageManager();
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
+                        WebActivity.class.getName()));
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_external), true)
+                .commit();
+        controller.pause().resume();
+        activity.onItemSelected(new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+        }, new View(activity));
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
     @Test

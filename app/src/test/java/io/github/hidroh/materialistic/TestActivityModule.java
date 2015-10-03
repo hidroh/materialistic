@@ -20,6 +20,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
+import io.github.hidroh.materialistic.test.WebActivity;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -54,8 +55,8 @@ import static org.mockito.Mockito.when;
                 FavoriteActivityTest.class,
                 FavoriteActivityEmptyTest.class,
                 TestFavoriteActivity.class,
-                WebActivityLocalTest.class,
-                WebActivityTest.class
+                WebFragmentLocalTest.class,
+                WebFragmentTest.class
         },
         library = true,
         overrides = true

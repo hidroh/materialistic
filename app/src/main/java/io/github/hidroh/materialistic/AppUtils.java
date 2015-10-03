@@ -31,17 +31,6 @@ public class AppUtils {
     // that specifies a Color.
     private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
 
-    public static void openWebUrl(Context context, ItemManager.WebItem item) {
-        final boolean isExternal = Preferences.externalBrowserEnabled(context);
-        if (isExternal) {
-            openWebUrlExternal(context, item.getUrl());
-        } else {
-            final Intent intent = new Intent(context, WebActivity.class);
-            intent.putExtra(WebActivity.EXTRA_ITEM, item);
-            context.startActivity(intent);
-        }
-    }
-
     public static void openWebUrlExternal(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         Bundle extras = new Bundle();

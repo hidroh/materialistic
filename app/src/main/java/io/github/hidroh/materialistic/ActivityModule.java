@@ -26,7 +26,6 @@ import io.github.hidroh.materialistic.data.SessionManager;
                 NewActivity.class,
                 SearchActivity.class,
                 ShowActivity.class,
-                WebActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,

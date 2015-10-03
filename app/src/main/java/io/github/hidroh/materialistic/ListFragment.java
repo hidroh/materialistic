@@ -354,7 +354,7 @@ public class ListFragment extends BaseFragment {
             holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
                 ((Button) holder.mCommentButton)
-                        .setText(getString(R.string.comments, story.getKidCount()));
+                        .setText(getString(R.string.comments_count, story.getKidCount()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
             } else {
                 holder.mCommentButton.setVisibility(View.GONE);

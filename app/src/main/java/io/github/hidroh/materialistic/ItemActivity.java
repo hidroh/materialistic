@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -32,18 +33,22 @@ public class ItemActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
+    public static final String EXTRA_OPEN_ARTICLE = ItemActivity.class.getName() + ".EXTRA_OPEN_ARTICLE";
     private static final String PARAM_ID = "id";
     private ItemManager.Item mItem;
     private ImageView mBookmark;
     private boolean mFavoriteBound;
     private boolean mOrientationChanged = false;
+    private boolean mExternalBrowser;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         setContentView(R.layout.activity_item);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
@@ -101,13 +106,14 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         bindFavorite();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item, menu);
         getMenuInflater().inflate(R.menu.menu_share, menu);
+        getMenuInflater().inflate(R.menu.menu_item, menu);
         if (mItem != null) {
             ((ShareActionProvider) MenuItemCompat.getActionProvider(
                     menu.findItem(R.id.menu_share)))
@@ -128,13 +134,23 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_external) {
-            final String url;
-            if (mTabLayout.getSelectedTabPosition() == 0) {
-                url = String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId());
-            } else {
-                url = mItem.getUrl();
-            }
-            AppUtils.openWebUrlExternal(this, url);
+            mAlertDialogBuilder
+                    .setMessage(R.string.view_in_browser)
+                    .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AppUtils.openWebUrlExternal(ItemActivity.this, mItem.getUrl());
+                        }
+                    })
+                    .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AppUtils.openWebUrlExternal(ItemActivity.this,
+                                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
+                        }
+                    })
+                    .create()
+                    .show();
             return true;
         }
 
@@ -260,13 +276,13 @@ public class ItemActivity extends BaseItemActivity {
 
             @Override
             public int getCount() {
-                return story.isShareable() ? 2 : 1;
+                return story.isShareable() && !mExternalBrowser ? 2 : 1;
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
                 if (position == 0) {
-                    return getString(R.string.comments, story.getKidCount());
+                    return getString(R.string.comments_count, story.getKidCount());
                 } else {
                     return getString(R.string.article);
                 }
@@ -277,6 +293,18 @@ public class ItemActivity extends BaseItemActivity {
             AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
             p.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
             mTabLayout.setLayoutParams(p);
+        } else if (getIntent().getBooleanExtra(EXTRA_OPEN_ARTICLE, false)) {
+            viewPager.setCurrentItem(1);
+        }
+        if (story.isShareable() && mExternalBrowser) {
+            findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppUtils.openWebUrlExternal(ItemActivity.this, story.getUrl());
+                }
+            });
+        } else {
+            findViewById(R.id.header_card_view).setClickable(false);
         }
     }
 

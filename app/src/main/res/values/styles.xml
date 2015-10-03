@@ -46,6 +46,7 @@
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
         <item name="themedMenuStoryDrawable">@drawable/ic_subject_white_24dp</item>
         <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_white_24dp</item>
+        <item name="themedMenuExternalDrawable">@drawable/ic_open_in_browser_white_24dp</item>
         <item name="themedTextColorPrimary">@color/textColorPrimary</item>
         <item name="themedTextColorSecondary">@color/textColorSecondary</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimaryInverse</item>
@@ -95,6 +96,7 @@
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
         <item name="themedMenuStoryDrawable">@drawable/ic_subject_black_24dp</item>
         <item name="themedMenuCommentDrawable">@drawable/ic_mode_comment_black_24dp</item>
+        <item name="themedMenuExternalDrawable">@drawable/ic_open_in_browser_black_24dp</item>
         <item name="themedTextColorPrimary">@color/textColorPrimaryInverse</item>
         <item name="themedTextColorSecondary">@color/textColorSecondaryInverse</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimary</item>
