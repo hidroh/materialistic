@@ -85,6 +85,7 @@ public class DrawerFragment extends Fragment {
                 @Override
                 public void run() {
                     final Intent intent = new Intent(getActivity(), activityClass);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     getActivity().startActivity(intent);
                 }
             }, DRAWER_SLIDE_DURATION_MS);
