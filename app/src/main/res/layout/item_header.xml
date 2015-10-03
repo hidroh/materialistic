@@ -21,6 +21,7 @@
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             android:maxLines="@integer/header_max_lines"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textSize="?attr/titleTextSize"
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -34,6 +35,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             android:textColor="?attr/themedTextColorPrimary"
+            android:textSize="?attr/subtitleTextSize"
             android:textStyle="italic" />
         <TextView
             android:id="@id/posted"
@@ -43,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            android:textSize="?attr/subtitleTextSize"
             android:textColor="?attr/themedTextColorPrimary"/>
     </LinearLayout>
 </FrameLayout>
