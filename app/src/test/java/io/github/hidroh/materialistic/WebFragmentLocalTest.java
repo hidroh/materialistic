@@ -22,6 +22,7 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.WebActivity;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class WebActivityLocalTest {
+public class WebFragmentLocalTest {
     private ActivityController<WebActivity> controller;
     private WebActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;

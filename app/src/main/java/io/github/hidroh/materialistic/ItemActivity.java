@@ -33,6 +33,7 @@ public class ItemActivity extends BaseItemActivity {
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
+    public static final String EXTRA_OPEN_ARTICLE = ItemActivity.class.getName() + ".EXTRA_OPEN_ARTICLE";
     private static final String PARAM_ID = "id";
     private ItemManager.Item mItem;
     private ImageView mBookmark;
@@ -105,6 +106,7 @@ public class ItemActivity extends BaseItemActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         bindFavorite();
     }
 
@@ -291,6 +293,8 @@ public class ItemActivity extends BaseItemActivity {
             AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
             p.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
             mTabLayout.setLayoutParams(p);
+        } else if (getIntent().getBooleanExtra(EXTRA_OPEN_ARTICLE, false)) {
+            viewPager.setCurrentItem(1);
         }
         if (story.isShareable() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {

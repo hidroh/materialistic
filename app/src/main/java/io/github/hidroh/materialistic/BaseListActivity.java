@@ -29,6 +29,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     protected ItemManager.WebItem mSelectedItem;
     private boolean mDefaultOpenComments;
     private boolean mStoryMode;
+    private boolean mExternalBrowser;
     private ViewSwitcher mViewSwitcher;
 
     @Override
@@ -37,6 +38,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         setTitle(getDefaultTitle());
         setContentView(R.layout.activity_list);
         mViewSwitcher = (ViewSwitcher) findViewById(R.id.content);
@@ -59,6 +61,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     protected void onResume() {
         super.onResume();
         mDefaultOpenComments = Preferences.isDefaultOpenComments(this);
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         mStoryMode = !mDefaultOpenComments;
     }
 
@@ -129,10 +132,10 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
             handleMultiPaneItemSelected(item);
             mStoryMode = !mDefaultOpenComments;
         } else {
-            if (mDefaultOpenComments) {
-                openItem(item, sharedElement);
+            if (mExternalBrowser) {
+                AppUtils.openWebUrlExternal(this, item.getUrl());
             } else {
-                AppUtils.openWebUrl(this, item);
+                openItem(item, sharedElement);
             }
         }
         supportInvalidateOptionsMenu();
@@ -234,6 +237,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     private void openItem(ItemManager.WebItem item, View sharedElement) {
         final Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
+        intent.putExtra(ItemActivity.EXTRA_OPEN_ARTICLE, !mDefaultOpenComments);
         final ActivityOptionsCompat options = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(this,
                         sharedElement, getString(R.string.transition_item_container));

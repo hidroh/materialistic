@@ -48,11 +48,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".WebActivity"
-            android:label="@string/title_activity_web"
-            android:configChanges="orientation|screenSize" >
-        </activity>
-        <activity
             android:name=".FavoriteActivity"
             android:label="@string/title_activity_favorite"
             android:configChanges="orientation|screenSize"
