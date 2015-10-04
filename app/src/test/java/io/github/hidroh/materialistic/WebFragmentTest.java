@@ -88,6 +88,7 @@ public class WebFragmentTest {
         WebView webView = (WebView) activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
         shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.pdf", "", "", "", 0l);
+        activity.fragment.setUserVisibleHint(true);
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull(alertDialog);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();

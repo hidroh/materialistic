@@ -33,6 +33,7 @@ public class WebFragment extends BaseFragment {
     private ItemManager.WebItem mItem;
     private WebView mWebView;
     private boolean mIsHackerNewsUrl;
+    private Intent mDownloadIntent;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
 
@@ -77,17 +78,7 @@ public class WebFragment extends BaseFragment {
                 }
 
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    mAlertDialogBuilder
-                            .setMessage(R.string.confirm_download)
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    startActivity(intent);
-                                }
-                            })
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .create()
-                            .show();
+                    mDownloadIntent = intent;
                 }
             }
         });
@@ -164,6 +155,29 @@ public class WebFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_ITEM, mItem);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        // TODO this assumes web fragment is inside a view pager
+        if (!isVisibleToUser) {
+            return;
+        }
+        if (mDownloadIntent == null) {
+            return;
+        }
+        mAlertDialogBuilder
+                .setMessage(R.string.confirm_download)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(mDownloadIntent);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create()
+                .show();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
