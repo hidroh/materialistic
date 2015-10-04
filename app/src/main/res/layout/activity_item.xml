@@ -49,6 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_bookmark_outline_white_24dp"
+        app:layout_behavior="@string/fab_scrolling_view_behavior"
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/view_pager"
         app:layout_anchorGravity="bottom|right" />
