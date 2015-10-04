@@ -32,7 +32,7 @@ public class MaterialisticProvider extends ContentProvider {
             return db.query(FavoriteEntry.TABLE_NAME, projection,
                     selection, selectionArgs,
                     null, null,
-                    FavoriteEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
+                    FavoriteEntry.COLUMN_NAME_TIME + DbHelper.ORDER_DESC);
         } else if (URI_VIEWED.equals(uri)) {
             return db.query(ViewedEntry.TABLE_NAME, projection,
                     selection, selectionArgs,
