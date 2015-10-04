@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.ViewSwitcher;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -26,7 +27,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     private boolean mDefaultOpenComments;
     private boolean mStoryMode;
     private boolean mExternalBrowser;
-    private ViewSwitcher mViewSwitcher;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
         setTitle(getDefaultTitle());
         setContentView(R.layout.activity_list);
-        mViewSwitcher = (ViewSwitcher) findViewById(R.id.content);
+        mViewPager = (ViewPager) findViewById(R.id.content);
         onCreateView();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -106,7 +107,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         if (item.getItemId() == R.id.menu_comment ||
                 item.getItemId() == R.id.menu_story) {
             mStoryMode = !mStoryMode;
-            mViewSwitcher.showNext();
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() == 0 ? 1 : 0);
             supportInvalidateOptionsMenu();
             return true;
         }
@@ -210,21 +211,26 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         supportInvalidateOptionsMenu();
     }
 
-    private void handleMultiPaneItemSelected(ItemManager.WebItem item) {
+    private void handleMultiPaneItemSelected(final ItemManager.WebItem item) {
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
-        mViewSwitcher.reset();
-        mViewSwitcher.setAnimateFirstView(false);
-        mViewSwitcher.setDisplayedChild(0);
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(mDefaultOpenComments ? R.id.first : R.id.second,
-                        ItemFragment.instantiate(this, item, null),
-                        ItemFragment.class.getName())
-                .replace(mDefaultOpenComments ? R.id.second : R.id.first,
-                        WebFragment.instantiate(this, item),
-                        WebFragment.class.getName())
-                .commit();
+        mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                Fragment itemFragment = ItemFragment.instantiate(BaseListActivity.this, item, null);
+                Fragment webFragment = WebFragment.instantiate(BaseListActivity.this, item);
+                if (position == 0) {
+                    return mDefaultOpenComments ? itemFragment : webFragment;
+                } else {
+                    return !mDefaultOpenComments ? itemFragment : webFragment;
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+        });
     }
 
     private void openItem(ItemManager.WebItem item) {

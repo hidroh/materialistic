@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.support.v4.view.ViewPager;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +10,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -31,7 +35,11 @@ public class BaseListActivityLandTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(TestListActivity.class);
-        activity = controller.create().start().resume().visible().get();
+        activity = controller.create().start().resume().get();
+        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
     }
 
     @Test
@@ -76,8 +84,6 @@ public class BaseListActivityLandTest {
             }
         });
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
-        assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag(WebFragment.class.getName());
-        assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag(ItemFragment.class.getName());
         assertStoryMode();
     }
 
@@ -97,7 +103,7 @@ public class BaseListActivityLandTest {
         });
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
-        assertThat(activity.findViewById(R.id.first)).isVisible(); // comment is now default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // comment is now default view
     }
 
     @Test
@@ -157,13 +163,13 @@ public class BaseListActivityLandTest {
     private void assertCommentMode() {
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
-        assertThat(activity.findViewById(R.id.second)).isVisible(); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1); // story is default view
     }
 
     private void assertStoryMode() {
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
-        assertThat(activity.findViewById(R.id.first)).isVisible(); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // story is default view
     }
 
     @After
