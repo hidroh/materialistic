@@ -28,6 +28,11 @@
             android:entryValues="@array/pref_comment_display_values"
             android:defaultValue="@string/pref_comment_display_value_collapsed" />
         <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_color_code"
+            android:title="@string/pref_color_code_title"
+            android:summary="@string/pref_color_code_summary"
+            android:defaultValue="true" />
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"
             android:enabled="@bool/pref_external_enabled"

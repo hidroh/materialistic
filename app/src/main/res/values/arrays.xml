@@ -67,4 +67,17 @@
     <string name="pref_search_sort_value_recent">recent</string>
     <string name="pref_search_sort_value_default">default</string>
 
+    <!-- Color codes -->
+    <array name="color_codes">
+        <item>@color/level_0</item>
+        <item>@color/level_1</item>
+        <item>@color/level_2</item>
+        <item>@color/level_3</item>
+        <item>@color/level_4</item>
+        <item>@color/level_5</item>
+        <item>@color/level_6</item>
+        <item>@color/level_7</item>
+        <item>@color/level_8</item>
+        <item>@color/level_9</item>
+    </array>
 </resources>

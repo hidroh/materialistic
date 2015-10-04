@@ -5,7 +5,6 @@
     <attr name="themedDrawerBackgroundColor" format="reference" />
     <attr name="themedPanelBackgroundColor" format="reference" />
     <attr name="themedHeaderCardDrawable" format="reference" />
-    <attr name="themedCardDrawable" format="reference" />
     <attr name="themedMenuFavoriteOnDrawable" format="reference" />
     <attr name="themedMenuFavoriteOffDrawable" format="reference" />
     <attr name="themedMenuClearDrawable" format="reference" />

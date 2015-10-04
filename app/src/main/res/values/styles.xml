@@ -40,7 +40,6 @@
         <item name="themedDrawerBackgroundColor">@android:color/white</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
         <item name="themedHeaderCardDrawable">@drawable/header_card</item>
-        <item name="themedCardDrawable">@drawable/card</item>
         <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_white_24dp</item>
         <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_white_24dp</item>
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
@@ -90,7 +89,6 @@
         <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
         <item name="themedHeaderCardDrawable">@drawable/header_card_dark</item>
-        <item name="themedCardDrawable">@drawable/card_dark</item>
         <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_black_24dp</item>
         <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_black_24dp</item>
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
@@ -294,13 +292,11 @@
     <style name="AppCardView" parent="BaseAppCardView">
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
-    <style name="BaseFlatCardView">
+    <style name="FlatCardView">
         <item name="android:paddingTop">@dimen/padding</item>
         <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/flat_card_horizontal_margin</item>
-    </style>
-    <style name="FlatCardView" parent="BaseFlatCardView">
-        <item name="android:background">?attr/themedCardDrawable</item>
+        <item name="android:background">?attr/themedCardBackgroundColor</item>
     </style>
 
 </resources>
