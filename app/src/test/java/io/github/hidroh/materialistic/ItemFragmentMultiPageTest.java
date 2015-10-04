@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import org.junit.After;
 import org.junit.Before;
@@ -56,7 +57,8 @@ public class ItemFragmentMultiPageTest {
                 }, null);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
-        assertThat(fragment.getView().findViewById(android.R.id.empty)).isVisible();
+        assertThat((ViewSwitcher) fragment.getView().findViewById(R.id.view_switcher))
+                .hasDisplayedChild(1);
     }
 
     @Test
@@ -74,7 +76,8 @@ public class ItemFragmentMultiPageTest {
                 }};
             }
         });
-        assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
+        assertThat((ViewSwitcher) fragment.getView().findViewById(R.id.view_switcher))
+                .hasDisplayedChild(0);
     }
 
     @Test
@@ -98,7 +101,8 @@ public class ItemFragmentMultiPageTest {
                 }, null);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
-        assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
+        assertThat((ViewSwitcher) fragment.getView().findViewById(R.id.view_switcher))
+                .hasDisplayedChild(0);
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);

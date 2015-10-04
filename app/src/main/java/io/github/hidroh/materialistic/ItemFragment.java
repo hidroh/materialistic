@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class ItemFragment extends BaseFragment {
 
     private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private RecyclerView mRecyclerView;
-    private View mEmptyView;
+    private ViewSwitcher mViewSwitcher;
     private ItemManager.Item mItem;
     private String mItemId;
     private boolean mIsResumed;
@@ -56,7 +57,7 @@ public class ItemFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
-        mEmptyView = view.findViewById(android.R.id.empty);
+        mViewSwitcher = (ViewSwitcher) view.findViewById(R.id.view_switcher);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
@@ -137,8 +138,9 @@ public class ItemFragment extends BaseFragment {
     }
 
     private void bindKidData(final ItemManager.Item[] items) {
-        if (items == null || items.length == 0) {
-            mEmptyView.setVisibility(View.VISIBLE);
+        boolean empty = items == null || items.length == 0;
+        mViewSwitcher.setDisplayedChild(!empty ? 0 : 1);
+        if (empty) {
             return;
         }
 
