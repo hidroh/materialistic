@@ -1,7 +1,7 @@
 package io.github.hidroh.materialistic.widget;
 
+import android.content.res.TypedArray;
 import android.support.v4.util.SimpleArrayMap;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +22,9 @@ public class SinglePageItemRecyclerViewAdapter
     private SimpleArrayMap<String, ItemManager.Item> mExpanded = new SimpleArrayMap<>();
     private Set<String> mCollapsed = new HashSet<>();
     private int mLevelIndicatorWidth = 0;
-    private int mDefaultItemVerticalMargin = 0;
     private boolean mAutoExpand = true;
+    private boolean mColorCoded = true;
+    private TypedArray mColors;
     private RecyclerView mRecyclerView;
 
     public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, ArrayList<ItemManager.Item> list) {
@@ -35,8 +36,11 @@ public class SinglePageItemRecyclerViewAdapter
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
-        mDefaultItemVerticalMargin = AppUtils.getDimensionInDp(mContext, R.dimen.margin);
         mAutoExpand = Preferences.shouldAutoExpandComments(mContext);
+        mColorCoded = Preferences.colorCodeEnabled(mContext);
+        if (mColorCoded) {
+            mColors = mContext.getResources().obtainTypedArray(R.array.color_codes);
+        }
         mRecyclerView = recyclerView;
     }
 
@@ -50,12 +54,14 @@ public class SinglePageItemRecyclerViewAdapter
     public ToggleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ToggleItemViewHolder holder =
                 new ToggleItemViewHolder(mLayoutInflater.inflate(R.layout.item_comment, parent, false));
-        // higher level item gets higher elevation, max 10dp
-        ViewCompat.setElevation(holder.itemView, 10f - 1f * viewType);
         final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)
                 holder.itemView.getLayoutParams();
         params.leftMargin = mLevelIndicatorWidth * viewType;
         holder.itemView.setLayoutParams(params);
+        if (mColorCoded && mColors != null && mColors.length() > 0) {
+            holder.mLevel.setVisibility(View.VISIBLE);
+            holder.mLevel.setBackgroundColor(mColors.getColor(viewType % mColors.length(), 0));
+        }
         return holder;
     }
 
@@ -66,10 +72,6 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     protected void bind(final ToggleItemViewHolder holder, final ItemManager.Item item) {
-        final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)
-                holder.itemView.getLayoutParams();
-        params.bottomMargin = mDefaultItemVerticalMargin;
-        holder.itemView.setLayoutParams(params);
         holder.mCommentButton.setVisibility(View.GONE);
         holder.mPostedTextView.setOnClickListener(null);
         holder.mToggle.setVisibility(View.GONE);
@@ -104,14 +106,10 @@ public class SinglePageItemRecyclerViewAdapter
             expand(item);
         }
         if(mExpanded.containsKey(item.getId())) {
-            params.bottomMargin = 0;
-            holder.itemView.setLayoutParams(params);
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_less_grey600_24dp, 0);
             holder.mToggle.setText(mContext.getString(R.string.hide_comments, item.getKidCount()));
         } else {
-            params.bottomMargin = mDefaultItemVerticalMargin;
-            holder.itemView.setLayoutParams(params);
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_more_grey600_24dp, 0);
             holder.mToggle.setText(mContext.getString(R.string.show_comments, item.getKidCount()));

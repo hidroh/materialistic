@@ -80,6 +80,11 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_external), false);
     }
 
+    public static boolean colorCodeEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_color_code), true);
+    }
+
     public static boolean isDefaultSinglePageComments(Context context) {
         return !PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_comment_display),
