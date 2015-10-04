@@ -1,9 +1,6 @@
 package io.github.hidroh.materialistic.widget;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -50,7 +47,7 @@ public class MultiPageItemRecyclerViewAdapter
                 holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openItem(holder, item);
+                        openItem(item);
                     }
                 });
             }
@@ -62,14 +59,10 @@ public class MultiPageItemRecyclerViewAdapter
         return mItems.length;
     }
 
-    private void openItem(ItemViewHolder holder, ItemManager.Item item) {
+    private void openItem(ItemManager.Item item) {
         final Intent intent = new Intent(mContext, ItemActivity.class);
-        Activity activity = (Activity) mContext;
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, mItemLevel + 1);
-        final ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(activity,
-                        holder.itemView, mContext.getString(R.string.transition_item_container));
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        mContext.startActivity(intent);
     }
 }

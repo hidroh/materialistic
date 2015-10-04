@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,7 +63,7 @@ public class BaseListActivityTest {
             public String getUrl() {
                 return "http://example.com";
             }
-        }, new View(activity));
+        });
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
         assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_ARTICLE);
@@ -90,7 +89,7 @@ public class BaseListActivityTest {
             public String getUrl() {
                 return "http://example.com";
             }
-        }, new View(activity));
+        });
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
@@ -107,7 +106,7 @@ public class BaseListActivityTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertEquals(ItemActivity.class.getName(),
                 shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
     }
@@ -124,7 +123,7 @@ public class BaseListActivityTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertNull(activity.getSelectedItem());
     }
 

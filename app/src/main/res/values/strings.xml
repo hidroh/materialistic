@@ -10,7 +10,6 @@
     <string name="title_activity_web">Story</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
-    <string name="transition_item_container">transition_item_container</string>
     <string name="view_in_browser">View in external browser</string>
     <string name="share_format" formatted="false">%s - %s (via Materialistic)</string>
     <string name="favorite_email_subject">Your Materialistic saved stories</string>
