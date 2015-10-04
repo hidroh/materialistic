@@ -17,7 +17,6 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.R;
@@ -426,23 +425,22 @@ public class FavoriteManager {
     }
 
     private static class FavoriteHandler extends AsyncQueryHandler {
-        private final WeakReference<FavoriteCallback> mCallback;
+        private FavoriteCallback mCallback;
 
         public FavoriteHandler(ContentResolver cr, FavoriteCallback callback) {
             super(cr);
-            mCallback = new WeakReference<>(callback);
+            mCallback = callback;
         }
 
         @Override
         protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
             if (cursor == null) {
+                mCallback = null;
                 return;
             }
             // cookie represents itemId
             if (cookie != null) {
-                if (mCallback.get() != null) {
-                    mCallback.get().onCheckComplete(cursor.getCount() > 0);
-                }
+                mCallback.onCheckComplete(cursor.getCount() > 0);
             } else {
                 Favorite[] favorites = new Favorite[cursor.getCount()];
                 int count = 0;
@@ -455,30 +453,26 @@ public class FavoriteManager {
                     } while (favoriteCursor.moveToNext());
 
                 }
-                if (mCallback.get() != null) {
-                    mCallback.get().onQueryComplete(favorites);
-                }
+                mCallback.onQueryComplete(favorites);
             }
+            mCallback = null;
         }
 
         @Override
         protected void onInsertComplete(int token, Object cookie, Uri uri) {
-            if (mCallback.get() != null) {
-                mCallback.get().onInsertComplete();
-            }
+            mCallback.onInsertComplete();
+            mCallback = null;
         }
 
         @Override
         protected void onDeleteComplete(int token, Object cookie, int result) {
-            if (mCallback.get() == null) {
-                return;
-            }
             // cookie represents itemId
             if (cookie != null) {
-                mCallback.get().onDeleteComplete();
+                mCallback.onDeleteComplete();
             } else {
-                mCallback.get().onClearComplete();
+                mCallback.onClearComplete();
             }
+            mCallback = null;
         }
     }
 
