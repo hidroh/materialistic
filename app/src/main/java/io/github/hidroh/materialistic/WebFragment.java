@@ -63,6 +63,7 @@ public class WebFragment extends BaseFragment {
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
                     mWebView.setBackgroundColor(Color.WHITE);
+                    mWebView.setVisibility(View.VISIBLE);
                 }
             }
         });
