@@ -12,8 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import java.lang.ref.WeakReference;
-
 /**
  * Data repository for session state
  */
@@ -94,26 +92,25 @@ public class SessionManager {
 
     private static class SessionHandler extends AsyncQueryHandler {
         private final String mItemId;
-        private final WeakReference<SessionCallback> mCallback;
+        private SessionCallback mCallback;
 
         public SessionHandler(ContentResolver cr, @NonNull String itemId,
                               @NonNull SessionCallback callback) {
             super(cr);
             mItemId = itemId;
-            mCallback = new WeakReference<>(callback);
+            mCallback = callback;
         }
 
         @Override
         protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
             super.onQueryComplete(token, cookie, cursor);
             if (cookie == null) {
-                return;
-            }
-            if (mCallback.get() == null) {
+                mCallback = null;
                 return;
             }
             if (cookie.equals(mItemId)) {
-                mCallback.get().onQueryComplete(cursor.getCount() > 0);
+                mCallback.onQueryComplete(cursor.getCount() > 0);
+                mCallback = null;
             }
         }
 
@@ -121,13 +118,12 @@ public class SessionManager {
         protected void onInsertComplete(int token, Object cookie, Uri uri) {
             super.onInsertComplete(token, cookie, uri);
             if (cookie == null) {
-                return;
-            }
-            if (mCallback.get() == null) {
+                mCallback = null;
                 return;
             }
             if (cookie.equals(mItemId)) {
-                mCallback.get().onInsertComplete();
+                mCallback.onInsertComplete();
+                mCallback = null;
             }
         }
     }
