@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@id/swipe_layout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="io.github.hidroh.materialistic.ItemActivity">
 
-    <ViewSwitcher
-        android:id="@+id/view_switcher"
+    <io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout
+        android:id="@id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,18 +16,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <android.support.v4.widget.NestedScrollView
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
+    </io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout>
 
-            <TextView
-                android:text="@string/no_comments"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                style="@style/textEmptyStyle" />
+    <android.support.v4.widget.NestedScrollView
+        android:id="@android:id/empty"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
-        </android.support.v4.widget.NestedScrollView>
+        <TextView
+            android:text="@string/no_comments"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            style="@style/textEmptyStyle" />
 
-    </ViewSwitcher>
+    </android.support.v4.widget.NestedScrollView>
 
-</io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout>
+</RelativeLayout>
