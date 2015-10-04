@@ -45,6 +45,21 @@ public class SettingsActivity extends BaseActivity {
             return true;
         }
 
+        if (item.getItemId() == R.id.menu_reset) {
+            mAlertDialogBuilder
+                    .setMessage(R.string.reset_settings_confirm)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Preferences.reset(SettingsActivity.this);
+                            AppUtils.restart(SettingsActivity.this);
+                        }
+                    })
+                    .create()
+                    .show();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

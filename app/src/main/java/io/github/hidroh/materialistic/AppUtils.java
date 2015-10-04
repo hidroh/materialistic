@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.DimenRes;
 import android.support.v4.app.BundleCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.IntentCompat;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -115,5 +117,12 @@ public class AppUtils {
     public static int getDimensionInDp(Context context, @DimenRes int dimenResId) {
         return (int) (context.getResources().getDimension(dimenResId) /
                         context.getResources().getDisplayMetrics().density);
+    }
+
+    public static void restart(Activity activity) {
+        activity.finish();
+        final Intent intent = activity.getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
     }
 }

@@ -121,5 +121,7 @@
     <string name="comments_count" formatted="false">%s Comments</string>
     <string name="article">Article</string>
     <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.ScrollAwareFABBehavior</string>
+    <string name="reset_settings">Reset all settings</string>
+    <string name="reset_settings_confirm">Reset all your preferences to app defaults?</string>
 
 </resources>
