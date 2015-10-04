@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/swipe_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.github.hidroh.materialistic.ItemActivity">
+    android:layout_height="match_parent">
 
-    <io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout
-        android:id="@id/swipe_layout"
+    <ViewSwitcher
+        android:id="@+id/view_switcher"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.v7.widget.RecyclerView
             android:id="@id/recycler_view"
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout>
-    <TextView
-        android:id="@android:id/empty"
-        android:text="@string/no_comments"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        style="@style/textEmptyStyle" />
 
-</RelativeLayout>
+        <android.support.v4.widget.NestedScrollView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:text="@string/no_comments"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                style="@style/textEmptyStyle" />
+
+        </android.support.v4.widget.NestedScrollView>
+
+    </ViewSwitcher>
+
+</io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout>
