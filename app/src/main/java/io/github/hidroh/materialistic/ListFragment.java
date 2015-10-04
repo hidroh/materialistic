@@ -324,7 +324,7 @@ public class ListFragment extends BaseFragment {
 
         @Override
         protected void onItemSelected(ItemManager.Item item, View itemView) {
-            mMultiPaneListener.onItemSelected(item, itemView);
+            mMultiPaneListener.onItemSelected(item);
         }
 
         @Override

@@ -1,7 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.view.View;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +54,7 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertThat(activity).hasTitle("item title");
 
         RuntimeEnvironment.setQualifiers("");
@@ -76,7 +74,7 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag(WebFragment.class.getName());
         assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag(ItemFragment.class.getName());
@@ -96,7 +94,7 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
         assertThat(activity.findViewById(R.id.first)).isVisible(); // comment is now default view
@@ -114,7 +112,7 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertNotNull(activity.getSelectedItem());
     }
 
@@ -130,7 +128,7 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         activity.clearSelection();
         assertThat(activity.findViewById(R.id.empty)).isVisible();
@@ -148,7 +146,7 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
-        }, new View(activity));
+        });
         assertStoryMode();
         shadowOf(activity).clickMenuItem(R.id.menu_comment);
         assertCommentMode();

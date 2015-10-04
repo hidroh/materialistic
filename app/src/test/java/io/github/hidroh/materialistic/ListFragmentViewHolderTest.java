@@ -104,8 +104,8 @@ public class ListFragmentViewHolderTest {
         View commentButton = holder.itemView.findViewById(R.id.comment);
         assertThat(commentButton).isVisible();
         commentButton.performClick();
-        verify(activity.multiPaneListener, never()).onItemSelected(any(ItemManager.WebItem.class),
-                any(View.class));
+        verify(activity.multiPaneListener, never()).onItemSelected(any(ItemManager.WebItem.class)
+        );
         assertEquals(ItemActivity.class.getName(),
                 shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
         assertViewed();
@@ -136,8 +136,8 @@ public class ListFragmentViewHolderTest {
         adapter.bindViewHolder(holder, 0);
         holder.itemView.performClick();
         assertViewed();
-        verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class),
-                any(View.class));
+        verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class)
+        );
     }
 
     @Test

@@ -379,7 +379,7 @@ public class FavoriteFragment extends BaseFragment
 
         @Override
         protected void onItemSelected(FavoriteManager.Favorite item, View itemView) {
-            mMultiPaneListener.onItemSelected(item, itemView);
+            mMultiPaneListener.onItemSelected(item);
         }
 
         private FavoriteManager.Favorite getItem(int position) {

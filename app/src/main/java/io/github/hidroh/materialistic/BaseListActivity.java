@@ -2,17 +2,13 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
 
@@ -34,9 +30,6 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        }
         super.onCreate(savedInstanceState);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
         setTitle(getDefaultTitle());
@@ -122,7 +115,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     }
 
     @Override
-    public void onItemSelected(ItemManager.WebItem item, View sharedElement) {
+    public void onItemSelected(ItemManager.WebItem item) {
         if (getSelectedItem() != null && item.getId().equals(getSelectedItem().getId())) {
             return;
         }
@@ -135,7 +128,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
             if (mExternalBrowser) {
                 AppUtils.openWebUrlExternal(this, item.getUrl());
             } else {
-                openItem(item, sharedElement);
+                openItem(item);
             }
         }
         supportInvalidateOptionsMenu();
@@ -234,13 +227,10 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
                 .commit();
     }
 
-    private void openItem(ItemManager.WebItem item, View sharedElement) {
+    private void openItem(ItemManager.WebItem item) {
         final Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         intent.putExtra(ItemActivity.EXTRA_OPEN_ARTICLE, !mDefaultOpenComments);
-        final ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(this,
-                        sharedElement, getString(R.string.transition_item_container));
-        ActivityCompat.startActivity(this, intent, options.toBundle());
+        startActivity(intent);
     }
 }
