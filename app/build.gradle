@@ -8,7 +8,7 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 19
+        versionCode 20
         versionName "1.6"
         resValue "bool", "debug", "true"
     }
