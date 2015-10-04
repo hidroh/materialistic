@@ -1,10 +1,8 @@
 package io.github.hidroh.materialistic;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
@@ -34,10 +32,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 Preferences.sync(getPreferenceManager(), key);
                 if (key.equals(getActivity().getString(R.string.pref_theme)) ||
                         key.equals(getActivity().getString(R.string.pref_text_size))) {
-                    getActivity().finish();
-                    final Intent intent = getActivity().getIntent();
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                    getActivity().startActivity(intent);
+                    AppUtils.restart(getActivity());
                 } else if (key.equals(getActivity().getString(R.string.pref_search_sort))) {
                     AlgoliaClient.sSortByTime = Preferences.isSortByRecent(getActivity());
                 }

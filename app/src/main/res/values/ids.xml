@@ -45,6 +45,7 @@
     <item type="id" name="menu_favorite" />
     <item type="id" name="menu_story" />
     <item type="id" name="menu_clear_recent" />
+    <item type="id" name="menu_reset" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

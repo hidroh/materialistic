@@ -107,6 +107,13 @@ public class Preferences {
         contextThemeWrapper.getTheme().applyStyle(Preferences.resolveTextSizeResId(contextThemeWrapper), true);
     }
 
+    public static void reset(Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .clear()
+                .apply();
+    }
+
     private static boolean darkThemeEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_theme),

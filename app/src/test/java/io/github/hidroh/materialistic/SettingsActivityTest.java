@@ -51,6 +51,21 @@ public class SettingsActivityTest {
     }
 
     @Test
+    public void testReset() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_color_code), false)
+                .commit();
+        assertFalse(Preferences.colorCodeEnabled(activity));
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_reset));
+        shadowOf(activity).clickMenuItem(R.id.menu_reset);
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        assertTrue(Preferences.colorCodeEnabled(activity));
+    }
+
+    @Test
     public void testPrefSearch() {
         assertTrue(AlgoliaClient.sSortByTime);
         String key = activity.getString(R.string.pref_search_sort);
