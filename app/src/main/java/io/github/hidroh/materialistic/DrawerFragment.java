@@ -74,7 +74,7 @@ public class DrawerFragment extends Fragment {
     }
 
     private void navigate(final Class<? extends Activity> activityClass) {
-        ((BaseActivity) getActivity()).closeDrawers();
+        ((DrawerActivity) getActivity()).closeDrawers();
         if (!getActivity().getClass().equals(activityClass)) {
             new Handler().postDelayed(new Runnable() {
                 @Override

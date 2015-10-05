@@ -3,20 +3,7 @@
     android:id="@id/drawer_layout"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <!-- The main content view -->
-    <RelativeLayout
-        android:id="@id/content_frame"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.Toolbar
-            android:id="@id/toolbar"
-            android:theme="@style/AppToolbarTheme"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
-    </RelativeLayout>
+    <!-- The main content view, to be inflated -->
     <!-- The navigation drawer -->
     <ScrollView
         android:id="@id/drawer"

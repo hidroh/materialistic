@@ -3,6 +3,8 @@ package io.github.hidroh.materialistic;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -10,13 +12,16 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
-public class SettingsActivity extends BaseActivity {
+public class SettingsActivity extends DrawerActivity {
     @Inject AlertDialogBuilder mAlertDialogBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
+                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
     }
 
     @Override
@@ -61,10 +66,5 @@ public class SettingsActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected boolean isSearchable() {
-        return false;
     }
 }

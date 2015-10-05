@@ -1,47 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:scrollbars="none"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            android:text="@string/application_info_title"
-            style="@style/HeadlineTextStyle" />
-        <TextView
-            android:id="@id/text_application_info"
-            style="@style/textContentStyle"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/content_frame"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="@string/developer_info_title"
-            style="@style/HeadlineTextStyle" />
-        <TextView
-            android:id="@id/text_developer_info"
-            style="@style/textContentStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="@string/libraries_title"
-            style="@style/HeadlineTextStyle" />
-        <TextView
-            android:id="@id/text_libraries"
-            style="@style/textContentStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="@string/license_title"
-            style="@style/HeadlineTextStyle" />
-        <TextView
-            android:id="@id/text_license"
-            style="@style/textContentStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-</ScrollView>
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="@string/application_info_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@id/text_application_info"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/developer_info_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@id/text_developer_info"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/libraries_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@id/text_libraries"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/license_title"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@id/text_license"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
