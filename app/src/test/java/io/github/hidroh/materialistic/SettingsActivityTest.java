@@ -34,7 +34,7 @@ public class SettingsActivityTest {
     public void setUp() {
         TestApplication.applicationGraph.inject(this);
         controller = Robolectric.buildActivity(SettingsActivity.class);
-        activity = controller.create().start().resume().visible().get();
+        activity = controller.create().postCreate(null).start().resume().visible().get();
         fragment = (SettingsFragment) activity.getSupportFragmentManager()
                 .findFragmentByTag(SettingsFragment.class.getName());
     }

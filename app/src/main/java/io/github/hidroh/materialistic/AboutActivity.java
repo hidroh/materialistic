@@ -3,13 +3,18 @@ package io.github.hidroh.materialistic;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends DrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
+                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 
         String versionName = "";
         try {
@@ -21,11 +26,6 @@ public class AboutActivity extends BaseActivity {
         setTextWithLinks(R.id.text_developer_info, getString(R.string.developer_info_text));
         setTextWithLinks(R.id.text_libraries, getString(R.string.libraries_text));
         setTextWithLinks(R.id.text_license, getString(R.string.license_text));
-    }
-
-    @Override
-    protected boolean isSearchable() {
-        return false;
     }
 
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {

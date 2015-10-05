@@ -1,24 +1,33 @@
 package io.github.hidroh.materialistic;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
 /**
  * List activity that renders alternative layouts for portrait/landscape
  */
-public abstract class BaseListActivity extends BaseActivity implements MultiPaneListener {
+public abstract class BaseListActivity extends DrawerActivity implements MultiPaneListener {
 
     private static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() + ".LIST_FRAGMENT_TAG";
     private boolean mIsMultiPane;
@@ -28,13 +37,19 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
     private boolean mStoryMode;
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
+    private RelativeLayout mContentView;
+    @Inject ActionViewResolver mActionViewResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
         setTitle(getDefaultTitle());
-        setContentView(R.layout.activity_list);
+        super.setContentView(R.layout.activity_list);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
+                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        mContentView = (RelativeLayout) findViewById(R.id.content_frame);
         mViewPager = (ViewPager) findViewById(R.id.content);
         onCreateView();
         getSupportFragmentManager()
@@ -57,6 +72,10 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         mDefaultOpenComments = Preferences.isDefaultOpenComments(this);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
         mStoryMode = !mDefaultOpenComments;
+        if (isSearchable()) {
+            // close search view
+            supportInvalidateOptionsMenu();
+        }
     }
 
     @Override
@@ -74,18 +93,27 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!getResources().getBoolean(R.bool.multi_pane)) {
-            return super.onCreateOptionsMenu(menu);
+        if (getResources().getBoolean(R.bool.multi_pane)) {
+            getMenuInflater().inflate(R.menu.menu_list_land, menu);
         }
 
-        getMenuInflater().inflate(R.menu.menu_list_land, menu);
+        if (isSearchable()) {
+            getMenuInflater().inflate(R.menu.menu_search, menu);
+            MenuItem menuSearch = menu.findItem(R.id.menu_search);
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(
+                    new ComponentName(this, SearchActivity.class)));
+            searchView.setIconified(true);
+            searchView.setQuery("", false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (!getResources().getBoolean(R.bool.multi_pane)) {
-            return super.onPrepareOptionsMenu(menu);
+            return isSearchable() || super.onPrepareOptionsMenu(menu);
         }
 
         menu.findItem(R.id.menu_comment).setVisible(isItemOptionsMenuVisible() && mStoryMode);
@@ -99,7 +127,7 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
                             mSelectedItem.getDisplayedTitle(),
                             mSelectedItem.getUrl())));
         }
-        return super.onPrepareOptionsMenu(menu);
+        return isSearchable() || super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -113,6 +141,11 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        addContentView(layoutResID);
     }
 
     @Override
@@ -154,7 +187,11 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
         return mSelectedItem;
     }
 
-    @Override
+
+    /**
+     * Checks if activity should have search view
+     * @return true if is searchable, false otherwise
+     */
     protected boolean isSearchable() {
         return true;
     }
@@ -176,6 +213,15 @@ public abstract class BaseListActivity extends BaseActivity implements MultiPane
      * @return  true to display item options menu, false otherwise
      */
     protected abstract boolean isItemOptionsMenuVisible();
+
+    protected View addContentView(@LayoutRes int layoutResID) {
+        View view = getLayoutInflater().inflate(layoutResID, mContentView, false);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        params.addRule(RelativeLayout.BELOW, R.id.toolbar);
+        view.setLayoutParams(params);
+        mContentView.addView(view);
+        return view;
+    }
 
     /**
      * Recreates view on first load or on orientation change that triggers layout change

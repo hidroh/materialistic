@@ -19,6 +19,5 @@ public class AboutActivityTest {
         assertThat((TextView) activity.findViewById(R.id.text_developer_info)).containsText("Ha Duy Trung");
         assertThat((TextView) activity.findViewById(R.id.text_libraries)).isNotEmpty();
         assertThat((TextView) activity.findViewById(R.id.text_license)).containsText("Apache");
-        assertFalse(activity.isSearchable());
     }
 }

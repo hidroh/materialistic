@@ -35,7 +35,7 @@ public class BaseListActivityLandTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(TestListActivity.class);
-        activity = controller.create().start().resume().get();
+        activity = controller.create().postCreate(null).start().resume().get();
         // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
         ShadowLooper.pauseMainLooper();
         controller.visible();

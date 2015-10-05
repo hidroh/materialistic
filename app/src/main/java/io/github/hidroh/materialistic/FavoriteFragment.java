@@ -256,10 +256,10 @@ public class FavoriteFragment extends BaseFragment
         }
 
         if (TextUtils.isEmpty(mFilter)) {
-            ((BaseActivity) getActivity()).getSupportActionBar().setSubtitle(null);
+            ((DrawerActivity) getActivity()).getSupportActionBar().setSubtitle(null);
             return new FavoriteManager.CursorLoader(getActivity());
         } else {
-            ((BaseActivity) getActivity()).getSupportActionBar().setSubtitle(mFilter);
+            ((DrawerActivity) getActivity()).getSupportActionBar().setSubtitle(mFilter);
             return new FavoriteManager.CursorLoader(getActivity(), mFilter);
         }
     }
@@ -326,8 +326,8 @@ public class FavoriteFragment extends BaseFragment
         return TextUtils.join("\n\n", favorites);
     }
 
-    private BaseActivity getBaseActivity() {
-        return (BaseActivity) getActivity();
+    private DrawerActivity getBaseActivity() {
+        return (DrawerActivity) getActivity();
     }
 
     private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, FavoriteManager.Favorite> {

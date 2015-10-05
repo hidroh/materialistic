@@ -1,26 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <include layout="@layout/list"
-        android:id="@android:id/list" />
-    <android.support.v4.view.ViewPager
-        android:id="@id/content"
-        android:inAnimation="@anim/slide_in_right"
-        android:outAnimation="@anim/slide_out_right"
-        android:elevation="8dp"
-        android:background="?attr/themedPanelBackgroundColor"
-        android:layout_toRightOf="@android:id/list"
+    android:id="@id/content_frame"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar"
+        android:id="@id/toolbar" />
+
+    <RelativeLayout
+        android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <TextView
-        android:id="@id/empty"
-        android:elevation="8dp"
-        android:layout_toRightOf="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|center_vertical"
-        android:background="?attr/themedCardHighlightColor"
-        android:text="@string/select_story"
-        android:textColor="?attr/themedTextColorSecondaryInverse"
-        android:textSize="@dimen/abc_text_size_headline_material"/>
+        android:layout_height="match_parent">
+
+        <include layout="@layout/list"
+            android:id="@android:id/list" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@id/content"
+            android:inAnimation="@anim/slide_in_right"
+            android:outAnimation="@anim/slide_out_right"
+            android:elevation="8dp"
+            android:background="?attr/themedPanelBackgroundColor"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@id/empty"
+            android:elevation="8dp"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_vertical"
+            android:background="?attr/themedCardHighlightColor"
+            android:text="@string/select_story"
+            android:textColor="?attr/themedTextColorSecondaryInverse"
+            android:textSize="@dimen/abc_text_size_headline_material"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

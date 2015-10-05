@@ -37,7 +37,7 @@ public class BaseListActivityTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(TestListActivity.class);
-        activity = controller.create().start().resume().visible().get();
+        activity = controller.create().postCreate(null).start().resume().visible().get();
     }
 
     @Test
