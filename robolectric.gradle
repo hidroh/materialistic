@@ -41,4 +41,8 @@ dependencies {
             exclude group: 'com.android.support', module: 'support-annotations'
             exclude group: 'com.android.support', module: 'support-v4' // see robolectric/robolectric#1633
     }
+    testCompile("com.squareup.assertj:assertj-android-appcompat-v7:$assertjVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'appcompat-v7' // see robolectric/robolectric#1633
+    }
 }

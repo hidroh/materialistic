@@ -285,8 +285,8 @@ public class HackerNewsClient implements ItemManager {
             try {
                 relativeTime = DateUtils.getRelativeTimeSpanString(time * 1000,
                         System.currentTimeMillis(),
-                                DateUtils.MINUTE_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_ALL);
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_ALL);
             } catch (NullPointerException e) {
                 // TODO should properly prevent this
             }

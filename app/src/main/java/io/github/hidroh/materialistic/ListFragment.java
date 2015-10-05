@@ -49,12 +49,17 @@ public class ListFragment extends BaseFragment {
     private Set<String> mChangedFavorites = new HashSet<>();
     private Set<String> mViewed = new HashSet<>();
     private MultiPaneListener mMultiPaneListener;
+    private RefreshCallback mRefreshCallback;
     private String mFilter;
     @Inject FavoriteManager mFavoriteManager;
     @Inject SessionManager mSessionManager;
     private boolean mResumed;
     private int mPrimaryTextColorResId;
     private int mSecondaryTextColorResId;
+
+    public interface RefreshCallback {
+        void onRefreshed();
+    }
 
     /**
      * Constructs an instance of {@link ListFragment} with given filter
@@ -86,6 +91,9 @@ public class ListFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mMultiPaneListener = (MultiPaneListener) activity;
+        if (activity instanceof RefreshCallback) {
+            mRefreshCallback = (RefreshCallback) activity;
+        }
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -190,6 +198,7 @@ public class ListFragment extends BaseFragment {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
         mMultiPaneListener = null;
+        mRefreshCallback = null;
         super.onDetach();
     }
 
@@ -208,6 +217,9 @@ public class ListFragment extends BaseFragment {
                 mErrorView.setVisibility(View.GONE);
                 mAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
+                if (mRefreshCallback != null) {
+                    mRefreshCallback.onRefreshed();
+                }
             }
 
             @Override
