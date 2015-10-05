@@ -7,7 +7,7 @@
         android:id="@id/empty_search" />
     <include layout="@layout/empty_list"
         android:id="@android:id/empty" />
-    <android.support.v4.widget.SwipeRefreshLayout
+    <io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:id="@id/swipe_layout"
@@ -19,5 +19,5 @@
             android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </io.github.hidroh.materialistic.widget.AppBarSwipeRefreshLayout>
 </FrameLayout>

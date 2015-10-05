@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
@@ -37,7 +39,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private boolean mStoryMode;
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
-    private RelativeLayout mContentView;
+    private CoordinatorLayout mContentView;
     @Inject ActionViewResolver mActionViewResolver;
 
     @Override
@@ -49,7 +51,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
-        mContentView = (RelativeLayout) findViewById(R.id.content_frame);
+        mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
         mViewPager = (ViewPager) findViewById(R.id.content);
         onCreateView();
         getSupportFragmentManager()
@@ -216,8 +218,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     protected View addContentView(@LayoutRes int layoutResID) {
         View view = getLayoutInflater().inflate(layoutResID, mContentView, false);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
-        params.addRule(RelativeLayout.BELOW, R.id.toolbar);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
+                view.getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
         view.setLayoutParams(params);
         mContentView.addView(view);
         return view;
