@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -52,5 +53,22 @@ public class AppUtilsTest {
         shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
         Preferences.applyTheme(activity);
         assertEquals(R.style.AppTextSize, shadowOf(activity.getTheme()).getStyleResourceId());
+    }
+
+    @Test
+    public void testGetAbbreviatedTimeSpan() {
+        assertEquals("0m", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() +
+                DateUtils.SECOND_IN_MILLIS));
+        assertEquals("0m", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis()));
+        assertEquals("5m", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
+                5 * DateUtils.MINUTE_IN_MILLIS - 10 * DateUtils.SECOND_IN_MILLIS));
+        assertEquals("1h", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
+                DateUtils.HOUR_IN_MILLIS - DateUtils.MINUTE_IN_MILLIS));
+        assertEquals("6d", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
+                DateUtils.WEEK_IN_MILLIS + DateUtils.MINUTE_IN_MILLIS));
+        assertEquals("1w", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
+                DateUtils.WEEK_IN_MILLIS - DateUtils.MINUTE_IN_MILLIS));
+        assertEquals("10y", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
+                10 * DateUtils.YEAR_IN_MILLIS -DateUtils.MINUTE_IN_MILLIS));
     }
 }

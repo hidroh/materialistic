@@ -125,7 +125,7 @@ public class HackerNewsItemTest {
         assertEquals(5, item.getScore());
         assertTrue(item.isDead());
         assertTrue(item.isDeleted());
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application)).doesNotContain("by");
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, true)).doesNotContain("by");
         assertThat(item.getKids()).hasSize(1);
         assertEquals(1, item.getKidItems()[0].getLevel());
     }
@@ -208,7 +208,7 @@ public class HackerNewsItemTest {
                 return "author";
             }
         });
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application))
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false))
                 .contains("author");
     }
 

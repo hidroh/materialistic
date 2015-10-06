@@ -39,7 +39,7 @@ public class MultiPageItemRecyclerViewAdapter
             holder.mPostedTextView.setText(R.string.loading_text);
             holder.mContentTextView.setText(R.string.loading_text);
         } else {
-            holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+            holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
             AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
             if (item.getKidCount() > 0) {
                 holder.mCommentButton.setText(mContext.getString(R.string.comments_count, item.getKidCount()));

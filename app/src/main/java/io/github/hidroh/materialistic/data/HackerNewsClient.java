@@ -13,6 +13,7 @@ import android.text.style.StrikethroughSpan;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.AppUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -280,15 +281,19 @@ public class HackerNewsClient implements ItemManager {
         }
 
         @Override
-        public Spannable getDisplayedTime(Context context) {
+        public Spannable getDisplayedTime(Context context, boolean abbreviate) {
             CharSequence relativeTime = "";
-            try {
-                relativeTime = DateUtils.getRelativeTimeSpanString(time * 1000,
-                        System.currentTimeMillis(),
-                        DateUtils.MINUTE_IN_MILLIS,
-                        DateUtils.FORMAT_ABBREV_ALL);
-            } catch (NullPointerException e) {
-                // TODO should properly prevent this
+            if (abbreviate) {
+                relativeTime = AppUtils.getAbbreviatedTimeSpan(time * 1000);
+            } else {
+                try {
+                    relativeTime = DateUtils.getRelativeTimeSpanString(time * 1000,
+                            System.currentTimeMillis(),
+                            DateUtils.MINUTE_IN_MILLIS,
+                            DateUtils.FORMAT_ABBREV_ALL);
+                } catch (NullPointerException e) {
+                    // TODO should properly prevent this
+                }
             }
             if (deleted) {
                 Spannable spannable = new SpannableString(relativeTime);

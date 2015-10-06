@@ -14,6 +14,7 @@ import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +33,11 @@ public class AppUtils {
     // Extra that changes the background color for the omnibox. colorInt is an int
     // that specifies a Color.
     private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
+    private static final String ABBR_YEAR = "y";
+    private static final String ABBR_WEEK = "w";
+    private static final String ABBR_DAY = "d";
+    private static final String ABBR_HOUR = "h";
+    private static final String ABBR_MINUTE = "m";
 
     public static void openWebUrlExternal(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -124,5 +130,22 @@ public class AppUtils {
         final Intent intent = activity.getIntent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
+    }
+
+    public static String getAbbreviatedTimeSpan(long timeMillis) {
+        long span = Math.max(System.currentTimeMillis() - timeMillis, 0);
+        if (span >= DateUtils.YEAR_IN_MILLIS) {
+            return (span / DateUtils.YEAR_IN_MILLIS) + ABBR_YEAR;
+        }
+        if (span >= DateUtils.WEEK_IN_MILLIS) {
+            return (span / DateUtils.WEEK_IN_MILLIS) + ABBR_WEEK;
+        }
+        if (span >= DateUtils.DAY_IN_MILLIS) {
+            return (span / DateUtils.DAY_IN_MILLIS) + ABBR_DAY;
+        }
+        if (span >= DateUtils.HOUR_IN_MILLIS) {
+            return (span / DateUtils.HOUR_IN_MILLIS) + ABBR_HOUR;
+        }
+        return (span / DateUtils.MINUTE_IN_MILLIS) + ABBR_MINUTE;
     }
 }

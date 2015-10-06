@@ -97,14 +97,14 @@ public interface ItemManager {
         /**
          * Gets author name
          * @return author name or null
-         * @see #getDisplayedTime(android.content.Context)
+         * @see WebItem#getDisplayedTime(Context, boolean)
          */
         String getBy();
 
         /**
          * Gets posted time
          * @return posted time as Unix timestamp in seconds
-         * @see #getDisplayedTime(android.content.Context)
+         * @see WebItem#getDisplayedTime(Context, boolean)
          */
         long getTime();
 
@@ -270,10 +270,11 @@ public interface ItemManager {
 
         /**
          * Gets formatted posted time for display
-         * @param context an instance of {@link android.content.Context}
+         * @param context       an instance of {@link Context}
+         * @param abbreviate    true to abbreviate time span, false otherwise
          * @return  displayed time
          */
-        Spannable getDisplayedTime(Context context);
+        Spannable getDisplayedTime(Context context, boolean abbreviate);
 
         /**
          * Gets item type

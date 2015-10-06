@@ -68,7 +68,7 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public Spannable getDisplayedTime(Context context) {
+    public Spannable getDisplayedTime(Context context, boolean abbreviate) {
         return null;
     }
 

@@ -82,12 +82,12 @@ public class SinglePageItemRecyclerViewAdapter
         }
 
         if (item.isDeleted() || !mExpanded.containsKey(item.getParent())) {
-            holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+            holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
             holder.mPostedTextView.setOnClickListener(null);
         } else {
             final ItemManager.Item parent = mExpanded.get(item.getParent());
             AppUtils.setHtmlText(holder.mPostedTextView, mContext.getString(R.string.posted_reply,
-                            item.getDisplayedTime(mContext),
+                            item.getDisplayedTime(mContext, false),
                             parent.getBy()));
             holder.mPostedTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
