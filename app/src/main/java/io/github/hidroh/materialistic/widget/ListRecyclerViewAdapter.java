@@ -44,7 +44,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      */
     protected void bindViewHolder(final VH holder, final T item) {
         holder.mTitleTextView.setText(item.getDisplayedTitle());
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, true));
         switch (item.getType()) {
             case ItemManager.Item.JOB_TYPE:
                 holder.mSourceTextView.setText(null);

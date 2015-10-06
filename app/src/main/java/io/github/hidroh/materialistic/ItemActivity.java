@@ -236,7 +236,7 @@ public class ItemActivity extends BaseItemActivity {
         }
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
-        postedTextView.setText(story.getDisplayedTime(this));
+        postedTextView.setText(story.getDisplayedTime(this, false));
         switch (story.getType()) {
             case ItemManager.Item.JOB_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
