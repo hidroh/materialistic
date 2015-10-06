@@ -189,7 +189,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         return mSelectedItem;
     }
 
-
     /**
      * Checks if activity should have search view
      * @return true if is searchable, false otherwise

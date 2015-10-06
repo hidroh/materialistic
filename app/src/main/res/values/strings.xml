@@ -123,5 +123,6 @@
     <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.ScrollAwareFABBehavior</string>
     <string name="reset_settings">Reset all settings</string>
     <string name="reset_settings_confirm">Reset all your preferences to app defaults?</string>
+    <string name="last_updated" formatted="false">Last updated %s</string>
 
 </resources>

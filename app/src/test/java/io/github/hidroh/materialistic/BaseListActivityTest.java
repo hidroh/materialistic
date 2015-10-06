@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.text.format.DateUtils;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
@@ -25,6 +27,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
@@ -125,6 +128,23 @@ public class BaseListActivityTest {
             }
         });
         assertNull(activity.getSelectedItem());
+    }
+
+    @Test
+    public void testLastUpdated() {
+        String expected = activity.getString(R.string.last_updated,
+                DateUtils.getRelativeTimeSpanString(System.currentTimeMillis(),
+                        System.currentTimeMillis(),
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_ALL));
+        activity.onRefreshed();
+        assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
+        activity.getSupportActionBar().setSubtitle(null);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
+        activity.getSupportActionBar().setSubtitle(null);
+        controller.pause().resume();
+        assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
     }
 
     @After
