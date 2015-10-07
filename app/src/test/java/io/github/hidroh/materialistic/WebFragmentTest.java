@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.support.v4.widget.NestedScrollView;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
@@ -30,9 +31,11 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.WebActivity;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -41,7 +44,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
-@Config(shadows = {ShadowWebView.class}, sdk = 19)
+@Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class}, sdk = 19)
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentTest {
     private WebActivity activity;
@@ -93,6 +96,18 @@ public class WebFragmentTest {
         assertNotNull(alertDialog);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
+    }
+
+    @Test
+    public void testScrollToTop() {
+        NestedScrollView scrollView = (NestedScrollView) activity.findViewById(R.id.nested_scroll_view);
+        scrollView.smoothScrollTo(0, 1);
+        assertEquals(1, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
+                .getSmoothScrollY());
+        activity.fragment.scrollToTop();
+        assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
+                .getSmoothScrollY());
+
     }
 
     @After

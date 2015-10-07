@@ -28,7 +28,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ItemActivity extends BaseItemActivity {
+public class ItemActivity extends BaseItemActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
@@ -44,6 +44,7 @@ public class ItemActivity extends BaseItemActivity {
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TabLayout mTabLayout;
+    private AppBarLayout mAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class ItemActivity extends BaseItemActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
+        mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -163,6 +165,11 @@ public class ItemActivity extends BaseItemActivity {
         super.onPause();
     }
 
+    @Override
+    public void scrollToTop() {
+        mAppBar.setExpanded(true, true);
+    }
+
     private void bindFavorite() {
         if (mItem == null) {
             return;
@@ -247,17 +254,16 @@ public class ItemActivity extends BaseItemActivity {
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        final Bundle args = new Bundle();
+        final Fragment[] fragments = new Fragment[2];
+        Bundle args = new Bundle();
         args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
+        fragments[0] = ItemFragment.instantiate(ItemActivity.this, story, args);
+        fragments[1] = WebFragment.instantiate(ItemActivity.this, story);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                if (position == 0) {
-                    return ItemFragment.instantiate(ItemActivity.this, mItem, args);
-                } else {
-                    return WebFragment.instantiate(ItemActivity.this, mItem);
-                }
+                return fragments[position];
             }
 
             @Override
@@ -275,6 +281,30 @@ public class ItemActivity extends BaseItemActivity {
             }
         });
         mTabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            private boolean mSelected = false;
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                if (mSelected) {
+                    return;
+                }
+                ((Scrollable) fragments[viewPager.getCurrentItem()]).scrollToTop();
+                scrollToTop();
+            }
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mSelected = true; // TODO https://code.google.com/p/android/issues/detail?id=177189
+                viewPager.setCurrentItem(tab.getPosition());
+                mSelected = false;
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // no-op
+            }
+        });
         if (viewPager.getAdapter().getCount() < 2) {
             AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
             p.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);

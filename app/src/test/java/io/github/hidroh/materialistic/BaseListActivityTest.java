@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 
 import org.junit.After;
@@ -12,11 +13,13 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -31,7 +34,7 @@ import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
-@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class})
+@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;
@@ -145,6 +148,17 @@ public class BaseListActivityTest {
         activity.getSupportActionBar().setSubtitle(null);
         controller.pause().resume();
         assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
+    }
+
+    @Test
+    public void testScrollToTop() {
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        recyclerView.smoothScrollToPosition(1);
+        assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
+                .getSmoothScrollToPosition());
+        activity.findViewById(R.id.toolbar).performClick();
+        assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
+                .getSmoothScrollToPosition());
     }
 
     @After

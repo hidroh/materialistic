@@ -34,7 +34,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
-public class ListFragment extends BaseFragment {
+public class ListFragment extends BaseFragment implements Scrollable {
 
     private static final String EXTRA_ITEMS = ListFragment.class.getName() + ".EXTRA_ITEMS";
     private RecyclerView mRecyclerView;
@@ -200,6 +200,11 @@ public class ListFragment extends BaseFragment {
         mMultiPaneListener = null;
         mRefreshCallback = null;
         super.onDetach();
+    }
+
+    @Override
+    public void scrollToTop() {
+        mRecyclerView.smoothScrollToPosition(0);
     }
 
     private void bindData() {

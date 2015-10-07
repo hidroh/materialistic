@@ -23,7 +23,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 
-public class ItemFragment extends BaseFragment {
+public class ItemFragment extends BaseFragment implements Scrollable {
 
     private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private RecyclerView mRecyclerView;
@@ -114,6 +114,11 @@ public class ItemFragment extends BaseFragment {
     public void onPause() {
         mIsResumed = false;
         super.onPause();
+    }
+
+    @Override
+    public void scrollToTop() {
+        mRecyclerView.smoothScrollToPosition(0);
     }
 
     private void loadKidData() {

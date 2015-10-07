@@ -37,7 +37,8 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class FavoriteFragment extends BaseFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, Scrollable {
+    private RecyclerView mRecyclerView;
     private FavoriteManager.Cursor mCursor;
     private RecyclerViewAdapter mAdapter;
     private BroadcastReceiver mBroadcastReceiver;
@@ -141,15 +142,15 @@ public class FavoriteFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_favorite, container, false);
         mAdapter = new RecyclerViewAdapter();
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
             public int getOrientation() {
                 return LinearLayout.VERTICAL;
             }
         });
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mAdapter);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -310,6 +311,11 @@ public class FavoriteFragment extends BaseFragment
             mActionMode.finish();
         }
         super.onDetach();
+    }
+
+    @Override
+    public void scrollToTop() {
+        mRecyclerView.smoothScrollToPosition(0);
     }
 
     /**
