@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
@@ -17,7 +18,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
 @Module(
         injects = {
                 SettingsActivity.class,
-                AboutActivity.class, // TODO remove
+                AboutActivity.class,
                 AskActivity.class,
                 FavoriteActivity.class,
                 ItemActivity.class,
@@ -29,7 +30,8 @@ import io.github.hidroh.materialistic.data.SessionManager;
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
-                WebFragment.class
+                WebFragment.class,
+                DrawerFragment.class
         },
         library = true
 )
@@ -55,6 +57,11 @@ public class ActivityModule {
 
     @Provides @Singleton @Named(ALGOLIA)
     public ItemManager provideAlgoliaClient(AlgoliaClient client) {
+        return client;
+    }
+
+    @Provides @Singleton
+    public FeedbackClient provideFeedbackClient(FeedbackClient.Impl client) {
         return client;
     }
 

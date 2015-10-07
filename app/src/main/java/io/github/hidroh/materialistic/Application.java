@@ -11,7 +11,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (getResources().getBoolean(R.bool.debug)) {
+        if (BuildConfig.DEBUG) {
             GoogleAnalytics.getInstance(this).getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             GoogleAnalytics.getInstance(this).setDryRun(true);
         }

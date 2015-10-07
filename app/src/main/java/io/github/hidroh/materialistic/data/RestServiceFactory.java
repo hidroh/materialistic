@@ -10,7 +10,7 @@ import com.squareup.okhttp.Request;
 
 import java.io.IOException;
 
-import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.BuildConfig;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 
@@ -24,8 +24,7 @@ public interface RestServiceFactory {
 
         public Impl(Context context) {
             final OkHttpClient okHttpClient = new OkHttpClient();
-            final boolean loggingEnabled = context.getResources().getBoolean(R.bool.debug);
-            if (loggingEnabled) {
+            if (BuildConfig.DEBUG) {
                 okHttpClient.networkInterceptors().add(new LoggingInterceptor());
             }
             okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
@@ -33,7 +32,7 @@ public interface RestServiceFactory {
 
             RestAdapter.Builder builder = new RestAdapter.Builder()
                     .setClient(new OkClient(okHttpClient));
-            if (loggingEnabled) {
+            if (BuildConfig.DEBUG) {
                 builder.setLogLevel(RestAdapter.LogLevel.BASIC);
             }
             mBuilder = builder;

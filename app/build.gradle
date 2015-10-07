@@ -10,7 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 20
         versionName "1.6"
-        resValue "bool", "debug", "true"
+        buildConfigField "String", "GITHUB_TOKEN", "\"\""
     }
 
     signingConfigs {
@@ -24,7 +24,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
             zipAlignEnabled true
-            resValue "bool", "debug", "false"
         }
     }
 
