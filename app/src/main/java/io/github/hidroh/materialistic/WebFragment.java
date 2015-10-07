@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -35,9 +34,8 @@ public class WebFragment extends BaseFragment implements Scrollable {
     private WebView mWebView;
     private NestedScrollView mScrollView;
     private boolean mIsHackerNewsUrl;
-    private Intent mDownloadIntent;
+    private boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
-    @Inject AlertDialogBuilder mAlertDialogBuilder;
 
     public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
@@ -67,7 +65,7 @@ public class WebFragment extends BaseFragment implements Scrollable {
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
                     mWebView.setBackgroundColor(Color.WHITE);
-                    mWebView.setVisibility(View.VISIBLE);
+                    mWebView.setVisibility(mExternalRequired ? View.GONE : View.VISIBLE);
                 }
             }
         });
@@ -75,14 +73,22 @@ public class WebFragment extends BaseFragment implements Scrollable {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition,
                                         String mimetype, long contentLength) {
-                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 if (getActivity() == null) {
                     return;
                 }
-
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    mDownloadIntent = intent;
+                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+                    return;
                 }
+                mExternalRequired = true;
+                mWebView.setVisibility(View.GONE);
+                view.findViewById(R.id.download_button).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.download_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(intent);
+                    }
+                });
             }
         });
         mWebView.setOnKeyListener(new View.OnKeyListener() {
@@ -160,29 +166,6 @@ public class WebFragment extends BaseFragment implements Scrollable {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_ITEM, mItem);
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        // TODO this assumes web fragment is inside a view pager
-        if (!isVisibleToUser) {
-            return;
-        }
-        if (mDownloadIntent == null) {
-            return;
-        }
-        mAlertDialogBuilder
-                .setMessage(R.string.confirm_download)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(mDownloadIntent);
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
-                .show();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

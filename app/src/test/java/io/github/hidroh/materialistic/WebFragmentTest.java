@@ -1,7 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
@@ -24,7 +22,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
-import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -91,10 +88,8 @@ public class WebFragmentTest {
         WebView webView = (WebView) activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
         shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.pdf", "", "", "", 0l);
-        activity.fragment.setUserVisibleHint(true);
-        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-        assertNotNull(alertDialog);
-        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        assertThat(activity.findViewById(R.id.download_button)).isVisible();
+        activity.findViewById(R.id.download_button).performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
