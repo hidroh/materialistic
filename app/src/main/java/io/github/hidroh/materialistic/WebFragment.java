@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +28,12 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class WebFragment extends BaseFragment {
+public class WebFragment extends BaseFragment implements Scrollable {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
     private WebView mWebView;
+    private NestedScrollView mScrollView;
     private boolean mIsHackerNewsUrl;
     private Intent mDownloadIntent;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
@@ -51,6 +53,7 @@ public class WebFragment extends BaseFragment {
         }
 
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_web, container, false);
+        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
@@ -102,7 +105,9 @@ public class WebFragment extends BaseFragment {
     private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web_hn, container, false);
-        ((TextView) view.findViewById(R.id.posted)).setText(mItem.getDisplayedTime(getActivity(), false));
+        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
+        ((TextView) view.findViewById(R.id.posted))
+                .setText(mItem.getDisplayedTime(getActivity(), false));
         if (mItem.getType().equals(ItemManager.Item.COMMENT_TYPE)) {
             view.findViewById(R.id.title).setVisibility(View.GONE);
         } else {
@@ -189,5 +194,10 @@ public class WebFragment extends BaseFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             webSettings.setDisplayZoomControls(false);
         }
+    }
+
+    @Override
+    public void scrollToTop() {
+        mScrollView.smoothScrollTo(0, 0);
     }
 }

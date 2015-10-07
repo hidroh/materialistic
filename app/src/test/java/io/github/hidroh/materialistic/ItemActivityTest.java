@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
@@ -34,6 +36,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.WebActivity;
@@ -49,7 +52,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 // TODO switch to API 21 once ShareActionProvider is fixed
-@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class})
+@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -349,6 +352,48 @@ public class ItemActivityTest {
         assertEquals(R.drawable.ic_bookmark_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
+    }
+
+    @Test
+    public void testScrollToTop() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public int getKidCount() {
+                return 10;
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+        // see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        recyclerView.smoothScrollToPosition(1);
+        assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
+                .getSmoothScrollToPosition());
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        tabLayout.getTabAt(1).select();
+        tabLayout.getTabAt(0).select();
+        tabLayout.getTabAt(0).select();
+        assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
+                .getSmoothScrollToPosition());
     }
 
     @After
