@@ -15,6 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <ViewStub
+            android:id="@+id/download_button"
+            android:inflatedId="@id/download_button"
+            android:layout="@layout/button_download"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_gravity="center|center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <ProgressBar
             android:id="@id/progress"
             style="@style/AppProgressBarHorizontalStyle" />

@@ -99,7 +99,7 @@
     <string name="save_story">Save story</string>
     <string name="unsave_story">Unsave story</string>
     <string name="select_story">Select a story to view</string>
-    <string name="confirm_download">View this file in another app?</string>
+    <string name="download_external">View this file in another app</string>
     <string name="try_me">try me!</string>
     <string name="title_activity_jobs">Jobs</string>
     <string name="title_activity_show">Show HN</string>
