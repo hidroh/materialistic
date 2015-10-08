@@ -167,11 +167,13 @@ public class AppUtils {
     @NonNull
     private static Intent createViewIntent(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        Bundle extras = new Bundle();
-        BundleCompat.putBinder(extras, EXTRA_CUSTOM_TABS_SESSION, null);
-        intent.putExtras(extras);
-        intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                ContextCompat.getColor(context, R.color.colorPrimary));
+        if (Preferences.customChromeTabEnabled(context)) {
+            Bundle extras = new Bundle();
+            BundleCompat.putBinder(extras, EXTRA_CUSTOM_TABS_SESSION, null);
+            intent.putExtras(extras);
+            intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+                    ContextCompat.getColor(context, R.color.colorPrimary));
+        }
         return intent;
     }
 }
