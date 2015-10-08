@@ -23,7 +23,6 @@ import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
-import io.github.hidroh.materialistic.test.WebActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -83,8 +82,7 @@ public class BaseListActivityTest {
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
-                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
-                        WebActivity.class.getName()));
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
@@ -96,7 +94,7 @@ public class BaseListActivityTest {
                 return "http://example.com";
             }
         });
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
     }
 
     @Test
