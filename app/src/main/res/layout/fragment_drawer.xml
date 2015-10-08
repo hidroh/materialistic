@@ -7,10 +7,11 @@
 
     <TextView
         android:text="@string/app_name"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/themedTextColorPrimary"
         android:textSize="@dimen/abc_text_size_large_material"
         android:textStyle="bold"
         android:drawableRight="@drawable/ic_app"
+        android:background="@color/colorPrimary"
         style="@style/DrawerTextStyle"/>
 
     <View
@@ -63,6 +64,12 @@
         android:id="@id/drawer_settings"
         android:text="@string/action_settings"
         android:drawableLeft="@drawable/ic_settings_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
+        android:id="@id/drawer_feedback"
+        android:text="@string/feedback"
+        android:drawableLeft="@drawable/ic_feedback_grey600_24dp"
         style="@style/DrawerTextStyle"/>
 
     <TextView

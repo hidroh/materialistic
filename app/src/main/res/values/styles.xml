@@ -32,6 +32,7 @@
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="editTextStyle">@style/AppEditText</item>
 
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
@@ -82,6 +83,7 @@
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
+        <item name="editTextStyle">@style/AppEditText</item>
 
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
@@ -181,6 +183,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">4dp</item>
         <item name="android:progressDrawable">@drawable/progress</item>
+    </style>
+    <style name="AppEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
     </style>
 
     <!-- =========== -->

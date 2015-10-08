@@ -34,6 +34,7 @@
     <item type="id" name="drawer_show" />
     <item type="id" name="drawer_ask" />
     <item type="id" name="drawer_new" />
+    <item type="id" name="drawer_feedback" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />

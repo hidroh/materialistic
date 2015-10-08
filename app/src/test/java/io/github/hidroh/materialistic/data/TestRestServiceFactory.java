@@ -7,6 +7,8 @@ public class TestRestServiceFactory implements RestServiceFactory {
             mock(HackerNewsClient.RestService.class);
     public static final AlgoliaClient.RestService algoliaRestService =
             mock(AlgoliaClient.RestService.class);
+    public static final FeedbackClient.Impl.FeedbackService feedbackService =
+            mock(FeedbackClient.Impl.FeedbackService.class);
 
     @Override
     public <T> T create(String baseUrl, Class<T> clazz) {
@@ -15,6 +17,9 @@ public class TestRestServiceFactory implements RestServiceFactory {
         }
         if (clazz.isInstance(algoliaRestService)) {
             return (T) algoliaRestService;
+        }
+        if (clazz.isInstance(feedbackService)) {
+            return (T) feedbackService;
         }
         return mock(clazz);
     }

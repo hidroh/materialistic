@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.widget.ListView;
 
 /**
  * Injectable alert dialog builder, allowing swapping between
@@ -18,6 +20,22 @@ public interface AlertDialogBuilder<T extends Dialog> {
      * @return This Builder object to allow for chaining of calls to set methods
      */
     AlertDialogBuilder setMessage(@StringRes int messageId);
+
+    /**
+     * Sets a custom view to be the contents of the alert dialog.
+     * <p>
+     * When using a pre-Holo theme, if the supplied view is an instance of
+     * a {@link ListView} then the light background will be used.
+     * <p>
+     * <strong>Note:</strong> To ensure consistent styling, the custom view
+     * should be inflated or constructed using the alert dialog's themed
+     * context
+     *
+     * @param view the view to use as the contents of the alert dialog
+     * @return this Builder object to allow for chaining of calls to set
+     *         methods
+     */
+    AlertDialogBuilder setView(View view);
 
     /**
      * Set a listener to be invoked when the negative button of the dialog is pressed.
@@ -64,6 +82,12 @@ public interface AlertDialogBuilder<T extends Dialog> {
         @Override
         public AlertDialogBuilder setMessage(@StringRes int messageId) {
             mBuilder.setMessage(messageId);
+            return this;
+        }
+
+        @Override
+        public AlertDialogBuilder setView(View view) {
+            mBuilder.setView(view);
             return this;
         }
 

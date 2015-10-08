@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.robolectric.RuntimeEnvironment;
 
@@ -15,6 +16,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.when;
                 // source classes
                 SettingsActivity.class,
                 AskActivity.class,
+                AboutActivity.class,
                 FavoriteActivity.class,
                 ItemActivity.class,
                 JobsActivity.class,
@@ -43,6 +46,7 @@ import static org.mockito.Mockito.when;
                 ItemFragment.class,
                 ListFragment.class,
                 WebFragment.class,
+                DrawerFragment.class,
                 // test classes
                 SettingsActivityTest.class,
                 ItemActivityTest.class,
@@ -56,7 +60,8 @@ import static org.mockito.Mockito.when;
                 FavoriteActivityEmptyTest.class,
                 TestFavoriteActivity.class,
                 WebFragmentLocalTest.class,
-                WebFragmentTest.class
+                WebFragmentTest.class,
+                FeedbackTest.class
         },
         library = true,
         overrides = true
@@ -67,6 +72,7 @@ public class TestActivityModule {
     private final FavoriteManager favoriteManager = mock(FavoriteManager.class);
     private final SessionManager sessionManager = mock(SessionManager.class);
     private final SearchView searchView = mock(SearchView.class);
+    private final FeedbackClient feedbackClient = mock(FeedbackClient.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -89,6 +95,11 @@ public class TestActivityModule {
     }
 
     @Provides @Singleton
+    public FeedbackClient provideFeedbackClient() {
+        return feedbackClient;
+    }
+
+    @Provides @Singleton
     public ActionViewResolver provideActionViewResolver() {
         ActionViewResolver resolver = mock(ActionViewResolver.class);
         when(resolver.getActionView(any(MenuItem.class))).thenReturn(searchView);
@@ -102,6 +113,12 @@ public class TestActivityModule {
             @Override
             public AlertDialogBuilder setMessage(@StringRes int messageId) {
                 builder.setMessage(messageId);
+                return this;
+            }
+
+            @Override
+            public AlertDialogBuilder setView(View view) {
+                builder.setView(view);
                 return this;
             }
 
