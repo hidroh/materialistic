@@ -82,7 +82,13 @@ public class DrawerFragment extends BaseFragment {
         view.findViewById(R.id.drawer_feedback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFeedbackDialog(inflater.inflate(R.layout.dialog_feedback, null, false));
+                ((DrawerActivity) getActivity()).closeDrawers();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        showFeedbackDialog(inflater.inflate(R.layout.dialog_feedback, null, false));
+                    }
+                }, DRAWER_SLIDE_DURATION_MS);
             }
         });
         return view;
@@ -103,7 +109,6 @@ public class DrawerFragment extends BaseFragment {
     }
 
     private void showFeedbackDialog(View dialogView) {
-        ((DrawerActivity) getActivity()).closeDrawers();
         final TextInputLayout titleLayout = (TextInputLayout)
                 dialogView.findViewById(R.id.textinput_title);
         final TextInputLayout bodyLayout = (TextInputLayout)
