@@ -3,10 +3,14 @@ package io.github.hidroh.materialistic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.DimenRes;
+import android.support.annotation.NonNull;
 import android.support.v4.app.BundleCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
@@ -19,6 +23,9 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -40,15 +47,23 @@ public class AppUtils {
     private static final String ABBR_MINUTE = "m";
 
     public static void openWebUrlExternal(Context context, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        Bundle extras = new Bundle();
-        BundleCompat.putBinder(extras, EXTRA_CUSTOM_TABS_SESSION, null);
-        intent.putExtras(extras);
-        intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                ContextCompat.getColor(context, R.color.colorPrimary));
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(intent);
+        Intent intent = createViewIntent(context, url);
+        List<ResolveInfo> activities = context.getPackageManager()
+                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        ArrayList<Intent> intents = new ArrayList<>();
+        for (ResolveInfo info : activities) {
+            if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
+                continue;
+            }
+            intents.add(createViewIntent(context, url).setPackage(info.activityInfo.packageName));
         }
+        if (intents.isEmpty()) {
+            return;
+        }
+        context.startActivity(Intent.createChooser(intents.remove(0),
+                context.getString(R.string.chooser_title))
+                .putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                        intents.toArray(new Parcelable[intents.size()])));
     }
 
     public static void setTextWithLinks(TextView textView, String htmlText) {
@@ -147,5 +162,18 @@ public class AppUtils {
             return (span / DateUtils.HOUR_IN_MILLIS) + ABBR_HOUR;
         }
         return (span / DateUtils.MINUTE_IN_MILLIS) + ABBR_MINUTE;
+    }
+
+    @NonNull
+    private static Intent createViewIntent(Context context, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        if (Preferences.customChromeTabEnabled(context)) {
+            Bundle extras = new Bundle();
+            BundleCompat.putBinder(extras, EXTRA_CUSTOM_TABS_SESSION, null);
+            intent.putExtras(extras);
+            intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
+                    ContextCompat.getColor(context, R.color.colorPrimary));
+        }
+        return intent;
     }
 }

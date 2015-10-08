@@ -38,6 +38,12 @@
             android:enabled="@bool/pref_external_enabled"
             android:summary="@string/pref_external_summary"
             android:defaultValue="false" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_custom_tab"
+            android:dependency="@string/pref_external"
+            android:title="@string/pref_custom_tab_title"
+            android:summary="@string/pref_custom_tab_summary"
+            android:defaultValue="true" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory
         android:title="@string/pref_category_search">

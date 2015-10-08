@@ -39,7 +39,6 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
-import io.github.hidroh.materialistic.test.WebActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -190,13 +189,11 @@ public class ItemActivityTest {
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
-                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
-                        WebActivity.class.getName()));
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse(String.format(HackerNewsClient.WEB_ITEM_PATH, "1"))),
-                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
-                        WebActivity.class.getName()));
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull
@@ -232,14 +229,14 @@ public class ItemActivityTest {
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
 
         // open item
         shadowOf(activity).clickMenuItem(R.id.menu_external);
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
     }
 
     @Test
@@ -249,8 +246,7 @@ public class ItemActivityTest {
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
-                ShadowResolveInfo.newResolveInfo("label", activity.getPackageName(),
-                        WebActivity.class.getName()));
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull
@@ -280,7 +276,7 @@ public class ItemActivityTest {
                 .commit();
         controller.withIntent(intent).create().start().resume();
         activity.findViewById(R.id.header_card_view).performClick();
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
     }
 
     @Test
