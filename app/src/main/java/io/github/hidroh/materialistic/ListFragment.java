@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -131,6 +132,13 @@ public class ListFragment extends BaseFragment implements Scrollable {
             }
         });
         mRecyclerView.setHasFixedSize(true);
+        final int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.set(margin, margin, margin, margin);
+            }
+        });
         mAdapter = new RecyclerViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
