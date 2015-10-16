@@ -10,7 +10,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 - Android SDK Build tools 23.0.1
 - Android SDK 23
 - Android Support Repository
-- Android Support Library 23.0.1
+- Android Support Library 23.1.0
 - Google Repository
 - Google Play services 8.1.0
 

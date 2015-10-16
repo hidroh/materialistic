@@ -281,28 +281,11 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
             }
         });
         mTabLayout.setupWithViewPager(viewPager);
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            private boolean mSelected = false;
-
+        mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                if (mSelected) {
-                    return;
-                }
                 ((Scrollable) fragments[viewPager.getCurrentItem()]).scrollToTop();
                 scrollToTop();
-            }
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mSelected = true; // TODO https://code.google.com/p/android/issues/detail?id=177189
-                viewPager.setCurrentItem(tab.getPosition());
-                mSelected = false;
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // no-op
             }
         });
         if (viewPager.getAdapter().getCount() < 2) {
