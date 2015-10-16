@@ -33,7 +33,7 @@ android {
 }
 
 ext {
-    supportVersion = '23.0.1'
+    supportVersion = '23.1.0'
     okHttpVersion = '2.5.0'
     daggerVersion = '1.2.2'
 }
