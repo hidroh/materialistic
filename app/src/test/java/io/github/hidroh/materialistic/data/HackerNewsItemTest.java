@@ -52,6 +52,13 @@ public class HackerNewsItemTest {
     }
 
     @Test
+    public void testCollapsed() {
+        assertFalse(item.isCollapsed());
+        item.setCollapsed(true);
+        assertTrue(item.isCollapsed());
+    }
+
+    @Test
     public void testPopulate() {
         item.populate(new TestItem() {
             @Override

@@ -79,6 +79,11 @@ public class ItemFragmentMultiPageTest {
                 return new ItemManager.Item[]{new TestItem() {
                 }};
             }
+
+            @Override
+            public int getKidCount() {
+                return 1;
+            }
         });
         assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
     }
@@ -100,6 +105,11 @@ public class ItemFragmentMultiPageTest {
                         return 1;
                     }
                 }};
+            }
+
+            @Override
+            public int getKidCount() {
+                return 1;
             }
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
@@ -128,6 +138,11 @@ public class ItemFragmentMultiPageTest {
             @Override
             public ItemManager.Item[] getKidItems() {
                 return new ItemManager.Item[]{kidItem};
+            }
+
+            @Override
+            public int getKidCount() {
+                return 1;
             }
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,

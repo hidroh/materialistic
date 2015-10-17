@@ -1,15 +1,15 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.res.TypedArray;
-import android.support.v4.util.SimpleArrayMap;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Preferences;
@@ -18,18 +18,16 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SinglePageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ToggleItemViewHolder> {
-    private final ArrayList<ItemManager.Item> mList;
-    private SimpleArrayMap<String, ItemManager.Item> mExpanded = new SimpleArrayMap<>();
-    private Set<String> mCollapsed = new HashSet<>();
     private int mLevelIndicatorWidth = 0;
     private boolean mAutoExpand = true;
     private boolean mColorCoded = true;
     private TypedArray mColors;
     private RecyclerView mRecyclerView;
+    private SavedState mState;
 
-    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, ArrayList<ItemManager.Item> list) {
+    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, SavedState state) {
         super(itemManager);
-        this.mList = list;
+        this.mState = state;
     }
 
     @Override
@@ -67,7 +65,7 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     protected ItemManager.Item getItem(int position) {
-        return mList.get(position);
+        return mState.list.get(position);
     }
 
     @Override
@@ -81,18 +79,18 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
 
-        if (item.isDeleted() || !mExpanded.containsKey(item.getParent())) {
+        if (item.isDeleted() || !mState.expanded.containsKey(item.getParent())) {
             holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
             holder.mPostedTextView.setOnClickListener(null);
         } else {
-            final ItemManager.Item parent = mExpanded.get(item.getParent());
+            final ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
             AppUtils.setHtmlText(holder.mPostedTextView, mContext.getString(R.string.posted_reply,
                             item.getDisplayedTime(mContext, false),
                             parent.getBy()));
             holder.mPostedTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mRecyclerView.smoothScrollToPosition(mList.indexOf(parent));
+                    mRecyclerView.smoothScrollToPosition(mState.list.indexOf(parent));
                 }
             });
         }
@@ -102,10 +100,10 @@ public class SinglePageItemRecyclerViewAdapter
         }
 
         holder.mToggle.setVisibility(View.VISIBLE);
-        if (!mCollapsed.contains(item.getId()) && mAutoExpand) {
+        if (!item.isCollapsed() && mAutoExpand) {
             expand(item);
         }
-        if(mExpanded.containsKey(item.getId())) {
+        if(mState.expanded.containsKey(item.getId())) {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_less_grey600_24dp, 0);
             holder.mToggle.setText(mContext.getString(R.string.hide_comments, item.getKidCount()));
@@ -117,32 +115,27 @@ public class SinglePageItemRecyclerViewAdapter
         holder.mToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCollapsed.contains(item.getId())) {
-                    mCollapsed.remove(item.getId());
-                } else {
-                    mCollapsed.add(item.getId());
-                }
-
-                if (mExpanded.containsKey(item.getId())) {
+                item.setCollapsed(!item.isCollapsed());
+                if (mState.expanded.containsKey(item.getId())) {
                     collapse(item);
                 } else {
                     expand(item);
                 }
 
-                notifyItemChanged(mList.indexOf(item)); // TODO prevent exception
+                notifyItemChanged(mState.list.indexOf(item)); // TODO prevent exception
             }
         });
     }
 
     private void expand(final ItemManager.Item item) {
-        if (mExpanded.containsKey(item.getId())) {
+        if (mState.expanded.containsKey(item.getId())) {
             return;
         }
 
-        final int index = mList.indexOf(item) + 1;
-        mExpanded.put(item.getId(), item);
+        final int index = mState.list.indexOf(item) + 1;
+        mState.expanded.putParcelable(item.getId(), item);
         // recursive here!!!
-        mList.addAll(index, Arrays.asList(item.getKidItems()));
+        mState.list.addAll(index, Arrays.asList(item.getKidItems()));
         try {
             notifyItemRangeInserted(index, item.getKidCount());
         } catch (IllegalStateException e) {
@@ -151,22 +144,22 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     private void collapse(ItemManager.Item item) {
-        final int index = mList.indexOf(item) + 1;
+        final int index = mState.list.indexOf(item) + 1;
         final int count = recursiveRemove(item);
         notifyItemRangeRemoved(index, count);
     }
 
     private int recursiveRemove(ItemManager.Item item) {
-        if (!mExpanded.containsKey(item.getId())) {
+        if (!mState.expanded.containsKey(item.getId())) {
             return 0;
         }
 
         // if item is already expanded, its kids must be added, so we need to remove them
         int count = item.getKidCount();
-        mExpanded.remove(item.getId());
+        mState.expanded.remove(item.getId());
         for (ItemManager.Item kid : item.getKidItems()) {
             count += recursiveRemove(kid);
-            mList.remove(kid);
+            mState.list.remove(kid);
         }
         return count;
     }
@@ -178,7 +171,46 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return mState.list.size();
     }
 
+    public static class SavedState implements Parcelable {
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+        private ArrayList<ItemManager.Item> list;
+        private Bundle expanded;
+
+        public SavedState(ArrayList<ItemManager.Item> list) {
+            this.list = list;
+            expanded = new Bundle();
+        }
+
+        @SuppressWarnings("unchecked")
+        private SavedState(Parcel source) {
+            list = source.readArrayList(ItemManager.Item.class.getClassLoader());
+            expanded = source.readBundle(list.isEmpty() ? null :
+                    list.get(0).getClass().getClassLoader());
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeList(list);
+            dest.writeBundle(expanded);
+        }
+    }
 }
