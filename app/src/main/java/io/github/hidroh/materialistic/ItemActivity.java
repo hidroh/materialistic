@@ -257,7 +257,8 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         final Fragment[] fragments = new Fragment[2];
         Bundle args = new Bundle();
         args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
-        fragments[0] = ItemFragment.instantiate(ItemActivity.this, story, args);
+        args.putParcelable(ItemFragment.EXTRA_ITEM, story);
+        fragments[0] = Fragment.instantiate(ItemActivity.this, ItemFragment.class.getName(), args);
         fragments[1] = WebFragment.instantiate(ItemActivity.this, story);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {

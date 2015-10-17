@@ -274,7 +274,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                Fragment itemFragment = ItemFragment.instantiate(BaseListActivity.this, item, null);
+                Bundle args = new Bundle();
+                args.putParcelable(ItemFragment.EXTRA_ITEM, item);
+                Fragment itemFragment = Fragment.instantiate(BaseListActivity.this,
+                        ItemFragment.class.getName(), args);
                 Fragment webFragment = WebFragment.instantiate(BaseListActivity.this, item);
                 if (position == 0) {
                     return mDefaultOpenComments ? itemFragment : webFragment;
