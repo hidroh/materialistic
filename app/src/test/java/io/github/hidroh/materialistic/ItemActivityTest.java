@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,8 +42,10 @@ import io.github.hidroh.materialistic.test.TestItem;
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,48 +70,6 @@ public class ItemActivityTest {
         reset(favoriteManager);
         controller = Robolectric.buildActivity(ItemActivity.class);
         activity = controller.get();
-    }
-
-    @Test
-    public void testStoryGivenItemId() {
-        Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM_ID, "1");
-        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 2);
-        controller.withIntent(intent).create().start().resume();
-        verify(hackerNewsClient).getItem(eq("1"), listener.capture());
-        listener.getValue().onResponse(new TestItem() {
-            @NonNull
-            @Override
-            public String getType() {
-                return STORY_TYPE;
-            }
-
-            @Override
-            public int getKidCount() {
-                return 1;
-            }
-
-            @Override
-            public String getDisplayedTitle() {
-                return "title";
-            }
-
-            @Override
-            public String getSource() {
-                return "http://example.com";
-            }
-
-            @Override
-            public boolean isShareable() {
-                return true;
-            }
-        });
-        assertEquals(activity.getString(R.string.comments_count, 1),
-                ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
-        assertThat((TextView) activity.findViewById(R.id.source)).hasTextString("http://example.com");
-        TextView titleTextView = (TextView) activity.findViewById(android.R.id.text2);
-        assertThat(titleTextView).hasTextString("title")
-                .hasEllipsize(TextUtils.TruncateAt.END);
     }
 
     @Test
@@ -149,14 +108,22 @@ public class ItemActivityTest {
             }
 
             @Override
+            public String getSource() {
+                return "http://example.com";
+            }
+
+            @Override
             public boolean isShareable() {
                 return true;
             }
         });
-        assertThat(activity.findViewById(R.id.source)).isNotVisible();
         assertEquals(R.drawable.ic_work_grey600_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
+        assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
+        reset(hackerNewsClient);
+        activity.recreate();
+        verify(hackerNewsClient, never()).getItem(anyString(), any(ItemManager.ResponseListener.class));
     }
 
     @Test
