@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic.data;
 
+import android.os.Build;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
@@ -26,6 +28,12 @@ public interface FeedbackClient {
 
         @Override
         public void send(String title, String body, final Callback callback) {
+            body = String.format("%s\nDevice: %s %s, SDK: %s, app version: %s",
+                    body,
+                    Build.MANUFACTURER,
+                    Build.MODEL,
+                    Build.VERSION.SDK_INT,
+                    BuildConfig.VERSION_CODE);
             mFeedbackService.createGithubIssue(new Issue(title, body),
                     new retrofit.Callback<Object>() {
                         @Override
