@@ -10,6 +10,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public abstract class TestItem implements ItemManager.Item {
     private boolean favorite;
     private Boolean viewed;
+    private boolean collapsed;
 
     @Override
     public String getParent() {
@@ -165,5 +166,15 @@ public abstract class TestItem implements ItemManager.Item {
     @Override
     public int getScore() {
         return 0;
+    }
+
+    @Override
+    public boolean isCollapsed() {
+        return collapsed;
+    }
+
+    @Override
+    public void setCollapsed(boolean collapsed) {
+        this.collapsed = collapsed;
     }
 }

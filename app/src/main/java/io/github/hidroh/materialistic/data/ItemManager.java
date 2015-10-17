@@ -216,6 +216,18 @@ public interface ItemManager {
          * @return item's score
          */
         int getScore();
+
+        /**
+         * Checks if item is collapsed
+         * @return true if collapsed, false otherwise
+         */
+        boolean isCollapsed();
+
+        /**
+         * Sets item collapsed state
+         * @param collapsed true to collapse, false otherwise
+         */
+        void setCollapsed(boolean collapsed);
     }
 
     /**

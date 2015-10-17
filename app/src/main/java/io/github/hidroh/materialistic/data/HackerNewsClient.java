@@ -149,11 +149,14 @@ public class HackerNewsClient implements ItemManager {
         private long[] parts;
         // In the case of stories or polls, the total comment count.
         private int descendants = -1;
+
+        // view state
         private HackerNewsItem[] kidItems;
         private boolean favorite;
         private Boolean viewed;
         private int localRevision = -1;
         private int level = 0;
+        private boolean collapsed;
 
         public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
             @Override
@@ -195,6 +198,7 @@ public class HackerNewsClient implements ItemManager {
             level = source.readInt();
             dead = source.readInt() == 1;
             deleted = source.readInt() == 1;
+            collapsed = source.readInt() == 1;
         }
 
         @Override
@@ -263,6 +267,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeInt(level);
             dest.writeInt(dead ? 1 : 0);
             dest.writeInt(deleted ? 1 : 0);
+            dest.writeInt(collapsed ? 1 : 0);
         }
 
         @Override
@@ -441,6 +446,16 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public int getScore() {
             return score;
+        }
+
+        @Override
+        public boolean isCollapsed() {
+            return collapsed;
+        }
+
+        @Override
+        public void setCollapsed(boolean collapsed) {
+            this.collapsed = collapsed;
         }
     }
 }

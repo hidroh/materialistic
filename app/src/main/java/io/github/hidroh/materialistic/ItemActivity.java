@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -255,15 +256,23 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                 break;
         }
         final Fragment[] fragments = new Fragment[2];
-        Bundle args = new Bundle();
-        args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
-        args.putParcelable(ItemFragment.EXTRA_ITEM, story);
-        fragments[0] = Fragment.instantiate(ItemActivity.this, ItemFragment.class.getName(), args);
-        fragments[1] = WebFragment.instantiate(ItemActivity.this, story);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
+                if (position == 0) {
+                    Bundle args = new Bundle();
+                    args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
+                    args.putParcelable(ItemFragment.EXTRA_ITEM, story);
+                    return Fragment.instantiate(ItemActivity.this, ItemFragment.class.getName(), args);
+                } else {
+                    return WebFragment.instantiate(ItemActivity.this, story);
+                }
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                fragments[position] = (Fragment) super.instantiateItem(container, position);
                 return fragments[position];
             }
 
@@ -285,7 +294,10 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                ((Scrollable) fragments[viewPager.getCurrentItem()]).scrollToTop();
+                Fragment activeFragment = fragments[viewPager.getCurrentItem()];
+                if (activeFragment != null) {
+                    ((Scrollable) activeFragment).scrollToTop();
+                }
                 scrollToTop();
             }
         });

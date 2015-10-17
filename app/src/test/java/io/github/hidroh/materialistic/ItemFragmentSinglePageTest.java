@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -48,6 +49,7 @@ public class ItemFragmentSinglePageTest {
     private ToggleItemViewHolder viewHolder;
     private ToggleItemViewHolder viewHolder1;
     private ToggleItemViewHolder viewHolder2;
+    private TestInjectableActivity activity;
 
     @Before
     public void setUp() {
@@ -148,11 +150,20 @@ public class ItemFragmentSinglePageTest {
             public ItemManager.Item[] getKidItems() {
                 return new ItemManager.Item[]{item0};
             }
+
+            @Override
+            public int getKidCount() {
+                return 1;
+            }
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
-                android.R.id.content);
+        activity = Robolectric.buildActivity(TestInjectableActivity.class)
+                .create().start().resume().visible().get();
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content, fragment)
+                .commit();
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
         // auto expand all
@@ -186,6 +197,11 @@ public class ItemFragmentSinglePageTest {
                         return -1;
                     }
                 }};
+            }
+
+            @Override
+            public int getKidCount() {
+                return 1;
             }
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
@@ -272,6 +288,11 @@ public class ItemFragmentSinglePageTest {
             public ItemManager.Item[] getKidItems() {
                 return new ItemManager.Item[]{item0};
             }
+
+            @Override
+            public int getKidCount() {
+                return 1;
+            }
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
@@ -284,6 +305,12 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder, 0);
         assertEquals(1, adapter.getItemCount()); // should not add kid to adapter
 
+    }
+
+    @Test
+    public void testSavedState() {
+        activity.recreate();
+        assertEquals(3, adapter.getItemCount());
     }
 
     @After
