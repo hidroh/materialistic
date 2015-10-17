@@ -32,11 +32,13 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class ItemActivity extends BaseItemActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
-    public static final String EXTRA_ITEM_ID = ItemActivity.class.getName() + ".EXTRA_ITEM_ID";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
     public static final String EXTRA_OPEN_ARTICLE = ItemActivity.class.getName() + ".EXTRA_OPEN_ARTICLE";
     private static final String PARAM_ID = "id";
+    private static final String STATE_ITEM = "state:item";
+    private static final String STATE_ITEM_ID = "state:itemId";
     private ItemManager.Item mItem;
+    private String mItemId;
     private ImageView mBookmark;
     private boolean mFavoriteBound;
     private boolean mOrientationChanged = false;
@@ -61,29 +63,25 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final Intent intent = getIntent();
-        String itemId = null;
-        if (intent.hasExtra(EXTRA_ITEM)) {
-            ItemManager.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
-            itemId = item.getId();
-            if (item instanceof ItemManager.Item) {
-                mItem = (ItemManager.Item) item;
-                bindData(mItem);
-                return;
+        if (savedInstanceState != null) {
+            mItem = savedInstanceState.getParcelable(STATE_ITEM);
+            mItemId = savedInstanceState.getString(STATE_ITEM_ID);
+        } else {
+            if (Intent.ACTION_VIEW.equalsIgnoreCase(intent.getAction())) {
+                mItemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
+            } else if (intent.hasExtra(EXTRA_ITEM)) {
+                ItemManager.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
+                mItemId = item.getId();
+                if (item instanceof ItemManager.Item) {
+                    mItem = (ItemManager.Item) item;
+                }
             }
         }
 
-        if (TextUtils.isEmpty(itemId)) {
-            itemId = getIntent().getStringExtra(EXTRA_ITEM_ID);
-        }
-
-        if (TextUtils.isEmpty(itemId)) {
-            if (intent.getAction() != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
-                itemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
-            }
-        }
-
-        if (!TextUtils.isEmpty(itemId)) {
-            mItemManager.getItem(itemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+        if (mItem != null) {
+            bindData(mItem);
+        } else if (!TextUtils.isEmpty(mItemId)) {
+            mItemManager.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
                 @Override
                 public void onResponse(ItemManager.Item response) {
                     mItem = response;
@@ -158,6 +156,13 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_ITEM, mItem);
+        outState.putString(STATE_ITEM_ID, mItemId);
     }
 
     @Override
