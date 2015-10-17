@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll|snap|enterAlways" />
 
     </android.support.design.widget.AppBarLayout>
 

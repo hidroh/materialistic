@@ -30,7 +30,7 @@
             android:id="@+id/tab_layout"
             app:tabIndicatorColor="@color/colorPrimaryLight"
             app:tabTextColor="?attr/themedTextColorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
