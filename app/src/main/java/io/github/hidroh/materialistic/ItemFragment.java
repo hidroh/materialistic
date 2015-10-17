@@ -1,9 +1,7 @@
 package io.github.hidroh.materialistic;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +23,11 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 
 public class ItemFragment extends BaseFragment implements Scrollable {
 
-    private static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
+    public static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
+    private static final String STATE_ITEM = "state:item";
+    private static final String STATE_ITEM_ID = "state:itemId";
+    private static final String STATE_LAYOUT = "state:layout";
+    private static final String STATE_SINGLE_PAGE = "state:singlePage";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private ItemManager.Item mItem;
@@ -35,22 +37,21 @@ public class ItemFragment extends BaseFragment implements Scrollable {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mSinglePage;
 
-    /**
-     * Instantiates fragment to display given item
-     * @param context   an instance of {@link android.content.Context}
-     * @param item      item to display
-     * @param args      fragment arguments or null
-     * @return  item fragment
-     */
-    public static ItemFragment instantiate(Context context, ItemManager.WebItem item, Bundle args) {
-        final ItemFragment fragment = (ItemFragment) Fragment.instantiate(context,
-                ItemFragment.class.getName(), args == null ? new Bundle() : args);
-        if (item instanceof ItemManager.Item) {
-            fragment.mItem = (ItemManager.Item) item;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mItem = savedInstanceState.getParcelable(STATE_ITEM);
+            mItemId = savedInstanceState.getString(STATE_ITEM_ID);
+            mSinglePage = savedInstanceState.getBoolean(STATE_SINGLE_PAGE);
+        } else {
+            ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
+            if (item instanceof ItemManager.Item) {
+                mItem = (ItemManager.Item) item;
+            }
+            mItemId = item != null ? item.getId() : null;
+            mSinglePage = Preferences.isDefaultSinglePageComments(getActivity());
         }
-        fragment.mItemId = item.getId();
-        fragment.mSinglePage = Preferences.isDefaultSinglePageComments(context);
-        return fragment;
     }
 
     @Override
@@ -84,13 +85,6 @@ public class ItemFragment extends BaseFragment implements Scrollable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            final ItemManager.Item savedItem = savedInstanceState.getParcelable(EXTRA_ITEM);
-            if (savedItem != null) {
-                mItem = savedItem;
-            }
-        }
-
         if (mItem != null) {
             bindKidData(mItem.getKidItems());
         } else if (!TextUtils.isEmpty(mItemId)) {
@@ -105,9 +99,21 @@ public class ItemFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(
+                    savedInstanceState.getParcelable(STATE_LAYOUT));
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_ITEM, mItem);
+        outState.putBoolean(STATE_SINGLE_PAGE, mSinglePage);
+        outState.putParcelable(STATE_ITEM, mItem);
+        outState.putString(STATE_ITEM_ID, mItemId);
+        outState.putParcelable(STATE_LAYOUT, mRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     @Override

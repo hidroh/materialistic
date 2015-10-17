@@ -155,15 +155,15 @@ public class HackerNewsClient implements ItemManager {
         private int localRevision = -1;
         private int level = 0;
 
-        public static final Creator<Item> CREATOR = new Creator<Item>() {
+        public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
             @Override
-            public Item createFromParcel(Parcel source) {
+            public HackerNewsItem createFromParcel(Parcel source) {
                 return new HackerNewsItem(source);
             }
 
             @Override
-            public Item[] newArray(int size) {
-                return new Item[size];
+            public HackerNewsItem[] newArray(int size) {
+                return new HackerNewsItem[size];
             }
         };
 
@@ -188,6 +188,13 @@ public class HackerNewsClient implements ItemManager {
             favorite = source.readInt() != 0;
             descendants = source.readInt();
             score = source.readInt();
+            kidItems = source.createTypedArray(HackerNewsItem.CREATOR);
+            favorite = source.readInt() == 1;
+            viewed = source.readInt() == 1;
+            localRevision = source.readInt();
+            level = source.readInt();
+            dead = source.readInt() == 1;
+            deleted = source.readInt() == 1;
         }
 
         @Override
@@ -249,6 +256,13 @@ public class HackerNewsClient implements ItemManager {
             dest.writeInt(favorite ? 1 : 0);
             dest.writeInt(descendants);
             dest.writeInt(score);
+            dest.writeTypedArray(kidItems, 0);
+            dest.writeInt(favorite ? 1 : 0);
+            dest.writeInt(viewed != null && viewed ? 1 : 0);
+            dest.writeInt(localRevision);
+            dest.writeInt(level);
+            dest.writeInt(dead ? 1 : 0);
+            dest.writeInt(deleted ? 1 : 0);
         }
 
         @Override

@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
@@ -140,13 +142,15 @@ public class ItemFragmentSinglePageTest {
                 return new ItemManager.Item[]{item1};
             }
         };
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
-                    @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{item0};
-                    }
-                }, null);
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+            @Override
+            public ItemManager.Item[] getKidItems() {
+                return new ItemManager.Item[]{item0};
+            }
+        });
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
@@ -172,18 +176,20 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testPendingItem() {
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+            @Override
+            public ItemManager.Item[] getKidItems() {
+                return new ItemManager.Item[]{new TestItem() {
                     @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{new TestItem() {
-                            @Override
-                            public int getLocalRevision() {
-                                return -1;
-                            }
-                        }};
+                    public int getLocalRevision() {
+                        return -1;
                     }
-                }, null);
+                }};
+            }
+        });
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
@@ -260,13 +266,15 @@ public class ItemFragmentSinglePageTest {
                 }};
             }
         };
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
-                    @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{item0};
-                    }
-                }, null);
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+            @Override
+            public ItemManager.Item[] getKidItems() {
+                return new ItemManager.Item[]{item0};
+            }
+        });
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);

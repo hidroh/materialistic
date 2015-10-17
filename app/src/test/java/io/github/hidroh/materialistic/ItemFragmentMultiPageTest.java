@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -51,9 +53,10 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testEmptyView() {
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
-                }, null);
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() { });
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         assertThat(fragment.getView().findViewById(android.R.id.empty)).isVisible();
@@ -63,7 +66,10 @@ public class ItemFragmentMultiPageTest {
     public void testWebItem() {
         ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
         when(webItem.getId()).thenReturn("1");
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application, webItem, null);
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
@@ -79,23 +85,25 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testBindLocalKidData() {
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+            @Override
+            public ItemManager.Item[] getKidItems() {
+                return new ItemManager.Item[]{new TestItem() {
                     @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{new TestItem() {
-                            @Override
-                            public String getText() {
-                                return "text";
-                            }
-
-                            @Override
-                            public int getKidCount() {
-                                return 1;
-                            }
-                        }};
+                    public String getText() {
+                        return "text";
                     }
-                }, null);
+
+                    @Override
+                    public int getKidCount() {
+                        return 1;
+                    }
+                }};
+            }
+        });
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
@@ -115,13 +123,15 @@ public class ItemFragmentMultiPageTest {
         final ItemManager.Item kidItem = mock(ItemManager.Item.class);
         when(kidItem.getId()).thenReturn("1");
         when(kidItem.getLocalRevision()).thenReturn(-1); // force remote retrieval
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application,
-                new TestItem() {
-                    @Override
-                    public ItemManager.Item[] getKidItems() {
-                        return new ItemManager.Item[]{kidItem};
-                    }
-                }, null);
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+            @Override
+            public ItemManager.Item[] getKidItems() {
+                return new ItemManager.Item[]{kidItem};
+            }
+        });
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
@@ -139,7 +149,10 @@ public class ItemFragmentMultiPageTest {
     public void testRefresh() {
         ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
         when(webItem.getId()).thenReturn("1");
-        ItemFragment fragment = ItemFragment.instantiate(RuntimeEnvironment.application, webItem, null);
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
                 android.R.id.content);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
