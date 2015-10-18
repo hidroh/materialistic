@@ -2,23 +2,34 @@ package io.github.hidroh.materialistic;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
 public class FavoriteActivity extends BaseListActivity implements FavoriteFragment.DataChangedListener {
 
-    private FavoriteFragment mFavoriteFragment;
+    private static final String STATE_FILTER = "state:filter";
     private View mEmptyView;
     private View mEmptySearchView;
     private boolean mIsEmpty;
     private String mFilter;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mFilter = savedInstanceState.getString(STATE_FILTER);
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (mFavoriteFragment != null) {
-            mFavoriteFragment.filter(intent.getStringExtra(SearchManager.QUERY));
+        FavoriteFragment fragment = (FavoriteFragment) getSupportFragmentManager()
+                .findFragmentByTag(LIST_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.filter(intent.getStringExtra(SearchManager.QUERY));
         }
     }
 
@@ -39,14 +50,21 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_FILTER, mFilter);
+    }
+
+    @Override
     protected String getDefaultTitle() {
         return getString(R.string.title_activity_favorite);
     }
 
     @Override
     protected Fragment instantiateListFragment() {
-        mFavoriteFragment = FavoriteFragment.instantiate(this, mFilter);
-        return mFavoriteFragment;
+        Bundle args = new Bundle();
+        args.putString(FavoriteFragment.EXTRA_FILTER, mFilter);
+        return Fragment.instantiate(this, FavoriteFragment.class.getName(), args);
     }
 
     @Override

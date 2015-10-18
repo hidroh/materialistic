@@ -31,7 +31,8 @@ import io.github.hidroh.materialistic.data.ItemManager;
  */
 public abstract class BaseListActivity extends DrawerActivity implements MultiPaneListener {
 
-    private static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() + ".LIST_FRAGMENT_TAG";
+    protected static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() +
+            ".LIST_FRAGMENT_TAG";
     private static final String STATE_SELECTED_ITEM = "state:selectedItem";
     private boolean mIsMultiPane;
     private boolean mIsResumed;

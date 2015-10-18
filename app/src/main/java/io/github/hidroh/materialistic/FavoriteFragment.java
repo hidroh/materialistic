@@ -10,7 +10,6 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -37,6 +36,8 @@ import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class FavoriteFragment extends BaseFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, Scrollable {
+    public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
+    private static final String STATE_FILTER = "state:filter";
     private RecyclerView mRecyclerView;
     private FavoriteManager.Cursor mCursor;
     private RecyclerViewAdapter mAdapter;
@@ -53,13 +54,6 @@ public class FavoriteFragment extends BaseFragment
     @Inject FavoriteManager mFavoriteManager;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
-
-    public static FavoriteFragment instantiate(Context context, String filter) {
-        final FavoriteFragment fragment = (FavoriteFragment) Fragment.instantiate(context,
-                FavoriteFragment.class.getName());
-        fragment.mFilter = filter;
-        return fragment;
-    }
 
     @Override
     public void onAttach(final Context context) {
@@ -135,6 +129,16 @@ public class FavoriteFragment extends BaseFragment
                 mActionMode = null;
             }
         };
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mFilter = savedInstanceState.getString(STATE_FILTER);
+        } else {
+            mFilter = getArguments().getString(EXTRA_FILTER);
+        }
     }
 
     @Override
@@ -250,6 +254,12 @@ public class FavoriteFragment extends BaseFragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_FILTER, mFilter);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id != FavoriteManager.LOADER) {
             return null;
@@ -273,12 +283,6 @@ public class FavoriteFragment extends BaseFragment
         if (data == null) {
             mCursor = null;
         } else {
-            boolean any = data.moveToFirst();
-            if (any) {
-
-            } else {
-
-            }
             mCursor = new FavoriteManager.Cursor(data);
         }
         mAdapter.notifyDataSetChanged();
