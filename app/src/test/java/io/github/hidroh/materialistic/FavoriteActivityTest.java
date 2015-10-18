@@ -10,8 +10,10 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -20,7 +22,6 @@ import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -29,13 +30,14 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.shadows.ShadowProgressDialog;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
 import java.util.Set;
@@ -62,8 +64,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-// TODO enable this once https://github.com/robolectric/robolectric/issues/2020 is fixed
-@Ignore
+@Config(shadows = {ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityTest {
     private ActivityController<TestFavoriteActivity> controller;
@@ -98,7 +99,7 @@ public class FavoriteActivityTest {
         cv.put("url", "http://example.com");
         cv.put("time", String.valueOf(System.currentTimeMillis()));
         resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        activity = controller.create().start().resume().visible().get(); // skip menu due to search view
+        activity = controller.create().postCreate(null).start().resume().visible().get(); // skip menu due to search view
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
@@ -231,6 +232,24 @@ public class FavoriteActivityTest {
         intent.putExtra(SearchManager.QUERY, "ask");
         controller.newIntent(intent);
         assertEquals(1, adapter.getItemCount());
+    }
+
+    @Test
+    public void testSaveState() {
+        Intent intent = new Intent();
+        intent.putExtra(SearchManager.QUERY, "ask");
+        Bundle outState = new Bundle();
+        controller.newIntent(intent).saveInstanceState(outState);
+        ActivityController<TestFavoriteActivity> controller = Robolectric
+                .buildActivity(TestFavoriteActivity.class)
+                .create(outState)
+                .postCreate(outState)
+                .start()
+                .resume()
+                .visible();
+        assertEquals(1, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
+                .getAdapter().getItemCount());
+        controller.pause().stop().destroy();
     }
 
     @After

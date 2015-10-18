@@ -26,9 +26,9 @@ public class AppUtilsTest {
     @Test
     public void testMakeShareIntent() {
         Intent actual = AppUtils.makeShareIntent("content");
-        assertThat(actual).hasAction(Intent.ACTION_SEND);
-        assertThat(actual).hasType("text/plain");
-        assertThat(actual).hasExtra(Intent.EXTRA_TEXT);
+        assertThat(actual).hasAction(Intent.ACTION_SEND)
+                .hasType("text/plain")
+                .hasExtra(Intent.EXTRA_TEXT, "content");
     }
 
     @Test
