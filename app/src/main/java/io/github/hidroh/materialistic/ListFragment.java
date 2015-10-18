@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -89,11 +88,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mMultiPaneListener = (MultiPaneListener) activity;
-        if (activity instanceof RefreshCallback) {
-            mRefreshCallback = (RefreshCallback) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mMultiPaneListener = (MultiPaneListener) context;
+        if (context instanceof RefreshCallback) {
+            mRefreshCallback = (RefreshCallback) context;
         }
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override

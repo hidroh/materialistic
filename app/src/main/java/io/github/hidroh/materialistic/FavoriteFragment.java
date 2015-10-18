@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -63,11 +62,11 @@ public class FavoriteFragment extends BaseFragment
     }
 
     @Override
-    public void onAttach(final Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(final Context context) {
+        super.onAttach(context);
         setHasOptionsMenu(true);
-        mMultiPaneListener = (MultiPaneListener) activity;
-        mDataChangedListener = (DataChangedListener) activity;
+        mMultiPaneListener = (MultiPaneListener) context;
+        mDataChangedListener = (DataChangedListener) context;
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -88,8 +87,8 @@ public class FavoriteFragment extends BaseFragment
                 }
             }
         };
-        LocalBroadcastManager.getInstance(activity).registerReceiver(mBroadcastReceiver, FavoriteManager.makeGetIntentFilter());
-        LocalBroadcastManager.getInstance(activity).registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver, FavoriteManager.makeGetIntentFilter());
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
         mActionModeCallback = new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -116,7 +115,7 @@ public class FavoriteFragment extends BaseFragment
                                     }
 
                                     mMultiPaneListener.clearSelection();
-                                    mFavoriteManager.remove(activity, mSelected);
+                                    mFavoriteManager.remove(context, mSelected);
                                     actionMode.finish();
                                 }
                             })
