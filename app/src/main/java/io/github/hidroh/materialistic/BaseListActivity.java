@@ -32,6 +32,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public abstract class BaseListActivity extends DrawerActivity implements MultiPaneListener {
 
     private static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() + ".LIST_FRAGMENT_TAG";
+    private static final String STATE_SELECTED_ITEM = "state:selectedItem";
     private boolean mIsMultiPane;
     private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
@@ -64,6 +65,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                             LIST_FRAGMENT_TAG)
                     .commit();
         } else {
+            mSelectedItem = savedInstanceState.getParcelable(STATE_SELECTED_ITEM);
             fragment = getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
         }
         if (fragment instanceof Scrollable) {
@@ -105,6 +107,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onPause() {
         mIsResumed = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
     }
 
     @Override

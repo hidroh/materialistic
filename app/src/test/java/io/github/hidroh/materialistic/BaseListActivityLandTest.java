@@ -120,6 +120,8 @@ public class BaseListActivityLandTest {
             }
         });
         assertNotNull(activity.getSelectedItem());
+        activity.recreate();
+        assertNotNull(activity.getSelectedItem());
     }
 
     @Test
