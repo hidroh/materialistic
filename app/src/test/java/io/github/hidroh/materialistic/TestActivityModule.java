@@ -56,12 +56,14 @@ import static org.mockito.Mockito.when;
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
                 ListFragmentViewHolderTest.class,
+                ListFragmentViewHolderEdgeTest.class,
                 FavoriteActivityTest.class,
                 FavoriteActivityEmptyTest.class,
                 TestFavoriteActivity.class,
                 WebFragmentLocalTest.class,
                 WebFragmentTest.class,
-                FeedbackTest.class
+                FeedbackTest.class,
+                ListFragmentTest.class
         },
         library = true,
         overrides = true

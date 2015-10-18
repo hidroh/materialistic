@@ -2,6 +2,8 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,13 +24,14 @@ import org.robolectric.util.ActivityController;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.TestItem;
-import io.github.hidroh.materialistic.test.TestItemManager;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -51,9 +54,12 @@ public class ListFragmentViewHolderTest {
     private ListActivity activity;
     private TestStory item;
     @Inject SessionManager sessionManager;
+    @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Inject FavoriteManager favoriteManager;
     @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallbacks;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
+    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item[]>> storiesListener;
+    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> itemListener;
 
     @Before
     public void setUp() {
@@ -61,25 +67,22 @@ public class ListFragmentViewHolderTest {
         TestApplication.applicationGraph.inject(this);
         reset(sessionManager);
         reset(favoriteManager);
+        reset(itemManager);
         item = new TestStory();
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
         activity = controller.get();
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, ListFragment.instantiate(activity, new TestItemManager() {
-                    @Override
-                    public void getStories(String filter, ResponseListener<Item[]> listener) {
-                        listener.onResponse(new Item[]{item});
-                    }
-
-                    @Override
-                    public void getItem(String itemId, ResponseListener<Item> listener) {
-                        item.title = "title";
-                        listener.onResponse(item);
-                    }
-                }, ItemManager.TOP_FETCH_MODE))
+                .add(android.R.id.content,
+                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
+        item.title = "title";
+        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        storiesListener.getValue().onResponse(new ItemManager.Item[]{item});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         holder = adapter.createViewHolder(recyclerView, 0);
@@ -88,6 +91,8 @@ public class ListFragmentViewHolderTest {
     @Test
     public void testStory() {
         adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
@@ -99,8 +104,10 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testComment() {
-        item.kidCount = 1;
         adapter.bindViewHolder(holder, 0);
+        item.kidCount = 1;
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         View commentButton = holder.itemView.findViewById(R.id.comment);
         assertThat(commentButton).isVisible();
         commentButton.performClick();
@@ -113,19 +120,21 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testJob() {
-        item.type = ItemManager.Item.JOB_TYPE;
-        item.setIsViewed(true);
         adapter.bindViewHolder(holder, 0);
+        item.type = ItemManager.Item.JOB_TYPE;
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         assertEquals(R.drawable.ic_work_grey600_18dp,
                 shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
-        assertViewed();
     }
 
     @Test
     public void testPoll() {
-        item.type = ItemManager.Item.POLL_TYPE;
         adapter.bindViewHolder(holder, 0);
+        item.type = ItemManager.Item.POLL_TYPE;
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         assertEquals(R.drawable.ic_poll_grey600_18dp,
                 shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
@@ -134,6 +143,8 @@ public class ListFragmentViewHolderTest {
     @Test
     public void testItemClick() {
         adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         holder.itemView.performClick();
         assertViewed();
         verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class)
@@ -142,9 +153,12 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testViewedBroadcast() {
-        item.setIsViewed(false);
         adapter.bindViewHolder(holder, 0);
+        item.setIsViewed(false);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         assertNotViewed();
+        reset(itemManager);
 
         ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
         List<ShadowLocalBroadcastManager.Wrapper> receivers = manager.getRegisteredBroadcastReceivers();
@@ -152,6 +166,8 @@ public class ListFragmentViewHolderTest {
         intent.putExtra(SessionManager.ACTION_ADD_EXTRA_DATA, "1");
         receivers.get(0).broadcastReceiver.onReceive(activity, intent);
         adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         assertViewed();
     }
 
@@ -162,6 +178,8 @@ public class ListFragmentViewHolderTest {
         List<ShadowLocalBroadcastManager.Wrapper> receivers = manager.getRegisteredBroadcastReceivers();
         receivers.get(0).broadcastReceiver.onReceive(activity, new Intent(FavoriteManager.ACTION_CLEAR));
         adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         verify(favoriteManager).check(any(Context.class), eq("1"), favoriteCallbacks.capture());
         favoriteCallbacks.getValue().onCheckComplete(true);
         assertTrue(item.isFavorite());
@@ -170,6 +188,8 @@ public class ListFragmentViewHolderTest {
     @Test
     public void testItemLongClick() {
         adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
         holder.itemView.performLongClick();
         verify(favoriteManager).add(any(Context.class), eq(item));
         assertTrue(item.isFavorite());
