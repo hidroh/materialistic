@@ -6,9 +6,8 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import io.github.hidroh.materialistic.data.AlgoliaClient;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
@@ -16,8 +15,6 @@ public class SearchActivity extends BaseListActivity {
 
     private static final int MAX_RECENT_SUGGESTIONS = 10;
     private String mQuery;
-    @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
-    @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +44,14 @@ public class SearchActivity extends BaseListActivity {
 
     @Override
     protected Fragment instantiateListFragment() {
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         if (TextUtils.isEmpty(mQuery)) {
-            return ListFragment.instantiate(this, mHackerNewsClient, ItemManager.TOP_FETCH_MODE);
+            args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
         } else {
-            return ListFragment.instantiate(this, mAlgoliaClient, mQuery);
+            args.putString(ListFragment.EXTRA_ITEM_MANAGER, AlgoliaClient.class.getName());
         }
+        return Fragment.instantiate(this, ListFragment.class.getName(), args);
     }
 
     @Override

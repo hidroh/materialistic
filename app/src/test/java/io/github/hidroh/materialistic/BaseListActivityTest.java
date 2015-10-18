@@ -146,6 +146,8 @@ public class BaseListActivityTest {
         activity.getSupportActionBar().setSubtitle(null);
         controller.pause().resume();
         assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
+        activity.recreate();
+        assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
     }
 
     @Test

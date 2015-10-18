@@ -54,7 +54,18 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
         mViewPager = (ViewPager) findViewById(R.id.content);
         onCreateView();
-        final Fragment fragment = instantiateListFragment();
+        final Fragment fragment;
+        if (savedInstanceState == null) {
+            fragment = instantiateListFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.list,
+                            fragment,
+                            LIST_FRAGMENT_TAG)
+                    .commit();
+        } else {
+            fragment = getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+        }
         if (fragment instanceof Scrollable) {
             findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -63,12 +74,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 }
             });
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.list,
-                        fragment,
-                        LIST_FRAGMENT_TAG)
-                .commit();
     }
 
     @Override
