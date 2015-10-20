@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
 
 public class SearchActivity extends BaseListActivity {
@@ -45,7 +44,7 @@ public class SearchActivity extends BaseListActivity {
     @Override
     protected Fragment instantiateListFragment() {
         Bundle args = new Bundle();
-        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
+        args.putString(ListFragment.EXTRA_FILTER, mQuery);
         if (TextUtils.isEmpty(mQuery)) {
             args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
         } else {

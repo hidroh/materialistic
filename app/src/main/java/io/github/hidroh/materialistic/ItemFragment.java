@@ -130,6 +130,7 @@ public class ItemFragment extends BaseFragment implements Scrollable {
                 }
 
                 mSwipeRefreshLayout.setRefreshing(false);
+                mAdapterItems = null;
                 mItem = response;
                 bindKidData();
             }
