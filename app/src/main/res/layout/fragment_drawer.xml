@@ -26,6 +26,12 @@
         style="@style/DrawerTextStyle"/>
 
     <TextView
+        android:id="@id/drawer_popular"
+        android:text="@string/title_activity_popular"
+        android:drawableLeft="@drawable/ic_whatshot_grey600_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <TextView
         android:id="@id/drawer_new"
         android:text="@string/title_activity_new"
         android:drawableLeft="@drawable/ic_new_releases_grey600_24dp"

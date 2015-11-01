@@ -30,8 +30,9 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.AlgoliaClient;
+import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
@@ -41,6 +42,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public static final String EXTRA_ITEM_MANAGER = ListFragment.class.getName() + ".EXTRA_ITEM_MANAGER";
     public static final String EXTRA_FILTER = ListFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_ITEMS = "state:items";
+    private static final String STATE_FILTER = "state:filter";
     private RecyclerView mRecyclerView;
     private ListRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -50,6 +52,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private ItemManager mItemManager;
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
+    @Inject @Named(ActivityModule.POPULAR) ItemManager mPopularItemManager;
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
@@ -70,7 +73,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mFilter = getArguments().getString(EXTRA_FILTER);
         TypedArray ta = context.obtainStyledAttributes(new int[]{
                 R.attr.themedTextColorPrimaryInverse,
                 R.attr.themedTextColorSecondaryInverse
@@ -111,6 +113,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mItems = savedInstanceState.getParcelableArrayList(STATE_ITEMS);
+            mFilter = savedInstanceState.getString(STATE_FILTER);
+        } else {
+            mFilter = getArguments().getString(EXTRA_FILTER);
         }
     }
 
@@ -160,8 +165,14 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mItemManager = HackerNewsClient.class.getName().equalsIgnoreCase(
-                getArguments().getString(EXTRA_ITEM_MANAGER)) ? mHnItemManager : mAlgoliaItemManager;
+        String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
+        if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
+            mItemManager = mAlgoliaItemManager;
+        } else if (TextUtils.equals(managerClassName, AlgoliaPopularClient.class.getName())) {
+            mItemManager = mPopularItemManager;
+        } else {
+            mItemManager = mHnItemManager;
+        }
         if (mItems != null) {
             bindData();
         } else {
@@ -187,6 +198,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_ITEMS, mItems);
+        outState.putString(STATE_FILTER, mFilter);
     }
 
     @Override
@@ -207,6 +219,12 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Override
     public void scrollToTop() {
         mRecyclerView.smoothScrollToPosition(0);
+    }
+
+    public void filter(String filter) {
+        mFilter = filter;
+        mSwipeRefreshLayout.setRefreshing(true);
+        refresh();
     }
 
     private void bindData() {

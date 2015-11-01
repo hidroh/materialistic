@@ -35,6 +35,7 @@
     <item type="id" name="drawer_ask" />
     <item type="id" name="drawer_new" />
     <item type="id" name="drawer_feedback" />
+    <item type="id" name="drawer_popular" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />
@@ -47,6 +48,11 @@
     <item type="id" name="menu_story" />
     <item type="id" name="menu_clear_recent" />
     <item type="id" name="menu_reset" />
+    <item type="id" name="menu_range" />
+    <item type="id" name="menu_range_day" />
+    <item type="id" name="menu_range_week" />
+    <item type="id" name="menu_range_month" />
+    <item type="id" name="menu_range_year" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

@@ -79,6 +79,11 @@
             android:configChanges="orientation|screenSize" >
         </activity>
         <activity
+            android:name=".PopularActivity"
+            android:label="@string/title_activity_popular"
+            android:configChanges="orientation|screenSize" >
+        </activity>
+        <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
             android:configChanges="orientation|screenSize" >

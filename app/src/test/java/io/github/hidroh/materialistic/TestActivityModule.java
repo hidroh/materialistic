@@ -42,6 +42,7 @@ import static org.mockito.Mockito.when;
                 SearchActivity.class,
                 ShowActivity.class,
                 WebActivity.class,
+                PopularActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -63,7 +64,8 @@ import static org.mockito.Mockito.when;
                 WebFragmentLocalTest.class,
                 WebFragmentTest.class,
                 FeedbackTest.class,
-                ListFragmentTest.class
+                ListFragmentTest.class,
+                PopularActivityTest.class
         },
         library = true,
         overrides = true
@@ -71,6 +73,7 @@ import static org.mockito.Mockito.when;
 public class TestActivityModule {
     private final ItemManager hackerNewsClient = mock(ItemManager.class);
     private final ItemManager algoliaClient = mock(ItemManager.class);
+    private final ItemManager algoliaPopularClient = mock(ItemManager.class);
     private final FavoriteManager favoriteManager = mock(FavoriteManager.class);
     private final SessionManager sessionManager = mock(SessionManager.class);
     private final SearchView searchView = mock(SearchView.class);
@@ -84,6 +87,11 @@ public class TestActivityModule {
     @Provides @Singleton @Named(ActivityModule.ALGOLIA)
     public ItemManager provideAlgoliaClient() {
         return algoliaClient;
+    }
+
+    @Provides @Singleton @Named(ActivityModule.POPULAR)
+    public ItemManager provideAlgoliaPopularClient() {
+        return algoliaPopularClient;
     }
 
     @Provides @Singleton

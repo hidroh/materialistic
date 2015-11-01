@@ -33,6 +33,13 @@ public class DrawerFragment extends BaseFragment {
             }
         });
 
+        view.findViewById(R.id.drawer_popular).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(PopularActivity.class);
+            }
+        });
+
         view.findViewById(R.id.drawer_new).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

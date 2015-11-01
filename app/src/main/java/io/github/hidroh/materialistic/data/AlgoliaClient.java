@@ -18,7 +18,7 @@ public class AlgoliaClient implements ItemManager {
 
     public static boolean sSortByTime = true;
     private static final String BASE_API_URL = "https://hn.algolia.com/api/v1";
-    private RestService mRestService;
+    protected RestService mRestService;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
 
     @Inject
@@ -49,16 +49,20 @@ public class AlgoliaClient implements ItemManager {
                 listener.onError(error != null ? error.getMessage() : "");
             }
         };
-        if (sSortByTime) {
-            mRestService.searchByDate(filter, callback);
-        } else {
-            mRestService.search(filter, callback);
-        }
+        search(filter, callback);
     }
 
     @Override
     public void getItem(String itemId, ResponseListener<Item> listener) {
         mHackerNewsClient.getItem(itemId, listener);
+    }
+
+    protected void search(String filter, Callback<AlgoliaHits> callback) {
+        if (sSortByTime) {
+            mRestService.searchByDate(filter, callback);
+        } else {
+            mRestService.search(filter, callback);
+        }
     }
 
     interface RestService {
@@ -69,13 +73,17 @@ public class AlgoliaClient implements ItemManager {
         @Headers("Cache-Control: max-age=600")
         @GET("/search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         void search(@Query("query") String query, Callback<AlgoliaHits> callback);
+
+        @Headers("Cache-Control: max-age=600")
+        @GET("/search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        void searchByMinTimestamp(@Query("numericFilters") String timestampSeconds, Callback<AlgoliaHits> callback);
     }
 
-    static class AlgoliaHits {
-        private Hit[] hits;
+    protected static class AlgoliaHits {
+        Hit[] hits;
     }
 
     private static class Hit {
-        private String objectID;
+        String objectID;
     }
 }

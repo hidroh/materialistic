@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@id/menu_range"
+        android:title="@string/range"
+        android:icon="?attr/themedMenuRangeDrawable"
+        app:showAsAction="ifRoom">
+
+        <menu>
+
+            <item
+                android:id="@id/menu_range_day"
+                android:title="@string/popular_range_last_24h" />
+
+            <item
+                android:id="@id/menu_range_week"
+                android:title="@string/popular_range_past_week" />
+
+            <item
+                android:id="@id/menu_range_month"
+                android:title="@string/popular_range_past_month" />
+
+            <item
+                android:id="@id/menu_range_year"
+                android:title="@string/popular_range_past_year" />
+
+        </menu>
+
+    </item>
+</menu>
