@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
+import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
@@ -27,6 +28,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
                 NewActivity.class,
                 SearchActivity.class,
                 ShowActivity.class,
+                PopularActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -37,6 +39,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
 )
 public class ActivityModule {
     public static final String ALGOLIA = "algolia";
+    public static final String POPULAR = "popular";
     public static final String HN = "hn";
 
     private final Context mContext;
@@ -57,6 +60,11 @@ public class ActivityModule {
 
     @Provides @Singleton @Named(ALGOLIA)
     public ItemManager provideAlgoliaClient(AlgoliaClient client) {
+        return client;
+    }
+
+    @Provides @Singleton @Named(POPULAR)
+    public ItemManager provideAlgoliaPopularClient(AlgoliaPopularClient client) {
         return client;
     }
 

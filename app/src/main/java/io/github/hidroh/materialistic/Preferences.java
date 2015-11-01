@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
@@ -9,6 +10,8 @@ import android.support.v7.preference.PreferenceManager;
 import android.view.ContextThemeWrapper;
 
 import java.util.Map;
+
+import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 
 public class Preferences {
 
@@ -102,6 +105,19 @@ public class Preferences {
                 .getString(context.getString(R.string.pref_comment_display),
                         context.getString(R.string.pref_comment_display_value_multiple))
                 .equals(context.getString(R.string.pref_comment_display_value_single));
+    }
+
+    public static void setPopularRange(Context context, @AlgoliaPopularClient.Range @NonNull String range) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.pref_popular_range), range)
+                .apply();
+    }
+
+    @NonNull
+    public static String getPopularRange(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_popular_range), AlgoliaPopularClient.LAST_24H);
     }
 
     public static void applyTheme(ContextThemeWrapper contextThemeWrapper) {
