@@ -228,6 +228,12 @@ public interface ItemManager {
          * @param collapsed true to collapse, false otherwise
          */
         void setCollapsed(boolean collapsed);
+
+        /**
+         * Gets item's rank among its siblings
+         * @return item's rank
+         */
+        int getRank();
     }
 
     /**

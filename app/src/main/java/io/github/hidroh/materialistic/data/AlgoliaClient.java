@@ -39,7 +39,10 @@ public class AlgoliaClient implements ItemManager {
                 Hit[] hits = algoliaHits.hits;
                 Item[] stories = new Item[hits == null ? 0 : hits.length];
                 for (int i = 0; i < stories.length; i++) {
-                    stories[i] = new HackerNewsClient.HackerNewsItem(Long.parseLong(hits[i].objectID));
+                    HackerNewsClient.HackerNewsItem item = new HackerNewsClient.HackerNewsItem(
+                            Long.parseLong(hits[i].objectID));
+                    item.rank = i + 1;
+                    stories[i] = item;
                 }
                 listener.onResponse(stories);
             }

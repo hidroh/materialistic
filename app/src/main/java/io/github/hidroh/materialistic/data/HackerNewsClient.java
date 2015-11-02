@@ -46,7 +46,9 @@ public class HackerNewsClient implements ItemManager {
             public void success(int[] ints, Response response) {
                 Item[] topStories = new Item[ints == null ? 0 : ints.length];
                 for (int i = 0; i < topStories.length; i++) {
-                    topStories[i] = new HackerNewsItem(ints[i]);
+                    HackerNewsItem item = new HackerNewsItem(ints[i]);
+                    item.rank = i + 1;
+                    topStories[i] = item;
                 }
                 listener.onResponse(topStories);
             }
@@ -157,6 +159,7 @@ public class HackerNewsClient implements ItemManager {
         private int localRevision = -1;
         private int level = 0;
         private boolean collapsed;
+        int rank;
 
         public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
             @Override
@@ -199,6 +202,7 @@ public class HackerNewsClient implements ItemManager {
             dead = source.readInt() == 1;
             deleted = source.readInt() == 1;
             collapsed = source.readInt() == 1;
+            rank = source.readInt();
         }
 
         @Override
@@ -268,6 +272,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeInt(dead ? 1 : 0);
             dest.writeInt(deleted ? 1 : 0);
             dest.writeInt(collapsed ? 1 : 0);
+            dest.writeInt(rank);
         }
 
         @Override
@@ -363,7 +368,9 @@ public class HackerNewsClient implements ItemManager {
             if (kidItems == null) {
                 kidItems = new HackerNewsItem[kids.length];
                 for (int i = 0; i < kids.length; i++) {
-                    kidItems[i] = new HackerNewsItem(kids[i], level + 1);
+                    HackerNewsItem item = new HackerNewsItem(kids[i], level + 1);
+                    item.rank = i + 1;
+                    kidItems[i] = item;
                 }
             }
 
@@ -456,6 +463,16 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public void setCollapsed(boolean collapsed) {
             this.collapsed = collapsed;
+        }
+
+        @Override
+        public int getRank() {
+            return rank;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof HackerNewsItem && id == ((HackerNewsItem) o).id;
         }
     }
 }

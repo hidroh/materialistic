@@ -14,7 +14,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@id/recycler_view"
             android:paddingTop="@dimen/margin"
-            android:paddingBottom="@dimen/margin"
+            android:paddingBottom="?attr/actionBarSize"
             android:paddingLeft="@dimen/margin"
             android:paddingRight="@dimen/margin"
             android:clipToPadding="false"

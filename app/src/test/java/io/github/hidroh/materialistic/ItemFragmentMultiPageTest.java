@@ -154,7 +154,12 @@ public class ItemFragmentMultiPageTest {
         RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
         adapter.bindViewHolder(viewHolder, 0);
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
-        TestItem remoteKidItem = new TestItem() {};
+        TestItem remoteKidItem = new TestItem() {
+            @Override
+            public String getId() {
+                return "1";
+            }
+        };
         listener.getValue().onResponse(remoteKidItem);
         verify(kidItem).populate(eq(remoteKidItem));
         verify(kidItem).setLocalRevision(eq(0));

@@ -13,6 +13,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.widget.AsteriskSpan;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class ListFragment extends BaseFragment implements Scrollable {
@@ -43,12 +46,15 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public static final String EXTRA_FILTER = ListFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_ITEMS = "state:items";
     private static final String STATE_FILTER = "state:filter";
+    private static final String STATE_UPDATED = "state:updated";
+    private static final String STATE_SHOW_ALL = "state:showAll";
     private RecyclerView mRecyclerView;
     private ListRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private BroadcastReceiver mBroadcastReceiver;
     private int mLocalRevision = 0;
     private ArrayList<ItemManager.Item> mItems;
+    private ArrayList<ItemManager.Item> mUpdated = new ArrayList<>();
     private ItemManager mItemManager;
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
@@ -65,6 +71,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private boolean mResumed;
     private int mPrimaryTextColorResId;
     private int mSecondaryTextColorResId;
+    private boolean mShowAll = true;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -113,7 +120,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mItems = savedInstanceState.getParcelableArrayList(STATE_ITEMS);
+            mUpdated = savedInstanceState.getParcelableArrayList(STATE_UPDATED);
             mFilter = savedInstanceState.getString(STATE_FILTER);
+            mShowAll = savedInstanceState.getBoolean(STATE_SHOW_ALL, true);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
         }
@@ -198,7 +207,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_ITEMS, mItems);
+        outState.putParcelableArrayList(STATE_UPDATED, mUpdated);
         outState.putString(STATE_FILTER, mFilter);
+        outState.putBoolean(STATE_SHOW_ALL, mShowAll);
     }
 
     @Override
@@ -227,27 +238,17 @@ public class ListFragment extends BaseFragment implements Scrollable {
         refresh();
     }
 
-    private void bindData() {
-        if (mItems == null || mItems.isEmpty()) {
-            mEmptyView.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.INVISIBLE);
-        } else {
-            mEmptyView.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-        }
-        mErrorView.setVisibility(View.GONE);
-        mAdapter.notifyDataSetChanged();
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
     private void refresh() {
+        mShowAll = true;
         mItemManager.getStories(mFilter, new ItemManager.ResponseListener<ItemManager.Item[]>() {
             @Override
             public void onResponse(final ItemManager.Item[] response) {
                 if (response == null) {
                     onError(null);
                 } else {
-                    mItems = new ArrayList<>(Arrays.asList(response));
+                    ArrayList<ItemManager.Item> updated = new ArrayList<>(Arrays.asList(response));
+                    bindUpdated(updated);
+                    mItems = updated;
                     bindData();
                     if (mRefreshCallback != null) {
                         mRefreshCallback.onRefreshed();
@@ -269,6 +270,60 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 }
             }
         });
+    }
+
+    private void bindUpdated(ArrayList<ItemManager.Item> updated) {
+        if (mItems == null) {
+            return;
+        }
+        mUpdated.clear();
+        // TODO add items with comments change
+        for (ItemManager.Item item : updated) {
+            if (!mItems.contains(item)) {
+                mUpdated.add(item);
+            }
+        }
+        if (mUpdated.isEmpty()) {
+            return;
+        }
+        Snackbar.make(mRecyclerView,
+                getString(R.string.new_stories_count, mUpdated.size()),
+                Snackbar.LENGTH_LONG)
+                .setAction(R.string.show_me, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mShowAll = false;
+                        bindData();
+                    }
+                })
+                .show();
+    }
+
+    private void bindData() {
+        if (!mShowAll) {
+            final Snackbar snackbar = Snackbar.make(mRecyclerView,
+                    getString(R.string.showing_new_stories, mUpdated.size()),
+                    Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.show_all, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackbar.dismiss();
+                    mUpdated.clear();
+                    mShowAll = true;
+                    bindData();
+                }
+            }).show();
+        }
+        if (mItems == null || mItems.isEmpty()) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
+        mErrorView.setVisibility(View.GONE);
+        mAdapter.notifyDataSetChanged();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private class ViewHolder extends ListRecyclerViewAdapter.ItemViewHolder {
@@ -293,9 +348,15 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
-            holder.mRankTextView.setText(String.valueOf(position + 1));
-            holder.mScoreTextView.setText(R.string.loading_text);
             final ItemManager.Item story = getItem(position);
+            SpannableStringBuilder sb = new SpannableStringBuilder(String.valueOf(story.getRank()));
+            if (mUpdated.contains(story)) {
+                sb.append("*");
+                sb.setSpan(new AsteriskSpan(getActivity()), sb.length() - 1, sb.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            holder.mRankTextView.setText(sb);
+            holder.mScoreTextView.setText(R.string.loading_text);
             if (story.isViewed() == null) {
                 mSessionManager.isViewed(getActivity(), story.getId(),
                         new SessionManager.OperationCallbacks() {
@@ -352,7 +413,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
         @Override
         public int getItemCount() {
-            return mItems != null ? mItems.size() : 0;
+            if (mShowAll) {
+                return mItems != null ? mItems.size() : 0;
+            } else {
+                return mUpdated.size();
+            }
         }
 
         @Override
@@ -437,7 +502,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
         }
 
         private ItemManager.Item getItem(int position) {
-            return mItems.get(position);
+            if (mShowAll) {
+                return mItems.get(position);
+            } else {
+                return mUpdated.get(position);
+            }
         }
     }
 
