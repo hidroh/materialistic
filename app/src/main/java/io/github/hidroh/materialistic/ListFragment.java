@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,6 +49,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_UPDATED = "state:updated";
     private static final String STATE_SHOW_ALL = "state:showAll";
+    private static final String STATE_GREEN_ITEMS = "state:greenItems";
     private RecyclerView mRecyclerView;
     private ListRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -55,6 +57,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private int mLocalRevision = 0;
     private ArrayList<ItemManager.Item> mItems;
     private ArrayList<ItemManager.Item> mUpdated = new ArrayList<>();
+    private ArrayList<String> mGreenItems = new ArrayList<>();
     private ItemManager mItemManager;
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
@@ -71,6 +74,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private boolean mResumed;
     private int mPrimaryTextColorResId;
     private int mSecondaryTextColorResId;
+    private int mRankUpColorResId;
     private boolean mShowAll = true;
 
     public interface RefreshCallback {
@@ -82,10 +86,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
         super.onAttach(context);
         TypedArray ta = context.obtainStyledAttributes(new int[]{
                 R.attr.themedTextColorPrimaryInverse,
-                R.attr.themedTextColorSecondaryInverse
+                R.attr.themedTextColorSecondaryInverse,
         });
         mPrimaryTextColorResId = ta.getInt(0, 0);
         mSecondaryTextColorResId = ta.getInt(1, 0);
+        mRankUpColorResId = ContextCompat.getColor(context, R.color.rank_up);
         ta.recycle();
         mMultiPaneListener = (MultiPaneListener) context;
         if (context instanceof RefreshCallback) {
@@ -121,6 +126,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         if (savedInstanceState != null) {
             mItems = savedInstanceState.getParcelableArrayList(STATE_ITEMS);
             mUpdated = savedInstanceState.getParcelableArrayList(STATE_UPDATED);
+            mGreenItems = savedInstanceState.getStringArrayList(STATE_GREEN_ITEMS);
             mFilter = savedInstanceState.getString(STATE_FILTER);
             mShowAll = savedInstanceState.getBoolean(STATE_SHOW_ALL, true);
         } else {
@@ -208,6 +214,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_ITEMS, mItems);
         outState.putParcelableArrayList(STATE_UPDATED, mUpdated);
+        outState.putStringArrayList(STATE_GREEN_ITEMS, mGreenItems);
         outState.putString(STATE_FILTER, mFilter);
         outState.putBoolean(STATE_SHOW_ALL, mShowAll);
     }
@@ -277,10 +284,17 @@ public class ListFragment extends BaseFragment implements Scrollable {
             return;
         }
         mUpdated.clear();
+        mGreenItems.clear();
         // TODO add items with comments change
         for (ItemManager.Item item : updated) {
-            if (!mItems.contains(item)) {
+            int index = mItems.indexOf(item);
+            if (index < 0) {
                 mUpdated.add(item);
+            } else {
+                int lastRank = mItems.get(index).getRank();
+                if (lastRank > item.getRank()) {
+                    mGreenItems.add(item.getId());
+                }
             }
         }
         if (mUpdated.isEmpty()) {
@@ -356,6 +370,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             holder.mRankTextView.setText(sb);
+            if (mGreenItems.contains(story.getId())) {
+                holder.mRankTextView.setTextColor(mRankUpColorResId);
+            } else {
+                holder.mRankTextView.setTextColor(mPrimaryTextColorResId);
+            }
             holder.mScoreTextView.setText(R.string.loading_text);
             if (story.isViewed() == null) {
                 mSessionManager.isViewed(getActivity(), story.getId(),
