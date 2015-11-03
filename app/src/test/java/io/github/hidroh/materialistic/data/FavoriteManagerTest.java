@@ -174,7 +174,7 @@ public class FavoriteManagerTest {
         assertNotNull(favorite.getDisplayedTime(RuntimeEnvironment.application, false));
         assertEquals(ItemManager.Item.STORY_TYPE, favorite.getType());
         assertTrue(favorite.isShareable());
-        assertEquals("title - http://example.com", favorite.toString());
+        assertEquals("title (http://example.com) - https://news.ycombinator.com/item?id=1", favorite.toString());
         assertEquals(0, favorite.describeContents());
         Parcel output = Parcel.obtain();
         favorite.writeToParcel(output, 0);
