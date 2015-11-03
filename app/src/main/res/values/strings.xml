@@ -144,5 +144,9 @@
     <string name="popular_range_past_week">Past week</string>
     <string name="popular_range_past_month">Past month</string>
     <string name="popular_range_past_year">Past year</string>
+    <string name="new_stories_count" formatted="false">%s new stories</string>
+    <string name="show_me">Show me</string>
+    <string name="showing_new_stories">Showing %s new stories</string>
+    <string name="show_all">Show all</string>
 
 </resources>

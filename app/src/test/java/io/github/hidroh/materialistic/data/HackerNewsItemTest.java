@@ -312,6 +312,8 @@ public class HackerNewsItemTest {
             }
         });
         assertThat(item.getKidItems()).hasSize(2);
+        assertEquals(1, item.getKidItems()[0].getRank());
+        assertEquals(2, item.getKidItems()[1].getRank());
     }
 
     @Test

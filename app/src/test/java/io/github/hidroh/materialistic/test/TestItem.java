@@ -177,4 +177,14 @@ public abstract class TestItem implements ItemManager.Item {
     public void setCollapsed(boolean collapsed) {
         this.collapsed = collapsed;
     }
+
+    @Override
+    public int getRank() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o != null && getId() != null && getId().equalsIgnoreCase(((TestItem) o).getId());
+    }
 }
