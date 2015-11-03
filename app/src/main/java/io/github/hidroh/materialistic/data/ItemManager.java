@@ -131,6 +131,19 @@ public interface ItemManager {
         int getKidCount();
 
         /**
+         * Gets previous number of kids, before {@link #populate(Item)} is called
+         * @return previous number of kids
+         * @see #setLastKidCount(int)
+         */
+        int getLastKidCount();
+
+        /**
+         * Sets previous number of kids, before {@link #populate(Item)} is called
+         * @param lastKidCount previous number of kids
+         */
+        void setLastKidCount(int lastKidCount);
+
+        /**
          * Gets array of kids, with corresponding IDs in {@link #getKids()}
          * @return array of kids or null
          * @see #getKids()

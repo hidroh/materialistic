@@ -11,6 +11,7 @@ public abstract class TestItem implements ItemManager.Item {
     private boolean favorite;
     private Boolean viewed;
     private boolean collapsed;
+    private int lastKidCount;
 
     @Override
     public String getParent() {
@@ -86,6 +87,16 @@ public abstract class TestItem implements ItemManager.Item {
     @Override
     public ItemManager.Item[] getKidItems() {
         return new ItemManager.Item[0];
+    }
+
+    @Override
+    public int getLastKidCount() {
+        return lastKidCount;
+    }
+
+    @Override
+    public void setLastKidCount(int lastKidCount) {
+        this.lastKidCount = lastKidCount;
     }
 
     @Override

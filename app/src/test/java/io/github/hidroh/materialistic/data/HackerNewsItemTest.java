@@ -129,6 +129,7 @@ public class HackerNewsItemTest {
         assertEquals("1", item.getParent());
         assertEquals(1234l, item.getTime());
         assertEquals(1, item.getDescendants());
+        assertEquals(1, item.getLastKidCount());
         assertEquals(5, item.getScore());
         assertTrue(item.isDead());
         assertTrue(item.isDeleted());
@@ -228,6 +229,19 @@ public class HackerNewsItemTest {
             }
         });
         assertEquals(10, item.getKidCount());
+    }
+
+    @Test
+    public void testLastKidCount() {
+        item.populate(new TestItem() {
+            @Override
+            public int getDescendants() {
+                return 0;
+            }
+        });
+        assertEquals(0, item.getLastKidCount());
+        item.setLastKidCount(1);
+        assertEquals(1, item.getLastKidCount());
     }
 
     @Test
@@ -366,5 +380,14 @@ public class HackerNewsItemTest {
     public void testParcelable() {
         assertThat(HackerNewsClient.HackerNewsItem.CREATOR.newArray(1)).hasSize(1);
         assertEquals(0, item.describeContents());
+    }
+
+    @Test
+    public void testEquals() {
+        assertFalse(item.equals(null));
+        assertFalse(item.equals(new TestItem(){}));
+        assertFalse(item.equals(new HackerNewsClient.HackerNewsItem(2l)));
+        assertTrue(item.equals(item));
+        assertTrue(item.equals(new HackerNewsClient.HackerNewsItem(1l)));
     }
 }
