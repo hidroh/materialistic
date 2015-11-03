@@ -241,6 +241,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
     public void filter(String filter) {
         mFilter = filter;
+        mItems = null; // prevent updated comparison
         mSwipeRefreshLayout.setRefreshing(true);
         refresh();
     }

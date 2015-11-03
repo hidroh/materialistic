@@ -8,6 +8,17 @@ import android.view.MenuItem;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 
 public class PopularActivity extends BaseListActivity {
+    private static final String STATE_RANGE = "state:range";
+
+    private String mRange;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            setRange(savedInstanceState.getString(STATE_RANGE));
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -34,6 +45,12 @@ public class PopularActivity extends BaseListActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_RANGE, mRange);
+    }
+
+    @Override
     protected String getDefaultTitle() {
         return getString(R.string.title_activity_popular);
     }
@@ -41,9 +58,8 @@ public class PopularActivity extends BaseListActivity {
     @Override
     protected Fragment instantiateListFragment() {
         Bundle args = new Bundle();
-        String range = Preferences.getPopularRange(this);
-        setSubtitle(range);
-        args.putString(ListFragment.EXTRA_FILTER, range);
+        setRange(Preferences.getPopularRange(this));
+        args.putString(ListFragment.EXTRA_FILTER, mRange);
         args.putString(ListFragment.EXTRA_ITEM_MANAGER, AlgoliaPopularClient.class.getName());
         return Fragment.instantiate(this, ListFragment.class.getName(), args);
     }
@@ -59,7 +75,7 @@ public class PopularActivity extends BaseListActivity {
     }
 
     private void filter(@AlgoliaPopularClient.Range String range) {
-        setSubtitle(range);
+        setRange(range);
         Preferences.setPopularRange(this, range);
         ListFragment listFragment = (ListFragment) getSupportFragmentManager()
                 .findFragmentByTag(LIST_FRAGMENT_TAG);
@@ -68,7 +84,8 @@ public class PopularActivity extends BaseListActivity {
         }
     }
 
-    private void setSubtitle(String range) {
+    private void setRange(String range) {
+        mRange = range;
         final int stringRes;
         switch (range) {
             case AlgoliaPopularClient.LAST_24H:
