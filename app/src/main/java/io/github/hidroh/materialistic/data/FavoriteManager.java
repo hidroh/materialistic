@@ -355,7 +355,7 @@ public class FavoriteManager {
 
         @Override
         public String toString() {
-            return String.format("%s - %s", title, url);
+            return String.format("%s (%s) - %s", title, url, String.format(HackerNewsClient.WEB_ITEM_PATH, itemId));
         }
 
         @Override
