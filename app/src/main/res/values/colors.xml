@@ -29,4 +29,7 @@
     <color name="level_7">#00BCD4</color>
     <color name="level_8">#009688</color>
     <color name="level_9">#4CAF50</color>
+
+    <!-- rank decoration -->
+    <color name="rank_up">#00C853</color>
 </resources>

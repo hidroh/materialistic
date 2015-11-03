@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -126,6 +127,27 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(newItem);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
+    }
+
+    @Test
+    public void testTrending() {
+        TestStory newItem = new TestStory() {
+            @Override
+            public int getRank() {
+                return 45;
+            }
+        };
+        reset(itemManager);
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
+                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
+        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
+        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        storiesListener.getValue().onResponse(new ItemManager.Item[]{newItem});
+        adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(newItem);
+        assertThat((TextView) holder.itemView.findViewById(R.id.rank))
+                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.rank_up));
     }
 
     @Test
