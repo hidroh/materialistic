@@ -68,6 +68,8 @@ public class PopularActivityTest {
                 any(ItemManager.ResponseListener.class));
         assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
         assertEquals(expectedRange, Preferences.getPopularRange(activity));
+        activity.recreate();
+        assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
     }
 
     @After
