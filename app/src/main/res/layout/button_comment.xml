@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:text="128 Comments"
     style="@style/Widget.AppCompat.Button.Borderless.Colored"
+    android:textAllCaps="false"
     android:text="@string/loading_text"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />

@@ -14,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -286,13 +287,14 @@ public class ListFragment extends BaseFragment implements Scrollable {
         }
         mUpdated.clear();
         mGreenItems.clear();
-        // TODO add items with comments change
         for (ItemManager.Item item : updated) {
-            int index = mItems.indexOf(item);
+            int index = mItems.indexOf(item); // TODO expensive lookup here
             if (index < 0) {
                 mUpdated.add(item);
             } else {
-                int lastRank = mItems.get(index).getRank();
+                ItemManager.Item currentRevision = mItems.get(index);
+                item.setLastKidCount(currentRevision.getLastKidCount());
+                int lastRank = currentRevision.getRank();
                 if (lastRank > item.getRank()) {
                     mGreenItems.add(item.getId());
                 }
@@ -364,13 +366,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             final ItemManager.Item story = getItem(position);
-            SpannableStringBuilder sb = new SpannableStringBuilder(String.valueOf(story.getRank()));
-            if (mUpdated.contains(story)) {
-                sb.append("*");
-                sb.setSpan(new AsteriskSpan(getActivity()), sb.length() - 1, sb.length(),
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            holder.mRankTextView.setText(sb);
+            holder.mRankTextView.setText(decorateUpdated(
+                    String.valueOf(story.getRank()), mUpdated.contains(story)));
             if (mGreenItems.contains(story.getId())) {
                 holder.mRankTextView.setTextColor(mRankUpColorResId);
             } else {
@@ -405,7 +402,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 decorateFavorite(holder, story);
             }
             if (!TextUtils.isEmpty(story.getTitle())) {
-                bindViewHolder(holder, story);
+                bindViewHolder(holder, story, false);
             } else {
                 clearViewHolder(holder);
                 mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
@@ -419,8 +416,10 @@ public class ListFragment extends BaseFragment implements Scrollable {
                             return;
                         }
 
+                        boolean hasNewComments = story.getLastKidCount() >= 0 &&
+                                story.getLastKidCount() < response.getKidCount();
                         story.populate(response);
-                        bindViewHolder(holder, story);
+                        bindViewHolder(holder, story, hasNewComments);
                     }
 
                     @Override
@@ -479,12 +478,24 @@ public class ListFragment extends BaseFragment implements Scrollable {
             holder.mBookmarked.setVisibility(story.isFavorite() ? View.VISIBLE : View.INVISIBLE);
         }
 
-        protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
+        private Spannable decorateUpdated(String text, boolean updated) {
+            SpannableStringBuilder sb = new SpannableStringBuilder(text);
+            if (updated) {
+                sb.append("*");
+                sb.setSpan(new AsteriskSpan(getActivity()), sb.length() - 1, sb.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            return sb;
+        }
+
+        private void bindViewHolder(final ViewHolder holder, final ItemManager.Item story,
+                                    boolean hasNewComments) {
             super.bindViewHolder(holder, story);
             holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
-                ((Button) holder.mCommentButton)
-                        .setText(getString(R.string.comments_count, story.getKidCount()));
+                ((Button) holder.mCommentButton).setText(decorateUpdated(
+                        getString(R.string.comments_count, story.getKidCount()),
+                        hasNewComments));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
             } else {
                 holder.mCommentButton.setVisibility(View.GONE);
