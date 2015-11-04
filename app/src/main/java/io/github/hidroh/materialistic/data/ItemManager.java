@@ -144,6 +144,12 @@ public interface ItemManager {
         void setLastKidCount(int lastKidCount);
 
         /**
+         * Checks if item has new kids after {@link #populate(Item)}
+         * @return true if has new kids, false otherwise
+         */
+        boolean hasNewKids();
+
+        /**
          * Gets array of kids, with corresponding IDs in {@link #getKids()}
          * @return array of kids or null
          * @see #getKids()

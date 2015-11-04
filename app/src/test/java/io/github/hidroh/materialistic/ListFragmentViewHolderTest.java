@@ -158,6 +158,11 @@ public class ListFragmentViewHolderTest {
             public int getKidCount() {
                 return 2;
             }
+
+            @Override
+            public boolean hasNewKids() {
+                return true;
+            }
         };
         reset(itemManager);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
