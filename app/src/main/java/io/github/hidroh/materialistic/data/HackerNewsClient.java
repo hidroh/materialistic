@@ -161,6 +161,7 @@ public class HackerNewsClient implements ItemManager {
         private boolean collapsed;
         int rank;
         private int lastKidCount = -1;
+        private boolean hasNewDescendants = false;
 
         public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
             @Override
@@ -205,6 +206,7 @@ public class HackerNewsClient implements ItemManager {
             collapsed = source.readInt() == 1;
             rank = source.readInt();
             lastKidCount = source.readInt();
+            hasNewDescendants = source.readInt() == 1;
         }
 
         @Override
@@ -217,6 +219,7 @@ public class HackerNewsClient implements ItemManager {
             text = info.getText();
             type = info.getRawType();
             descendants = info.getDescendants();
+            hasNewDescendants = lastKidCount >= 0 && descendants > lastKidCount;
             lastKidCount = descendants;
             parent = Long.parseLong(info.getParent());
             deleted = info.isDeleted();
@@ -277,6 +280,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeInt(collapsed ? 1 : 0);
             dest.writeInt(rank);
             dest.writeInt(lastKidCount);
+            dest.writeInt(hasNewDescendants ? 1 : 0);
         }
 
         @Override
@@ -350,6 +354,11 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public void setLastKidCount(int lastKidCount) {
             this.lastKidCount = lastKidCount;
+        }
+
+        @Override
+        public boolean hasNewKids() {
+            return hasNewDescendants;
         }
 
         @Override

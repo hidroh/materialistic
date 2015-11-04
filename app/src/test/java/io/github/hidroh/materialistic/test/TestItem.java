@@ -100,6 +100,11 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public boolean hasNewKids() {
+        return false;
+    }
+
+    @Override
     public boolean isFavorite() {
         return favorite;
     }
@@ -146,7 +151,7 @@ public abstract class TestItem implements ItemManager.Item {
 
     @Override
     public String getId() {
-        return null;
+        return "1";
     }
 
     @Override

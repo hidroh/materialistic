@@ -245,6 +245,32 @@ public class HackerNewsItemTest {
     }
 
     @Test
+    public void testHasNewKids() {
+        assertFalse(item.hasNewKids());
+        item.populate(new TestItem() {
+            @Override
+            public int getDescendants() {
+                return 0;
+            }
+        });
+        assertFalse(item.hasNewKids());
+        item.populate(new TestItem() {
+            @Override
+            public int getDescendants() {
+                return 1;
+            }
+        });
+        assertTrue(item.hasNewKids());
+        item.populate(new TestItem() {
+            @Override
+            public int getDescendants() {
+                return 1;
+            }
+        });
+        assertFalse(item.hasNewKids());
+    }
+
+    @Test
     public void testKidCountNull() {
         item.populate(new TestItem() {
             @Override

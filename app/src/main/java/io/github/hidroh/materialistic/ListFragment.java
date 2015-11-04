@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,6 +60,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private ArrayList<ItemManager.Item> mItems;
     private ArrayList<ItemManager.Item> mUpdated = new ArrayList<>();
     private ArrayList<String> mGreenItems = new ArrayList<>();
+    private LongSparseArray<ItemManager.Item> mItemIdMaps = new LongSparseArray<>();
     private ItemManager mItemManager;
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
@@ -125,7 +127,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mItems = savedInstanceState.getParcelableArrayList(STATE_ITEMS);
+            ArrayList<ItemManager.Item> savedItems = savedInstanceState.getParcelableArrayList(STATE_ITEMS);
+            setItems(savedItems);
             mUpdated = savedInstanceState.getParcelableArrayList(STATE_UPDATED);
             mGreenItems = savedInstanceState.getStringArrayList(STATE_GREEN_ITEMS);
             mFilter = savedInstanceState.getString(STATE_FILTER);
@@ -242,7 +245,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
     public void filter(String filter) {
         mFilter = filter;
-        mItems = null; // prevent updated comparison
+        setItems(null); // prevent updated comparison
         mSwipeRefreshLayout.setRefreshing(true);
         refresh();
     }
@@ -257,7 +260,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 } else {
                     ArrayList<ItemManager.Item> updated = new ArrayList<>(Arrays.asList(response));
                     bindUpdated(updated);
-                    mItems = updated;
+                    setItems(updated);
                     bindData();
                     if (mRefreshCallback != null) {
                         mRefreshCallback.onRefreshed();
@@ -288,11 +291,10 @@ public class ListFragment extends BaseFragment implements Scrollable {
         mUpdated.clear();
         mGreenItems.clear();
         for (ItemManager.Item item : updated) {
-            int index = mItems.indexOf(item); // TODO expensive lookup here
-            if (index < 0) {
+            ItemManager.Item currentRevision = mItemIdMaps.get(Long.valueOf(item.getId()));
+            if (currentRevision == null) {
                 mUpdated.add(item);
             } else {
-                ItemManager.Item currentRevision = mItems.get(index);
                 item.setLastKidCount(currentRevision.getLastKidCount());
                 int lastRank = currentRevision.getRank();
                 if (lastRank > item.getRank()) {
@@ -341,6 +343,16 @@ public class ListFragment extends BaseFragment implements Scrollable {
         mErrorView.setVisibility(View.GONE);
         mAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void setItems(ArrayList<ItemManager.Item> items) {
+        mItems = items;
+        mItemIdMaps.clear();
+        if (items != null) {
+            for (ItemManager.Item item : items) {
+                mItemIdMaps.put(Long.valueOf(item.getId()), item);
+            }
+        }
     }
 
     private class ViewHolder extends ListRecyclerViewAdapter.ItemViewHolder {
@@ -402,7 +414,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 decorateFavorite(holder, story);
             }
             if (!TextUtils.isEmpty(story.getTitle())) {
-                bindViewHolder(holder, story, false);
+                bindViewHolder(holder, story);
             } else {
                 clearViewHolder(holder);
                 mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
@@ -416,10 +428,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
                             return;
                         }
 
-                        boolean hasNewComments = story.getLastKidCount() >= 0 &&
-                                story.getLastKidCount() < response.getKidCount();
                         story.populate(response);
-                        bindViewHolder(holder, story, hasNewComments);
+                        bindViewHolder(holder, story);
                     }
 
                     @Override
@@ -488,14 +498,14 @@ public class ListFragment extends BaseFragment implements Scrollable {
             return sb;
         }
 
-        private void bindViewHolder(final ViewHolder holder, final ItemManager.Item story,
-                                    boolean hasNewComments) {
+        @Override
+        protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
             super.bindViewHolder(holder, story);
             holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
                 ((Button) holder.mCommentButton).setText(decorateUpdated(
                         getString(R.string.comments_count, story.getKidCount()),
-                        hasNewComments));
+                        story.hasNewKids()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
             } else {
                 holder.mCommentButton.setVisibility(View.GONE);
