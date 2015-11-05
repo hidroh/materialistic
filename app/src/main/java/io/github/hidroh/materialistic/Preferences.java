@@ -88,6 +88,11 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_color_code), true);
     }
 
+    public static boolean highlightUpdatedEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_highlight_updated), true);
+    }
+
     public static boolean customChromeTabEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_custom_tab), true);
