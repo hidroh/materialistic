@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
@@ -13,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -52,6 +54,17 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_UPDATED = "state:updated";
     private static final String STATE_SHOW_ALL = "state:showAll";
     private static final String STATE_GREEN_ITEMS = "state:greenItems";
+    private static final String STATE_HIGHLIGHT_UPDATED = "state:highlightUpdated";
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (key.equals(getActivity().getString(R.string.pref_highlight_updated))) {
+                        mHighlightUpdated = sharedPreferences.getBoolean(key, true);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            };
     private RecyclerView mRecyclerView;
     private ListRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -79,6 +92,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private int mSecondaryTextColorResId;
     private int mRankUpColorResId;
     private boolean mShowAll = true;
+    private boolean mHighlightUpdated = true;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -121,6 +135,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 .registerReceiver(mBroadcastReceiver, FavoriteManager.makeRemoveIntentFilter());
         LocalBroadcastManager.getInstance(getActivity())
                 .registerReceiver(mBroadcastReceiver, SessionManager.makeAddIntentFilter());
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
 
     @Override
@@ -133,8 +149,10 @@ public class ListFragment extends BaseFragment implements Scrollable {
             mGreenItems = savedInstanceState.getStringArrayList(STATE_GREEN_ITEMS);
             mFilter = savedInstanceState.getString(STATE_FILTER);
             mShowAll = savedInstanceState.getBoolean(STATE_SHOW_ALL, true);
+            mHighlightUpdated = savedInstanceState.getBoolean(STATE_HIGHLIGHT_UPDATED, true);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
+            mHighlightUpdated = Preferences.highlightUpdatedEnabled(getActivity());
         }
     }
 
@@ -221,6 +239,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         outState.putStringArrayList(STATE_GREEN_ITEMS, mGreenItems);
         outState.putString(STATE_FILTER, mFilter);
         outState.putBoolean(STATE_SHOW_ALL, mShowAll);
+        outState.putBoolean(STATE_HIGHLIGHT_UPDATED, mHighlightUpdated);
     }
 
     @Override
@@ -232,6 +251,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Override
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
         mBroadcastReceiver = null;
         mMultiPaneListener = null;
         mRefreshCallback = null;
@@ -285,6 +306,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
     }
 
     private void bindUpdated(ArrayList<ItemManager.Item> updated) {
+        if (!mHighlightUpdated) {
+            return;
+        }
         if (mItems == null) {
             return;
         }
@@ -380,11 +404,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
             final ItemManager.Item story = getItem(position);
             holder.mRankTextView.setText(decorateUpdated(
                     String.valueOf(story.getRank()), mUpdated.contains(story)));
-            if (mGreenItems.contains(story.getId())) {
-                holder.mRankTextView.setTextColor(mRankUpColorResId);
-            } else {
-                holder.mRankTextView.setTextColor(mPrimaryTextColorResId);
-            }
+            decorateTrending(holder, story);
             holder.mScoreTextView.setText(R.string.loading_text);
             if (story.isViewed() == null) {
                 mSessionManager.isViewed(getActivity(), story.getId(),
@@ -490,12 +510,20 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
         private Spannable decorateUpdated(String text, boolean updated) {
             SpannableStringBuilder sb = new SpannableStringBuilder(text);
-            if (updated) {
+            if (mHighlightUpdated && updated) {
                 sb.append("*");
                 sb.setSpan(new AsteriskSpan(getActivity()), sb.length() - 1, sb.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             return sb;
+        }
+
+        private void decorateTrending(ViewHolder holder, ItemManager.Item story) {
+            if (mHighlightUpdated && mGreenItems.contains(story.getId())) {
+                holder.mRankTextView.setTextColor(mRankUpColorResId);
+            } else {
+                holder.mRankTextView.setTextColor(mPrimaryTextColorResId);
+            }
         }
 
         @Override

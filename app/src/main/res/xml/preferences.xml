@@ -21,6 +21,11 @@
             android:entries="@array/pref_story_display_options"
             android:entryValues="@array/pref_story_display_values"
             android:defaultValue="@string/pref_story_display_value_article" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_highlight_updated"
+            android:title="@string/pref_highlight_updated_title"
+            android:summary="@string/pref_highlight_updated_summary"
+            android:defaultValue="true" />
         <android.support.v7.preference.ListPreference
             android:key="@string/pref_comment_display"
             android:title="@string/pref_comment_display_title"

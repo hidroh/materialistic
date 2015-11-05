@@ -35,6 +35,7 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.ListActivity;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
 
@@ -51,7 +52,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
@@ -174,6 +175,32 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(newItem);
         assertThat((Button) holder.itemView.findViewById(R.id.comment)).hasTextString("2 Comments*");
+    }
+
+    @Test
+    public void testPreferenceChange() {
+        TestStory newItem = new TestStory() {
+            @Override
+            public String getId() {
+                return "2";
+            }
+        };
+        reset(itemManager);
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
+                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
+        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
+        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        storiesListener.getValue().onResponse(new ItemManager.Item[]{newItem});
+        adapter.bindViewHolder(holder, 0);
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(newItem);
+        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_highlight_updated), false)
+                .commit();
+        adapter.bindViewHolder(holder, 0);
+        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
     }
 
     @Test

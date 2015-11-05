@@ -81,6 +81,9 @@
     <string name="pref_color_code">pref_color_code</string>
     <string name="pref_color_code_title">Color code comments</string>
     <string name="pref_color_code_summary">Apply visual indicator to comments</string>
+    <string name="pref_highlight_updated">pref_highlight_updated</string>
+    <string name="pref_highlight_updated_title">Highlight updated stories</string>
+    <string name="pref_highlight_updated_summary">Show changes from last refresh</string>
     <string name="pref_custom_tab">pref_custom_tab</string>
     <string name="pref_custom_tab_title">Use custom Chrome tab (beta)</string>
     <string name="pref_custom_tab_summary">Open Chrome tab instead of browser</string>
