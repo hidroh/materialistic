@@ -1,7 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +13,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
@@ -21,6 +24,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSearchRecentSuggestions.class, ShadowSupportPreferenceManager.class})
@@ -103,6 +107,17 @@ public class SettingsActivityTest {
         fragment.mListener.onSharedPreferenceChanged(
                 ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity), key);
         assertNotNull(shadowOf(activity).getNextStartedActivity());
+    }
+
+    @Test
+    public void testHelp() {
+        fragment.getPreferenceScreen()
+                .findPreference(activity.getString(R.string.pref_highlight_updated_help))
+                .performClick();
+        Dialog dialog = ShadowDialog.getLatestDialog();
+        assertNotNull(dialog);
+        assertThat((TextView) dialog.findViewById(R.id.alertTitle))
+                .hasText(R.string.pref_highlight_updated_title);
     }
 
     @After

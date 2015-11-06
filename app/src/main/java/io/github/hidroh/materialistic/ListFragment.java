@@ -90,7 +90,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private boolean mResumed;
     private int mPrimaryTextColorResId;
     private int mSecondaryTextColorResId;
-    private int mRankUpColorResId;
+    private int mPromotedColorResId;
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
 
@@ -107,7 +107,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         });
         mPrimaryTextColorResId = ta.getInt(0, 0);
         mSecondaryTextColorResId = ta.getInt(1, 0);
-        mRankUpColorResId = ContextCompat.getColor(context, R.color.rank_up);
+        mPromotedColorResId = ContextCompat.getColor(context, R.color.promoted);
         ta.recycle();
         mMultiPaneListener = (MultiPaneListener) context;
         if (context instanceof RefreshCallback) {
@@ -404,7 +404,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
             final ItemManager.Item story = getItem(position);
             holder.mRankTextView.setText(decorateUpdated(
                     String.valueOf(story.getRank()), mUpdated.contains(story)));
-            decorateTrending(holder, story);
+            decoratePromoted(holder, story);
             holder.mScoreTextView.setText(R.string.loading_text);
             if (story.isViewed() == null) {
                 mSessionManager.isViewed(getActivity(), story.getId(),
@@ -518,9 +518,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
             return sb;
         }
 
-        private void decorateTrending(ViewHolder holder, ItemManager.Item story) {
+        private void decoratePromoted(ViewHolder holder, ItemManager.Item story) {
             if (mHighlightUpdated && mGreenItems.contains(story.getId())) {
-                holder.mRankTextView.setTextColor(mRankUpColorResId);
+                holder.mRankTextView.setTextColor(mPromotedColorResId);
             } else {
                 holder.mRankTextView.setTextColor(mPrimaryTextColorResId);
             }

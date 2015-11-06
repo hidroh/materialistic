@@ -131,9 +131,13 @@
     <!-- =================== -->
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceStyle">@style/AppPreference</item>
+        <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
     </style>
     <style name="AppPreference" parent="Preference">
         <item name="layout">@layout/preference</item>
+    </style>
+    <style name="Preference.PreferenceHelp" parent="Preference">
+        <item name="android:layout">@layout/preference_help</item>
     </style>
 
     <!-- =================== -->
