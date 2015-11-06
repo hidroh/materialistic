@@ -101,6 +101,7 @@
     <string name="pref_comment_display">pref_comment_display</string>
     <string name="pref_comment_display_title">Comments and replies</string>
     <string name="pref_popular_range">pref_popular_range</string>
+    <string name="pref_highlight_updated_help">pref_highlight_updated_help</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="save_story">Save story</string>
@@ -151,5 +152,10 @@
     <string name="show_me">Show me</string>
     <string name="showing_new_stories">Showing %s new stories</string>
     <string name="show_all">Show all</string>
+    <string name="whats_this">What\'s this?</string>
+    <string name="got_it">Got it</string>
+    <string name="help_new_story">New story since last refresh</string>
+    <string name="help_promoted_story">Promoted story since last refresh</string>
+    <string name="help_new_comments">Story with new comments since last refresh</string>
 
 </resources>

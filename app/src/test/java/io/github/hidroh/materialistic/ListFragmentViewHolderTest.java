@@ -132,7 +132,7 @@ public class ListFragmentViewHolderTest {
     }
 
     @Test
-    public void testTrending() {
+    public void testPromoted() {
         TestStory newItem = new TestStory() {
             @Override
             public int getRank() {
@@ -149,7 +149,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(newItem);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank))
-                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.rank_up));
+                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.promoted));
     }
 
     @Test

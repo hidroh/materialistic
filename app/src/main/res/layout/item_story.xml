@@ -46,7 +46,7 @@
         </LinearLayout>
         <TextView
             android:id="@id/title"
-            android:text="A lil' bit of programming that matters"
+            android:text="@string/loading_text"
             android:paddingTop="@dimen/padding"
             android:layout_toRightOf="@id/rank_container"
             style="@style/textTitleStyle"
@@ -63,11 +63,11 @@
             android:paddingBottom="@dimen/padding">
             <TextView
                 android:id="@id/source"
-                android:text="hidroh.github.io"
+                android:text="@string/loading_text"
                 style="@style/textSubtitleStyle.Italic" />
             <TextView
                 android:id="@id/posted"
-                android:text="Since January 01, 2015"
+                android:text="@string/loading_text"
                 style="@style/textSubtitleStyle"
                 android:singleLine="false" />
         </LinearLayout>

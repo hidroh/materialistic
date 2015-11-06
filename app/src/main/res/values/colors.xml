@@ -31,5 +31,5 @@
     <color name="level_9">#4CAF50</color>
 
     <!-- rank decoration -->
-    <color name="rank_up">#00C853</color>
+    <color name="promoted">#00C853</color>
 </resources>
