@@ -5,17 +5,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.MenuItemCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +43,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private ViewPager mViewPager;
     private CoordinatorLayout mContentView;
     @Inject ActionViewResolver mActionViewResolver;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +121,11 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getResources().getBoolean(R.bool.multi_pane)) {
             getMenuInflater().inflate(R.menu.menu_list_land, menu);
+            menu.findItem(R.id.menu_share).getIcon()
+                    .mutate()
+                    .setColorFilter(ContextCompat.getColor(this,
+                                    AppUtils.getThemedResId(this, android.R.attr.textColorPrimary)),
+                            PorterDuff.Mode.SRC_IN);
         }
 
         if (isSearchable()) {
@@ -144,14 +150,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         menu.findItem(R.id.menu_comment).setVisible(isItemOptionsMenuVisible() && mStoryMode);
         menu.findItem(R.id.menu_story).setVisible(isItemOptionsMenuVisible() && !mStoryMode);
         menu.findItem(R.id.menu_share).setVisible(isItemOptionsMenuVisible());
-        if (mSelectedItem != null && mSelectedItem.isShareable()) {
-            ShareActionProvider shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(
-                    menu.findItem(R.id.menu_share));
-            shareActionProvider.setShareIntent(AppUtils.makeShareIntent(
-                    getString(R.string.share_format,
-                            mSelectedItem.getDisplayedTitle(),
-                            mSelectedItem.getUrl())));
-        }
         return isSearchable() || super.onPrepareOptionsMenu(menu);
     }
 
@@ -164,7 +162,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             supportInvalidateOptionsMenu();
             return true;
         }
-
+        if (item.getItemId() == R.id.menu_share) {
+            AppUtils.share(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

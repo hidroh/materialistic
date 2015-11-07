@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -113,11 +114,29 @@ public class AppUtils {
         return intent;
     }
 
-    public static Intent makeShareIntent(String text) {
-        final Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-        return intent;
+    public static void share(@NonNull final Context context,
+                             @NonNull AlertDialogBuilder alertDialogBuilder,
+                             @NonNull final ItemManager.WebItem item) {
+        alertDialogBuilder
+                .setMessage(R.string.share)
+                .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        context.startActivity(makeChooserShareIntent(context,
+                                item.getDisplayedTitle(),
+                                item.getUrl()));
+                    }
+                })
+                .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        context.startActivity(makeChooserShareIntent(context,
+                                item.getDisplayedTitle(),
+                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
+                    }
+                })
+                .create()
+                .show();
     }
 
     public static int getThemedResId(Context context, int attr) {
@@ -161,6 +180,21 @@ public class AppUtils {
         return (span / DateUtils.MINUTE_IN_MILLIS) + ABBR_MINUTE;
     }
 
+    private static Intent makeShareIntent(String subject, String text) {
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        return intent;
+    }
+
+    private static Intent makeChooserShareIntent(Context context, String subject, String text) {
+        Intent shareIntent = AppUtils.makeShareIntent(subject, text);
+        Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
+        chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return chooserIntent;
+    }
+
     @NonNull
     private static Intent createViewIntent(Context context, String url) {
         if (Preferences.customChromeTabEnabled(context)) {
@@ -183,10 +217,7 @@ public class AppUtils {
     public static class ShareBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent shareIntent = AppUtils.makeShareIntent(intent.getDataString());
-            Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
-            chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(chooserIntent);
+            context.startActivity(makeChooserShareIntent(context, null, intent.getDataString()));
         }
     }
 }

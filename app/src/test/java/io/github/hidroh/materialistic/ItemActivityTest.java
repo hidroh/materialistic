@@ -51,8 +51,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-// TODO switch to API 21 once ShareActionProvider is fixed
-@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -204,6 +203,61 @@ public class ItemActivityTest {
                 .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    public void testShare() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+
+        // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
+        ShadowLooper.pauseMainLooper();
+        controller.visible();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+
+        // share article
+        shadowOf(activity).clickMenuItem(R.id.menu_share);
+        ShadowAlertDialog.getLatestAlertDialog()
+                .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        Intent actual = shadowOf(activity).getNextStartedActivity();
+        assertThat(actual)
+                .hasAction(Intent.ACTION_CHOOSER);
+        assertThat((Intent) actual.getParcelableExtra(Intent.EXTRA_INTENT))
+                .hasExtra(Intent.EXTRA_TEXT, "http://example.com");
+
+        // share item
+        shadowOf(activity).clickMenuItem(R.id.menu_share);
+        ShadowAlertDialog.getLatestAlertDialog()
+                .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
+        actual = shadowOf(activity).getNextStartedActivity();
+        assertThat(actual)
+                .hasAction(Intent.ACTION_CHOOSER);
+        assertThat((Intent) actual.getParcelableExtra(Intent.EXTRA_INTENT))
+                .hasExtra(Intent.EXTRA_TEXT, "https://news.ycombinator.com/item?id=1");
     }
 
     @Test
