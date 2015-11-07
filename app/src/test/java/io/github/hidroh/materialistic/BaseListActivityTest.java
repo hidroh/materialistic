@@ -27,7 +27,6 @@ import io.github.hidroh.materialistic.test.TestWebItem;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -82,6 +81,32 @@ public class BaseListActivityTest {
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
                 ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_external), true)
+                .commit();
+        controller.pause().resume();
+        activity.onItemSelected(new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+        });
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    public void testSelectItemOpenChooser() {
+        RobolectricPackageManager packageManager = (RobolectricPackageManager)
+                RuntimeEnvironment.application.getPackageManager();
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://example.com")),
+                ShadowResolveInfo.newResolveInfo("label", "com.android.browser", "DefaultActivity"));
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)

@@ -60,10 +60,14 @@ public class AppUtils {
         if (intents.isEmpty()) {
             return;
         }
-        context.startActivity(Intent.createChooser(intents.remove(0),
-                context.getString(R.string.chooser_title))
-                .putExtra(Intent.EXTRA_INITIAL_INTENTS,
-                        intents.toArray(new Parcelable[intents.size()])));
+        if (intents.size() == 1) {
+            context.startActivity(intents.remove(0));
+        } else {
+            context.startActivity(Intent.createChooser(intents.remove(0),
+                    context.getString(R.string.chooser_title))
+                    .putExtra(Intent.EXTRA_INITIAL_INTENTS,
+                            intents.toArray(new Parcelable[intents.size()])));
+        }
     }
 
     public static void setTextWithLinks(TextView textView, String htmlText) {

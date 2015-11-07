@@ -196,14 +196,14 @@ public class ItemActivityTest {
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
 
         // open item
         shadowOf(activity).clickMenuItem(R.id.menu_external);
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
     @Test
@@ -243,7 +243,7 @@ public class ItemActivityTest {
                 .commit();
         controller.withIntent(intent).create().start().resume();
         activity.findViewById(R.id.header_card_view).performClick();
-        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
     @Test
