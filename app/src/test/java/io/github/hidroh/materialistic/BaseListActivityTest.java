@@ -31,8 +31,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-// TODO switch to API 21 once ShareActionProvider is fixed
-@Config(sdk = 19, shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;

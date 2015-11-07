@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.view.ViewPager;
 
 import org.junit.After;
@@ -10,6 +12,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
@@ -18,6 +21,7 @@ import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -25,8 +29,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-// TODO switch to API 21 once ShareActionProvider is fixed
-@Config(qualifiers = "w820dp-land", sdk = 19, shadows = {ShadowSupportPreferenceManager.class})
+@Config(qualifiers = "w820dp-land", shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
@@ -85,6 +88,12 @@ public class BaseListActivityLandTest {
         });
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         assertStoryMode();
+        shadowOf(activity).clickMenuItem(R.id.menu_share);
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        assertEquals(activity.getString(R.string.share), shadowOf(alertDialog).getMessage());
+        assertThat(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)).hasText(R.string.article);
+        assertThat(alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)).hasText(R.string.comments);
     }
 
     @Test

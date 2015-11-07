@@ -12,6 +12,6 @@
         app:showAsAction="always" />
     <item android:id="@id/menu_share"
         android:title="@string/share"
-        app:showAsAction="ifRoom"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
+        android:icon="@drawable/ic_share_grey600_24dp"
+        app:showAsAction="ifRoom" />
 </menu>

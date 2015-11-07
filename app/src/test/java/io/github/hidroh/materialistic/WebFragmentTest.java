@@ -40,8 +40,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-// TODO switch to API 21 once ShareActionProvider is fixed
-@Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class}, sdk = 19)
+@Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentTest {
     private WebActivity activity;

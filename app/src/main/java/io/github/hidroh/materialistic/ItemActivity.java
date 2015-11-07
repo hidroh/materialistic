@@ -3,16 +3,16 @@ package io.github.hidroh.materialistic;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -114,6 +114,11 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_share, menu);
+        menu.findItem(R.id.menu_share).getIcon()
+                .mutate()
+                .setColorFilter(ContextCompat.getColor(this,
+                        AppUtils.getThemedResId(this, android.R.attr.textColorPrimary)),
+                        PorterDuff.Mode.SRC_IN);
         getMenuInflater().inflate(R.menu.menu_item, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -121,15 +126,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_share).setVisible(mItem != null);
-        if (mItem != null) {
-            String url = mTabLayout.getSelectedTabPosition() == 0 ?
-                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()) :
-                    mItem.getUrl();
-            ((ShareActionProvider) MenuItemCompat.getActionProvider(
-                    menu.findItem(R.id.menu_share)))
-                    .setShareIntent(AppUtils.makeShareIntent(
-                            getString(R.string.share_format, mItem.getDisplayedTitle(), url)));
-        }
         return mItem != null;
     }
 
@@ -155,7 +151,10 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                     .show();
             return true;
         }
-
+        if (item.getItemId() == R.id.menu_share) {
+            AppUtils.share(ItemActivity.this, mAlertDialogBuilder, mItem);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -298,12 +297,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         });
         mTabLayout.setupWithViewPager(viewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                supportInvalidateOptionsMenu();
-            }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment activeFragment = fragments[viewPager.getCurrentItem()];

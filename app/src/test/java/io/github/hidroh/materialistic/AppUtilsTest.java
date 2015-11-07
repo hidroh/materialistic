@@ -27,14 +27,6 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricGradleTestRunner.class)
 public class AppUtilsTest {
     @Test
-    public void testMakeShareIntent() {
-        Intent actual = AppUtils.makeShareIntent("content");
-        assertThat(actual).hasAction(Intent.ACTION_SEND)
-                .hasType("text/plain")
-                .hasExtra(Intent.EXTRA_TEXT, "content");
-    }
-
-    @Test
     public void testSetTextWithLinks() {
         TextView textView = new TextView(RuntimeEnvironment.application);
         AppUtils.setTextWithLinks(textView, "<a href=\\\"http://www.justin.tv/problems/bml\\\" rel=\\\"nofollow\\\">http://www.justin.tv/problems/bml</a>");
