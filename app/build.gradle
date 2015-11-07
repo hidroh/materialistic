@@ -8,8 +8,8 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 24
-        versionName "1.7"
+        versionCode 25
+        versionName "1.8"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
     }
 
