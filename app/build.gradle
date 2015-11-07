@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
@@ -50,7 +50,7 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile "com.squareup.okhttp:okhttp-urlconnection:$okHttpVersion"
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"
-    compile 'com.google.android.gms:play-services-analytics:8.1.0'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
     provided "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 

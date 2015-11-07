@@ -7,12 +7,12 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 **Requirements**
 - Latest Android SDK tools
 - Latest Android platform tools
-- Android SDK Build tools 23.0.1
+- Android SDK Build tools 23.0.2
 - Android SDK 23
 - Android Support Repository
 - Android Support Library 23.1.0
 - Google Repository
-- Google Play services 8.1.0
+- Google Play services 8.3.0
 
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API)
