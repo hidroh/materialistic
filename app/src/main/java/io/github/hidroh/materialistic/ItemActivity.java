@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -41,7 +40,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     private String mItemId;
     private ImageView mBookmark;
     private boolean mFavoriteBound;
-    private boolean mOrientationChanged = false;
     private boolean mExternalBrowser;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
@@ -96,12 +94,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                 }
             });
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mOrientationChanged = !mOrientationChanged;
     }
 
     @Override
