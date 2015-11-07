@@ -115,20 +115,21 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_share, menu);
         getMenuInflater().inflate(R.menu.menu_item, menu);
-        if (mItem != null) {
-            ((ShareActionProvider) MenuItemCompat.getActionProvider(
-                    menu.findItem(R.id.menu_share)))
-                    .setShareIntent(AppUtils.makeShareIntent(
-                            getString(R.string.share_format,
-                                    mItem.getDisplayedTitle(),
-                                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()))));
-        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_share).setVisible(mItem != null);
+        if (mItem != null) {
+            String url = mTabLayout.getSelectedTabPosition() == 0 ?
+                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()) :
+                    mItem.getUrl();
+            ((ShareActionProvider) MenuItemCompat.getActionProvider(
+                    menu.findItem(R.id.menu_share)))
+                    .setShareIntent(AppUtils.makeShareIntent(
+                            getString(R.string.share_format, mItem.getDisplayedTitle(), url)));
+        }
         return mItem != null;
     }
 
@@ -297,6 +298,12 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         });
         mTabLayout.setupWithViewPager(viewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                supportInvalidateOptionsMenu();
+            }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment activeFragment = fragments[viewPager.getCurrentItem()];
