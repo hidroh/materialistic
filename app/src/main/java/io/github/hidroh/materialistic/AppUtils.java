@@ -1,17 +1,19 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
-import android.support.v4.app.BundleCompat;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.text.Html;
@@ -31,15 +33,6 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class AppUtils {
-    //  Must have. Extra used to match the session. Its value is an IBinder passed
-    //  whilst creating a news session. See newSession() below. Even if the service is not
-    //  used and there is no valid session id to be provided, this extra has to be present
-    //  with a null value to launch a custom tab.
-    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
-
-    // Extra that changes the background color for the omnibox. colorInt is an int
-    // that specifies a Color.
-    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
     private static final String ABBR_YEAR = "y";
     private static final String ABBR_WEEK = "w";
     private static final String ABBR_DAY = "d";
@@ -170,14 +163,30 @@ public class AppUtils {
 
     @NonNull
     private static Intent createViewIntent(Context context, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         if (Preferences.customChromeTabEnabled(context)) {
-            Bundle extras = new Bundle();
-            BundleCompat.putBinder(extras, EXTRA_CUSTOM_TABS_SESSION, null);
-            intent.putExtras(extras);
-            intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR,
-                    ContextCompat.getColor(context, R.color.colorPrimary));
+            Intent shareIntent = new Intent(context, ShareBroadcastReceiver.class);
+            shareIntent.setData(Uri.parse(url));
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                    .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setActionButton(BitmapFactory.decodeResource(context.getResources(),
+                                    R.drawable.ic_share_grey600_24dp),
+                            context.getString(R.string.share),
+                            PendingIntent.getBroadcast(context, 0, shareIntent, 0))
+                    .build();
+            customTabsIntent.intent.setData(Uri.parse(url));
+            return customTabsIntent.intent;
+        } else {
+            return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }
-        return intent;
+    }
+
+    public static class ShareBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent shareIntent = AppUtils.makeShareIntent(intent.getDataString());
+            Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
+            chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(chooserIntent);
+        }
     }
 }

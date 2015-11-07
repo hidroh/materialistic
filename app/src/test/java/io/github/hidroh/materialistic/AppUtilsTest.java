@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -12,6 +13,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
+
+import io.github.hidroh.materialistic.test.TestInjectableActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -69,6 +72,18 @@ public class AppUtilsTest {
         assertEquals("1w", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
                 DateUtils.WEEK_IN_MILLIS - DateUtils.MINUTE_IN_MILLIS));
         assertEquals("10y", AppUtils.getAbbreviatedTimeSpan(System.currentTimeMillis() -
-                10 * DateUtils.YEAR_IN_MILLIS -DateUtils.MINUTE_IN_MILLIS));
+                10 * DateUtils.YEAR_IN_MILLIS - DateUtils.MINUTE_IN_MILLIS));
+    }
+
+    @Test
+    public void testShareBroadcastReceiver() {
+        TestInjectableActivity activity = Robolectric.buildActivity(TestInjectableActivity.class).create().get();
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("http://example.com"));
+        new AppUtils.ShareBroadcastReceiver().onReceive(activity, intent);
+        Intent actual = shadowOf(activity).getNextStartedActivity();
+        assertThat(actual)
+                .isNotNull()
+                .hasAction(Intent.ACTION_CHOOSER);
     }
 }

@@ -208,6 +208,10 @@ public class ItemActivityTest {
 
     @Test
     public void testHeaderOpenExternal() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_custom_tab), false)
+                .commit();
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(

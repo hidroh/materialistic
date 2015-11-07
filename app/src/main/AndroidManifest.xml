@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.hidroh.materialistic" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.github.hidroh.materialistic">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-sdk tools:overrideLibrary="android.support.customtabs" />
 
     <application
         android:name=".Application"
@@ -110,6 +113,7 @@
             android:authorities="io.github.hidroh.materialistic.recentprovider"
             android:name=".data.SearchRecentSuggestionsProvider"
             android:exported="false" />
+        <receiver android:name=".AppUtils$ShareBroadcastReceiver" />
     </application>
 
 </manifest>
