@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -30,6 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.assertj.TextSwitcherAssert;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -103,7 +105,8 @@ public class ListFragmentViewHolderTest {
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
-        assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasText("title");
+        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextString("title");
         assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
         verify(sessionManager).isViewed(any(Context.class), anyString(), sessionCallbacks.capture());
         sessionCallbacks.getValue().onCheckComplete(true);
@@ -308,13 +311,13 @@ public class ListFragmentViewHolderTest {
     }
 
     private void assertViewed() {
-        assertThat((TextView) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(activity.getResources().getColor(R.color.textColorSecondaryInverse));
+        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(R.color.textColorSecondaryInverse);
     }
 
     private void assertNotViewed() {
-        assertThat((TextView) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(activity.getResources().getColor(R.color.textColorPrimaryInverse));
+        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(R.color.textColorPrimaryInverse);
     }
 
     private class TestStory extends TestItem {

@@ -44,14 +44,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-        <TextView
+        <TextSwitcher
             android:id="@id/title"
-            android:text="@string/loading_text"
-            android:paddingTop="@dimen/padding"
             android:layout_toRightOf="@id/rank_container"
-            style="@style/textTitleStyle"
+            android:paddingTop="@dimen/padding"
+            android:inAnimation="@android:anim/fade_in"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/loading_text"
+                style="@style/textTitleStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                style="@style/textTitleStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </TextSwitcher>
         <LinearLayout
             android:id="@id/meta_container"
             android:layout_width="match_parent"

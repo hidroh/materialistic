@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.AppUtils;
@@ -102,7 +103,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * @param holder    view holder to clear
      */
     protected void clearViewHolder(VH holder) {
-        holder.mTitleTextView.setText(R.string.loading_text);
+        holder.mTitleTextView.setCurrentText(mContext.getString(R.string.loading_text));
         holder.mPostedTextView.setText(R.string.loading_text);
         holder.mSourceTextView.setText(R.string.loading_text);
         holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
@@ -142,14 +143,14 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         public final TextView mPostedTextView;
-        public final TextView mTitleTextView;
+        public final TextSwitcher mTitleTextView;
         public final View mCommentButton;
         public final TextView mSourceTextView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mTitleTextView = (TextView) itemView.findViewById(R.id.title);
+            mTitleTextView = (TextSwitcher) itemView.findViewById(R.id.title);
             mSourceTextView = (TextView) itemView.findViewById(R.id.source);
             mCommentButton = itemView.findViewById(R.id.comment);
         }

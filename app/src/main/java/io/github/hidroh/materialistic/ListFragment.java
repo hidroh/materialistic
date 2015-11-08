@@ -406,18 +406,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
                     String.valueOf(story.getRank()), mUpdated.contains(story)));
             decoratePromoted(holder, story);
             holder.mScoreTextView.setText(R.string.loading_text);
-            if (story.isViewed() == null) {
-                mSessionManager.isViewed(getActivity(), story.getId(),
-                        new SessionManager.OperationCallbacks() {
-                            @Override
-                            public void onCheckComplete(boolean isViewed) {
-                                story.setIsViewed(isViewed);
-                                decorateViewed(holder, story);
-                            }
-                        });
-            } else {
-                decorateViewed(holder, story);
-            }
             if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
                 story.setLocalRevision(mLocalRevision);
                 mChangedFavorites.remove(story.getId());
@@ -501,7 +489,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
         private void decorateViewed(ViewHolder holder, ItemManager.Item story) {
             boolean viewed = mViewed.contains(story.getId()) ||
                     story.isViewed() != null && story.isViewed();
-            holder.mTitleTextView.setTextColor(viewed ? mSecondaryTextColorResId : mPrimaryTextColorResId);
+            ((TextView) holder.mTitleTextView.getCurrentView())
+                    .setTextColor(viewed ? mSecondaryTextColorResId : mPrimaryTextColorResId);
         }
 
         private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {
@@ -529,6 +518,18 @@ public class ListFragment extends BaseFragment implements Scrollable {
         @Override
         protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
             super.bindViewHolder(holder, story);
+            if (story.isViewed() == null) {
+                mSessionManager.isViewed(getActivity(), story.getId(),
+                        new SessionManager.OperationCallbacks() {
+                            @Override
+                            public void onCheckComplete(boolean isViewed) {
+                                story.setIsViewed(isViewed);
+                                decorateViewed(holder, story);
+                            }
+                        });
+            } else {
+                decorateViewed(holder, story);
+            }
             holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
                 ((Button) holder.mCommentButton).setText(decorateUpdated(
