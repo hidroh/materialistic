@@ -198,8 +198,6 @@
     <!-- Text styles -->
     <!-- =========== -->
     <style name="textRankStyle">
-        <item name="android:paddingTop">@dimen/padding</item>
-        <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
         <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
