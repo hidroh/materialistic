@@ -44,6 +44,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * @param item      item that contains data
      */
     protected void bindViewHolder(final VH holder, final T item) {
+        holder.mTitleTextView.setCurrentText(mContext.getString(R.string.loading_text));
         holder.mTitleTextView.setText(item.getDisplayedTitle());
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext, true));
         switch (item.getType()) {
