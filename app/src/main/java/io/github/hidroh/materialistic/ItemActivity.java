@@ -298,11 +298,8 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                 scrollToTop();
             }
         });
-        if (viewPager.getAdapter().getCount() < 2) {
-            AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
-            p.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL);
-            mTabLayout.setLayoutParams(p);
-        } else if (getIntent().getBooleanExtra(EXTRA_OPEN_ARTICLE, false)) {
+        if (viewPager.getAdapter().getCount() == 2 &&
+                getIntent().getBooleanExtra(EXTRA_OPEN_ARTICLE, false)) {
             viewPager.setCurrentItem(1);
         }
         if (story.isShareable() && mExternalBrowser) {
