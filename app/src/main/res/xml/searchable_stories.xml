@@ -3,4 +3,5 @@
     android:label="@string/title_activity_search"
     android:hint="@string/title_activity_search"
     android:searchSuggestAuthority="io.github.hidroh.materialistic.recentprovider"
-    android:searchSuggestSelection=" ?"/>
+    android:searchSuggestSelection=" ?"
+    android:voiceSearchMode="showVoiceSearchButton|launchRecognizer" />
