@@ -12,8 +12,10 @@ import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.AttrRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
@@ -32,6 +34,7 @@ import java.util.List;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.widget.ImageGetter;
 
 public class AppUtils {
     private static final String ABBR_YEAR = "y";
@@ -103,7 +106,8 @@ public class AppUtils {
     }
 
     public static void setHtmlText(TextView textView, String htmlText) {
-        textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
+        textView.setText(TextUtils.isEmpty(htmlText) ? null :
+                Html.fromHtml(htmlText, new ImageGetter(textView), null));
     }
 
     public static Intent makeEmailIntent(String subject, String text) {
@@ -144,6 +148,13 @@ public class AppUtils {
         final int resId = a.getResourceId(0, 0);
         a.recycle();
         return resId;
+    }
+
+    public static float getDimension(Context context, @StyleRes int styleResId, @AttrRes int attr) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(styleResId, new int[]{attr});
+        float size = a.getDimension(0, 0);
+        a.recycle();
+        return size;
     }
 
     public static boolean isHackerNewsUrl(ItemManager.WebItem item) {

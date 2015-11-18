@@ -410,6 +410,7 @@ public class ItemActivityTest {
         assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
                 .getSmoothScrollToPosition());
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(3, tabLayout.getTabCount());
         tabLayout.getTabAt(1).select();
         tabLayout.getTabAt(0).select();
         tabLayout.getTabAt(0).select();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
@@ -130,7 +131,29 @@ public class Preferences {
             contextThemeWrapper.setTheme(R.style.AppTheme_Dark);
         }
 
-        contextThemeWrapper.getTheme().applyStyle(Preferences.resolveTextSizeResId(contextThemeWrapper), true);
+        contextThemeWrapper.getTheme().applyStyle(Preferences.resolvePreferredTextSizeResId(contextThemeWrapper), true);
+    }
+
+    public static @StyleRes int resolveTextSizeResId(String choice) {
+        switch (Integer.parseInt(choice)) {
+            case -1:
+                return R.style.AppTextSize_XSmall;
+            case 0:
+            default:
+                return R.style.AppTextSize;
+            case 1:
+                return R.style.AppTextSize_Medium;
+            case 2:
+                return R.style.AppTextSize_Large;
+            case 3:
+                return R.style.AppTextSize_XLarge;
+        }
+    }
+
+    public static @StyleRes int resolvePreferredTextSizeResId(Context context) {
+        String choice = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
+        return resolveTextSizeResId(choice);
     }
 
     public static void reset(Context context) {
@@ -145,24 +168,6 @@ public class Preferences {
                 .getString(context.getString(R.string.pref_theme),
                         context.getString(R.string.pref_theme_value_light))
                 .equals(context.getString(R.string.pref_theme_value_dark));
-    }
-
-    private static int resolveTextSizeResId(Context context) {
-        String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
-        switch (Integer.parseInt(choice)) {
-            case -1:
-                return R.style.AppTextSize_XSmall;
-            case 0:
-            default:
-                return R.style.AppTextSize;
-            case 1:
-                return R.style.AppTextSize_Medium;
-            case 2:
-                return R.style.AppTextSize_Large;
-            case 3:
-                return R.style.AppTextSize_XLarge;
-        }
     }
 
     private static class BoolToStringPref {

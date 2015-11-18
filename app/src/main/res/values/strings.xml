@@ -50,9 +50,11 @@
         <![CDATA[
             <p><a href="https://github.com/square/retrofit">Square Retrofit</a></p>
             <p><a href="https://github.com/square/okhttp">Square OkHttp</a></p>
+            <p><a href="https://github.com/square/picasso">Square Picasso</a></p>
             <p><a href="https://github.com/square/dagger">Square Dagger</a></p>
             <p><a href="http://developer.android.com/tools/support-library/index.html">Android Support</a></p>
             <p><a href="https://github.com/algolia/hn-search">algolia/hn-search</a></p>
+            <p><a href="https://www.readability.com/developers/api/parser">Readability Parser API</a></p>
         ]]>
     </string>
     <string name="title_activity_favorite">Saved Stories</string>
@@ -154,5 +156,13 @@
     <string name="help_new_story">New story since last refresh</string>
     <string name="help_promoted_story">Promoted story since last refresh</string>
     <string name="help_new_comments">Story with new comments since last refresh</string>
+    <string name="readability">Readability</string>
+    <string name="text_size_extra_small">Extra small</string>
+    <string name="text_size_small">Small</string>
+    <string name="text_size_medium">Medium</string>
+    <string name="text_size_large">Large</string>
+    <string name="text_size_extra_large">Extra large</string>
+    <string name="readability_failed">Unable to parse article</string>
+    <string name="try_again">Try again</string>
 
 </resources>

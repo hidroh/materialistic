@@ -11,6 +11,7 @@ android {
         versionCode 26
         versionName "1.8"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
+        buildConfigField "String", "READABILITY_TOKEN", "\"\""
     }
 
     signingConfigs {
@@ -47,6 +48,7 @@ dependencies {
     compile "com.android.support:preference-v7:$supportVersion"
     compile "com.android.support:customtabs:$supportVersion"
     compile "com.squareup.dagger:dagger:$daggerVersion"
+    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile "com.squareup.okhttp:okhttp-urlconnection:$okHttpVersion"
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"

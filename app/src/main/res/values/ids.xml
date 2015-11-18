@@ -50,6 +50,7 @@
     <item type="id" name="menu_range_week" />
     <item type="id" name="menu_range_month" />
     <item type="id" name="menu_range_year" />
+    <item type="id" name="menu_font_size" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

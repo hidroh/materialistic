@@ -47,6 +47,7 @@
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
         <item name="themedMenuExternalDrawable">@drawable/ic_open_in_browser_white_24dp</item>
         <item name="themedMenuRangeDrawable">@drawable/ic_history_white_24dp</item>
+        <item name="themedMenuFontSizeDrawable">@drawable/ic_format_size_white_24dp</item>
         <item name="themedTextColorPrimary">@color/textColorPrimary</item>
         <item name="themedTextColorSecondary">@color/textColorSecondary</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimaryInverse</item>
@@ -97,6 +98,7 @@
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
         <item name="themedMenuExternalDrawable">@drawable/ic_open_in_browser_black_24dp</item>
         <item name="themedMenuRangeDrawable">@drawable/ic_history_black_24dp</item>
+        <item name="themedMenuFontSizeDrawable">@drawable/ic_format_size_black_24dp</item>
         <item name="themedTextColorPrimary">@color/textColorPrimaryInverse</item>
         <item name="themedTextColorSecondary">@color/textColorSecondaryInverse</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimary</item>
@@ -263,7 +265,9 @@
     <!-- Text sizes -->
     <!-- ========== -->
     <style name="AppTextSize">
-        <!-- default text size, should be specified in theme -->
+        <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
+        <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
+        <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
     </style>
     <style name="AppTextSize.XSmall">
         <item name="titleTextSize">16sp</item>

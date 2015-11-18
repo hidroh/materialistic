@@ -18,11 +18,15 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
+import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.WebActivity;
+import io.github.hidroh.materialistic.widget.ImageGetter;
+import io.github.hidroh.materialistic.widget.ImageGetterTest;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -48,12 +52,15 @@ import static org.mockito.Mockito.when;
                 ListFragment.class,
                 WebFragment.class,
                 DrawerFragment.class,
+                ReadabilityFragment.class,
+                ImageGetter.class,
                 // test classes
                 SettingsActivityTest.class,
                 ItemActivityTest.class,
                 ItemFragmentMultiPageTest.class,
                 ItemFragmentSinglePageTest.class,
                 TestInjectableActivity.class,
+                TestReadabilityActivity.class,
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
                 ListFragmentViewHolderTest.class,
@@ -65,7 +72,10 @@ import static org.mockito.Mockito.when;
                 WebFragmentTest.class,
                 FeedbackTest.class,
                 ListFragmentTest.class,
-                PopularActivityTest.class
+                PopularActivityTest.class,
+                ImageGetterTest.class,
+                ImageGetterTest.TestImageGetter.class,
+                ReadabilityFragmentTest.class
         },
         library = true,
         overrides = true
@@ -78,6 +88,8 @@ public class TestActivityModule {
     private final SessionManager sessionManager = mock(SessionManager.class);
     private final SearchView searchView = mock(SearchView.class);
     private final FeedbackClient feedbackClient = mock(FeedbackClient.class);
+    private final ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
+    private final ImageUtils imageUtils = mock(ImageUtils.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -110,10 +122,20 @@ public class TestActivityModule {
     }
 
     @Provides @Singleton
+    public ReadabilityClient provideReadabilityClient() {
+        return readabilityClient;
+    }
+
+    @Provides @Singleton
     public ActionViewResolver provideActionViewResolver() {
         ActionViewResolver resolver = mock(ActionViewResolver.class);
         when(resolver.getActionView(any(MenuItem.class))).thenReturn(searchView);
         return resolver;
+    }
+
+    @Provides
+    public ImageUtils provideImageUtils() {
+        return imageUtils;
     }
 
     @Provides

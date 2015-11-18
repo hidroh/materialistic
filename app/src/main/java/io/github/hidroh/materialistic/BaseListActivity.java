@@ -280,19 +280,22 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private void handleMultiPaneItemSelected(final ItemManager.WebItem item) {
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
-        final Fragment[] fragments = new Fragment[2];
+        final Fragment[] fragments = new Fragment[3];
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                Bundle args = new Bundle();
-                args.putParcelable(ItemFragment.EXTRA_ITEM, item);
-                Fragment itemFragment = Fragment.instantiate(BaseListActivity.this,
-                        ItemFragment.class.getName(), args);
-                Fragment webFragment = WebFragment.instantiate(BaseListActivity.this, item);
                 if (position == 0) {
-                    return itemFragment;
+                    Bundle args = new Bundle();
+                    args.putParcelable(ItemFragment.EXTRA_ITEM, item);
+                    return Fragment.instantiate(BaseListActivity.this,
+                            ItemFragment.class.getName(), args);
+                } else if (position == getCount() - 1) {
+                    Bundle readabilityArgs = new Bundle();
+                    readabilityArgs.putString(ReadabilityFragment.EXTRA_URL, item.getUrl());
+                    return Fragment.instantiate(BaseListActivity.this,
+                            ReadabilityFragment.class.getName(), readabilityArgs);
                 } else {
-                    return webFragment;
+                    return WebFragment.instantiate(BaseListActivity.this, item);
                 }
             }
 
@@ -304,13 +307,15 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
             @Override
             public int getCount() {
-                return 2;
+                return 3;
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
                 if (position == 0) {
                     return getString(R.string.title_activity_item);
+                } else if (position == getCount() - 1) {
+                    return getString(R.string.readability);
                 } else {
                     return getString(R.string.article);
                 }
@@ -327,6 +332,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             }
         });
         if (mDefaultOpenArticle) {
+            // TODO add option to default to readability
             mViewPager.setCurrentItem(1);
         }
     }

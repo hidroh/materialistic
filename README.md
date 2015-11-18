@@ -17,8 +17,9 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API)
 - [Algolia Hacker News Search API](https://github.com/algolia/hn-search)
+- [Readability Parser API](https://www.readability.com/developers/api/parser)
 - [appcompat-v7](https://developer.android.com/tools/support-library/features.html#v7-appcompat) / [recyclerview-v7](https://developer.android.com/tools/support-library/features.html#v7-recyclerview) / [cardview-v7](https://developer.android.com/tools/support-library/features.html#v7-cardview)
-- Square [Retrofit](https://github.com/square/retrofit) / [OkHttp](https://github.com/square/okhttp)
+- Square [Retrofit](https://github.com/square/retrofit) / [OkHttp](https://github.com/square/okhttp) / [Picasso](https://github.com/square/picasso)
 - [Square AssertJ](https://github.com/square/assertj-android)
 - [Square Dagger](https://github.com/square/dagger)
 - [Robolectric](https://github.com/robolectric/robolectric)
@@ -27,7 +28,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 
     ./gradlew assembleDebug
 
-Supply your own release signing config to build release. Release signing config is left out on purpose.
+Supply your own Readability API key & release signing config to build release. These have been left out on purpose.
 
 **Test** [![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
 
