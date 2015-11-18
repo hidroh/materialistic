@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import javax.inject.Inject;
@@ -37,13 +39,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private boolean mIsMultiPane;
     private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
-    private boolean mDefaultOpenComments;
-    private boolean mStoryMode;
+    private boolean mDefaultOpenArticle;
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
     private CoordinatorLayout mContentView;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
         mViewPager = (ViewPager) findViewById(R.id.content);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         onCreateView();
         final Fragment fragment;
         if (savedInstanceState == null) {
@@ -89,9 +94,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     protected void onResume() {
         super.onResume();
-        mDefaultOpenComments = Preferences.isDefaultOpenComments(this);
+        mDefaultOpenArticle = !Preferences.isDefaultOpenComments(this);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
-        mStoryMode = !mDefaultOpenComments;
         if (isSearchable()) {
             // close search view
             supportInvalidateOptionsMenu();
@@ -147,21 +151,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             return isSearchable() || super.onPrepareOptionsMenu(menu);
         }
 
-        menu.findItem(R.id.menu_comment).setVisible(isItemOptionsMenuVisible() && mStoryMode);
-        menu.findItem(R.id.menu_story).setVisible(isItemOptionsMenuVisible() && !mStoryMode);
         menu.findItem(R.id.menu_share).setVisible(isItemOptionsMenuVisible());
         return isSearchable() || super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_comment ||
-                item.getItemId() == R.id.menu_story) {
-            mStoryMode = !mStoryMode;
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem() == 0 ? 1 : 0);
-            supportInvalidateOptionsMenu();
-            return true;
-        }
         if (item.getItemId() == R.id.menu_share) {
             AppUtils.share(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem);
             return true;
@@ -183,7 +178,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mSelectedItem = item;
         if (mIsMultiPane) {
             handleMultiPaneItemSelected(item);
-            mStoryMode = !mDefaultOpenComments;
         } else {
             if (mExternalBrowser) {
                 AppUtils.openWebUrlExternal(this, item.getUrl());
@@ -286,6 +280,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private void handleMultiPaneItemSelected(final ItemManager.WebItem item) {
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
+        final Fragment[] fragments = new Fragment[2];
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -295,23 +290,51 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                         ItemFragment.class.getName(), args);
                 Fragment webFragment = WebFragment.instantiate(BaseListActivity.this, item);
                 if (position == 0) {
-                    return mDefaultOpenComments ? itemFragment : webFragment;
+                    return itemFragment;
                 } else {
-                    return !mDefaultOpenComments ? itemFragment : webFragment;
+                    return webFragment;
                 }
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                fragments[position] = (Fragment) super.instantiateItem(container, position);
+                return fragments[position];
             }
 
             @Override
             public int getCount() {
                 return 2;
             }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                if (position == 0) {
+                    return getString(R.string.title_activity_item);
+                } else {
+                    return getString(R.string.article);
+                }
+            }
         });
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                Fragment activeFragment = fragments[mViewPager.getCurrentItem()];
+                if (activeFragment != null) {
+                    ((Scrollable) activeFragment).scrollToTop();
+                }
+            }
+        });
+        if (mDefaultOpenArticle) {
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     private void openItem(ItemManager.WebItem item) {
         final Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        intent.putExtra(ItemActivity.EXTRA_OPEN_ARTICLE, !mDefaultOpenComments);
+        intent.putExtra(ItemActivity.EXTRA_OPEN_ARTICLE, mDefaultOpenArticle);
         startActivity(intent);
     }
 }

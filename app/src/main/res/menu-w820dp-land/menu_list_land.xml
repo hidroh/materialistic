@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@id/menu_comment"
-        android:title="@string/title_activity_item"
-        android:icon="?attr/themedMenuCommentDrawable"
-        app:showAsAction="always" />
-    <item android:id="@id/menu_story"
-        android:title="@string/title_activity_web"
-        android:icon="?attr/themedMenuStoryDrawable"
-        android:visible="false"
-        app:showAsAction="always" />
     <item android:id="@id/menu_share"
         android:title="@string/share"
         android:icon="@drawable/ic_share_grey600_24dp"

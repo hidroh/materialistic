@@ -45,8 +45,6 @@ public class BaseListActivityTest {
 
     @Test
     public void testCreate() {
-        assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
-        assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
         assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
     }
 
@@ -54,8 +52,6 @@ public class BaseListActivityTest {
     public void testRotate() {
         RuntimeEnvironment.setQualifiers("w820dp-land");
         activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
-        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
-        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
     }
 
