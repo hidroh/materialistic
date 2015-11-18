@@ -8,8 +8,6 @@
     <attr name="themedMenuFavoriteOnDrawable" format="reference" />
     <attr name="themedMenuFavoriteOffDrawable" format="reference" />
     <attr name="themedMenuClearDrawable" format="reference" />
-    <attr name="themedMenuStoryDrawable" format="reference" />
-    <attr name="themedMenuCommentDrawable" format="reference" />
     <attr name="themedMenuExternalDrawable" format="reference" />
     <attr name="themedMenuRangeDrawable" format="reference" />
     <attr name="themedTextColorPrimary" format="reference" />

@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
 import org.junit.After;
@@ -47,8 +48,6 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testCreateLand() {
-        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment));
-        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story));
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share).isVisible());
     }
@@ -110,8 +109,6 @@ public class BaseListActivityLandTest {
                 return "1";
             }
         });
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // comment is now default view
     }
 
@@ -165,22 +162,18 @@ public class BaseListActivityLandTest {
             }
         });
         assertStoryMode();
-        shadowOf(activity).clickMenuItem(R.id.menu_comment);
+        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).select();
         assertCommentMode();
-        shadowOf(activity).clickMenuItem(R.id.menu_story);
+        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
         assertStoryMode();
     }
 
     private void assertCommentMode() {
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // story is default view
     }
 
     private void assertStoryMode() {
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_comment).isVisible());
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_story).isVisible());
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1); // story is default view
     }
 
     @After

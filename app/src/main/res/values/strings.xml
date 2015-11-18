@@ -103,8 +103,6 @@
     <string name="pref_highlight_updated_help">pref_highlight_updated_help</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
-    <string name="save_story">Save story</string>
-    <string name="unsave_story">Unsave story</string>
     <string name="select_story">Select a story to view</string>
     <string name="download_external">View this file in another app</string>
     <string name="try_me">try me!</string>

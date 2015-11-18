@@ -29,12 +29,21 @@
         <include layout="@layout/list"
             android:id="@android:id/list" />
 
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            app:tabIndicatorColor="@color/colorPrimaryLight"
+            app:tabTextColor="?attr/themedTextColorPrimary"
+            android:background="?attr/colorPrimary"
+            android:elevation="8dp"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <android.support.v4.view.ViewPager
             android:id="@id/content"
-            android:inAnimation="@anim/slide_in_right"
-            android:outAnimation="@anim/slide_out_right"
             android:elevation="8dp"
             android:background="?attr/themedPanelBackgroundColor"
+            android:layout_below="@id/tab_layout"
             android:layout_toRightOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
