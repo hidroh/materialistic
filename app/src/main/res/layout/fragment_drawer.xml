@@ -7,7 +7,7 @@
 
     <TextView
         android:text="@string/app_name"
-        android:textColor="?attr/themedTextColorPrimary"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/abc_text_size_large_material"
         android:textStyle="bold"
         android:drawableRight="@drawable/ic_app"

@@ -4,10 +4,6 @@
     <attr name="themedCardHighlightColor" format="reference" />
     <attr name="themedDrawerBackgroundColor" format="reference" />
     <attr name="themedPanelBackgroundColor" format="reference" />
-    <attr name="themedTextColorPrimary" format="reference" />
-    <attr name="themedTextColorSecondary" format="reference" />
-    <attr name="themedTextColorPrimaryInverse" format="reference" />
-    <attr name="themedTextColorSecondaryInverse" format="reference" />
     <attr name="titleTextSize" format="dimension|reference" />
     <attr name="subtitleTextSize" format="dimension|reference" />
     <attr name="contentTextSize" format="dimension|reference" />

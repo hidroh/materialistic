@@ -23,12 +23,12 @@
     <ImageView
         android:src="@drawable/arrow"
         android:layout_width="wrap_content"
-        android:tint="?attr/themedTextColorSecondaryInverse"
+        android:tint="?android:attr/textColorSecondaryInverse"
         android:layout_height="48dp" />
     <TextView
         android:text="@string/try_me"
         android:fontFamily="sans-serif-thin"
-        android:textColor="?attr/themedTextColorSecondaryInverse"
+        android:textColor="?android:attr/textColorSecondaryInverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/abc_text_size_headline_material" />

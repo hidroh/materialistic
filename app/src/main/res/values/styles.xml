@@ -41,10 +41,6 @@
         <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
         <item name="themedDrawerBackgroundColor">@android:color/white</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
-        <item name="themedTextColorPrimary">@color/textColorPrimary</item>
-        <item name="themedTextColorSecondary">@color/textColorSecondary</item>
-        <item name="themedTextColorPrimaryInverse">@color/textColorPrimaryInverse</item>
-        <item name="themedTextColorSecondaryInverse">@color/textColorSecondaryInverse</item>
 
         <!-- default text size -->
         <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
@@ -85,10 +81,6 @@
         <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
         <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
-        <item name="themedTextColorPrimary">@color/textColorPrimaryInverse</item>
-        <item name="themedTextColorSecondary">@color/textColorSecondaryInverse</item>
-        <item name="themedTextColorPrimaryInverse">@color/textColorPrimary</item>
-        <item name="themedTextColorSecondaryInverse">@color/textColorSecondary</item>
 
         <!-- default text size -->
         <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
@@ -107,7 +99,7 @@
         <item name="searchViewStyle">@style/AppToolbarSearchView</item>
     </style>
     <style name="AppToolbarSubtitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">?attr/themedTextColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <!-- =================== -->
@@ -148,16 +140,16 @@
         <item name="android:dropDownSelector">?attr/listChoiceBackgroundIndicator</item>
     </style>
     <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
-        <item name="android:textColor">?attr/themedTextColorPrimary</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
     <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="AppPopupMenuSmallTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <!-- ============= -->
@@ -175,7 +167,7 @@
         <item name="android:progressDrawable">@drawable/progress</item>
     </style>
     <style name="AppEditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <!-- =========== -->
@@ -184,18 +176,18 @@
     <style name="textRankStyle">
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="textTitleStyle">
         <item name="android:textSize">?attr/titleTextSize</item>
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
     <style name="textSubtitleStyle">
         <item name="android:textSize">?attr/subtitleTextSize</item>
-        <item name="android:textColor">?attr/themedTextColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
@@ -228,23 +220,23 @@
         <item name="android:drawablePadding">32dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:background">@drawable/abc_item_background_holo_light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
     </style>
     <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="textAppearanceContentNormal">
-        <item name="android:textColor">?attr/themedTextColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="textAppearanceContentDisabled">
-        <item name="android:textColor">?attr/themedTextColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
     </style>
 
     <!-- ========== -->
