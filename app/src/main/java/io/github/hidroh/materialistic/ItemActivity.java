@@ -252,7 +252,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
-        final Fragment[] fragments = new Fragment[2];
+        final Fragment[] fragments = new Fragment[3];
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -262,6 +262,11 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                     args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
                     args.putParcelable(ItemFragment.EXTRA_ITEM, story);
                     return Fragment.instantiate(ItemActivity.this, ItemFragment.class.getName(), args);
+                } else if (position == getCount() - 1) {
+                    Bundle readabilityArgs = new Bundle();
+                    readabilityArgs.putString(ReadabilityFragment.EXTRA_URL, story.getUrl());
+                    return Fragment.instantiate(ItemActivity.this,
+                            ReadabilityFragment.class.getName(), readabilityArgs);
                 } else {
                     return WebFragment.instantiate(ItemActivity.this, story);
                 }
@@ -275,13 +280,15 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
 
             @Override
             public int getCount() {
-                return story.isShareable() && !mExternalBrowser ? 2 : 1;
+                return story.isShareable() && !mExternalBrowser ? 3 : 2;
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
                 if (position == 0) {
                     return getString(R.string.comments_count, story.getKidCount());
+                } else if (position == getCount() - 1) {
+                    return getString(R.string.readability);
                 } else {
                     return getString(R.string.article);
                 }
@@ -298,8 +305,9 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                 scrollToTop();
             }
         });
-        if (viewPager.getAdapter().getCount() == 2 &&
+        if (viewPager.getAdapter().getCount() >= 2 &&
                 getIntent().getBooleanExtra(EXTRA_OPEN_ARTICLE, false)) {
+                // TODO add option to default to readability
             viewPager.setCurrentItem(1);
         }
         if (story.isShareable() && mExternalBrowser) {

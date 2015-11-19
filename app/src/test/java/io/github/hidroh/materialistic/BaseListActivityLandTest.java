@@ -25,7 +25,6 @@ import io.github.hidroh.materialistic.test.TestWebItem;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -161,11 +160,15 @@ public class BaseListActivityLandTest {
                 return "1";
             }
         });
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(3, tabLayout.getTabCount());
         assertStoryMode();
-        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).select();
+        tabLayout.getTabAt(0).select();
         assertCommentMode();
-        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
+        tabLayout.getTabAt(1).select();
         assertStoryMode();
+        tabLayout.getTabAt(2).select();
+        assertReadabilityMode();
     }
 
     private void assertCommentMode() {
@@ -174,6 +177,10 @@ public class BaseListActivityLandTest {
 
     private void assertStoryMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1); // story is default view
+    }
+
+    private void assertReadabilityMode() {
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2); // story is default view
     }
 
     @After

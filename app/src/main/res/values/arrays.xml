@@ -2,11 +2,11 @@
 <resources>
     <!-- Font size -->
     <string-array name="text_size_options">
-        <item>Extra small</item>
-        <item>Small</item>
-        <item>Medium</item>
-        <item>Large</item>
-        <item>Extra large</item>
+        <item>@string/text_size_extra_small</item>
+        <item>@string/text_size_small</item>
+        <item>@string/text_size_medium</item>
+        <item>@string/text_size_large</item>
+        <item>@string/text_size_extra_large</item>
     </string-array>
     <string-array name="pref_text_size_values">
         <item>-1</item>

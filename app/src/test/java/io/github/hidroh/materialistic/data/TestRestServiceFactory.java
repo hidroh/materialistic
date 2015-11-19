@@ -9,6 +9,8 @@ public class TestRestServiceFactory implements RestServiceFactory {
             mock(AlgoliaClient.RestService.class);
     public static final FeedbackClient.Impl.FeedbackService feedbackService =
             mock(FeedbackClient.Impl.FeedbackService.class);
+    public static final ReadabilityClient.Impl.ReadabilityService readabilityService =
+            mock(ReadabilityClient.Impl.ReadabilityService.class);
 
     @Override
     public <T> T create(String baseUrl, Class<T> clazz) {
@@ -20,6 +22,9 @@ public class TestRestServiceFactory implements RestServiceFactory {
         }
         if (clazz.isInstance(feedbackService)) {
             return (T) feedbackService;
+        }
+        if (clazz.isInstance(readabilityService)) {
+            return (T) readabilityService;
         }
         return mock(clazz);
     }
