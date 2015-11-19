@@ -121,7 +121,7 @@ public class ItemActivityTest {
                         .getCompoundDrawables()[0]).getCreatedFromResId());
         assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
         reset(hackerNewsClient);
-        activity.recreate();
+        shadowOf(activity).recreate();
         verify(hackerNewsClient, never()).getItem(anyString(), any(ItemManager.ResponseListener.class));
     }
 

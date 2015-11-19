@@ -125,7 +125,7 @@ public class BaseListActivityLandTest {
             }
         });
         assertNotNull(activity.getSelectedItem());
-        activity.recreate();
+        shadowOf(activity).recreate();
         assertNotNull(activity.getSelectedItem());
     }
 

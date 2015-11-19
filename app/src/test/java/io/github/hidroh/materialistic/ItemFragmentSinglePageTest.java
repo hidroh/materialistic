@@ -309,7 +309,7 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testSavedState() {
-        activity.recreate();
+        shadowOf(activity).recreate();
         assertEquals(3, adapter.getItemCount());
     }
 
