@@ -26,7 +26,7 @@
         <!-- Here we setting appcompat’s actionBarStyle -->
         <item name="toolbarStyle">@style/AppToolbar</item>
         <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
-        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="actionModeBackground">?colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
@@ -43,9 +43,9 @@
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
 
         <!-- default text size -->
-        <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
-        <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
-        <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
+        <item name="titleTextSize">@dimen/text_size_medium</item>
+        <item name="subtitleTextSize">@dimen/text_size_small</item>
+        <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -66,7 +66,7 @@
         <!-- Here we setting appcompat’s actionBarStyle -->
         <item name="toolbarStyle">@style/AppToolbar</item>
         <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
-        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="actionModeBackground">?colorPrimary</item>
         <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
         <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
@@ -83,9 +83,9 @@
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
 
         <!-- default text size -->
-        <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
-        <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
-        <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
+        <item name="titleTextSize">@dimen/text_size_medium</item>
+        <item name="subtitleTextSize">@dimen/text_size_small</item>
+        <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
 
     <!-- ========================= -->
@@ -175,7 +175,7 @@
     <!-- =========== -->
     <style name="textRankStyle">
         <item name="android:gravity">center|center_vertical</item>
-        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="textTitleStyle">
@@ -204,7 +204,7 @@
     </style>
     <style name="textEmptyStyle">
         <item name="android:textColor">@color/textColorSecondary</item>
-        <item name="android:textSize">@dimen/abc_text_size_headline_material</item>
+        <item name="android:textSize">@dimen/text_size_headline</item>
         <item name="android:padding">@dimen/padding</item>
         <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
@@ -219,7 +219,7 @@
         <item name="android:paddingRight">16dp</item>
         <item name="android:drawablePadding">32dp</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:background">@drawable/abc_item_background_holo_light</item>
         <item name="android:layout_width">match_parent</item>
@@ -243,9 +243,9 @@
     <!-- Text sizes -->
     <!-- ========== -->
     <style name="AppTextSize">
-        <item name="titleTextSize">@dimen/abc_text_size_medium_material</item>
-        <item name="subtitleTextSize">@dimen/abc_text_size_small_material</item>
-        <item name="contentTextSize">@dimen/abc_text_size_small_material</item>
+        <item name="titleTextSize">@dimen/text_size_medium</item>
+        <item name="subtitleTextSize">@dimen/text_size_small</item>
+        <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
     <style name="AppTextSize.XSmall">
         <item name="titleTextSize">16sp</item>
