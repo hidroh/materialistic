@@ -57,6 +57,7 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
         for (int i = 0; i < options.length; i++) {
             subMenu.add(Menu.NONE, Menu.NONE, i, options[i]);
         }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

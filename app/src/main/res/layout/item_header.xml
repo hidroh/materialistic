@@ -8,7 +8,7 @@
     android:paddingLeft="56dp"
     android:paddingRight="56dp"
     android:foreground="?attr/selectableItemBackground"
-    tools:background="@color/colorPrimary">
+    tools:background="?attr/colorPrimary">
     <LinearLayout
         android:orientation="vertical"
         android:layout_marginTop="@dimen/margin"
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            android:textColor="?attr/themedTextColorPrimary"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="?attr/subtitleTextSize"
             android:textStyle="italic" />
         <TextView
@@ -46,6 +46,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             android:textSize="?attr/subtitleTextSize"
-            android:textColor="?attr/themedTextColorPrimary"/>
+            android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
 </FrameLayout>

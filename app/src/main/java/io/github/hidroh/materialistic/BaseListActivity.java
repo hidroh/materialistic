@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.AppBarLayout;
@@ -13,7 +12,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
@@ -125,11 +123,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getResources().getBoolean(R.bool.multi_pane)) {
             getMenuInflater().inflate(R.menu.menu_list_land, menu);
-            menu.findItem(R.id.menu_share).getIcon()
-                    .mutate()
-                    .setColorFilter(ContextCompat.getColor(this,
-                                    AppUtils.getThemedResId(this, android.R.attr.textColorPrimary)),
-                            PorterDuff.Mode.SRC_IN);
         }
 
         if (isSearchable()) {

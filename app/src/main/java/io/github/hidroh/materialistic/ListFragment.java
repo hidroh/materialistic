@@ -102,8 +102,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public void onAttach(Context context) {
         super.onAttach(context);
         TypedArray ta = context.obtainStyledAttributes(new int[]{
-                R.attr.themedTextColorPrimaryInverse,
-                R.attr.themedTextColorSecondaryInverse,
+                android.R.attr.textColorPrimaryInverse,
+                android.R.attr.textColorSecondaryInverse,
         });
         mPrimaryTextColorResId = ta.getInt(0, 0);
         mSecondaryTextColorResId = ta.getInt(1, 0);
