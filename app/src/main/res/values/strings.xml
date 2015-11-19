@@ -164,5 +164,14 @@
     <string name="text_size_extra_large">Extra large</string>
     <string name="readability_failed">Unable to parse article</string>
     <string name="try_again">Try again</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="comment_display_multiple">Multiple pages</string>
+    <string name="comment_display_single">Single page - auto expand</string>
+    <string name="comment_display_collapsed">Single page - collapsed</string>
+    <string name="story_display_article">Article</string>
+    <string name="story_display_comments">Comments</string>
+    <string name="search_sort_recent">More recent</string>
+    <string name="search_sort_popularity">Popularity</string>
 
 </resources>

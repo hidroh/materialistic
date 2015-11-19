@@ -18,8 +18,8 @@
 
     <!-- Theme -->
     <string-array name="pref_theme_options">
-        <item>Light</item>
-        <item>Dark</item>
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
     </string-array>
     <string-array name="pref_theme_values">
         <item>@string/pref_theme_value_light</item>
@@ -30,9 +30,9 @@
 
     <!-- Comment display -->
     <string-array name="pref_comment_display_options">
-        <item>Multiple pages</item>
-        <item>Single page - auto expand</item>
-        <item>Single page - collapsed</item>
+        <item>@string/comment_display_multiple</item>
+        <item>@string/comment_display_single</item>
+        <item>@string/comment_display_collapsed</item>
     </string-array>
     <string-array name="pref_comment_display_values">
         <item>@string/pref_comment_display_value_multiple</item>
@@ -45,8 +45,8 @@
 
     <!-- Story display -->
     <string-array name="pref_story_display_options">
-        <item>Article</item>
-        <item>Comments</item>
+        <item>@string/story_display_article</item>
+        <item>@string/story_display_comments</item>
     </string-array>
     <string-array name="pref_story_display_values">
         <item>@string/pref_story_display_value_article</item>
@@ -57,8 +57,8 @@
 
     <!-- Sort -->
     <string-array name="pref_search_sort_options">
-        <item>More recent</item>
-        <item>Popularity</item>
+        <item>@string/search_sort_recent</item>
+        <item>@string/search_sort_popularity</item>
     </string-array>
     <string-array name="pref_search_sort_values">
         <item>@string/pref_search_sort_value_recent</item>
