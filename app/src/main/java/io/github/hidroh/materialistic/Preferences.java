@@ -8,6 +8,7 @@ import android.support.annotation.StyleRes;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 
 import java.util.Map;
@@ -15,6 +16,11 @@ import java.util.Map;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 
 public class Preferences {
+    public enum StoryViewMode {
+        Comment,
+        Article,
+        Readability
+    }
 
     private static final BoolToStringPref[] PREF_MIGRATION = new BoolToStringPref[]{
             new BoolToStringPref(R.string.pref_dark_theme, false,
@@ -72,11 +78,17 @@ public class Preferences {
                 .equals(context.getString(R.string.pref_search_sort_value_recent));
     }
 
-    public static boolean isDefaultOpenComments(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
+    public static StoryViewMode getDefaultStoryView(Context context) {
+        String pref = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_story_display),
-                        context.getString(R.string.pref_story_display_value_article))
-                .equals(context.getString(R.string.pref_story_display_value_comments));
+                        context.getString(R.string.pref_story_display_value_article));
+        if (TextUtils.equals(context.getString(R.string.pref_story_display_value_comments), pref)) {
+            return StoryViewMode.Comment;
+        }
+        if (TextUtils.equals(context.getString(R.string.pref_story_display_value_readability), pref)) {
+            return StoryViewMode.Readability;
+        }
+        return StoryViewMode.Article;
     }
 
     public static boolean externalBrowserEnabled(Context context) {

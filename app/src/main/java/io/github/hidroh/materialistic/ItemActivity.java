@@ -32,7 +32,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
-    public static final String EXTRA_OPEN_ARTICLE = ItemActivity.class.getName() + ".EXTRA_OPEN_ARTICLE";
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
@@ -41,6 +40,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     private ImageView mBookmark;
     private boolean mFavoriteBound;
     private boolean mExternalBrowser;
+    private Preferences.StoryViewMode mStoryViewMode;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
@@ -51,6 +51,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
+        mStoryViewMode = Preferences.getDefaultStoryView(this);
         setContentView(R.layout.activity_item);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
@@ -99,7 +100,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     @Override
     protected void onResume() {
         super.onResume();
-        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         bindFavorite();
     }
 
@@ -305,10 +305,15 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                 scrollToTop();
             }
         });
-        if (viewPager.getAdapter().getCount() >= 2 &&
-                getIntent().getBooleanExtra(EXTRA_OPEN_ARTICLE, false)) {
-                // TODO add option to default to readability
-            viewPager.setCurrentItem(1);
+        switch (mStoryViewMode) {
+            case Article:
+                if (viewPager.getAdapter().getCount() == 3) {
+                    viewPager.setCurrentItem(1);
+                }
+                break;
+            case Readability:
+                viewPager.setCurrentItem(viewPager.getAdapter().getCount() - 1);
+                break;
         }
         if (story.isShareable() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {
