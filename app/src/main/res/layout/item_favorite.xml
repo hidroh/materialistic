@@ -41,7 +41,7 @@
         <ImageButton
             android:id="@id/comment"
             android:src="@drawable/ic_comment_grey600_48dp"
-            android:tint="@color/colorAccent"
+            android:tint="?attr/colorAccent"
             android:background="@null"
             android:paddingTop="@dimen/padding"
             android:paddingRight="@dimen/padding"

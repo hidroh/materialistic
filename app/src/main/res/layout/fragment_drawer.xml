@@ -11,7 +11,7 @@
         android:textSize="@dimen/abc_text_size_large_material"
         android:textStyle="bold"
         android:drawableRight="@drawable/ic_app"
-        android:background="@color/colorPrimary"
+        android:background="?attr/colorPrimary"
         style="@style/DrawerTextStyle"/>
 
     <View

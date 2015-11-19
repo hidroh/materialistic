@@ -8,7 +8,7 @@
     android:paddingLeft="56dp"
     android:paddingRight="56dp"
     android:foreground="?attr/selectableItemBackground"
-    tools:background="@color/colorPrimary">
+    tools:background="?attr/colorPrimary">
     <LinearLayout
         android:orientation="vertical"
         android:layout_marginTop="@dimen/margin"
