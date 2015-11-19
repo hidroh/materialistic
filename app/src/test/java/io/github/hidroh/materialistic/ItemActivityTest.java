@@ -418,6 +418,42 @@ public class ItemActivityTest {
                 .getSmoothScrollToPosition());
     }
 
+    @Test
+    public void testDefaultReadabilityView() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_readability))
+                .commit();
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public int getKidCount() {
+                return 10;
+            }
+        });
+        controller.withIntent(intent).create().start().resume();
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(3, tabLayout.getTabCount());
+        assertEquals(2, tabLayout.getSelectedTabPosition());
+    }
+
     @After
     public void tearDown() {
         reset(hackerNewsClient);

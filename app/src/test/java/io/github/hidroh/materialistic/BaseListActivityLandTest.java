@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,11 +14,13 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -29,7 +32,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(qualifiers = "w820dp-land", shadows = {ShadowSupportPreferenceManager.class})
+@Config(qualifiers = "w820dp-land", shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
@@ -95,7 +98,7 @@ public class BaseListActivityLandTest {
     }
 
     @Test
-    public void testSelectItemOpenComment() {
+    public void testDefaultCommentView() {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
@@ -108,7 +111,26 @@ public class BaseListActivityLandTest {
                 return "1";
             }
         });
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // comment is now default view
+        assertCommentMode();
+    }
+
+    @Test
+    public void testDefaultReadabilityView() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_readability))
+                .commit();
+        controller.pause().resume();
+        activity.onItemSelected(new TestWebItem() {
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
+        viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
+        assertReadabilityMode();
     }
 
     @Test
@@ -171,16 +193,43 @@ public class BaseListActivityLandTest {
         assertReadabilityMode();
     }
 
+    @Test
+    public void testScrollItemToTop() {
+        activity.onItemSelected(new TestWebItem() {
+            @Override
+            public boolean isShareable() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        RecyclerView itemRecyclerView = (RecyclerView) activity.findViewById(R.id.content)
+                .findViewById(R.id.recycler_view);
+        itemRecyclerView.smoothScrollToPosition(1);
+        assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(itemRecyclerView))
+                .getSmoothScrollToPosition());
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(3, tabLayout.getTabCount());
+        tabLayout.getTabAt(1).select();
+        tabLayout.getTabAt(0).select();
+        tabLayout.getTabAt(0).select();
+        assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(itemRecyclerView))
+                .getSmoothScrollToPosition());
+    }
+
     private void assertCommentMode() {
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0);
     }
 
     private void assertStoryMode() {
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
     }
 
     private void assertReadabilityMode() {
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2); // story is default view
+        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2);
     }
 
     @After

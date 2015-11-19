@@ -65,7 +65,6 @@ public class BaseListActivityTest {
         });
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
-        assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_ARTICLE, true);
     }
 
     @Test

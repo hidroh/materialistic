@@ -45,15 +45,18 @@
 
     <!-- Story display -->
     <string-array name="pref_story_display_options">
-        <item>@string/story_display_article</item>
         <item>@string/story_display_comments</item>
+        <item>@string/story_display_article</item>
+        <item>@string/story_display_readability</item>
     </string-array>
     <string-array name="pref_story_display_values">
-        <item>@string/pref_story_display_value_article</item>
         <item>@string/pref_story_display_value_comments</item>
+        <item>@string/pref_story_display_value_article</item>
+        <item>@string/pref_story_display_value_readability</item>
     </string-array>
-    <string name="pref_story_display_value_article">article</string>
     <string name="pref_story_display_value_comments">comments</string>
+    <string name="pref_story_display_value_article">article</string>
+    <string name="pref_story_display_value_readability">readability</string>
 
     <!-- Sort -->
     <string-array name="pref_search_sort_options">

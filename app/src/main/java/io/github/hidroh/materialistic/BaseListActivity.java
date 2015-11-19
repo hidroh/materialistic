@@ -39,7 +39,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private boolean mIsMultiPane;
     private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
-    private boolean mDefaultOpenArticle;
+    private Preferences.StoryViewMode mStoryViewMode;
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
     private CoordinatorLayout mContentView;
@@ -94,7 +94,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     protected void onResume() {
         super.onResume();
-        mDefaultOpenArticle = !Preferences.isDefaultOpenComments(this);
+        mStoryViewMode = Preferences.getDefaultStoryView(this);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
         if (isSearchable()) {
             // close search view
@@ -284,18 +284,20 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                if (position == 0) {
-                    Bundle args = new Bundle();
-                    args.putParcelable(ItemFragment.EXTRA_ITEM, item);
-                    return Fragment.instantiate(BaseListActivity.this,
-                            ItemFragment.class.getName(), args);
-                } else if (position == getCount() - 1) {
-                    Bundle readabilityArgs = new Bundle();
-                    readabilityArgs.putString(ReadabilityFragment.EXTRA_URL, item.getUrl());
-                    return Fragment.instantiate(BaseListActivity.this,
-                            ReadabilityFragment.class.getName(), readabilityArgs);
-                } else {
-                    return WebFragment.instantiate(BaseListActivity.this, item);
+                switch (position) {
+                    case 0:
+                    default:
+                        Bundle args = new Bundle();
+                        args.putParcelable(ItemFragment.EXTRA_ITEM, item);
+                        return Fragment.instantiate(BaseListActivity.this,
+                                ItemFragment.class.getName(), args);
+                    case 1:
+                        return WebFragment.instantiate(BaseListActivity.this, item);
+                    case 2:
+                        Bundle readabilityArgs = new Bundle();
+                        readabilityArgs.putString(ReadabilityFragment.EXTRA_URL, item.getUrl());
+                        return Fragment.instantiate(BaseListActivity.this,
+                                ReadabilityFragment.class.getName(), readabilityArgs);
                 }
             }
 
@@ -312,12 +314,14 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
             @Override
             public CharSequence getPageTitle(int position) {
-                if (position == 0) {
-                    return getString(R.string.title_activity_item);
-                } else if (position == getCount() - 1) {
-                    return getString(R.string.readability);
-                } else {
-                    return getString(R.string.article);
+                switch (position) {
+                    case 0:
+                    default:
+                        return getString(R.string.title_activity_item);
+                    case 1:
+                        return getString(R.string.article);
+                    case 2:
+                        return getString(R.string.readability);
                 }
             }
         });
@@ -331,16 +335,19 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 }
             }
         });
-        if (mDefaultOpenArticle) {
-            // TODO add option to default to readability
-            mViewPager.setCurrentItem(1);
+        switch (mStoryViewMode) {
+            case Article:
+                mViewPager.setCurrentItem(1);
+                break;
+            case Readability:
+                mViewPager.setCurrentItem(2);
+                break;
         }
     }
 
     private void openItem(ItemManager.WebItem item) {
         final Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        intent.putExtra(ItemActivity.EXTRA_OPEN_ARTICLE, mDefaultOpenArticle);
         startActivity(intent);
     }
 }

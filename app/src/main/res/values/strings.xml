@@ -173,5 +173,6 @@
     <string name="story_display_comments">Comments</string>
     <string name="search_sort_recent">More recent</string>
     <string name="search_sort_popularity">Popularity</string>
+    <string name="story_display_readability">Readability</string>
 
 </resources>
