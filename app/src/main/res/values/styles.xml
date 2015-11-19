@@ -41,7 +41,6 @@
         <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
         <item name="themedDrawerBackgroundColor">@android:color/white</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
-        <item name="themedHeaderCardDrawable">@drawable/header_card</item>
         <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_white_24dp</item>
         <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_white_24dp</item>
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
@@ -92,7 +91,6 @@
         <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
         <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
-        <item name="themedHeaderCardDrawable">@drawable/header_card_dark</item>
         <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_black_24dp</item>
         <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_black_24dp</item>
         <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
