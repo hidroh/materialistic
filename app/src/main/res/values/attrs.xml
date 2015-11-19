@@ -4,12 +4,6 @@
     <attr name="themedCardHighlightColor" format="reference" />
     <attr name="themedDrawerBackgroundColor" format="reference" />
     <attr name="themedPanelBackgroundColor" format="reference" />
-    <attr name="themedMenuFavoriteOnDrawable" format="reference" />
-    <attr name="themedMenuFavoriteOffDrawable" format="reference" />
-    <attr name="themedMenuClearDrawable" format="reference" />
-    <attr name="themedMenuExternalDrawable" format="reference" />
-    <attr name="themedMenuRangeDrawable" format="reference" />
-    <attr name="themedMenuFontSizeDrawable" format="reference" />
     <attr name="themedTextColorPrimary" format="reference" />
     <attr name="themedTextColorSecondary" format="reference" />
     <attr name="themedTextColorPrimaryInverse" format="reference" />

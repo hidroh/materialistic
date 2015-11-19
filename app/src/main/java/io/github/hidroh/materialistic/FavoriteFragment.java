@@ -41,10 +41,75 @@ public class FavoriteFragment extends BaseFragment
     private RecyclerView mRecyclerView;
     private FavoriteManager.Cursor mCursor;
     private RecyclerViewAdapter mAdapter;
-    private BroadcastReceiver mBroadcastReceiver;
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (FavoriteManager.ACTION_GET.equals(intent.getAction())) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                }
+                final Intent emailIntent = AppUtils.makeEmailIntent(
+                        getString(R.string.favorite_email_subject),
+                        makeEmailContent(
+                                (FavoriteManager.Favorite[]) intent.getParcelableArrayExtra(
+                                        FavoriteManager.ACTION_GET_EXTRA_DATA)));
+                if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(emailIntent);
+                }
+            } else if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
+                getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
+            }
+        }
+    };
     private ProgressDialog mProgressDialog;
     private ActionMode mActionMode;
-    private ActionMode.Callback mActionModeCallback;
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
+            mMenuTintDelegate.onOptionsMenuCreated(menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.menu_clear) {
+                mAlertDialogBuilder
+                        .setMessage(R.string.confirm_clear_selected)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (!mIsResumed) {
+                                    // TODO should dismiss dialog on orientation changed
+                                    return;
+                                }
+
+                                mMultiPaneListener.clearSelection();
+                                mFavoriteManager.remove(getActivity(), mSelected);
+                                actionMode.finish();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .create()
+                        .show();
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mSelected.clear();
+            mAdapter.notifyDataSetChanged();
+            mActionMode = null;
+        }
+    };
     private Set<String> mSelected = new HashSet<>();
     private String mFilter;
     private boolean mSearchViewVisible;
@@ -61,74 +126,8 @@ public class FavoriteFragment extends BaseFragment
         setHasOptionsMenu(true);
         mMultiPaneListener = (MultiPaneListener) context;
         mDataChangedListener = (DataChangedListener) context;
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (FavoriteManager.ACTION_GET.equals(intent.getAction())) {
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                    }
-                    final Intent emailIntent = AppUtils.makeEmailIntent(
-                            getString(R.string.favorite_email_subject),
-                            makeEmailContent(
-                                    (FavoriteManager.Favorite[]) intent.getParcelableArrayExtra(
-                                            FavoriteManager.ACTION_GET_EXTRA_DATA)));
-                    if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        startActivity(emailIntent);
-                    }
-                } else if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
-                    getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
-                }
-            }
-        };
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver, FavoriteManager.makeGetIntentFilter());
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
-        mActionModeCallback = new ActionMode.Callback() {
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.menu_clear) {
-                    mAlertDialogBuilder
-                            .setMessage(R.string.confirm_clear_selected)
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (!mIsResumed) {
-                                        // TODO should dismiss dialog on orientation changed
-                                        return;
-                                    }
-
-                                    mMultiPaneListener.clearSelection();
-                                    mFavoriteManager.remove(context, mSelected);
-                                    actionMode.finish();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .create()
-                            .show();
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-                mSelected.clear();
-                mAdapter.notifyDataSetChanged();
-                mActionMode = null;
-            }
-        };
     }
 
     @Override
@@ -208,6 +207,7 @@ public class FavoriteFragment extends BaseFragment
                 return false;
             }
         });
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -307,7 +307,6 @@ public class FavoriteFragment extends BaseFragment
     @Override
     public void onDetach() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
-        mBroadcastReceiver = null;
         mMultiPaneListener = null;
         mDataChangedListener = null;
         if (mActionMode != null) {

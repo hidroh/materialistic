@@ -4,7 +4,7 @@
     <item
         android:id="@id/menu_range"
         android:title="@string/range"
-        android:icon="?attr/themedMenuRangeDrawable"
+        android:icon="@drawable/ic_history_white_24dp"
         app:showAsAction="ifRoom">
 
         <menu>

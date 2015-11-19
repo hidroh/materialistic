@@ -41,12 +41,6 @@
         <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
         <item name="themedDrawerBackgroundColor">@android:color/white</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
-        <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_white_24dp</item>
-        <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_white_24dp</item>
-        <item name="themedMenuClearDrawable">@drawable/ic_clear_all_white_24dp</item>
-        <item name="themedMenuExternalDrawable">@drawable/ic_open_in_browser_white_24dp</item>
-        <item name="themedMenuRangeDrawable">@drawable/ic_history_white_24dp</item>
-        <item name="themedMenuFontSizeDrawable">@drawable/ic_format_size_white_24dp</item>
         <item name="themedTextColorPrimary">@color/textColorPrimary</item>
         <item name="themedTextColorSecondary">@color/textColorSecondary</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimaryInverse</item>
@@ -91,12 +85,6 @@
         <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
         <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
         <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
-        <item name="themedMenuFavoriteOnDrawable">@drawable/ic_bookmark_black_24dp</item>
-        <item name="themedMenuFavoriteOffDrawable">@drawable/ic_bookmark_outline_black_24dp</item>
-        <item name="themedMenuClearDrawable">@drawable/ic_clear_all_black_24dp</item>
-        <item name="themedMenuExternalDrawable">@drawable/ic_open_in_browser_black_24dp</item>
-        <item name="themedMenuRangeDrawable">@drawable/ic_history_black_24dp</item>
-        <item name="themedMenuFontSizeDrawable">@drawable/ic_format_size_black_24dp</item>
         <item name="themedTextColorPrimary">@color/textColorPrimaryInverse</item>
         <item name="themedTextColorSecondary">@color/textColorSecondaryInverse</item>
         <item name="themedTextColorPrimaryInverse">@color/textColorPrimary</item>
