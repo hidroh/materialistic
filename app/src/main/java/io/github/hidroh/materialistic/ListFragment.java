@@ -88,7 +88,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Inject FavoriteManager mFavoriteManager;
     @Inject SessionManager mSessionManager;
     private boolean mResumed;
-    private int mPrimaryTextColorResId;
+    private int mTertiaryTextColorResId;
     private int mSecondaryTextColorResId;
     private int mPromotedColorResId;
     private boolean mShowAll = true;
@@ -102,10 +102,10 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public void onAttach(Context context) {
         super.onAttach(context);
         TypedArray ta = context.obtainStyledAttributes(new int[]{
-                android.R.attr.textColorPrimaryInverse,
-                android.R.attr.textColorSecondaryInverse,
+                android.R.attr.textColorTertiary,
+                android.R.attr.textColorSecondary,
         });
-        mPrimaryTextColorResId = ta.getInt(0, 0);
+        mTertiaryTextColorResId = ta.getInt(0, 0);
         mSecondaryTextColorResId = ta.getInt(1, 0);
         mPromotedColorResId = ContextCompat.getColor(context, R.color.greenA700);
         ta.recycle();
@@ -492,7 +492,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
             boolean viewed = mViewed.contains(story.getId()) ||
                     story.isViewed() != null && story.isViewed();
             ((TextView) holder.mTitleTextView.getCurrentView())
-                    .setTextColor(viewed ? mSecondaryTextColorResId : mPrimaryTextColorResId);
+                    .setTextColor(viewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
         }
 
         private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {
@@ -513,7 +513,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
             if (mHighlightUpdated && mGreenItems.contains(story.getId())) {
                 holder.mRankTextView.setTextColor(mPromotedColorResId);
             } else {
-                holder.mRankTextView.setTextColor(mPrimaryTextColorResId);
+                holder.mRankTextView.setTextColor(mTertiaryTextColorResId);
             }
         }
 

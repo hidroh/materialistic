@@ -46,7 +46,7 @@
 
         <TextView
             android:text="@string/feedback_note"
-            android:textColor="?android:attr/textColorSecondaryInverse"
+            android:textColor="?android:attr/textColorSecondary"
             android:layout_marginTop="@dimen/margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
@@ -247,11 +248,10 @@ public class ItemFragmentSinglePageTest {
     @Test
     public void testDead() {
         assertThat(((TextView) viewHolder.itemView.findViewById(R.id.text)))
-                .hasCurrentTextColor(RuntimeEnvironment.application.getResources()
-                        .getColor(R.color.blackT87));
+                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.blackT87));
         assertThat(((TextView) viewHolder2.itemView.findViewById(R.id.text)))
-                .hasCurrentTextColor(RuntimeEnvironment.application.getResources()
-                        .getColor(R.color.textColorSecondaryInverse));
+                .hasCurrentTextColor(ContextCompat.getColor(activity,
+                        AppUtils.getThemedResId(activity, android.R.attr.textColorSecondary)));
     }
 
     @Test

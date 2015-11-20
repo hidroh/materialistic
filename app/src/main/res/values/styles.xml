@@ -4,32 +4,19 @@
     <!-- Application themes        -->
     <!-- ========================= -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <!--   your app branding color for the app bar -->
         <item name="colorPrimary">@color/orange500</item>
-        <!--   darker variant for the status bar and contextual app bars -->
         <item name="colorPrimaryDark">@color/orange700</item>
-        <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/redA200</item>
         <item name="colorButtonNormal">?colorAccent</item>
-
-        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorPrimary">@color/blackT87</item>
         <item name="android:textColorSecondary">@color/grey500</item>
-        <item name="android:textColorPrimaryInverse">@color/blackT87</item>
-        <item name="android:textColorSecondaryInverse">@color/grey500</item>
-        <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
+        <item name="android:textColorTertiary">@color/blackT87</item>
         <item name="android:textColorLink">?colorAccent</item>
-        <!-- Here we setting appcompat’s actionBarStyle -->
-        <item name="toolbarStyle">@style/AppToolbar</item>
-        <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
+
         <item name="actionModeBackground">?colorPrimary</item>
-        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
-        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
-        <item name="editTextStyle">@style/AppEditText</item>
-
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
         <!-- custom themed attributes -->
@@ -49,23 +36,15 @@
         <item name="colorAccent">@color/redA100</item>
         <item name="colorButtonNormal">?colorAccent</item>
 
-        <item name="android:textColorPrimary">@color/blackT87</item>
+        <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/grey500</item>
-        <item name="android:textColorPrimaryInverse">@color/white</item>
-        <item name="android:textColorSecondaryInverse">@color/grey500</item>
-        <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
+        <item name="android:textColorTertiary">@color/white</item>
         <item name="android:textColorLink">?colorAccent</item>
-        <!-- Here we setting appcompat’s actionBarStyle -->
-        <item name="toolbarStyle">@style/AppToolbar</item>
-        <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
+
         <item name="actionModeBackground">?colorPrimary</item>
-        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
-        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
         <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
-        <item name="editTextStyle">@style/AppEditText</item>
-
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
         <!-- custom themed attributes -->
@@ -83,26 +62,16 @@
     <!-- ========================= -->
     <!-- Action bar/toolbar styles -->
     <!-- ========================= -->
-    <style name="AppToolbar" parent="Widget.AppCompat.Toolbar">
-        <!-- force subtitle text color for v21+ -->
-        <item name="subtitleTextAppearance">@style/AppToolbarSubtitleTextAppearance</item>
-    </style>
     <style name="AppToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="searchViewStyle">@style/AppToolbarSearchView</item>
-    </style>
-    <style name="AppToolbarSubtitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
     </style>
 
     <!-- =================== -->
     <!-- Preference themes   -->
     <!-- =================== -->
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
-        <item name="preferenceStyle">@style/AppPreference</item>
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
-    </style>
-    <style name="AppPreference" parent="Preference">
-        <item name="layout">@layout/preference</item>
     </style>
     <style name="Preference.PreferenceHelp" parent="Preference">
         <item name="android:layout">@layout/preference_help</item>
@@ -124,24 +93,9 @@
     <style name="AppToolbarSearchView" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="queryHint">@string/title_activity_search</item>
     </style>
-    <style name="AppActionBarWidget" parent="Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
-    </style>
     <style name="AppAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
         <!-- force item selectable background for v10- -->
         <item name="android:dropDownSelector">?attr/listChoiceBackgroundIndicator</item>
-    </style>
-    <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-    <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
-    <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
-    <style name="AppPopupMenuSmallTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <!-- ============= -->
@@ -152,9 +106,6 @@
         <item name="android:layout_height">4dp</item>
         <item name="android:progressDrawable">@drawable/progress</item>
     </style>
-    <style name="AppEditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
 
     <!-- =========== -->
     <!-- Text styles -->
@@ -162,18 +113,16 @@
     <style name="textRankStyle">
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="textTitleStyle">
         <item name="android:textSize">?attr/titleTextSize</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
     <style name="textSubtitleStyle">
         <item name="android:textSize">?attr/subtitleTextSize</item>
-        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
@@ -186,7 +135,6 @@
     </style>
     <style name="textContentStyle">
         <item name="android:textSize">?attr/contentTextSize</item>
-        <item name="android:textAppearance">@style/textAppearanceContentNormal</item>
     </style>
     <style name="textEmptyStyle">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
@@ -206,23 +154,21 @@
         <item name="android:drawablePadding">32dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:background">@drawable/abc_item_background_holo_light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
     </style>
     <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="textAppearanceContentNormal">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
     <style name="textAppearanceContentDisabled">
-        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <!-- ========== -->

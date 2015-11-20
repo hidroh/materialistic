@@ -57,7 +57,7 @@
             android:gravity="center|center_vertical"
             android:background="?attr/themedCardHighlightColor"
             android:text="@string/select_story"
-            android:textColor="?android:attr/textColorSecondaryInverse"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="@dimen/abc_text_size_headline_material"/>
 
     </RelativeLayout>

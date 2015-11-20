@@ -21,6 +21,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
@@ -312,7 +313,7 @@ public class ListFragmentViewHolderTest {
 
     private void assertViewed() {
         TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(R.color.textColorSecondaryInverse);
+                .hasCurrentTextColor(AppUtils.getThemedResId(activity, android.R.attr.textColorSecondary));
     }
 
     private void assertNotViewed() {

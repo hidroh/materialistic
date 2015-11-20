@@ -17,7 +17,7 @@ public class AsteriskSpan extends ReplacementSpan {
     public AsteriskSpan(Context context) {
         super();
         mBackgroundColor = ContextCompat.getColor(context, R.color.redA200);
-        mTextColor = AppUtils.getThemedResId(context, android.R.attr.textColorPrimary);
+        mTextColor = AppUtils.getThemedResId(context, android.R.attr.textColorTertiary);
         mPadding = context.getResources().getDimension(R.dimen.padding_asterisk);
     }
 

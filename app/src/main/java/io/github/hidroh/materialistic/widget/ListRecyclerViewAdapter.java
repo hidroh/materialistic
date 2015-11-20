@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -129,7 +130,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
 
     private void decorateCardSelection(ItemViewHolder holder, String itemId) {
         ((CardView) holder.itemView).setCardBackgroundColor(
-                mContext.getResources().getColor(isSelected(itemId) ?
+                ContextCompat.getColor(mContext, isSelected(itemId) ?
                         mCardHighlightColorResId : mCardBackgroundColorResId));
     }
 
