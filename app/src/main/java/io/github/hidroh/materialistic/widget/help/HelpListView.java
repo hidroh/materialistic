@@ -27,7 +27,7 @@ public class HelpListView extends ScrollView {
         ((TextView) findViewById(R.id.item_new).findViewById(R.id.rank))
                 .append(makeAsteriskSpan());
         ((TextView) findViewById(R.id.item_promoted).findViewById(R.id.rank))
-                .setTextColor(ContextCompat.getColor(getContext(), R.color.promoted));
+                .setTextColor(ContextCompat.getColor(getContext(), R.color.greenA700));
         Button comments = (Button) findViewById(R.id.item_new_comments).findViewById(R.id.comment);
         SpannableStringBuilder sb = new SpannableStringBuilder(comments.getText());
         sb.append(makeAsteriskSpan());

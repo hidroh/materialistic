@@ -152,7 +152,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(newItem);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank))
-                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.promoted));
+                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.greenA700));
     }
 
     @Test
@@ -317,7 +317,7 @@ public class ListFragmentViewHolderTest {
 
     private void assertNotViewed() {
         TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(R.color.textColorPrimaryInverse);
+                .hasCurrentTextColor(R.color.blackT87);
     }
 
     private class TestStory extends TestItem {

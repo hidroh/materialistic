@@ -10,7 +10,7 @@
         android:id="@id/level"
         android:visibility="gone"
         tools:visibility="visible"
-        tools:background="@color/level_0"
+        tools:background="@color/red500"
         android:layout_width="@dimen/padding"
         android:layout_height="match_parent" />
 

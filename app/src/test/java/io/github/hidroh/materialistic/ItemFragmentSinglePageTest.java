@@ -248,7 +248,7 @@ public class ItemFragmentSinglePageTest {
     public void testDead() {
         assertThat(((TextView) viewHolder.itemView.findViewById(R.id.text)))
                 .hasCurrentTextColor(RuntimeEnvironment.application.getResources()
-                        .getColor(R.color.textColorPrimaryInverse));
+                        .getColor(R.color.blackT87));
         assertThat(((TextView) viewHolder2.itemView.findViewById(R.id.text)))
                 .hasCurrentTextColor(RuntimeEnvironment.application.getResources()
                         .getColor(R.color.textColorSecondaryInverse));

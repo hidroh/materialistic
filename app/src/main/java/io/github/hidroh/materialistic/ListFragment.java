@@ -107,7 +107,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         });
         mPrimaryTextColorResId = ta.getInt(0, 0);
         mSecondaryTextColorResId = ta.getInt(1, 0);
-        mPromotedColorResId = ContextCompat.getColor(context, R.color.promoted);
+        mPromotedColorResId = ContextCompat.getColor(context, R.color.greenA700);
         ta.recycle();
         mMultiPaneListener = (MultiPaneListener) context;
         if (context instanceof RefreshCallback) {
@@ -180,8 +180,10 @@ public class ListFragment extends BaseFragment implements Scrollable {
         mAdapter = new RecyclerViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.textColorPrimary);
-        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorAccent);
+        mSwipeRefreshLayout.setColorSchemeResources(AppUtils.getThemedResId(getActivity(),
+                android.R.attr.textColorPrimary));
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
+                AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
         if (savedInstanceState == null) {
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override

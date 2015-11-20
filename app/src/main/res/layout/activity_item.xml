@@ -28,7 +28,7 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
-            app:tabIndicatorColor="@color/colorPrimaryLight"
+            app:tabIndicatorColor="@color/orange100"
             app:tabTextColor="?android:attr/textColorPrimary"
             app:layout_scrollFlags="scroll|snap|enterAlways"
             android:layout_width="match_parent"

@@ -143,7 +143,7 @@ public class AppUtils {
                 .show();
     }
 
-    public static int getThemedResId(Context context, int attr) {
+    public static int getThemedResId(Context context, @AttrRes int attr) {
         TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
         final int resId = a.getResourceId(0, 0);
         a.recycle();
@@ -212,7 +212,7 @@ public class AppUtils {
             Intent shareIntent = new Intent(context, ShareBroadcastReceiver.class);
             shareIntent.setData(Uri.parse(url));
             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
-                    .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .setToolbarColor(ContextCompat.getColor(context, R.color.orange500))
                     .setActionButton(BitmapFactory.decodeResource(context.getResources(),
                                     R.drawable.ic_share_grey600_24dp),
                             context.getString(R.string.share),
