@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.text.style.ReplacementSpan;
 
-import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
 public class AsteriskSpan extends ReplacementSpan {
@@ -17,7 +16,7 @@ public class AsteriskSpan extends ReplacementSpan {
     public AsteriskSpan(Context context) {
         super();
         mBackgroundColor = ContextCompat.getColor(context, R.color.redA200);
-        mTextColor = AppUtils.getThemedResId(context, android.R.attr.textColorTertiary);
+        mTextColor = ContextCompat.getColor(context, R.color.white);
         mPadding = context.getResources().getDimension(R.dimen.padding_asterisk);
     }
 
