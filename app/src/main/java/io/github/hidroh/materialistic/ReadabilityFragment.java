@@ -26,6 +26,8 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
     public static final String EXTRA_URL = ReadabilityFragment.class.getName() + ".EXTRA_URL";
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_TEXT_SIZE = "state:textSize";
+    private static final String STATE_EAGER_LOAD = "state:eagerLoad";
+    private static final String STATE_ACTIVITY_CREATED = "state:activityCreated";
     private NestedScrollView mScrollView;
     private TextView mTextView;
     private ProgressBar mProgressBar;
@@ -33,6 +35,8 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
     private String mContent;
     private float mTextSize;
     private String[] mTextSizeOptionValues;
+    private boolean mEagerLoad;
+    private boolean mActivityCreated;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,10 +45,13 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
         if (savedInstanceState != null) {
             mTextSize = savedInstanceState.getFloat(STATE_TEXT_SIZE);
             mContent = savedInstanceState.getString(STATE_CONTENT);
+            mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
+            mActivityCreated = savedInstanceState.getBoolean(STATE_ACTIVITY_CREATED);
         } else {
             mTextSize = AppUtils.getDimension(getActivity(),
                     Preferences.Theme.resolvePreferredTextSizeResId(getActivity()),
                     R.attr.contentTextSize);
+            mEagerLoad = AppUtils.isOnWiFi(getContext());
         }
         mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
     }
@@ -89,10 +96,16 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (TextUtils.isEmpty(mContent)) {
-            parse();
-        } else {
-            bind();
+        mActivityCreated = true;
+        eagerLoad();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && !mEagerLoad) {
+            mEagerLoad = true;
+            eagerLoad();
         }
     }
 
@@ -101,11 +114,27 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
         super.onSaveInstanceState(outState);
         outState.putFloat(STATE_TEXT_SIZE, mTextSize);
         outState.putString(STATE_CONTENT, mContent);
+        outState.putBoolean(STATE_EAGER_LOAD, mEagerLoad);
+        outState.putBoolean(STATE_ACTIVITY_CREATED, mActivityCreated);
     }
 
     @Override
     public void scrollToTop() {
         mScrollView.smoothScrollTo(0, 0);
+    }
+
+    private void eagerLoad() {
+        if (!mEagerLoad) {
+            return;
+        }
+        if (!mActivityCreated) {
+            return;
+        }
+        if (TextUtils.isEmpty(mContent)) {
+            parse();
+        } else {
+            bind();
+        }
     }
 
     private void parse() {

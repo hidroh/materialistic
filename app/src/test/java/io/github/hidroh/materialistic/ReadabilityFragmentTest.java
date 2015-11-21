@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -18,6 +20,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -50,6 +53,9 @@ public class ReadabilityFragmentTest {
         reset(readabilityClient);
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
+        shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
         Bundle args = new Bundle();
         args.putString(ReadabilityFragment.EXTRA_URL, "http://example.com/article.html");
         fragment = (ReadabilityFragment) Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
@@ -57,7 +63,6 @@ public class ReadabilityFragmentTest {
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
                 .commit();
-
     }
 
     @Test
