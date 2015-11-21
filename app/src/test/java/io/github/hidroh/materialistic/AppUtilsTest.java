@@ -1,7 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
@@ -13,10 +15,12 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowNetworkInfo;
 
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -77,5 +81,38 @@ public class AppUtilsTest {
         assertThat(actual)
                 .isNotNull()
                 .hasAction(Intent.ACTION_CHOOSER);
+    }
+
+    @Test
+    public void testNoActiveNetwork() {
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE)).setActiveNetworkInfo(null);
+        assertFalse(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testDisconnectedNetwork() {
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null, 0, 0, false, false));
+        assertFalse(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testNonWiFiNetwork() {
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_MOBILE, 0, true, true));
+        assertFalse(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testWiFiNetwork() {
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
+        assertTrue(AppUtils.isOnWiFi(RuntimeEnvironment.application));
     }
 }

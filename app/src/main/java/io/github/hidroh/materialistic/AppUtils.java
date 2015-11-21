@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.AttrRes;
@@ -189,6 +191,14 @@ public class AppUtils {
             return (span / DateUtils.HOUR_IN_MILLIS) + ABBR_HOUR;
         }
         return (span / DateUtils.MINUTE_IN_MILLIS) + ABBR_MINUTE;
+    }
+
+    public static boolean isOnWiFi(Context context) {
+        NetworkInfo activeNetwork = ((ConnectivityManager) context.getSystemService(
+                Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting() &&
+                activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
     private static Intent makeShareIntent(String subject, String text) {
