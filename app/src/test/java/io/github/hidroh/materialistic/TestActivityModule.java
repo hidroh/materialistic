@@ -75,7 +75,8 @@ import static org.mockito.Mockito.when;
                 PopularActivityTest.class,
                 ImageGetterTest.class,
                 ImageGetterTest.TestImageGetter.class,
-                ReadabilityFragmentTest.class
+                ReadabilityFragmentTest.class,
+                ReadabilityFragmentLazyLoadTest.class
         },
         library = true,
         overrides = true

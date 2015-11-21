@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 
-public class ReadabilityFragment extends BaseFragment implements Scrollable {
+public class ReadabilityFragment extends LazyLoadFragment implements Scrollable {
     public static final String EXTRA_URL = ReadabilityFragment.class.getName() + ".EXTRA_URL";
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_TEXT_SIZE = "state:textSize";
@@ -87,16 +87,6 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (TextUtils.isEmpty(mContent)) {
-            parse();
-        } else {
-            bind();
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putFloat(STATE_TEXT_SIZE, mTextSize);
@@ -106,6 +96,15 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
     @Override
     public void scrollToTop() {
         mScrollView.smoothScrollTo(0, 0);
+    }
+
+    @Override
+    protected void load() {
+        if (TextUtils.isEmpty(mContent)) {
+            parse();
+        } else {
+            bind();
+        }
     }
 
     private void parse() {

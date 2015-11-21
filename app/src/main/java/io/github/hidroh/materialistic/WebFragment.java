@@ -27,7 +27,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class WebFragment extends BaseFragment implements Scrollable {
+public class WebFragment extends LazyLoadFragment implements Scrollable {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
@@ -42,6 +42,14 @@ public class WebFragment extends BaseFragment implements Scrollable {
         fragment.mItem = item;
         fragment.mIsHackerNewsUrl = AppUtils.isHackerNewsUrl(item);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mItem = savedInstanceState.getParcelable(EXTRA_ITEM);
+        }
     }
 
     @Override
@@ -123,20 +131,32 @@ public class WebFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_ITEM, mItem);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setWebViewSettings(WebSettings webSettings) {
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setBuiltInZoomControls(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            webSettings.setDisplayZoomControls(false);
+        }
+    }
+
+    @Override
+    public void scrollToTop() {
+        mScrollView.smoothScrollTo(0, 0);
+    }
+
+    @Override
+    protected void load() {
         if (mIsHackerNewsUrl) {
             bindContent();
-            return;
-        }
-
-        if (savedInstanceState != null) {
-            ItemManager.WebItem savedItem = savedInstanceState.getParcelable(EXTRA_ITEM);
-            if (savedItem != null) {
-                mItem = savedItem;
-            }
-        }
-        if (mItem != null) {
+        } else if (mItem != null) {
             mWebView.loadUrl(mItem.getUrl());
         }
     }
@@ -160,27 +180,5 @@ public class WebFragment extends BaseFragment implements Scrollable {
                         }
                     });
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_ITEM, mItem);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setWebViewSettings(WebSettings webSettings) {
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setBuiltInZoomControls(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webSettings.setDisplayZoomControls(false);
-        }
-    }
-
-    @Override
-    public void scrollToTop() {
-        mScrollView.smoothScrollTo(0, 0);
     }
 }

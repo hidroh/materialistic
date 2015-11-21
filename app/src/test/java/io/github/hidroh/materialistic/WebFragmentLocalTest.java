@@ -1,6 +1,8 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
 
@@ -13,6 +15,8 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -28,6 +32,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentLocalTest {
@@ -43,6 +48,10 @@ public class WebFragmentLocalTest {
         reset(itemManager);
         controller = Robolectric.buildActivity(WebActivity.class);
         activity = controller.get();
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
     }
 
     @Test

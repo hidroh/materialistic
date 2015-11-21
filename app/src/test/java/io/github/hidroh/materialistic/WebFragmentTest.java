@@ -1,9 +1,11 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
 import android.webkit.WebView;
@@ -22,6 +24,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -59,6 +62,10 @@ public class WebFragmentTest {
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
         activity = controller.withIntent(intent).create().start().resume().get();
     }
 
