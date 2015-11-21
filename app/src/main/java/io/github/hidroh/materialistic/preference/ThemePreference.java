@@ -11,7 +11,7 @@ import android.view.View;
 
 import io.github.hidroh.materialistic.R;
 
-public class PreferenceTheme extends Preference {
+public class ThemePreference extends Preference {
 
     private static final ArrayMap<Integer, Integer> VALUE_MAP = new ArrayMap<Integer, Integer>() {{
         put(R.id.theme_light, R.string.pref_theme_value_light);
@@ -27,11 +27,11 @@ public class PreferenceTheme extends Preference {
     }};
     private static final ArrayMap<String, Integer> SUMMARY_MAP = new ArrayMap<>();
 
-    public PreferenceTheme(Context context, AttributeSet attrs) {
+    public ThemePreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PreferenceTheme(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ThemePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         for (int i = 0; i < RES_MAP.size(); i++) {
             SUMMARY_MAP.put(context.getString(RES_MAP.keyAt(i)), RES_MAP.valueAt(i));

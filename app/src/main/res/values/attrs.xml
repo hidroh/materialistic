@@ -10,4 +10,8 @@
         <attr name="dialogTitle" />
         <attr name="dialogLayout" />
     </declare-styleable>
+    <declare-styleable name="SpinnerPreference">
+        <attr name="entries" />
+        <attr name="entryValues" />
+    </declare-styleable>
 </resources>
