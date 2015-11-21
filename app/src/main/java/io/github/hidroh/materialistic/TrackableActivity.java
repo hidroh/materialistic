@@ -12,7 +12,7 @@ public abstract class TrackableActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Preferences.applyTheme(this);
+        Preferences.Theme.apply(this);
         super.onCreate(savedInstanceState);
         mMenuTintDelegate.onActivityCreated(this);
     }

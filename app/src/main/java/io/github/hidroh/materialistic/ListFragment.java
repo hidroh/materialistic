@@ -180,8 +180,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         mAdapter = new RecyclerViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(AppUtils.getThemedResId(getActivity(),
-                android.R.attr.textColorPrimary));
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
                 AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
         if (savedInstanceState == null) {
