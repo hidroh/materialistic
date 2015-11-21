@@ -70,8 +70,7 @@ public class ItemFragment extends BaseFragment implements Scrollable {
         });
         mRecyclerView.setHasFixedSize(true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(AppUtils.getThemedResId(getActivity(),
-                android.R.attr.textColorPrimary));
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
