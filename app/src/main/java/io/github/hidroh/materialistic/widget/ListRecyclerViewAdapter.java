@@ -29,8 +29,8 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
-        mCardBackgroundColorResId = AppUtils.getThemedResId(mContext, R.attr.themedCardBackgroundColor);
-        mCardHighlightColorResId = AppUtils.getThemedResId(mContext, R.attr.themedCardHighlightColor);
+        mCardBackgroundColorResId = AppUtils.getThemedResId(mContext, R.attr.colorCardBackground);
+        mCardHighlightColorResId = AppUtils.getThemedResId(mContext, R.attr.colorCardHighlight);
     }
 
     @Override

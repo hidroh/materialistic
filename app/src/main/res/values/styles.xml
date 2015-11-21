@@ -4,56 +4,47 @@
     <!-- Application themes        -->
     <!-- ========================= -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- color palette -->
         <item name="colorPrimary">@color/orange500</item>
         <item name="colorPrimaryDark">@color/orange700</item>
         <item name="colorAccent">@color/redA200</item>
-        <item name="colorButtonNormal">?colorAccent</item>
+        <item name="colorCardBackground">@color/grey100</item>
+        <item name="colorCardHighlight">@color/orange100</item>
         <item name="android:textColorPrimary">@color/blackT87</item>
         <item name="android:textColorSecondary">@color/grey500</item>
-        <item name="android:textColorTertiary">@color/blackT87</item>
-        <item name="android:textColorLink">?colorAccent</item>
 
-        <item name="actionModeBackground">?colorPrimary</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
+        <!-- default theme override -->
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
+        <item name="android:textColorLink">?colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">?colorPrimary</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
         <!-- custom themed attributes -->
-        <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
-        <item name="themedCardHighlightColor">@color/orange100</item>
-        <item name="themedDrawerBackgroundColor">@android:color/white</item>
-        <item name="themedPanelBackgroundColor">@color/grey300</item>
-
-        <!-- default text size -->
         <item name="titleTextSize">@dimen/text_size_medium</item>
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <!-- color palette -->
         <item name="colorPrimary">@color/orange500</item>
         <item name="colorPrimaryDark">@color/orange700</item>
         <item name="colorAccent">@color/redA100</item>
-        <item name="colorButtonNormal">?colorAccent</item>
-
+        <item name="colorCardBackground">@color/cardview_dark_background</item>
+        <item name="colorCardHighlight">@color/grey800</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/grey500</item>
-        <item name="android:textColorTertiary">@color/white</item>
-        <item name="android:textColorLink">?colorAccent</item>
 
-        <item name="actionModeBackground">?colorPrimary</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
+        <!-- default theme override -->
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
+        <item name="android:textColorLink">?colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">?colorPrimary</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
         <!-- custom themed attributes -->
-        <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
-        <item name="themedCardHighlightColor">@color/grey800</item>
-        <item name="themedDrawerBackgroundColor">@color/grey800</item>
-        <item name="themedPanelBackgroundColor">@color/grey800</item>
-
-        <!-- default text size -->
         <item name="titleTextSize">@dimen/text_size_medium</item>
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
@@ -92,10 +83,6 @@
     <!-- ================== -->
     <style name="AppToolbarSearchView" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="queryHint">@string/title_activity_search</item>
-    </style>
-    <style name="AppAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
-        <!-- force item selectable background for v10- -->
-        <item name="android:dropDownSelector">?attr/listChoiceBackgroundIndicator</item>
     </style>
 
     <!-- ============= -->
@@ -204,7 +191,7 @@
     <!-- Card styles -->
     <!-- =========== -->
     <style name="BaseAppCardView">
-        <item name="cardBackgroundColor">?attr/themedCardBackgroundColor</item>
+        <item name="cardBackgroundColor">?attr/colorCardBackground</item>
         <item name="cardUseCompatPadding">true</item>
         <item name="cardPreventCornerOverlap">false</item>
         <item name="cardElevation">@dimen/cardview_default_elevation</item>
@@ -217,7 +204,7 @@
         <item name="android:paddingTop">@dimen/padding</item>
         <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/flat_card_horizontal_margin</item>
-        <item name="android:background">?attr/themedCardBackgroundColor</item>
+        <item name="android:background">?attr/colorCardBackground</item>
     </style>
 
 </resources>
