@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <io.github.hidroh.materialistic.widget.preference.ThemeView
+        android:id="@+id/theme_light"
+        android:theme="@style/AppTheme"
+        android:layout_marginRight="@dimen/margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <io.github.hidroh.materialistic.widget.preference.ThemeView
+        android:id="@+id/theme_dark"
+        android:theme="@style/AppTheme.Dark"
+        android:layout_marginRight="@dimen/margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <io.github.hidroh.materialistic.widget.preference.ThemeView
+        android:id="@+id/theme_sepia"
+        android:theme="@style/AppTheme.Sepia"
+        android:layout_marginRight="@dimen/margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <io.github.hidroh.materialistic.widget.preference.ThemeView
+        android:id="@+id/theme_green"
+        android:theme="@style/AppTheme.Green"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
