@@ -1,4 +1,4 @@
-package io.github.hidroh.materialistic.widget.help;
+package io.github.hidroh.materialistic.widget.preference;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
