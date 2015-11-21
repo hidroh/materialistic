@@ -22,7 +22,7 @@ import io.github.hidroh.materialistic.widget.ItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 
-public class ItemFragment extends BaseFragment implements Scrollable {
+public class ItemFragment extends LazyLoadFragment implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private static final String STATE_ITEM = "state:item";
@@ -86,16 +86,6 @@ public class ItemFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (mItem != null) {
-            bindKidData();
-        } else if (!TextUtils.isEmpty(mItemId)) {
-            loadKidData();
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         mIsResumed = true;
@@ -108,6 +98,15 @@ public class ItemFragment extends BaseFragment implements Scrollable {
         outState.putParcelable(STATE_ITEM, mItem);
         outState.putString(STATE_ITEM_ID, mItemId);
         outState.putParcelable(STATE_ADAPTER_ITEMS, mAdapterItems);
+    }
+
+    @Override
+    protected void load() {
+        if (mItem != null) {
+            bindKidData();
+        } else if (!TextUtils.isEmpty(mItemId)) {
+            loadKidData();
+        }
     }
 
     @Override

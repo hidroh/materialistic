@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +20,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import javax.inject.Inject;
@@ -57,6 +60,10 @@ public class ItemFragmentSinglePageTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(hackerNewsClient);
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
