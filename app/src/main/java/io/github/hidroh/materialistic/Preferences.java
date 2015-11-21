@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
+import android.support.v4.util.ArrayMap;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.view.ContextThemeWrapper;
 
 import java.util.Map;
 
@@ -138,48 +138,11 @@ public class Preferences {
                 .getString(context.getString(R.string.pref_popular_range), AlgoliaPopularClient.LAST_24H);
     }
 
-    public static void applyTheme(ContextThemeWrapper contextThemeWrapper) {
-        if (Preferences.darkThemeEnabled(contextThemeWrapper)) {
-            contextThemeWrapper.setTheme(R.style.AppTheme_Dark);
-        }
-
-        contextThemeWrapper.getTheme().applyStyle(Preferences.resolvePreferredTextSizeResId(contextThemeWrapper), true);
-    }
-
-    public static @StyleRes int resolveTextSizeResId(String choice) {
-        switch (Integer.parseInt(choice)) {
-            case -1:
-                return R.style.AppTextSize_XSmall;
-            case 0:
-            default:
-                return R.style.AppTextSize;
-            case 1:
-                return R.style.AppTextSize_Medium;
-            case 2:
-                return R.style.AppTextSize_Large;
-            case 3:
-                return R.style.AppTextSize_XLarge;
-        }
-    }
-
-    public static @StyleRes int resolvePreferredTextSizeResId(Context context) {
-        String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
-        return resolveTextSizeResId(choice);
-    }
-
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .clear()
                 .apply();
-    }
-
-    private static boolean darkThemeEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_theme),
-                        context.getString(R.string.pref_theme_value_light))
-                .equals(context.getString(R.string.pref_theme_value_dark));
     }
 
     private static class BoolToStringPref {
@@ -203,6 +166,64 @@ public class Preferences {
 
         private boolean hasOldValue(Context context, SharedPreferences sp) {
             return sp.contains(context.getString(oldKey));
+        }
+    }
+
+    public static class Theme {
+        private static final int THEME_DEFAULT = R.style.AppTheme;
+        private static final ArrayMap<Integer, Integer> THEMES = new ArrayMap<Integer, Integer>(){{
+            put(R.string.pref_theme_value_light, R.style.AppTheme);
+            put(R.string.pref_theme_value_dark, R.style.AppTheme_Dark);
+        }};
+        private static final ArrayMap<String, Integer> CHOICES = new ArrayMap<>();
+
+        public static void apply(Context context) {
+            initChoices(context);
+            int theme = getTheme(context);
+            if (theme != THEME_DEFAULT) {
+                context.setTheme(theme);
+            }
+            context.getTheme()
+                    .applyStyle(resolvePreferredTextSizeResId(context), true);
+        }
+
+        public static @StyleRes int resolveTextSizeResId(String choice) {
+            switch (Integer.parseInt(choice)) {
+                case -1:
+                    return R.style.AppTextSize_XSmall;
+                case 0:
+                default:
+                    return R.style.AppTextSize;
+                case 1:
+                    return R.style.AppTextSize_Medium;
+                case 2:
+                    return R.style.AppTextSize_Large;
+                case 3:
+                    return R.style.AppTextSize_XLarge;
+            }
+        }
+
+        public static @StyleRes int resolvePreferredTextSizeResId(Context context) {
+            String choice = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
+            return resolveTextSizeResId(choice);
+        }
+
+        private static @StyleRes int getTheme(Context context) {
+            String choice = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.getString(R.string.pref_theme),
+                            context.getString(R.string.pref_theme_value_light));
+            return CHOICES.get(choice);
+        }
+
+        private static void initChoices(Context context) {
+            if (!CHOICES.isEmpty()) {
+                return;
+            }
+            String[] choices = context.getResources().getStringArray(R.array.pref_theme_values);
+            for (int i = 0; i < choices.length; i++) {
+                CHOICES.put(context.getString(THEMES.keyAt(i)), THEMES.valueAt(i));
+            }
         }
     }
 }

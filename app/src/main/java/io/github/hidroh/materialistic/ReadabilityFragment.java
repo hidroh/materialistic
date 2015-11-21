@@ -43,7 +43,7 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
             mContent = savedInstanceState.getString(STATE_CONTENT);
         } else {
             mTextSize = AppUtils.getDimension(getActivity(),
-                    Preferences.resolvePreferredTextSizeResId(getActivity()),
+                    Preferences.Theme.resolvePreferredTextSizeResId(getActivity()),
                     R.attr.contentTextSize);
         }
         mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
@@ -66,7 +66,7 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
             return true;
         }
         mTextSize = AppUtils.getDimension(getActivity(),
-                Preferences.resolveTextSizeResId(mTextSizeOptionValues[item.getOrder()]),
+                Preferences.Theme.resolveTextSizeResId(mTextSizeOptionValues[item.getOrder()]),
                 R.attr.contentTextSize);
         mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
         return true;

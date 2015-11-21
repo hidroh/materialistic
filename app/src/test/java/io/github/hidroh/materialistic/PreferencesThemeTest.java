@@ -29,7 +29,7 @@ public class PreferencesThemeTest {
     @Test
     public void testDefaultTheme() {
         Integer originalTheme = shadowOf(activity).callGetThemeResId();
-        Preferences.applyTheme(activity);
+        Preferences.Theme.apply(activity);
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(originalTheme);
     }
 
@@ -40,7 +40,7 @@ public class PreferencesThemeTest {
                 .putString(activity.getString(R.string.pref_theme),
                         activity.getString(R.string.pref_theme_value_dark))
                 .commit();
-        Preferences.applyTheme(activity);
+        Preferences.Theme.apply(activity);
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(R.style.AppTheme_Dark);
     }
 }
