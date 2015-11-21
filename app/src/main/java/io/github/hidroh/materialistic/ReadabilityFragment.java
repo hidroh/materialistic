@@ -78,7 +78,7 @@ public class ReadabilityFragment extends BaseFragment implements Scrollable {
         View view = inflater.inflate(R.layout.fragment_readability, container, false);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         mProgressBar.getIndeterminateDrawable()
-                .setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorAccent),
+                .setColorFilter(ContextCompat.getColor(getActivity(), R.color.redA200),
                         PorterDuff.Mode.SRC_IN);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         mTextView = (TextView) view.findViewById(R.id.content);

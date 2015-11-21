@@ -8,7 +8,7 @@
     <ScrollView
         android:id="@id/drawer"
         android:layout_gravity="left"
-        android:background="?attr/themedDrawerBackgroundColor"
+        android:background="?attr/colorCardHighlight"
         android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

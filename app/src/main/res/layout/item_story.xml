@@ -11,7 +11,7 @@
             android:layout_height="match_parent"
             android:layout_alignTop="@id/title"
             android:layout_alignBottom="@+id/meta_container"
-            android:background="?attr/themedCardHighlightColor" />
+            android:background="?attr/colorCardHighlight" />
         <ImageView
             android:id="@id/bookmarked"
             android:src="@drawable/ic_bookmark_grey600_24dp"

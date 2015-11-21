@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="themedCardBackgroundColor" format="reference" />
-    <attr name="themedCardHighlightColor" format="reference" />
-    <attr name="themedDrawerBackgroundColor" format="reference" />
-    <attr name="themedPanelBackgroundColor" format="reference" />
+    <attr name="colorCardBackground" format="reference" />
+    <attr name="colorCardHighlight" format="reference" />
     <attr name="titleTextSize" format="dimension|reference" />
     <attr name="subtitleTextSize" format="dimension|reference" />
     <attr name="contentTextSize" format="dimension|reference" />

@@ -72,15 +72,15 @@
 
     <!-- Color codes -->
     <array name="color_codes">
-        <item>@color/level_0</item>
-        <item>@color/level_1</item>
-        <item>@color/level_2</item>
-        <item>@color/level_3</item>
-        <item>@color/level_4</item>
-        <item>@color/level_5</item>
-        <item>@color/level_6</item>
-        <item>@color/level_7</item>
-        <item>@color/level_8</item>
-        <item>@color/level_9</item>
+        <item>@color/red500</item>
+        <item>@color/pink500</item>
+        <item>@color/purple500</item>
+        <item>@color/deepPurple500</item>
+        <item>@color/indigo500</item>
+        <item>@color/blue500</item>
+        <item>@color/lightBlue500</item>
+        <item>@color/cyan500</item>
+        <item>@color/teal500</item>
+        <item>@color/green500</item>
     </array>
 </resources>

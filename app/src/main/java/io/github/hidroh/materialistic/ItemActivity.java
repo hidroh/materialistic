@@ -2,14 +2,12 @@ package io.github.hidroh.materialistic;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -106,11 +104,6 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_share, menu);
-        menu.findItem(R.id.menu_share).getIcon()
-                .mutate()
-                .setColorFilter(ContextCompat.getColor(this,
-                        AppUtils.getThemedResId(this, android.R.attr.textColorPrimary)),
-                        PorterDuff.Mode.SRC_IN);
         getMenuInflater().inflate(R.menu.menu_item, menu);
         return super.onCreateOptionsMenu(menu);
     }

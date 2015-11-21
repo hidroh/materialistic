@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/content_frame"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,18 +31,15 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
-            app:tabIndicatorColor="@color/colorPrimaryLight"
+            app:tabIndicatorColor="@color/orange100"
             app:tabTextColor="?android:attr/textColorPrimary"
             android:background="?attr/colorPrimary"
-            android:elevation="8dp"
             android:layout_toRightOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <android.support.v4.view.ViewPager
             android:id="@id/content"
-            android:elevation="8dp"
-            android:background="?attr/themedPanelBackgroundColor"
             android:layout_below="@id/tab_layout"
             android:layout_toRightOf="@android:id/list"
             android:layout_width="match_parent"
@@ -50,14 +47,13 @@
 
         <TextView
             android:id="@id/empty"
-            android:elevation="8dp"
             android:layout_toRightOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_vertical"
-            android:background="?attr/themedCardHighlightColor"
+            android:background="?attr/colorCardHighlight"
             android:text="@string/select_story"
-            android:textColor="?android:attr/textColorSecondaryInverse"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="@dimen/abc_text_size_headline_material"/>
 
     </RelativeLayout>

@@ -4,85 +4,47 @@
     <!-- Application themes        -->
     <!-- ========================= -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <!--   your app branding color for the app bar -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorButtonNormal">?colorAccent</item>
+        <!-- color palette -->
+        <item name="colorPrimary">@color/orange500</item>
+        <item name="colorPrimaryDark">@color/orange700</item>
+        <item name="colorAccent">@color/redA200</item>
+        <item name="colorCardBackground">@color/grey100</item>
+        <item name="colorCardHighlight">@color/orange100</item>
+        <item name="android:textColorPrimary">@color/blackT87</item>
+        <item name="android:textColorSecondary">@color/grey500</item>
 
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
-        <item name="android:textColorSecondary">@color/textColorSecondary</item>
-        <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
-        <item name="android:textColorSecondaryInverse">@color/textColorSecondaryInverse</item>
-        <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
+        <!-- default theme override -->
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
-        <!-- style for buttons -->
-        <item name="android:buttonStyle">@style/AppButton</item>
-        <!-- style for spinners -->
-        <item name="android:spinnerStyle">@style/AppSpinner</item>
-        <!-- Here we setting appcompat’s actionBarStyle -->
-        <item name="toolbarStyle">@style/AppToolbar</item>
-        <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
-        <item name="actionModeBackground">?colorPrimary</item>
-        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
-        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">?colorPrimary</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
-        <item name="editTextStyle">@style/AppEditText</item>
-
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
         <!-- custom themed attributes -->
-        <item name="themedCardBackgroundColor">@color/cardview_light_background</item>
-        <item name="themedCardHighlightColor">@color/colorPrimaryLight</item>
-        <item name="themedDrawerBackgroundColor">@android:color/white</item>
-        <item name="themedPanelBackgroundColor">@color/colorBackgroundPanel</item>
-
-        <!-- default text size -->
         <item name="titleTextSize">@dimen/text_size_medium</item>
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccentLight</item>
-        <item name="colorButtonNormal">?colorAccent</item>
+        <!-- color palette -->
+        <item name="colorPrimary">@color/orange500</item>
+        <item name="colorPrimaryDark">@color/orange700</item>
+        <item name="colorAccent">@color/redA100</item>
+        <item name="colorCardBackground">@color/cardview_dark_background</item>
+        <item name="colorCardHighlight">@color/grey800</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/grey500</item>
 
-        <item name="android:textColorPrimary">@color/textColorPrimaryInverse</item>
-        <item name="android:textColorSecondary">@color/textColorSecondaryInverse</item>
-        <item name="android:textColorPrimaryInverse">@color/textColorPrimary</item>
-        <item name="android:textColorSecondaryInverse">@color/textColorSecondary</item>
-        <item name="textAppearanceSearchResultTitle">@style/AppTextAppearanceSearchResultTitle</item>
+        <!-- default theme override -->
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
-        <!-- style for buttons -->
-        <item name="android:buttonStyle">@style/AppButton</item>
-        <!-- style for spinners -->
-        <item name="android:spinnerStyle">@style/AppSpinner</item>
-        <!-- Here we setting appcompat’s actionBarStyle -->
-        <item name="toolbarStyle">@style/AppToolbar</item>
-        <item name="actionBarWidgetTheme">@style/AppActionBarWidget</item>
-        <item name="actionModeBackground">?colorPrimary</item>
-        <item name="textAppearanceLargePopupMenu">@style/AppPopupMenuLargeTextAppearance</item>
-        <item name="textAppearanceSmallPopupMenu">@style/AppPopupMenuSmallTextAppearance</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AppAutoCompleteTextView</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">?colorPrimary</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
-        <item name="editTextStyle">@style/AppEditText</item>
-
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
 
         <!-- custom themed attributes -->
-        <item name="themedCardBackgroundColor">@color/cardview_dark_background</item>
-        <item name="themedCardHighlightColor">@color/colorHighlightInverse</item>
-        <item name="themedDrawerBackgroundColor">@color/colorHighlightInverse</item>
-        <item name="themedPanelBackgroundColor">@color/colorBackgroundPanelInverse</item>
-
-        <!-- default text size -->
         <item name="titleTextSize">@dimen/text_size_medium</item>
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
@@ -91,26 +53,16 @@
     <!-- ========================= -->
     <!-- Action bar/toolbar styles -->
     <!-- ========================= -->
-    <style name="AppToolbar" parent="Widget.AppCompat.Toolbar">
-        <!-- force subtitle text color for v21+ -->
-        <item name="subtitleTextAppearance">@style/AppToolbarSubtitleTextAppearance</item>
-    </style>
     <style name="AppToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="searchViewStyle">@style/AppToolbarSearchView</item>
-    </style>
-    <style name="AppToolbarSubtitleTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorSecondary">?android:attr/textColorPrimary</item>
     </style>
 
     <!-- =================== -->
     <!-- Preference themes   -->
     <!-- =================== -->
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
-        <item name="preferenceStyle">@style/AppPreference</item>
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
-    </style>
-    <style name="AppPreference" parent="Preference">
-        <item name="layout">@layout/preference</item>
     </style>
     <style name="Preference.PreferenceHelp" parent="Preference">
         <item name="android:layout">@layout/preference_help</item>
@@ -120,10 +72,10 @@
     <!-- Alert dialog themes -->
     <!-- =================== -->
     <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/redA200</item>
     </style>
     <style name="AppAlertDialog.Dark" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/colorAccentLight</item>
+        <item name="colorAccent">@color/redA100</item>
     </style>
 
     <!-- ================== -->
@@ -132,42 +84,14 @@
     <style name="AppToolbarSearchView" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="queryHint">@string/title_activity_search</item>
     </style>
-    <style name="AppActionBarWidget" parent="Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
-    </style>
-    <style name="AppAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
-        <!-- force item selectable background for v10- -->
-        <item name="android:dropDownSelector">?attr/listChoiceBackgroundIndicator</item>
-    </style>
-    <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-    <style name="AppTextAppearanceSearchResultTitle" parent="TextAppearance.AppCompat.SearchResult.Title">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
-    <style name="AppPopupMenuLargeTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
-    <style name="AppPopupMenuSmallTextAppearance" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
 
     <!-- ============= -->
     <!-- Widget styles -->
     <!-- ============= -->
-    <style name="AppButton" parent="android:Widget.Button">
-        <item name="android:textColor">@color/textColorButton</item>
-    </style>
-    <style name="AppSpinner" parent="Widget.AppCompat.Spinner">
-        <!-- Customize spinner here -->
-    </style>
     <style name="AppProgressBarHorizontalStyle" parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">4dp</item>
         <item name="android:progressDrawable">@drawable/progress</item>
-    </style>
-    <style name="AppEditText" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
 
     <!-- =========== -->
@@ -176,18 +100,16 @@
     <style name="textRankStyle">
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     <style name="textTitleStyle">
         <item name="android:textSize">?attr/titleTextSize</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
     <style name="textSubtitleStyle">
         <item name="android:textSize">?attr/subtitleTextSize</item>
-        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
@@ -200,10 +122,9 @@
     </style>
     <style name="textContentStyle">
         <item name="android:textSize">?attr/contentTextSize</item>
-        <item name="android:textAppearance">@style/textAppearanceContentNormal</item>
     </style>
     <style name="textEmptyStyle">
-        <item name="android:textColor">@color/textColorSecondary</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:textSize">@dimen/text_size_headline</item>
         <item name="android:padding">@dimen/padding</item>
         <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
@@ -220,23 +141,21 @@
         <item name="android:drawablePadding">32dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:background">@drawable/abc_item_background_holo_light</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
     </style>
     <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="textAppearanceContentNormal">
-        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
     <style name="textAppearanceContentDisabled">
-        <item name="android:textColor">?android:attr/textColorSecondaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <!-- ========== -->
@@ -272,7 +191,7 @@
     <!-- Card styles -->
     <!-- =========== -->
     <style name="BaseAppCardView">
-        <item name="cardBackgroundColor">?attr/themedCardBackgroundColor</item>
+        <item name="cardBackgroundColor">?attr/colorCardBackground</item>
         <item name="cardUseCompatPadding">true</item>
         <item name="cardPreventCornerOverlap">false</item>
         <item name="cardElevation">@dimen/cardview_default_elevation</item>
@@ -285,7 +204,7 @@
         <item name="android:paddingTop">@dimen/padding</item>
         <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/flat_card_horizontal_margin</item>
-        <item name="android:background">?attr/themedCardBackgroundColor</item>
+        <item name="android:background">?attr/colorCardBackground</item>
     </style>
 
 </resources>

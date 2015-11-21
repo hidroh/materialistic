@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF9800</color>
-    <color name="colorPrimaryDark">#F57C00</color>
-    <color name="colorPrimaryLight">#FFE0B2</color>
-    <color name="colorAccent">#FF5252</color>
-    <color name="colorAccentLight">#FF8A80</color>
-    <color name="textColorPrimary">#FFFFFF</color>
-    <color name="textColorSecondary">#9E9E9E</color>
-    <color name="textColorPrimaryInverse">#DE000000</color>
-    <color name="textColorSecondaryInverse">#9E9E9E</color>
-    <color name="textColorButton">#FFFFFF</color>
-    <color name="colorDisabled">#1A000000</color>
-    <color name="colorDivider">#0C000000</color>
-    <color name="colorBackgroundPanel">#FFE0E0E0</color>
-    <color name="colorBackgroundPanelInverse">#FF424242</color>
-    <color name="colorHighlightInverse">#424242</color>
-    <color name="colorShadow">#E0E0E0</color>
-    <color name="colorShadowInverse">#181818</color>
+    <color name="white">#FFFFFF</color>
+    <color name="blackT87">#DE000000</color>
+    <color name="blackT38">#61000000</color>
+    <color name="blackT12">#1F000000</color>
+    <color name="grey100">#F5F5F5</color>
+    <color name="grey500">#9E9E9E</color>
+    <color name="grey800">#424242</color>
 
-    <!-- color-coded levels -->
-    <color name="level_0">#F44336</color>
-    <color name="level_1">#E91E63</color>
-    <color name="level_2">#9C27B0</color>
-    <color name="level_3">#673AB7</color>
-    <color name="level_4">#3F51B5</color>
-    <color name="level_5">#2196F3</color>
-    <color name="level_6">#03A9F4</color>
-    <color name="level_7">#00BCD4</color>
-    <color name="level_8">#009688</color>
-    <color name="level_9">#4CAF50</color>
+    <color name="red500">#F44336</color>
+    <color name="redA100">#FF8A80</color>
+    <color name="redA200">#FF5252</color>
+    <color name="pink500">#E91E63</color>
+    <color name="purple500">#9C27B0</color>
+    <color name="deepPurple500">#673AB7</color>
+    <color name="indigo500">#3F51B5</color>
+    <color name="blue500">#2196F3</color>
+    <color name="lightBlue500">#03A9F4</color>
+    <color name="cyan500">#00BCD4</color>
+    <color name="teal500">#009688</color>
+    <color name="green500">#4CAF50</color>
+    <color name="greenA700">#00C853</color>
+    <color name="orange100">#FFE0B2</color>
+    <color name="orange500">#FF9800</color>
+    <color name="orange700">#F57C00</color>
 
-    <!-- rank decoration -->
-    <color name="promoted">#00C853</color>
 </resources>
