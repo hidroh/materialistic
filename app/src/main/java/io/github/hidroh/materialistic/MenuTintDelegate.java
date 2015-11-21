@@ -1,9 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.Menu;
 
 /**
@@ -31,7 +31,8 @@ public class MenuTintDelegate {
             if (drawable == null) {
                 continue;
             }
-            drawable.mutate().setColorFilter(mTextColorPrimary, PorterDuff.Mode.SRC_IN);
+            drawable = DrawableCompat.wrap(drawable);
+            DrawableCompat.setTint(drawable, mTextColorPrimary);
         }
     }
 }
