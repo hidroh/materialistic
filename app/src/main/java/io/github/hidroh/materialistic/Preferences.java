@@ -174,6 +174,7 @@ public class Preferences {
         private static final ArrayMap<Integer, Integer> THEMES = new ArrayMap<Integer, Integer>(){{
             put(R.string.pref_theme_value_light, R.style.AppTheme);
             put(R.string.pref_theme_value_dark, R.style.AppTheme_Dark);
+            put(R.string.pref_theme_value_sepia, R.style.AppTheme_Sepia);
         }};
         private static final ArrayMap<String, Integer> CHOICES = new ArrayMap<>();
 

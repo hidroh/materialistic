@@ -21,8 +21,12 @@
     <color name="teal500">#009688</color>
     <color name="green500">#4CAF50</color>
     <color name="greenA700">#00C853</color>
+    <color name="orange50">#FFF3E0</color>
     <color name="orange100">#FFE0B2</color>
+    <color name="orange300">#FFB74D</color>
     <color name="orange500">#FF9800</color>
     <color name="orange700">#F57C00</color>
+    <color name="brown300">#A1887F</color>
+    <color name="brown500">#795548</color>
 
 </resources>

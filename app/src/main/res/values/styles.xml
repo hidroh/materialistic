@@ -49,6 +49,13 @@
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
+    <style name="AppTheme.Sepia">
+        <item name="colorPrimary">@color/orange300</item>
+        <item name="colorPrimaryDark">@color/orange500</item>
+        <item name="colorCardBackground">@color/orange50</item>
+        <item name="android:textColorPrimary">@color/brown500</item>
+        <item name="android:textColorSecondary">@color/brown300</item>
+    </style>
 
     <!-- ========================= -->
     <!-- Action bar/toolbar styles -->
