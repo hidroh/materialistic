@@ -70,7 +70,7 @@
             android:layout_toRightOf="@id/rank_container"
             android:layout_toLeftOf="@id/comment"
             android:paddingBottom="@dimen/padding">
-            <TextView
+            <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@id/source"
                 android:text="@string/loading_text"
                 style="@style/textSubtitleStyle.Italic" />
