@@ -21,15 +21,18 @@
         <item>@string/theme_light</item>
         <item>@string/theme_dark</item>
         <item>@string/theme_sepia</item>
+        <item>@string/theme_green</item>
     </string-array>
     <string-array name="pref_theme_values">
         <item>@string/pref_theme_value_light</item>
         <item>@string/pref_theme_value_dark</item>
         <item>@string/pref_theme_value_sepia</item>
+        <item>@string/pref_theme_value_green</item>
     </string-array>
     <string name="pref_theme_value_light">light</string>
     <string name="pref_theme_value_dark">dark</string>
     <string name="pref_theme_value_sepia">sepia</string>
+    <string name="pref_theme_value_green">green</string>
 
     <!-- Comment display -->
     <string-array name="pref_comment_display_options">

@@ -56,6 +56,14 @@
         <item name="android:textColorPrimary">@color/brown500</item>
         <item name="android:textColorSecondary">@color/brown300</item>
     </style>
+    <style name="AppTheme.Green">
+        <item name="colorPrimary">@color/orange300</item>
+        <item name="colorPrimaryDark">@color/orange500</item>
+        <item name="colorCardBackground">@color/teal50</item>
+        <item name="colorCardHighlight">@color/teal100</item>
+        <item name="android:textColorPrimary">@color/teal900</item>
+        <item name="android:textColorSecondary">@color/teal500</item>
+    </style>
 
     <!-- ========================= -->
     <!-- Action bar/toolbar styles -->

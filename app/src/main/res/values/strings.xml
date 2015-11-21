@@ -167,6 +167,7 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_sepia">Sepia</string>
+    <string name="theme_green">Green</string>
     <string name="comment_display_multiple">Multiple pages</string>
     <string name="comment_display_single">Single page - auto expand</string>
     <string name="comment_display_collapsed">Single page - collapsed</string>

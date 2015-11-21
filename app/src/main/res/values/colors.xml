@@ -18,7 +18,10 @@
     <color name="blue500">#2196F3</color>
     <color name="lightBlue500">#03A9F4</color>
     <color name="cyan500">#00BCD4</color>
+    <color name="teal50">#E0F2F1</color>
+    <color name="teal100">#B2DFDB</color>
     <color name="teal500">#009688</color>
+    <color name="teal900">#004D40</color>
     <color name="green500">#4CAF50</color>
     <color name="greenA700">#00C853</color>
     <color name="orange50">#FFF3E0</color>
