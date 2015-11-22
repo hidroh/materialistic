@@ -12,46 +12,43 @@ import org.robolectric.Robolectric;
 import java.util.Arrays;
 import java.util.List;
 
-import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
-public class FontSizePreferenceTest {
+public class FontPreferenceTest {
     private final int selection;
-    private final int styleResId;
     private SettingsActivity activity;
     private View preferenceView;
 
     @ParameterizedRobolectricGradleTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
-                new Object[]{0, R.style.AppTextSize_XSmall},
-                new Object[]{1, R.style.AppTextSize},
-                new Object[]{2, R.style.AppTextSize_Medium},
-                new Object[]{3, R.style.AppTextSize_Large},
-                new Object[]{4, R.style.AppTextSize_XLarge}
+                new Object[]{1},
+                new Object[]{2},
+                new Object[]{3},
+                new Object[]{4}
         );
     }
 
-    public FontSizePreferenceTest(int selection, int styleResId) {
+    public FontPreferenceTest(int selection) {
         this.selection = selection;
-        this.styleResId = styleResId;
     }
 
     @Before
     public void setUp() {
         activity = Robolectric.buildActivity(SettingsActivity.class)
                 .create().postCreate(null).start().resume().visible().get();
-        shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(2));
-        adapter.onBindViewHolder(holder, 2);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(3));
+        adapter.onBindViewHolder(holder, 3);
         preferenceView = holder.itemView;
     }
 
@@ -59,7 +56,9 @@ public class FontSizePreferenceTest {
     public void test() {
         preferenceView.performClick();
         ((Spinner) preferenceView.findViewById(R.id.spinner)).setSelection(selection);
-        Preferences.Theme.apply(activity);
-        assertEquals(styleResId, shadowOf(activity.getTheme()).getStyleResourceId());
+        assertNotNull(Application.TYPE_FACE);
+        preferenceView.performClick();
+        ((Spinner) preferenceView.findViewById(R.id.spinner)).setSelection(0);
+        assertNull(Application.TYPE_FACE);
     }
 }

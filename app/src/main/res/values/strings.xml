@@ -98,7 +98,9 @@
     <string name="pref_search_sort">pref_search_sort</string>
     <string name="pref_search_sort_title">Sort by</string>
     <string name="pref_text_size">pref_text_size</string>
-    <string name="pref_text_size_title">Font size</string>
+    <string name="pref_text_size_title">Text size</string>
+    <string name="pref_font">pref_font</string>
+    <string name="pref_font_title">Font</string>
     <string name="pref_comment_display">pref_comment_display</string>
     <string name="pref_comment_display_title">Comments and replies</string>
     <string name="pref_popular_range">pref_popular_range</string>

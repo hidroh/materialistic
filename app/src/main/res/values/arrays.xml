@@ -16,6 +16,22 @@
         <item>3</item>
     </string-array>
 
+    <!-- Font -->
+    <string-array name="font_options">
+        <item>Default</item>
+        <item>Droid Sans</item>
+        <item>Droid Serif</item>
+        <item>Libre Baskerville</item>
+        <item>Roboto Slab</item>
+    </string-array>
+    <string-array name="font_values">
+        <item/>
+        <item>DroidSans.ttf</item>
+        <item>DroidSerif.ttf</item>
+        <item>LibreBaskerville-Regular.ttf</item>
+        <item>RobotoSlab-Regular.ttf</item>
+    </string-array>
+
     <!-- Comment display -->
     <string-array name="pref_comment_display_options">
         <item>@string/comment_display_multiple</item>

@@ -51,12 +51,12 @@
             android:inAnimation="@android:anim/fade_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <io.github.hidroh.materialistic.widget.TextView
                 android:text="@string/loading_text"
                 style="@style/textTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
+            <io.github.hidroh.materialistic.widget.TextView
                 style="@style/textTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

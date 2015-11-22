@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.v7.preference.ListPreference;
@@ -175,6 +176,11 @@ public class Preferences {
                 context.setTheme(theme);
             }
             context.getTheme().applyStyle(resolvePreferredTextSizeResId(context), true);
+        }
+
+        public static @Nullable String getTypeface(Context context) {
+            return PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.getString(R.string.pref_font), null);
         }
 
         public static @StyleRes int resolveTextSizeResId(String choice) {

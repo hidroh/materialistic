@@ -15,7 +15,7 @@
         android:layout_marginBottom="@dimen/margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
+        <io.github.hidroh.materialistic.widget.TextView
             android:id="@android:id/text2"
             android:text="@string/loading_text"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
