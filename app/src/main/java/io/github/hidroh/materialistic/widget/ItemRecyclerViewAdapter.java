@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     protected LayoutInflater mLayoutInflater;
     private ItemManager mItemManager;
     protected Context mContext;
+    private int mTertiaryTextColorResId;
+    private int mSecondaryTextColorResId;
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
@@ -26,6 +29,13 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
         mLayoutInflater = LayoutInflater.from(mContext);
+        TypedArray ta = mContext.obtainStyledAttributes(new int[]{
+                android.R.attr.textColorTertiary,
+                android.R.attr.textColorSecondary,
+        });
+        mTertiaryTextColorResId = ta.getInt(0, 0);
+        mSecondaryTextColorResId = ta.getInt(1, 0);
+        ta.recycle();
     }
 
     @Override
@@ -73,10 +83,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     protected abstract void bind(VH holder, ItemManager.Item item);
 
     private void decorateDead(VH holder, ItemManager.Item item) {
-        holder.mContentTextView.setTextAppearance(mContext,
-                item.isDead() ?
-                        R.style.textAppearanceContentDisabled :
-                        R.style.textAppearanceContentNormal);
+        holder.mContentTextView.setTextColor(item.isDead() ?
+                mSecondaryTextColorResId : mTertiaryTextColorResId);
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {

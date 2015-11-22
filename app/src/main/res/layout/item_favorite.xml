@@ -21,13 +21,13 @@
             android:layout_toLeftOf="@id/comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <io.github.hidroh.materialistic.widget.TextView
                 android:text="@string/loading_text"
                 style="@style/textTitleStyle"
                 android:lines="@null"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
+            <io.github.hidroh.materialistic.widget.TextView
                 style="@style/textTitleStyle"
                 android:lines="@null"
                 android:layout_width="match_parent"

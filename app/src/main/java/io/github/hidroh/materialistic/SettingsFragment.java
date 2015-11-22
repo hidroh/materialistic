@@ -31,7 +31,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 Preferences.sync(getPreferenceManager(), key);
                 if (key.equals(getActivity().getString(R.string.pref_theme)) ||
-                        key.equals(getActivity().getString(R.string.pref_text_size))) {
+                        key.equals(getActivity().getString(R.string.pref_text_size)) ||
+                        key.equals(getActivity().getString(R.string.pref_font))) {
                     AppUtils.restart(getActivity());
                 } else if (key.equals(getActivity().getString(R.string.pref_search_sort))) {
                     AlgoliaClient.sSortByTime = Preferences.isSortByRecent(getActivity());
