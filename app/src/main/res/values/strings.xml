@@ -156,5 +156,6 @@
     <string name="search_sort_recent">More recent</string>
     <string name="search_sort_popularity">Popularity</string>
     <string name="story_display_readability">Readability</string>
+    <string name="font_options">Font options</string>
 
 </resources>
