@@ -19,7 +19,6 @@ import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRun
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class FontPreferenceTest {
