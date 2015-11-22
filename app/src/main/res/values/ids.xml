@@ -51,6 +51,9 @@
     <item type="id" name="menu_range_month" />
     <item type="id" name="menu_range_year" />
     <item type="id" name="menu_font_size" />
+    <item type="id" name="menu_font" />
+    <item type="id" name="menu_font_size_group" />
+    <item type="id" name="menu_font_group" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

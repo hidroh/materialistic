@@ -27,9 +27,12 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
+import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -37,7 +40,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowNestedScrollView.class})
+@Config(shadows = {ShadowNestedScrollView.class, ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
@@ -110,6 +113,19 @@ public class ReadabilityFragmentTest {
         shadowOf(activity).clickMenuItem(R.id.menu_font_size);
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(4)); // extra large
         assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(20);
+    }
+
+    @Test
+    public void testFontMenu() {
+        assertNull(((ShadowTextView) ShadowExtractor.extract(activity
+                .findViewById(R.id.content))).getTypeface()); // no custom typeface set
+        MenuItem menuItem = shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font);
+        assertThat(menuItem).hasSubMenu();
+        assertThat(menuItem.getSubMenu()).hasSize(5);
+        shadowOf(activity).clickMenuItem(R.id.menu_font);
+        fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(1)); // non default
+        assertNotNull(((ShadowTextView) ShadowExtractor.extract(activity
+                .findViewById(R.id.content))).getTypeface()); // custom typeface set
     }
 
     @After
