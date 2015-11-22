@@ -69,6 +69,8 @@
             <io.github.hidroh.materialistic.widget.preference.ThemeView
                 android:id="@+id/theme_light"
                 android:theme="@style/AppTheme"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -76,6 +78,8 @@
             <io.github.hidroh.materialistic.widget.preference.ThemeView
                 android:id="@+id/theme_dark"
                 android:theme="@style/AppTheme.Dark"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -83,6 +87,8 @@
             <io.github.hidroh.materialistic.widget.preference.ThemeView
                 android:id="@+id/theme_sepia"
                 android:theme="@style/AppTheme.Sepia"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -90,6 +96,8 @@
             <io.github.hidroh.materialistic.widget.preference.ThemeView
                 android:id="@+id/theme_green"
                 android:theme="@style/AppTheme.Green"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -97,6 +105,8 @@
             <io.github.hidroh.materialistic.widget.preference.ThemeView
                 android:id="@+id/theme_solarized"
                 android:theme="@style/AppTheme.Solarized"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -104,6 +114,8 @@
             <io.github.hidroh.materialistic.widget.preference.ThemeView
                 android:id="@+id/theme_solarized_dark"
                 android:theme="@style/AppTheme.Dark.Solarized"
+                android:layout_marginTop="@dimen/margin"
+                android:layout_marginBottom="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
