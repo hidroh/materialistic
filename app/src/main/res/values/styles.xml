@@ -64,6 +64,24 @@
         <item name="android:textColorPrimary">@color/teal900</item>
         <item name="android:textColorSecondary">@color/teal500</item>
     </style>
+    <style name="AppTheme.Solarized">
+        <item name="colorPrimary">@color/orange300</item>
+        <item name="colorPrimaryDark">@color/orange500</item>
+        <item name="colorAccent">@color/solarizedOrange</item>
+        <item name="colorCardBackground">@color/solarizedBase3</item>
+        <item name="colorCardHighlight">@color/solarizedBase2</item>
+        <item name="android:textColorPrimary">@color/solarizedBase01</item>
+        <item name="android:textColorSecondary">@color/solarizedBase1</item>
+    </style>
+    <style name="AppTheme.Dark.Solarized">
+        <item name="colorPrimary">@color/grey900</item>
+        <item name="colorPrimaryDark">@color/blackT87</item>
+        <item name="colorAccent">@color/solarizedOrange</item>
+        <item name="colorCardBackground">@color/solarizedBase03</item>
+        <item name="colorCardHighlight">@color/solarizedBase02</item>
+        <item name="android:textColorPrimary">@color/solarizedBase1</item>
+        <item name="android:textColorSecondary">@color/solarizedBase01</item>
+    </style>
 
     <!-- ========================= -->
     <!-- Action bar/toolbar styles -->

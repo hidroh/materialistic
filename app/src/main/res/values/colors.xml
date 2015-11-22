@@ -7,6 +7,7 @@
     <color name="grey100">#F5F5F5</color>
     <color name="grey500">#9E9E9E</color>
     <color name="grey800">#424242</color>
+    <color name="grey900">#212121</color>
 
     <color name="red500">#F44336</color>
     <color name="redA100">#FF8A80</color>
@@ -32,4 +33,12 @@
     <color name="brown300">#A1887F</color>
     <color name="brown500">#795548</color>
 
+    <!-- http://ethanschoonover.com/solarized -->
+    <color name="solarizedBase01">#586e75</color>
+    <color name="solarizedBase02">#073642</color>
+    <color name="solarizedBase03">#002b36</color>
+    <color name="solarizedOrange">#cb4b16</color>
+    <color name="solarizedBase1">#93a1a1</color>
+    <color name="solarizedBase2">#eee8d5</color>
+    <color name="solarizedBase3">#fdf6e3</color>
 </resources>

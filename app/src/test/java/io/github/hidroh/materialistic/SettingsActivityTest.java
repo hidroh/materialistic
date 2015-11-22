@@ -89,7 +89,7 @@ public class SettingsActivityTest {
         // trigger listener
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
-                .putString(key, activity.getString(R.string.pref_theme_value_dark))
+                .putString(key, "dark")
                 .commit();
         fragment.mListener.onSharedPreferenceChanged(
                 ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity), key);
