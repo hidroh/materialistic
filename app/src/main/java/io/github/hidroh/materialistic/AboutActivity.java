@@ -26,6 +26,7 @@ public class AboutActivity extends DrawerActivity {
         setTextWithLinks(R.id.text_developer_info, getString(R.string.developer_info_text));
         setTextWithLinks(R.id.text_libraries, getString(R.string.libraries_text));
         setTextWithLinks(R.id.text_license, getString(R.string.license_text));
+        setTextWithLinks(R.id.text_3rd_party_licenses, getString(R.string.third_party_licenses_text));
     }
 
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {

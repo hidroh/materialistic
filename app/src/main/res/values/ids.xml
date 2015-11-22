@@ -56,6 +56,7 @@
     <item type="id" name="text_developer_info" />
     <item type="id" name="text_application_info" />
     <item type="id" name="text_license" />
+    <item type="id" name="text_3rd_party_licenses" />
     <item type="id" name="text_libraries" />
     <item type="id" name="empty" />
     <item type="id" name="empty_search" />

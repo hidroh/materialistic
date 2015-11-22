@@ -15,20 +15,7 @@
     <string name="share">Share</string>
     <string name="title_activity_about">About</string>
     <string name="license_title">License</string>
-    <string name="license_text">
-        <![CDATA[
-            <p>Copyright 2015 Ha Duy Trung</p>
-            <p>Licensed under the Apache License, Version 2.0 (the "License");
-            you may not use this file except in compliance with the License.
-            You may obtain a copy of the License at</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
-            <p>Unless required by applicable law or agreed to in writing, software
-            distributed under the License is distributed on an "AS IS" BASIS,
-            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-            See the License for the specific language governing permissions and
-            limitations under the License.</p>
-        ]]>
-    </string>
+    <string name="third_party_licenses_title">3rd Party Licenses</string>
     <string name="developer_info_title">Developer Info</string>
     <string name="developer_info_text">
         <![CDATA[
@@ -45,18 +32,7 @@
             <p>This application is open source at <a href="https://github.com/hidroh/materialistic">github.com/hidroh/materialistic</a></p>
         ]]>
     </string>
-    <string name="libraries_title">Libraries</string>
-    <string name="libraries_text">
-        <![CDATA[
-            <p><a href="https://github.com/square/retrofit">Square Retrofit</a></p>
-            <p><a href="https://github.com/square/okhttp">Square OkHttp</a></p>
-            <p><a href="https://github.com/square/picasso">Square Picasso</a></p>
-            <p><a href="https://github.com/square/dagger">Square Dagger</a></p>
-            <p><a href="http://developer.android.com/tools/support-library/index.html">Android Support</a></p>
-            <p><a href="https://github.com/algolia/hn-search">algolia/hn-search</a></p>
-            <p><a href="https://www.readability.com/developers/api/parser">Readability Parser API</a></p>
-        ]]>
-    </string>
+    <string name="libraries_title">Libraries &amp; Resources</string>
     <string name="title_activity_favorite">Saved Stories</string>
     <string name="saved" formatted="false">Saved %s</string>
     <string name="toast_saved">Story saved!</string>
