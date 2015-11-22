@@ -37,8 +37,6 @@ public class PreferencesMigrationTest {
     @ParameterizedRobolectricGradleTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
-                new Object[]{R.string.pref_dark_theme, true,
-                        R.string.pref_theme, R.string.pref_theme_value_dark},
                 new Object[]{R.string.pref_item_click, true,
                         R.string.pref_story_display, R.string.pref_story_display_value_comments},
                 new Object[]{R.string.pref_item_search_recent, false,

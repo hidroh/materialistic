@@ -8,7 +8,7 @@
         <io.github.hidroh.materialistic.preference.ThemePreference
             android:key="@string/pref_theme"
             android:title="@string/pref_theme_title"
-            android:defaultValue="@string/pref_theme_value_light" />
+            android:defaultValue="light" />
         <io.github.hidroh.materialistic.preference.FontSizePreference
             android:key="@string/pref_text_size"
             android:title="@string/pref_text_size_title"

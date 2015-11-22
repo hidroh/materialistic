@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
@@ -14,6 +13,7 @@ import android.text.TextUtils;
 import java.util.Map;
 
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
+import io.github.hidroh.materialistic.preference.ThemePreference;
 
 public class Preferences {
     public enum StoryViewMode {
@@ -23,8 +23,6 @@ public class Preferences {
     }
 
     private static final BoolToStringPref[] PREF_MIGRATION = new BoolToStringPref[]{
-            new BoolToStringPref(R.string.pref_dark_theme, false,
-                    R.string.pref_theme, R.string.pref_theme_value_dark),
             new BoolToStringPref(R.string.pref_item_click, false,
                     R.string.pref_story_display, R.string.pref_story_display_value_comments),
             new BoolToStringPref(R.string.pref_item_search_recent, true,
@@ -170,23 +168,13 @@ public class Preferences {
     }
 
     public static class Theme {
-        private static final int THEME_DEFAULT = R.style.AppTheme;
-        private static final ArrayMap<Integer, Integer> THEMES = new ArrayMap<Integer, Integer>(){{
-            put(R.string.pref_theme_value_light, R.style.AppTheme);
-            put(R.string.pref_theme_value_dark, R.style.AppTheme_Dark);
-            put(R.string.pref_theme_value_sepia, R.style.AppTheme_Sepia);
-            put(R.string.pref_theme_value_green, R.style.AppTheme_Green);
-        }};
-        private static final ArrayMap<String, Integer> CHOICES = new ArrayMap<>();
 
         public static void apply(Context context) {
-            initChoices(context);
             int theme = getTheme(context);
-            if (theme != THEME_DEFAULT) {
+            if (theme != ThemePreference.THEME_DEFAULT) {
                 context.setTheme(theme);
             }
-            context.getTheme()
-                    .applyStyle(resolvePreferredTextSizeResId(context), true);
+            context.getTheme().applyStyle(resolvePreferredTextSizeResId(context), true);
         }
 
         public static @StyleRes int resolveTextSizeResId(String choice) {
@@ -213,19 +201,8 @@ public class Preferences {
 
         private static @StyleRes int getTheme(Context context) {
             String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_theme),
-                            context.getString(R.string.pref_theme_value_light));
-            return CHOICES.get(choice);
-        }
-
-        private static void initChoices(Context context) {
-            if (!CHOICES.isEmpty()) {
-                return;
-            }
-            String[] choices = context.getResources().getStringArray(R.array.pref_theme_values);
-            for (int i = 0; i < choices.length; i++) {
-                CHOICES.put(context.getString(THEMES.keyAt(i)), THEMES.valueAt(i));
-            }
+                    .getString(context.getString(R.string.pref_theme), null);
+            return ThemePreference.getTheme(choice);
         }
     }
 }
