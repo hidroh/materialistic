@@ -22,7 +22,14 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
                     '**/RestServiceFactory*.class',
                     '**/ActivityModule*.class',
                     '**/AlertDialogBuilder.class',
-                    '**/AlertDialogBuilder$Impl.class'
+                    '**/AlertDialogBuilder$Impl.class',
+                    '**/ImageUtils$PicassoImpl.class',
+                    '**/ActionViewResolver.class',
+                    '**/SpinnerPreference$*.class',
+                    '**/AsteriskSpan.class',
+                    '**/ImageGetter$URLDrawable.class',
+                    '**/ScrollAwareFABBehavior.class',
+                    '**/SinglePageItemRecyclerViewAdapter$SavedState*.class'
             ])
     sourceDirectories = files android.sourceSets.main.java.srcDirs
     executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"

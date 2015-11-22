@@ -5,16 +5,16 @@
     android:layout_height="match_parent">
     <android.support.v7.preference.PreferenceCategory
         android:title="@string/pref_category_reading">
-        <io.github.hidroh.materialistic.preference.PreferenceTheme
+        <io.github.hidroh.materialistic.preference.ThemePreference
             android:key="@string/pref_theme"
             android:title="@string/pref_theme_title"
             android:defaultValue="@string/pref_theme_value_light" />
-        <android.support.v7.preference.ListPreference
+        <io.github.hidroh.materialistic.preference.FontSizePreference
             android:key="@string/pref_text_size"
-            android:entries="@array/text_size_options"
-            android:entryValues="@array/pref_text_size_values"
+            android:title="@string/pref_text_size_title"
             android:defaultValue="0"
-            android:title="@string/pref_text_size_title" />
+            app:entries="@array/text_size_options"
+            app:entryValues="@array/pref_text_size_values" />
         <android.support.v7.preference.ListPreference
             android:key="@string/pref_story_display"
             android:title="@string/pref_story_display_title"
