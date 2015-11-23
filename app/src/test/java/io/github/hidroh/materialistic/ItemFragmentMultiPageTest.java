@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -131,8 +132,9 @@ public class ItemFragmentMultiPageTest {
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text)).hasTextString("text");
         assertThat(viewHolder.itemView.findViewById(R.id.comment)).isVisible();
         viewHolder.itemView.findViewById(R.id.comment).performClick();
-        assertEquals(ItemActivity.class.getName(),
-                shadowOf(fragment.getActivity()).getNextStartedActivity().getComponent().getClassName());
+        Intent actual = shadowOf(fragment.getActivity()).getNextStartedActivity();
+        assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
+        assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
     }
 
     @Test

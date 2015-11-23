@@ -63,6 +63,7 @@ public class MultiPageItemRecyclerViewAdapter
         final Intent intent = new Intent(mContext, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, mItemLevel + 1);
+        intent.putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
         mContext.startActivity(intent);
     }
 }

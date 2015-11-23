@@ -137,6 +137,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     private void openItem(T item) {
         final Intent intent = new Intent(mContext, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
+        intent.putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
         mContext.startActivity(intent);
     }
 
