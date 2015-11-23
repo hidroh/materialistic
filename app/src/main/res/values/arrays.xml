@@ -62,6 +62,20 @@
     <string name="pref_story_display_value_article">article</string>
     <string name="pref_story_display_value_readability">readability</string>
 
+    <!-- Comment max lines -->
+    <string-array name="comment_max_lines_options">
+        <item>@string/comment_max_lines_3</item>
+        <item>@string/comment_max_lines_4</item>
+        <item>@string/comment_max_lines_5</item>
+        <item>@string/comment_max_lines_all</item>
+    </string-array>
+    <string-array name="comment_max_lines_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>-1</item>
+    </string-array>
+
     <!-- Sort -->
     <string-array name="pref_search_sort_options">
         <item>@string/search_sort_recent</item>

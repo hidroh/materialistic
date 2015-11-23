@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -40,7 +39,7 @@ public class MultiPageItemRecyclerViewAdapter
             holder.mContentTextView.setText(R.string.loading_text);
         } else {
             holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
-            AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
+            bindContent(holder, item);
             if (item.getKidCount() > 0) {
                 holder.mCommentButton.setText(mContext.getString(R.string.comments_count, item.getKidCount()));
                 holder.mCommentButton.setVisibility(View.VISIBLE);
