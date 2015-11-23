@@ -50,7 +50,7 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public ToggleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ToggleItemViewHolder holder =
+        final ToggleItemViewHolder holder =
                 new ToggleItemViewHolder(mLayoutInflater.inflate(R.layout.item_comment, parent, false));
         final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)
                 holder.itemView.getLayoutParams();
@@ -76,6 +76,7 @@ public class SinglePageItemRecyclerViewAdapter
         if (item == null) {
             holder.mPostedTextView.setText(R.string.loading_text);
             holder.mContentTextView.setText(R.string.loading_text);
+            holder.mReadMoreTextView.setVisibility(View.GONE);
             return;
         }
 
@@ -85,8 +86,8 @@ public class SinglePageItemRecyclerViewAdapter
         } else {
             final ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
             AppUtils.setHtmlText(holder.mPostedTextView, mContext.getString(R.string.posted_reply,
-                            item.getDisplayedTime(mContext, false),
-                            parent.getBy()));
+                    item.getDisplayedTime(mContext, false),
+                    parent.getBy()));
             holder.mPostedTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -94,7 +95,7 @@ public class SinglePageItemRecyclerViewAdapter
                 }
             });
         }
-        AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
+        bindContent(holder, item);
         if (item.getKidCount() == 0) {
             return;
         }

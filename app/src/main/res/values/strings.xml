@@ -51,6 +51,7 @@
 
     <!-- preferences -->
     <string name="pref_category_reading">Reading</string>
+    <string name="pref_category_comments">Comments and replies</string>
     <string name="pref_category_search">Search</string>
     <string name="pref_external">pref_external</string>
     <string name="pref_external_title">Use external browser</string>
@@ -78,7 +79,10 @@
     <string name="pref_font">pref_font</string>
     <string name="pref_font_title">Font</string>
     <string name="pref_comment_display">pref_comment_display</string>
-    <string name="pref_comment_display_title">Comments and replies</string>
+    <string name="pref_comment_display_title">Default comments display</string>
+    <string name="pref_max_lines">pref_max_lines</string>
+    <string name="pref_max_lines_title">Initial display</string>
+    <string name="pref_max_lines_summary">Expand/collapse long comments</string>
     <string name="pref_popular_range">pref_popular_range</string>
     <string name="pref_highlight_updated_help">pref_highlight_updated_help</string>
 
@@ -156,5 +160,10 @@
     <string name="search_sort_popularity">Popularity</string>
     <string name="story_display_readability">Readability</string>
     <string name="font_options">Font options</string>
+    <string name="read_more">Read all %s lines</string>
+    <string name="comment_max_lines_3">Max 3 lines</string>
+    <string name="comment_max_lines_4">Max 4 lines</string>
+    <string name="comment_max_lines_5">Max 5 lines</string>
+    <string name="comment_max_lines_all">All</string>
 
 </resources>
