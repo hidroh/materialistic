@@ -218,8 +218,9 @@ public class ListFragmentViewHolderTest {
         commentButton.performClick();
         verify(activity.multiPaneListener, never()).onItemSelected(any(ItemManager.WebItem.class)
         );
-        assertEquals(ItemActivity.class.getName(),
-                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+        Intent actual = shadowOf(activity).getNextStartedActivity();
+        assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
+        assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
         assertViewed();
     }
 

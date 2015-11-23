@@ -30,6 +30,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
+    public static final String EXTRA_OPEN_COMMENTS = ItemActivity.class.getName() + ".EXTRA_OPEN_COMMENTS";
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
@@ -49,7 +50,11 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mExternalBrowser = Preferences.externalBrowserEnabled(this);
-        mStoryViewMode = Preferences.getDefaultStoryView(this);
+        if (getIntent().getBooleanExtra(EXTRA_OPEN_COMMENTS, false)) {
+            mStoryViewMode = Preferences.StoryViewMode.Comment;
+        } else {
+            mStoryViewMode = Preferences.getDefaultStoryView(this);
+        }
         setContentView(R.layout.activity_item);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
