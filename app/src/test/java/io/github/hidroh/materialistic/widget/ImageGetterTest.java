@@ -65,6 +65,12 @@ public class ImageGetterTest {
     }
 
     @Test
+    public void testNullSource() {
+        textView.setText(Html.fromHtml("<div><img /></div>", imageGetter, null));
+        verify(imageUtils, never()).fromUri(any(Uri.class));
+    }
+
+    @Test
     public void testNoImg() {
         textView.setText(Html.fromHtml("<div></div>", imageGetter, null));
         verify(imageUtils, never()).fromUri(any(Uri.class));
