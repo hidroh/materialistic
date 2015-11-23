@@ -44,19 +44,6 @@
             app:dialogTitle="@string/pref_highlight_updated_title"
             app:dialogLayout="@layout/help_list_view" />
 
-        <android.support.v7.preference.ListPreference
-            android:key="@string/pref_comment_display"
-            android:title="@string/pref_comment_display_title"
-            android:entries="@array/pref_comment_display_options"
-            android:entryValues="@array/pref_comment_display_values"
-            android:defaultValue="@string/pref_comment_display_value_collapsed" />
-
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="@string/pref_color_code"
-            android:title="@string/pref_color_code_title"
-            android:summary="@string/pref_color_code_summary"
-            android:defaultValue="true" />
-
         <android.support.v7.preference.SwitchPreferenceCompat
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"
@@ -69,6 +56,32 @@
             android:title="@string/pref_custom_tab_title"
             android:summary="@string/pref_custom_tab_summary"
             android:defaultValue="true" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/pref_category_comments">
+
+        <android.support.v7.preference.ListPreference
+                android:key="@string/pref_comment_display"
+                android:title="@string/pref_comment_display_title"
+                android:entries="@array/pref_comment_display_options"
+                android:entryValues="@array/pref_comment_display_values"
+                android:defaultValue="@string/pref_comment_display_value_collapsed" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_color_code"
+            android:title="@string/pref_color_code_title"
+            android:summary="@string/pref_color_code_summary"
+            android:defaultValue="true" />
+
+        <io.github.hidroh.materialistic.preference.CommentMaxLinesPreference
+            android:key="@string/pref_max_lines"
+            android:title="@string/pref_max_lines_title"
+            android:summary="@string/pref_max_lines_summary"
+            android:defaultValue="-1"
+            app:entries="@array/comment_max_lines_options"
+            app:entryValues="@array/comment_max_lines_values" />
 
     </android.support.v7.preference.PreferenceCategory>
 
