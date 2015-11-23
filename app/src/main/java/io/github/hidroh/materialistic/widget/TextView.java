@@ -13,6 +13,8 @@ public class TextView extends AppCompatTextView {
 
     public TextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setTypeface(Application.TYPE_FACE);
+        if (!isInEditMode()) {
+            setTypeface(Application.TYPE_FACE);
+        }
     }
 }

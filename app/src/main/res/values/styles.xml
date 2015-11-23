@@ -157,14 +157,16 @@
         <item name="android:textSize">?attr/contentTextSize</item>
     </style>
     <style name="textEmptyStyle">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-        <item name="android:textSize">@dimen/text_size_headline</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Empty</item>
         <item name="android:padding">@dimen/padding</item>
         <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="TextAppearance.App.Empty" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
     <style name="DrawerTextStyle">
         <item name="android:paddingLeft">16dp</item>
