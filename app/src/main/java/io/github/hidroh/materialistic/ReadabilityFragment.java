@@ -1,13 +1,14 @@
 package io.github.hidroh.materialistic;
 
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,6 +70,11 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             subMenu.add(R.id.menu_font_group, Menu.NONE, i, options[i]);
         }
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.menu_font_options).setVisible(!TextUtils.isEmpty(mContent));
     }
 
     @Override
@@ -137,18 +143,18 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     private void bind() {
+        mProgressBar.setVisibility(View.GONE);
+        getActivity().supportInvalidateOptionsMenu();
         if (!TextUtils.isEmpty(mContent)) {
-            mProgressBar.setVisibility(View.GONE);
             AppUtils.setTextWithLinks(mTextView, mContent);
         } else {
-            Snackbar.make(mScrollView, R.string.readability_failed, Snackbar.LENGTH_SHORT)
-                    .setAction(R.string.try_again, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            parse();
-                        }
-                    })
-                    .show();
+            mTextView.setText(R.string.readability_failed);
+            mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mTextView.setTextAppearance(R.style.TextAppearance_App_Empty);
+            } else {
+                mTextView.setTextAppearance(getActivity(), R.style.TextAppearance_App_Empty);
+            }
         }
     }
 }

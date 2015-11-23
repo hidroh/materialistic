@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -34,7 +33,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -81,16 +79,15 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testParseFailed() {
+        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
         assertThat(activity.findViewById(R.id.progress)).isVisible();
         verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
         callback.getValue().onResponse(null);
         reset(readabilityClient);
-        assertThat(activity.findViewById(R.id.progress)).isVisible();
-        View snackbarAction = activity.findViewById(R.id.snackbar_action);
-        assertThat(snackbarAction).isVisible();
-        snackbarAction.performClick();
-        verify(readabilityClient).parse(eq("http://example.com/article.html"),
-                any(ReadabilityClient.Callback.class));
+        assertThat(activity.findViewById(R.id.progress)).isNotVisible();
+        assertThat((TextView) activity.findViewById(R.id.content))
+                .hasTextString(R.string.readability_failed);
+        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
     }
 
     @Test
@@ -106,6 +103,9 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testFontSizeMenu() {
+        verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
+        callback.getValue().onResponse("<div>content</div>");
+        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isVisible();
         assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(14); // small - default
         MenuItem menuItem = shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_size);
         assertThat(menuItem).hasSubMenu();

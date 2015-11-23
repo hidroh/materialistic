@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -38,6 +39,9 @@ public class ImageGetter implements android.text.Html.ImageGetter {
 
     @Override
     public Drawable getDrawable(String source) {
+        if (TextUtils.isEmpty(source)) {
+            return null;
+        }
         final Uri uri = Uri.parse(source);
         if (uri.isRelative()) {
             return null;
