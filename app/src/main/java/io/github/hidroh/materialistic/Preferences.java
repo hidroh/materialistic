@@ -137,6 +137,16 @@ public class Preferences {
                 .getString(context.getString(R.string.pref_popular_range), AlgoliaPopularClient.LAST_24H);
     }
 
+    public static int getCommentMaxLines(Context context) {
+        String maxLinesString = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_max_lines), null);
+        int maxLines = maxLinesString == null ? -1 : Integer.parseInt(maxLinesString);
+        if (maxLines < 0) {
+            maxLines = Integer.MAX_VALUE;
+        }
+        return maxLines;
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()

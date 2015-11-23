@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -29,6 +30,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -40,7 +42,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
     @Inject
@@ -318,6 +320,46 @@ public class ItemFragmentSinglePageTest {
     public void testSavedState() {
         shadowOf(activity).recreate();
         assertEquals(3, adapter.getItemCount());
+    }
+
+    @Test
+    public void testDefaultDisplayAllLines() {
+        assertThat(viewHolder.itemView.findViewById(R.id.more)).isNotVisible();
+    }
+
+    @Test
+    public void testDisplayMaxLines() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_max_lines), "3")
+                .commit();
+        adapter.onAttachedToRecyclerView(recyclerView);
+        TextView textView = (TextView) viewHolder.itemView.findViewById(R.id.text);
+        View more = viewHolder.itemView.findViewById(R.id.more);
+        ((ShadowTextView) ShadowExtractor.extract(textView)).setLineCount(10);
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(textView).hasMaxLines(3);
+        assertThat(more).isVisible();
+        more.performClick();
+        assertThat(textView).hasMaxLines(10);
+        assertThat(more).isNotVisible();
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(more).isNotVisible();
+    }
+
+    @Test
+    public void testMaxLines() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_max_lines), "5")
+                .commit();
+        adapter.onAttachedToRecyclerView(recyclerView);
+        TextView textView = (TextView) viewHolder.itemView.findViewById(R.id.text);
+        View more = viewHolder.itemView.findViewById(R.id.more);
+        ((ShadowTextView) ShadowExtractor.extract(textView)).setLineCount(3);
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
+        assertThat(more).isNotVisible();
     }
 
     @After

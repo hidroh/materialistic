@@ -12,6 +12,7 @@ public abstract class TestItem implements ItemManager.Item {
     private Boolean viewed;
     private boolean collapsed;
     private int lastKidCount;
+    private boolean contentCollapsed;
 
     @Override
     public String getParent() {
@@ -192,6 +193,16 @@ public abstract class TestItem implements ItemManager.Item {
     @Override
     public void setCollapsed(boolean collapsed) {
         this.collapsed = collapsed;
+    }
+
+    @Override
+    public boolean isContentCollapsed() {
+        return contentCollapsed;
+    }
+
+    @Override
+    public void setContentCollapsed(boolean collapsed) {
+        contentCollapsed = collapsed;
     }
 
     @Override

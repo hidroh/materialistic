@@ -159,6 +159,7 @@ public class HackerNewsClient implements ItemManager {
         private int localRevision = -1;
         private int level = 0;
         private boolean collapsed;
+        private boolean contentCollapsed;
         int rank;
         private int lastKidCount = -1;
         private boolean hasNewDescendants = false;
@@ -204,6 +205,7 @@ public class HackerNewsClient implements ItemManager {
             dead = source.readInt() == 1;
             deleted = source.readInt() == 1;
             collapsed = source.readInt() == 1;
+            contentCollapsed = source.readInt() == 1;
             rank = source.readInt();
             lastKidCount = source.readInt();
             hasNewDescendants = source.readInt() == 1;
@@ -278,6 +280,7 @@ public class HackerNewsClient implements ItemManager {
             dest.writeInt(dead ? 1 : 0);
             dest.writeInt(deleted ? 1 : 0);
             dest.writeInt(collapsed ? 1 : 0);
+            dest.writeInt(contentCollapsed ? 1 : 0);
             dest.writeInt(rank);
             dest.writeInt(lastKidCount);
             dest.writeInt(hasNewDescendants ? 1 : 0);
@@ -491,6 +494,16 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public int getRank() {
             return rank;
+        }
+
+        @Override
+        public boolean isContentCollapsed() {
+            return contentCollapsed;
+        }
+
+        @Override
+        public void setContentCollapsed(boolean collapsed) {
+            contentCollapsed = collapsed;
         }
 
         @Override
