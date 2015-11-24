@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -45,6 +46,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
+    private CoordinatorLayout mCoordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
@@ -201,7 +204,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                             toastMessageResId = R.string.toast_removed;
                         }
                         if (!mUndo) {
-                            Snackbar.make(v, toastMessageResId, Snackbar.LENGTH_SHORT)
+                            Snackbar.make(mCoordinatorLayout, toastMessageResId, Snackbar.LENGTH_SHORT)
                                     .setAction(R.string.undo, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {

@@ -8,7 +8,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,6 +74,7 @@ public class ReadabilityFragmentTest {
         assertThat((TextView) activity.findViewById(R.id.content)).containsText("content");
         shadowOf(activity).recreate();
         assertThat((TextView) activity.findViewById(R.id.content)).containsText("content");
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -88,6 +88,7 @@ public class ReadabilityFragmentTest {
         assertThat((TextView) activity.findViewById(R.id.content))
                 .hasTextString(R.string.readability_failed);
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -99,6 +100,7 @@ public class ReadabilityFragmentTest {
         fragment.scrollToTop();
         assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
                 .getSmoothScrollY());
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -113,6 +115,7 @@ public class ReadabilityFragmentTest {
         shadowOf(activity).clickMenuItem(R.id.menu_font_size);
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(4)); // extra large
         assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(20);
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -126,10 +129,14 @@ public class ReadabilityFragmentTest {
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(1)); // non default
         assertNotNull(((ShadowTextView) ShadowExtractor.extract(activity
                 .findViewById(R.id.content))).getTypeface()); // custom typeface set
+        controller.pause().stop().destroy();
     }
 
-    @After
-    public void tearDown() {
+    @Test
+    public void testBindAfterDetached() {
+        assertThat(activity.findViewById(R.id.progress)).isVisible();
         controller.pause().stop().destroy();
+        verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
+        callback.getValue().onResponse("<div>content</div>");
     }
 }
