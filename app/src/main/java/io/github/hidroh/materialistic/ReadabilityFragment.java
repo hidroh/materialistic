@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,13 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private String[] mTextSizeOptionValues;
     private String mTypefaceName;
     private String[] mFontOptionValues;
+    private boolean mAttached;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mAttached = true;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,6 +126,12 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mAttached = false;
+    }
+
+    @Override
     public void scrollToTop() {
         mScrollView.smoothScrollTo(0, 0);
     }
@@ -143,6 +157,9 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     private void bind() {
+        if (!mAttached) {
+            return;
+        }
         mProgressBar.setVisibility(View.GONE);
         getActivity().supportInvalidateOptionsMenu();
         if (!TextUtils.isEmpty(mContent)) {
