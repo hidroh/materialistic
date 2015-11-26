@@ -57,9 +57,9 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             mTypefaceName = savedInstanceState.getString(STATE_TYPEFACE_NAME);
         } else {
             mTextSize = AppUtils.getDimension(getActivity(),
-                    Preferences.Theme.resolvePreferredTextSizeResId(getActivity()),
+                    Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity()),
                     R.attr.contentTextSize);
-            mTypefaceName = Preferences.Theme.getTypeface(getActivity());
+            mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
         }
         mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
         mFontOptionValues = getResources().getStringArray(R.array.font_values);
@@ -92,12 +92,15 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             return true;
         }
         if (item.getGroupId() == R.id.menu_font_size_group) {
+            String choice = mTextSizeOptionValues[item.getOrder()];
+            Preferences.Theme.savePreferredReadabilityTextSize(getActivity(), choice);
             mTextSize = AppUtils.getDimension(getActivity(),
-                    Preferences.Theme.resolveTextSizeResId(mTextSizeOptionValues[item.getOrder()]),
+                    Preferences.Theme.resolveTextSize(choice),
                     R.attr.contentTextSize);
             mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
         } else if (item.getGroupId() == R.id.menu_font_group) {
             mTypefaceName = mFontOptionValues[item.getOrder()];
+            Preferences.Theme.savePreferredReadabilityTypeface(getActivity(), mTypefaceName);
             mTextView.setTypeface(AppUtils.createTypeface(getActivity(), mTypefaceName));
         }
         return true;

@@ -76,7 +76,9 @@
     <string name="pref_search_sort_title">Sort by</string>
     <string name="pref_text_size">pref_text_size</string>
     <string name="pref_text_size_title">Text size</string>
+    <string name="pref_readability_text_size">pref_readability_text_size</string>
     <string name="pref_font">pref_font</string>
+    <string name="pref_readability_font">pref_readability_font</string>
     <string name="pref_font_title">Font</string>
     <string name="pref_comment_display">pref_comment_display</string>
     <string name="pref_comment_display_title">Default comments display</string>
