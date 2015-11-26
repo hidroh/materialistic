@@ -21,7 +21,7 @@ public class Application extends android.app.Application {
         GoogleAnalytics.getInstance(this).newTracker(R.xml.ga_config);
         mApplicationGraph = ObjectGraph.create();
         Preferences.migrate(this);
-        TYPE_FACE = AppUtils.createTypeface(this, Preferences.Theme.getTypeface(this));
+        TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
     }
 
     public ObjectGraph getApplicationGraph() {
