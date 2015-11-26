@@ -16,8 +16,10 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
+import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -40,7 +42,18 @@ public class ReadabilityFragmentLazyLoadTest {
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
         Bundle args = new Bundle();
-        args.putString(ReadabilityFragment.EXTRA_URL, "http://example.com/article.html");
+        ItemManager.WebItem item = new TestWebItem() {
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com/article.html";
+            }
+        };
+        args.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
         fragment = Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
         shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(null);
@@ -52,11 +65,11 @@ public class ReadabilityFragmentLazyLoadTest {
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
                 .commit();
-        verify(readabilityClient, never()).parse(anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
         fragment.setUserVisibleHint(true);
         fragment.setUserVisibleHint(false);
-        verify(readabilityClient).parse(anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
     }
 
     @Test
@@ -65,13 +78,13 @@ public class ReadabilityFragmentLazyLoadTest {
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         fragment.setUserVisibleHint(true);
-        verify(readabilityClient, never()).parse(anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
                 .commit();
-        verify(readabilityClient).parse(anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
     }
 
     @After

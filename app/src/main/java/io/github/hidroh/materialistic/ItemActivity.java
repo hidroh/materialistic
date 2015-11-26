@@ -265,7 +265,7 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
                     return Fragment.instantiate(ItemActivity.this, ItemFragment.class.getName(), args);
                 } else if (position == getCount() - 1) {
                     Bundle readabilityArgs = new Bundle();
-                    readabilityArgs.putString(ReadabilityFragment.EXTRA_URL, story.getUrl());
+                    readabilityArgs.putParcelable(ReadabilityFragment.EXTRA_ITEM, story);
                     return Fragment.instantiate(ItemActivity.this,
                             ReadabilityFragment.class.getName(), readabilityArgs);
                 } else {

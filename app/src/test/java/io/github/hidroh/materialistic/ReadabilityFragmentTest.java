@@ -23,10 +23,12 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
+import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -57,7 +59,18 @@ public class ReadabilityFragmentTest {
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         Bundle args = new Bundle();
-        args.putString(ReadabilityFragment.EXTRA_URL, "http://example.com/article.html");
+        ItemManager.WebItem item = new TestWebItem() {
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com/article.html";
+            }
+        };
+        args.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
         fragment = (ReadabilityFragment) Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
         activity.getSupportFragmentManager()
                 .beginTransaction()
@@ -68,7 +81,7 @@ public class ReadabilityFragmentTest {
     @Test
     public void testParseAndBind() {
         assertThat(activity.findViewById(R.id.progress)).isVisible();
-        verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
         callback.getValue().onResponse("<div>content</div>");
         assertThat(activity.findViewById(R.id.progress)).isNotVisible();
         assertThat((TextView) activity.findViewById(R.id.content)).containsText("content");
@@ -81,7 +94,7 @@ public class ReadabilityFragmentTest {
     public void testParseFailed() {
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
         assertThat(activity.findViewById(R.id.progress)).isVisible();
-        verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
         callback.getValue().onResponse(null);
         reset(readabilityClient);
         assertThat(activity.findViewById(R.id.progress)).isNotVisible();
@@ -105,7 +118,7 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testFontSizeMenu() {
-        verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
         callback.getValue().onResponse("<div>content</div>");
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isVisible();
         assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(14); // small - default
@@ -136,7 +149,7 @@ public class ReadabilityFragmentTest {
     public void testBindAfterDetached() {
         assertThat(activity.findViewById(R.id.progress)).isVisible();
         controller.pause().stop().destroy();
-        verify(readabilityClient).parse(eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
         callback.getValue().onResponse("<div>content</div>");
     }
 }

@@ -22,10 +22,11 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 
 public class ReadabilityFragment extends LazyLoadFragment implements Scrollable {
-    public static final String EXTRA_URL = ReadabilityFragment.class.getName() + ".EXTRA_URL";
+    public static final String EXTRA_ITEM = ReadabilityFragment.class.getName() +".EXTRA_ITEM";
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_TEXT_SIZE = "state:textSize";
     private static final String STATE_TYPEFACE_NAME = "state:typefaceName";
@@ -146,8 +147,12 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     private void parse() {
-        mReadabilityClient.parse(getArguments().getString(EXTRA_URL),
-                new ReadabilityClient.Callback() {
+        ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
+        if (item == null) {
+            return;
+        }
+        mReadabilityClient.parse(item.getId(),
+                item.getUrl(), new ReadabilityClient.Callback() {
                     @Override
                     public void onResponse(String content) {
                         mContent = content;
