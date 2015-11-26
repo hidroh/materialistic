@@ -185,7 +185,7 @@ public class Preferences {
             if (theme != ThemePreference.THEME_DEFAULT) {
                 context.setTheme(theme);
             }
-            context.getTheme().applyStyle(resolvePreferredTextSizeResId(context), true);
+            context.getTheme().applyStyle(resolvePreferredTextSize(context), true);
         }
 
         public static @Nullable String getTypeface(Context context) {
@@ -193,7 +193,23 @@ public class Preferences {
                     .getString(context.getString(R.string.pref_font), null);
         }
 
-        public static @StyleRes int resolveTextSizeResId(String choice) {
+        public static @Nullable String getReadabilityTypeface(Context context) {
+            String typefaceName = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.getString(R.string.pref_readability_font), null);
+            if (TextUtils.isEmpty(typefaceName)) {
+                return getTypeface(context);
+            }
+            return typefaceName;
+        }
+
+        public static void savePreferredReadabilityTypeface(Context context, String typefaceName) {
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .edit()
+                    .putString(context.getString(R.string.pref_readability_font), typefaceName)
+                    .apply();
+        }
+
+        public static @StyleRes int resolveTextSize(String choice) {
             switch (Integer.parseInt(choice)) {
                 case -1:
                     return R.style.AppTextSize_XSmall;
@@ -209,10 +225,26 @@ public class Preferences {
             }
         }
 
-        public static @StyleRes int resolvePreferredTextSizeResId(Context context) {
+        public static @StyleRes int resolvePreferredTextSize(Context context) {
             String choice = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
-            return resolveTextSizeResId(choice);
+            return resolveTextSize(choice);
+        }
+
+        public static @StyleRes int resolvePreferredReadabilityTextSize(Context context) {
+            String choice = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.getString(R.string.pref_readability_text_size), null);
+            if (TextUtils.isEmpty(choice)) {
+                return resolvePreferredTextSize(context);
+            }
+            return resolveTextSize(choice);
+        }
+
+        public static void savePreferredReadabilityTextSize(Context context, String choice) {
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .edit()
+                    .putString(context.getString(R.string.pref_readability_text_size), choice)
+                    .apply();
         }
 
         private static @StyleRes int getTheme(Context context) {

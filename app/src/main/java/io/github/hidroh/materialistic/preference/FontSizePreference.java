@@ -33,7 +33,7 @@ public class FontSizePreference extends SpinnerPreference {
     protected void bindDropDownView(int position, View view) {
         TextView textView = (TextView) view.findViewById(android.R.id.text1);
         float textSize = AppUtils.getDimension(getContext(),
-                Preferences.Theme.resolveTextSizeResId(mEntryValues[position]),
+                Preferences.Theme.resolveTextSize(mEntryValues[position]),
                 R.attr.contentTextSize);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         textView.setText(mEntries[position]);

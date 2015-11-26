@@ -128,6 +128,8 @@ public class ReadabilityFragmentTest {
         shadowOf(activity).clickMenuItem(R.id.menu_font_size);
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(4)); // extra large
         assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(20);
+        assertEquals(R.style.AppTextSize_XLarge,
+                Preferences.Theme.resolvePreferredReadabilityTextSize(activity));
         controller.pause().stop().destroy();
     }
 
@@ -142,6 +144,7 @@ public class ReadabilityFragmentTest {
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(1)); // non default
         assertNotNull(((ShadowTextView) ShadowExtractor.extract(activity
                 .findViewById(R.id.content))).getTypeface()); // custom typeface set
+        assertEquals("DroidSans.ttf", Preferences.Theme.getReadabilityTypeface(activity));
         controller.pause().stop().destroy();
     }
 
