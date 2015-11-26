@@ -24,6 +24,7 @@ public class MaterialisticProvider extends ContentProvider {
     public static final Uri URI_READABILITY = BASE_URI.buildUpon()
             .appendPath(ReadabilityEntry.TABLE_NAME)
             .build();
+    private static final String READABILITY_MAX_ENTRIES = "50";
     private DbHelper mDbHelper;
 
     @Override
@@ -94,6 +95,7 @@ public class MaterialisticProvider extends ContentProvider {
             long id = -1;
             if (updated == 0) {
                 id = db.insert(ReadabilityEntry.TABLE_NAME, null, values);
+                db.delete(ReadabilityEntry.TABLE_NAME, DbHelper.SQL_WHERE_READABILITY_TRUNCATE, null);
             }
 
             return id == -1 ? null : ContentUris.withAppendedId(URI_READABILITY, id);
@@ -195,6 +197,11 @@ public class MaterialisticProvider extends ContentProvider {
                 "DROP TABLE IF EXISTS " + ViewedEntry.TABLE_NAME;
         private static final String SQL_DROP_READABILITY_TABLE =
                 "DROP TABLE IF EXISTS " + ReadabilityEntry.TABLE_NAME;
+        private static final String SQL_WHERE_READABILITY_TRUNCATE = ReadabilityEntry._ID + " IN " +
+                "(SELECT " + ReadabilityEntry._ID + " FROM " + ReadabilityEntry.TABLE_NAME +
+                " ORDER BY " + ReadabilityEntry._ID + " DESC" +
+                " LIMIT -1 OFFSET " + READABILITY_MAX_ENTRIES + ")";
+
 
         private DbHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
