@@ -6,46 +6,24 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.text.format.DateUtils;
-import android.view.MotionEvent;
-import android.widget.TextView;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
 
 import io.github.hidroh.materialistic.test.TestInjectableActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class AppUtilsTest {
-    @Test
-    public void testSetTextWithLinks() {
-        TextView textView = new TextView(RuntimeEnvironment.application);
-        AppUtils.setTextWithLinks(textView, "<a href=\\\"http://www.justin.tv/problems/bml\\\" rel=\\\"nofollow\\\">http://www.justin.tv/problems/bml</a>");
-        MotionEvent event = mock(MotionEvent.class);
-        when(event.getAction()).thenReturn(MotionEvent.ACTION_DOWN);
-        when(event.getX()).thenReturn(0f);
-        when(event.getY()).thenReturn(0f);
-        assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
-        when(event.getAction()).thenReturn(MotionEvent.ACTION_UP);
-        when(event.getX()).thenReturn(0f);
-        when(event.getY()).thenReturn(0f);
-        assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
-        assertNotNull(ShadowApplication.getInstance().getNextStartedActivity());
-    }
-
     @Test
     public void testDefaultTextSize() {
         Activity activity = Robolectric.setupActivity(Activity.class);
