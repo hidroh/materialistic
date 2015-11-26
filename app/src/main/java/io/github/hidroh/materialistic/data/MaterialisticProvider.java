@@ -15,8 +15,16 @@ import android.text.TextUtils;
 public class MaterialisticProvider extends ContentProvider {
     private static final String PROVIDER_AUTHORITY = "io.github.hidroh.materialistic.provider";
     private static final Uri BASE_URI = Uri.parse("content://" + PROVIDER_AUTHORITY);
-    public static final Uri URI_FAVORITE = BASE_URI.buildUpon().appendPath(FavoriteEntry.TABLE_NAME).build();
-    public static final Uri URI_VIEWED = BASE_URI.buildUpon().appendPath(ViewedEntry.TABLE_NAME).build();
+    public static final Uri URI_FAVORITE = BASE_URI.buildUpon()
+            .appendPath(FavoriteEntry.TABLE_NAME)
+            .build();
+    public static final Uri URI_VIEWED = BASE_URI.buildUpon()
+            .appendPath(ViewedEntry.TABLE_NAME)
+            .build();
+    public static final Uri URI_READABILITY = BASE_URI.buildUpon()
+            .appendPath(ReadabilityEntry.TABLE_NAME)
+            .build();
+    private static final String READABILITY_MAX_ENTRIES = "50";
     private DbHelper mDbHelper;
 
     @Override
@@ -37,7 +45,12 @@ public class MaterialisticProvider extends ContentProvider {
             return db.query(ViewedEntry.TABLE_NAME, projection,
                     selection, selectionArgs,
                     null, null,
-                    FavoriteEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
+                    ViewedEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
+        } else if (URI_READABILITY.equals(uri)) {
+            return db.query(ReadabilityEntry.TABLE_NAME, projection,
+                    selection, selectionArgs,
+                    null, null,
+                    ReadabilityEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
         }
 
         return null;
@@ -49,6 +62,8 @@ public class MaterialisticProvider extends ContentProvider {
             return FavoriteEntry.MIME_TYPE;
         } else if (URI_VIEWED.equals(uri)) {
             return ViewedEntry.MIME_TYPE;
+        } else if (URI_READABILITY.equals(uri)) {
+            return ReadabilityEntry.MIME_TYPE;
         }
         return null;
     }
@@ -74,6 +89,16 @@ public class MaterialisticProvider extends ContentProvider {
             }
 
             return id == -1 ? null : ContentUris.withAppendedId(URI_VIEWED, id);
+        } else if (URI_READABILITY.equals(uri)) {
+            int updated = update(uri, values, ReadabilityEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                    new String[]{values.getAsString(ReadabilityEntry.COLUMN_NAME_ITEM_ID)});
+            long id = -1;
+            if (updated == 0) {
+                id = db.insert(ReadabilityEntry.TABLE_NAME, null, values);
+                db.delete(ReadabilityEntry.TABLE_NAME, DbHelper.SQL_WHERE_READABILITY_TRUNCATE, null);
+            }
+
+            return id == -1 ? null : ContentUris.withAppendedId(URI_READABILITY, id);
         }
 
         return null;
@@ -87,6 +112,8 @@ public class MaterialisticProvider extends ContentProvider {
             table = FavoriteEntry.TABLE_NAME;
         } else if (URI_VIEWED.equals(uri)) {
             table = ViewedEntry.TABLE_NAME;
+        } else if (URI_READABILITY.equals(uri)) {
+            table = ReadabilityEntry.TABLE_NAME;
         }
 
         if (TextUtils.isEmpty(table)) {
@@ -104,6 +131,8 @@ public class MaterialisticProvider extends ContentProvider {
             table = FavoriteEntry.TABLE_NAME;
         } else if (URI_VIEWED.equals(uri)) {
             table = ViewedEntry.TABLE_NAME;
+        } else if (URI_READABILITY.equals(uri)) {
+            table = ReadabilityEntry.TABLE_NAME;
         }
 
         if (TextUtils.isEmpty(table)) {
@@ -128,9 +157,16 @@ public class MaterialisticProvider extends ContentProvider {
         String COLUMN_NAME_ITEM_ID = "itemid";
     }
 
+    interface ReadabilityEntry extends BaseColumns {
+        String TABLE_NAME = "readability";
+        String MIME_TYPE = "vnd.android.cursor.dir/vnd." + PROVIDER_AUTHORITY + "." + TABLE_NAME;
+        String COLUMN_NAME_ITEM_ID = "itemid";
+        String COLUMN_NAME_CONTENT = "content";
+    }
+
     private static class DbHelper extends SQLiteOpenHelper {
         private static final String DB_NAME = "Materialistic.db";
-        private static final int DB_VERSION = 2;
+        private static final int DB_VERSION = 3;
         private static final String TEXT_TYPE = " TEXT";
         private static final String INTEGER_TYPE = " INTEGER";
         private static final String PRIMARY_KEY = " PRIMARY KEY";
@@ -149,10 +185,23 @@ public class MaterialisticProvider extends ContentProvider {
                         ViewedEntry._ID +                 INTEGER_TYPE +  PRIMARY_KEY + COMMA_SEP +
                         ViewedEntry.COLUMN_NAME_ITEM_ID + TEXT_TYPE +
                         " )";
+        private static final String SQL_CREATE_READABILITY_TABLE =
+                "CREATE TABLE " + ReadabilityEntry.TABLE_NAME + " (" +
+                        ReadabilityEntry._ID +                 INTEGER_TYPE +  PRIMARY_KEY + COMMA_SEP +
+                        ReadabilityEntry.COLUMN_NAME_ITEM_ID + TEXT_TYPE + COMMA_SEP +
+                        ReadabilityEntry.COLUMN_NAME_CONTENT + TEXT_TYPE +
+                        " )";
         private static final String SQL_DROP_FAVORITE_TABLE =
                 "DROP TABLE IF EXISTS " + FavoriteEntry.TABLE_NAME;
         private static final String SQL_DROP_VIEWED_TABLE =
                 "DROP TABLE IF EXISTS " + ViewedEntry.TABLE_NAME;
+        private static final String SQL_DROP_READABILITY_TABLE =
+                "DROP TABLE IF EXISTS " + ReadabilityEntry.TABLE_NAME;
+        private static final String SQL_WHERE_READABILITY_TRUNCATE = ReadabilityEntry._ID + " IN " +
+                "(SELECT " + ReadabilityEntry._ID + " FROM " + ReadabilityEntry.TABLE_NAME +
+                " ORDER BY " + ReadabilityEntry._ID + " DESC" +
+                " LIMIT -1 OFFSET " + READABILITY_MAX_ENTRIES + ")";
+
 
         private DbHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
@@ -162,17 +211,22 @@ public class MaterialisticProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_FAVORITE_TABLE);
             db.execSQL(SQL_CREATE_VIEWED_TABLE);
+            db.execSQL(SQL_CREATE_READABILITY_TABLE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             switch (oldVersion) {
+                case 2:
+                    db.execSQL(SQL_CREATE_READABILITY_TABLE);
+                    break;
                 case 1:
                     db.execSQL(SQL_CREATE_VIEWED_TABLE);
                     break;
                 default:
                     db.execSQL(SQL_DROP_FAVORITE_TABLE);
                     db.execSQL(SQL_DROP_VIEWED_TABLE);
+                    db.execSQL(SQL_DROP_READABILITY_TABLE);
                     onCreate(db);
                     break;
             }

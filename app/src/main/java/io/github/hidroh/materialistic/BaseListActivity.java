@@ -288,7 +288,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                         return WebFragment.instantiate(BaseListActivity.this, item);
                     case 2:
                         Bundle readabilityArgs = new Bundle();
-                        readabilityArgs.putString(ReadabilityFragment.EXTRA_URL, item.getUrl());
+                        readabilityArgs.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
                         return Fragment.instantiate(BaseListActivity.this,
                                 ReadabilityFragment.class.getName(), readabilityArgs);
                 }
