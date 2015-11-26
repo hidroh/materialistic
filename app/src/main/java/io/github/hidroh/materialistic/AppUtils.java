@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -18,7 +17,6 @@ import android.os.Parcelable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
@@ -164,13 +162,6 @@ public class AppUtils {
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting() &&
                 activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-    }
-
-    public static Typeface createTypeface(@NonNull Context context, @Nullable String name) {
-        if (TextUtils.isEmpty(name)) {
-            return null;
-        }
-        return Typeface.createFromAsset(context.getAssets(), name);
     }
 
     private static Intent makeShareIntent(String subject, String text) {

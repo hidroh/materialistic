@@ -101,7 +101,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         } else if (item.getGroupId() == R.id.menu_font_group) {
             mTypefaceName = mFontOptionValues[item.getOrder()];
             Preferences.Theme.savePreferredReadabilityTypeface(getActivity(), mTypefaceName);
-            mTextView.setTypeface(AppUtils.createTypeface(getActivity(), mTypefaceName));
+            mTextView.setTypeface(FontCache.getInstance().get(getActivity(), mTypefaceName));
         }
         return true;
     }
@@ -117,7 +117,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         mTextView = (TextView) view.findViewById(R.id.content);
         mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-        mTextView.setTypeface(AppUtils.createTypeface(getActivity(), mTypefaceName));
+        mTextView.setTypeface(FontCache.getInstance().get(getActivity(), mTypefaceName));
         return view;
     }
 
