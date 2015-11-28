@@ -11,25 +11,15 @@
     <TextView
         android:id="@android:id/title"
         android:text="@string/no_saved_stories"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         style="@style/textEmptyStyle" />
     <include layout="@layout/item_story"
         android:id="@id/header_card_view"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_width="@dimen/list_width"
         android:layout_height="wrap_content" />
-    <ImageView
-        android:src="@drawable/arrow"
-        android:layout_width="wrap_content"
-        android:tint="?android:attr/textColorSecondary"
-        android:layout_height="48dp" />
-    <TextView
+    <io.github.hidroh.materialistic.widget.TintableTextView
         android:text="@string/try_me"
-        android:fontFamily="sans-serif-thin"
-        android:textColor="?android:attr/textColorSecondary"
+        android:drawableTop="@drawable/ic_touch_app_white_48dp"
+        style="@style/textEmptyStyle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/abc_text_size_headline_material" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

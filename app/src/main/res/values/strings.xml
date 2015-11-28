@@ -38,8 +38,8 @@
     <string name="toast_saved">Story saved!</string>
     <string name="clear_all">Clear all</string>
     <string name="toast_removed">Story unsaved</string>
-    <string name="no_saved_stories">No saved stories so far.\nLong press one to save it for later!</string>
-    <string name="no_comments">No comments found for this item</string>
+    <string name="no_saved_stories">No saved stories so far</string>
+    <string name="no_comments">It\'s still quiet here</string>
     <string name="confirm_clear">Clear all saved stories?</string>
     <string name="email">Export via email</string>
     <string name="preparing">Preparing...</string>
@@ -47,7 +47,7 @@
     <string name="confirm_clear_selected">Clear selected saved stories?</string>
     <string name="search">Search</string>
     <string name="hint_search_saved_stories">Search saved stories</string>
-    <string name="no_stories_search">No stories found matching your query</string>
+    <string name="no_stories_search">Couldn\'t find what you\'re looking for</string>
 
     <!-- preferences -->
     <string name="pref_category_reading">Reading</string>
@@ -90,8 +90,8 @@
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>
-    <string name="download_external">View this file in another app</string>
-    <string name="try_me">try me!</string>
+    <string name="download_external">View in another app</string>
+    <string name="try_me">Long press one to save it for later!</string>
     <string name="title_activity_jobs">Jobs</string>
     <string name="title_activity_show">Show HN</string>
     <string name="title_activity_ask">Ask HN</string>
@@ -188,5 +188,6 @@
             </html>"
         ]]>
     </string>
+    <string name="file_not_supported">Content type not supported</string>
 
 </resources>

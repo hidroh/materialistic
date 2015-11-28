@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Button xmlns:android="http://schemas.android.com/apk/res/android"
-    android:text="@string/download_external"
-    style="@style/Widget.AppCompat.Button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <io.github.hidroh.materialistic.widget.TintableTextView
+        android:text="@string/file_not_supported"
+        android:drawableTop="@drawable/ic_save_white_48dp"
+        android:padding="@dimen/activity_vertical_margin"
+        android:drawablePadding="@dimen/padding"
+        style="@style/textEmptyStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/download_button"
+        android:text="@string/download_external"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center_vertical"
     android:gravity="center"
+    tools:visibility="visible"
     android:visibility="gone"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <ImageView
-        android:src="@drawable/ic_cloud_off_grey600_48dp"
-        android:tint="?android:attr/textColorSecondary"
-        android:layout_width="64dp"
-        android:layout_height="64dp" />
-    <TextView
+    <io.github.hidroh.materialistic.widget.TintableTextView
+        android:drawableTop="@drawable/ic_cloud_off_grey600_48dp"
         android:text="@string/connection_error"
         style="@style/textEmptyStyle"/>
 </LinearLayout>

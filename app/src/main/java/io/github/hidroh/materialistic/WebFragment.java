@@ -90,7 +90,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
                 }
                 mExternalRequired = true;
                 mWebView.setVisibility(View.GONE);
-                view.findViewById(R.id.download_button).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.empty).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.download_button).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
