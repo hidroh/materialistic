@@ -120,13 +120,6 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web_hn, container, false);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
-        ((TextView) view.findViewById(R.id.posted))
-                .setText(mItem.getDisplayedTime(getActivity(), false));
-        if (mItem.getType().equals(ItemManager.Item.COMMENT_TYPE)) {
-            view.findViewById(R.id.title).setVisibility(View.GONE);
-        } else {
-            ((TextView) view.findViewById(R.id.title)).setText(mItem.getDisplayedTitle());
-        }
         return view;
     }
 

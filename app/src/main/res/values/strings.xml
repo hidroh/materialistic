@@ -167,5 +167,26 @@
     <string name="comment_max_lines_4">Max 4 lines</string>
     <string name="comment_max_lines_5">Max 5 lines</string>
     <string name="comment_max_lines_all">All</string>
+    <string name="readability_html" formatted="false">
+        <![CDATA[
+        <html>
+            <head>
+                <style type="text/css">
+                    @font-face {
+                        font-family: materialistic;
+                        src: url("file:///android_asset/%s")}
+                    body {
+                        font-family: materialistic;
+                        font-size: %fpx;
+                        color: #%s;
+                    }
+                    a {color: #%s;}
+                    img {display: inline; height: auto; max-width: 100%%;}
+                </style>
+            </head>
+            <body>%s</body>
+            </html>"
+        ]]>
+    </string>
 
 </resources>

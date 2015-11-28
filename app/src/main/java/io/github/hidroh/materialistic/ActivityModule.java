@@ -16,7 +16,6 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
-import io.github.hidroh.materialistic.widget.ImageGetter;
 
 @Module(
         injects = {
@@ -36,8 +35,7 @@ import io.github.hidroh.materialistic.widget.ImageGetter;
                 ListFragment.class,
                 WebFragment.class,
                 DrawerFragment.class,
-                ReadabilityFragment.class,
-                ImageGetter.class
+                ReadabilityFragment.class
         },
         library = true
 )
@@ -105,10 +103,5 @@ public class ActivityModule {
     @Provides
     public AlertDialogBuilder provideAlertDialogBuilder(Context context) {
         return new AlertDialogBuilder.Impl(context);
-    }
-
-    @Provides
-    public ImageUtils provideImageUtils(Context context) {
-        return new ImageUtils.PicassoImpl(context);
     }
 }

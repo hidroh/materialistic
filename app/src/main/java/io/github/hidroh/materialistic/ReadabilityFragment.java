@@ -2,14 +2,13 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.AttrRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +16,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -30,8 +29,9 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_TEXT_SIZE = "state:textSize";
     private static final String STATE_TYPEFACE_NAME = "state:typefaceName";
+    private static final String FORMAT_HTML_COLOR = "%06X";
     private NestedScrollView mScrollView;
-    private TextView mTextView;
+    private WebView mWebView;
     private ProgressBar mProgressBar;
     @Inject ReadabilityClient mReadabilityClient;
     private String mContent;
@@ -40,6 +40,8 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private String mTypefaceName;
     private String[] mFontOptionValues;
     private boolean mAttached;
+    private String mTextColor;
+    private String mTextLinkColor;
 
     @Override
     public void onAttach(Context context) {
@@ -56,13 +58,13 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             mContent = savedInstanceState.getString(STATE_CONTENT);
             mTypefaceName = savedInstanceState.getString(STATE_TYPEFACE_NAME);
         } else {
-            mTextSize = AppUtils.getDimension(getActivity(),
-                    Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity()),
-                    R.attr.contentTextSize);
+            mTextSize = toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity()));
             mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
         }
         mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
         mFontOptionValues = getResources().getStringArray(R.array.font_values);
+        mTextColor = toHtmlColor(android.R.attr.textColorPrimary);
+        mTextLinkColor = toHtmlColor(android.R.attr.textColorLink);
     }
 
     @Override
@@ -94,14 +96,12 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         if (item.getGroupId() == R.id.menu_font_size_group) {
             String choice = mTextSizeOptionValues[item.getOrder()];
             Preferences.Theme.savePreferredReadabilityTextSize(getActivity(), choice);
-            mTextSize = AppUtils.getDimension(getActivity(),
-                    Preferences.Theme.resolveTextSize(choice),
-                    R.attr.contentTextSize);
-            mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+            mTextSize = toHtmlPx(Preferences.Theme.resolveTextSize(choice));
+            render();
         } else if (item.getGroupId() == R.id.menu_font_group) {
             mTypefaceName = mFontOptionValues[item.getOrder()];
             Preferences.Theme.savePreferredReadabilityTypeface(getActivity(), mTypefaceName);
-            mTextView.setTypeface(FontCache.getInstance().get(getActivity(), mTypefaceName));
+            render();
         }
         return true;
     }
@@ -115,9 +115,9 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
                 .setColorFilter(ContextCompat.getColor(getActivity(), R.color.redA200),
                         PorterDuff.Mode.SRC_IN);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
-        mTextView = (TextView) view.findViewById(R.id.content);
-        mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-        mTextView.setTypeface(FontCache.getInstance().get(getActivity(), mTypefaceName));
+        mWebView = (WebView) view.findViewById(R.id.content);
+        mWebView.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                AppUtils.getThemedResId(getActivity(), R.attr.colorCardBackground)));
         return view;
     }
 
@@ -171,15 +171,32 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         mProgressBar.setVisibility(View.GONE);
         getActivity().supportInvalidateOptionsMenu();
         if (!TextUtils.isEmpty(mContent)) {
-            AppUtils.setTextWithLinks(mTextView, mContent);
+            render();
         } else {
-            mTextView.setText(R.string.readability_failed);
-            mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mTextView.setTextAppearance(R.style.TextAppearance_App_Empty);
-            } else {
-                mTextView.setTextAppearance(getActivity(), R.style.TextAppearance_App_Empty);
-            }
+            getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
         }
+    }
+
+    private void render() {
+        mWebView.loadDataWithBaseURL(null, wrap(mContent), "text/html", "UTF-8", null);
+    }
+
+    private String wrap(String html) {
+        return getString(R.string.readability_html,
+                mTypefaceName,
+                mTextSize,
+                mTextColor,
+                mTextLinkColor,
+                html);
+    }
+
+    private String toHtmlColor(@AttrRes int colorAttr) {
+        return String.format(FORMAT_HTML_COLOR, 0xFFFFFF & ContextCompat.getColor(getActivity(),
+                AppUtils.getThemedResId(getActivity(), colorAttr)));
+    }
+
+    private float toHtmlPx(@StyleRes int textStyleAttr) {
+        return AppUtils.getDimension(getActivity(), textStyleAttr, R.attr.contentTextSize) /
+                getResources().getDisplayMetrics().density;
     }
 }

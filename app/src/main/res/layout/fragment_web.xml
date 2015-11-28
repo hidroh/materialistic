@@ -2,6 +2,9 @@
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nested_scroll_view"
+    android:background="?attr/colorCardBackground"
+    android:scrollbarStyle="insideOverlay"
+    android:scrollbars="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,8 +22,7 @@
             android:id="@+id/download_button"
             android:inflatedId="@id/download_button"
             android:layout="@layout/button_download"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_gravity="center|center_vertical"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

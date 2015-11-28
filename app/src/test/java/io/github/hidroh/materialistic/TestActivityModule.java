@@ -25,8 +25,6 @@ import io.github.hidroh.materialistic.test.TestInjectableActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.WebActivity;
-import io.github.hidroh.materialistic.widget.ImageGetter;
-import io.github.hidroh.materialistic.widget.ImageGetterTest;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -53,7 +51,6 @@ import static org.mockito.Mockito.when;
                 WebFragment.class,
                 DrawerFragment.class,
                 ReadabilityFragment.class,
-                ImageGetter.class,
                 // test classes
                 SettingsActivityTest.class,
                 ItemActivityTest.class,
@@ -73,8 +70,6 @@ import static org.mockito.Mockito.when;
                 FeedbackTest.class,
                 ListFragmentTest.class,
                 PopularActivityTest.class,
-                ImageGetterTest.class,
-                ImageGetterTest.TestImageGetter.class,
                 ReadabilityFragmentTest.class,
                 ReadabilityFragmentLazyLoadTest.class
         },
@@ -90,7 +85,6 @@ public class TestActivityModule {
     private final SearchView searchView = mock(SearchView.class);
     private final FeedbackClient feedbackClient = mock(FeedbackClient.class);
     private final ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
-    private final ImageUtils imageUtils = mock(ImageUtils.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -132,11 +126,6 @@ public class TestActivityModule {
         ActionViewResolver resolver = mock(ActionViewResolver.class);
         when(resolver.getActionView(any(MenuItem.class))).thenReturn(searchView);
         return resolver;
-    }
-
-    @Provides
-    public ImageUtils provideImageUtils() {
-        return imageUtils;
     }
 
     @Provides

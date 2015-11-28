@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.webkit.WebView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,20 +26,18 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
-import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowNestedScrollView.class, ShadowTextView.class})
+@Config(shadows = {ShadowNestedScrollView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
@@ -81,12 +79,15 @@ public class ReadabilityFragmentTest {
     @Test
     public void testParseAndBind() {
         assertThat(activity.findViewById(R.id.progress)).isVisible();
-        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
+                callback.capture());
         callback.getValue().onResponse("<div>content</div>");
         assertThat(activity.findViewById(R.id.progress)).isNotVisible();
-        assertThat((TextView) activity.findViewById(R.id.content)).containsText("content");
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+                .getLastLoadDataWithBaseURL().data).contains("content");
         shadowOf(activity).recreate();
-        assertThat((TextView) activity.findViewById(R.id.content)).containsText("content");
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+                .getLastLoadDataWithBaseURL().data).contains("content");
         controller.pause().stop().destroy();
     }
 
@@ -94,12 +95,12 @@ public class ReadabilityFragmentTest {
     public void testParseFailed() {
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
         assertThat(activity.findViewById(R.id.progress)).isVisible();
-        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
+                callback.capture());
         callback.getValue().onResponse(null);
         reset(readabilityClient);
         assertThat(activity.findViewById(R.id.progress)).isNotVisible();
-        assertThat((TextView) activity.findViewById(R.id.content))
-                .hasTextString(R.string.readability_failed);
+        assertThat(activity.findViewById(R.id.empty)).isVisible();
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
         controller.pause().stop().destroy();
     }
@@ -118,16 +119,19 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testFontSizeMenu() {
-        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
+                callback.capture());
         callback.getValue().onResponse("<div>content</div>");
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isVisible();
-        assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(14); // small - default
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+                .getLastLoadDataWithBaseURL().data).contains("14"); // small - default
         MenuItem menuItem = shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_size);
         assertThat(menuItem).hasSubMenu();
         assertThat(menuItem.getSubMenu()).hasSize(5);
         shadowOf(activity).clickMenuItem(R.id.menu_font_size);
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(4)); // extra large
-        assertThat((TextView) activity.findViewById(R.id.content)).hasTextSize(20);
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+                .getLastLoadDataWithBaseURL().data).contains("20");
         assertEquals(R.style.AppTextSize_XLarge,
                 Preferences.Theme.resolvePreferredReadabilityTextSize(activity));
         controller.pause().stop().destroy();
@@ -135,15 +139,16 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testFontMenu() {
-        assertNull(((ShadowTextView) ShadowExtractor.extract(activity
-                .findViewById(R.id.content))).getTypeface()); // no custom typeface set
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
+                callback.capture());
+        callback.getValue().onResponse("<div>content</div>");
         MenuItem menuItem = shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font);
         assertThat(menuItem).hasSubMenu();
         assertThat(menuItem.getSubMenu()).hasSize(5);
         shadowOf(activity).clickMenuItem(R.id.menu_font);
         fragment.onOptionsItemSelected(menuItem.getSubMenu().getItem(1)); // non default
-        assertNotNull(((ShadowTextView) ShadowExtractor.extract(activity
-                .findViewById(R.id.content))).getTypeface()); // custom typeface set
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+                .getLastLoadDataWithBaseURL().data).contains("DroidSans.ttf");
         assertEquals("DroidSans.ttf", Preferences.Theme.getReadabilityTypeface(activity));
         controller.pause().stop().destroy();
     }
