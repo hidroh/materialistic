@@ -19,7 +19,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 - [Algolia Hacker News Search API](https://github.com/algolia/hn-search)
 - [Readability Parser API](https://www.readability.com/developers/api/parser)
 - AOSP [appcompat-v7](https://developer.android.com/tools/support-library/features.html#v7-appcompat) / [recyclerview-v7](https://developer.android.com/tools/support-library/features.html#v7-recyclerview) / [design](https://developer.android.com/tools/support-library/features.html#design) / [cardview-v7](https://developer.android.com/tools/support-library/features.html#v7-cardview) / [preference-v7](https://developer.android.com/tools/support-library/features.html#v7-preference) / [customtabs](https://developer.android.com/tools/support-library/features.html#custom-tabs)
-- Square [Retrofit](https://github.com/square/retrofit) / [OkHttp](https://github.com/square/okhttp) / [Picasso](https://github.com/square/picasso) / [AssertJ](https://github.com/square/assertj-android) / [Dagger](https://github.com/square/dagger)
+- Square [Retrofit](https://github.com/square/retrofit) / [OkHttp](https://github.com/square/okhttp) / [AssertJ](https://github.com/square/assertj-android) / [Dagger](https://github.com/square/dagger)
 - [Robolectric](https://github.com/robolectric/robolectric)
 
 **Build**

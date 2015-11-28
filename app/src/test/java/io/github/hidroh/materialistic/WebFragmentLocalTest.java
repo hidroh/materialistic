@@ -81,7 +81,6 @@ public class WebFragmentLocalTest {
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume().visible();
-        assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("Ask HN");
         verify(itemManager).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
@@ -119,7 +118,6 @@ public class WebFragmentLocalTest {
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume().visible();
-        assertThat(activity.findViewById(R.id.title)).isNotVisible();
         assertThat((TextView) activity.findViewById(R.id.text)).hasTextString("comment");
     }
 

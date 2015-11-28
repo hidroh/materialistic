@@ -32,7 +32,6 @@ import java.util.List;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.widget.ImageGetter;
 
 public class AppUtils {
     private static final String ABBR_YEAR = "y";
@@ -71,8 +70,7 @@ public class AppUtils {
     }
 
     public static void setHtmlText(TextView textView, String htmlText) {
-        textView.setText(TextUtils.isEmpty(htmlText) ? null :
-                Html.fromHtml(htmlText, new ImageGetter(textView), null));
+        textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
     }
 
     public static Intent makeEmailIntent(String subject, String text) {

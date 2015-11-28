@@ -158,7 +158,8 @@
     </style>
     <style name="textEmptyStyle">
         <item name="android:textAppearance">@style/TextAppearance.App.Empty</item>
-        <item name="android:padding">@dimen/padding</item>
+        <item name="android:padding">@dimen/activity_vertical_margin</item>
+        <item name="android:drawablePadding">@dimen/padding</item>
         <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
         <item name="android:gravity">center_horizontal</item>
