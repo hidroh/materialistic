@@ -346,7 +346,7 @@ public class FavoriteFragment extends BaseFragment
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, final int position) {
+        public void onBindViewHolder(final ItemViewHolder holder, int position) {
             final FavoriteManager.Favorite favorite = getItem(position);
             if (favorite == null) {
                 clearViewHolder(holder);
@@ -356,7 +356,7 @@ public class FavoriteFragment extends BaseFragment
                     public boolean onLongClick(View v) {
                         if (mActionMode == null && !mSearchViewVisible) {
                             mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
-                            toggle(favorite.getId(), position);
+                            toggle(favorite.getId(), holder.getAdapterPosition());
                             if (mMultiPaneListener.getSelectedItem() != null) {
                                 mSelected.add(mMultiPaneListener.getSelectedItem().getId());
                             }
@@ -390,7 +390,8 @@ public class FavoriteFragment extends BaseFragment
             mMultiPaneListener.onItemSelected(item);
         }
 
-        private FavoriteManager.Favorite getItem(int position) {
+        @Override
+        protected FavoriteManager.Favorite getItem(int position) {
             if (mCursor == null) {
                 return null;
             }

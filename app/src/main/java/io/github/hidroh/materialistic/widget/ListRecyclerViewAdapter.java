@@ -24,6 +24,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     private Context mContext;
     private int mCardBackgroundColorResId;
     private int mCardHighlightColorResId;
+    private int mLastSelectedPosition = -1;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -87,7 +88,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     protected void handleItemClick(T item, VH holder) {
         onItemSelected(item, holder.itemView);
         if (isSelected(item.getId())) {
-            notifyDataSetChanged(); // switch selection decorator
+            notifyItemChanged(holder.getAdapterPosition());
+            if (mLastSelectedPosition >= 0) {
+                notifyItemChanged(mLastSelectedPosition);
+            }
+            mLastSelectedPosition = holder.getAdapterPosition();
         }
     }
 
@@ -127,6 +132,13 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * @return  true if selected, false otherwise or if selection is disabled
      */
     protected abstract boolean isSelected(String itemId);
+
+    /**
+     * Gets item at position
+     * @param position    item position
+     * @return item at given position or null
+     */
+    protected abstract ItemManager.WebItem getItem(int position);
 
     private void decorateCardSelection(ItemViewHolder holder, String itemId) {
         ((CardView) holder.itemView).setCardBackgroundColor(

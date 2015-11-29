@@ -401,7 +401,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             final ItemManager.Item story = getItem(position);
             holder.mRankTextView.setText(decorateUpdated(
                     String.valueOf(story.getRank()), mUpdated.contains(story)));
@@ -572,7 +572,8 @@ public class ListFragment extends BaseFragment implements Scrollable {
             });
         }
 
-        private ItemManager.Item getItem(int position) {
+        @Override
+        protected ItemManager.Item getItem(int position) {
             if (mShowAll) {
                 return mItems.get(position);
             } else {
