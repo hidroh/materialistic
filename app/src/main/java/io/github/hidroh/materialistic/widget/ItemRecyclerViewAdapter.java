@@ -96,17 +96,20 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         final int lineCount = holder.mContentTextView.getLineCount();
         if (item.isContentCollapsed() || lineCount <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
+            holder.mContentTextView.setTextIsSelectable(true);
             holder.mReadMoreTextView.setVisibility(View.GONE);
             return;
         }
         holder.mContentTextView.setMaxLines(mContentMaxLines);
+        holder.mContentTextView.setTextIsSelectable(false);
         holder.mReadMoreTextView.setVisibility(View.VISIBLE);
         holder.mReadMoreTextView.setText(mContext.getString(R.string.read_more, lineCount));
         holder.mReadMoreTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                item.setContentCollapsed(true);
+                item.setContentExpanded(true);
                 v.setVisibility(View.GONE);
+                holder.mContentTextView.setTextIsSelectable(true);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
                             .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)

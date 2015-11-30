@@ -255,16 +255,16 @@ public interface ItemManager {
         int getRank();
 
         /**
-         * Checks if item content is collapsed
-         * @return true if collapsed, false otherwise
+         * Checks if item content is expanded
+         * @return true if expanded, false otherwise
          */
         boolean isContentCollapsed();
 
         /**
-         * Sets item content collapsed state
-         * @param collapsed true to collapse, false otherwise
+         * Sets item content expanded state
+         * @param expanded true to expand, false otherwise
          */
-        void setContentCollapsed(boolean collapsed);
+        void setContentExpanded(boolean expanded);
     }
 
     /**
