@@ -23,7 +23,7 @@ import io.github.hidroh.materialistic.R;
 public abstract class SpinnerPreference extends Preference {
     protected String[] mEntries = new String[0];
     protected String[] mEntryValues = new String[0];
-    private int mInitialSelection = 0;
+    private int mSelection = 0;
 
     public SpinnerPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -59,7 +59,7 @@ public abstract class SpinnerPreference extends Preference {
         String value = restorePersistedValue ? getPersistedString(null) : (String) defaultValue;
         for (int i = 0; i < mEntryValues.length; i++) {
             if (TextUtils.equals(mEntryValues[i], value)) {
-                mInitialSelection = i;
+                mSelection = i;
                 break;
             }
         }
@@ -135,10 +135,11 @@ public abstract class SpinnerPreference extends Preference {
                 return false;
             }
         });
-        spinner.setSelection(mInitialSelection);
+        spinner.setSelection(mSelection);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mSelection = position;
                 persistString(mEntryValues[position]);
             }
 
