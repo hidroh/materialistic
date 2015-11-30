@@ -31,7 +31,7 @@ public abstract class SpinnerPreference extends Preference {
 
     public SpinnerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setWidgetLayoutResource(R.layout.preference_font_size);
+        setWidgetLayoutResource(R.layout.preference_spinner);
         init(context, attrs);
     }
 
