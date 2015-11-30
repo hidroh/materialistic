@@ -502,8 +502,8 @@ public class HackerNewsClient implements ItemManager {
         }
 
         @Override
-        public void setContentCollapsed(boolean collapsed) {
-            contentCollapsed = collapsed;
+        public void setContentExpanded(boolean expanded) {
+            contentCollapsed = expanded;
         }
 
         @Override

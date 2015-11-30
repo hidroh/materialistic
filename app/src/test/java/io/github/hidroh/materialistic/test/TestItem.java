@@ -201,8 +201,8 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public void setContentCollapsed(boolean collapsed) {
-        contentCollapsed = collapsed;
+    public void setContentExpanded(boolean expanded) {
+        contentCollapsed = expanded;
     }
 
     @Override
