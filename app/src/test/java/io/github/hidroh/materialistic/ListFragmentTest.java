@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import org.assertj.android.api.Assertions;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,6 +68,7 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isRefreshing();
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -87,6 +87,7 @@ public class ListFragmentTest {
         // should trigger another data request
         verify(itemManager, times(2)).getStories(any(String.class),
                 any(ItemManager.ResponseListener.class));
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -137,6 +138,7 @@ public class ListFragmentTest {
                 .containsText(activity.getString(R.string.showing_new_stories, 1));
         activity.findViewById(R.id.snackbar_action).performClick();
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -159,6 +161,7 @@ public class ListFragmentTest {
         // should not trigger another data request
         verify(itemManager, never()).getStories(any(String.class),
                 any(ItemManager.ResponseListener.class));
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -175,6 +178,7 @@ public class ListFragmentTest {
         listener.getValue().onResponse(new ItemManager.Item[0]);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -191,6 +195,7 @@ public class ListFragmentTest {
         listener.getValue().onError(null);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isVisible();
+        controller.pause().stop().destroy();
     }
 
     @Test
@@ -214,10 +219,38 @@ public class ListFragmentTest {
         listener.getValue().onError(null);
         Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
         assertNotNull(ShadowToast.getLatestToast());
+        controller.pause().stop().destroy();
     }
 
-    @After
-    public void tearDown() {
+    @Test
+    public void testErrorWhenDetached() {
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content,
+                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
+                .commit();
+        verify(itemManager).getStories(anyString(), listener.capture());
         controller.pause().stop().destroy();
+        listener.getValue().onError(null);
+        // no exception
+    }
+
+    @Test
+    public void testResponseWhenDetached() {
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.content,
+                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
+                .commit();
+        verify(itemManager).getStories(anyString(), listener.capture());
+        controller.pause().stop().destroy();
+        listener.getValue().onResponse(null);
+        // no exception
     }
 }

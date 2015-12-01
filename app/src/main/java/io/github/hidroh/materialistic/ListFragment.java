@@ -93,6 +93,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
     private int mPromotedColorResId;
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
+    private boolean mAttached;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -137,6 +138,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 .registerReceiver(mBroadcastReceiver, SessionManager.makeAddIntentFilter());
         PreferenceManager.getDefaultSharedPreferences(context)
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
+        mAttached = true;
     }
 
     @Override
@@ -251,6 +253,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
     @Override
     public void onDetach() {
+        mAttached = false;
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
@@ -277,6 +280,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
         mItemManager.getStories(mFilter, new ItemManager.ResponseListener<ItemManager.Item[]>() {
             @Override
             public void onResponse(final ItemManager.Item[] response) {
+                if (!mAttached) {
+                    return;
+                }
                 if (response == null) {
                     onError(null);
                 } else {
@@ -292,6 +298,9 @@ public class ListFragment extends BaseFragment implements Scrollable {
 
             @Override
             public void onError(String errorMessage) {
+                if (!mAttached) {
+                    return;
+                }
                 mSwipeRefreshLayout.setRefreshing(false);
                 if (mItems == null || mItems.isEmpty()) {
                     // TODO make refreshing indicator visible in error view
