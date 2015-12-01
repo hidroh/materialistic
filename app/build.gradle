@@ -8,7 +8,7 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 33
+        versionCode 34
         versionName "2.0"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "READABILITY_TOKEN", "\"\""
@@ -35,7 +35,7 @@ android {
 
 ext {
     supportVersion = '23.1.1'
-    okHttpVersion = '2.5.0'
+    okHttpVersion = '2.6.0'
     daggerVersion = '1.2.2'
 }
 
@@ -51,6 +51,7 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile "com.squareup.okhttp:okhttp-urlconnection:$okHttpVersion"
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"
+    compile "com.squareup.okhttp:logging-interceptor:$okHttpVersion"
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
     provided "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
