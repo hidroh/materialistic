@@ -4,11 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-
-import java.io.IOException;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import retrofit.RestAdapter;
@@ -24,17 +21,23 @@ public interface RestServiceFactory {
 
         public Impl(Context context) {
             final OkHttpClient okHttpClient = new OkHttpClient();
-            if (BuildConfig.DEBUG) {
-                okHttpClient.networkInterceptors().add(new LoggingInterceptor());
-            }
+            HttpLoggingInterceptor interceptor =
+                    new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                        @Override
+                        public void log(String message) {
+                            Log.d(TAG_OK_HTTP, message);
+                        }
+                    });
+            interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
+                    HttpLoggingInterceptor.Level.NONE);
+            okHttpClient.networkInterceptors().add(interceptor);
             okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
                     CACHE_SIZE));
 
             RestAdapter.Builder builder = new RestAdapter.Builder()
                     .setClient(new OkClient(okHttpClient));
-            if (BuildConfig.DEBUG) {
-                builder.setLogLevel(RestAdapter.LogLevel.BASIC);
-            }
+            builder.setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.BASIC :
+                    RestAdapter.LogLevel.NONE);
             mBuilder = builder;
         }
 
@@ -44,25 +47,6 @@ public interface RestServiceFactory {
                     .setEndpoint(baseUrl)
                     .build()
                     .create(clazz);
-        }
-
-        private static class LoggingInterceptor implements Interceptor {
-            @Override
-            public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-
-                long t1 = System.nanoTime();
-                Log.d(TAG_OK_HTTP, String.format("---> %s (%s)%n%s",
-                        request.url(), chain.connection(), request.headers()));
-
-                com.squareup.okhttp.Response response = chain.proceed(request);
-
-                long t2 = System.nanoTime();
-                Log.d(TAG_OK_HTTP, String.format("<--- %s (%.1fms)%n%s",
-                        response.request().url(), (t2 - t1) / 1e6d, response.headers()));
-
-                return response;
-            }
         }
     }
 }
