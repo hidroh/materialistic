@@ -96,12 +96,12 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         final int lineCount = holder.mContentTextView.getLineCount();
         if (item.isContentCollapsed() || lineCount <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
-            holder.mContentTextView.setTextIsSelectable(true);
+            setTextIsSelectable(holder.mContentTextView, true);
             holder.mReadMoreTextView.setVisibility(View.GONE);
             return;
         }
         holder.mContentTextView.setMaxLines(mContentMaxLines);
-        holder.mContentTextView.setTextIsSelectable(false);
+        setTextIsSelectable(holder.mContentTextView, false);
         holder.mReadMoreTextView.setVisibility(View.VISIBLE);
         holder.mReadMoreTextView.setText(mContext.getString(R.string.read_more, lineCount));
         holder.mReadMoreTextView.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +109,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             public void onClick(final View v) {
                 item.setContentExpanded(true);
                 v.setVisibility(View.GONE);
-                holder.mContentTextView.setTextIsSelectable(true);
+                setTextIsSelectable(holder.mContentTextView, true);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
                             .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)
@@ -124,6 +124,12 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private void decorateDead(VH holder, ItemManager.Item item) {
         holder.mContentTextView.setTextColor(item.isDead() ?
                 mSecondaryTextColorResId : mTertiaryTextColorResId);
+    }
+
+    private void setTextIsSelectable(TextView textView, boolean isSelectable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            textView.setTextIsSelectable(isSelectable);
+        }
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
