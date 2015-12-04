@@ -27,7 +27,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
-public class ItemActivity extends BaseItemActivity implements Scrollable {
+public class ItemActivity extends InjectableActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
@@ -124,6 +124,10 @@ public class ItemActivity extends BaseItemActivity implements Scrollable {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
         if (item.getItemId() == R.id.menu_external) {
             mAlertDialogBuilder
                     .setMessage(R.string.view_in_browser)

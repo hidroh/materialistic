@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import dagger.ObjectGraph;
 
-public abstract class InjectableActivity extends TrackableActivity implements Injectable {
+public abstract class InjectableActivity extends ThemedActivity implements Injectable {
     private ObjectGraph mActivityGraph;
 
     @Override
