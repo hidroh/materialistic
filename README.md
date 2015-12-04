@@ -24,7 +24,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 
     ./gradlew assembleDebug
 
-Supply your own Readability API key & release signing config to build release. These have been left out on purpose.
+Grab your Readability Parser API key [here](https://www.readability.com/developers/api/parser) if you want to connect to Readability.
 
 **Test** [![Build Status](https://travis-ci.org/hidroh/materialistic.svg?branch=master)](https://travis-ci.org/hidroh/materialistic)
 
