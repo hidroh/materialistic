@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_color_code">pref_color_code</string>
+    <string name="pref_comment_display">pref_comment_display</string>
+    <string name="pref_custom_tab">pref_custom_tab</string>
+    <string name="pref_dark_theme">pref_dark_theme</string> <!-- deprecated -->
+    <string name="pref_external">pref_external</string>
+    <string name="pref_font">pref_font</string>
+    <string name="pref_highlight_updated">pref_highlight_updated</string>
+    <string name="pref_highlight_updated_help">pref_highlight_updated_help</string>
+    <string name="pref_item_click">pref_item_click</string> <!-- deprecated -->
+    <string name="pref_item_search_recent">pref_item_search_recent</string> <!-- deprecated -->
+    <string name="pref_max_lines">pref_max_lines</string>
+    <string name="pref_popular_range">pref_popular_range</string>
+    <string name="pref_readability_font">pref_readability_font</string>
+    <string name="pref_readability_text_size">pref_readability_text_size</string>
+    <string name="pref_search_sort">pref_search_sort</string>
+    <string name="pref_story_display">pref_story_display</string>
+    <string name="pref_text_size">pref_text_size</string>
+    <string name="pref_theme">pref_theme</string>
+</resources>

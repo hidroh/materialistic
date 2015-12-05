@@ -77,6 +77,16 @@ public class Preferences {
                 .equals(context.getString(R.string.pref_search_sort_value_recent));
     }
 
+    public static void setSortByRecent(Context context, boolean byRecent) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.pref_search_sort),
+                        context.getString(byRecent ?
+                                R.string.pref_search_sort_value_recent :
+                                R.string.pref_search_sort_value_default))
+                .apply();
+    }
+
     public static StoryViewMode getDefaultStoryView(Context context) {
         String pref = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_story_display),
