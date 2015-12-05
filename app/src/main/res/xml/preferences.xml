@@ -85,16 +85,4 @@
 
     </android.support.v7.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="@string/pref_category_search">
-
-        <android.support.v7.preference.ListPreference
-            android:key="@string/pref_search_sort"
-            android:title="@string/pref_search_sort_title"
-            android:entries="@array/pref_search_sort_options"
-            android:entryValues="@array/pref_search_sort_values"
-            android:defaultValue="@string/pref_search_sort_value_recent" />
-
-    </android.support.v7.preference.PreferenceCategory>
-
 </android.support.v7.preference.PreferenceScreen>

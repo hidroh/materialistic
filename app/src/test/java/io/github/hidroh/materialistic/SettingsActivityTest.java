@@ -70,20 +70,6 @@ public class SettingsActivityTest {
     }
 
     @Test
-    public void testPrefSearch() {
-        assertTrue(AlgoliaClient.sSortByTime);
-        String key = activity.getString(R.string.pref_search_sort);
-        // trigger listener
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(key, activity.getString(R.string.pref_search_sort_value_default))
-                .commit();
-        fragment.mListener.onSharedPreferenceChanged(
-                ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity), key);
-        assertFalse(AlgoliaClient.sSortByTime);
-    }
-
-    @Test
     public void testPrefTheme() {
         String key = activity.getString(R.string.pref_theme);
         // trigger listener

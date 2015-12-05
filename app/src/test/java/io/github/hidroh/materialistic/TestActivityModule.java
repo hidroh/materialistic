@@ -53,6 +53,7 @@ import static org.mockito.Mockito.when;
                 ReadabilityFragment.class,
                 // test classes
                 SettingsActivityTest.class,
+                SearchActivityTest.class,
                 ItemActivityTest.class,
                 ItemFragmentMultiPageTest.class,
                 ItemFragmentSinglePageTest.class,

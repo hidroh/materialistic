@@ -52,7 +52,6 @@
     <!-- preferences -->
     <string name="pref_category_reading">Reading</string>
     <string name="pref_category_comments">Comments and replies</string>
-    <string name="pref_category_search">Search</string>
     <string name="pref_external">pref_external</string>
     <string name="pref_external_title">Use external browser</string>
     <string name="pref_external_summary">Read articles in external browser</string>
@@ -74,6 +73,8 @@
     <string name="pref_item_search_recent">pref_item_search_recent</string> <!-- deprecated -->
     <string name="pref_search_sort">pref_search_sort</string>
     <string name="pref_search_sort_title">Sort by</string>
+    <string name="pref_search_sort_value_recent">recent</string>
+    <string name="pref_search_sort_value_default">default</string>
     <string name="pref_text_size">pref_text_size</string>
     <string name="pref_text_size_title">Text size</string>
     <string name="pref_readability_text_size">pref_readability_text_size</string>

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
-import io.github.hidroh.materialistic.data.AlgoliaClient;
-
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @VisibleForTesting
@@ -34,8 +32,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         key.equals(getActivity().getString(R.string.pref_text_size)) ||
                         key.equals(getActivity().getString(R.string.pref_font))) {
                     AppUtils.restart(getActivity());
-                } else if (key.equals(getActivity().getString(R.string.pref_search_sort))) {
-                    AlgoliaClient.sSortByTime = Preferences.isSortByRecent(getActivity());
                 }
             }
         };

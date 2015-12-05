@@ -55,6 +55,10 @@
     <item type="id" name="menu_font" />
     <item type="id" name="menu_font_size_group" />
     <item type="id" name="menu_font_group" />
+    <item type="id" name="menu_sort" />
+    <item type="id" name="menu_sort_group" />
+    <item type="id" name="menu_sort_recent" />
+    <item type="id" name="menu_sort_popular" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />
