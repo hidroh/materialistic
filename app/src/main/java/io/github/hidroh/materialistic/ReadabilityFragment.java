@@ -61,8 +61,6 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             mTextSize = toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity()));
             mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
         }
-        mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
-        mFontOptionValues = getResources().getStringArray(R.array.font_values);
         mTextColor = toHtmlColor(android.R.attr.textColorPrimary);
         mTextLinkColor = toHtmlColor(android.R.attr.textColorLink);
     }
@@ -70,16 +68,24 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_font_options, menu);
+        mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
+        mFontOptionValues = getResources().getStringArray(R.array.font_values);
         SubMenu subMenu = menu.findItem(R.id.menu_font_size).getSubMenu();
         String[] options = getResources().getStringArray(R.array.text_size_options);
+        String initialTextSize = Preferences.Theme.getPreferredReadabilityTextSize(getActivity());
         for (int i = 0; i < options.length; i++) {
-            subMenu.add(R.id.menu_font_size_group, Menu.NONE, i, options[i]);
+            MenuItem item = subMenu.add(R.id.menu_font_size_group, Menu.NONE, i, options[i]);
+            item.setChecked(TextUtils.equals(initialTextSize, mTextSizeOptionValues[i]));
         }
+        subMenu.setGroupCheckable(R.id.menu_font_size_group, true, true);
         subMenu = menu.findItem(R.id.menu_font).getSubMenu();
         options = getResources().getStringArray(R.array.font_options);
+        String initialTypeface = Preferences.Theme.getReadabilityTypeface(getActivity());
         for (int i = 0; i < options.length; i++) {
-            subMenu.add(R.id.menu_font_group, Menu.NONE, i, options[i]);
+            MenuItem item = subMenu.add(R.id.menu_font_group, Menu.NONE, i, options[i]);
+            item.setChecked(TextUtils.equals(initialTypeface, mFontOptionValues[i]));
         }
+        subMenu.setGroupCheckable(R.id.menu_font_group, true, true);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -94,11 +100,13 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             return true;
         }
         if (item.getGroupId() == R.id.menu_font_size_group) {
+            item.setChecked(true);
             String choice = mTextSizeOptionValues[item.getOrder()];
-            Preferences.Theme.savePreferredReadabilityTextSize(getActivity(), choice);
             mTextSize = toHtmlPx(Preferences.Theme.resolveTextSize(choice));
+            Preferences.Theme.savePreferredReadabilityTextSize(getActivity(), choice);
             render();
         } else if (item.getGroupId() == R.id.menu_font_group) {
+            item.setChecked(true);
             mTypefaceName = mFontOptionValues[item.getOrder()];
             Preferences.Theme.savePreferredReadabilityTypeface(getActivity(), mTypefaceName);
             render();

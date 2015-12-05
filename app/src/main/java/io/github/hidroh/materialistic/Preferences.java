@@ -236,18 +236,20 @@ public class Preferences {
         }
 
         public static @StyleRes int resolvePreferredTextSize(Context context) {
-            String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
-            return resolveTextSize(choice);
+            return resolveTextSize(getPreferredTextSize(context));
         }
 
         public static @StyleRes int resolvePreferredReadabilityTextSize(Context context) {
+            return resolveTextSize(getPreferredReadabilityTextSize(context));
+        }
+
+        public static @NonNull String getPreferredReadabilityTextSize(Context context) {
             String choice = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString(context.getString(R.string.pref_readability_text_size), null);
             if (TextUtils.isEmpty(choice)) {
-                return resolvePreferredTextSize(context);
+                return getPreferredTextSize(context);
             }
-            return resolveTextSize(choice);
+            return choice;
         }
 
         public static void savePreferredReadabilityTextSize(Context context, String choice) {
@@ -255,6 +257,11 @@ public class Preferences {
                     .edit()
                     .putString(context.getString(R.string.pref_readability_text_size), choice)
                     .apply();
+        }
+
+        private static @NonNull String getPreferredTextSize(Context context) {
+            return PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
         }
 
         private static @StyleRes int getTheme(Context context) {
