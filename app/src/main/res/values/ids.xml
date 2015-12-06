@@ -60,6 +60,7 @@
     <item type="id" name="menu_sort_group" />
     <item type="id" name="menu_sort_recent" />
     <item type="id" name="menu_sort_popular" />
+    <item type="id" name="menu_list_toggle" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

@@ -2,9 +2,11 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.Menu;
+import android.view.MenuItem;
 
 /**
  * Helper to tint menu items for activities and fragments
@@ -34,5 +36,12 @@ public class MenuTintDelegate {
             drawable = DrawableCompat.wrap(drawable);
             DrawableCompat.setTint(drawable, mTextColorPrimary);
         }
+    }
+
+    public void setIcon(MenuItem item, @DrawableRes int icon) {
+        item.setIcon(icon);
+        Drawable drawable = item.getIcon();
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, mTextColorPrimary);
     }
 }

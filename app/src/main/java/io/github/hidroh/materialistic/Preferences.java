@@ -70,6 +70,18 @@ public class Preferences {
         editor.apply();
     }
 
+    public static boolean isListItemCardView(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_list_item_view), true);
+    }
+
+    public static void setListItemCardView(Context context, boolean isCardView) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(context.getString(R.string.pref_list_item_view), isCardView)
+                .apply();
+    }
+
     public static boolean isSortByRecent(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_search_sort),

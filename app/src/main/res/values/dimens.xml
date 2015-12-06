@@ -13,6 +13,7 @@
     <dimen name="comment_button_small_size">48dp</dimen>
     <dimen name="level_indicator_width">24dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="divider">1dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_size_small">14sp</dimen>

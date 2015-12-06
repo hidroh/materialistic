@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -18,11 +19,17 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
 
     private Context mContext;
     private int mLastSelectedPosition = -1;
+    private int mCardElevation;
+    private int mCardRadius;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
+        mCardElevation = mContext.getResources()
+                .getDimensionPixelSize(R.dimen.cardview_default_elevation);
+        mCardRadius = mContext.getResources()
+                .getDimensionPixelSize(R.dimen.cardview_default_radius);
     }
 
     @Override
@@ -34,6 +41,13 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     @Override
     public final void onBindViewHolder(final VH holder, int position) {
         final T item = getItem(position);
+        if (shouldCompact()) {
+            holder.mCardView.setCardElevation(0);
+            holder.mCardView.setRadius(0);
+        } else {
+            holder.mCardView.setCardElevation(mCardElevation);
+            holder.mCardView.setRadius(mCardRadius);
+        }
         if (!isItemAvailable(item)) {
             clearViewHolder(holder);
             loadItem(holder.getAdapterPosition());
@@ -55,6 +69,8 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         });
         bindItem(holder);
     }
+
+    protected abstract boolean shouldCompact();
 
     protected void loadItem(int adapterPosition) {
         // override to load item if needed
@@ -132,9 +148,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         public final StoryView mStoryView;
+        public final CardView mCardView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
+            mCardView = (CardView) itemView;
             mStoryView = (StoryView) itemView.findViewById(R.id.story_view);
         }
     }

@@ -172,5 +172,7 @@
         ]]>
     </string>
     <string name="file_not_supported">Content type not supported</string>
+    <string name="card_view">Card view</string>
+    <string name="compact_view">Compact view</string>
 
 </resources>

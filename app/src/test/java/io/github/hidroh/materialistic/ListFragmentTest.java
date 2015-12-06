@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -26,11 +27,15 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ListActivity;
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -38,8 +43,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentTest {
     private ActivityController<ListActivity> controller;
@@ -53,7 +59,7 @@ public class ListFragmentTest {
         TestApplication.applicationGraph.inject(this);
         reset(itemManager);
         controller = Robolectric.buildActivity(ListActivity.class)
-                        .create().start().resume().visible();
+                        .create().postCreate(null).start().resume().visible();
         activity = controller.get();
     }
 
@@ -64,7 +70,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isRefreshing();
@@ -78,7 +84,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
@@ -97,7 +103,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -149,7 +155,7 @@ public class ListFragmentTest {
         Fragment fragment = Fragment.instantiate(activity, ListFragment.class.getName(), args);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, fragment)
+                .add(R.id.content, fragment)
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
         listener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {
@@ -171,7 +177,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -188,7 +194,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -205,7 +211,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -229,7 +235,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -245,12 +251,85 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content,
+                .add(R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
         controller.pause().stop().destroy();
         listener.getValue().onResponse(null);
         // no exception
+    }
+
+    @Test
+    public void testLayoutToggle() {
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.content,
+                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
+                .commit();
+        Rect rect = new Rect();
+        assertCardView(rect);
+        shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
+        assertCompactView(rect);
+        shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
+        assertCardView(rect);
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void testTogglePreferenceChange() {
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.content,
+                        Fragment.instantiate(activity, ListFragment.class.getName(), args),
+                        ListFragment.class.getName())
+                .commit();
+        Rect rect = new Rect();
+        assertCardView(rect);
+        controller.pause();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_list_item_view), false)
+                .commit();
+        controller.resume().postResume();
+        activity.getSupportFragmentManager().findFragmentByTag(ListFragment.class.getName())
+                .onPrepareOptionsMenu(shadowOf(activity).getOptionsMenu());
+        assertCompactView(rect);
+        controller.pause().stop().destroy();
+    }
+
+    private void assertCardView(Rect rect) {
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor
+                .extract(recyclerView);
+        shadowRecyclerView.getItemDecorations().get(0)
+                .getItemOffsets(rect, null, recyclerView, null);
+        int margin = activity.getResources().getDimensionPixelSize(R.dimen.margin);
+        assertThat(rect).hasLeft(margin * 2)
+                .hasRight(margin * 2)
+                .hasBottom(margin);
+        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_list_toggle))
+                .hasTitle(activity.getString(R.string.compact_view));
+    }
+
+    private void assertCompactView(Rect rect) {
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor
+                .extract(recyclerView);
+        shadowRecyclerView.getItemDecorations().get(0)
+                .getItemOffsets(rect, null, recyclerView, null);
+        int divider = activity.getResources().getDimensionPixelSize(R.dimen.divider);
+        assertThat(rect).hasTop(0)
+                .hasLeft(0)
+                .hasRight(0)
+                .hasBottom(divider);
+        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_list_toggle))
+                .hasTitle(activity.getString(R.string.card_view));
     }
 }

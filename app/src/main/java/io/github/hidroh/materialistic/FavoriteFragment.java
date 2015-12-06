@@ -14,7 +14,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -24,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,13 +32,12 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
-public class FavoriteFragment extends BaseFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>, Scrollable {
+public class FavoriteFragment extends BaseListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
-    private RecyclerView mRecyclerView;
     private FavoriteManager.Cursor mCursor;
-    private RecyclerViewAdapter mAdapter;
+    private final RecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -123,11 +120,12 @@ public class FavoriteFragment extends BaseFragment
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
-        setHasOptionsMenu(true);
         mMultiPaneListener = (MultiPaneListener) context;
         mDataChangedListener = (DataChangedListener) context;
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver, FavoriteManager.makeGetIntentFilter());
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
+                FavoriteManager.makeGetIntentFilter());
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
+                FavoriteManager.makeClearIntentFilter());
     }
 
     @Override
@@ -142,17 +140,9 @@ public class FavoriteFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_favorite, container, false);
-        mAdapter = new RecyclerViewAdapter();
+        final View view = getLayoutInflater(savedInstanceState)
+                .inflate(R.layout.fragment_favorite, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
-            @Override
-            public int getOrientation() {
-                return LinearLayout.VERTICAL;
-            }
-        });
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(mAdapter);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -215,6 +205,7 @@ public class FavoriteFragment extends BaseFragment
         invalidateMenuItems(menu);
         menu.findItem(R.id.menu_search).setVisible(!TextUtils.isEmpty(mFilter) ||
                 mAdapter.getItemCount() > 0);
+        super.onPrepareOptionsMenu(menu);
     }
 
     private void invalidateMenuItems(Menu menu) {
@@ -315,11 +306,6 @@ public class FavoriteFragment extends BaseFragment
         super.onDetach();
     }
 
-    @Override
-    public void scrollToTop() {
-        mRecyclerView.smoothScrollToPosition(0);
-    }
-
     /**
      * Filters list data by given query
      * @param query query used to filter data
@@ -328,6 +314,11 @@ public class FavoriteFragment extends BaseFragment
         mFilter = query;
         mSearchViewVisible = false;
         getLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
+    }
+
+    @Override
+    protected RecyclerView.Adapter getAdapter() {
+        return mAdapter;
     }
 
     private String makeEmailContent(FavoriteManager.Favorite[] favorites) {
@@ -408,6 +399,11 @@ public class FavoriteFragment extends BaseFragment
             return mMultiPaneListener.getSelectedItem() != null &&
                     itemId.equals(mMultiPaneListener.getSelectedItem().getId()) ||
                     mSelected.contains(itemId);
+        }
+
+        @Override
+        protected boolean shouldCompact() {
+            return !mCardView;
         }
 
         private void toggle(String itemId, int position) {
