@@ -14,4 +14,7 @@
         <attr name="entries" />
         <attr name="entryValues" />
     </declare-styleable>
+    <declare-styleable name="StoryView">
+        <attr name="local" format="boolean" />
+    </declare-styleable>
 </resources>

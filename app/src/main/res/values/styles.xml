@@ -227,7 +227,6 @@
     <!-- Card styles -->
     <!-- =========== -->
     <style name="BaseAppCardView">
-        <item name="cardBackgroundColor">?attr/colorCardBackground</item>
         <item name="cardUseCompatPadding">true</item>
         <item name="cardPreventCornerOverlap">false</item>
         <item name="cardElevation">@dimen/cardview_default_elevation</item>

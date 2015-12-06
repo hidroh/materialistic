@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -88,9 +86,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Inject FavoriteManager mFavoriteManager;
     @Inject SessionManager mSessionManager;
     private boolean mResumed;
-    private int mTertiaryTextColorResId;
-    private int mSecondaryTextColorResId;
-    private int mPromotedColorResId;
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
     private boolean mAttached;
@@ -102,14 +97,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        TypedArray ta = context.obtainStyledAttributes(new int[]{
-                android.R.attr.textColorTertiary,
-                android.R.attr.textColorSecondary,
-        });
-        mTertiaryTextColorResId = ta.getInt(0, 0);
-        mSecondaryTextColorResId = ta.getInt(1, 0);
-        mPromotedColorResId = ContextCompat.getColor(context, R.color.greenA700);
-        ta.recycle();
         mMultiPaneListener = (MultiPaneListener) context;
         if (context instanceof RefreshCallback) {
             mRefreshCallback = (RefreshCallback) context;
@@ -392,7 +379,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
     }
 
     private class ViewHolder extends ListRecyclerViewAdapter.ItemViewHolder {
-        private final View mBookmarked;
         private final TextView mRankTextView;
         private final TextView mScoreTextView;
 
@@ -400,7 +386,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
             super(itemView);
             mRankTextView = (TextView) itemView.findViewById(R.id.rank);
             mScoreTextView = (TextView) itemView.findViewById(R.id.score);
-            mBookmarked = itemView.findViewById(R.id.bookmarked);
         }
     }
 
@@ -416,7 +401,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
             final ItemManager.Item story = getItem(position);
             holder.mRankTextView.setText(decorateUpdated(
                     String.valueOf(story.getRank()), mUpdated.contains(story)));
-            decoratePromoted(holder, story);
+            holder.mStoryView.setPromoted(mHighlightUpdated && mGreenItems.contains(story.getId()));
             holder.mScoreTextView.setText(R.string.loading_text);
             if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
                 story.setLocalRevision(mLocalRevision);
@@ -426,12 +411,12 @@ public class ListFragment extends BaseFragment implements Scrollable {
                             @Override
                             public void onCheckComplete(boolean isFavorite) {
                                 story.setFavorite(isFavorite);
-                                decorateFavorite(holder, story);
+                                holder.mStoryView.setFavorite(story.isFavorite());
                             }
 
                         });
             } else {
-                decorateFavorite(holder, story);
+                holder.mStoryView.setFavorite(story.isFavorite());
             }
             if (!TextUtils.isEmpty(story.getTitle())) {
                 bindViewHolder(holder, story);
@@ -493,16 +478,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
         private void markAsViewed(ItemManager.Item item, ViewHolder holder) {
             mSessionManager.view(getActivity(), item.getId());
             item.setIsViewed(true);
-            decorateViewed(holder, true);
-        }
-
-        private void decorateViewed(ViewHolder holder, boolean isViewed) {
-            ((TextView) holder.mTitleTextView.getCurrentView())
-                    .setTextColor(isViewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
-        }
-
-        private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {
-            holder.mBookmarked.setVisibility(story.isFavorite() ? View.VISIBLE : View.INVISIBLE);
+            holder.mStoryView.setViewed(true);
         }
 
         private Spannable decorateUpdated(String text, boolean updated) {
@@ -515,26 +491,18 @@ public class ListFragment extends BaseFragment implements Scrollable {
             return sb;
         }
 
-        private void decoratePromoted(ViewHolder holder, ItemManager.Item story) {
-            if (mHighlightUpdated && mGreenItems.contains(story.getId())) {
-                holder.mRankTextView.setTextColor(mPromotedColorResId);
-            } else {
-                holder.mRankTextView.setTextColor(mTertiaryTextColorResId);
-            }
-        }
-
         @Override
         protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
             super.bindViewHolder(holder, story);
             if (story.isViewed() != null || mViewed.contains(story.getId())) {
-                decorateViewed(holder, mViewed.contains(story.getId()) || story.isViewed());
+                holder.mStoryView.setViewed(mViewed.contains(story.getId()) || story.isViewed());
             } else {
                 mSessionManager.isViewed(getActivity(), story.getId(),
                         new SessionManager.OperationCallbacks() {
                             @Override
                             public void onCheckComplete(boolean isViewed) {
                                 story.setIsViewed(isViewed);
-                                decorateViewed(holder, isViewed);
+                                holder.mStoryView.setViewed(isViewed);
                             }
                         });
             }
@@ -572,7 +540,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
                                 .show();
                     }
                     story.setFavorite(!story.isFavorite());
-                    decorateFavorite(holder, story);
+                    holder.mStoryView.setFavorite(story.isFavorite());
                     mUndo = false;
                     return true;
                 }
