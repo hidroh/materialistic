@@ -126,6 +126,10 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 } else if (SessionManager.ACTION_ADD.equals(intent.getAction())) {
                     mViewed.add(intent.getStringExtra(SessionManager.ACTION_ADD_EXTRA_DATA));
                 }
+                if (!mResumed) {
+                    // refresh favorite/viewed state if any changes
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         };
         LocalBroadcastManager.getInstance(getActivity())
@@ -230,8 +234,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
     public void onResume() {
         super.onResume();
         mResumed = true;
-        // refresh favorite/viewed state if any changes
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -441,13 +443,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
                         if (!mResumed) {
                             return;
                         }
-
                         if (response == null) {
                             return;
                         }
-
                         story.populate(response);
-                        bindViewHolder(holder, story);
+                        notifyItemChanged(holder.getAdapterPosition());
                     }
 
                     @Override
@@ -493,14 +493,12 @@ public class ListFragment extends BaseFragment implements Scrollable {
         private void markAsViewed(ItemManager.Item item, ViewHolder holder) {
             mSessionManager.view(getActivity(), item.getId());
             item.setIsViewed(true);
-            decorateViewed(holder, item);
+            decorateViewed(holder, true);
         }
 
-        private void decorateViewed(ViewHolder holder, ItemManager.Item story) {
-            boolean viewed = mViewed.contains(story.getId()) ||
-                    story.isViewed() != null && story.isViewed();
+        private void decorateViewed(ViewHolder holder, boolean isViewed) {
             ((TextView) holder.mTitleTextView.getCurrentView())
-                    .setTextColor(viewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
+                    .setTextColor(isViewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
         }
 
         private void decorateFavorite(ViewHolder holder, ItemManager.Item story) {
@@ -528,17 +526,17 @@ public class ListFragment extends BaseFragment implements Scrollable {
         @Override
         protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
             super.bindViewHolder(holder, story);
-            if (story.isViewed() == null) {
+            if (story.isViewed() != null || mViewed.contains(story.getId())) {
+                decorateViewed(holder, mViewed.contains(story.getId()) || story.isViewed());
+            } else {
                 mSessionManager.isViewed(getActivity(), story.getId(),
                         new SessionManager.OperationCallbacks() {
                             @Override
                             public void onCheckComplete(boolean isViewed) {
                                 story.setIsViewed(isViewed);
-                                decorateViewed(holder, story);
+                                decorateViewed(holder, isViewed);
                             }
                         });
-            } else {
-                decorateViewed(holder, story);
             }
             holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
             if (story.getKidCount() > 0) {
