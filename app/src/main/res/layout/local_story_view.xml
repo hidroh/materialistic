@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:id="@id/posted"
+        android:text="@string/loading_text"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/comment"
+        android:paddingTop="@dimen/padding"
+        style="@style/textSubtitleStyle.Italic" />
+    <TextSwitcher
+        android:id="@id/title"
+        android:layout_below="@id/posted"
+        android:layout_toLeftOf="@id/comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <io.github.hidroh.materialistic.widget.TextView
+            android:text="@string/loading_text"
+            style="@style/textTitleStyle"
+            android:lines="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <io.github.hidroh.materialistic.widget.TextView
+            style="@style/textTitleStyle"
+            android:lines="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </TextSwitcher>
+    <TextView
+        android:id="@id/source"
+        android:text="@string/loading_text"
+        android:layout_below="@id/title"
+        android:paddingBottom="@dimen/padding"
+        style="@style/textSubtitleStyle.Italic" />
+    <ImageButton
+        android:id="@id/comment"
+        android:src="@drawable/ic_comment_grey600_48dp"
+        android:tint="?attr/colorAccent"
+        android:background="@null"
+        android:paddingTop="@dimen/padding"
+        android:paddingBottom="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</merge>

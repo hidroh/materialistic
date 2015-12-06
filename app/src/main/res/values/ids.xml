@@ -21,6 +21,7 @@
     <item type="id" name="sub_item_view" />
     <item type="id" name="score" />
     <item type="id" name="level" />
+    <item type="id" name="story_view" />
 
     <!-- drawer -->
     <item type="id" name="drawer_layout" />

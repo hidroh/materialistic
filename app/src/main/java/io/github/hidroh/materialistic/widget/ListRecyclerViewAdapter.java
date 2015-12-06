@@ -2,14 +2,11 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
-import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -22,16 +19,12 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem> extends RecyclerView.Adapter<VH> {
 
     private Context mContext;
-    private int mCardBackgroundColorResId;
-    private int mCardHighlightColorResId;
     private int mLastSelectedPosition = -1;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
-        mCardBackgroundColorResId = AppUtils.getThemedResId(mContext, R.attr.colorCardBackground);
-        mCardHighlightColorResId = AppUtils.getThemedResId(mContext, R.attr.colorCardHighlight);
     }
 
     @Override
@@ -49,6 +42,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         holder.mTitleTextView.setCurrentText(mContext.getString(R.string.loading_text));
         holder.mTitleTextView.setText(item.getDisplayedTitle());
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext, true));
+        holder.mStoryView.setChecked(isSelected(item.getId()));
         switch (item.getType()) {
             case ItemManager.Item.JOB_TYPE:
                 holder.mSourceTextView.setText(null);
@@ -77,7 +71,6 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
                 handleCommentButtonClick(item, holder);
             }
         });
-        decorateCardSelection(holder, item.getId());
     }
 
     /**
@@ -140,12 +133,6 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      */
     protected abstract ItemManager.WebItem getItem(int position);
 
-    private void decorateCardSelection(ItemViewHolder holder, String itemId) {
-        ((CardView) holder.itemView).setCardBackgroundColor(
-                ContextCompat.getColor(mContext, isSelected(itemId) ?
-                        mCardHighlightColorResId : mCardBackgroundColorResId));
-    }
-
     private void openItem(T item) {
         final Intent intent = new Intent(mContext, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
@@ -161,9 +148,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         public final TextSwitcher mTitleTextView;
         public final View mCommentButton;
         public final TextView mSourceTextView;
+        public final StoryView mStoryView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
+            mStoryView = (StoryView) itemView.findViewById(R.id.story_view);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mTitleTextView = (TextSwitcher) itemView.findViewById(R.id.title);
             mSourceTextView = (TextView) itemView.findViewById(R.id.source);
