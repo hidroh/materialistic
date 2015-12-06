@@ -14,6 +14,8 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -23,17 +25,18 @@ import io.github.hidroh.materialistic.assertj.TextSwitcherAssert;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ListActivity;
+import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
+@Config(shadows = {ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;
     private RecyclerView.ViewHolder holder;
-    private ListActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item[]>> storiesListener;
@@ -45,7 +48,7 @@ public class ListFragmentViewHolderEdgeTest {
         reset(itemManager);
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
-        activity = controller.get();
+        ListActivity activity = controller.get();
         Bundle args = new Bundle();
         args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
@@ -58,8 +61,10 @@ public class ListFragmentViewHolderEdgeTest {
         storiesListener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {
         }});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        holder = recyclerView.getAdapter().createViewHolder(recyclerView, 0);
-        recyclerView.getAdapter().bindViewHolder(holder, 0);
+        ShadowRecyclerViewAdapter shadowAdapter = ((ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(recyclerView.getAdapter()));
+        shadowAdapter.makeItemVisible(0);
+        holder = shadowAdapter.getViewHolder(0);
     }
 
     @Test

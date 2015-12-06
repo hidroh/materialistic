@@ -346,28 +346,33 @@ public class FavoriteFragment extends BaseFragment
         }
 
         @Override
-        public void onBindViewHolder(final ItemViewHolder holder, int position) {
-            final FavoriteManager.Favorite favorite = getItem(position);
-            if (favorite == null) {
-                clearViewHolder(holder);
-            } else {
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        if (mActionMode == null && !mSearchViewVisible) {
-                            mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
-                            toggle(favorite.getId(), holder.getAdapterPosition());
-                            if (mMultiPaneListener.getSelectedItem() != null) {
-                                mSelected.add(mMultiPaneListener.getSelectedItem().getId());
-                            }
-                            return true;
-                        }
+        public int getItemCount() {
+            return mCursor == null ? 0 : mCursor.getCount();
+        }
 
-                        return false;
+        @Override
+        protected void bindItem(final ItemViewHolder holder) {
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    FavoriteManager.Favorite favorite = getItem(holder.getAdapterPosition());
+                    if (mActionMode == null && !mSearchViewVisible) {
+                        mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
+                        toggle(favorite.getId(), holder.getAdapterPosition());
+                        if (mMultiPaneListener.getSelectedItem() != null) {
+                            mSelected.add(mMultiPaneListener.getSelectedItem().getId());
+                        }
+                        return true;
                     }
-                });
-                bindViewHolder(holder, favorite);
-            }
+
+                    return false;
+                }
+            });
+        }
+
+        @Override
+        protected boolean isItemAvailable(FavoriteManager.Favorite item) {
+            return item != null;
         }
 
         @Override
@@ -378,11 +383,6 @@ public class FavoriteFragment extends BaseFragment
             } else {
                 toggle(item.getId(), holder.getLayoutPosition());
             }
-        }
-
-        @Override
-        public int getItemCount() {
-            return mCursor == null ? 0 : mCursor.getCount();
         }
 
         @Override

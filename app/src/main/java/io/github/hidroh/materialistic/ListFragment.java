@@ -15,16 +15,11 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,7 +35,6 @@ import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
-import io.github.hidroh.materialistic.widget.AsteriskSpan;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class ListFragment extends BaseFragment implements Scrollable {
@@ -378,69 +372,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
         }
     }
 
-    private class ViewHolder extends ListRecyclerViewAdapter.ItemViewHolder {
-        private final TextView mRankTextView;
-        private final TextView mScoreTextView;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            mRankTextView = (TextView) itemView.findViewById(R.id.rank);
-            mScoreTextView = (TextView) itemView.findViewById(R.id.score);
-        }
-    }
-
-    private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ViewHolder, ItemManager.Item> {
+    private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, ItemManager.Item> {
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(getLayoutInflater(null)
+        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ItemViewHolder(getLayoutInflater(null)
                     .inflate(R.layout.item_story, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            final ItemManager.Item story = getItem(position);
-            holder.mRankTextView.setText(decorateUpdated(
-                    String.valueOf(story.getRank()), mUpdated.contains(story)));
-            holder.mStoryView.setPromoted(mHighlightUpdated && mGreenItems.contains(story.getId()));
-            holder.mScoreTextView.setText(R.string.loading_text);
-            if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
-                story.setLocalRevision(mLocalRevision);
-                mChangedFavorites.remove(story.getId());
-                mFavoriteManager.check(getActivity(), story.getId(),
-                        new FavoriteManager.OperationCallbacks() {
-                            @Override
-                            public void onCheckComplete(boolean isFavorite) {
-                                story.setFavorite(isFavorite);
-                                holder.mStoryView.setFavorite(story.isFavorite());
-                            }
-
-                        });
-            } else {
-                holder.mStoryView.setFavorite(story.isFavorite());
-            }
-            if (!TextUtils.isEmpty(story.getTitle())) {
-                bindViewHolder(holder, story);
-            } else {
-                clearViewHolder(holder);
-                mItemManager.getItem(story.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
-                    @Override
-                    public void onResponse(ItemManager.Item response) {
-                        if (!mResumed) {
-                            return;
-                        }
-                        if (response == null) {
-                            return;
-                        }
-                        story.populate(response);
-                        notifyItemChanged(holder.getAdapterPosition());
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        // do nothing
-                    }
-                });
-            }
         }
 
         @Override
@@ -453,68 +389,31 @@ public class ListFragment extends BaseFragment implements Scrollable {
         }
 
         @Override
-        protected void handleItemClick(ItemManager.Item item, ViewHolder holder) {
-            super.handleItemClick(item, holder);
-            markAsViewed(item, holder);
+        protected void loadItem(final int adapterPosition) {
+            final ItemManager.Item partialStory = getItem(adapterPosition);
+            mItemManager.getItem(partialStory.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
+                @Override
+                public void onResponse(ItemManager.Item response) {
+                    if (!mResumed || response == null) {
+                        return;
+                    }
+                    partialStory.populate(response);
+                    notifyItemChanged(adapterPosition);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    // do nothing
+                }
+            });
         }
 
         @Override
-        protected void handleCommentButtonClick(ItemManager.Item item, ViewHolder holder) {
-            super.handleCommentButtonClick(item, holder);
-            markAsViewed(item, holder);
-        }
-
-        @Override
-        protected void onItemSelected(ItemManager.Item item, View itemView) {
-            mMultiPaneListener.onItemSelected(item);
-        }
-
-        @Override
-        protected boolean isSelected(String itemId) {
-            return mMultiPaneListener.getSelectedItem() != null &&
-                    itemId.equals(mMultiPaneListener.getSelectedItem().getId());
-        }
-
-        private void markAsViewed(ItemManager.Item item, ViewHolder holder) {
-            mSessionManager.view(getActivity(), item.getId());
-            item.setIsViewed(true);
-            holder.mStoryView.setViewed(true);
-        }
-
-        private Spannable decorateUpdated(String text, boolean updated) {
-            SpannableStringBuilder sb = new SpannableStringBuilder(text);
-            if (mHighlightUpdated && updated) {
-                sb.append("*");
-                sb.setSpan(new AsteriskSpan(getActivity()), sb.length() - 1, sb.length(),
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            return sb;
-        }
-
-        @Override
-        protected void bindViewHolder(final ViewHolder holder, final ItemManager.Item story) {
-            super.bindViewHolder(holder, story);
-            if (story.isViewed() != null || mViewed.contains(story.getId())) {
-                holder.mStoryView.setViewed(mViewed.contains(story.getId()) || story.isViewed());
-            } else {
-                mSessionManager.isViewed(getActivity(), story.getId(),
-                        new SessionManager.OperationCallbacks() {
-                            @Override
-                            public void onCheckComplete(boolean isViewed) {
-                                story.setIsViewed(isViewed);
-                                holder.mStoryView.setViewed(isViewed);
-                            }
-                        });
-            }
-            holder.mScoreTextView.setText(getString(R.string.score, story.getScore()));
-            if (story.getKidCount() > 0) {
-                ((Button) holder.mCommentButton).setText(decorateUpdated(
-                        getString(R.string.comments_count, story.getKidCount()),
-                        story.hasNewKids()));
-                holder.mCommentButton.setVisibility(View.VISIBLE);
-            } else {
-                holder.mCommentButton.setVisibility(View.GONE);
-            }
+        protected void bindItem(final ItemViewHolder holder) {
+            final ItemManager.Item story = getItem(holder.getAdapterPosition());
+            bindUpdated(holder, story);
+            bindFavorite(holder, story);
+            bindViewed(holder, story);
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 private boolean mUndo;
 
@@ -548,6 +447,34 @@ public class ListFragment extends BaseFragment implements Scrollable {
         }
 
         @Override
+        protected boolean isItemAvailable(ItemManager.Item item) {
+            return item != null && !TextUtils.isEmpty(item.getTitle());
+        }
+
+        @Override
+        protected void handleItemClick(ItemManager.Item item, ItemViewHolder holder) {
+            super.handleItemClick(item, holder);
+            markAsViewed(item, holder);
+        }
+
+        @Override
+        protected void handleCommentButtonClick(ItemManager.Item item, ItemViewHolder holder) {
+            super.handleCommentButtonClick(item, holder);
+            markAsViewed(item, holder);
+        }
+
+        @Override
+        protected void onItemSelected(ItemManager.Item item, View itemView) {
+            mMultiPaneListener.onItemSelected(item);
+        }
+
+        @Override
+        protected boolean isSelected(String itemId) {
+            return mMultiPaneListener.getSelectedItem() != null &&
+                    itemId.equals(mMultiPaneListener.getSelectedItem().getId());
+        }
+
+        @Override
         protected ItemManager.Item getItem(int position) {
             if (mShowAll) {
                 return mItems.get(position);
@@ -555,6 +482,50 @@ public class ListFragment extends BaseFragment implements Scrollable {
                 return mUpdated.get(position);
             }
         }
-    }
 
+        private void bindUpdated(ItemViewHolder holder, ItemManager.Item story) {
+            if (mHighlightUpdated) {
+                holder.mStoryView.setUpdated(story, mUpdated, mGreenItems);
+            }
+        }
+
+        private void bindViewed(final ItemViewHolder holder, final ItemManager.Item story) {
+            if (story.isViewed() != null || mViewed.contains(story.getId())) {
+                holder.mStoryView.setViewed(mViewed.contains(story.getId()) || story.isViewed());
+            } else {
+                mSessionManager.isViewed(getActivity(), story.getId(),
+                        new SessionManager.OperationCallbacks() {
+                            @Override
+                            public void onCheckComplete(boolean isViewed) {
+                                story.setIsViewed(isViewed);
+                                holder.mStoryView.setViewed(isViewed);
+                            }
+                        });
+            }
+        }
+
+        private void bindFavorite(final ItemViewHolder holder, final ItemManager.Item story) {
+            if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
+                story.setLocalRevision(mLocalRevision);
+                mChangedFavorites.remove(story.getId());
+                mFavoriteManager.check(getActivity(), story.getId(),
+                        new FavoriteManager.OperationCallbacks() {
+                            @Override
+                            public void onCheckComplete(boolean isFavorite) {
+                                story.setFavorite(isFavorite);
+                                holder.mStoryView.setFavorite(story.isFavorite());
+                            }
+
+                        });
+            } else {
+                holder.mStoryView.setFavorite(story.isFavorite());
+            }
+        }
+
+        private void markAsViewed(ItemManager.Item item, ItemViewHolder holder) {
+            mSessionManager.view(getActivity(), item.getId());
+            item.setIsViewed(true);
+            holder.mStoryView.setViewed(true);
+        }
+    }
 }

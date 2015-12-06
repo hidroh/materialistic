@@ -32,6 +32,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
@@ -46,6 +47,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 
 import static junit.framework.Assert.assertEquals;
@@ -64,7 +66,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowContentResolverCompatJellybean.class})
+@Config(shadows = {ShadowContentResolverCompatJellybean.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityTest {
     private ActivityController<TestFavoriteActivity> controller;
@@ -145,24 +147,30 @@ public class FavoriteActivityTest {
     @Test
     public void testItemClick() {
         assertEquals(2, adapter.getItemCount());
-        RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(holder, 0);
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
     @Test
     public void testActionMode() {
-        RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(holder, 0);
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performLongClick();
         assertNotNull(activity.actionModeCallback);
     }
 
     @Test
     public void testSelectionToggle() {
-        RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(holder, 0);
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performLongClick();
         holder.itemView.performClick();
         assertNull(shadowOf(activity).getNextStartedActivity());
@@ -172,8 +180,10 @@ public class FavoriteActivityTest {
 
     @Test
     public void testDelete() {
-        RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(holder, 0);
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performLongClick();
 
         ActionMode actionMode = mock(ActionMode.class);
