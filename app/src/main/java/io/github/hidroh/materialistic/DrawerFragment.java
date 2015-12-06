@@ -108,6 +108,7 @@ public class DrawerFragment extends BaseFragment {
                 @Override
                 public void run() {
                     final Intent intent = new Intent(getActivity(), activityClass);
+                    // TODO M bug https://code.google.com/p/android/issues/detail?id=193822
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     getActivity().startActivity(intent);
                 }
