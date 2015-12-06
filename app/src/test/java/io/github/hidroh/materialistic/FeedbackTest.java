@@ -48,7 +48,6 @@ public class FeedbackTest {
         controller = Robolectric.buildActivity(AboutActivity.class);
         activity = controller.create().postCreate(null).start().resume().get();
         activity.findViewById(R.id.drawer_feedback).performClick();
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
         dialog = ShadowAlertDialog.getLatestDialog();
         assertNotNull(dialog);
     }

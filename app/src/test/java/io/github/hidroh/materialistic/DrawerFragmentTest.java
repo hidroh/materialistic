@@ -1,12 +1,14 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
+import android.support.v4.widget.DrawerLayout;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.shadows.ShadowLooper;
-import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
+import org.robolectric.Robolectric;
+import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,13 +17,16 @@ import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRun
 import io.github.hidroh.materialistic.test.TestListActivity;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class DrawerFragmentTest {
     private final int drawerResId;
     private final Class<? extends Activity> startedActivity;
-    private DrawerFragment fragment;
+    private ActivityController<TestListActivity> controller;
+    private TestListActivity activity;
 
     public DrawerFragmentTest(int drawerResId, Class<? extends Activity> startedActivity) {
         this.drawerResId = drawerResId;
@@ -45,16 +50,32 @@ public class DrawerFragmentTest {
 
     @Before
     public void setUp() {
-        fragment = new DrawerFragment();
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestListActivity.class,
-                android.R.id.content);
+        controller = Robolectric.buildActivity(TestListActivity.class)
+                .create()
+                .postCreate(null)
+                .start()
+                .resume()
+                .visible();
+        activity = controller.get();
+        shadowOf(activity).clickMenuItem(android.R.id.home);
     }
 
     @Test
     public void test() {
-        fragment.getView().findViewById(drawerResId).performClick();
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
+                .getDrawerListener()
+                .onDrawerClosed(activity.findViewById(R.id.drawer));
+        assertNull(shadowOf(activity).getNextStartedActivity());
+        activity.findViewById(drawerResId).performClick();
+        shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
+                .getDrawerListener()
+                .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertEquals(startedActivity.getName(),
-                shadowOf(fragment.getActivity()).getNextStartedActivity().getComponent().getClassName());
+                shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
+    }
+
+    @After
+    public void tearDown() {
+        controller.pause().stop().destroy();
     }
 }
