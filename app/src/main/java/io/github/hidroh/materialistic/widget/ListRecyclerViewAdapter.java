@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
 
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
@@ -33,45 +31,38 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         super.onDetachedFromRecyclerView(recyclerView);
     }
 
-    /**
-     * Populates view holder with data from given item
-     * @param holder    view holder to populate
-     * @param item      item that contains data
-     */
-    protected void bindViewHolder(final VH holder, final T item) {
-        holder.mTitleTextView.setCurrentText(mContext.getString(R.string.loading_text));
-        holder.mTitleTextView.setText(item.getDisplayedTitle());
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, true));
-        holder.mStoryView.setChecked(isSelected(item.getId()));
-        switch (item.getType()) {
-            case ItemManager.Item.JOB_TYPE:
-                holder.mSourceTextView.setText(null);
-                holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_work_grey600_18dp, 0, 0, 0);
-                break;
-            case ItemManager.Item.POLL_TYPE:
-                holder.mSourceTextView.setText(null);
-                holder.mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
-                break;
-            default:
-                holder.mSourceTextView.setText(item.getSource());
-                holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
-                break;
+    @Override
+    public final void onBindViewHolder(final VH holder, int position) {
+        final T item = getItem(position);
+        if (!isItemAvailable(item)) {
+            clearViewHolder(holder);
+            loadItem(holder.getAdapterPosition());
+            return;
         }
+        holder.mStoryView.setStory(item);
+        holder.mStoryView.setChecked(isSelected(item.getId()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleItemClick(item, holder);
             }
         });
-        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
+        holder.mStoryView.setOnCommentClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleCommentButtonClick(item, holder);
             }
         });
+        bindItem(holder);
     }
+
+    protected void loadItem(int adapterPosition) {
+        // override to load item if needed
+    }
+
+    protected abstract void bindItem(VH holder);
+
+    protected abstract boolean isItemAvailable(T item);
 
     /**
      * Handles item click
@@ -102,12 +93,8 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * Clears previously bind data from given view holder
      * @param holder    view holder to clear
      */
-    protected void clearViewHolder(VH holder) {
-        holder.mTitleTextView.setCurrentText(mContext.getString(R.string.loading_text));
-        holder.mPostedTextView.setText(R.string.loading_text);
-        holder.mSourceTextView.setText(R.string.loading_text);
-        holder.mSourceTextView.setCompoundDrawables(null, null, null, null);
-        holder.mCommentButton.setVisibility(View.GONE);
+    protected final void clearViewHolder(VH holder) {
+        holder.mStoryView.reset();
         holder.itemView.setOnClickListener(null);
         holder.itemView.setOnLongClickListener(null);
     }
@@ -131,7 +118,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * @param position    item position
      * @return item at given position or null
      */
-    protected abstract ItemManager.WebItem getItem(int position);
+    protected abstract T getItem(int position);
 
     private void openItem(T item) {
         final Intent intent = new Intent(mContext, ItemActivity.class);
@@ -144,19 +131,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
      */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mPostedTextView;
-        public final TextSwitcher mTitleTextView;
-        public final View mCommentButton;
-        public final TextView mSourceTextView;
         public final StoryView mStoryView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             mStoryView = (StoryView) itemView.findViewById(R.id.story_view);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
-            mTitleTextView = (TextSwitcher) itemView.findViewById(R.id.title);
-            mSourceTextView = (TextView) itemView.findViewById(R.id.source);
-            mCommentButton = itemView.findViewById(R.id.comment);
         }
     }
 }
