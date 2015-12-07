@@ -10,6 +10,7 @@
     <string name="pref_highlight_updated_help">pref_highlight_updated_help</string>
     <string name="pref_item_click">pref_item_click</string> <!-- deprecated -->
     <string name="pref_item_search_recent">pref_item_search_recent</string> <!-- deprecated -->
+    <string name="pref_list_item_view">pref_list_item_view</string>
     <string name="pref_max_lines">pref_max_lines</string>
     <string name="pref_popular_range">pref_popular_range</string>
     <string name="pref_readability_font">pref_readability_font</string>

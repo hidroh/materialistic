@@ -126,6 +126,7 @@ public class StoryView extends RelativeLayout implements Checkable {
 
     public void reset() {
         if (!mIsLocal) {
+            mRankTextView.setText(R.string.loading_text);
             mScoreTextView.setText(R.string.loading_text);
         }
         mTitleTextView.setCurrentText(getContext().getString(R.string.loading_text));

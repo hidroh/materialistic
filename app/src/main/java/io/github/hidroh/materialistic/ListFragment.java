@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -13,13 +12,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,7 +34,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
-public class ListFragment extends BaseFragment implements Scrollable {
+public class ListFragment extends BaseListFragment {
 
     public static final String EXTRA_ITEM_MANAGER = ListFragment.class.getName() + ".EXTRA_ITEM_MANAGER";
     public static final String EXTRA_FILTER = ListFragment.class.getName() + ".EXTRA_FILTER";
@@ -57,8 +54,7 @@ public class ListFragment extends BaseFragment implements Scrollable {
                     }
                 }
             };
-    private RecyclerView mRecyclerView;
-    private ListRecyclerViewAdapter mAdapter;
+    private final ListRecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private BroadcastReceiver mBroadcastReceiver;
     private int mLocalRevision = 0;
@@ -149,23 +145,6 @@ public class ListFragment extends BaseFragment implements Scrollable {
         mErrorView = view.findViewById(android.R.id.empty);
         mEmptyView = view.findViewById(R.id.empty_search);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
-            @Override
-            public int getOrientation() {
-                return LinearLayout.VERTICAL;
-            }
-        });
-        mRecyclerView.setHasFixedSize(true);
-        final int margin = getResources().getDimensionPixelSize(R.dimen.margin);
-        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                       RecyclerView.State state) {
-                outRect.set(margin, margin, margin, margin);
-            }
-        });
-        mAdapter = new RecyclerViewAdapter();
-        mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
@@ -246,16 +225,16 @@ public class ListFragment extends BaseFragment implements Scrollable {
         super.onDetach();
     }
 
-    @Override
-    public void scrollToTop() {
-        mRecyclerView.smoothScrollToPosition(0);
-    }
-
     public void filter(String filter) {
         mFilter = filter;
         setItems(null); // prevent updated comparison
         mSwipeRefreshLayout.setRefreshing(true);
         refresh();
+    }
+
+    @Override
+    protected RecyclerView.Adapter getAdapter() {
+        return mAdapter;
     }
 
     private void refresh() {
@@ -481,6 +460,11 @@ public class ListFragment extends BaseFragment implements Scrollable {
             } else {
                 return mUpdated.get(position);
             }
+        }
+
+        @Override
+        protected boolean shouldCompact() {
+            return !mCardView;
         }
 
         private void bindUpdated(ItemViewHolder holder, ItemManager.Item story) {
