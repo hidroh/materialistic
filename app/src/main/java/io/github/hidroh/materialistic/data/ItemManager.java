@@ -258,7 +258,7 @@ public interface ItemManager {
          * Checks if item content is expanded
          * @return true if expanded, false otherwise
          */
-        boolean isContentCollapsed();
+        boolean isContentExpanded();
 
         /**
          * Sets item content expanded state

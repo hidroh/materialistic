@@ -196,7 +196,7 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public boolean isContentCollapsed() {
+    public boolean isContentExpanded() {
         return contentCollapsed;
     }
 
