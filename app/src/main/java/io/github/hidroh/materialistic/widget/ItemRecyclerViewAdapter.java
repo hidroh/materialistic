@@ -93,8 +93,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     protected void bindContent(final VH holder, final @NonNull ItemManager.Item item) {
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
-        final int lineCount = holder.mContentTextView.getLineCount();
-        if (item.isContentCollapsed() || lineCount <= mContentMaxLines) {
+        final int lineCount = holder.mContentTextView.getLineCount(); // TODO 0 on restore state
+        if (item.isContentExpanded() || lineCount <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
             setTextIsSelectable(holder.mContentTextView, true);
             holder.mReadMoreTextView.setVisibility(View.GONE);
