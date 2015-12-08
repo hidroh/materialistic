@@ -122,6 +122,13 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_color_code), true);
     }
 
+    public static void setColorCodeEnabled(Context context, boolean enabled) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(context.getString(R.string.pref_color_code), enabled)
+                .apply();
+    }
+
     public static boolean highlightUpdatedEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.pref_highlight_updated), true);

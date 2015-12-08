@@ -35,10 +35,7 @@ public class SinglePageItemRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
         mAutoExpand = Preferences.shouldAutoExpandComments(mContext);
-        mColorCoded = Preferences.colorCodeEnabled(mContext);
-        if (mColorCoded) {
-            mColors = mContext.getResources().obtainTypedArray(R.array.color_codes);
-        }
+        mColors = mContext.getResources().obtainTypedArray(R.array.color_codes);
         mRecyclerView = recyclerView;
     }
 
@@ -56,11 +53,24 @@ public class SinglePageItemRecyclerViewAdapter
                 holder.itemView.getLayoutParams();
         params.leftMargin = mLevelIndicatorWidth * viewType;
         holder.itemView.setLayoutParams(params);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(ToggleItemViewHolder holder, int position) {
         if (mColorCoded && mColors != null && mColors.length() > 0) {
             holder.mLevel.setVisibility(View.VISIBLE);
-            holder.mLevel.setBackgroundColor(mColors.getColor(viewType % mColors.length(), 0));
+            holder.mLevel.setBackgroundColor(mColors.getColor(
+                    getItemViewType(position) % mColors.length(), 0));
+        } else {
+            holder.mLevel.setVisibility(View.GONE);
         }
-        return holder;
+        super.onBindViewHolder(holder, position);
+    }
+
+    public void setColorCodeEnabled(boolean enabled) {
+        mColorCoded = enabled;
+        notifyDataSetChanged();
     }
 
     @Override
