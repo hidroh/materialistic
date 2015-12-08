@@ -17,7 +17,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
 
-import io.github.hidroh.materialistic.test.TestInjectableActivity;
+import io.github.hidroh.materialistic.test.TestItemActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -73,7 +73,7 @@ public class AppUtilsTest {
 
     @Test
     public void testShareBroadcastReceiver() {
-        TestInjectableActivity activity = Robolectric.buildActivity(TestInjectableActivity.class).create().get();
+        TestItemActivity activity = Robolectric.buildActivity(TestItemActivity.class).create().get();
         Intent intent = new Intent();
         intent.setData(Uri.parse("http://example.com"));
         new AppUtils.ShareBroadcastReceiver().onReceive(activity, intent);

@@ -61,6 +61,7 @@
     <item type="id" name="menu_sort_recent" />
     <item type="id" name="menu_sort_popular" />
     <item type="id" name="menu_list_toggle" />
+    <item type="id" name="menu_color_code" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

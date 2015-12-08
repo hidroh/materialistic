@@ -31,13 +31,15 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
-import io.github.hidroh.materialistic.test.TestInjectableActivity;
+import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.robolectric.Shadows.shadowOf;
@@ -55,7 +57,7 @@ public class ItemFragmentSinglePageTest {
     private ToggleItemViewHolder viewHolder;
     private ToggleItemViewHolder viewHolder1;
     private ToggleItemViewHolder viewHolder2;
-    private TestInjectableActivity activity;
+    private TestItemActivity activity;
 
     @Before
     public void setUp() {
@@ -168,11 +170,11 @@ public class ItemFragmentSinglePageTest {
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        activity = Robolectric.buildActivity(TestInjectableActivity.class)
+        activity = Robolectric.buildActivity(TestItemActivity.class)
                 .create().start().resume().visible().get();
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, fragment)
+                .add(R.id.content_frame, fragment)
                 .commit();
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
@@ -216,8 +218,8 @@ public class ItemFragmentSinglePageTest {
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
-                android.R.id.content);
+        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
+                R.id.content_frame);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
         ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
@@ -305,15 +307,14 @@ public class ItemFragmentSinglePageTest {
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestInjectableActivity.class,
-                android.R.id.content);
+        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
+                R.id.content_frame);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
         assertEquals(1, adapter.getItemCount());
         ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
         adapter.bindViewHolder(viewHolder, 0);
         assertEquals(1, adapter.getItemCount()); // should not add kid to adapter
-
     }
 
     @Test
@@ -360,6 +361,14 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder, 0);
         assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
         assertThat(more).isNotVisible();
+    }
+
+    @Test
+    public void testToggleColorCode() {
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isEnabled());
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
+        shadowOf(activity).clickMenuItem(R.id.menu_color_code);
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
     }
 
     @After
