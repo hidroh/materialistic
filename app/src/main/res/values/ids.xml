@@ -62,6 +62,8 @@
     <item type="id" name="menu_sort_popular" />
     <item type="id" name="menu_list_toggle" />
     <item type="id" name="menu_color_code" />
+    <item type="id" name="menu_thread" />
+    <item type="id" name="menu_thread_group" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

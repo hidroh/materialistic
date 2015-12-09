@@ -139,18 +139,27 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_custom_tab), true);
     }
 
-    public static boolean isDefaultSinglePageComments(Context context) {
-        return !PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_comment_display),
-                        context.getString(R.string.pref_comment_display_value_multiple))
-                .equals(context.getString(R.string.pref_comment_display_value_multiple));
+    public static boolean isSinglePage(Context context, String displayOption) {
+        return !TextUtils.equals(displayOption,
+                context.getString(R.string.pref_comment_display_value_multiple));
     }
 
-    public static boolean shouldAutoExpandComments(Context context) {
+    public static boolean isAutoExpand(Context context, String displayOption) {
+        return TextUtils.equals(displayOption,
+                context.getString(R.string.pref_comment_display_value_single));
+    }
+
+    public static String getCommentDisplayOption(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_comment_display),
-                        context.getString(R.string.pref_comment_display_value_multiple))
-                .equals(context.getString(R.string.pref_comment_display_value_single));
+                        context.getString(R.string.pref_comment_display_value_single));
+    }
+
+    public static void setCommentDisplayOption(Context context, String choice) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.pref_comment_display), choice)
+                .apply();
     }
 
     public static void setPopularRange(Context context, @AlgoliaPopularClient.Range @NonNull String range) {

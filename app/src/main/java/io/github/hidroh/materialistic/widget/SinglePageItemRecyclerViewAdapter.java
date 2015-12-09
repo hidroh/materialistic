@@ -4,6 +4,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,29 +13,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SinglePageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ToggleItemViewHolder> {
     private int mLevelIndicatorWidth = 0;
-    private boolean mAutoExpand = true;
+    private final boolean mAutoExpand;
     private boolean mColorCoded = true;
     private TypedArray mColors;
     private RecyclerView mRecyclerView;
-    private SavedState mState;
+    private final @NonNull SavedState mState;
 
-    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, SavedState state) {
+    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, @NonNull SavedState state,
+                                             boolean autoExpand) {
         super(itemManager);
         this.mState = state;
+        mAutoExpand = autoExpand;
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
-        mAutoExpand = Preferences.shouldAutoExpandComments(mContext);
         mColors = mContext.getResources().obtainTypedArray(R.array.color_codes);
         mRecyclerView = recyclerView;
     }
@@ -68,7 +69,7 @@ public class SinglePageItemRecyclerViewAdapter
         super.onBindViewHolder(holder, position);
     }
 
-    public void setColorCodeEnabled(boolean enabled) {
+    public void toggleColorCode(boolean enabled) {
         mColorCoded = enabled;
         notifyDataSetChanged();
     }
