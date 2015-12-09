@@ -62,13 +62,6 @@
     <android.support.v7.preference.PreferenceCategory
         android:title="@string/pref_category_comments">
 
-        <android.support.v7.preference.ListPreference
-                android:key="@string/pref_comment_display"
-                android:title="@string/pref_comment_display_title"
-                android:entries="@array/pref_comment_display_options"
-                android:entryValues="@array/pref_comment_display_values"
-                android:defaultValue="@string/pref_comment_display_value_collapsed" />
-
         <io.github.hidroh.materialistic.preference.CommentMaxLinesPreference
             android:key="@string/pref_max_lines"
             android:title="@string/pref_max_lines_title"

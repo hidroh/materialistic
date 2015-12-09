@@ -33,6 +33,7 @@ import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
 
@@ -41,6 +42,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -174,7 +176,7 @@ public class ItemFragmentSinglePageTest {
                 .create().start().resume().visible().get();
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content_frame, fragment)
+                .add(R.id.content_frame, fragment, ItemFragment.class.getName())
                 .commit();
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
@@ -371,9 +373,36 @@ public class ItemFragmentSinglePageTest {
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
     }
 
+    @Test
+    public void testChangeThreadDisplay() {
+        assertSinglePage();
+        activity.getSupportFragmentManager()
+                .findFragmentByTag(ItemFragment.class.getName())
+                .onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
+                        .findItem(R.id.menu_thread).getSubMenu().getItem(1)); // still single
+        assertSinglePage();
+        activity.getSupportFragmentManager()
+                .findFragmentByTag(ItemFragment.class.getName())
+                .onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
+                        .findItem(R.id.menu_thread).getSubMenu().getItem(0)); // multiple
+        assertMultiplePage();
+    }
+
     @After
     public void tearDown() {
         recyclerView.setAdapter(null);
         reset(hackerNewsClient);
+    }
+
+    private void assertSinglePage() {
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_thread).getSubMenu()
+                .getItem(1).isChecked());
+        assertThat(recyclerView.getAdapter()).isInstanceOf(SinglePageItemRecyclerViewAdapter.class);
+    }
+
+    private void assertMultiplePage() {
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_thread).getSubMenu()
+                .getItem(0).isChecked());
+        assertThat(recyclerView.getAdapter()).isInstanceOf(MultiPageItemRecyclerViewAdapter.class);
     }
 }

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -33,9 +34,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     public static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
-    private static final String STATE_SINGLE_PAGE = "state:singlePage";
     private static final String STATE_ADAPTER_ITEMS = "state:adapterItems";
     private static final String STATE_COLOR_CODED = "state:colorCoded";
+    private static final String STATE_DISPLAY_OPTION = "state:displayOption";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private ItemManager.Item mItem;
@@ -45,8 +46,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
     private RecyclerView.Adapter<? extends ItemRecyclerViewAdapter.ItemViewHolder> mAdapter;
-    private boolean mSinglePage;
     private boolean mColorCoded = true;
+    private String[] mDisplayOptionValues;
+    private String mDisplayOption;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -55,6 +57,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                     if (TextUtils.equals(key, getString(R.string.pref_color_code))) {
                         mColorCoded = Preferences.colorCodeEnabled(getActivity());
                         toggleColorCode();
+                    } else if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
+                        mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
+                        eagerLoad();
                     }
                 }
             };
@@ -73,17 +78,17 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (savedInstanceState != null) {
             mItem = savedInstanceState.getParcelable(STATE_ITEM);
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
-            mSinglePage = savedInstanceState.getBoolean(STATE_SINGLE_PAGE);
             mAdapterItems = savedInstanceState.getParcelable(STATE_ADAPTER_ITEMS);
             mColorCoded = savedInstanceState.getBoolean(STATE_COLOR_CODED);
+            mDisplayOption = savedInstanceState.getString(STATE_DISPLAY_OPTION);
         } else {
             ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
             if (item instanceof ItemManager.Item) {
                 mItem = (ItemManager.Item) item;
             }
             mItemId = item != null ? item.getId() : null;
-            mSinglePage = Preferences.isDefaultSinglePageComments(getActivity());
             mColorCoded = Preferences.colorCodeEnabled(getActivity());
+            mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
         }
     }
 
@@ -124,6 +129,13 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_item_view, menu);
+        mDisplayOptionValues = getResources().getStringArray(R.array.pref_comment_display_values);
+        SubMenu subMenu = menu.findItem(R.id.menu_thread).getSubMenu();
+        String[] options = getResources().getStringArray(R.array.pref_comment_display_options);
+        for (int i = 0; i < options.length; i++) {
+            subMenu.add(R.id.menu_thread_group, Menu.NONE, i, options[i]);
+        }
+        subMenu.setGroupCheckable(R.id.menu_thread_group, true, true);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -134,6 +146,12 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         itemColorCode.setEnabled(mAdapter != null &&
                 mAdapter instanceof SinglePageItemRecyclerViewAdapter);
         itemColorCode.setChecked(itemColorCode.isEnabled() && mColorCoded);
+        SubMenu subMenuThread = menu.findItem(R.id.menu_thread).getSubMenu();
+        for (int i = 0; i < mDisplayOptionValues.length; i++) {
+            if (TextUtils.equals(mDisplayOption, mDisplayOptionValues[i])) {
+                subMenuThread.getItem(i).setChecked(true);
+            }
+        }
     }
 
     @Override
@@ -142,17 +160,24 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             Preferences.setColorCodeEnabled(getActivity(), !mColorCoded);
             return true;
         }
+        if (item.getGroupId() == R.id.menu_thread_group) {
+            if (item.isChecked()) {
+                return true;
+            }
+            Preferences.setCommentDisplayOption(getActivity(), mDisplayOptionValues[item.getOrder()]);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_SINGLE_PAGE, mSinglePage);
         outState.putParcelable(STATE_ITEM, mItem);
         outState.putString(STATE_ITEM_ID, mItemId);
         outState.putParcelable(STATE_ADAPTER_ITEMS, mAdapterItems);
         outState.putBoolean(STATE_COLOR_CODED, mColorCoded);
+        outState.putString(STATE_DISPLAY_OPTION, mDisplayOption);
     }
 
     @Override
@@ -209,13 +234,15 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             return;
         }
 
-        if (mSinglePage) {
-            if (mAdapterItems == null) {
+        if (Preferences.isSinglePage(getActivity(), mDisplayOption)) {
+            boolean autoExpand = Preferences.isAutoExpand(getActivity(), mDisplayOption);
+            // if collapsed or no saved state then start a fresh (adapter items all collapsed)
+            if (!autoExpand || mAdapterItems == null) {
                 mAdapterItems = new SinglePageItemRecyclerViewAdapter.SavedState(
                         new ArrayList<>(Arrays.asList(mItem.getKidItems())));
             }
-            mAdapter = new SinglePageItemRecyclerViewAdapter(mItemManager, mAdapterItems);
-            ((SinglePageItemRecyclerViewAdapter) mAdapter).setColorCodeEnabled(mColorCoded);
+            mAdapter = new SinglePageItemRecyclerViewAdapter(mItemManager, mAdapterItems, autoExpand);
+            ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
         } else {
             mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems(),
                     getArguments().getInt(ItemActivity.EXTRA_ITEM_LEVEL, 0));
@@ -229,6 +256,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             return;
         }
         getActivity().supportInvalidateOptionsMenu();
-        ((SinglePageItemRecyclerViewAdapter) mAdapter).setColorCodeEnabled(mColorCoded);
+        ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
     }
 }

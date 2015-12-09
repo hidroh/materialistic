@@ -56,8 +56,8 @@ public class CommentMaxLinesPreferenceTest {
         shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(11));
-        adapter.onBindViewHolder(holder, 11);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(10));
+        adapter.onBindViewHolder(holder, 10);
         preferenceView = holder.itemView;
         preference = ((SettingsFragment) activity
                 .getSupportFragmentManager()

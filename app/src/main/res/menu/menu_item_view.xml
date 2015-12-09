@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@id/menu_thread"
+        android:title="@string/pref_comment_display_title"
+        app:showAsAction="never">
+        <menu />
+    </item>
+    <item
         android:id="@id/menu_color_code"
         android:title="@string/pref_color_code_title"
         android:checkable="true"
