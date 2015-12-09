@@ -60,6 +60,11 @@ public class ItemFragmentMultiPageTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+                .edit()
+                .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
+                        RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_multiple))
+                .commit();
     }
 
     @Test

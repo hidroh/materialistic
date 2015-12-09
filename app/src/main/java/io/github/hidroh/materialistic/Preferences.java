@@ -152,7 +152,7 @@ public class Preferences {
     public static String getCommentDisplayOption(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_comment_display),
-                        context.getString(R.string.pref_comment_display_value_multiple));
+                        context.getString(R.string.pref_comment_display_value_single));
     }
 
     public static void setCommentDisplayOption(Context context, String choice) {

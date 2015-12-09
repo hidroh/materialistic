@@ -70,11 +70,6 @@ public class ItemFragmentSinglePageTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
-                .edit()
-                .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
-                        RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_single))
-                .commit();
         final TestItem item2 = new TestItem() { // level 2
             @Override
             public String getId() {
