@@ -33,6 +33,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private NestedScrollView mScrollView;
     private WebView mWebView;
     private ProgressBar mProgressBar;
+    private View mEmptyView;
     @Inject ReadabilityClient mReadabilityClient;
     private String mContent;
     private float mTextSize;
@@ -126,6 +127,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         mWebView = (WebView) view.findViewById(R.id.content);
         mWebView.setBackgroundColor(ContextCompat.getColor(getActivity(),
                 AppUtils.getThemedResId(getActivity(), R.attr.colorCardBackground)));
+        mEmptyView = view.findViewById(R.id.empty);
         return view;
     }
 
@@ -181,7 +183,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         if (!TextUtils.isEmpty(mContent)) {
             render();
         } else {
-            getView().findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.VISIBLE);
         }
     }
 

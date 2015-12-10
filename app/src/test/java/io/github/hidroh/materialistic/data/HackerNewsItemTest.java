@@ -344,7 +344,7 @@ public class HackerNewsItemTest {
 
     @Test
     public void testGetKidItems() {
-        assertNull(item.getKidItems());
+        assertThat(item.getKidItems()).isEmpty();
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
