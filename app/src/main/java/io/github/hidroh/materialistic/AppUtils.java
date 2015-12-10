@@ -44,8 +44,8 @@ public class AppUtils {
     private static final String ABBR_HOUR = "h";
     private static final String ABBR_MINUTE = "m";
 
-    public static void openWebUrlExternal(Context context, String url) {
-        Intent intent = createViewIntent(context, url);
+    public static void openWebUrlExternal(Context context, String title, String url) {
+        Intent intent = createViewIntent(context, title, url);
         List<ResolveInfo> activities = context.getPackageManager()
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         ArrayList<Intent> intents = new ArrayList<>();
@@ -53,7 +53,7 @@ public class AppUtils {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, url).setPackage(info.activityInfo.packageName));
+            intents.add(createViewIntent(context, title, url).setPackage(info.activityInfo.packageName));
         }
         if (intents.isEmpty()) {
             return;
@@ -216,10 +216,11 @@ public class AppUtils {
     }
 
     @NonNull
-    private static Intent createViewIntent(Context context, String url) {
+    private static Intent createViewIntent(Context context, String title, String url) {
         if (Preferences.customChromeTabEnabled(context)) {
             Intent shareIntent = new Intent(context, ShareBroadcastReceiver.class);
-            shareIntent.setData(Uri.parse(url));
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, url);
             CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
                     .setToolbarColor(ContextCompat.getColor(context, R.color.orange500))
                     .setActionButton(BitmapFactory.decodeResource(context.getResources(),
@@ -237,7 +238,9 @@ public class AppUtils {
     public static class ShareBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            context.startActivity(makeChooserShareIntent(context, null, intent.getDataString()));
+            context.startActivity(makeChooserShareIntent(context,
+                    intent.getStringExtra(Intent.EXTRA_SUBJECT),
+                    intent.getStringExtra(Intent.EXTRA_TEXT)));
         }
     }
 }

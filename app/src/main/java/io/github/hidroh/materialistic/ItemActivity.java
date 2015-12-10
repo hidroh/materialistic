@@ -134,13 +134,16 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                     .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            AppUtils.openWebUrlExternal(ItemActivity.this, mItem.getUrl());
+                            AppUtils.openWebUrlExternal(ItemActivity.this,
+                                    mItem.getDisplayedTitle(),
+                                    mItem.getUrl());
                         }
                     })
                     .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             AppUtils.openWebUrlExternal(ItemActivity.this,
+                                    mItem.getDisplayedTitle(),
                                     String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
                         }
                     })
@@ -324,7 +327,9 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppUtils.openWebUrlExternal(ItemActivity.this, story.getUrl());
+                    AppUtils.openWebUrlExternal(ItemActivity.this,
+                            story.getDisplayedTitle(),
+                            story.getUrl());
                 }
             });
         } else {
