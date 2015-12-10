@@ -173,7 +173,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             handleMultiPaneItemSelected(item);
         } else {
             if (mExternalBrowser) {
-                AppUtils.openWebUrlExternal(this, item.getUrl());
+                AppUtils.openWebUrlExternal(this, item.getDisplayedTitle(), item.getUrl());
             } else {
                 openItem(item);
             }
