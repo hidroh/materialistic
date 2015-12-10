@@ -47,8 +47,8 @@ public class ThemePreferenceTest {
                 .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(1));
-        adapter.onBindViewHolder(holder, 1);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(0));
+        adapter.onBindViewHolder(holder, 0);
         preferenceView = holder.itemView;
     }
 

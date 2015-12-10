@@ -50,8 +50,6 @@
     <string name="no_stories_search">Couldn\'t find what you\'re looking for</string>
 
     <!-- preferences -->
-    <string name="pref_category_reading">Reading</string>
-    <string name="pref_category_comments">Comments and replies</string>
     <string name="pref_external_title">Use external browser</string>
     <string name="pref_external_summary">Read articles in external browser</string>
     <string name="pref_color_code_title">Color code</string>
@@ -67,8 +65,7 @@
     <string name="pref_text_size_title">Text size</string>
     <string name="pref_font_title">Font</string>
     <string name="pref_comment_display_title">Thread display</string>
-    <string name="pref_max_lines_title">Initial display</string>
-    <string name="pref_max_lines_summary">Expand/collapse long comments</string>
+    <string name="pref_max_lines_title">Comment display</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>

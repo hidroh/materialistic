@@ -347,14 +347,27 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testMaxLines() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(activity.getString(R.string.pref_max_lines), "5")
-                .commit();
-        adapter.onAttachedToRecyclerView(recyclerView);
+        adapter.bindViewHolder(viewHolder, 0);
         TextView textView = (TextView) viewHolder.itemView.findViewById(R.id.text);
+        ((ShadowTextView) ShadowExtractor.extract(textView)).setLineCount(4); // content has 4 lines
         View more = viewHolder.itemView.findViewById(R.id.more);
-        ((ShadowTextView) ShadowExtractor.extract(textView)).setLineCount(3);
+        assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
+        assertThat(more).isNotVisible();
+
+        // display all regardless of content size
+        clickSubMenuItem(R.id.menu_max_lines, 3); // all
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
+        assertThat(more).isNotVisible();
+
+        // content longer than max lines
+        clickSubMenuItem(R.id.menu_max_lines, 0); // 3 lines
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(textView).hasMaxLines(3);
+        assertThat(more).isVisible();
+
+        // content shorter than max lines
+        clickSubMenuItem(R.id.menu_max_lines, 2); // 5 lines
         adapter.bindViewHolder(viewHolder, 0);
         assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
         assertThat(more).isNotVisible();
@@ -371,15 +384,9 @@ public class ItemFragmentSinglePageTest {
     @Test
     public void testChangeThreadDisplay() {
         assertSinglePage();
-        activity.getSupportFragmentManager()
-                .findFragmentByTag(ItemFragment.class.getName())
-                .onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
-                        .findItem(R.id.menu_thread).getSubMenu().getItem(1)); // still single
+        clickSubMenuItem(R.id.menu_thread, 1); // still single
         assertSinglePage();
-        activity.getSupportFragmentManager()
-                .findFragmentByTag(ItemFragment.class.getName())
-                .onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
-                        .findItem(R.id.menu_thread).getSubMenu().getItem(0)); // multiple
+        clickSubMenuItem(R.id.menu_thread, 0); // multiple
         assertMultiplePage();
     }
 
@@ -399,5 +406,12 @@ public class ItemFragmentSinglePageTest {
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_thread).getSubMenu()
                 .getItem(0).isChecked());
         assertThat(recyclerView.getAdapter()).isInstanceOf(MultiPageItemRecyclerViewAdapter.class);
+    }
+
+    private void clickSubMenuItem(int parentId, int order) {
+        activity.getSupportFragmentManager()
+                .findFragmentByTag(ItemFragment.class.getName())
+                .onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
+                        .findItem(parentId).getSubMenu().getItem(order));
     }
 }

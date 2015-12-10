@@ -64,6 +64,8 @@
     <item type="id" name="menu_color_code" />
     <item type="id" name="menu_thread" />
     <item type="id" name="menu_thread_group" />
+    <item type="id" name="menu_max_lines" />
+    <item type="id" name="menu_max_lines_group" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

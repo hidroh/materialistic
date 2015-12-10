@@ -185,6 +185,13 @@ public class Preferences {
         return maxLines;
     }
 
+    public static void setCommentMaxLines(Context context, String choice) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.pref_max_lines), choice)
+                .apply();
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()

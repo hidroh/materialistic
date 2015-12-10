@@ -50,8 +50,8 @@ public class FontSizePreferenceTest {
         shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(2));
-        adapter.onBindViewHolder(holder, 2);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(1));
+        adapter.onBindViewHolder(holder, 1);
         preferenceView = holder.itemView;
     }
 

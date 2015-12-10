@@ -37,6 +37,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private static final String STATE_ADAPTER_ITEMS = "state:adapterItems";
     private static final String STATE_COLOR_CODED = "state:colorCoded";
     private static final String STATE_DISPLAY_OPTION = "state:displayOption";
+    private static final String STATE_MAX_LINES = "state:maxLines";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private ItemManager.Item mItem;
@@ -45,10 +46,12 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
-    private RecyclerView.Adapter<? extends ItemRecyclerViewAdapter.ItemViewHolder> mAdapter;
+    private ItemRecyclerViewAdapter mAdapter;
     private boolean mColorCoded = true;
     private String[] mDisplayOptionValues;
+    private String[] mMaxLinesOptionValues;
     private String mDisplayOption;
+    private int mMaxLines;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -60,6 +63,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                     } else if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
                         mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
                         eagerLoad();
+                    } else if (TextUtils.equals(key, getString(R.string.pref_max_lines))) {
+                        mMaxLines = Preferences.getCommentMaxLines(getActivity());
+                        setMaxLines();
                     }
                 }
             };
@@ -81,6 +87,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mAdapterItems = savedInstanceState.getParcelable(STATE_ADAPTER_ITEMS);
             mColorCoded = savedInstanceState.getBoolean(STATE_COLOR_CODED);
             mDisplayOption = savedInstanceState.getString(STATE_DISPLAY_OPTION);
+            mMaxLines = savedInstanceState.getInt(STATE_MAX_LINES, Integer.MAX_VALUE);
         } else {
             ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
             if (item instanceof ItemManager.Item) {
@@ -89,6 +96,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mItemId = item != null ? item.getId() : null;
             mColorCoded = Preferences.colorCodeEnabled(getActivity());
             mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
+            mMaxLines = Preferences.getCommentMaxLines(getActivity());
         }
     }
 
@@ -136,6 +144,13 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             subMenu.add(R.id.menu_thread_group, Menu.NONE, i, options[i]);
         }
         subMenu.setGroupCheckable(R.id.menu_thread_group, true, true);
+        mMaxLinesOptionValues = getResources().getStringArray(R.array.comment_max_lines_values);
+        subMenu = menu.findItem(R.id.menu_max_lines).getSubMenu();
+        options = getResources().getStringArray(R.array.comment_max_lines_options);
+        for (int i = 0; i < options.length; i++) {
+            subMenu.add(R.id.menu_max_lines_group, Menu.NONE, i, options[i]);
+        }
+        subMenu.setGroupCheckable(R.id.menu_max_lines_group, true, true);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -150,6 +165,16 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         for (int i = 0; i < mDisplayOptionValues.length; i++) {
             if (TextUtils.equals(mDisplayOption, mDisplayOptionValues[i])) {
                 subMenuThread.getItem(i).setChecked(true);
+            }
+        }
+        SubMenu subMenuMaxLines = menu.findItem(R.id.menu_max_lines).getSubMenu();
+        for (int i = 0; i < mMaxLinesOptionValues.length; i++) {
+            int value = Integer.parseInt(mMaxLinesOptionValues[i]);
+            if (value == -1) {
+                value = Integer.MAX_VALUE;
+            }
+            if (mMaxLines == value) {
+                subMenuMaxLines.getItem(i).setChecked(true);
             }
         }
     }
@@ -167,6 +192,13 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             Preferences.setCommentDisplayOption(getActivity(), mDisplayOptionValues[item.getOrder()]);
             return true;
         }
+        if (item.getGroupId() == R.id.menu_max_lines_group) {
+            if (item.isChecked()) {
+                return true;
+            }
+            Preferences.setCommentMaxLines(getActivity(), mMaxLinesOptionValues[item.getOrder()]);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -178,6 +210,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         outState.putParcelable(STATE_ADAPTER_ITEMS, mAdapterItems);
         outState.putBoolean(STATE_COLOR_CODED, mColorCoded);
         outState.putString(STATE_DISPLAY_OPTION, mDisplayOption);
+        outState.putInt(STATE_MAX_LINES, mMaxLines);
     }
 
     @Override
@@ -247,6 +280,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems(),
                     getArguments().getInt(ItemActivity.EXTRA_ITEM_LEVEL, 0));
         }
+        mAdapter.setMaxLines(mMaxLines);
         getActivity().supportInvalidateOptionsMenu();
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -257,5 +291,13 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
         getActivity().supportInvalidateOptionsMenu();
         ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
+    }
+
+    private void setMaxLines() {
+        if (mAdapter == null) {
+            return;
+        }
+        getActivity().supportInvalidateOptionsMenu();
+        mAdapter.setMaxLines(mMaxLines);
     }
 }
