@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentLazyLoadTest {
     private TestReadabilityActivity activity;
@@ -60,7 +63,24 @@ public class ReadabilityFragmentLazyLoadTest {
     }
 
     @Test
-    public void testLazyLoad() {
+    public void testLazyLoadByDefault() {
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, fragment, "tag")
+                .commit();
+        verify(readabilityClient, never()).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        reset(readabilityClient);
+        fragment.setUserVisibleHint(true);
+        fragment.setUserVisibleHint(false);
+        verify(readabilityClient).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+    }
+
+    @Test
+    public void testLazyLoadOnWifi() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .commit();
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
@@ -74,6 +94,10 @@ public class ReadabilityFragmentLazyLoadTest {
 
     @Test
     public void testVisible() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .commit();
         shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));

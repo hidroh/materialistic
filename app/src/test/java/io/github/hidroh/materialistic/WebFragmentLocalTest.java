@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
@@ -24,6 +25,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.WebActivity;
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentLocalTest {
     private ActivityController<WebActivity> controller;
@@ -48,6 +51,10 @@ public class WebFragmentLocalTest {
         reset(itemManager);
         controller = Robolectric.buildActivity(WebActivity.class);
         activity = controller.get();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .commit();
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,

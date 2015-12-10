@@ -64,6 +64,7 @@ public class ItemFragmentMultiPageTest {
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_multiple))
+                .putBoolean(RuntimeEnvironment.application.getString(R.string.pref_lazy_load), false)
                 .commit();
     }
 

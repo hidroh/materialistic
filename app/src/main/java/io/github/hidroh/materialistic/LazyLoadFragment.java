@@ -18,10 +18,9 @@ public abstract class LazyLoadFragment extends BaseFragment {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
             mActivityCreated = savedInstanceState.getBoolean(STATE_ACTIVITY_CREATED);
         } else {
-            mEagerLoad = AppUtils.isOnWiFi(getContext());
+            mEagerLoad = !Preferences.shouldLazyLoad(getActivity()) && AppUtils.isOnWiFi(getContext());
         }
     }
-
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

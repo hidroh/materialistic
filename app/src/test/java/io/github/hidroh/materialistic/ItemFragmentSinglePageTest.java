@@ -169,6 +169,10 @@ public class ItemFragmentSinglePageTest {
                 ItemFragment.class.getName(), args);
         activity = Robolectric.buildActivity(TestItemActivity.class)
                 .create().start().resume().visible().get();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .commit();
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.content_frame, fragment, ItemFragment.class.getName())

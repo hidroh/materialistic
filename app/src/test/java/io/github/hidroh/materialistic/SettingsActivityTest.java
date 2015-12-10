@@ -106,6 +106,17 @@ public class SettingsActivityTest {
                 .hasText(R.string.pref_highlight_updated_title);
     }
 
+    @Test
+    public void testLazyLoadHelp() {
+        fragment.getPreferenceScreen()
+                .findPreference(activity.getString(R.string.pref_lazy_load_help))
+                .performClick();
+        Dialog dialog = ShadowDialog.getLatestDialog();
+        assertNotNull(dialog);
+        assertThat((TextView) dialog.findViewById(R.id.alertTitle))
+                .hasText(R.string.pref_lazy_load_title);
+    }
+
     @After
     public void tearDown() {
         AlgoliaClient.sSortByTime = true;

@@ -18,7 +18,7 @@ import io.github.hidroh.materialistic.widget.AsteriskSpan;
 public class HelpListView extends ScrollView {
     public HelpListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        addView(LayoutInflater.from(context).inflate(R.layout.help_list, this, false));
+        addView(LayoutInflater.from(context).inflate(R.layout.include_help_list_view, this, false));
     }
 
     @Override
