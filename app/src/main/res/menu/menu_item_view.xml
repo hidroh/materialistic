@@ -8,6 +8,12 @@
         <menu />
     </item>
     <item
+        android:id="@id/menu_max_lines"
+        android:title="@string/pref_max_lines_title"
+        app:showAsAction="never">
+        <menu />
+    </item>
+    <item
         android:id="@id/menu_color_code"
         android:title="@string/pref_color_code_title"
         android:checkable="true"

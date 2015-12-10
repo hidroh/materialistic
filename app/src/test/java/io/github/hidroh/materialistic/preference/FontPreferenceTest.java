@@ -46,8 +46,8 @@ public class FontPreferenceTest {
                 .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(3));
-        adapter.onBindViewHolder(holder, 3);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(2));
+        adapter.onBindViewHolder(holder, 2);
         preferenceView = holder.itemView;
     }
 

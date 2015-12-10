@@ -3,73 +3,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.preference.PreferenceCategory
-        android:title="@string/pref_category_reading">
 
-        <io.github.hidroh.materialistic.preference.ThemePreference
-            android:key="@string/pref_theme"
-            android:title="@string/pref_theme_title"
-            android:defaultValue="light" />
+    <io.github.hidroh.materialistic.preference.ThemePreference
+        android:key="@string/pref_theme"
+        android:title="@string/pref_theme_title"
+        android:defaultValue="light" />
 
-        <io.github.hidroh.materialistic.preference.FontSizePreference
-            android:key="@string/pref_text_size"
-            android:title="@string/pref_text_size_title"
-            android:defaultValue="0"
-            app:entries="@array/text_size_options"
-            app:entryValues="@array/pref_text_size_values" />
+    <io.github.hidroh.materialistic.preference.FontSizePreference
+        android:key="@string/pref_text_size"
+        android:title="@string/pref_text_size_title"
+        android:defaultValue="0"
+        app:entries="@array/text_size_options"
+        app:entryValues="@array/pref_text_size_values" />
 
-        <io.github.hidroh.materialistic.preference.FontPreference
-            android:key="@string/pref_font"
-            android:title="@string/pref_font_title"
-            android:defaultValue=""
-            app:entries="@array/font_options"
-            app:entryValues="@array/font_values" />
+    <io.github.hidroh.materialistic.preference.FontPreference
+        android:key="@string/pref_font"
+        android:title="@string/pref_font_title"
+        android:defaultValue=""
+        app:entries="@array/font_options"
+        app:entryValues="@array/font_values" />
 
-        <android.support.v7.preference.ListPreference
-            android:key="@string/pref_story_display"
-            android:title="@string/pref_story_display_title"
-            android:entries="@array/pref_story_display_options"
-            android:entryValues="@array/pref_story_display_values"
-            android:defaultValue="@string/pref_story_display_value_article" />
+    <android.support.v7.preference.ListPreference
+        android:key="@string/pref_story_display"
+        android:title="@string/pref_story_display_title"
+        android:entries="@array/pref_story_display_options"
+        android:entryValues="@array/pref_story_display_values"
+        android:defaultValue="@string/pref_story_display_value_article" />
 
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="@string/pref_highlight_updated"
-            android:title="@string/pref_highlight_updated_title"
-            android:summary="@string/pref_highlight_updated_summary"
-            android:defaultValue="true" />
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_highlight_updated"
+        android:title="@string/pref_highlight_updated_title"
+        android:summary="@string/pref_highlight_updated_summary"
+        android:defaultValue="true" />
 
-        <io.github.hidroh.materialistic.preference.PreferenceHelp
-            android:key="@string/pref_highlight_updated_help"
-            android:title="@string/whats_this"
-            app:dialogTitle="@string/pref_highlight_updated_title"
-            app:dialogLayout="@layout/help_list_view" />
+    <io.github.hidroh.materialistic.preference.PreferenceHelp
+        android:key="@string/pref_highlight_updated_help"
+        android:title="@string/whats_this"
+        app:dialogTitle="@string/pref_highlight_updated_title"
+        app:dialogLayout="@layout/help_list_view" />
 
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="@string/pref_external"
-            android:title="@string/pref_external_title"
-            android:enabled="@bool/pref_external_enabled"
-            android:summary="@string/pref_external_summary"
-            android:defaultValue="false" />
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_external"
+        android:title="@string/pref_external_title"
+        android:enabled="@bool/pref_external_enabled"
+        android:summary="@string/pref_external_summary"
+        android:defaultValue="false" />
 
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="@string/pref_custom_tab"
-            android:title="@string/pref_custom_tab_title"
-            android:summary="@string/pref_custom_tab_summary"
-            android:defaultValue="true" />
-
-    </android.support.v7.preference.PreferenceCategory>
-
-    <android.support.v7.preference.PreferenceCategory
-        android:title="@string/pref_category_comments">
-
-        <io.github.hidroh.materialistic.preference.CommentMaxLinesPreference
-            android:key="@string/pref_max_lines"
-            android:title="@string/pref_max_lines_title"
-            android:summary="@string/pref_max_lines_summary"
-            android:defaultValue="-1"
-            app:entries="@array/comment_max_lines_options"
-            app:entryValues="@array/comment_max_lines_values" />
-
-    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_custom_tab"
+        android:title="@string/pref_custom_tab_title"
+        android:summary="@string/pref_custom_tab_summary"
+        android:defaultValue="true" />
 
 </android.support.v7.preference.PreferenceScreen>

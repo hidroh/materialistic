@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -37,7 +36,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
         mLayoutInflater = LayoutInflater.from(mContext);
-        mContentMaxLines = Preferences.getCommentMaxLines(mContext);
         TypedArray ta = mContext.obtainStyledAttributes(new int[]{
                 android.R.attr.textColorTertiary,
                 android.R.attr.textColorSecondary,
@@ -85,6 +83,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             bind(holder, item);
             decorateDead(holder, item);
         }
+    }
+
+    public void setMaxLines(int maxLines) {
+        mContentMaxLines = maxLines;
+        notifyDataSetChanged();
     }
 
     protected abstract ItemManager.Item getItem(int position);
