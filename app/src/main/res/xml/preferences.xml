@@ -55,4 +55,10 @@
         android:summary="@string/pref_custom_tab_summary"
         android:defaultValue="true" />
 
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_lazy_load"
+        android:title="@string/pref_lazy_load_title"
+        android:summary="@string/pref_lazy_load_summary"
+        android:defaultValue="true" />
+
 </android.support.v7.preference.PreferenceScreen>

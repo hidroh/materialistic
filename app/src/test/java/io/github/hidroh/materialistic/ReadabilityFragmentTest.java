@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowNestedScrollView.class})
+@Config(shadows = {ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
@@ -53,6 +54,10 @@ public class ReadabilityFragmentTest {
         reset(readabilityClient);
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .commit();
         shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));

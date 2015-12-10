@@ -192,6 +192,11 @@ public class Preferences {
                 .apply();
     }
 
+    public static boolean shouldLazyLoad(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_lazy_load), true);
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()

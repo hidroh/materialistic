@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.WebActivity;
 
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class})
+@Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentTest {
     private WebActivity activity;
@@ -66,7 +67,12 @@ public class WebFragmentTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        activity = controller.withIntent(intent).create().start().resume().get();
+        activity = controller.get();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .commit();
+        controller.withIntent(intent).create().start().resume();
     }
 
     @Test
