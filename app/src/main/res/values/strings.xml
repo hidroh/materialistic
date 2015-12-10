@@ -121,6 +121,7 @@
     <string name="help_new_story">New story since last refresh</string>
     <string name="help_promoted_story">Promoted story since last refresh</string>
     <string name="help_new_comments">Story with new comments since last refresh</string>
+    <string name="help_lazy_load">With lazy loading setting enabled, only your preferred default tab will be loaded when an item is first opened.\n\nIf you are on a slow connection or encounter lagging, turning this on may help.\n\nLazy loading is enabled by default for non-wifi connections, regardless of this setting.</string>
     <string name="readability">Readability</string>
     <string name="text_size_extra_small">Extra small</string>
     <string name="text_size_small">Small</string>

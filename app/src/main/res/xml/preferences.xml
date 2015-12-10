@@ -61,4 +61,10 @@
         android:summary="@string/pref_lazy_load_summary"
         android:defaultValue="true" />
 
+    <io.github.hidroh.materialistic.preference.PreferenceHelp
+        android:key="@string/pref_lazy_load_help"
+        android:title="@string/whats_this"
+        app:dialogTitle="@string/pref_lazy_load_title"
+        app:dialogLayout="@layout/help_lazy_load" />
+
 </android.support.v7.preference.PreferenceScreen>

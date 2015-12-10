@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="15dip"
     android:layout_marginRight="6dip"
+    android:paddingBottom="@dimen/padding"
     android:gravity="center_vertical"
     android:focusable="true"
     android:drawableLeft="@drawable/ic_help_grey600_24dp"
