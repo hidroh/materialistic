@@ -21,10 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <ViewStub
-            android:id="@id/empty"
-            android:inflatedId="@id/empty"
-            android:layout="@layout/empty_readability"
+        <include
+            layout="@layout/empty_readability"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

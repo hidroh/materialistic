@@ -388,7 +388,7 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public HackerNewsItem[] getKidItems() {
             if (kids == null || kids.length == 0) {
-                return null;
+                return new HackerNewsItem[0];
             }
 
             if (kidItems == null) {

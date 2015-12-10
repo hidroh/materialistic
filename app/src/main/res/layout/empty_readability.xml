@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.github.hidroh.materialistic.widget.TintableTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/empty"
+    android:visibility="gone"
+    tools:visibility="visible"
     android:drawableTop="@drawable/ic_local_hotel_white_48dp"
     android:text="@string/readability_failed"
     style="@style/textEmptyStyle" />
