@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +18,9 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 public class DrawerFragment extends BaseFragment {
-    @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject AlertDialogBuilder mLogoutAlertDialogBuilder;
+    @Inject AlertDialogBuilder mAccountAlertDialogBuilder;
+    @Inject AccountManager mAccountManager;
     private TextView mDrawerAccount;
     private View mDrawerLogout;
     private final SharedPreferences.OnSharedPreferenceChangeListener mLoginListener
@@ -46,15 +50,19 @@ public class DrawerFragment extends BaseFragment {
         mDrawerAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigate(LoginActivity.class);
+                Account[] accounts = mAccountManager.getAccountsByType(BuildConfig.APPLICATION_ID);
+                if (accounts.length == 0) {
+                    navigate(LoginActivity.class);
+                } else {
+                    showAccountChooser(accounts);
+                }
             }
         });
-
         mDrawerLogout = view.findViewById(R.id.drawer_logout);
         mDrawerLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAlertDialogBuilder.setMessage(R.string.logout_confirm)
+                mLogoutAlertDialogBuilder.setMessage(R.string.logout_confirm)
                         .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
@@ -159,12 +167,36 @@ public class DrawerFragment extends BaseFragment {
         String username = Preferences.getUsername(getActivity());
         if (!TextUtils.isEmpty(username)) {
             mDrawerAccount.setText(username);
-            mDrawerAccount.setClickable(false);
             mDrawerLogout.setVisibility(View.VISIBLE);
         } else {
             mDrawerAccount.setText(R.string.login);
-            mDrawerAccount.setClickable(true);
             mDrawerLogout.setVisibility(View.GONE);
         }
+    }
+
+    private void showAccountChooser(Account[] accounts) {
+        final String[] items = new String[accounts.length + 1];
+        int checked = -1;
+        for (int i = 0; i < accounts.length; i++) {
+            String accountName = accounts[i].name;
+            items[i] = accountName;
+            if (TextUtils.equals(accountName, mDrawerAccount.getText())) {
+                checked = i;
+            }
+        }
+        items[items.length - 1] = getString(R.string.add_account);
+        mAccountAlertDialogBuilder.setTitle(R.string.choose_account)
+                .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == items.length - 1) {
+                            navigate(LoginActivity.class);
+                        } else {
+                            Preferences.setUsername(getActivity(), items[which]);
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 }

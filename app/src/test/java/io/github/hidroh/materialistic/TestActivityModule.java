@@ -141,6 +141,12 @@ public class TestActivityModule {
         final AlertDialog.Builder builder = new AlertDialog.Builder(RuntimeEnvironment.application);
         return new AlertDialogBuilder() {
             @Override
+            public AlertDialogBuilder setTitle(int titleId) {
+                builder.setTitle(titleId);
+                return this;
+            }
+
+            @Override
             public AlertDialogBuilder setMessage(@StringRes int messageId) {
                 builder.setMessage(messageId);
                 return this;
@@ -149,6 +155,12 @@ public class TestActivityModule {
             @Override
             public AlertDialogBuilder setView(View view) {
                 builder.setView(view);
+                return this;
+            }
+
+            @Override
+            public AlertDialogBuilder setSingleChoiceItems(CharSequence[] items, int checkedItem, DialogInterface.OnClickListener listener) {
+                builder.setSingleChoiceItems(items, checkedItem, listener);
                 return this;
             }
 
