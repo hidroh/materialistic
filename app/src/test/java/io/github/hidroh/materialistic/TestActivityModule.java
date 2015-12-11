@@ -77,7 +77,8 @@ import static org.mockito.Mockito.when;
                 PopularActivityTest.class,
                 ReadabilityFragmentTest.class,
                 ReadabilityFragmentLazyLoadTest.class,
-                LoginActivityTest.class
+                LoginActivityTest.class,
+                DrawerFragmentLoginTest.class
         },
         library = true,
         overrides = true

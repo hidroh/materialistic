@@ -197,6 +197,18 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_lazy_load), true);
     }
 
+    public static String getUsername(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_username), null);
+    }
+
+    public static void setUsername(Context context, String username) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.pref_username), username)
+                .apply();;
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()

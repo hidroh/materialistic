@@ -181,5 +181,6 @@
     <string name="password_required">Password is required</string>
     <string name="login_failed">Login failed, please try again</string>
     <string name="welcome" formatted="false">Welcome %s!</string>
+    <string name="logout_confirm">Do you want to log out?</string>
 
 </resources>

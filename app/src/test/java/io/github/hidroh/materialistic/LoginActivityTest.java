@@ -12,6 +12,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -19,6 +20,7 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -29,6 +31,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class LoginActivityTest {
     private ActivityController<LoginActivity> controller;
@@ -64,6 +67,7 @@ public class LoginActivityTest {
         assertThat(activity).isFinishing();
         assertEquals(activity.getString(R.string.welcome, "username"), ShadowToast.getTextOfLatestToast());
         assertThat(ShadowAccountManager.get(activity).getAccounts()).hasSize(1);
+        assertEquals("username", Preferences.getUsername(activity));
     }
 
     @Test

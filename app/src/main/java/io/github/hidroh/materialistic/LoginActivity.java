@@ -80,6 +80,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         bundle.putString(AccountManager.KEY_ACCOUNT_NAME, username);
         bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, BuildConfig.APPLICATION_ID);
         setAccountAuthenticatorResult(bundle);
+        Preferences.setUsername(this, username);
         finish();
     }
 }
