@@ -9,7 +9,6 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import io.github.hidroh.materialistic.R;
@@ -17,6 +16,7 @@ import io.github.hidroh.materialistic.R;
 public class ThemePreference extends Preference {
 
     public static final @StyleRes int THEME_DEFAULT = R.style.AppTheme;
+    public static final @StyleRes int DIALOG_THEME_DEFAULT = R.style.AppAlertDialog;
     private static final String VALUE_LIGHT = "light";
     private static final String VALUE_DARK = "dark";
     private static final String VALUE_SEPIA = "sepia";
@@ -33,14 +33,18 @@ public class ThemePreference extends Preference {
         BUTTON_VALUE.put(R.id.theme_solarized, VALUE_SOLARIZED);
         BUTTON_VALUE.put(R.id.theme_solarized_dark, VALUE_SOLARIZED_DARK);
 
-        VALUE_THEME.put(VALUE_LIGHT, new ThemeSpec(R.string.theme_light, R.style.AppTheme));
-        VALUE_THEME.put(VALUE_DARK, new ThemeSpec(R.string.theme_dark, R.style.AppTheme_Dark));
-        VALUE_THEME.put(VALUE_SEPIA, new ThemeSpec(R.string.theme_sepia, R.style.AppTheme_Sepia));
-        VALUE_THEME.put(VALUE_GREEN, new ThemeSpec(R.string.theme_green, R.style.AppTheme_Green));
+        VALUE_THEME.put(VALUE_LIGHT,
+                new ThemeSpec(R.string.theme_light, R.style.AppTheme, R.style.AppAlertDialog));
+        VALUE_THEME.put(VALUE_DARK,
+                new ThemeSpec(R.string.theme_dark, R.style.AppTheme_Dark, R.style.AppAlertDialog_Dark));
+        VALUE_THEME.put(VALUE_SEPIA,
+                new ThemeSpec(R.string.theme_sepia, R.style.AppTheme_Sepia, R.style.AppAlertDialog_Sepia));
+        VALUE_THEME.put(VALUE_GREEN,
+                new ThemeSpec(R.string.theme_green, R.style.AppTheme_Green, R.style.AppAlertDialog_Green));
         VALUE_THEME.put(VALUE_SOLARIZED,
-                new ThemeSpec(R.string.theme_solarized, R.style.AppTheme_Solarized));
+                new ThemeSpec(R.string.theme_solarized, R.style.AppTheme_Solarized, R.style.AppAlertDialog_Solarized));
         VALUE_THEME.put(VALUE_SOLARIZED_DARK,
-                new ThemeSpec(R.string.theme_solarized_dark, R.style.AppTheme_Dark_Solarized));
+                new ThemeSpec(R.string.theme_solarized_dark, R.style.AppTheme_Dark_Solarized, R.style.AppAlertDialog_Dark_Solarized));
     }
 
     public static @StyleRes int getTheme(String value) {
@@ -48,6 +52,13 @@ public class ThemePreference extends Preference {
             return THEME_DEFAULT;
         }
         return VALUE_THEME.get(value).theme;
+    }
+
+    public static @StyleRes int getDialogTheme(String value) {
+        if (!VALUE_THEME.containsKey(value)) {
+            return DIALOG_THEME_DEFAULT;
+        }
+        return VALUE_THEME.get(value).dialogTheme;
     }
 
     public ThemePreference(Context context, AttributeSet attrs) {
@@ -93,13 +104,15 @@ public class ThemePreference extends Preference {
         }
     }
 
-    public static class ThemeSpec {
+    private static class ThemeSpec {
         public final @StringRes int summary;
         public final @StyleRes int theme;
+        public final @StyleRes int dialogTheme;
 
-        public ThemeSpec(@StringRes int summary, @StyleRes int theme) {
+        private ThemeSpec(@StringRes int summary, @StyleRes int theme, @StyleRes int dialogTheme) {
             this.summary = summary;
             this.theme = theme;
+            this.dialogTheme = dialogTheme;
         }
     }
 }

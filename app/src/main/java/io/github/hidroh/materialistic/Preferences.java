@@ -197,6 +197,18 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_lazy_load), true);
     }
 
+    public static String getUsername(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.pref_username), null);
+    }
+
+    public static void setUsername(Context context, String username) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(R.string.pref_username), username)
+                .apply();;
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
@@ -230,9 +242,9 @@ public class Preferences {
 
     public static class Theme {
 
-        public static void apply(Context context) {
-            int theme = getTheme(context);
-            if (theme != ThemePreference.THEME_DEFAULT) {
+        public static void apply(Context context, boolean dialogTheme) {
+            int theme = getTheme(context, dialogTheme);
+            if (dialogTheme || theme != ThemePreference.THEME_DEFAULT) {
                 context.setTheme(theme);
             }
             context.getTheme().applyStyle(resolvePreferredTextSize(context), true);
@@ -304,10 +316,14 @@ public class Preferences {
                     .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
         }
 
-        private static @StyleRes int getTheme(Context context) {
+        private static @StyleRes int getTheme(Context context, boolean dialogTheme) {
             String choice = PreferenceManager.getDefaultSharedPreferences(context)
                     .getString(context.getString(R.string.pref_theme), null);
-            return ThemePreference.getTheme(choice);
+            if (dialogTheme) {
+                return ThemePreference.getDialogTheme(choice);
+            } else {
+                return ThemePreference.getTheme(choice);
+            }
         }
     }
 }

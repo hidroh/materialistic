@@ -59,7 +59,7 @@ public class FontSizePreferenceTest {
     public void test() {
         preferenceView.performClick();
         ((Spinner) preferenceView.findViewById(R.id.spinner)).setSelection(selection);
-        Preferences.Theme.apply(activity);
+        Preferences.Theme.apply(activity, false);
         assertEquals(styleResId, shadowOf(activity.getTheme()).getStyleResourceId());
     }
 }

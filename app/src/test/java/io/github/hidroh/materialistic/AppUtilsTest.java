@@ -50,7 +50,7 @@ public class AppUtilsTest {
     public void testDefaultTextSize() {
         Activity activity = Robolectric.setupActivity(Activity.class);
         shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
-        Preferences.Theme.apply(activity);
+        Preferences.Theme.apply(activity, false);
         assertEquals(R.style.AppTextSize, shadowOf(activity.getTheme()).getStyleResourceId());
     }
 

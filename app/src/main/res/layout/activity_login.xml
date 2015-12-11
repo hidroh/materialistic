@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textinput_title"
+            android:id="@+id/textinput_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/edittext_title"
-                android:hint="@string/title_hint"
+                android:id="@+id/edittext_username"
+                android:hint="@string/username_hint"
                 android:singleLine="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -28,37 +25,29 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textinput_body"
+            android:id="@+id/textinput_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/edittext_body"
-                android:hint="@string/comment_hint"
-                android:gravity="top"
-                android:singleLine="false"
-                android:minLines="3"
-                android:maxLines="10"
+                android:id="@+id/edittext_password"
+                android:hint="@string/password_hint"
+                android:singleLine="true"
+                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:text="@string/feedback_note"
-            android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginTop="@dimen/margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <Button
-            android:id="@+id/feedback_button"
-            android:text="@string/send_feedback"
+            android:id="@+id/login_button"
+            android:text="@string/login"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_marginTop="@dimen/margin"
             android:layout_gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
 
     </LinearLayout>
 
