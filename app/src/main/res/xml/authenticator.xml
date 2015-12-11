@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="io.github.hidroh.materialistic"
+    android:icon="@drawable/ic_app"
+    android:smallIcon="@drawable/ic_app"
+    android:label="@string/app_name" />

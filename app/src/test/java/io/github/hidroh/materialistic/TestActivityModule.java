@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -9,12 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowAccountManager;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -88,6 +91,7 @@ public class TestActivityModule {
     private final SearchView searchView = mock(SearchView.class);
     private final FeedbackClient feedbackClient = mock(FeedbackClient.class);
     private final ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
+    private final UserServices userServices = mock(UserServices.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -171,5 +175,15 @@ public class TestActivityModule {
                 return builder.show();
             }
         };
+    }
+
+    @Provides @Singleton
+    public UserServices provideUserServices() {
+        return userServices;
+    }
+
+    @Provides
+    public AccountManager provideAccountManager() {
+        return ShadowAccountManager.get(RuntimeEnvironment.application);
     }
 }
