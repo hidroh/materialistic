@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 @Module(
         injects = {
                 // source classes
+                LoginActivity.class,
                 SettingsActivity.class,
                 AskActivity.class,
                 AboutActivity.class,
@@ -72,7 +73,8 @@ import static org.mockito.Mockito.when;
                 ListFragmentTest.class,
                 PopularActivityTest.class,
                 ReadabilityFragmentTest.class,
-                ReadabilityFragmentLazyLoadTest.class
+                ReadabilityFragmentLazyLoadTest.class,
+                LoginActivityTest.class
         },
         library = true,
         overrides = true

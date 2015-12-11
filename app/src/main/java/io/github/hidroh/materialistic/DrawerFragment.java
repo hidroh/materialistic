@@ -12,6 +12,13 @@ public class DrawerFragment extends BaseFragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_drawer, container, false);
+        view.findViewById(R.id.drawer_account).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(LoginActivity.class);
+            }
+        });
+
         view.findViewById(R.id.drawer_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

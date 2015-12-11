@@ -10,7 +10,7 @@ public abstract class ThemedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Preferences.Theme.apply(this);
+        Preferences.Theme.apply(this, isDialogTheme());
         super.onCreate(savedInstanceState);
         mMenuTintDelegate.onActivityCreated(this);
     }
@@ -20,5 +20,9 @@ public abstract class ThemedActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         mMenuTintDelegate.onOptionsMenuCreated(menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    protected boolean isDialogTheme() {
+        return false;
     }
 }

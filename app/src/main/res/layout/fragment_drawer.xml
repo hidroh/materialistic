@@ -5,12 +5,11 @@
     android:clickable="true"
     tools:context="io.github.hidroh.materialistic.DrawerFragment">
 
-    <TextView
-        android:text="@string/app_name"
+    <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_account"
+        android:text="@string/login"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="@dimen/abc_text_size_large_material"
-        android:textStyle="bold"
-        android:drawableRight="@drawable/ic_app"
+        android:drawableLeft="@drawable/ic_lock_white_24dp"
         android:background="?attr/colorPrimary"
         style="@style/DrawerTextStyle"/>
 

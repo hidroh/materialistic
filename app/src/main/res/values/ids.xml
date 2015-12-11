@@ -37,6 +37,7 @@
     <item type="id" name="drawer_new" />
     <item type="id" name="drawer_feedback" />
     <item type="id" name="drawer_popular" />
+    <item type="id" name="drawer_account" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />

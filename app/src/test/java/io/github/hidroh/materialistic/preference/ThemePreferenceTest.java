@@ -55,7 +55,7 @@ public class ThemePreferenceTest {
     @Test
     public void test() {
         preferenceView.findViewById(preferenceId).performClick();
-        Preferences.Theme.apply(activity);
+        Preferences.Theme.apply(activity, false);
         shadowOf(activity).recreate();
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(styleResId);
     }

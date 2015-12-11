@@ -51,7 +51,7 @@ public class PreferencesTextSizeTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_text_size), choice)
                 .commit();
-        Preferences.Theme.apply(activity);
+        Preferences.Theme.apply(activity, false);
         assertEquals(resId, shadowOf(activity.getTheme()).getStyleResourceId());
     }
 }

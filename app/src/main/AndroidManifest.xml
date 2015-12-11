@@ -105,6 +105,11 @@
             android:name=".SettingsActivity"
             android:label="@string/action_settings" >
         </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppAlertDialog">
+        </activity>
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"
             android:name=".data.MaterialisticProvider"

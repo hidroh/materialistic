@@ -173,5 +173,11 @@
     <string name="file_not_supported">Content type not supported</string>
     <string name="card_view">Card view</string>
     <string name="compact_view">Compact view</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="title_activity_login">Login</string>
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
 
 </resources>
