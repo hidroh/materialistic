@@ -47,7 +47,7 @@
         </LinearLayout>
 
         <ImageView
-            android:src="@drawable/ic_thumb_up_white_36dp"
+            android:src="@drawable/ic_thumb_up_white_24dp"
             android:tint="@color/greenA700"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_width="wrap_content"

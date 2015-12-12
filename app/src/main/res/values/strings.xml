@@ -191,5 +191,6 @@
     <string name="vote_up">Vote up</string>
     <string name="voted">Successfully voted!</string>
     <string name="vote_failed">Fail to record vote. Please try again.</string>
+    <string name="sending">Sending...</string>
 
 </resources>
