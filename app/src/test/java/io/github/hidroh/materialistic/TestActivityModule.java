@@ -3,9 +3,12 @@ package io.github.hidroh.materialistic;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.MenuRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.SearchView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -28,6 +31,7 @@ import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.WebActivity;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -198,5 +202,42 @@ public class TestActivityModule {
     @Provides
     public AccountManager provideAccountManager() {
         return ShadowAccountManager.get(RuntimeEnvironment.application);
+    }
+
+    @Provides
+    public PopupMenu providePopupMenu() {
+        return new PopupMenu() {
+            private android.widget.PopupMenu popupMenu;
+
+            @Override
+            public void create(Context context, View anchor, int gravity) {
+                popupMenu = new android.widget.PopupMenu(context, anchor, gravity);
+            }
+
+            @Override
+            public void inflate(@MenuRes int menuRes) {
+                popupMenu.inflate(menuRes);
+            }
+
+            @Override
+            public Menu getMenu() {
+                return popupMenu.getMenu();
+            }
+
+            @Override
+            public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
+                popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        return listener.onMenuItemClick(item);
+                    }
+                });
+            }
+
+            @Override
+            public void show() {
+                popupMenu.show();
+            }
+        };
     }
 }

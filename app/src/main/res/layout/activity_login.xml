@@ -7,6 +7,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin">
 
@@ -38,6 +40,13 @@
                 android:layout_height="wrap_content" />
 
         </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:text="@string/login_note"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/login_button"

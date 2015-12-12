@@ -1,9 +1,11 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
@@ -24,7 +27,10 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadows.ShadowPopupMenu;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
@@ -33,6 +39,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.assertj.TextSwitcherAssert;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
@@ -48,6 +55,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -68,10 +76,12 @@ public class ListFragmentViewHolderTest {
     @Inject SessionManager sessionManager;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Inject FavoriteManager favoriteManager;
+    @Inject UserServices userServices;
     @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallbacks;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item[]>> storiesListener;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> itemListener;
+    @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
 
     @Before
     public void setUp() {
@@ -80,6 +90,7 @@ public class ListFragmentViewHolderTest {
         reset(sessionManager);
         reset(favoriteManager);
         reset(itemManager);
+        reset(userServices);
         item = new TestHnItem(1) {
             @Override
             public int getRank() {
@@ -333,11 +344,16 @@ public class ListFragmentViewHolderTest {
         controller.resume();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
-    public void testItemLongClick() {
+    public void testSaveItem() {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_save));
         verify(favoriteManager).add(any(Context.class), eq(item));
         assertTrue(item.isFavorite());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
@@ -346,6 +362,52 @@ public class ListFragmentViewHolderTest {
         activity.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
         assertFalse(item.isFavorite());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItem() {
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
+        voteCallback.getValue().onDone(true);
+        assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItemPromptToLogin() {
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
+        voteCallback.getValue().onDone(false);
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, LoginActivity.class);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItemFailed() {
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
+        voteCallback.getValue().onError();
+        assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 
     @After
