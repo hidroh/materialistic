@@ -231,10 +231,15 @@ public interface ItemManager {
         boolean isDead();
 
         /**
-         * Get item's score
+         * Gets item's score
          * @return item's score
          */
         int getScore();
+
+        /**
+         * Increments item's score
+         */
+        void incrementScore();
 
         /**
          * Checks if item is collapsed

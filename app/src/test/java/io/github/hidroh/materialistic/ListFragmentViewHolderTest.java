@@ -12,10 +12,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +30,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
@@ -40,13 +42,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.assertj.TextSwitcherAssert;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
+import io.github.hidroh.materialistic.test.ShadowAnimation;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
@@ -66,7 +68,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowAnimation.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
@@ -124,8 +126,7 @@ public class ListFragmentViewHolderTest {
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextString("title");
+        assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
         verify(sessionManager).isViewed(any(Context.class), anyString(), sessionCallbacks.capture());
         sessionCallbacks.getValue().onCheckComplete(true);
@@ -377,6 +378,14 @@ public class ListFragmentViewHolderTest {
         verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
         voteCallback.getValue().onDone(true);
         assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
+        Animation animation = ((ViewSwitcher) adapter.getViewHolder(0).itemView
+                .findViewById(R.id.rank_container))
+                .getInAnimation();
+        ((ShadowAnimation) ShadowExtractor.extract(animation))
+                .getAnimationListener().onAnimationEnd(animation);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+        assertThat((TextView) adapter.getViewHolder(0).itemView.findViewById(R.id.score))
+                .hasTextString(activity.getString(R.string.score, 1));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -417,14 +426,14 @@ public class ListFragmentViewHolderTest {
 
     private void assertViewed() {
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(AppUtils.getThemedResId(activity, android.R.attr.textColorSecondary));
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(ContextCompat.getColor(activity, AppUtils.getThemedResId(activity, android.R.attr.textColorSecondary)));
     }
 
     private void assertNotViewed() {
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(R.color.blackT87);
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.blackT87));
     }
 
     @SuppressLint("ParcelCreator")
