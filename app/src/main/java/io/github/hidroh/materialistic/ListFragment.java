@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -69,6 +70,8 @@ public class ListFragment extends BaseListFragment {
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
     @Inject @Named(ActivityModule.POPULAR) ItemManager mPopularItemManager;
+    @Inject UserServices mUserServices;
+    @Inject AlertDialogBuilder mLoginAlertDialogBuilder;
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
@@ -411,6 +414,10 @@ public class ListFragment extends BaseListFragment {
                                 toggleSave(story, holder);
                                 return true;
                             }
+                            if (item.getItemId() == R.id.menu_contextual_vote) {
+                                vote(story, holder);
+                                return true;
+                            }
                             return false;
                         }
                     });
@@ -526,6 +533,27 @@ public class ListFragment extends BaseListFragment {
                     .show();
             story.setFavorite(!story.isFavorite());
             holder.mStoryView.setFavorite(story.isFavorite());
+        }
+
+        private void vote(final ItemManager.Item story, ItemViewHolder holder) {
+            final int position = holder.getAdapterPosition();
+            mUserServices.voteUp(getActivity(), story.getId(), new UserServices.Callback() {
+                @Override
+                public void onDone(boolean successful) {
+                    if (successful) {
+                        // TODO increment score
+                        notifyItemChanged(position);
+                        Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
+                    } else {
+                        AppUtils.showLogin(getActivity(), mLoginAlertDialogBuilder);
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

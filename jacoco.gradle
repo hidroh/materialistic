@@ -23,6 +23,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
                     '**/ActivityModule*.class',
                     '**/AlertDialogBuilder.class',
                     '**/AlertDialogBuilder$Impl.class',
+                    '**/PopupMenu*.class',
                     '**/ImageUtils$PicassoImpl.class',
                     '**/ActionViewResolver.class',
                     '**/SpinnerPreference$*.class',

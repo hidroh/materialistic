@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic.accounts;
 
+import android.accounts.Account;
+
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -14,13 +16,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowAccountManager;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.Preferences;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +40,7 @@ public class UserServicesClientTest {
     private Response.Builder responseBuilder = new Response.Builder()
             .protocol(Protocol.HTTP_2)
             .request(new Request.Builder().url("http://example.com").build());
+    private Account account;
 
     @Before
     public void setUp() {
@@ -40,10 +49,14 @@ public class UserServicesClientTest {
         OkHttpClient client = mock(OkHttpClient.class);
         when(client.newCall(any(Request.class))).thenReturn(call);
         userServices = new UserServicesClient(client);
+        Preferences.setUsername(RuntimeEnvironment.application, "username");
+        account = new Account("username", BuildConfig.APPLICATION_ID);
+        ShadowAccountManager.get(RuntimeEnvironment.application)
+                .addAccountExplicitly(account, "password", null);
     }
 
     @Test
-    public void testSuccess() throws IOException {
+    public void testLoginSuccess() throws IOException {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", callback);
         verify(call).enqueue(callbackCaptor.capture());
@@ -53,7 +66,7 @@ public class UserServicesClientTest {
     }
 
     @Test
-    public void testFailed() throws IOException {
+    public void testLoginFailed() throws IOException {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", callback);
         verify(call).enqueue(callbackCaptor.capture());
@@ -63,11 +76,60 @@ public class UserServicesClientTest {
     }
 
     @Test
-    public void testError() throws IOException {
+    public void testLoginError() throws IOException {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
         verify(callback).onError();
     }
+
+    @Test
+    public void testVoteSuccess() throws IOException {
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(responseBuilder
+                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
+        verify(callback).onDone(eq(true));
+    }
+
+    @Test
+    public void testVoteFailed() throws IOException {
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(responseBuilder
+                .code(HttpURLConnection.HTTP_OK).build());
+        verify(callback).onDone(eq(false));
+    }
+
+    @Test
+    public void testVoteError() throws IOException {
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(null, null);
+        verify(callback).onError();
+    }
+
+    @Test
+    public void testVoteNoMatchingAccount() throws IOException {
+        Preferences.setUsername(RuntimeEnvironment.application, "another");
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        verify(call, never()).enqueue(any(Callback.class));
+        verify(callback).onDone(eq(false));
+    }
+
+    @Test
+    public void testVoteNoAccount() throws IOException {
+        ShadowAccountManager.get(RuntimeEnvironment.application)
+                .removeAccount(account, null, null);
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        verify(call, never()).enqueue(any(Callback.class));
+        verify(callback).onDone(eq(false));
+    }
+
 }

@@ -3,4 +3,7 @@
     <item
         android:id="@id/menu_contextual_save"
         android:title="@string/save" />
+    <item
+        android:id="@id/menu_contextual_vote"
+        android:title="@string/vote_up" />
 </menu>
