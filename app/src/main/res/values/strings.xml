@@ -100,7 +100,11 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="title_hint">Title</string>
     <string name="comment_hint">Comment</string>
-    <string name="feedback_note">Your feedback will be made public as a Materialistic Github issue.</string>
+    <string name="feedback_note" formatted="false">
+        <![CDATA[
+            Your feedback will be made public as a <a href="https://github.com/hidroh/materialistic/issues">Materialistic Github issue</a>.
+        ]]>
+    </string>
     <string name="title_required">Title is required</string>
     <string name="comment_required">Comment is required</string>
     <string name="feedback_sent">Feedback sent. Thank you!</string>

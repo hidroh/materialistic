@@ -45,6 +45,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <TextView
+            android:id="@+id/feedback_note"
             android:text="@string/feedback_note"
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginTop="@dimen/margin"
