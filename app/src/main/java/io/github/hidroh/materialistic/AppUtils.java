@@ -286,7 +286,8 @@ public class AppUtils {
                     .setActionButton(BitmapFactory.decodeResource(context.getResources(),
                                     R.drawable.ic_share_grey600_24dp),
                             context.getString(R.string.share),
-                            PendingIntent.getBroadcast(context, 0, shareIntent, 0))
+                            PendingIntent.getBroadcast(context, 0, shareIntent,
+                                    PendingIntent.FLAG_ONE_SHOT))
                     .build();
             customTabsIntent.intent.setData(Uri.parse(url));
             return customTabsIntent.intent;
