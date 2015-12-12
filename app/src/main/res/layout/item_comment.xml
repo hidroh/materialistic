@@ -45,14 +45,12 @@
                     android:layout_weight="1"
                     android:singleLine="false"
                     android:gravity="center_vertical" />
-                <ImageButton
+
+                <include layout="@layout/button_more"
                     android:id="@+id/button_more"
-                    android:src="@drawable/ic_more_vert_white_24dp"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:tint="?android:attr/textColorSecondary"
-                    android:minWidth="@null"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
             <io.github.hidroh.materialistic.widget.TextView
                 android:id="@id/text"

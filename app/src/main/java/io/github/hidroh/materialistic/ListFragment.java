@@ -403,26 +403,14 @@ public class ListFragment extends BaseListFragment {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    mPopupMenu.create(getActivity(), v, Gravity.RIGHT);
-                    mPopupMenu.inflate(R.menu.menu_contextual_story);
-                    mPopupMenu.getMenu().findItem(R.id.menu_contextual_save)
-                            .setTitle(story.isFavorite() ? R.string.unsave : R.string.save);
-                    mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            if (item.getItemId() == R.id.menu_contextual_save) {
-                                toggleSave(story, holder);
-                                return true;
-                            }
-                            if (item.getItemId() == R.id.menu_contextual_vote) {
-                                vote(story, holder);
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
-                    mPopupMenu.show();
+                    showMoreOptions(holder.mStoryView.getMoreOptions(), story, holder);
                     return true;
+                }
+            });
+            holder.mStoryView.getMoreOptions().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showMoreOptions(v, story, holder);
                 }
             });
         }
@@ -512,6 +500,28 @@ public class ListFragment extends BaseListFragment {
             mSessionManager.view(getActivity(), item.getId());
             item.setIsViewed(true);
             holder.mStoryView.setViewed(true);
+        }
+
+        private void showMoreOptions(View v, final ItemManager.Item story, final ItemViewHolder holder) {
+            mPopupMenu.create(getActivity(), v, Gravity.NO_GRAVITY);
+            mPopupMenu.inflate(R.menu.menu_contextual_story);
+            mPopupMenu.getMenu().findItem(R.id.menu_contextual_save)
+                    .setTitle(story.isFavorite() ? R.string.unsave : R.string.save);
+            mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    if (item.getItemId() == R.id.menu_contextual_save) {
+                        toggleSave(story, holder);
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.menu_contextual_vote) {
+                        vote(story, holder);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            mPopupMenu.show();
         }
 
         private void toggleSave(final ItemManager.Item story, final ItemViewHolder holder) {

@@ -63,6 +63,7 @@
         android:paddingTop="@dimen/padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <LinearLayout
         android:id="@id/meta_container"
         android:layout_width="match_parent"
@@ -82,11 +83,22 @@
             style="@style/textSubtitleStyle"
             android:singleLine="false" />
     </LinearLayout>
+
     <include layout="@layout/button_comment"
         android:id="@id/comment"
+        android:layout_toLeftOf="@+id/button_more"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignTop="@id/meta_container"
+        android:layout_alignBottom="@id/meta_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <include layout="@layout/button_more"
+        android:id="@id/button_more"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/meta_container"
         android:layout_alignBottom="@id/meta_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
 </merge>

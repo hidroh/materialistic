@@ -39,6 +39,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final View mCommentButton;
     private final boolean mIsLocal;
     private final ViewSwitcher mRankContainer;
+    private final View mMoreButton;
     private boolean mChecked;
 
     public StoryView(Context context, @Nullable AttributeSet attrs) {
@@ -70,6 +71,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mTitleTextView = (TextView) findViewById(R.id.title);
         mSourceTextView = (TextView) findViewById(R.id.source);
         mCommentButton = findViewById(R.id.comment);
+        mMoreButton = findViewById(R.id.button_more);
         ta.recycle();
         a.recycle();
     }
@@ -208,6 +210,13 @@ public class StoryView extends RelativeLayout implements Checkable {
             }
         });
         mRankContainer.showNext();
+    }
+
+    public View getMoreOptions() {
+        if (mIsLocal) {
+            return null;
+        }
+        return mMoreButton;
     }
 
     private Spannable decorateUpdated(String text, boolean updated) {
