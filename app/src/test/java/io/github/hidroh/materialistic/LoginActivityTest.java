@@ -81,6 +81,17 @@ public class LoginActivityTest {
         assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
     }
 
+    @Test
+    public void testError() {
+        ((EditText) activity.findViewById(R.id.edittext_username)).setText("username");
+        ((EditText) activity.findViewById(R.id.edittext_password)).setText("password");
+        activity.findViewById(R.id.login_button).performClick();
+        verify(userServices).login(eq("username"), eq("password"), callback.capture());
+        callback.getValue().onError();
+        assertThat(activity).isNotFinishing();
+        assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
+    }
+
     @After
     public void tearDown() {
         controller.pause().stop().destroy();

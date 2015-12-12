@@ -68,6 +68,6 @@ public class UserServicesClientTest {
         userServices.login("username", "password", callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onDone(eq(false));
+        verify(callback).onError();
     }
 }

@@ -70,6 +70,13 @@ public class LoginActivity extends AccountAuthenticatorActivity {
                                     .show();
                         }
                     }
+
+                    @Override
+                    public void onError() {
+                        Toast.makeText(LoginActivity.this,
+                                R.string.login_failed, Toast.LENGTH_SHORT)
+                                .show();
+                    }
                 });
     }
 

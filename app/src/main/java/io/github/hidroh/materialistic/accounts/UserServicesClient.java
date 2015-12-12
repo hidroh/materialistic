@@ -61,7 +61,7 @@ public class UserServicesClient implements UserServices {
                         mUiHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onDone(false);
+                                callback.onError();
                             }
                         });
                     }

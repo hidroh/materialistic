@@ -1,8 +1,11 @@
 package io.github.hidroh.materialistic.accounts;
 
+import android.content.Context;
+
 public interface UserServices {
-    interface Callback {
-        void onDone(boolean successful);
+    abstract class Callback {
+        public void onDone(boolean successful) {}
+        public void onError() {}
     }
 
     void login(String username, String password, Callback callback);
