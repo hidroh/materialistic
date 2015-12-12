@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -9,6 +10,8 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -17,12 +20,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -44,9 +50,12 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject AlertDialogBuilder mLoginAlertDialogBuilder;
+    @Inject UserServices mUserServices;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
+    private ImageButton mVoteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +70,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
+        mVoteButton = (ImageButton) findViewById(R.id.vote_button);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
@@ -235,7 +245,13 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (story == null) {
             return;
         }
-
+        mVoteButton.setVisibility(View.VISIBLE);
+        mVoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vote(story);
+            }
+        });
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         if (story.isShareable()) {
             titleTextView.setText(story.getDisplayedTitle());
@@ -340,5 +356,28 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     private void decorateFavorite(boolean isFavorite) {
         mBookmark.setImageResource(isFavorite ?
                 R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_outline_white_24dp);
+    }
+
+    private void vote(final ItemManager.Item story) {
+        mUserServices.voteUp(ItemActivity.this, story.getId(), new UserServices.Callback() {
+            @Override
+            public void onDone(boolean successful) {
+                if (successful) {
+                    Drawable drawable = DrawableCompat.wrap(mVoteButton.getDrawable());
+                    DrawableCompat.setTint(drawable,
+                            ContextCompat.getColor(ItemActivity.this, R.color.greenA700));
+                    Toast.makeText(ItemActivity.this, R.string.voted,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    AppUtils.showLogin(ItemActivity.this, mLoginAlertDialogBuilder);
+                }
+            }
+
+            @Override
+            public void onError() {
+                Toast.makeText(ItemActivity.this, R.string.vote_failed,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
