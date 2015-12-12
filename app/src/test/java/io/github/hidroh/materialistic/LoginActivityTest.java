@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.widget.EditText;
 
@@ -12,6 +13,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowToast;
@@ -90,6 +92,27 @@ public class LoginActivityTest {
         callback.getValue().onError();
         assertThat(activity).isNotFinishing();
         assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testReLogin() {
+        controller = Robolectric.buildActivity(LoginActivity.class);
+        Preferences.setUsername(RuntimeEnvironment.application, "existing");
+        activity = controller.create().postCreate(null).start().resume().get();
+        assertThat(activity).hasTitle(R.string.re_enter_password);
+        assertThat((EditText) activity.findViewById(R.id.edittext_username))
+                .hasTextString("existing");
+    }
+
+    @Test
+    public void testAddAccount() {
+        controller = Robolectric.buildActivity(LoginActivity.class);
+        Preferences.setUsername(RuntimeEnvironment.application, "existing");
+        Intent intent = new Intent();
+        intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
+        activity = controller.withIntent(intent).create().postCreate(null).start().resume().get();
+        assertThat(activity).hasTitle(R.string.title_activity_login);
+        assertThat((EditText) activity.findViewById(R.id.edittext_username)).isEmpty();
     }
 
     @After

@@ -187,5 +187,6 @@
     <string name="login_note">Your credentials will be stored securely under your device\'s Settings / Accounts</string>
     <string name="save">Save</string>
     <string name="unsave">Unsave</string>
+    <string name="re_enter_password">Re-enter your password</string>
 
 </resources>

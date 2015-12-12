@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.accounts.UserServices;
 
 public class LoginActivity extends AccountAuthenticatorActivity {
+    public static final String EXTRA_ADD_ACCOUNT = LoginActivity.class.getName() + ".EXTRA_ADD_ACCOUNT";
     @Inject UserServices mUserServices;
     @Inject AccountManager mAccountManager;
     private View mLoginButton;
@@ -21,30 +22,36 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String username = Preferences.getUsername(this);
+        boolean addAccount = getIntent().getBooleanExtra(EXTRA_ADD_ACCOUNT, false);
         setContentView(R.layout.activity_login);
         final TextInputLayout usernameLayout = (TextInputLayout)
                 findViewById(R.id.textinput_username);
         final TextInputLayout passwordLayout = (TextInputLayout)
                 findViewById(R.id.textinput_password);
-        final EditText username = (EditText) findViewById(R.id.edittext_username);
-        final EditText password = (EditText) findViewById(R.id.edittext_password);
+        final EditText usernameEditText = (EditText) findViewById(R.id.edittext_username);
+        if (!addAccount && !TextUtils.isEmpty(username)) {
+            setTitle(R.string.re_enter_password);
+            usernameEditText.setText(username);
+        }
+        final EditText passwordEditText = (EditText) findViewById(R.id.edittext_password);
         mLoginButton = findViewById(R.id.login_button);
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 usernameLayout.setErrorEnabled(false);
                 passwordLayout.setErrorEnabled(false);
-                if (username.length() == 0) {
+                if (usernameEditText.length() == 0) {
                     usernameLayout.setError(getString(R.string.username_required));
                 }
-                if (password.length() == 0) {
+                if (passwordEditText.length() == 0) {
                     passwordLayout.setError(getString(R.string.password_required));
                 }
-                if (username.length() == 0 || password.length() == 0) {
+                if (usernameEditText.length() == 0 || passwordEditText.length() == 0) {
                     return;
                 }
                 mLoginButton.setEnabled(false);
-                login(username.getText().toString(), password.getText().toString());
+                login(usernameEditText.getText().toString(), passwordEditText.getText().toString());
             }
         });
     }
@@ -84,6 +91,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     private void addAccount(String username, String password) {
         Account account = new Account(username, BuildConfig.APPLICATION_ID);
         mAccountManager.addAccountExplicitly(account, password, null);
+        mAccountManager.setPassword(account, password); // for re-login with updated password
         Bundle bundle = new Bundle();
         bundle.putString(AccountManager.KEY_ACCOUNT_NAME, username);
         bundle.putString(AccountManager.KEY_ACCOUNT_TYPE, BuildConfig.APPLICATION_ID);

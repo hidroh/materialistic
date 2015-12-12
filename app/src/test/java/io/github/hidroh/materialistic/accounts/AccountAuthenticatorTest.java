@@ -34,7 +34,9 @@ public class AccountAuthenticatorTest {
                 BuildConfig.APPLICATION_ID, null, null, null);
         assertThat(actual).hasKey(AccountManager.KEY_INTENT);
         Intent actualIntent = actual.getParcelable(AccountManager.KEY_INTENT);
-        assertThat(actualIntent).hasComponent(RuntimeEnvironment.application, LoginActivity.class);
+        assertThat(actualIntent)
+                .hasComponent(RuntimeEnvironment.application, LoginActivity.class)
+                .hasExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
     }
 
     @Test
