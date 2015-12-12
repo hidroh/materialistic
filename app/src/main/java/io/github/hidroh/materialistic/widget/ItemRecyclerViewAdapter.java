@@ -169,7 +169,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopupMenu.create(mContext, holder.mMoreButton, Gravity.RIGHT);
+                mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY);
                 mPopupMenu.inflate(R.menu.menu_contextual_comment);
                 mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override

@@ -393,7 +393,7 @@ public class ListFragmentViewHolderTest {
     public void testVoteItemPromptToLogin() {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
-        adapter.getViewHolder(0).itemView.performLongClick();
+        adapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
