@@ -246,7 +246,9 @@ public class AppUtils {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == items.length - 1) {
-                            context.startActivity(new Intent(context, LoginActivity.class));
+                            Intent intent = new Intent(context, LoginActivity.class);
+                            intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
+                            context.startActivity(intent);
                         } else {
                             Preferences.setUsername(context, items[which]);
                             Toast.makeText(context,
