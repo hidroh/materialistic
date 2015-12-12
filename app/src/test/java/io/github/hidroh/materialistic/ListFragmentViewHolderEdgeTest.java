@@ -3,7 +3,7 @@ package io.github.hidroh.materialistic;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.widget.TextSwitcher;
+import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,13 +21,13 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.github.hidroh.materialistic.assertj.TextSwitcherAssert;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.TestItem;
 
+import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -71,16 +71,16 @@ public class ListFragmentViewHolderEdgeTest {
     public void testNullResponse() {
         verify(itemManager).getItem(anyString(), listener.capture());
         listener.getValue().onResponse(null);
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentText(R.string.loading_text);
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasText(R.string.loading_text);
     }
 
     @Test
     public void testErrorResponse() {
         verify(itemManager).getItem(anyString(), listener.capture());
         listener.getValue().onError(null);
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentText(R.string.loading_text);
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasText(R.string.loading_text);
     }
 
     @After

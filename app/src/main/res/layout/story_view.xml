@@ -38,23 +38,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-    <TextSwitcher
+    <io.github.hidroh.materialistic.widget.TextView
         android:id="@id/title"
+        android:text="@string/loading_text"
+        style="@style/textTitleStyle"
         android:layout_toRightOf="@id/rank_container"
         android:paddingTop="@dimen/padding"
-        android:inAnimation="@android:anim/fade_in"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <io.github.hidroh.materialistic.widget.TextView
-            android:text="@string/loading_text"
-            style="@style/textTitleStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <io.github.hidroh.materialistic.widget.TextView
-            style="@style/textTitleStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </TextSwitcher>
+        android:layout_height="wrap_content" />
     <LinearLayout
         android:id="@id/meta_container"
         android:layout_width="match_parent"

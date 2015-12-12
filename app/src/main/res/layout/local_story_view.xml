@@ -8,24 +8,15 @@
         android:layout_toLeftOf="@id/comment"
         android:paddingTop="@dimen/padding"
         style="@style/textSubtitleStyle.Italic" />
-    <TextSwitcher
+    <io.github.hidroh.materialistic.widget.TextView
         android:id="@id/title"
+        android:text="@string/loading_text"
+        style="@style/textTitleStyle"
+        android:lines="@null"
         android:layout_below="@id/posted"
         android:layout_toLeftOf="@id/comment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <io.github.hidroh.materialistic.widget.TextView
-            android:text="@string/loading_text"
-            style="@style/textTitleStyle"
-            android:lines="@null"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <io.github.hidroh.materialistic.widget.TextView
-            style="@style/textTitleStyle"
-            android:lines="@null"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </TextSwitcher>
+        android:layout_height="wrap_content" />
     <TextView
         android:id="@id/source"
         android:text="@string/loading_text"

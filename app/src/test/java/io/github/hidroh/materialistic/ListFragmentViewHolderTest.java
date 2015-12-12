@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -40,7 +39,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.assertj.TextSwitcherAssert;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -124,8 +122,7 @@ public class ListFragmentViewHolderTest {
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextString("title");
+        assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
         verify(sessionManager).isViewed(any(Context.class), anyString(), sessionCallbacks.capture());
         sessionCallbacks.getValue().onCheckComplete(true);
@@ -417,14 +414,14 @@ public class ListFragmentViewHolderTest {
 
     private void assertViewed() {
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(AppUtils.getThemedResId(activity, android.R.attr.textColorSecondary));
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(ContextCompat.getColor(activity, AppUtils.getThemedResId(activity, android.R.attr.textColorSecondary)));
     }
 
     private void assertNotViewed() {
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        TextSwitcherAssert.assertThat((TextSwitcher) holder.itemView.findViewById(R.id.title))
-                .hasCurrentTextColor(R.color.blackT87);
+        assertThat((TextView) holder.itemView.findViewById(R.id.title))
+                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.blackT87));
     }
 
     @SuppressLint("ParcelCreator")

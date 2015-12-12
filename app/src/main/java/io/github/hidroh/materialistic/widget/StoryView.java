@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,12 +26,11 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final int mTertiaryTextColorResId;
     private final int mSecondaryTextColorResId;
     private final int mPromotedColorResId;
-    private final TextSwitcher mTitleSwitcher;
     private final TextView mRankTextView;
     private final TextView mScoreTextView;
     private final View mBookmarked;
     private final TextView mPostedTextView;
-    private final TextSwitcher mTitleTextView;
+    private final TextView mTitleTextView;
     private final TextView mSourceTextView;
     private final View mCommentButton;
     private final boolean mIsLocal;
@@ -59,12 +57,11 @@ public class StoryView extends RelativeLayout implements Checkable {
         mPromotedColorResId = ContextCompat.getColor(context, R.color.greenA700);
         inflate(context, mIsLocal ? R.layout.local_story_view : R.layout.story_view, this);
         setBackgroundColor(mBackgroundColor);
-        mTitleSwitcher = (TextSwitcher) findViewById(R.id.title);
         mRankTextView = (TextView) findViewById(R.id.rank);
         mScoreTextView = (TextView) findViewById(R.id.score);
         mBookmarked = findViewById(R.id.bookmarked);
         mPostedTextView = (TextView) findViewById(R.id.posted);
-        mTitleTextView = (TextSwitcher) findViewById(R.id.title);
+        mTitleTextView = (TextView) findViewById(R.id.title);
         mSourceTextView = (TextView) findViewById(R.id.source);
         mCommentButton = findViewById(R.id.comment);
         ta.recycle();
@@ -103,7 +100,7 @@ public class StoryView extends RelativeLayout implements Checkable {
                 mCommentButton.setVisibility(View.GONE);
             }
         }
-        mTitleTextView.setCurrentText(getContext().getString(R.string.loading_text));
+        mTitleTextView.setText(getContext().getString(R.string.loading_text));
         mTitleTextView.setText(story.getDisplayedTitle());
         mPostedTextView.setText(story.getDisplayedTime(getContext(), true));
         switch (story.getType()) {
@@ -129,7 +126,7 @@ public class StoryView extends RelativeLayout implements Checkable {
             mRankTextView.setText(R.string.loading_text);
             mScoreTextView.setText(R.string.loading_text);
         }
-        mTitleTextView.setCurrentText(getContext().getString(R.string.loading_text));
+        mTitleTextView.setText(getContext().getString(R.string.loading_text));
         mPostedTextView.setText(R.string.loading_text);
         mSourceTextView.setText(R.string.loading_text);
         mSourceTextView.setCompoundDrawables(null, null, null, null);
@@ -140,8 +137,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         if (mIsLocal) {
             return; // local always means viewed, do not decorate
         }
-        ((android.widget.TextView) mTitleSwitcher.getCurrentView())
-                .setTextColor(isViewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
+        mTitleTextView.setTextColor(isViewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
     }
 
     public void setPromoted(boolean isPromoted) {
