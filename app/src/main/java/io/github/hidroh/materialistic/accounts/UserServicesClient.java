@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.Pair;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.HttpUrl;
@@ -18,6 +19,7 @@ import java.net.HttpURLConnection;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.R;
 
 public class UserServicesClient implements UserServices {
     private static final String TAG_OK_HTTP = "OkHttp";
@@ -73,6 +75,7 @@ public class UserServicesClient implements UserServices {
             callback.onDone(false);
             return;
         }
+        Toast.makeText(context, R.string.sending, Toast.LENGTH_SHORT).show();
         mClient.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
