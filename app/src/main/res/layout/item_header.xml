@@ -5,12 +5,11 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:id="@id/header_card_view"
-    android:paddingLeft="56dp"
-    android:paddingRight="56dp"
     android:foreground="?attr/selectableItemBackground"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     tools:background="?attr/colorPrimary">
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_marginTop="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         android:layout_width="match_parent"
@@ -23,29 +22,67 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             android:textSize="?attr/titleTextSize"
             android:ellipsize="end"
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <TextView
-            android:id="@id/source"
-            android:text="@string/loading_text"
-            tools:text="example.com"
-            tools:visibility="visible"
-            android:visibility="gone"
+
+        <LinearLayout
+            android:id="@+id/meta_container"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_below="@android:id/text2"
+            android:layout_toLeftOf="@+id/action_container"
+            android:layout_alignTop="@id/action_container"
+            android:layout_alignBottom="@id/action_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="?attr/subtitleTextSize"
-            android:textStyle="italic" />
-        <TextView
-            android:id="@id/posted"
-            android:text="@string/loading_text"
-            tools:text="2 days ago"
-            android:drawablePadding="@dimen/padding"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            android:textSize="?attr/subtitleTextSize"
-            android:textColor="?android:attr/textColorPrimary"/>
-    </LinearLayout>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@id/source"
+                android:text="@string/loading_text"
+                tools:text="example.com"
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="?attr/subtitleTextSize"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@id/posted"
+                android:text="@string/loading_text"
+                tools:text="2 days ago"
+                android:drawablePadding="@dimen/padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+                android:textSize="?attr/subtitleTextSize"
+                android:textColor="?android:attr/textColorPrimary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/action_container"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_below="@android:id/text2"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/vote_button"
+                tools:visibility="visible"
+                android:visibility="invisible"
+                android:src="@drawable/ic_thumb_up_white_36dp"
+                android:tint="?android:attr/textColorPrimary"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
 </FrameLayout>

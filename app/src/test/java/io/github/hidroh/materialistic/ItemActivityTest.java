@@ -27,14 +27,17 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
@@ -58,8 +61,10 @@ public class ItemActivityTest {
     private ItemActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject FavoriteManager favoriteManager;
+    @Inject UserServices userServices;
     @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
+    @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
 
     @Before
     public void setUp() {
@@ -67,6 +72,7 @@ public class ItemActivityTest {
         TestApplication.applicationGraph.inject(this);
         reset(hackerNewsClient);
         reset(favoriteManager);
+        reset(userServices);
         controller = Robolectric.buildActivity(ItemActivity.class);
         activity = controller.get();
     }
@@ -452,6 +458,40 @@ public class ItemActivityTest {
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
         assertEquals(3, tabLayout.getTabCount());
         assertEquals(2, tabLayout.getSelectedTabPosition());
+    }
+
+    @Test
+    public void testVotePromptToLogin() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
+        controller.withIntent(intent).create().start().resume();
+        activity.findViewById(R.id.vote_button).performClick();
+        verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
+        userServicesCallback.getValue().onDone(false);
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, LoginActivity.class);
+    }
+
+    @Test
+    public void testVote() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
+        controller.withIntent(intent).create().start().resume();
+        activity.findViewById(R.id.vote_button).performClick();
+        verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
+        userServicesCallback.getValue().onDone(true);
+        assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testVoteError() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
+        controller.withIntent(intent).create().start().resume();
+        activity.findViewById(R.id.vote_button).performClick();
+        verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
+        userServicesCallback.getValue().onError();
+        assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 
     @After

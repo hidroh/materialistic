@@ -33,6 +33,7 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -248,6 +249,10 @@ public class AppUtils {
                             context.startActivity(new Intent(context, LoginActivity.class));
                         } else {
                             Preferences.setUsername(context, items[which]);
+                            Toast.makeText(context,
+                                    context.getString(R.string.welcome, items[which]),
+                                    Toast.LENGTH_SHORT)
+                                    .show();
                         }
                         dialog.dismiss();
                     }

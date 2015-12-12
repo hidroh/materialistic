@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,7 +18,6 @@ import javax.inject.Inject;
 public class DrawerFragment extends BaseFragment {
     @Inject AlertDialogBuilder mLogoutAlertDialogBuilder;
     @Inject AlertDialogBuilder mAccountAlertDialogBuilder;
-    @Inject AccountManager mAccountManager;
     private TextView mDrawerAccount;
     private View mDrawerLogout;
     private final SharedPreferences.OnSharedPreferenceChangeListener mLoginListener
