@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -21,6 +23,7 @@ import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.util.Pair;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -198,6 +201,58 @@ public class AppUtils {
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting() &&
                 activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+    }
+
+    public static Pair<String, String> getCredentials(Context context) {
+        String username = Preferences.getUsername(context);
+        if (TextUtils.isEmpty(username)) {
+            return null;
+        }
+        AccountManager accountManager = AccountManager.get(context);
+        Account[] accounts = accountManager.getAccountsByType(BuildConfig.APPLICATION_ID);
+        for (Account account : accounts) {
+            if (TextUtils.equals(username, account.name)) {
+                return Pair.create(username, accountManager.getPassword(account));
+            }
+        }
+        return null;
+    }
+
+    public static void showLogin(Context context, AlertDialogBuilder alertDialogBuilder) {
+        Account[] accounts = AccountManager.get(context).getAccountsByType(BuildConfig.APPLICATION_ID);
+        if (accounts.length == 0) {
+            context.startActivity(new Intent(context, LoginActivity.class));
+        } else {
+            showAccountChooser(context, alertDialogBuilder, accounts);
+        }
+    }
+
+    private static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
+                                           Account[] accounts) {
+        String username = Preferences.getUsername(context);
+        final String[] items = new String[accounts.length + 1];
+        int checked = -1;
+        for (int i = 0; i < accounts.length; i++) {
+            String accountName = accounts[i].name;
+            items[i] = accountName;
+            if (TextUtils.equals(accountName, username)) {
+                checked = i;
+            }
+        }
+        items[items.length - 1] = context.getString(R.string.add_account);
+        alertDialogBuilder.setTitle(R.string.choose_account)
+                .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == items.length - 1) {
+                            context.startActivity(new Intent(context, LoginActivity.class));
+                        } else {
+                            Preferences.setUsername(context, items[which]);
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     private static Intent makeShareIntent(String subject, String text) {

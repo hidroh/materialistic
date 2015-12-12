@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
@@ -50,12 +49,7 @@ public class DrawerFragment extends BaseFragment {
         mDrawerAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Account[] accounts = mAccountManager.getAccountsByType(BuildConfig.APPLICATION_ID);
-                if (accounts.length == 0) {
-                    navigate(LoginActivity.class);
-                } else {
-                    showAccountChooser(accounts);
-                }
+                AppUtils.showLogin(getActivity(), mAccountAlertDialogBuilder);
             }
         });
         mDrawerLogout = view.findViewById(R.id.drawer_logout);
@@ -172,31 +166,5 @@ public class DrawerFragment extends BaseFragment {
             mDrawerAccount.setText(R.string.login);
             mDrawerLogout.setVisibility(View.GONE);
         }
-    }
-
-    private void showAccountChooser(Account[] accounts) {
-        final String[] items = new String[accounts.length + 1];
-        int checked = -1;
-        for (int i = 0; i < accounts.length; i++) {
-            String accountName = accounts[i].name;
-            items[i] = accountName;
-            if (TextUtils.equals(accountName, mDrawerAccount.getText())) {
-                checked = i;
-            }
-        }
-        items[items.length - 1] = getString(R.string.add_account);
-        mAccountAlertDialogBuilder.setTitle(R.string.choose_account)
-                .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == items.length - 1) {
-                            navigate(LoginActivity.class);
-                        } else {
-                            Preferences.setUsername(getActivity(), items[which]);
-                        }
-                        dialog.dismiss();
-                    }
-                })
-                .show();
     }
 }
