@@ -1,12 +1,15 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -20,19 +23,23 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowPopupMenu;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
-import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
@@ -43,17 +50,20 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
-    @Inject
-    @Named(ActivityModule.HN)
-    ItemManager hackerNewsClient;
-    @Captor
-    ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
+    @Inject UserServices userServices;
+    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
     private RecyclerView recyclerView;
     private SinglePageItemRecyclerViewAdapter adapter;
     private ToggleItemViewHolder viewHolder;
@@ -66,6 +76,7 @@ public class ItemFragmentSinglePageTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(hackerNewsClient);
+        reset(userServices);
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
@@ -392,6 +403,46 @@ public class ItemFragmentSinglePageTest {
         assertSinglePage();
         clickSubMenuItem(R.id.menu_thread, 0); // multiple
         assertMultiplePage();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVote() {
+        viewHolder.itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
+        voteCallback.getValue().onDone(true);
+        assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItemPromptToLogin() {
+        viewHolder.itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
+        voteCallback.getValue().onDone(false);
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, LoginActivity.class);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItemFailed() {
+        viewHolder.itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
+        voteCallback.getValue().onError();
+        assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 
     @After
