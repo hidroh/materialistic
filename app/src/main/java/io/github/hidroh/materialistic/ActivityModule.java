@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.view.View;
 
 import com.squareup.okhttp.OkHttpClient;
 
@@ -10,6 +11,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.accounts.UserServicesClient;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -19,8 +22,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
-import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.accounts.UserServicesClient;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 @Module(
         injects = {
@@ -119,5 +121,10 @@ public class ActivityModule {
     @Provides
     public AccountManager provideAccountManager(Context context) {
         return AccountManager.get(context);
+    }
+
+    @Provides
+    public PopupMenu providePopupMenu() {
+        return new PopupMenu.Impl();
     }
 }

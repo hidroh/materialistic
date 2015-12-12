@@ -184,5 +184,7 @@
     <string name="logout_confirm">Do you want to log out?</string>
     <string name="choose_account">Choose an account</string>
     <string name="add_account">Add account</string>
+    <string name="save">Save</string>
+    <string name="unsave">Unsave</string>
 
 </resources>

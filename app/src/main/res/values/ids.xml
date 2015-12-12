@@ -68,6 +68,7 @@
     <item type="id" name="menu_thread_group" />
     <item type="id" name="menu_max_lines" />
     <item type="id" name="menu_max_lines_group" />
+    <item type="id" name="menu_contextual_save" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

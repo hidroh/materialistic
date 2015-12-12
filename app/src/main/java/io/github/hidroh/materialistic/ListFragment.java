@@ -14,7 +14,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -33,6 +35,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 public class ListFragment extends BaseListFragment {
 
@@ -79,6 +82,7 @@ public class ListFragment extends BaseListFragment {
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
     private boolean mAttached;
+    @Inject PopupMenu mPopupMenu;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -394,32 +398,23 @@ public class ListFragment extends BaseListFragment {
             bindFavorite(holder, story);
             bindViewed(holder, story);
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                private boolean mUndo;
-
                 @Override
                 public boolean onLongClick(View v) {
-                    final int toastMessageResId;
-                    if (!story.isFavorite()) {
-                        mFavoriteManager.add(getActivity(), story);
-                        toastMessageResId = R.string.toast_saved;
-                    } else {
-                        mFavoriteManager.remove(getActivity(), story.getId());
-                        toastMessageResId = R.string.toast_removed;
-                    }
-                    if (!mUndo) {
-                        Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
-                                .setAction(R.string.undo, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        mUndo = true;
-                                        holder.itemView.performLongClick();
-                                    }
-                                })
-                                .show();
-                    }
-                    story.setFavorite(!story.isFavorite());
-                    holder.mStoryView.setFavorite(story.isFavorite());
-                    mUndo = false;
+                    mPopupMenu.create(getActivity(), v, Gravity.RIGHT);
+                    mPopupMenu.inflate(R.menu.menu_contextual_story);
+                    mPopupMenu.getMenu().findItem(R.id.menu_contextual_save)
+                            .setTitle(story.isFavorite() ? R.string.unsave : R.string.save);
+                    mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            if (item.getItemId() == R.id.menu_contextual_save) {
+                                toggleSave(story, holder);
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+                    mPopupMenu.show();
                     return true;
                 }
             });
@@ -510,6 +505,27 @@ public class ListFragment extends BaseListFragment {
             mSessionManager.view(getActivity(), item.getId());
             item.setIsViewed(true);
             holder.mStoryView.setViewed(true);
+        }
+
+        private void toggleSave(final ItemManager.Item story, final ItemViewHolder holder) {
+            final int toastMessageResId;
+            if (!story.isFavorite()) {
+                mFavoriteManager.add(getActivity(), story);
+                toastMessageResId = R.string.toast_saved;
+            } else {
+                mFavoriteManager.remove(getActivity(), story.getId());
+                toastMessageResId = R.string.toast_removed;
+            }
+            Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            toggleSave(story, holder);
+                        }
+                    })
+                    .show();
+            story.setFavorite(!story.isFavorite());
+            holder.mStoryView.setFavorite(story.isFavorite());
         }
     }
 }
