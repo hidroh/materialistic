@@ -25,7 +25,8 @@ public class SinglePageItemRecyclerViewAdapter
     private RecyclerView mRecyclerView;
     private final @NonNull SavedState mState;
 
-    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager, @NonNull SavedState state,
+    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager,
+                                             @NonNull SavedState state,
                                              boolean autoExpand) {
         super(itemManager);
         this.mState = state;
@@ -69,6 +70,16 @@ public class SinglePageItemRecyclerViewAdapter
         super.onBindViewHolder(holder, position);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return getItem(position).getLevel() - 1;
+    }
+
+    @Override
+    public int getItemCount() {
+        return mState.list.size();
+    }
+
     public void toggleColorCode(boolean enabled) {
         mColorCoded = enabled;
         notifyDataSetChanged();
@@ -80,17 +91,22 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    protected void bind(final ToggleItemViewHolder holder, final ItemManager.Item item) {
-        holder.mCommentButton.setVisibility(View.GONE);
-        holder.mPostedTextView.setOnClickListener(null);
+    protected void clear(ToggleItemViewHolder holder) {
+        super.clear(holder);
         holder.mToggle.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void bind(final ToggleItemViewHolder holder, final ItemManager.Item item) {
+        super.bind(holder, item);
         if (item == null) {
-            holder.mPostedTextView.setText(R.string.loading_text);
-            holder.mContentTextView.setText(R.string.loading_text);
-            holder.mReadMoreTextView.setVisibility(View.GONE);
             return;
         }
+        bindNavigation(holder, item);
+        toggleKids(holder, item);
+    }
 
+    private void bindNavigation(ToggleItemViewHolder holder, ItemManager.Item item) {
         if (item.isDeleted() || !mState.expanded.containsKey(item.getParent())) {
             holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
             holder.mPostedTextView.setOnClickListener(null);
@@ -106,11 +122,12 @@ public class SinglePageItemRecyclerViewAdapter
                 }
             });
         }
-        bindContent(holder, item);
+    }
+
+    private void toggleKids(ToggleItemViewHolder holder, final ItemManager.Item item) {
         if (item.getKidCount() == 0) {
             return;
         }
-
         holder.mToggle.setVisibility(View.VISIBLE);
         if (!item.isCollapsed() && mAutoExpand) {
             expand(item);
@@ -174,16 +191,6 @@ public class SinglePageItemRecyclerViewAdapter
             mState.list.remove(kid);
         }
         return count;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return getItem(position).getLevel() - 1;
-    }
-
-    @Override
-    public int getItemCount() {
-        return mState.list.size();
     }
 
     public static class SavedState implements Parcelable {

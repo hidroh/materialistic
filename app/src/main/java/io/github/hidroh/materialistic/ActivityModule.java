@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.view.View;
 
 import com.squareup.okhttp.OkHttpClient;
 
@@ -22,7 +21,9 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
+import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 
 @Module(
         injects = {
@@ -43,7 +44,9 @@ import io.github.hidroh.materialistic.widget.PopupMenu;
                 ListFragment.class,
                 WebFragment.class,
                 DrawerFragment.class,
-                ReadabilityFragment.class
+                ReadabilityFragment.class,
+                SinglePageItemRecyclerViewAdapter.class,
+                MultiPageItemRecyclerViewAdapter.class
         },
         library = true
 )

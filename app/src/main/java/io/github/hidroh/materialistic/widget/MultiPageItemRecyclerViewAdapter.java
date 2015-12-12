@@ -13,7 +13,8 @@ public class MultiPageItemRecyclerViewAdapter
     private final ItemManager.Item[] mItems;
     private final int mItemLevel;
 
-    public MultiPageItemRecyclerViewAdapter(ItemManager itemManager, ItemManager.Item[] items,
+    public MultiPageItemRecyclerViewAdapter(ItemManager itemManager,
+                                            ItemManager.Item[] items,
                                             int itemLevel) {
         super(itemManager);
         this.mItems = items;
@@ -32,24 +33,20 @@ public class MultiPageItemRecyclerViewAdapter
 
     @Override
     protected void bind(final ItemViewHolder holder, final ItemManager.Item item) {
-        holder.mCommentButton.setVisibility(View.GONE);
-        holder.mPostedTextView.setOnClickListener(null);
+        super.bind(holder, item);
         if (item == null) {
-            holder.mPostedTextView.setText(R.string.loading_text);
-            holder.mContentTextView.setText(R.string.loading_text);
-        } else {
-            holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
-            bindContent(holder, item);
-            if (item.getKidCount() > 0) {
-                holder.mCommentButton.setText(mContext.getString(R.string.comments_count, item.getKidCount()));
-                holder.mCommentButton.setVisibility(View.VISIBLE);
-                holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openItem(item);
-                    }
-                });
-            }
+            return;
+        }
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
+        if (item.getKidCount() > 0) {
+            holder.mCommentButton.setText(mContext.getString(R.string.comments_count, item.getKidCount()));
+            holder.mCommentButton.setVisibility(View.VISIBLE);
+            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openItem(item);
+                }
+            });
         }
     }
 

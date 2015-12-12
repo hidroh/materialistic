@@ -264,9 +264,6 @@
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
     <style name="FlatCardView">
-        <item name="android:paddingTop">@dimen/padding</item>
-        <item name="android:paddingLeft">@dimen/flat_card_horizontal_margin</item>
-        <item name="android:paddingRight">@dimen/flat_card_horizontal_margin</item>
         <item name="android:background">?attr/colorCardBackground</item>
     </style>
 
