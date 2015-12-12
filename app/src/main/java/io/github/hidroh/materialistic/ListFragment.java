@@ -535,14 +535,14 @@ public class ListFragment extends BaseListFragment {
             holder.mStoryView.setFavorite(story.isFavorite());
         }
 
-        private void vote(final ItemManager.Item story, ItemViewHolder holder) {
-            final int position = holder.getAdapterPosition();
+        private void vote(final ItemManager.Item story, final ItemViewHolder holder) {
             mUserServices.voteUp(getActivity(), story.getId(), new UserServices.Callback() {
                 @Override
                 public void onDone(boolean successful) {
                     if (successful) {
-                        // TODO increment score
-                        notifyItemChanged(position);
+                        // TODO update locally only, as API does not update instantly
+                        story.incrementScore();
+                        holder.mStoryView.animateVote(story.getScore());
                         Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
                     } else {
                         AppUtils.showLogin(getActivity(), mLoginAlertDialogBuilder);

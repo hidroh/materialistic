@@ -482,6 +482,11 @@ public class HackerNewsClient implements ItemManager {
         }
 
         @Override
+        public void incrementScore() {
+            score++;
+        }
+
+        @Override
         public boolean isCollapsed() {
             return collapsed;
         }

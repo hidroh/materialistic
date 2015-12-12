@@ -186,6 +186,11 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public void incrementScore() {
+
+    }
+
+    @Override
     public boolean isCollapsed() {
         return collapsed;
     }
