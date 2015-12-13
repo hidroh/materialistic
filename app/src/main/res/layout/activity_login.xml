@@ -48,14 +48,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/login_button"
-            android:text="@string/login"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_marginTop="@dimen/margin"
+        <LinearLayout
             android:layout_gravity="right"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/register_button"
+                android:text="@string/create_account"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/login_button"
+                android:text="@string/login"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
 
     </LinearLayout>

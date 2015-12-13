@@ -58,7 +58,7 @@ public class UserServicesClientTest {
     @Test
     public void testLoginSuccess() throws IOException {
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.login("username", "password", callback);
+        userServices.login("username", "password", false, callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(responseBuilder
                 .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
@@ -66,9 +66,9 @@ public class UserServicesClientTest {
     }
 
     @Test
-    public void testLoginFailed() throws IOException {
+    public void testRegisterFailed() throws IOException {
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.login("username", "password", callback);
+        userServices.login("username", "password", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(responseBuilder
                 .code(HttpURLConnection.HTTP_OK).build());
@@ -78,7 +78,7 @@ public class UserServicesClientTest {
     @Test
     public void testLoginError() throws IOException {
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.login("username", "password", callback);
+        userServices.login("username", "password", false, callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
         verify(callback).onError();

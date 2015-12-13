@@ -51,20 +51,27 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void testEmptyInput() {
+    public void testEmptyLoginInput() {
         activity.findViewById(R.id.login_button).performClick();
         assertNotNull(((TextInputLayout) activity.findViewById(R.id.textinput_username)).getError());
         assertNotNull(((TextInputLayout) activity.findViewById(R.id.textinput_password)).getError());
     }
 
     @Test
-    public void testSuccessful() {
+    public void testEmptyRegisterInput() {
+        activity.findViewById(R.id.register_button).performClick();
+        assertNotNull(((TextInputLayout) activity.findViewById(R.id.textinput_username)).getError());
+        assertNotNull(((TextInputLayout) activity.findViewById(R.id.textinput_password)).getError());
+    }
+
+    @Test
+    public void testLoginSuccessful() {
         ((EditText) activity.findViewById(R.id.edittext_username)).setText("username");
         ((EditText) activity.findViewById(R.id.edittext_password)).setText("password");
         activity.findViewById(R.id.login_button).performClick();
         assertNull(((TextInputLayout) activity.findViewById(R.id.textinput_username)).getError());
         assertNull(((TextInputLayout) activity.findViewById(R.id.textinput_password)).getError());
-        verify(userServices).login(eq("username"), eq("password"), callback.capture());
+        verify(userServices).login(eq("username"), eq("password"), eq(false), callback.capture());
         callback.getValue().onDone(true);
         assertThat(activity).isFinishing();
         assertEquals(activity.getString(R.string.welcome, "username"), ShadowToast.getTextOfLatestToast());
@@ -73,22 +80,22 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void testFailed() {
+    public void testRegisterFailed() {
         ((EditText) activity.findViewById(R.id.edittext_username)).setText("username");
         ((EditText) activity.findViewById(R.id.edittext_password)).setText("password");
-        activity.findViewById(R.id.login_button).performClick();
-        verify(userServices).login(eq("username"), eq("password"), callback.capture());
+        activity.findViewById(R.id.register_button).performClick();
+        verify(userServices).login(eq("username"), eq("password"), eq(true), callback.capture());
         callback.getValue().onDone(false);
         assertThat(activity).isNotFinishing();
         assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
     }
 
     @Test
-    public void testError() {
+    public void testLoginError() {
         ((EditText) activity.findViewById(R.id.edittext_username)).setText("username");
         ((EditText) activity.findViewById(R.id.edittext_password)).setText("password");
         activity.findViewById(R.id.login_button).performClick();
-        verify(userServices).login(eq("username"), eq("password"), callback.capture());
+        verify(userServices).login(eq("username"), eq("password"), eq(false), callback.capture());
         callback.getValue().onError();
         assertThat(activity).isNotFinishing();
         assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
@@ -100,6 +107,7 @@ public class LoginActivityTest {
         Preferences.setUsername(RuntimeEnvironment.application, "existing");
         activity = controller.create().postCreate(null).start().resume().get();
         assertThat(activity).hasTitle(R.string.re_enter_password);
+        assertThat(activity.findViewById(R.id.register_button)).isNotVisible();
         assertThat((EditText) activity.findViewById(R.id.edittext_username))
                 .hasTextString("existing");
     }
@@ -112,6 +120,7 @@ public class LoginActivityTest {
         intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
         activity = controller.withIntent(intent).create().postCreate(null).start().resume().get();
         assertThat(activity).hasTitle(R.string.title_activity_login);
+        assertThat(activity.findViewById(R.id.register_button)).isVisible();
         assertThat((EditText) activity.findViewById(R.id.edittext_username)).isEmpty();
     }
 

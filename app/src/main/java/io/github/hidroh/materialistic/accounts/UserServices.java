@@ -8,7 +8,7 @@ public interface UserServices {
         public void onError() {}
     }
 
-    void login(String username, String password, Callback callback);
+    void login(String username, String password, boolean createAccount, Callback callback);
 
     void voteUp(Context context, String itemId, Callback callback);
 }

@@ -217,6 +217,7 @@ public class AppUtils {
                 return Pair.create(username, accountManager.getPassword(account));
             }
         }
+        Preferences.setUsername(context, null); // stale account, auto logout
         return null;
     }
 
