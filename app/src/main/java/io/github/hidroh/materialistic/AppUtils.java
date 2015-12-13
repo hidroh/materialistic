@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -228,6 +229,24 @@ public class AppUtils {
         } else {
             showAccountChooser(context, alertDialogBuilder, accounts);
         }
+    }
+
+    public static void registerAccountsUpdatedListener(final Context context) {
+        AccountManager.get(context).addOnAccountsUpdatedListener(new OnAccountsUpdateListener() {
+            @Override
+            public void onAccountsUpdated(Account[] accounts) {
+                String username = Preferences.getUsername(context);
+                if (TextUtils.isEmpty(username)) {
+                    return;
+                }
+                for (Account account : accounts) {
+                    if (TextUtils.equals(account.name, username)) {
+                        return;
+                    }
+                }
+                Preferences.setUsername(context, null);
+            }
+        }, null, true);
     }
 
     private static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,

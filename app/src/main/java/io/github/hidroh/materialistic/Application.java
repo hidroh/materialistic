@@ -14,6 +14,7 @@ public class Application extends android.app.Application {
         mApplicationGraph = ObjectGraph.create();
         Preferences.migrate(this);
         TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
+        AppUtils.registerAccountsUpdatedListener(this);
     }
 
     public ObjectGraph getApplicationGraph() {

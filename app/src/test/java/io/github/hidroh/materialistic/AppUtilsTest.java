@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +16,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
 
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItemActivity;
 
 import static junit.framework.Assert.assertEquals;
@@ -24,10 +28,12 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class AppUtilsTest {
     @Test
@@ -114,5 +120,18 @@ public class AppUtilsTest {
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         assertTrue(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testRemoveAccount() {
+        Preferences.setUsername(RuntimeEnvironment.application, "olduser");
+        AppUtils.registerAccountsUpdatedListener(RuntimeEnvironment.application);
+        shadowOf(AccountManager.get(RuntimeEnvironment.application)).addAccount(
+                new Account("newuser", BuildConfig.APPLICATION_ID));
+        assertNull(Preferences.getUsername(RuntimeEnvironment.application));
+        Preferences.setUsername(RuntimeEnvironment.application, "newuser");
+        shadowOf(AccountManager.get(RuntimeEnvironment.application)).addAccount(
+                new Account("olduser", BuildConfig.APPLICATION_ID));
+        assertEquals("newuser", Preferences.getUsername(RuntimeEnvironment.application));
     }
 }
