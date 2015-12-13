@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,7 +39,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     protected Context mContext;
     private int mTertiaryTextColorResId;
     private int mSecondaryTextColorResId;
+    private int mCardBackgroundColorResId;
+    private int mCardHighlightColorResId;
     private int mContentMaxLines;
+    private String mUsername;
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
@@ -55,9 +59,13 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         TypedArray ta = mContext.obtainStyledAttributes(new int[]{
                 android.R.attr.textColorTertiary,
                 android.R.attr.textColorSecondary,
+                R.attr.colorCardBackground,
+                R.attr.colorCardHighlight
         });
         mTertiaryTextColorResId = ta.getInt(0, 0);
         mSecondaryTextColorResId = ta.getInt(1, 0);
+        mCardBackgroundColorResId = ta.getInt(2, 0);
+        mCardHighlightColorResId = ta.getInt(3, 0);
         ta.recycle();
     }
 
@@ -83,6 +91,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         notifyDataSetChanged();
     }
 
+    public void setHighlightUsername(String username) {
+        mUsername = username;
+        notifyDataSetChanged();
+    }
+
     protected abstract ItemManager.Item getItem(int position);
 
     @CallSuper
@@ -90,6 +103,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         if (item == null) {
             return;
         }
+        highlightUserItem(holder, item);
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
         decorateDead(holder, item);
         toggleCollapsibleContent(holder, item);
@@ -125,6 +139,13 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                         // do nothing
                     }
                 });
+    }
+
+    private void highlightUserItem(VH holder, ItemManager.Item item) {
+        boolean highlight = !TextUtils.isEmpty(mUsername) &&
+                TextUtils.equals(mUsername, item.getBy());
+        holder.mContentView.setBackgroundColor(highlight ?
+                mCardHighlightColorResId : mCardBackgroundColorResId);
     }
 
     private void decorateDead(VH holder, ItemManager.Item item) {
@@ -220,6 +241,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         final TextView mReadMoreTextView;
         final Button mCommentButton;
         final View mMoreButton;
+        final View mContentView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
@@ -229,6 +251,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mCommentButton = (Button) itemView.findViewById(R.id.comment);
             mCommentButton.setVisibility(View.GONE);
             mMoreButton = itemView.findViewById(R.id.button_more);
+            mContentView = itemView.findViewById(R.id.content);
         }
     }
 }

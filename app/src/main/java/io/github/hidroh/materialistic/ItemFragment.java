@@ -38,6 +38,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private static final String STATE_COLOR_CODED = "state:colorCoded";
     private static final String STATE_DISPLAY_OPTION = "state:displayOption";
     private static final String STATE_MAX_LINES = "state:maxLines";
+    private static final String STATE_USERNAME = "state:username";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private ItemManager.Item mItem;
@@ -52,6 +53,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private String[] mMaxLinesOptionValues;
     private String mDisplayOption;
     private int mMaxLines;
+    private String mUsername;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -66,6 +68,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                     } else if (TextUtils.equals(key, getString(R.string.pref_max_lines))) {
                         mMaxLines = Preferences.getCommentMaxLines(getActivity());
                         setMaxLines();
+                    } else if (TextUtils.equals(key, getString(R.string.pref_username))) {
+                        mUsername = Preferences.getUsername(getActivity());
+                        setHighlightUsername();
                     }
                 }
             };
@@ -88,6 +93,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mColorCoded = savedInstanceState.getBoolean(STATE_COLOR_CODED);
             mDisplayOption = savedInstanceState.getString(STATE_DISPLAY_OPTION);
             mMaxLines = savedInstanceState.getInt(STATE_MAX_LINES, Integer.MAX_VALUE);
+            mUsername = savedInstanceState.getString(STATE_USERNAME);
         } else {
             ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
             if (item instanceof ItemManager.Item) {
@@ -97,6 +103,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mColorCoded = Preferences.colorCodeEnabled(getActivity());
             mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
             mMaxLines = Preferences.getCommentMaxLines(getActivity());
+            mUsername = Preferences.getUsername(getActivity());
         }
     }
 
@@ -211,6 +218,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         outState.putBoolean(STATE_COLOR_CODED, mColorCoded);
         outState.putString(STATE_DISPLAY_OPTION, mDisplayOption);
         outState.putInt(STATE_MAX_LINES, mMaxLines);
+        outState.putString(STATE_USERNAME, mUsername);
     }
 
     @Override
@@ -281,6 +289,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                     getArguments().getInt(ItemActivity.EXTRA_ITEM_LEVEL, 0));
         }
         mAdapter.setMaxLines(mMaxLines);
+        mAdapter.setHighlightUsername(mUsername);
         getActivity().supportInvalidateOptionsMenu();
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -299,5 +308,12 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
         getActivity().supportInvalidateOptionsMenu();
         mAdapter.setMaxLines(mMaxLines);
+    }
+
+    private void setHighlightUsername() {
+        if (mAdapter == null) {
+            return;
+        }
+        mAdapter.setHighlightUsername(mUsername);
     }
 }

@@ -5,7 +5,6 @@
         android:text="@string/loading_text"
         android:gravity="center_vertical"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/comment"
         android:paddingTop="@dimen/padding"
         style="@style/textSubtitleStyle.Italic" />
 
@@ -15,7 +14,6 @@
         style="@style/textTitleStyle"
         android:lines="@null"
         android:layout_below="@id/posted"
-        android:layout_toLeftOf="@id/comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -23,19 +21,23 @@
         android:id="@id/source"
         android:text="@string/loading_text"
         android:layout_below="@id/title"
-        android:paddingBottom="@dimen/padding"
+        android:layout_alignTop="@id/button_more"
+        android:layout_alignBottom="@id/button_more"
         style="@style/textSubtitleStyle.Italic" />
 
     <include layout="@layout/button_comment"
         android:id="@id/comment"
         android:layout_toLeftOf="@+id/button_more"
+        android:layout_below="@id/title"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@id/button_more"
+        android:layout_alignBottom="@id/button_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <include layout="@layout/button_more"
         android:id="@id/button_more"
+        android:layout_below="@id/title"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
