@@ -112,6 +112,10 @@
             android:label="@string/title_activity_login"
             android:theme="@style/AppAlertDialog">
         </activity>
+        <activity
+            android:name=".ComposeActivity"
+            android:label="@string/title_activity_compose" >
+        </activity>
         <service android:name=".accounts.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

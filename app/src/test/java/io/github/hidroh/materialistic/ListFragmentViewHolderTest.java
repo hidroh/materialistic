@@ -419,6 +419,21 @@ public class ListFragmentViewHolderTest {
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testReply() {
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_comment));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ComposeActivity.class)
+                .hasExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
+    }
+
     @After
     public void tearDown() {
         controller.pause().stop().destroy();

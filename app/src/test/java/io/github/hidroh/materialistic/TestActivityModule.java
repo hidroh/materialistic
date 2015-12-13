@@ -55,6 +55,7 @@ import static org.mockito.Mockito.when;
                 ShowActivity.class,
                 WebActivity.class,
                 PopularActivity.class,
+                ComposeActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -86,7 +87,8 @@ import static org.mockito.Mockito.when;
                 ReadabilityFragmentTest.class,
                 ReadabilityFragmentLazyLoadTest.class,
                 LoginActivityTest.class,
-                DrawerFragmentLoginTest.class
+                DrawerFragmentLoginTest.class,
+                ComposeActivityTest.class
         },
         library = true,
         overrides = true

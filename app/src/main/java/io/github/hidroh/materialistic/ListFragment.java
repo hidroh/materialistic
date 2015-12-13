@@ -518,6 +518,12 @@ public class ListFragment extends BaseListFragment {
                         vote(story, holder);
                         return true;
                     }
+                    if (item.getItemId() == R.id.menu_contextual_comment) {
+                        Intent intent = new Intent(getActivity(), ComposeActivity.class);
+                        intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId());
+                        intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getDisplayedTitle());
+                        startActivity(intent);
+                    }
                     return false;
                 }
             });

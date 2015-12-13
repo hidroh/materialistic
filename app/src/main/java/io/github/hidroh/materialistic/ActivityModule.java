@@ -39,6 +39,7 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
                 ShowActivity.class,
                 PopularActivity.class,
                 LoginActivity.class,
+                ComposeActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,

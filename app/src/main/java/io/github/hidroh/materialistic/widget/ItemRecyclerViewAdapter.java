@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -176,6 +178,14 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         if (menuItem.getItemId() == R.id.menu_contextual_vote) {
                             vote(item);
+                            return true;
+                        }
+                        if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                            Intent intent = new Intent(mContext, ComposeActivity.class);
+                            intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId());
+                            intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText());
+                            mContext.startActivity(intent);
+                            return true;
                         }
                         return false;
                     }
