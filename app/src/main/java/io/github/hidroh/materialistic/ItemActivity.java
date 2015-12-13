@@ -335,7 +335,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
-                if (tab.getPosition() == 0) {
+                if (tab.getPosition() == 0 && mReplyButton.getParent() == null) {
                     mCoordinatorLayout.addView(mReplyButton);
                 } else {
                     mCoordinatorLayout.removeView(mReplyButton);

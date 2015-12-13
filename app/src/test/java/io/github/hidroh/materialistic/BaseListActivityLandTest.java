@@ -30,6 +30,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
+import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(qualifiers = "w820dp-land", shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class})
@@ -52,6 +53,7 @@ public class BaseListActivityLandTest {
     public void testCreateLand() {
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share).isVisible());
+        assertNull(activity.findViewById(R.id.reply_button));
     }
 
     @Test
@@ -76,6 +78,7 @@ public class BaseListActivityLandTest {
         RuntimeEnvironment.setQualifiers("w820dp-land");
         activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
         assertThat(activity).hasTitle("item title");
+        assertNull(activity.findViewById(R.id.reply_button));
     }
 
     @Test
@@ -112,6 +115,9 @@ public class BaseListActivityLandTest {
             }
         });
         assertCommentMode();
+        activity.findViewById(R.id.reply_button).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ComposeActivity.class);
     }
 
     @Test
@@ -167,6 +173,7 @@ public class BaseListActivityLandTest {
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         activity.clearSelection();
         assertThat(activity.findViewById(R.id.empty)).isVisible();
+        assertNull(activity.findViewById(R.id.reply_button));
     }
 
     @Test
@@ -222,14 +229,17 @@ public class BaseListActivityLandTest {
 
     private void assertCommentMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0);
+        assertNotNull(activity.findViewById(R.id.reply_button));
     }
 
     private void assertStoryMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
+        assertNull(activity.findViewById(R.id.reply_button));
     }
 
     private void assertReadabilityMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2);
+        assertNull(activity.findViewById(R.id.reply_button));
     }
 
     @After

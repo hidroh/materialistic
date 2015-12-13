@@ -44,6 +44,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TabLayout mTabLayout;
+    private View mReplyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mReplyButton = findViewById(R.id.reply_button);
+        mReplyButton.setVisibility(View.VISIBLE);
+        toggleReplyButton(false);
         onCreateView();
         final Fragment fragment;
         if (savedInstanceState == null) {
@@ -185,6 +189,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     public void clearSelection() {
         mSelectedItem = null;
         if (mIsMultiPane) {
+            toggleReplyButton(false);
             setTitle(getDefaultTitle());
             findViewById(R.id.empty).setVisibility(View.VISIBLE);
         }
@@ -265,6 +270,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             params = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
+            toggleReplyButton(false);
         }
         findViewById(android.R.id.list).setLayoutParams(params);
         supportInvalidateOptionsMenu();
@@ -273,6 +279,16 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private void handleMultiPaneItemSelected(final ItemManager.WebItem item) {
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
+        toggleReplyButton(true);
+        mReplyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BaseListActivity.this, ComposeActivity.class);
+                intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId());
+                intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle());
+                startActivity(intent);
+            }
+        });
         final Fragment[] fragments = new Fragment[3];
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -321,6 +337,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                toggleReplyButton(tab.getPosition() == 0);
+            }
+
+            @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment activeFragment = fragments[mViewPager.getCurrentItem()];
                 if (activeFragment != null) {
@@ -342,5 +364,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         final Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         startActivity(intent);
+    }
+
+    private void toggleReplyButton(boolean visible) {
+        if (!visible) {
+            mContentView.removeView(mReplyButton);
+        } else if (mReplyButton.getParent() == null) {
+            mContentView.addView(mReplyButton);
+        }
     }
 }
