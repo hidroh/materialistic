@@ -213,9 +213,6 @@ public class StoryView extends RelativeLayout implements Checkable {
     }
 
     public View getMoreOptions() {
-        if (mIsLocal) {
-            return null;
-        }
         return mMoreButton;
     }
 

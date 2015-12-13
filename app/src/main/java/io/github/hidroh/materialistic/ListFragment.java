@@ -72,6 +72,7 @@ public class ListFragment extends BaseListFragment {
     @Inject @Named(ActivityModule.POPULAR) ItemManager mPopularItemManager;
     @Inject UserServices mUserServices;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject PopupMenu mPopupMenu;
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
@@ -85,7 +86,6 @@ public class ListFragment extends BaseListFragment {
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
     private boolean mAttached;
-    @Inject PopupMenu mPopupMenu;
 
     public interface RefreshCallback {
         void onRefreshed();
