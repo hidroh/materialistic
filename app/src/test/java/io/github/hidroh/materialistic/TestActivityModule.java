@@ -55,6 +55,7 @@ import static org.mockito.Mockito.when;
                 ShowActivity.class,
                 WebActivity.class,
                 PopularActivity.class,
+                ComposeActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -86,7 +87,8 @@ import static org.mockito.Mockito.when;
                 ReadabilityFragmentTest.class,
                 ReadabilityFragmentLazyLoadTest.class,
                 LoginActivityTest.class,
-                DrawerFragmentLoginTest.class
+                DrawerFragmentLoginTest.class,
+                ComposeActivityTest.class
         },
         library = true,
         overrides = true
@@ -146,8 +148,15 @@ public class TestActivityModule {
 
     @Provides
     public AlertDialogBuilder provideAlertDialogBuilder() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(RuntimeEnvironment.application);
         return new AlertDialogBuilder() {
+            private AlertDialog.Builder builder;
+
+            @Override
+            public AlertDialogBuilder init(Context context) {
+                builder = new AlertDialog.Builder(context);
+                return this;
+            }
+
             @Override
             public AlertDialogBuilder setTitle(int titleId) {
                 builder.setTitle(titleId);

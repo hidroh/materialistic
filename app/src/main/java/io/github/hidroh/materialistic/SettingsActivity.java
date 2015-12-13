@@ -34,6 +34,7 @@ public class SettingsActivity extends DrawerActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_clear_recent) {
             mAlertDialogBuilder
+                    .init(this)
                     .setMessage(R.string.clear_search_history_confirm)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -52,6 +53,7 @@ public class SettingsActivity extends DrawerActivity {
 
         if (item.getItemId() == R.id.menu_reset) {
             mAlertDialogBuilder
+                    .init(this)
                     .setMessage(R.string.reset_settings_confirm)
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

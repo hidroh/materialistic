@@ -445,6 +445,19 @@ public class ItemFragmentSinglePageTest {
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testReply() {
+        viewHolder.itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_comment));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ComposeActivity.class)
+                .hasExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
+    }
+
     @After
     public void tearDown() {
         recyclerView.setAdapter(null);

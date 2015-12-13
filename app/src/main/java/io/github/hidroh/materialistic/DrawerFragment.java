@@ -16,8 +16,7 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 public class DrawerFragment extends BaseFragment {
-    @Inject AlertDialogBuilder mLogoutAlertDialogBuilder;
-    @Inject AlertDialogBuilder mAccountAlertDialogBuilder;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TextView mDrawerAccount;
     private View mDrawerLogout;
     private final SharedPreferences.OnSharedPreferenceChangeListener mLoginListener
@@ -47,14 +46,16 @@ public class DrawerFragment extends BaseFragment {
         mDrawerAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppUtils.showLogin(getActivity(), mAccountAlertDialogBuilder);
+                AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
             }
         });
         mDrawerLogout = view.findViewById(R.id.drawer_logout);
         mDrawerLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLogoutAlertDialogBuilder.setMessage(R.string.logout_confirm)
+                mAlertDialogBuilder
+                        .init(getActivity())
+                        .setMessage(R.string.logout_confirm)
                         .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override

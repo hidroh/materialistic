@@ -196,5 +196,16 @@
     <string name="voted">Successfully voted!</string>
     <string name="vote_failed">Fail to record vote. Please try again.</string>
     <string name="sending">Sending...</string>
+    <string name="add_comment">Add comment</string>
+    <string name="title_activity_compose">Compose</string>
+    <string name="send">Send</string>
+    <string name="original_content">Original content</string>
+    <string name="quote">Quote</string>
+    <string name="formatting_guidelines">
+        <![CDATA[
+            <a href="#">Hacker News formatting guidelines</a>
+        ]]>
+    </string>
+    <string name="confirm_discard">Discard draft?</string>
 
 </resources>

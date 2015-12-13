@@ -71,7 +71,7 @@ public class ListFragment extends BaseListFragment {
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
     @Inject @Named(ActivityModule.POPULAR) ItemManager mPopularItemManager;
     @Inject UserServices mUserServices;
-    @Inject AlertDialogBuilder mLoginAlertDialogBuilder;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
@@ -518,6 +518,12 @@ public class ListFragment extends BaseListFragment {
                         vote(story, holder);
                         return true;
                     }
+                    if (item.getItemId() == R.id.menu_contextual_comment) {
+                        Intent intent = new Intent(getActivity(), ComposeActivity.class);
+                        intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId());
+                        intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getDisplayedTitle());
+                        startActivity(intent);
+                    }
                     return false;
                 }
             });
@@ -555,7 +561,7 @@ public class ListFragment extends BaseListFragment {
                         holder.mStoryView.animateVote(story.getScore());
                         Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
                     } else {
-                        AppUtils.showLogin(getActivity(), mLoginAlertDialogBuilder);
+                        AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
                     }
                 }
 

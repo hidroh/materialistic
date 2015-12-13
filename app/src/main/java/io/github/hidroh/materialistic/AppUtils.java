@@ -127,6 +127,7 @@ public class AppUtils {
                              @NonNull AlertDialogBuilder alertDialogBuilder,
                              @NonNull final ItemManager.WebItem item) {
         alertDialogBuilder
+                .init(context)
                 .setMessage(R.string.share)
                 .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
                     @Override
@@ -241,7 +242,9 @@ public class AppUtils {
             }
         }
         items[items.length - 1] = context.getString(R.string.add_account);
-        alertDialogBuilder.setTitle(R.string.choose_account)
+        alertDialogBuilder
+                .init(context)
+                .setTitle(R.string.choose_account)
                 .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

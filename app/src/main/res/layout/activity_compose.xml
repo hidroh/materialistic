@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@id/toolbar"
+        android:theme="@style/AppToolbarTheme"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+        android:background="?attr/colorPrimary" />
+
+    <ScrollView
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideInset"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:background="?attr/colorCardBackground"
+        android:fillViewport="true"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <LinearLayout
+            android:id="@id/content_frame"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <io.github.hidroh.materialistic.widget.TintableTextView
+                android:id="@+id/toggle"
+                android:drawableRight="@drawable/ic_expand_more_grey600_24dp"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:gravity="center_vertical"
+                android:hint="@string/original_content"
+                android:background="?attr/selectableItemBackground"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/listPreferredItemHeightSmall" />
+
+            <TextView
+                android:id="@id/text"
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:textIsSelectable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider"
+                android:background="@color/blackT12" />
+
+            <TextView
+                android:id="@+id/guidelines"
+                android:text="@string/formatting_guidelines"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/listPreferredItemHeightSmall" />
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/edittext_body"
+                android:hint="@string/comment_hint"
+                android:gravity="top"
+                android:singleLine="false"
+                android:background="@null"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:id="@id/empty"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,113 @@
+package io.github.hidroh.materialistic;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowToast;
+import org.robolectric.util.ActivityController;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.assertj.android.api.Assertions.assertThat;
+import static org.robolectric.Shadows.shadowOf;
+
+@RunWith(RobolectricGradleTestRunner.class)
+public class ComposeActivityTest {
+    private ActivityController<ComposeActivity> controller;
+    private ComposeActivity activity;
+
+    @Before
+    public void setUp() {
+        controller = Robolectric.buildActivity(ComposeActivity.class);
+        activity = controller.get();
+        Intent intent = new Intent();
+        intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
+        intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, "Paragraph 1<br/><br/>Paragraph 2<br/>");
+        controller.withIntent(intent).create().start().resume().visible();
+    }
+
+    @Test
+    public void testToggle() {
+        assertThat(activity.findViewById(R.id.toggle)).isVisible();
+        assertThat(activity.findViewById(R.id.text)).isNotVisible();
+        activity.findViewById(R.id.toggle).performClick();
+        assertThat(activity.findViewById(R.id.text)).isVisible();
+        assertThat((TextView) activity.findViewById(R.id.text))
+                .hasTextString("Paragraph 1\n\nParagraph 2\n");
+        activity.findViewById(R.id.toggle).performClick();
+        assertThat(activity.findViewById(R.id.text)).isNotVisible();
+    }
+
+    @Test
+    public void testHomeButtonClick() {
+        shadowOf(activity).clickMenuItem(android.R.id.home);
+        assertThat(activity).isFinishing();
+    }
+
+    @Test
+    public void testConfirmExit() {
+        ((EditText) activity.findViewById(R.id.edittext_body)).setText("Reply");
+        shadowOf(activity).clickMenuItem(android.R.id.home);
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        assertThat(activity).isFinishing();
+    }
+
+    @Test
+    public void testSendEmpty() {
+        shadowOf(activity).clickMenuItem(R.id.menu_send);
+        assertEquals(activity.getString(R.string.comment_required), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testQuote() {
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
+        ((EditText) activity.findViewById(R.id.edittext_body)).setText("Reply");
+        shadowOf(activity).clickMenuItem(R.id.menu_quote);
+        assertThat((EditText) activity.findViewById(R.id.edittext_body))
+                .hasTextString("> Paragraph 1\n\n> Paragraph 2\n\nReply");
+    }
+
+    @Test
+    public void testClickEmptyFocusEditText() {
+        View editText = activity.findViewById(R.id.edittext_body);
+        editText.clearFocus();
+        assertThat(editText).isNotFocused();
+        activity.findViewById(R.id.empty).performClick();
+        assertThat(editText).isFocused();
+    }
+
+    @Test
+    public void testGuidelines() {
+        activity.findViewById(R.id.guidelines).performClick();
+        assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
+    }
+
+    @Test
+    public void testEmptyQuote() {
+        controller = Robolectric.buildActivity(ComposeActivity.class)
+                .create().start().resume().visible();
+        activity = controller.get();
+        assertThat(activity.findViewById(R.id.toggle)).isNotVisible();
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
+    }
+
+    @After
+    public void tearDown() {
+        controller.pause().stop().destroy();
+    }
+}

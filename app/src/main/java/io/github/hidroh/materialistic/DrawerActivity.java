@@ -109,6 +109,7 @@ public abstract class DrawerActivity extends InjectableActivity {
         final EditText body = (EditText) dialogView.findViewById(R.id.edittext_body);
         final View sendButton = dialogView.findViewById(R.id.feedback_button);
         final Dialog dialog = mAlertDialogBuilder
+                .init(this)
                 .setView(dialogView)
                 .create();
         sendButton.setOnClickListener(new View.OnClickListener() {

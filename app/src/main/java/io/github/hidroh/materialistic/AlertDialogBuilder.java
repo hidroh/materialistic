@@ -15,6 +15,13 @@ import android.widget.ListView;
  */
 public interface AlertDialogBuilder<T extends Dialog> {
     /**
+     * Construct the wrapped dialog builder object. This must be called before any other methods.
+     * @param context activity context
+     * @return This Builder object to allow for chaining of calls to set methods
+     */
+    AlertDialogBuilder init(Context context);
+
+    /**
      * Set the title using the given resource id.
      *
      * @return This Builder object to allow for chaining of calls to set methods
@@ -100,10 +107,15 @@ public interface AlertDialogBuilder<T extends Dialog> {
      * {@link android.support.v7.app.AlertDialog.Builder} wrapper
      */
     class Impl implements AlertDialogBuilder<AlertDialog> {
-        private final AlertDialog.Builder mBuilder;
+        private AlertDialog.Builder mBuilder;
 
-        public Impl(Context context) {
+        public Impl() {
+        }
+
+        @Override
+        public AlertDialogBuilder init(Context context) {
             mBuilder = new AlertDialog.Builder(context);
+            return this;
         }
 
         @Override

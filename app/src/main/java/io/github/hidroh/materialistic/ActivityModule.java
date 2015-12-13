@@ -39,6 +39,7 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
                 ShowActivity.class,
                 PopularActivity.class,
                 LoginActivity.class,
+                ComposeActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -113,7 +114,7 @@ public class ActivityModule {
 
     @Provides
     public AlertDialogBuilder provideAlertDialogBuilder(Context context) {
-        return new AlertDialogBuilder.Impl(context);
+        return new AlertDialogBuilder.Impl();
     }
 
     @Provides @Singleton
