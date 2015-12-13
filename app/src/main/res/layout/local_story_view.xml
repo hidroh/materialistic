@@ -8,6 +8,7 @@
         android:layout_toLeftOf="@id/comment"
         android:paddingTop="@dimen/padding"
         style="@style/textSubtitleStyle.Italic" />
+
     <io.github.hidroh.materialistic.widget.TextView
         android:id="@id/title"
         android:text="@string/loading_text"
@@ -17,22 +18,27 @@
         android:layout_toLeftOf="@id/comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <TextView
         android:id="@id/source"
         android:text="@string/loading_text"
         android:layout_below="@id/title"
         android:paddingBottom="@dimen/padding"
         style="@style/textSubtitleStyle.Italic" />
-    <ImageButton
+
+    <include layout="@layout/button_comment"
         android:id="@id/comment"
-        android:src="@drawable/ic_comment_grey600_48dp"
-        android:tint="?attr/colorAccent"
-        android:background="@null"
-        android:paddingTop="@dimen/padding"
-        android:paddingBottom="@dimen/padding"
-        android:paddingRight="@dimen/padding"
-        android:layout_centerInParent="true"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/button_more"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <include layout="@layout/button_more"
+        android:id="@id/button_more"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </merge>

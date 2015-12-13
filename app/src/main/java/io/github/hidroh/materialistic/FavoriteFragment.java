@@ -17,20 +17,24 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 public class FavoriteFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -117,6 +121,8 @@ public class FavoriteFragment extends BaseListFragment
     @Inject FavoriteManager mFavoriteManager;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject UserServices mUserServices;
+    @Inject PopupMenu mPopupMenu;
 
     @Override
     public void onAttach(final Context context) {
@@ -345,10 +351,10 @@ public class FavoriteFragment extends BaseListFragment
 
         @Override
         protected void bindItem(final ItemViewHolder holder) {
+            final FavoriteManager.Favorite favorite = getItem(holder.getAdapterPosition());
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    FavoriteManager.Favorite favorite = getItem(holder.getAdapterPosition());
                     if (mActionMode == null && !mSearchViewVisible) {
                         mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
                         toggle(favorite.getId(), holder.getAdapterPosition());
@@ -359,6 +365,12 @@ public class FavoriteFragment extends BaseListFragment
                     }
 
                     return false;
+                }
+            });
+            holder.mStoryView.getMoreOptions().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showMoreOptions(v, favorite);
                 }
             });
         }
@@ -415,6 +427,46 @@ public class FavoriteFragment extends BaseListFragment
                 mSelected.add(itemId);
             }
             notifyItemChanged(position);
+        }
+
+        private void showMoreOptions(View v, final FavoriteManager.Favorite item) {
+            mPopupMenu.create(getActivity(), v, Gravity.NO_GRAVITY);
+            mPopupMenu.inflate(R.menu.menu_contextual_favorite);
+            mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                        vote(item);
+                        return true;
+                    }
+                    if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                        Intent intent = new Intent(getActivity(), ComposeActivity.class);
+                        intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId());
+                        intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle());
+                        startActivity(intent);
+                    }
+                    return false;
+                }
+            });
+            mPopupMenu.show();
+        }
+
+        private void vote(final FavoriteManager.Favorite item) {
+            mUserServices.voteUp(getActivity(), item.getId(), new UserServices.Callback() {
+                @Override
+                public void onDone(boolean successful) {
+                    if (successful) {
+                        Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
+                    } else {
+                        AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 

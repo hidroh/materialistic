@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentValues;
@@ -10,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,8 +21,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +41,9 @@ import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
+import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowProgressDialog;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
@@ -45,6 +51,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -76,9 +83,11 @@ public class FavoriteActivityTest {
     private Fragment fragment;
     @Inject FavoriteManager favoriteManager;
     @Inject ActionViewResolver actionViewResolver;
+    @Inject UserServices userServices;
     @Captor ArgumentCaptor<Set<String>> selection;
     @Captor ArgumentCaptor<View.OnClickListener> searchViewClickListener;
     @Captor ArgumentCaptor<SearchView.OnCloseListener> searchViewCloseListener;
+    @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
     private ShadowContentResolver resolver;
 
     @Before
@@ -86,6 +95,7 @@ public class FavoriteActivityTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(favoriteManager);
+        reset(userServices);
         reset(actionViewResolver.getActionView(mock(MenuItem.class)));
         controller = Robolectric.buildActivity(TestFavoriteActivity.class);
         resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
@@ -260,6 +270,70 @@ public class FavoriteActivityTest {
         assertEquals(1, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
                 .getAdapter().getItemCount());
         controller.pause().stop().destroy();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItem() {
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        Assert.assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
+        userServicesCallback.getValue().onDone(true);
+        assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItemPromptToLogin() {
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        Assert.assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
+        userServicesCallback.getValue().onDone(false);
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, LoginActivity.class);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testVoteItemFailed() {
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        Assert.assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+        verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
+        userServicesCallback.getValue().onError();
+        assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testReply() {
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        Assert.assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_comment));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ComposeActivity.class);
     }
 
     @After
