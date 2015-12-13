@@ -41,13 +41,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- TODO use this for new comment -->
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/reply_button"
         android:visibility="gone"
         tools:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_bookmark_outline_white_24dp"
+        android:src="@drawable/ic_reply_white_24dp"
         app:layout_behavior="@string/fab_scrolling_view_behavior"
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/view_pager"

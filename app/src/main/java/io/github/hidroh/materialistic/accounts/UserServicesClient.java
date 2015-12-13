@@ -26,6 +26,7 @@ public class UserServicesClient implements UserServices {
     private static final String BASE_WEB_URL = "https://news.ycombinator.com";
     private static final String LOGIN_PATH = "login";
     private static final String VOTE_PATH = "vote";
+    private static final String COMMENT_PATH = "comment";
     private static final String LOGIN_PARAM_ACCT = "acct";
     private static final String LOGIN_PARAM_PW = "pw";
     private static final String LOGIN_PARAM_CREATING = "creating";
@@ -33,6 +34,8 @@ public class UserServicesClient implements UserServices {
     private static final String VOTE_PARAM_FOR = "for";
     private static final String VOTE_PARAM_WHENCE = "whence";
     private static final String VOTE_PARAM_DIR = "dir";
+    private static final String COMMENT_PARAM_PARENT = "parent";
+    private static final String COMMENT_PARAM_TEXT = "text";
     private static final String VOTE_DIR_UP = "up";
     private static final String DEFAULT_REDIRECT = "news";
     private static final String CREATING_TRUE = "t";
@@ -93,6 +96,28 @@ public class UserServicesClient implements UserServices {
                         .add(VOTE_PARAM_FOR, itemId)
                         .add(VOTE_PARAM_DIR, VOTE_DIR_UP)
                         .add(VOTE_PARAM_WHENCE, DEFAULT_REDIRECT)
+                        .build())
+                .build())
+                .enqueue(wrap(callback));
+    }
+
+    @Override
+    public void reply(Context context, String parentId, String text, Callback callback) {
+        Pair<String, String> credentials = AppUtils.getCredentials(context);
+        if (credentials == null) {
+            callback.onDone(false);
+            return;
+        }
+        mClient.newCall(new Request.Builder()
+                .url(HttpUrl.parse(BASE_WEB_URL)
+                        .newBuilder()
+                        .addPathSegment(COMMENT_PATH)
+                        .build())
+                .post(new FormEncodingBuilder()
+                        .add(LOGIN_PARAM_ACCT, credentials.first)
+                        .add(LOGIN_PARAM_PW, credentials.second)
+                        .add(COMMENT_PARAM_PARENT, parentId)
+                        .add(COMMENT_PARAM_TEXT, text)
                         .build())
                 .build())
                 .enqueue(wrap(callback));

@@ -55,6 +55,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
+    private View mReplyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
+        mReplyButton = findViewById(R.id.reply_button);
         mVoteButton = (ImageButton) findViewById(R.id.vote_button);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
@@ -245,6 +247,16 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (story == null) {
             return;
         }
+        mReplyButton.setVisibility(View.VISIBLE);
+        mReplyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ItemActivity.this, ComposeActivity.class);
+                intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId());
+                intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getText());
+                startActivity(intent);
+            }
+        });
         mVoteButton.setVisibility(View.VISIBLE);
         mVoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,6 +332,16 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         });
         mTabLayout.setupWithViewPager(viewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                if (tab.getPosition() == 0) {
+                    mCoordinatorLayout.addView(mReplyButton);
+                } else {
+                    mCoordinatorLayout.removeView(mReplyButton);
+                }
+            }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment activeFragment = fragments[viewPager.getCurrentItem()];
