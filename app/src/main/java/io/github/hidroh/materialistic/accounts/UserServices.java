@@ -11,4 +11,6 @@ public interface UserServices {
     void login(String username, String password, boolean createAccount, Callback callback);
 
     void voteUp(Context context, String itemId, Callback callback);
+
+    void reply(Context context, String parentId, String text, Callback callback);
 }

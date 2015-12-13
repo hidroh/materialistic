@@ -123,6 +123,25 @@ public class UserServicesClientTest {
     }
 
     @Test
+    public void testCommentSuccess() throws IOException {
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.reply(RuntimeEnvironment.application, "1", "reply", callback);
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(responseBuilder
+                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
+        verify(callback).onDone(eq(true));
+    }
+
+    @Test
+    public void testCommentNotLoggedIn() throws IOException {
+        Preferences.setUsername(RuntimeEnvironment.application, null);
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.reply(RuntimeEnvironment.application, "1", "reply", callback);
+        verify(call, never()).enqueue(any(Callback.class));
+        verify(callback).onDone(eq(false));
+    }
+
+    @Test
     public void testVoteNoAccount() throws IOException {
         ShadowAccountManager.get(RuntimeEnvironment.application)
                 .removeAccount(account, null, null);

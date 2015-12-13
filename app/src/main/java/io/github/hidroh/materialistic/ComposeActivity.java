@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.accounts.UserServices;
+
 public class ComposeActivity extends InjectableActivity {
     public static final String EXTRA_PARENT_ID = ComposeActivity.class.getName() + ".EXTRA_PARENT_ID";
     public static final String EXTRA_PARENT_TEXT = ComposeActivity.class.getName() + ".EXTRA_PARENT_TEXT";
@@ -23,14 +26,22 @@ public class ComposeActivity extends InjectableActivity {
     private static final String FORMAT_QUOTE = "> %s\n\n";
     private static final String PARAGRAPH_QUOTE = "\n\n> ";
     private static final String PARAGRAPH_BREAK_REGEX = "[\\n]{2,}";
+    @Inject UserServices mUserServices;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private EditText mEditText;
     private String mParentText;
     private String mQuoteText;
+    private String mParentId;
+    private boolean mSending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mParentId = getIntent().getStringExtra(EXTRA_PARENT_ID);
+        if (TextUtils.isEmpty(mParentId)) {
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_compose);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
@@ -96,7 +107,8 @@ public class ComposeActivity extends InjectableActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_quote).setVisible(!TextUtils.isEmpty(mParentText));
+        menu.findItem(R.id.menu_quote).setVisible(!mSending && !TextUtils.isEmpty(mParentText));
+        menu.findItem(R.id.menu_send).setEnabled(!mSending);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -129,7 +141,7 @@ public class ComposeActivity extends InjectableActivity {
         }
         mAlertDialogBuilder
                 .init(this)
-                .setMessage(R.string.confirm_discard)
+                .setMessage(mSending ? R.string.confirm_no_waiting : R.string.confirm_discard)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -141,7 +153,36 @@ public class ComposeActivity extends InjectableActivity {
     }
 
     private void send() {
-        // TODO
+        toggleControls(true);
+        Toast.makeText(this, R.string.sending, Toast.LENGTH_SHORT).show();
+        mUserServices.reply(this, mParentId, mEditText.getText().toString(),
+                new UserServices.Callback() {
+                    @Override
+                    public void onDone(boolean successful) {
+                        if (successful) {
+                            Toast.makeText(ComposeActivity.this, R.string.comment_successful,
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                            if (!isFinishing()) {
+                                finish();
+                                // TODO refresh parent
+                            }
+                        } else {
+                            if (!isFinishing()) {
+                                startActivity(new Intent(ComposeActivity.this, LoginActivity.class));
+                            }
+                            toggleControls(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError() {
+                        Toast.makeText(ComposeActivity.this, R.string.comment_failed,
+                                Toast.LENGTH_SHORT)
+                                .show();
+                        toggleControls(false);
+                    }
+                });
     }
 
     private String createQuote() {
@@ -152,5 +193,14 @@ public class ComposeActivity extends InjectableActivity {
                     .replaceAll(PARAGRAPH_BREAK_REGEX, PARAGRAPH_QUOTE));
         }
         return mQuoteText;
+    }
+
+    private void toggleControls(boolean sending) {
+        if (isFinishing()) {
+            return;
+        }
+        mSending = sending;
+        mEditText.setEnabled(!sending);
+        supportInvalidateOptionsMenu();
     }
 }

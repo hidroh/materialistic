@@ -43,7 +43,9 @@ import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -492,6 +494,20 @@ public class ItemActivityTest {
         verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
         userServicesCallback.getValue().onError();
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testReply() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
+        controller.withIntent(intent).create().start().resume();
+        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
+        assertNull(activity.findViewById(R.id.reply_button));
+        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).select();
+        assertNotNull(activity.findViewById(R.id.reply_button));
+        activity.findViewById(R.id.reply_button).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ComposeActivity.class);
     }
 
     @After

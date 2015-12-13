@@ -208,5 +208,8 @@
     </string>
     <string name="confirm_discard">Discard draft?</string>
     <string name="create_account">Create account</string>
+    <string name="comment_failed">Failed to send comment</string>
+    <string name="comment_successful">Successfully add comment!</string>
+    <string name="confirm_no_waiting">Exit without waiting?</string>
 
 </resources>
