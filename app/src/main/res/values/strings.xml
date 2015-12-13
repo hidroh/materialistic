@@ -183,7 +183,7 @@
     <string name="title_activity_login">Login to Hacker News</string>
     <string name="username_required">Username is required</string>
     <string name="password_required">Password is required</string>
-    <string name="login_failed">Login failed, please try again</string>
+    <string name="login_failed">Login/create account failed, please try again</string>
     <string name="welcome" formatted="false">Welcome %s!</string>
     <string name="logout_confirm">Do you want to log out?</string>
     <string name="choose_account">Choose an account</string>
@@ -207,5 +207,6 @@
         ]]>
     </string>
     <string name="confirm_discard">Discard draft?</string>
+    <string name="create_account">Create account</string>
 
 </resources>

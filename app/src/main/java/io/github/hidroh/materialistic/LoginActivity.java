@@ -18,6 +18,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     @Inject UserServices mUserServices;
     @Inject AccountManager mAccountManager;
     private View mLoginButton;
+    private View mRegisterButton;
+    private TextInputLayout mUsernameLayout;
+    private TextInputLayout mPasswordLayout;
+    private EditText mUsernameEditText;
+    private EditText mPasswordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,33 +30,41 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         String username = Preferences.getUsername(this);
         boolean addAccount = getIntent().getBooleanExtra(EXTRA_ADD_ACCOUNT, false);
         setContentView(R.layout.activity_login);
-        final TextInputLayout usernameLayout = (TextInputLayout)
-                findViewById(R.id.textinput_username);
-        final TextInputLayout passwordLayout = (TextInputLayout)
-                findViewById(R.id.textinput_password);
-        final EditText usernameEditText = (EditText) findViewById(R.id.edittext_username);
+        mUsernameLayout = (TextInputLayout) findViewById(R.id.textinput_username);
+        mPasswordLayout = (TextInputLayout) findViewById(R.id.textinput_password);
+        mUsernameEditText = (EditText) findViewById(R.id.edittext_username);
+        mLoginButton = findViewById(R.id.login_button);
+        mRegisterButton = findViewById(R.id.register_button);
         if (!addAccount && !TextUtils.isEmpty(username)) {
             setTitle(R.string.re_enter_password);
-            usernameEditText.setText(username);
+            mUsernameEditText.setText(username);
+            mRegisterButton.setVisibility(View.GONE);
         }
-        final EditText passwordEditText = (EditText) findViewById(R.id.edittext_password);
-        mLoginButton = findViewById(R.id.login_button);
+        mPasswordEditText = (EditText) findViewById(R.id.edittext_password);
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                usernameLayout.setErrorEnabled(false);
-                passwordLayout.setErrorEnabled(false);
-                if (usernameEditText.length() == 0) {
-                    usernameLayout.setError(getString(R.string.username_required));
-                }
-                if (passwordEditText.length() == 0) {
-                    passwordLayout.setError(getString(R.string.password_required));
-                }
-                if (usernameEditText.length() == 0 || passwordEditText.length() == 0) {
+                if (!validate()) {
                     return;
                 }
                 mLoginButton.setEnabled(false);
-                login(usernameEditText.getText().toString(), passwordEditText.getText().toString());
+                mRegisterButton.setEnabled(false);
+                login(mUsernameEditText.getText().toString(),
+                        mPasswordEditText.getText().toString(),
+                        false);
+            }
+        });
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!validate()) {
+                    return;
+                }
+                mLoginButton.setEnabled(false);
+                mRegisterButton.setEnabled(false);
+                login(mUsernameEditText.getText().toString(),
+                        mPasswordEditText.getText().toString(),
+                        true);
             }
         });
     }
@@ -61,31 +74,46 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         return true;
     }
 
-    private void login(final String username, final String password) {
-        mUserServices.login(username, password,
-                new UserServices.Callback() {
-                    @Override
-                    public void onDone(boolean successful) {
-                        mLoginButton.setEnabled(true);
-                        if (successful) {
-                            addAccount(username, password);
-                            Toast.makeText(LoginActivity.this,
-                                    getString(R.string.welcome, username), Toast.LENGTH_SHORT)
-                                    .show();
-                        } else {
-                            Toast.makeText(LoginActivity.this,
-                                    R.string.login_failed, Toast.LENGTH_SHORT)
-                                    .show();
-                        }
-                    }
+    private boolean validate() {
+        mUsernameLayout.setErrorEnabled(false);
+        mPasswordLayout.setErrorEnabled(false);
+        if (mUsernameEditText.length() == 0) {
+            mUsernameLayout.setError(getString(R.string.username_required));
+        }
+        if (mPasswordEditText.length() == 0) {
+            mPasswordLayout.setError(getString(R.string.password_required));
+        }
+        if (mUsernameEditText.length() == 0 || mPasswordEditText.length() == 0) {
+            return false;
+        }
+        return true;
+    }
 
-                    @Override
-                    public void onError() {
-                        Toast.makeText(LoginActivity.this,
-                                R.string.login_failed, Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                });
+    private void login(final String username, final String password, boolean createAccount) {
+        mUserServices.login(username, password, createAccount, new UserServices.Callback() {
+            @Override
+            public void onDone(boolean successful) {
+                mLoginButton.setEnabled(true);
+                mRegisterButton.setEnabled(true);
+                if (successful) {
+                    addAccount(username, password);
+                    Toast.makeText(LoginActivity.this,
+                            getString(R.string.welcome, username), Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    Toast.makeText(LoginActivity.this,
+                            R.string.login_failed, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onError() {
+                Toast.makeText(LoginActivity.this,
+                        R.string.login_failed, Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
     }
 
     private void addAccount(String username, String password) {

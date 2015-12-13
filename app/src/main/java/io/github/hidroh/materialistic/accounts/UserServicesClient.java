@@ -28,12 +28,14 @@ public class UserServicesClient implements UserServices {
     private static final String VOTE_PATH = "vote";
     private static final String LOGIN_PARAM_ACCT = "acct";
     private static final String LOGIN_PARAM_PW = "pw";
+    private static final String LOGIN_PARAM_CREATING = "creating";
     private static final String LOGIN_PARAM_GOTO = "goto";
     private static final String VOTE_PARAM_FOR = "for";
     private static final String VOTE_PARAM_WHENCE = "whence";
     private static final String VOTE_PARAM_DIR = "dir";
     private static final String VOTE_DIR_UP = "up";
     private static final String DEFAULT_REDIRECT = "news";
+    private static final String CREATING_TRUE = "t";
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
     private final OkHttpClient mClient;
 
@@ -53,17 +55,21 @@ public class UserServicesClient implements UserServices {
     }
 
     @Override
-    public void login(final String username, final String password, final Callback callback) {
+    public void login(final String username, final String password, boolean createAccount,
+                      final Callback callback) {
+        FormEncodingBuilder formBuilder = new FormEncodingBuilder()
+                .add(LOGIN_PARAM_ACCT, username)
+                .add(LOGIN_PARAM_PW, password)
+                .add(LOGIN_PARAM_GOTO, DEFAULT_REDIRECT);
+        if (createAccount) {
+            formBuilder.add(LOGIN_PARAM_CREATING, CREATING_TRUE);
+        }
         mClient.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(LOGIN_PATH)
                         .build())
-                .post(new FormEncodingBuilder()
-                        .add(LOGIN_PARAM_ACCT, username)
-                        .add(LOGIN_PARAM_PW, password)
-                        .add(LOGIN_PARAM_GOTO, DEFAULT_REDIRECT)
-                        .build())
+                .post(formBuilder.build())
                 .build())
                 .enqueue(wrap(callback));
     }
