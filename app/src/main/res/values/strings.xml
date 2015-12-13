@@ -206,5 +206,6 @@
             <a href="#">Hacker News formatting guidelines</a>
         ]]>
     </string>
+    <string name="confirm_discard">Discard draft?</string>
 
 </resources>

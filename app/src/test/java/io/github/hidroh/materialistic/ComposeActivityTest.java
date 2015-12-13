@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
@@ -52,6 +54,16 @@ public class ComposeActivityTest {
     @Test
     public void testHomeButtonClick() {
         shadowOf(activity).clickMenuItem(android.R.id.home);
+        assertThat(activity).isFinishing();
+    }
+
+    @Test
+    public void testConfirmExit() {
+        ((EditText) activity.findViewById(R.id.edittext_body)).setText("Reply");
+        shadowOf(activity).clickMenuItem(android.R.id.home);
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertThat(activity).isFinishing();
     }
 

@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -118,6 +119,25 @@ public class ComposeActivity extends InjectableActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mEditText.length() == 0) {
+            super.onBackPressed();
+            return;
+        }
+        mAlertDialogBuilder
+                .init(this)
+                .setMessage(R.string.confirm_discard)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ComposeActivity.super.onBackPressed();
+                    }
+                })
+                .show();
     }
 
     private void send() {
