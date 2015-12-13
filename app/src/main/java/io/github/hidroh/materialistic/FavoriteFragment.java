@@ -77,6 +77,7 @@ public class FavoriteFragment extends BaseListFragment
         public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.menu_clear) {
                 mAlertDialogBuilder
+                        .init(getActivity())
                         .setMessage(R.string.confirm_clear_selected)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
@@ -218,6 +219,7 @@ public class FavoriteFragment extends BaseListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_clear) {
             mAlertDialogBuilder
+                    .init(getActivity())
                     .setMessage(R.string.confirm_clear)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override

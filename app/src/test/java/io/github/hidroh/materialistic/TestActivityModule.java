@@ -148,8 +148,15 @@ public class TestActivityModule {
 
     @Provides
     public AlertDialogBuilder provideAlertDialogBuilder() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(RuntimeEnvironment.application);
         return new AlertDialogBuilder() {
+            private AlertDialog.Builder builder;
+
+            @Override
+            public AlertDialogBuilder init(Context context) {
+                builder = new AlertDialog.Builder(context);
+                return this;
+            }
+
             @Override
             public AlertDialogBuilder setTitle(int titleId) {
                 builder.setTitle(titleId);

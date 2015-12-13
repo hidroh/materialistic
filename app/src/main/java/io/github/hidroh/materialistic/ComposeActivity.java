@@ -56,6 +56,7 @@ public class ComposeActivity extends InjectableActivity {
                 WebView webView = new WebView(ComposeActivity.this);
                 webView.loadUrl(HN_FORMAT_DOC_URL);
                 mAlertDialogBuilder
+                        .init(ComposeActivity.this)
                         .setView(webView)
                         .setPositiveButton(android.R.string.ok, null)
                         .show();

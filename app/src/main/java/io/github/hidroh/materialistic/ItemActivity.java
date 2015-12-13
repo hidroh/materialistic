@@ -50,7 +50,6 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
-    @Inject AlertDialogBuilder mLoginAlertDialogBuilder;
     @Inject UserServices mUserServices;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
@@ -140,6 +139,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
         if (item.getItemId() == R.id.menu_external) {
             mAlertDialogBuilder
+                    .init(this)
                     .setMessage(R.string.view_in_browser)
                     .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
                         @Override
@@ -369,7 +369,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                     Toast.makeText(ItemActivity.this, R.string.voted,
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    AppUtils.showLogin(ItemActivity.this, mLoginAlertDialogBuilder);
+                    AppUtils.showLogin(ItemActivity.this, mAlertDialogBuilder);
                 }
             }
 

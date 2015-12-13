@@ -114,7 +114,7 @@ public class ActivityModule {
 
     @Provides
     public AlertDialogBuilder provideAlertDialogBuilder(Context context) {
-        return new AlertDialogBuilder.Impl(context);
+        return new AlertDialogBuilder.Impl();
     }
 
     @Provides @Singleton
