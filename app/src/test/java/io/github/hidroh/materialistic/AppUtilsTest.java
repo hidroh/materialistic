@@ -17,9 +17,12 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
 
+import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItemActivity;
 
@@ -133,5 +136,35 @@ public class AppUtilsTest {
         shadowOf(AccountManager.get(RuntimeEnvironment.application)).addAccount(
                 new Account("olduser", BuildConfig.APPLICATION_ID));
         assertEquals("newuser", Preferences.getUsername(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testShareComment() {
+        AppUtils.share(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
+                new TestHnItem(1));
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
+        AppUtils.share(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
+                new TestHnItem(1) {
+                    @Override
+                    public String getUrl() {
+                        return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
+                    }
+                });
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
+    }
+
+    @Test
+    public void testOpenExternalComment() {
+        AppUtils.openExternal(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
+                new TestHnItem(1));
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
+        AppUtils.openExternal(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
+                new TestHnItem(1) {
+                    @Override
+                    public String getUrl() {
+                        return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
+                    }
+                });
+        assertNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 }

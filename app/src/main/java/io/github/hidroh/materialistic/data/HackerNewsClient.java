@@ -409,7 +409,7 @@ public class HackerNewsClient implements ItemManager {
         }
 
         @Override
-        public boolean isShareable() {
+        public boolean isStoryType() {
             switch (getType()) {
                 case STORY_TYPE:
                 case POLL_TYPE:

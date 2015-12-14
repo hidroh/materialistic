@@ -120,7 +120,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
         });
@@ -145,7 +145,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
         });
@@ -182,7 +182,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -229,7 +229,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -294,7 +294,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -323,7 +323,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -362,7 +362,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -399,7 +399,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -447,7 +447,7 @@ public class ItemActivityTest {
             }
 
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 

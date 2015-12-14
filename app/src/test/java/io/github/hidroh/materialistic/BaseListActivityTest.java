@@ -137,7 +137,7 @@ public class BaseListActivityTest {
     public void testGetSelectedItem() {
         activity.onItemSelected(new TestWebItem() {
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 

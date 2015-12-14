@@ -318,7 +318,7 @@ public class FavoriteManager {
         }
 
         @Override
-        public boolean isShareable() {
+        public boolean isStoryType() {
             return true;
         }
 

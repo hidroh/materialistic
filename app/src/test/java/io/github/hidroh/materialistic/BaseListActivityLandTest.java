@@ -53,6 +53,8 @@ public class BaseListActivityLandTest {
     public void testCreateLand() {
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share).isVisible());
+        assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_external));
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_external).isVisible());
         assertNull(activity.findViewById(R.id.reply_button));
     }
 
@@ -89,6 +91,11 @@ public class BaseListActivityLandTest {
             public String getId() {
                 return "1";
             }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
         });
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         assertStoryMode();
@@ -98,6 +105,8 @@ public class BaseListActivityLandTest {
         assertEquals(activity.getString(R.string.share), shadowOf(alertDialog).getMessage());
         assertThat(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)).hasText(R.string.article);
         assertThat(alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)).hasText(R.string.comments);
+        shadowOf(activity).clickMenuItem(R.id.menu_external);
+        assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test
@@ -143,7 +152,7 @@ public class BaseListActivityLandTest {
     public void testGetSelectedItem() {
         activity.onItemSelected(new TestWebItem() {
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -161,7 +170,7 @@ public class BaseListActivityLandTest {
     public void testClearSelection() {
         activity.onItemSelected(new TestWebItem() {
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -180,7 +189,7 @@ public class BaseListActivityLandTest {
     public void testToggleItemView() {
         activity.onItemSelected(new TestWebItem() {
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 
@@ -204,7 +213,7 @@ public class BaseListActivityLandTest {
     public void testScrollItemToTop() {
         activity.onItemSelected(new TestWebItem() {
             @Override
-            public boolean isShareable() {
+            public boolean isStoryType() {
                 return true;
             }
 

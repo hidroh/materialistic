@@ -19,7 +19,7 @@ public abstract class TestWebItem implements ItemManager.WebItem {
     }
 
     @Override
-    public boolean isShareable() {
+    public boolean isStoryType() {
         return false;
     }
 

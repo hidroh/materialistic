@@ -305,10 +305,10 @@ public interface ItemManager {
         String getUrl();
 
         /**
-         * Checks if item can be shared
-         * @return true if shareable, false otherwise
+         * Checks if item is not a comment
+         * @return true if is not a comment, false otherwise
          */
-        boolean isShareable();
+        boolean isStoryType();
 
         /**
          * Gets item ID

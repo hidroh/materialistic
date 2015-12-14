@@ -1,6 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ItemActivity extends InjectableActivity implements Scrollable {
@@ -122,7 +120,6 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_share, menu);
         getMenuInflater().inflate(R.menu.menu_item, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -140,27 +137,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             return true;
         }
         if (item.getItemId() == R.id.menu_external) {
-            mAlertDialogBuilder
-                    .init(this)
-                    .setMessage(R.string.view_in_browser)
-                    .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            AppUtils.openWebUrlExternal(ItemActivity.this,
-                                    mItem.getDisplayedTitle(),
-                                    mItem.getUrl());
-                        }
-                    })
-                    .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            AppUtils.openWebUrlExternal(ItemActivity.this,
-                                    mItem.getDisplayedTitle(),
-                                    String.format(HackerNewsClient.WEB_ITEM_PATH, mItem.getId()));
-                        }
-                    })
-                    .create()
-                    .show();
+            AppUtils.openExternal(ItemActivity.this, mAlertDialogBuilder, mItem);
             return true;
         }
         if (item.getItemId() == R.id.menu_share) {
@@ -193,7 +170,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             return;
         }
 
-        if (!mItem.isShareable()) {
+        if (!mItem.isStoryType()) {
             return;
         }
 
@@ -265,7 +242,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             }
         });
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
-        if (story.isShareable()) {
+        if (story.isStoryType()) {
             titleTextView.setText(story.getDisplayedTitle());
             if (!TextUtils.isEmpty(story.getSource())) {
                 TextView sourceTextView = (TextView) findViewById(R.id.source);
@@ -316,7 +293,11 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
 
             @Override
             public int getCount() {
-                return story.isShareable() && !mExternalBrowser ? 3 : 2;
+                if (story.isStoryType()) {
+                    return !mExternalBrowser ? 3 : 2;
+                } else {
+                    return 1;
+                }
             }
 
             @Override
@@ -361,7 +342,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                 viewPager.setCurrentItem(viewPager.getAdapter().getCount() - 1);
                 break;
         }
-        if (story.isShareable() && mExternalBrowser) {
+        if (story.isStoryType() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

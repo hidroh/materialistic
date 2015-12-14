@@ -146,7 +146,7 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public boolean isShareable() {
+    public boolean isStoryType() {
         return false;
     }
 
