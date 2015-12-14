@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DimenRes;
@@ -48,6 +50,7 @@ public class AppUtils {
     private static final String ABBR_DAY = "d";
     private static final String ABBR_HOUR = "h";
     private static final String ABBR_MINUTE = "m";
+    private static final String PLAY_STORE_URL = "market://details?id=" + BuildConfig.APPLICATION_ID;
 
     public static void openWebUrlExternal(Context context, String title, String url) {
         Intent intent = createViewIntent(context, title, url);
@@ -288,6 +291,22 @@ public class AppUtils {
                 Preferences.setUsername(context, null);
             }
         }, null, true);
+    }
+
+    public static void openPlayStore(Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        }
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, R.string.no_playstore, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,

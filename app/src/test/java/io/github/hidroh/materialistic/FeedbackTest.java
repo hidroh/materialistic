@@ -14,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
@@ -31,6 +30,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class FeedbackTest {
@@ -105,6 +105,13 @@ public class FeedbackTest {
         verify(feedbackClient).send(eq("title"), eq("body"), callback.capture());
         controller.pause().stop().destroy();
         callback.getValue().onSent(true);
+    }
+
+    @Test
+    public void testRate() {
+        dialog.findViewById(R.id.button_rate).performClick();
+        assertNotNull(shadowOf(activity).getNextStartedActivity());
+        assertThat(dialog).isNotShowing();
     }
 
     @After

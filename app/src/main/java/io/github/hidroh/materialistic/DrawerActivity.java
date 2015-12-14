@@ -112,6 +112,13 @@ public abstract class DrawerActivity extends InjectableActivity {
                 .init(this)
                 .setView(dialogView)
                 .create();
+        dialogView.findViewById(R.id.button_rate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppUtils.openPlayStore(DrawerActivity.this);
+                dialog.dismiss();
+            }
+        });
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
