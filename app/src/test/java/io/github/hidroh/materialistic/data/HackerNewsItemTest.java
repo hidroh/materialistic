@@ -358,21 +358,21 @@ public class HackerNewsItemTest {
 
     @Test
     public void testIsShareable() {
-        assertTrue(item.isShareable());
+        assertTrue(item.isStoryType());
         item.populate(new TestItem() {
             @Override
             public String getRawType() {
                 return "comment";
             }
         });
-        assertFalse(item.isShareable());
+        assertFalse(item.isStoryType());
         item.populate(new TestItem() {
             @Override
             public String getRawType() {
                 return "poll";
             }
         });
-        assertTrue(item.isShareable());
+        assertTrue(item.isStoryType());
     }
 
     @Test

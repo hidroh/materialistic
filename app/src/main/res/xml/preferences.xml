@@ -45,7 +45,6 @@
     <android.support.v7.preference.SwitchPreferenceCompat
         android:key="@string/pref_external"
         android:title="@string/pref_external_title"
-        android:enabled="@bool/pref_external_enabled"
         android:summary="@string/pref_external_summary"
         android:defaultValue="false" />
 

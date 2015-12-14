@@ -85,6 +85,8 @@
 
             <ImageButton
                 android:id="@id/bookmarked"
+                android:visibility="gone"
+                tools:visibility="visible"
                 android:src="@drawable/ic_bookmark_outline_white_24dp"
                 android:tint="?android:attr/textColorPrimary"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"

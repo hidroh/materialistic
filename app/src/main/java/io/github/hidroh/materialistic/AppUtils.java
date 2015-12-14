@@ -124,9 +124,50 @@ public class AppUtils {
         return intent;
     }
 
+    public static void openExternal(@NonNull final Context context,
+                                    @NonNull AlertDialogBuilder alertDialogBuilder,
+                                    @NonNull final ItemManager.WebItem item) {
+        if (TextUtils.isEmpty(item.getUrl()) ||
+                item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
+            openWebUrlExternal(context,
+                    item.getDisplayedTitle(),
+                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
+            return;
+        }
+        alertDialogBuilder
+                .init(context)
+                .setMessage(R.string.view_in_browser)
+                .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openWebUrlExternal(context,
+                                item.getDisplayedTitle(),
+                                item.getUrl());
+                    }
+                })
+                .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openWebUrlExternal(context,
+                                item.getDisplayedTitle(),
+                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
+                    }
+                })
+                .create()
+                .show();
+
+    }
+
     public static void share(@NonNull final Context context,
                              @NonNull AlertDialogBuilder alertDialogBuilder,
                              @NonNull final ItemManager.WebItem item) {
+        if (TextUtils.isEmpty(item.getUrl()) ||
+                item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
+            context.startActivity(makeChooserShareIntent(context,
+                    item.getDisplayedTitle(),
+                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
+            return;
+        }
         alertDialogBuilder
                 .init(context)
                 .setMessage(R.string.share)

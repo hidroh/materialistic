@@ -126,7 +126,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getResources().getBoolean(R.bool.multi_pane)) {
-            getMenuInflater().inflate(R.menu.menu_list_land, menu);
+            getMenuInflater().inflate(R.menu.menu_item, menu);
         }
 
         if (isSearchable()) {
@@ -149,6 +149,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
 
         menu.findItem(R.id.menu_share).setVisible(isItemOptionsMenuVisible());
+        menu.findItem(R.id.menu_external).setVisible(isItemOptionsMenuVisible());
         return isSearchable() || super.onPrepareOptionsMenu(menu);
     }
 
@@ -156,6 +157,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_share) {
             AppUtils.share(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem);
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_external) {
+            AppUtils.openExternal(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -318,7 +323,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
             @Override
             public int getCount() {
-                return 3;
+                return 3; // items in landscape are always stories
             }
 
             @Override
