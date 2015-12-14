@@ -211,5 +211,9 @@
     <string name="comment_failed">Failed to send comment</string>
     <string name="comment_successful">Comment added. Please refresh to see.</string>
     <string name="confirm_no_waiting">Exit without waiting?</string>
+    <string name="rate_app">Rate the app</string>
+    <string name="or">or</string>
+    <string name="leave_feedback">Leave feedback</string>
+    <string name="no_playstore">No Play Store app found</string>
 
 </resources>
