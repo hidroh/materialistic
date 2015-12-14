@@ -13,7 +13,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 - Android Support Library 23.1.1
 
 **Dependencies**
-- [Official Hacker News API](https://github.com/HackerNews/API)
+- [Official Hacker News API](https://github.com/HackerNews/API), user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
 - [Algolia Hacker News Search API](https://github.com/algolia/hn-search)
 - [Readability Parser API](https://www.readability.com/developers/api/parser)
 - AOSP [appcompat-v7](https://developer.android.com/tools/support-library/features.html#v7-appcompat) / [recyclerview-v7](https://developer.android.com/tools/support-library/features.html#v7-recyclerview) / [design](https://developer.android.com/tools/support-library/features.html#design) / [cardview-v7](https://developer.android.com/tools/support-library/features.html#v7-cardview) / [preference-v7](https://developer.android.com/tools/support-library/features.html#v7-preference) / [customtabs](https://developer.android.com/tools/support-library/features.html#custom-tabs)
