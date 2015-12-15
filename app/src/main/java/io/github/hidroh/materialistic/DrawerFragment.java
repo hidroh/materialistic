@@ -1,8 +1,11 @@
 package io.github.hidroh.materialistic;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -46,7 +49,14 @@ public class DrawerFragment extends BaseFragment {
         mDrawerAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
+                Account[] accounts = AccountManager.get(getActivity())
+                        .getAccountsByType(BuildConfig.APPLICATION_ID);
+                if (accounts.length == 0) { // no accounts, ask to login or re-login
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                } else { // has accounts, show account chooser regardless of login status
+                    AppUtils.showAccountChooser(getActivity(), mAlertDialogBuilder,
+                            accounts);
+                }
             }
         });
         mDrawerLogout = view.findViewById(R.id.drawer_logout);

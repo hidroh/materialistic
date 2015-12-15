@@ -65,6 +65,7 @@ import static org.mockito.Mockito.when;
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
                 // test classes
+                AppUtilsTest.class,
                 SettingsActivityTest.class,
                 SearchActivityTest.class,
                 ItemActivityTest.class,
