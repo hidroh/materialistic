@@ -13,4 +13,6 @@ public interface UserServices {
     void voteUp(Context context, String itemId, Callback callback);
 
     void reply(Context context, String parentId, String text, Callback callback);
+
+    void submit(Context context, String title, String content, boolean isUrl, Callback callback);
 }

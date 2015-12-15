@@ -215,5 +215,16 @@
     <string name="or">or</string>
     <string name="leave_feedback">Leave feedback</string>
     <string name="no_playstore">No Play Store app found</string>
+    <string name="submit">Submit</string>
+    <string name="submit_content_hint">URL or text</string>
+    <string name="title_activity_submit">Submit to HN</string>
+    <string name="url_text_required">URL or text is required</string>
+    <string name="submit_failed">Failed to submit link</string>
+    <string name="submit_succesful">Link submitted successfully</string>
+    <string name="confirm_no_submit">Exit without submitting?</string>
+    <string name="submit_note">Enter text to submit a question for discussion, or URL to submit a link. You can also share links directly from other apps</string>
+    <string name="confirm_submit_url">Submit as link?</string>
+    <string name="confirm_submit_question">Submit as question?</string>
+    <string name="submission_guidelines">Submission guidelines</string>
 
 </resources>

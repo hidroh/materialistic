@@ -137,6 +137,12 @@ public class DrawerFragment extends BaseFragment {
                 navigate(FavoriteActivity.class);
             }
         });
+        view.findViewById(R.id.drawer_submit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigate(SubmitActivity.class);
+            }
+        });
         view.findViewById(R.id.drawer_feedback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
