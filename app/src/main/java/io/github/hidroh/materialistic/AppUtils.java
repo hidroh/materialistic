@@ -262,15 +262,24 @@ public class AppUtils {
                 return Pair.create(username, accountManager.getPassword(account));
             }
         }
-        Preferences.setUsername(context, null); // stale account, auto logout
         return null;
     }
 
+    /**
+     * Displays UI to allow user to login
+     * If no accounts exist in user's device, regardless of login status, prompt to login again
+     * If 1 or more accounts in user's device, and already logged in, prompt to update password
+     * If 1 or more accounts in user's device, and logged out, show account chooser
+     * @param context activity context
+     * @param alertDialogBuilder dialog builder
+     */
     public static void showLogin(Context context, AlertDialogBuilder alertDialogBuilder) {
         Account[] accounts = AccountManager.get(context).getAccountsByType(BuildConfig.APPLICATION_ID);
-        if (accounts.length == 0) {
+        if (accounts.length == 0) { // no accounts, ask to login or re-login
             context.startActivity(new Intent(context, LoginActivity.class));
-        } else {
+        } else if (!TextUtils.isEmpty(Preferences.getUsername(context))) { // stale account, ask to re-login
+            context.startActivity(new Intent(context, LoginActivity.class));
+        } else { // logged out, choose from existing accounts to log in
             showAccountChooser(context, alertDialogBuilder, accounts);
         }
     }
@@ -309,7 +318,7 @@ public class AppUtils {
         }
     }
 
-    private static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
+    public static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
                                            Account[] accounts) {
         String username = Preferences.getUsername(context);
         final String[] items = new String[accounts.length + 1];

@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -169,7 +168,7 @@ public class ComposeActivity extends InjectableActivity {
                             }
                         } else {
                             if (!isFinishing()) {
-                                startActivity(new Intent(ComposeActivity.this, LoginActivity.class));
+                                AppUtils.showLogin(ComposeActivity.this, mAlertDialogBuilder);
                             }
                             toggleControls(false);
                         }

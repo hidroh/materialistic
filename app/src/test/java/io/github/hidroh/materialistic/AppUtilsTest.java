@@ -17,9 +17,12 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
+
+import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -39,6 +42,8 @@ import static org.robolectric.Shadows.shadowOf;
 @Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class AppUtilsTest {
+    @Inject AlertDialogBuilder alertDialogBuilder;
+
     @Test
     public void testSetTextWithLinks() {
         TextView textView = new TextView(RuntimeEnvironment.application);
@@ -166,5 +171,31 @@ public class AppUtilsTest {
                     }
                 });
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
+    }
+
+    @Test
+    public void testLoginNoAccounts() {
+        AppUtils.showLogin(RuntimeEnvironment.application, null);
+        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
+                .hasComponent(RuntimeEnvironment.application, LoginActivity.class);
+    }
+
+    @Test
+    public void testLoginStaleAccount() {
+        Preferences.setUsername(RuntimeEnvironment.application, "username");
+        shadowOf(ShadowAccountManager.get(RuntimeEnvironment.application))
+                .addAccount(new Account("username", BuildConfig.APPLICATION_ID));
+        AppUtils.showLogin(RuntimeEnvironment.application, null);
+        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
+                .hasComponent(RuntimeEnvironment.application, LoginActivity.class);
+    }
+
+    @Test
+    public void testLoginShowChooser() {
+        TestApplication.applicationGraph.inject(this);
+        shadowOf(ShadowAccountManager.get(RuntimeEnvironment.application))
+                .addAccount(new Account("username", BuildConfig.APPLICATION_ID));
+        AppUtils.showLogin(RuntimeEnvironment.application, alertDialogBuilder);
+        assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 }

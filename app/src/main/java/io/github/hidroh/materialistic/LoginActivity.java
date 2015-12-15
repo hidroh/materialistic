@@ -83,10 +83,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         if (mPasswordEditText.length() == 0) {
             mPasswordLayout.setError(getString(R.string.password_required));
         }
-        if (mUsernameEditText.length() == 0 || mPasswordEditText.length() == 0) {
-            return false;
-        }
-        return true;
+        return mUsernameEditText.length() > 0 && mPasswordEditText.length() > 0;
     }
 
     private void login(final String username, final String password, boolean createAccount) {
@@ -109,6 +106,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
             @Override
             public void onError() {
+                mLoginButton.setEnabled(true);
+                mRegisterButton.setEnabled(true);
                 Toast.makeText(LoginActivity.this,
                         R.string.login_failed, Toast.LENGTH_SHORT)
                         .show();
