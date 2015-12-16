@@ -38,14 +38,15 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -56,7 +57,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowFloatingActionButton.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -502,9 +503,12 @@ public class ItemActivityTest {
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
         controller.withIntent(intent).create().start().resume();
         ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
-        assertNull(activity.findViewById(R.id.reply_button));
+        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
         ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).select();
-        assertNotNull(activity.findViewById(R.id.reply_button));
+        assertThat(activity.findViewById(R.id.reply_button)).isVisible();
+        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
         activity.findViewById(R.id.reply_button).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class);

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -44,7 +45,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TabLayout mTabLayout;
-    private View mReplyButton;
+    private FloatingActionButton mReplyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        mReplyButton = findViewById(R.id.reply_button);
-        mReplyButton.setVisibility(View.VISIBLE);
+        mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
         toggleReplyButton(false);
         onCreateView();
         final Fragment fragment;
@@ -372,10 +372,15 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void toggleReplyButton(boolean visible) {
-        if (!visible) {
-            mContentView.removeView(mReplyButton);
-        } else if (mReplyButton.getParent() == null) {
-            mContentView.addView(mReplyButton);
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams)
+                mReplyButton.getLayoutParams();
+        if (visible) {
+            mReplyButton.show();
+            p.setBehavior(new ScrollAwareFABBehavior());
+        } else {
+            mReplyButton.hide();
+            p.setBehavior(null);
         }
+        mReplyButton.setLayoutParams(p);
     }
 }

@@ -20,6 +20,7 @@ import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
@@ -28,12 +29,12 @@ import io.github.hidroh.materialistic.test.TestWebItem;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(qualifiers = "w820dp-land", shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class})
+@Config(qualifiers = "w820dp-land", shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
@@ -55,7 +56,8 @@ public class BaseListActivityLandTest {
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share).isVisible());
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_external));
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_external).isVisible());
-        assertNull(activity.findViewById(R.id.reply_button));
+        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @Test
@@ -80,7 +82,8 @@ public class BaseListActivityLandTest {
         RuntimeEnvironment.setQualifiers("w820dp-land");
         activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
         assertThat(activity).hasTitle("item title");
-        assertNull(activity.findViewById(R.id.reply_button));
+        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @Test
@@ -182,7 +185,8 @@ public class BaseListActivityLandTest {
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         activity.clearSelection();
         assertThat(activity.findViewById(R.id.empty)).isVisible();
-        assertNull(activity.findViewById(R.id.reply_button));
+        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @Test
@@ -238,17 +242,20 @@ public class BaseListActivityLandTest {
 
     private void assertCommentMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0);
-        assertNotNull(activity.findViewById(R.id.reply_button));
+        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     private void assertStoryMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
-        assertNull(activity.findViewById(R.id.reply_button));
+        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     private void assertReadabilityMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2);
-        assertNull(activity.findViewById(R.id.reply_button));
+        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @After
