@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -53,7 +54,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
-    private View mReplyButton;
+    private FloatingActionButton mReplyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,8 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
-        mReplyButton = findViewById(R.id.reply_button);
+        mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
+        toggleReplyButton(false);
         mVoteButton = (ImageButton) findViewById(R.id.vote_button);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
@@ -224,7 +226,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (story == null) {
             return;
         }
-        mReplyButton.setVisibility(View.VISIBLE);
+        toggleReplyButton(true);
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -316,11 +318,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
-                if (tab.getPosition() == 0 && mReplyButton.getParent() == null) {
-                    mCoordinatorLayout.addView(mReplyButton);
-                } else {
-                    mCoordinatorLayout.removeView(mReplyButton);
-                }
+                toggleReplyButton(tab.getPosition() == 0);
             }
 
             @Override
@@ -382,5 +380,18 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void toggleReplyButton(boolean visible) {
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams)
+                mReplyButton.getLayoutParams();
+        if (visible) {
+            mReplyButton.show();
+            p.setBehavior(new ScrollAwareFABBehavior());
+        } else {
+            mReplyButton.hide();
+            p.setBehavior(null);
+        }
+        mReplyButton.setLayoutParams(p);
     }
 }
