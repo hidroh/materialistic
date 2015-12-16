@@ -45,7 +45,8 @@ public class DrawerFragmentTest {
                 new Object[]{R.id.drawer_settings, SettingsActivity.class},
                 new Object[]{R.id.drawer_about, AboutActivity.class},
                 new Object[]{R.id.drawer_favorite, FavoriteActivity.class},
-                new Object[]{R.id.drawer_popular, PopularActivity.class}
+                new Object[]{R.id.drawer_popular, PopularActivity.class},
+                new Object[]{R.id.drawer_submit, SubmitActivity.class}
         );
     }
 

@@ -48,12 +48,16 @@ public class ListFragment extends BaseListFragment {
     private static final String STATE_SHOW_ALL = "state:showAll";
     private static final String STATE_GREEN_ITEMS = "state:greenItems";
     private static final String STATE_HIGHLIGHT_UPDATED = "state:highlightUpdated";
+    private static final String STATE_USERNAME = "state:username";
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                     if (key.equals(getActivity().getString(R.string.pref_highlight_updated))) {
                         mHighlightUpdated = sharedPreferences.getBoolean(key, true);
+                        mAdapter.notifyDataSetChanged();
+                    } else if (key.equals(getActivity().getString(R.string.pref_username))) {
+                        mUsername = Preferences.getUsername(getActivity());
                         mAdapter.notifyDataSetChanged();
                     }
                 }
@@ -86,6 +90,7 @@ public class ListFragment extends BaseListFragment {
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
     private boolean mAttached;
+    private String mUsername;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -140,9 +145,11 @@ public class ListFragment extends BaseListFragment {
             mFilter = savedInstanceState.getString(STATE_FILTER);
             mShowAll = savedInstanceState.getBoolean(STATE_SHOW_ALL, true);
             mHighlightUpdated = savedInstanceState.getBoolean(STATE_HIGHLIGHT_UPDATED, true);
+            mUsername = savedInstanceState.getString(STATE_USERNAME);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
             mHighlightUpdated = Preferences.highlightUpdatedEnabled(getActivity());
+            mUsername = Preferences.getUsername(getActivity());
         }
     }
 
@@ -400,6 +407,7 @@ public class ListFragment extends BaseListFragment {
             bindUpdated(holder, story);
             bindFavorite(holder, story);
             bindViewed(holder, story);
+            highlightUserPost(holder, story);
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -571,5 +579,10 @@ public class ListFragment extends BaseListFragment {
                 }
             });
         }
+    }
+
+    private void highlightUserPost(ListRecyclerViewAdapter.ItemViewHolder holder, ItemManager.Item story) {
+        holder.mStoryView.setChecked(!TextUtils.isEmpty(mUsername) &&
+                TextUtils.equals(mUsername, story.getBy()));
     }
 }

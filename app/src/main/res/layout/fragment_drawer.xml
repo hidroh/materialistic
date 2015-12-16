@@ -75,6 +75,17 @@
         android:layout_height="2dp" />
 
     <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_submit"
+        android:text="@string/title_activity_submit"
+        android:drawableLeft="@drawable/ic_add_white_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <View
+        android:background="@color/blackT12"
+        android:layout_width="match_parent"
+        android:layout_height="2dp" />
+
+    <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_favorite"
         android:text="@string/title_activity_favorite"
         android:drawableLeft="@drawable/ic_bookmark_grey600_24dp"

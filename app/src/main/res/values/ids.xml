@@ -39,6 +39,7 @@
     <item type="id" name="drawer_popular" />
     <item type="id" name="drawer_account" />
     <item type="id" name="drawer_logout" />
+    <item type="id" name="drawer_submit" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />
@@ -73,6 +74,7 @@
     <item type="id" name="menu_contextual_comment" />
     <item type="id" name="menu_send" />
     <item type="id" name="menu_quote" />
+    <item type="id" name="menu_guidelines" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />
