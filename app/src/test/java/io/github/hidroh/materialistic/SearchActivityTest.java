@@ -17,6 +17,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ShadowSearchRecentSuggestions;
 
 import static junit.framework.Assert.assertEquals;
@@ -81,7 +82,7 @@ public class SearchActivityTest {
         activity.onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
                 .findItem(R.id.menu_sort_popular)); // should trigger search
         assertFalse(AlgoliaClient.sSortByTime);
-        verify(itemManager, times(2)).getStories(anyString(), any(ItemManager.ResponseListener.class));
+        verify(itemManager, times(2)).getStories(anyString(), any(ResponseListener.class));
     }
 
     @After

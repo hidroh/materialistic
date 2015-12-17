@@ -34,6 +34,7 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
@@ -253,7 +254,7 @@ public class ListFragment extends BaseListFragment {
 
     private void refresh() {
         mShowAll = true;
-        mItemManager.getStories(mFilter, new ItemManager.ResponseListener<ItemManager.Item[]>() {
+        mItemManager.getStories(mFilter, new ResponseListener<ItemManager.Item[]>() {
             @Override
             public void onResponse(final ItemManager.Item[] response) {
                 if (!mAttached) {
@@ -384,7 +385,7 @@ public class ListFragment extends BaseListFragment {
         @Override
         protected void loadItem(final int adapterPosition) {
             final ItemManager.Item partialStory = getItem(adapterPosition);
-            mItemManager.getItem(partialStory.getId(), new ItemManager.ResponseListener<ItemManager.Item>() {
+            mItemManager.getItem(partialStory.getId(), new ResponseListener<ItemManager.Item>() {
                 @Override
                 public void onResponse(ItemManager.Item response) {
                     if (!mResumed || response == null) {

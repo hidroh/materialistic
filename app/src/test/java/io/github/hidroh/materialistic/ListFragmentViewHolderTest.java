@@ -45,6 +45,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
@@ -81,8 +82,8 @@ public class ListFragmentViewHolderTest {
     @Inject UserServices userServices;
     @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallbacks;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item[]>> storiesListener;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> itemListener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> storiesListener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> itemListener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
 
     @Before

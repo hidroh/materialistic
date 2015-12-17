@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.widget.ItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -112,12 +112,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
         mEmptyView = view.findViewById(android.R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
-            @Override
-            public int getOrientation() {
-                return LinearLayout.VERTICAL;
-            }
-        });
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
@@ -249,7 +244,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     private void loadKidData() {
-        mItemManager.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+        mItemManager.getItem(mItemId, new ResponseListener<ItemManager.Item>() {
             @Override
             public void onResponse(ItemManager.Item response) {
                 if (!mIsResumed) {

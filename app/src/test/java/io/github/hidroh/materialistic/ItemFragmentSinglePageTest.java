@@ -35,6 +35,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
@@ -62,7 +63,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class ItemFragmentSinglePageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
     private RecyclerView recyclerView;
     private SinglePageItemRecyclerViewAdapter adapter;

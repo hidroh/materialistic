@@ -21,9 +21,11 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
 
 @Module(
         injects = {
@@ -41,6 +43,7 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
                 LoginActivity.class,
                 ComposeActivity.class,
                 SubmitActivity.class,
+                UserActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -48,7 +51,8 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
                 DrawerFragment.class,
                 ReadabilityFragment.class,
                 SinglePageItemRecyclerViewAdapter.class,
-                MultiPageItemRecyclerViewAdapter.class
+                MultiPageItemRecyclerViewAdapter.class,
+                UserItemRecyclerViewAdapter.class
         },
         library = true
 )
@@ -80,6 +84,11 @@ public class ActivityModule {
 
     @Provides @Singleton @Named(POPULAR)
     public ItemManager provideAlgoliaPopularClient(AlgoliaPopularClient client) {
+        return client;
+    }
+
+    @Provides @Singleton
+    public UserManager provideUserManager(HackerNewsClient client) {
         return client;
     }
 

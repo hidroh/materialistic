@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/meta_container"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:paddingLeft="56dp"
+    android:paddingRight="56dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorPrimary">
+
+    <TextView
+        android:id="@id/title"
+        android:text="@string/loading_text"
+        tools:text="Username"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        android:textSize="?attr/titleTextSize"
+        android:ellipsize="end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/user_info"
+        android:text="@string/loading_text"
+        tools:text="Created: 01/01/2015 - Karma: 2016"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="?attr/subtitleTextSize"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/about"
+        android:text="@string/loading_text"
+        android:singleLine="false"
+        android:maxLines="5"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        android:paddingTop="@dimen/padding"
+        android:paddingBottom="@dimen/padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="?attr/contentTextSize" />
+
+</LinearLayout>

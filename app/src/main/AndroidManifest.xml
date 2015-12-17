@@ -125,6 +125,10 @@
             android:name=".ComposeActivity"
             android:label="@string/title_activity_compose" >
         </activity>
+        <activity
+            android:name=".UserActivity"
+            android:label="@string/title_activity_user" >
+        </activity>
         <service android:name=".accounts.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

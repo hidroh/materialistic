@@ -25,6 +25,7 @@ import retrofit.mime.TypedInput;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -35,11 +36,13 @@ import static org.mockito.Mockito.when;
 public class HackerNewsClientTest {
     @Inject RestServiceFactory factory;
     @Captor ArgumentCaptor<Callback<HackerNewsClient.HackerNewsItem>> getItemCallback;
+    @Captor ArgumentCaptor<Callback<HackerNewsClient.UserItem>> getUserCallback;
     @Captor ArgumentCaptor<Callback<int[]>> getStoriesCallback;
     @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
     private HackerNewsClient client;
-    private ItemManager.ResponseListener<ItemManager.Item> itemListener;
-    private ItemManager.ResponseListener<ItemManager.Item[]> storiesListener;
+    private ResponseListener<ItemManager.Item> itemListener;
+    private ResponseListener<UserManager.User> userListener;
+    private ResponseListener<ItemManager.Item[]> storiesListener;
 
     @Before
     public void setUp() {
@@ -47,8 +50,9 @@ public class HackerNewsClientTest {
         ObjectGraph.create(new TestModule()).inject(this);
         reset(TestRestServiceFactory.hnRestService);
         client = new HackerNewsClient(factory);
-        itemListener = mock(ItemManager.ResponseListener.class);
-        storiesListener = mock(ItemManager.ResponseListener.class);
+        itemListener = mock(ResponseListener.class);
+        storiesListener = mock(ResponseListener.class);
+        userListener = mock(ResponseListener.class);
     }
 
     @Test
@@ -133,6 +137,47 @@ public class HackerNewsClientTest {
         verify(TestRestServiceFactory.hnRestService).jobStories(getStoriesCallback.capture());
         getStoriesCallback.getValue().failure(null);
         verify(storiesListener).onError(eq(""));
+    }
+
+    @Test
+    public void testGetUserNoListener() {
+        client.getUser("username", null);
+        verify(TestRestServiceFactory.hnRestService, never()).user(anyString(), getUserCallback.capture());
+    }
+
+    @Test
+    public void testGetUserSuccess() {
+        client.getUser("username", userListener);
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
+        HackerNewsClient.UserItem hnUser = mock(HackerNewsClient.UserItem.class);
+        getUserCallback.getValue().success(hnUser, createResponse(200));
+        verify(userListener).onResponse(eq(hnUser));
+    }
+
+    @Test
+    public void testGetUserNull() {
+        client.getUser("username", userListener);
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
+        getUserCallback.getValue().success(null, createResponse(200));
+        verify(userListener).onResponse((UserManager.User) isNull());
+    }
+
+    @Test
+    public void testGetUserFailure() {
+        client.getUser("username", userListener);
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
+        RetrofitError retrofitError = mock(RetrofitError.class);
+        when(retrofitError.getMessage()).thenReturn("message");
+        getUserCallback.getValue().failure(retrofitError);
+        verify(userListener).onError(eq("message"));
+    }
+
+    @Test
+    public void testGetUserFailureNoMessage() {
+        client.getUser("username", userListener);
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
+        getUserCallback.getValue().failure(null);
+        verify(userListener).onError(eq(""));
     }
 
     private Response createResponse(int statusCode) {

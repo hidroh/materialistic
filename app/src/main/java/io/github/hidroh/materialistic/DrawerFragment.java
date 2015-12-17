@@ -22,6 +22,7 @@ public class DrawerFragment extends BaseFragment {
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TextView mDrawerAccount;
     private View mDrawerLogout;
+    private View mDrawerUser;
     private final SharedPreferences.OnSharedPreferenceChangeListener mLoginListener
             = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
@@ -76,6 +77,7 @@ public class DrawerFragment extends BaseFragment {
                         .show();
             }
         });
+        mDrawerUser = view.findViewById(R.id.drawer_user);
 
         view.findViewById(R.id.drawer_list).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +145,14 @@ public class DrawerFragment extends BaseFragment {
                 navigate(SubmitActivity.class);
             }
         });
+        view.findViewById(R.id.drawer_user).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle extras = new Bundle();
+                extras.putString(UserActivity.EXTRA_USERNAME, Preferences.getUsername(getActivity()));
+                navigate(UserActivity.class, extras);
+            }
+        });
         view.findViewById(R.id.drawer_feedback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,8 +175,12 @@ public class DrawerFragment extends BaseFragment {
                 .unregisterOnSharedPreferenceChangeListener(mLoginListener);
     }
 
-    private void navigate(final Class<? extends Activity> activityClass) {
-        ((DrawerActivity) getActivity()).navigate(activityClass);
+    private void navigate(Class<? extends Activity> activityClass) {
+        navigate(activityClass, null);
+    }
+
+    private void navigate(Class<? extends Activity> activityClass, Bundle extras) {
+        ((DrawerActivity) getActivity()).navigate(activityClass, extras);
     }
 
     private void setUsername() {
@@ -177,9 +191,11 @@ public class DrawerFragment extends BaseFragment {
         if (!TextUtils.isEmpty(username)) {
             mDrawerAccount.setText(username);
             mDrawerLogout.setVisibility(View.VISIBLE);
+            mDrawerUser.setVisibility(View.VISIBLE);
         } else {
             mDrawerAccount.setText(R.string.login);
             mDrawerLogout.setVisibility(View.GONE);
+            mDrawerUser.setVisibility(View.GONE);
         }
     }
 }

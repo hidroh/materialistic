@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -51,7 +52,7 @@ public class ListFragmentTest {
     private ActivityController<ListActivity> controller;
     private ListActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item[]>> listener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> listener;
 
     @Before
     public void setUp() {
@@ -92,7 +93,7 @@ public class ListFragmentTest {
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
         verify(itemManager, times(2)).getStories(any(String.class),
-                any(ItemManager.ResponseListener.class));
+                any(ResponseListener.class));
         controller.pause().stop().destroy();
     }
 
@@ -166,7 +167,7 @@ public class ListFragmentTest {
         fragment.onActivityCreated(state);
         // should not trigger another data request
         verify(itemManager, never()).getStories(any(String.class),
-                any(ItemManager.ResponseListener.class));
+                any(ResponseListener.class));
         controller.pause().stop().destroy();
     }
 

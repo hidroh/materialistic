@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,6 +28,7 @@ public abstract class DrawerActivity extends InjectableActivity {
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
     private Class<? extends Activity> mPendingNavigation;
+    private Bundle mPendingNavigationExtras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,10 @@ public abstract class DrawerActivity extends InjectableActivity {
                 super.onDrawerClosed(drawerView);
                 if (drawerView.equals(mDrawer) && mPendingNavigation != null) {
                     final Intent intent = new Intent(DrawerActivity.this, mPendingNavigation);
+                    if (mPendingNavigationExtras != null) {
+                        intent.putExtras(mPendingNavigationExtras);
+                        mPendingNavigationExtras = null;
+                    }
                     // TODO M bug https://code.google.com/p/android/issues/detail?id=193822
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
@@ -84,8 +90,9 @@ public abstract class DrawerActivity extends InjectableActivity {
         drawerLayout.addView(view, 0);
     }
 
-    void navigate(final Class<? extends Activity> activityClass) {
+    void navigate(Class<? extends Activity> activityClass, @Nullable Bundle extras) {
         mPendingNavigation = !getClass().equals(activityClass) ? activityClass : null;
+        mPendingNavigationExtras = extras;
         closeDrawers();
     }
 

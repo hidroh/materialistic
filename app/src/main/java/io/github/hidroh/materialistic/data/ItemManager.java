@@ -41,25 +41,7 @@ public interface ItemManager {
      * @param itemId    item ID
      * @param listener  callback to be notified on response
      */
-    void getItem(String itemId, ItemManager.ResponseListener<Item> listener);
-
-    /**
-     * Callback interface for item requests
-     * @param <T> item type
-     */
-    interface ResponseListener<T> {
-        /**
-         * Fired when request is successful
-         * @param response result
-         */
-        void onResponse(T response);
-
-        /**
-         * Fired when request is failed
-         * @param errorMessage error message or null
-         */
-        void onError(String errorMessage);
-    }
+    void getItem(String itemId, ResponseListener<Item> listener);
 
     /**
      * Represents an item that can be displayed as story/comment

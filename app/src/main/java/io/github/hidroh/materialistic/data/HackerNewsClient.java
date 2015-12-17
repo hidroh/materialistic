@@ -24,7 +24,7 @@ import retrofit.http.Path;
 /**
  * Client to retrieve Hacker News content asynchronously
  */
-public class HackerNewsClient implements ItemManager {
+public class HackerNewsClient implements ItemManager, UserManager {
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
     private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0";
@@ -44,13 +44,7 @@ public class HackerNewsClient implements ItemManager {
         final Callback<int[]> callback = new Callback<int[]>() {
             @Override
             public void success(int[] ints, Response response) {
-                Item[] topStories = new Item[ints == null ? 0 : ints.length];
-                for (int i = 0; i < topStories.length; i++) {
-                    HackerNewsItem item = new HackerNewsItem(ints[i]);
-                    item.rank = i + 1;
-                    topStories[i] = item;
-                }
-                listener.onResponse(topStories);
+                listener.onResponse(toItems(ints));
             }
 
             @Override
@@ -78,7 +72,7 @@ public class HackerNewsClient implements ItemManager {
     }
 
     @Override
-    public void getItem(String itemId, final ItemManager.ResponseListener<Item> listener) {
+    public void getItem(String itemId, final ResponseListener<Item> listener) {
         if (listener == null) {
             return;
         }
@@ -94,6 +88,42 @@ public class HackerNewsClient implements ItemManager {
                 listener.onError(error != null ? error.getMessage() : "");
             }
         });
+    }
+
+    @Override
+    public void getUser(String username, final ResponseListener<User> listener) {
+        if (listener == null) {
+            return;
+        }
+
+        final Callback<UserItem> callback = new Callback<UserItem>() {
+            @Override
+            public void success(UserItem user, Response response) {
+                if (user == null) {
+                    listener.onResponse(null);
+                    return;
+                }
+                user.submittedItems = toItems(user.submitted);
+                listener.onResponse(user);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                listener.onError(error != null ? error.getMessage() : "");
+            }
+        };
+        mRestService.user(username, callback);
+    }
+
+    @NonNull
+    private HackerNewsItem[] toItems(int[] ids) {
+        HackerNewsItem[] items = new HackerNewsItem[ids == null ? 0 : ids.length];
+        for (int i = 0; i < items.length; i++) {
+            HackerNewsItem item = new HackerNewsItem(ids[i]);
+            item.rank = i + 1;
+            items[i] = item;
+        }
+        return items;
     }
 
     interface RestService {
@@ -120,6 +150,10 @@ public class HackerNewsClient implements ItemManager {
         @Headers("Cache-Control: max-age=300")
         @GET("/item/{itemId}.json")
         void item(@Path("itemId") String itemId, Callback<HackerNewsItem> callback);
+
+        @Headers("Cache-Control: max-age=300")
+        @GET("/user/{userId}.json")
+        void user(@Path("userId") String userId, Callback<UserItem> callback);
     }
 
     static class HackerNewsItem implements Item {
@@ -514,6 +548,81 @@ public class HackerNewsClient implements ItemManager {
         @Override
         public boolean equals(Object o) {
             return o != null && o instanceof HackerNewsItem && id == ((HackerNewsItem) o).id;
+        }
+    }
+
+    static class UserItem implements User {
+        public static final Creator<UserItem> CREATOR = new Creator<UserItem>() {
+            @Override
+            public UserItem createFromParcel(Parcel source) {
+                return new UserItem(source);
+            }
+
+            @Override
+            public UserItem[] newArray(int size) {
+                return new UserItem[size];
+            }
+        };
+        private String id;
+        private long delay;
+        private long created;
+        private long karma;
+        private String about;
+        private int[] submitted;
+
+        // view state
+        private HackerNewsItem[] submittedItems = new HackerNewsItem[0];
+
+        private UserItem(Parcel source) {
+            id = source.readString();
+            delay = source.readLong();
+            created = source.readLong();
+            karma = source.readLong();
+            about = source.readString();
+            submitted = source.createIntArray();
+            submittedItems = source.createTypedArray(HackerNewsItem.CREATOR);
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String getAbout() {
+            return about;
+        }
+
+        @Override
+        public long getKarma() {
+            return karma;
+        }
+
+        @Override
+        public long getCreated() {
+            return created;
+        }
+
+        @NonNull
+        @Override
+        public Item[] getItems() {
+            return submittedItems;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(id);
+            dest.writeLong(delay);
+            dest.writeLong(created);
+            dest.writeLong(karma);
+            dest.writeString(about);
+            dest.writeIntArray(submitted);
+            dest.writeTypedArray(submittedItems, flags);
         }
     }
 }

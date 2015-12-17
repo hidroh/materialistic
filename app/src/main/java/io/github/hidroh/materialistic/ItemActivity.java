@@ -31,6 +31,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 
 public class ItemActivity extends InjectableActivity implements Scrollable {
 
@@ -97,7 +98,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (mItem != null) {
             bindData(mItem);
         } else if (!TextUtils.isEmpty(mItemId)) {
-            mItemManager.getItem(mItemId, new ItemManager.ResponseListener<ItemManager.Item>() {
+            mItemManager.getItem(mItemId, new ResponseListener<ItemManager.Item>() {
                 @Override
                 public void onResponse(ItemManager.Item response) {
                     mItem = response;

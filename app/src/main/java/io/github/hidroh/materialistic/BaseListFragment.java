@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 public abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_CARD_VIEW = "state:cardView";
@@ -51,12 +50,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
-            @Override
-            public int getOrientation() {
-                return LinearLayout.VERTICAL;
-            }
-        });
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         final int margin = getResources().getDimensionPixelSize(R.dimen.margin);
         final int divider = getResources().getDimensionPixelSize(R.dimen.divider);

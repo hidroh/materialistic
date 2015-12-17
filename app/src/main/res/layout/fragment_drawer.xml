@@ -75,6 +75,12 @@
         android:layout_height="2dp" />
 
     <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_user"
+        android:text="@string/title_activity_user"
+        android:drawableLeft="@drawable/ic_person_white_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_submit"
         android:text="@string/title_activity_submit"
         android:drawableLeft="@drawable/ic_add_white_24dp"
