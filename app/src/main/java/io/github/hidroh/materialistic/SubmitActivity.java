@@ -131,7 +131,7 @@ public class SubmitActivity extends InjectableActivity {
                     public void onDone(boolean successful) {
                         toggleControls(false);
                         if (successful) {
-                            Toast.makeText(SubmitActivity.this, R.string.submit_succesful,
+                            Toast.makeText(SubmitActivity.this, R.string.submit_successful,
                                     Toast.LENGTH_SHORT)
                                     .show();
                             if (!isFinishing()) {
