@@ -260,7 +260,7 @@ public class ItemFragmentSinglePageTest {
         ShadowRecyclerView shadowRecyclerView =
                 (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
         assertEquals(-1, shadowRecyclerView.getSmoothScrollToPosition());
-        viewHolder2.itemView.findViewById(R.id.posted).performClick();
+        viewHolder2.itemView.findViewById(R.id.parent).performClick();
         assertEquals(1, shadowRecyclerView.getSmoothScrollToPosition());
     }
 

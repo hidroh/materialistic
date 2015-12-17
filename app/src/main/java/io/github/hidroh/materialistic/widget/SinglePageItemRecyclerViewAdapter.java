@@ -106,22 +106,22 @@ public class SinglePageItemRecyclerViewAdapter
         toggleKids(holder, item);
     }
 
-    private void bindNavigation(ToggleItemViewHolder holder, ItemManager.Item item) {
-        if (item.isDeleted() || !mState.expanded.containsKey(item.getParent())) {
-            holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
-            holder.mPostedTextView.setOnClickListener(null);
-        } else {
-            final ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
-            AppUtils.setHtmlText(holder.mPostedTextView, mContext.getString(R.string.posted_reply,
-                    item.getDisplayedTime(mContext, false),
-                    parent.getBy()));
-            holder.mPostedTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mRecyclerView.smoothScrollToPosition(mState.list.indexOf(parent));
-                }
-            });
+    private void bindNavigation(ToggleItemViewHolder holder, final ItemManager.Item item) {
+        AppUtils.setHtmlText(holder.mParent, mContext.getString(R.string.parent));
+        if (!mState.expanded.containsKey(item.getParent())) {
+            holder.mParent.setVisibility(View.INVISIBLE);
+            return;
         }
+        holder.mParent.setVisibility(View.VISIBLE);
+        holder.mParent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
+                int position = mState.list.indexOf(parent);
+                mRecyclerView.smoothScrollToPosition(position);
+                notifyItemChanged(position);
+            }
+        });
     }
 
     private void toggleKids(ToggleItemViewHolder holder, final ItemManager.Item item) {

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -14,6 +16,7 @@ import android.text.style.StrikethroughSpan;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.BuildConfig;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -157,6 +160,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     static class HackerNewsItem implements Item {
+        private static final String FORMAT_LINK_USER = "<a href=\"%1$s://user/%2$s\">%2$s</a>";
+
         // The item's unique id. Required.
         private long id;
         // true if the item is deleted.
@@ -370,8 +375,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 return spannable;
             }
-
-            return new SpannableString(String.format("%s - %s", relativeTime, by));
+            return new SpannableStringBuilder(relativeTime)
+                    .append(" - ")
+                    .append(Html.fromHtml(String.format(FORMAT_LINK_USER,
+                            BuildConfig.APPLICATION_ID, by)));
         }
 
         @Override

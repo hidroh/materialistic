@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -258,6 +259,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this, false));
+        postedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
             case ItemManager.Item.JOB_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(

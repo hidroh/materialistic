@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -103,6 +104,15 @@ public class UserActivityTest {
     public void testNoId() {
         controller = Robolectric.buildActivity(UserActivity.class).create();
         activity = controller.get();
+        assertThat(activity).isFinishing();
+    }
+
+    @Test
+    public void testNoDataId() {
+        controller = Robolectric.buildActivity(UserActivity.class).create();
+        Intent intent = new Intent();
+        intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://user/"));
+        activity = controller.withIntent(intent).get();
         assertThat(activity).isFinishing();
     }
 

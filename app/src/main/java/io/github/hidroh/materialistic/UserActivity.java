@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -39,6 +40,9 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUsername = getIntent().getStringExtra(EXTRA_USERNAME);
+        if (TextUtils.isEmpty(mUsername) && getIntent().getData() != null) {
+            mUsername =  getIntent().getData().getLastPathSegment();
+        }
         if (TextUtils.isEmpty(mUsername)) {
             finish();
             return;
@@ -125,7 +129,11 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mInfo.setText(getString(R.string.user_info,
                 DateUtils.formatDateTime(this, mUser.getCreated() * 1000, DateUtils.FORMAT_SHOW_DATE),
                 mUser.getKarma()));
-        AppUtils.setHtmlText(mAbout, mUser.getAbout());
+        if (TextUtils.isEmpty(mUser.getAbout())) {
+            mAbout.setVisibility(View.GONE);
+        } else {
+            AppUtils.setHtmlText(mAbout, mUser.getAbout());
+        }
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getString(R.string.submissions_count, mUser.getItems().length)));
         mAdapter = new UserItemRecyclerViewAdapter(mItemManger, mUser.getItems());
