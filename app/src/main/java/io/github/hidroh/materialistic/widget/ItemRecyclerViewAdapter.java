@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -105,6 +106,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             return;
         }
         highlightUserItem(holder, item);
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
         decorateDead(holder, item);
         toggleCollapsibleContent(holder, item);
@@ -247,6 +249,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         public ItemViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
+            mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
             mContentTextView = (TextView) itemView.findViewById(R.id.text);
             mReadMoreTextView = (TextView) itemView.findViewById(R.id.more);
             mCommentButton = (Button) itemView.findViewById(R.id.comment);

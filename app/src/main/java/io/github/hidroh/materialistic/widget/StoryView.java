@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
@@ -111,6 +112,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mTitleTextView.setText(getContext().getString(R.string.loading_text));
         mTitleTextView.setText(story.getDisplayedTitle());
         mPostedTextView.setText(story.getDisplayedTime(getContext(), true));
+        mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
             case ItemManager.Item.JOB_TYPE:
                 mSourceTextView.setText(null);

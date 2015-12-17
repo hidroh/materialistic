@@ -128,6 +128,17 @@
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user" >
+            <intent-filter android:label="@string/title_activity_user" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="user"
+                    android:pathPrefix="/"
+                    android:scheme="${applicationId}" />
+            </intent-filter>
         </activity>
         <service android:name=".accounts.AuthenticatorService">
             <intent-filter>

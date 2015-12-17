@@ -22,6 +22,7 @@
     <item type="id" name="score" />
     <item type="id" name="level" />
     <item type="id" name="story_view" />
+    <item type="id" name="parent" />
 
     <!-- drawer -->
     <item type="id" name="drawer_layout" />

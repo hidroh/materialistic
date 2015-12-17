@@ -82,11 +82,7 @@
     <string name="clear_search_history_confirm">Clear search history?</string>
     <string name="hide_comments" formatted="false">Hide comments (%s)</string>
     <string name="show_comments" formatted="false">Show comments (%s)</string>
-    <string name="posted_reply" formatted="false">
-        <![CDATA[
-            %s <a href="#">in response to %s</a>
-        ]]>
-    </string>
+    <string name="parent" formatted="false"><![CDATA[&nbsp;-&nbsp;<a href="#">parent</a>]]></string>
     <string name="undo">Undo</string>
     <string name="score" formatted="false">%s pts</string>
     <string name="comments">Comments</string>
