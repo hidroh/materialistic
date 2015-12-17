@@ -37,6 +37,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
@@ -65,7 +66,7 @@ public class ItemActivityTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
 
@@ -87,7 +88,7 @@ public class ItemActivityTest {
         when(webItem.getId()).thenReturn("1");
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
         controller.withIntent(intent).create().start().resume().visible();
-        verify(hackerNewsClient).getItem(eq("1"), any(ItemManager.ResponseListener.class));
+        verify(hackerNewsClient).getItem(eq("1"), any(ResponseListener.class));
     }
 
     @Test
@@ -131,7 +132,7 @@ public class ItemActivityTest {
         assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
         reset(hackerNewsClient);
         shadowOf(activity).recreate();
-        verify(hackerNewsClient, never()).getItem(anyString(), any(ItemManager.ResponseListener.class));
+        verify(hackerNewsClient, never()).getItem(anyString(), any(ResponseListener.class));
     }
 
     @Test

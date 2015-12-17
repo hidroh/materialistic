@@ -25,6 +25,7 @@ import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 
 public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter.ItemViewHolder>
         extends RecyclerView.Adapter<VH> {
@@ -41,7 +42,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private int mSecondaryTextColorResId;
     private int mCardBackgroundColorResId;
     private int mCardHighlightColorResId;
-    private int mContentMaxLines;
+    private int mContentMaxLines = Integer.MAX_VALUE;
     private String mUsername;
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
@@ -120,7 +121,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     private void load(final VH holder, final ItemManager.Item item) {
         mItemManager.getItem(item.getId(),
-                new ItemManager.ResponseListener<ItemManager.Item>() {
+                new ResponseListener<ItemManager.Item>() {
                     @Override
                     public void onResponse(ItemManager.Item response) {
                         if (response == null) {

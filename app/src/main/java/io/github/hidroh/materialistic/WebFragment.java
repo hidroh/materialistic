@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 
 public class WebFragment extends LazyLoadFragment implements Scrollable {
 
@@ -160,7 +161,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
                     ((ItemManager.Item) mItem).getText());
         } else {
             mItemManager.getItem(mItem.getId(),
-                    new ItemManager.ResponseListener<ItemManager.Item>() {
+                    new ResponseListener<ItemManager.Item>() {
                         @Override
                         public void onResponse(ItemManager.Item response) {
                             AppUtils.setTextWithLinks((TextView) getView().findViewById(R.id.text),

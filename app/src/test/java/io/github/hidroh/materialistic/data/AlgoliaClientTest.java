@@ -41,8 +41,8 @@ public class AlgoliaClientTest {
     @Captor ArgumentCaptor<Callback<AlgoliaClient.AlgoliaHits>> getStoriesCallback;
     @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
     private AlgoliaClient client;
-    private ItemManager.ResponseListener<ItemManager.Item> itemListener;
-    private ItemManager.ResponseListener<ItemManager.Item[]> storiesListener;
+    private ResponseListener<ItemManager.Item> itemListener;
+    private ResponseListener<ItemManager.Item[]> storiesListener;
 
     @Before
     public void setUp() {
@@ -52,8 +52,8 @@ public class AlgoliaClientTest {
         client = new AlgoliaClient(RuntimeEnvironment.application, factory);
         client.mHackerNewsClient = hackerNewsClient;
         client.sSortByTime = true;
-        itemListener = mock(ItemManager.ResponseListener.class);
-        storiesListener = mock(ItemManager.ResponseListener.class);
+        itemListener = mock(ResponseListener.class);
+        storiesListener = mock(ResponseListener.class);
     }
 
     @Test

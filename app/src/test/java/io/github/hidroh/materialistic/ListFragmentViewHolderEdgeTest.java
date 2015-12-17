@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.TestItem;
@@ -38,8 +39,8 @@ public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;
     private RecyclerView.ViewHolder holder;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item[]>> storiesListener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> storiesListener;
 
     @Before
     public void setUp() {

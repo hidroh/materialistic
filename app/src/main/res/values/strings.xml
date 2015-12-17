@@ -226,5 +226,9 @@
     <string name="confirm_submit_url">Submit as link?</string>
     <string name="confirm_submit_question">Submit as question?</string>
     <string name="submission_guidelines">Submission guidelines</string>
+    <string name="title_activity_user">User Profile</string>
+    <string name="user_info" formatted="false">Created: %s - karma: %s</string>
+    <string name="submissions_count">%s submissions</string>
+    <string name="open">Open</string>
 
 </resources>

@@ -33,6 +33,7 @@ public class DrawerFragmentLoginTest {
     private TestListActivity activity;
     private TextView drawerAccount;
     private View drawerLogout;
+    private View drawerUser;
 
     @Before
     public void setUp() {
@@ -45,21 +46,36 @@ public class DrawerFragmentLoginTest {
         activity = controller.get();
         drawerAccount = (TextView) activity.findViewById(R.id.drawer_account);
         drawerLogout = activity.findViewById(R.id.drawer_logout);
+        drawerUser = activity.findViewById(R.id.drawer_user);
     }
 
     @Test
     public void testNoExistingAccount() {
         assertThat(drawerAccount).hasText(R.string.login);
         assertThat(drawerLogout).isNotVisible();
+        assertThat(drawerUser).isNotVisible();
         Preferences.setUsername(activity, "username");
         assertThat(drawerAccount).hasText("username");
         assertThat(drawerLogout).isVisible();
+        assertThat(drawerUser).isVisible();
         drawerLogout.performClick();
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull(alertDialog);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertThat(drawerAccount).hasText(R.string.login);
         assertThat(drawerLogout).isNotVisible();
+    }
+
+    @Test
+    public void testOpenUserProfile() {
+        Preferences.setUsername(activity, "username");
+        drawerUser.performClick();
+        Shadows.shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
+                .getDrawerListener()
+                .onDrawerClosed(activity.findViewById(R.id.drawer));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, UserActivity.class)
+                .hasExtra(UserActivity.EXTRA_USERNAME, "username");
     }
 
     @Test

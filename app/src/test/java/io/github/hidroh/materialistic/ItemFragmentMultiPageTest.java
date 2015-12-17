@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItemActivity;
@@ -49,7 +50,7 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
 
     @Before
     public void setUp() {

@@ -16,6 +16,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 
 import static junit.framework.Assert.assertEquals;
@@ -65,7 +66,7 @@ public class PopularActivityTest {
     public void testFilter() {
         shadowOf(activity).clickMenuItem(menuResId);
         verify(itemManager, atLeastOnce()).getStories(eq(expectedRange),
-                any(ItemManager.ResponseListener.class));
+                any(ResponseListener.class));
         assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
         assertEquals(expectedRange, Preferences.getPopularRange(activity));
         shadowOf(activity).recreate();

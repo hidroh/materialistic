@@ -26,6 +26,7 @@ import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
@@ -34,6 +35,7 @@ import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -57,6 +59,7 @@ import static org.mockito.Mockito.when;
                 PopularActivity.class,
                 ComposeActivity.class,
                 SubmitActivity.class,
+                UserActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -65,6 +68,7 @@ import static org.mockito.Mockito.when;
                 ReadabilityFragment.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
+                UserItemRecyclerViewAdapter.class,
                 // test classes
                 AppUtilsTest.class,
                 SettingsActivityTest.class,
@@ -91,7 +95,8 @@ import static org.mockito.Mockito.when;
                 LoginActivityTest.class,
                 DrawerFragmentLoginTest.class,
                 ComposeActivityTest.class,
-                SubmitActivityTest.class
+                SubmitActivityTest.class,
+                UserActivityTest.class
         },
         library = true,
         overrides = true
@@ -100,6 +105,7 @@ public class TestActivityModule {
     private final ItemManager hackerNewsClient = mock(ItemManager.class);
     private final ItemManager algoliaClient = mock(ItemManager.class);
     private final ItemManager algoliaPopularClient = mock(ItemManager.class);
+    private final UserManager userManager = mock(UserManager.class);
     private final FavoriteManager favoriteManager = mock(FavoriteManager.class);
     private final SessionManager sessionManager = mock(SessionManager.class);
     private final SearchView searchView = mock(SearchView.class);
@@ -140,6 +146,11 @@ public class TestActivityModule {
     @Provides @Singleton
     public ReadabilityClient provideReadabilityClient() {
         return readabilityClient;
+    }
+
+    @Provides @Singleton
+    public UserManager provideUserManager() {
+        return userManager;
     }
 
     @Provides @Singleton

@@ -25,6 +25,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -42,7 +43,7 @@ public class WebFragmentLocalTest {
     private ActivityController<WebActivity> controller;
     private WebActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ItemManager.ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
 
     @Before
     public void setUp() {
