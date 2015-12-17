@@ -8,8 +8,8 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 37
-        versionName "2.2"
+        versionCode 38
+        versionName "2.3"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "READABILITY_TOKEN", "\"\""
     }
@@ -21,7 +21,7 @@ android {
 
 ext {
     supportVersion = '23.1.1'
-    okHttpVersion = '2.6.0'
+    okHttpVersion = '2.7.0'
     daggerVersion = '1.2.2'
 }
 
