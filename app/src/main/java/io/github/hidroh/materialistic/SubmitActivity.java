@@ -131,13 +131,13 @@ public class SubmitActivity extends InjectableActivity {
                     public void onDone(boolean successful) {
                         toggleControls(false);
                         if (successful) {
-                            Toast.makeText(SubmitActivity.this, R.string.submit_succesful,
+                            Toast.makeText(SubmitActivity.this, R.string.submit_successful,
                                     Toast.LENGTH_SHORT)
                                     .show();
                             if (!isFinishing()) {
                                 Intent intent = new Intent(SubmitActivity.this, NewActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT |
-                                        Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                intent.putExtra(NewActivity.EXTRA_REFRESH, true);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent); // TODO should go to profile instead?
                                 finish();
                             }

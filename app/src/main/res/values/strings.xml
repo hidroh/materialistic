@@ -193,7 +193,7 @@
     <string name="unsave">Unsave</string>
     <string name="re_enter_password">Re-enter your password</string>
     <string name="vote_up">Vote up</string>
-    <string name="voted">Successfully voted!</string>
+    <string name="voted">Successfully voted</string>
     <string name="vote_failed">Fail to record vote. Please try again.</string>
     <string name="sending">Sending...</string>
     <string name="add_comment">Add comment</string>
@@ -219,8 +219,8 @@
     <string name="submit_content_hint">URL or text</string>
     <string name="title_activity_submit">Submit to HN</string>
     <string name="url_text_required">URL or text is required</string>
-    <string name="submit_failed">Failed to submit link</string>
-    <string name="submit_succesful">Link submitted successfully</string>
+    <string name="submit_failed">Failed to submit. Please try again.</string>
+    <string name="submit_successful">Successfully submitted</string>
     <string name="confirm_no_submit">Exit without submitting?</string>
     <string name="submit_note">Enter text to submit a question for discussion, or URL to submit a link. You can also share links directly from other apps</string>
     <string name="confirm_submit_url">Submit as link?</string>
