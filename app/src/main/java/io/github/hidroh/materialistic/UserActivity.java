@@ -8,10 +8,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,13 +28,13 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     @Inject @Named(ActivityModule.HN) ItemManager mItemManger;
     private String mUsername;
     private UserManager.User mUser;
-    private TextView mTitle;
     private TextView mInfo;
     private TextView mAbout;
     private RecyclerView mRecyclerView;
     private UserItemRecyclerViewAdapter mAdapter;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
+    private View mEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +52,10 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
-        mTitle = (TextView) findViewById(R.id.title);
+        ((TextView) findViewById(R.id.title)).setText(mUsername);
         mInfo = (TextView) findViewById(R.id.user_info);
         mAbout = (TextView) findViewById(R.id.about);
+        mEmpty = findViewById(android.R.id.empty);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -113,22 +114,27 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                     mUser = response;
                     bind();
                 } else {
-                    // TODO
+                    showEmpty();
                 }
             }
 
             @Override
             public void onError(String errorMessage) {
-                // TODO
+                Toast.makeText(UserActivity.this, R.string.user_failed, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    private void showEmpty() {
+        mInfo.setVisibility(View.GONE);
+        mAbout.setVisibility(View.GONE);
+        mEmpty.setVisibility(View.VISIBLE);
+        mTabLayout.addTab(mTabLayout.newTab()
+                .setText(getString(R.string.submissions_count, "").trim()));
+    }
+
     private void bind() {
-        mTitle.setText(mUser.getId());
-        mInfo.setText(getString(R.string.user_info,
-                DateUtils.formatDateTime(this, mUser.getCreated() * 1000, DateUtils.FORMAT_SHOW_DATE),
-                mUser.getKarma()));
+        mInfo.setText(getString(R.string.user_info, mUser.getCreated(this), mUser.getKarma()));
         if (TextUtils.isEmpty(mUser.getAbout())) {
             mAbout.setVisibility(View.GONE);
         } else {

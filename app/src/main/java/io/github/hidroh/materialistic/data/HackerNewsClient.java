@@ -606,8 +606,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
 
         @Override
-        public long getCreated() {
-            return created;
+        public String getCreated(Context context) {
+            return DateUtils.formatDateTime(context, created * 1000, DateUtils.FORMAT_SHOW_DATE);
         }
 
         @NonNull

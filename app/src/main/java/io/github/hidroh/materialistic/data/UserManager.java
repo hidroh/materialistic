@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.data;
 
+import android.content.Context;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
@@ -10,7 +11,7 @@ public interface UserManager {
         String getId();
         String getAbout();
         long getKarma();
-        long getCreated();
+        String getCreated(Context context);
         @NonNull ItemManager.Item[] getItems();
     }
 }
