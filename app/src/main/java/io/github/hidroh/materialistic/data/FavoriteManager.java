@@ -33,7 +33,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
-import java.util.Set;
+import java.util.Collection;
 
 import io.github.hidroh.materialistic.R;
 
@@ -207,7 +207,7 @@ public class FavoriteManager {
      * @param itemIds   array of story IDs to be removed from favorites
      * @see #makeClearIntentFilter()
      */
-    public void remove(Context context, Set<String> itemIds) {
+    public void remove(Context context, Collection<String> itemIds) {
         if (itemIds == null || itemIds.isEmpty()) {
             return;
         }
@@ -238,7 +238,7 @@ public class FavoriteManager {
     /**
      * Creates an intent filter for clear action broadcast
      * @return clear intent filter
-     * @see #remove(android.content.Context, java.util.Set)
+     * @see #remove(android.content.Context, java.util.Collection)
      * @see #clear(android.content.Context, String)
      */
     public static IntentFilter makeClearIntentFilter() {
