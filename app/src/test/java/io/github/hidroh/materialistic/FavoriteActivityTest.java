@@ -68,6 +68,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -228,7 +229,7 @@ public class FavoriteActivityTest {
         RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView)).getItemTouchHelperCallback()
                 .onSwiped(holder, ItemTouchHelper.LEFT);
-        verify(favoriteManager).remove(any(Context.class), eq("2"));
+        verify(favoriteManager).remove(any(Context.class), anyCollection());
         resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
         ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
         manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver

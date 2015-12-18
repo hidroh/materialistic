@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.ArrayMap;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -43,8 +44,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -83,6 +85,8 @@ public class FavoriteFragment extends BaseListFragment
     private ProgressDialog mProgressDialog;
     private ActionMode mActionMode;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        private boolean mPendingClear;
+
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
@@ -108,9 +112,9 @@ public class FavoriteFragment extends BaseListFragment
                                     // TODO should dismiss dialog on orientation changed
                                     return;
                                 }
-
+                                mPendingClear = true;
                                 mMultiPaneListener.clearSelection();
-                                mFavoriteManager.remove(getActivity(), mSelected);
+                                mFavoriteManager.remove(getActivity(), mSelected.values());
                                 actionMode.finish();
                             }
                         })
@@ -125,12 +129,16 @@ public class FavoriteFragment extends BaseListFragment
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
-            mSelected.clear();
+            if (mPendingClear) {
+                mPendingClear = false;
+            } else {
+                mSelected.clear();
+            }
             mAdapter.notifyDataSetChanged();
             mActionMode = null;
         }
     };
-    private Set<String> mSelected = new HashSet<>();
+    private ArrayMap<Integer, String> mSelected = new ArrayMap<>();
     private String mFilter;
     private boolean mSearchViewVisible;
     private boolean mIsResumed;
@@ -182,18 +190,28 @@ public class FavoriteFragment extends BaseListFragment
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 if (direction == ItemTouchHelper.LEFT || direction == ItemTouchHelper.RIGHT) {
                     int position = viewHolder.getAdapterPosition();
-                    mFavoriteManager.remove(getActivity(), mAdapter.getItem(position).getId());
+                    mSelected.put(position, mAdapter.getItem(position).getId());
+                    mFavoriteManager.remove(getActivity(), mSelected.values());
                 }
             }
         }).attachToRecyclerView(mRecyclerView);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                toggleEmpty();
+            }
+
+            @Override
             public void onChanged() {
                 super.onChanged();
+                toggleEmpty();
+            }
+
+            private void toggleEmpty() {
                 if (!mIsResumed) {
                     return;
                 }
-
                 mDataChangedListener.onDataChanged(mAdapter.getItemCount() == 0, mFilter);
             }
         });
@@ -320,7 +338,16 @@ public class FavoriteFragment extends BaseListFragment
         } else {
             mCursor = new FavoriteManager.Cursor(data);
         }
-        mAdapter.notifyDataSetChanged();
+        if (!mSelected.isEmpty()) {
+            List<Integer> positions = new ArrayList<>(mSelected.keySet());
+            Collections.sort(positions);
+            mSelected.clear();
+            for (int i = positions.size() - 1; i >= 0; i--) {
+                mAdapter.notifyItemRemoved(positions.get(i));
+            }
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -341,13 +368,16 @@ public class FavoriteFragment extends BaseListFragment
 
     @Override
     public void onDetach() {
+        super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mMultiPaneListener = null;
         mDataChangedListener = null;
         if (mActionMode != null) {
             mActionMode.finish();
         }
-        super.onDetach();
+        if (mCursor != null) {
+            mCursor.close();
+        }
     }
 
     /**
@@ -395,7 +425,8 @@ public class FavoriteFragment extends BaseListFragment
                         mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
                         toggle(favorite.getId(), holder.getAdapterPosition());
                         if (mMultiPaneListener.getSelectedItem() != null) {
-                            mSelected.add(mMultiPaneListener.getSelectedItem().getId());
+                            mSelected.put(holder.getAdapterPosition(),
+                                    mMultiPaneListener.getSelectedItem().getId());
                         }
                         return true;
                     }
@@ -448,7 +479,7 @@ public class FavoriteFragment extends BaseListFragment
         protected boolean isSelected(String itemId) {
             return mMultiPaneListener.getSelectedItem() != null &&
                     itemId.equals(mMultiPaneListener.getSelectedItem().getId()) ||
-                    mSelected.contains(itemId);
+                    mSelected.containsValue(itemId);
         }
 
         @Override
@@ -457,10 +488,10 @@ public class FavoriteFragment extends BaseListFragment
         }
 
         private void toggle(String itemId, int position) {
-            if (mSelected.contains(itemId)) {
-                mSelected.remove(itemId);
+            if (mSelected.containsValue(itemId)) {
+                mSelected.remove(position);
             } else {
-                mSelected.add(itemId);
+                mSelected.put(position, itemId);
             }
             notifyItemChanged(position);
         }
