@@ -111,7 +111,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         }
         mTitleTextView.setText(getContext().getString(R.string.loading_text));
         mTitleTextView.setText(story.getDisplayedTitle());
-        mPostedTextView.setText(story.getDisplayedTime(getContext(), true));
+        mPostedTextView.setText(story.getDisplayedTime(getContext(), true, true));
         mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
             case ItemManager.Item.JOB_TYPE:

@@ -35,7 +35,7 @@ import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
-import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -68,7 +68,7 @@ import static org.mockito.Mockito.when;
                 ReadabilityFragment.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
-                UserItemRecyclerViewAdapter.class,
+                SubmissionRecyclerViewAdapter.class,
                 // test classes
                 AppUtilsTest.class,
                 SettingsActivityTest.class,

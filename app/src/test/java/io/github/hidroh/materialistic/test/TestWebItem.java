@@ -34,7 +34,7 @@ public abstract class TestWebItem implements ItemManager.WebItem {
     }
 
     @Override
-    public Spannable getDisplayedTime(Context context, boolean abbreviate) {
+    public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
         return null;
     }
 

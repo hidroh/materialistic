@@ -83,6 +83,7 @@
     <string name="hide_comments" formatted="false">Hide comments (%s)</string>
     <string name="show_comments" formatted="false">Show comments (%s)</string>
     <string name="parent" formatted="false"><![CDATA[&nbsp;-&nbsp;<a href="#">parent</a>]]></string>
+    <string name="parent_link" formatted="false"><![CDATA[&nbsp;-&nbsp;<a href="io.github.hidroh.materialistic://item/%s">parent</a>]]></string>
     <string name="undo">Undo</string>
     <string name="score" formatted="false">%s pts</string>
     <string name="comments">Comments</string>
@@ -225,7 +226,8 @@
     <string name="title_activity_user">My Profile</string>
     <string name="user_info" formatted="false">Created: %s - karma: %s</string>
     <string name="submissions_count">%s submissions</string>
-    <string name="open">Open</string>
+    <string name="view">View</string>
     <string name="user_failed">Unable to load user. Please try again.</string>
+    <string name="dead_prefix">[dead]</string>
 
 </resources>

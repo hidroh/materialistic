@@ -79,14 +79,14 @@ public interface ItemManager {
         /**
          * Gets author name
          * @return author name or null
-         * @see WebItem#getDisplayedTime(Context, boolean)
+         * @see WebItem#getDisplayedTime(Context, boolean, boolean)
          */
         String getBy();
 
         /**
          * Gets posted time
          * @return posted time as Unix timestamp in seconds
-         * @see WebItem#getDisplayedTime(Context, boolean)
+         * @see WebItem#getDisplayedTime(Context, boolean, boolean)
          */
         long getTime();
 
@@ -308,9 +308,10 @@ public interface ItemManager {
          * Gets formatted posted time for display
          * @param context       an instance of {@link Context}
          * @param abbreviate    true to abbreviate time span, false otherwise
+         * @param authorLink    true to display link to author, false otherwise
          * @return  displayed time
          */
-        Spannable getDisplayedTime(Context context, boolean abbreviate);
+        Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink);
 
         /**
          * Gets item type

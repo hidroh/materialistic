@@ -25,7 +25,7 @@ import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
-import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 
 @Module(
         injects = {
@@ -52,7 +52,7 @@ import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
                 ReadabilityFragment.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
-                UserItemRecyclerViewAdapter.class
+                SubmissionRecyclerViewAdapter.class
         },
         library = true
 )

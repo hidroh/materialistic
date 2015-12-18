@@ -102,6 +102,7 @@ public class SinglePageItemRecyclerViewAdapter
         if (item == null) {
             return;
         }
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, true));
         bindNavigation(holder, item);
         toggleKids(holder, item);
     }

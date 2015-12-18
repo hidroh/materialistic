@@ -4,5 +4,6 @@
     style="@style/Widget.AppCompat.Button.Borderless.Colored"
     android:textAllCaps="false"
     android:minWidth="@null"
+    android:minHeight="@null"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
