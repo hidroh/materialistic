@@ -92,6 +92,16 @@ public class ItemActivityTest {
     }
 
     @Test
+    public void testCustomScheme() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 1);
+        intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://item/1"));
+        controller.withIntent(intent).create().start().resume();
+        verify(hackerNewsClient).getItem(eq("1"), any(ResponseListener.class));
+    }
+
+    @Test
     public void testJobGivenDeepLink() {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);

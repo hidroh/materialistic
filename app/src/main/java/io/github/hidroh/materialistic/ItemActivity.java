@@ -43,7 +43,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
     private ItemManager.Item mItem;
-    private String mItemId;
+    private String mItemId = null;
     private ImageView mBookmark;
     private boolean mFavoriteBound;
     private boolean mExternalBrowser;
@@ -86,7 +86,13 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
         } else {
             if (Intent.ACTION_VIEW.equalsIgnoreCase(intent.getAction())) {
-                mItemId = intent.getData() != null ? intent.getData().getQueryParameter(PARAM_ID) : null;
+                if (intent.getData() != null) {
+                    if (TextUtils.equals(intent.getData().getScheme(), BuildConfig.APPLICATION_ID)) {
+                        mItemId = intent.getData().getLastPathSegment();
+                    } else {
+                        mItemId = intent.getData().getQueryParameter(PARAM_ID);
+                    }
+                }
             } else if (intent.hasExtra(EXTRA_ITEM)) {
                 ItemManager.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
                 mItemId = item.getId();
@@ -258,7 +264,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
-        postedTextView.setText(story.getDisplayedTime(this, false));
+        postedTextView.setText(story.getDisplayedTime(this, false, true));
         postedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
             case ItemManager.Item.JOB_TYPE:
