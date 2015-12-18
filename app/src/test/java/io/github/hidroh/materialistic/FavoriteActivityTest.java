@@ -19,6 +19,7 @@ import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -54,6 +55,8 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 
@@ -66,6 +69,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -73,7 +77,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowContentResolverCompatJellybean.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@Config(shadows = {ShadowContentResolverCompatJellybean.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowRecyclerView.class, ShadowItemTouchHelper.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityTest {
     private ActivityController<TestFavoriteActivity> controller;
@@ -213,6 +217,22 @@ public class FavoriteActivityTest {
         ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
         manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
                 .onReceive(activity, new Intent(FavoriteManager.ACTION_CLEAR));
+        assertEquals(1, adapter.getItemCount());
+    }
+
+    @Test
+    public void testSwipeToDelete() {
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
+        ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView)).getItemTouchHelperCallback()
+                .onSwiped(holder, ItemTouchHelper.LEFT);
+        verify(favoriteManager).remove(any(Context.class), eq("2"));
+        resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
+        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
+        manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
+                .onReceive(activity, new Intent(FavoriteManager.ACTION_REMOVE));
         assertEquals(1, adapter.getItemCount());
     }
 
