@@ -32,6 +32,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -73,7 +74,8 @@ public class FavoriteFragment extends BaseListFragment
                 if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(emailIntent);
                 }
-            } else if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
+            } else if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction()) ||
+                    FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
                 getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
             }
         }
@@ -149,6 +151,8 @@ public class FavoriteFragment extends BaseListFragment
                 FavoriteManager.makeGetIntentFilter());
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
                 FavoriteManager.makeClearIntentFilter());
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
+                FavoriteManager.makeRemoveIntentFilter());
     }
 
     @Override
@@ -166,6 +170,22 @@ public class FavoriteFragment extends BaseListFragment
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_favorite, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                if (direction == ItemTouchHelper.LEFT || direction == ItemTouchHelper.RIGHT) {
+                    int position = viewHolder.getAdapterPosition();
+                    mFavoriteManager.remove(getActivity(), mAdapter.getItem(position).getId());
+                }
+            }
+        }).attachToRecyclerView(mRecyclerView);
         mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
