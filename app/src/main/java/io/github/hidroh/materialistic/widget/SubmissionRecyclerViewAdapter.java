@@ -46,7 +46,7 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
                     mContext.getString(R.string.parent_link, item.getParent()));
             holder.mTitleTextView.setText(null);
         } else {
-            holder.mParentTextView.setText(null);
+            holder.mParentTextView.setText(" - " + mContext.getString(R.string.score, item.getScore()));
             holder.mTitleTextView.setText(item.getDisplayedTitle());
         }
         holder.mTitleTextView.setVisibility(holder.mTitleTextView.length() > 0 ?
