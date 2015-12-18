@@ -151,6 +151,15 @@ public class UserActivityTest {
     }
 
     @Test
+    public void testDeepLink() {
+        controller = Robolectric.buildActivity(UserActivity.class);
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("https://news.ycombinator.com/user?id=123"));
+        activity = controller.withIntent(intent).create().get();
+        assertThat(activity).isNotFinishing();
+    }
+
+    @Test
     public void testItemBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);

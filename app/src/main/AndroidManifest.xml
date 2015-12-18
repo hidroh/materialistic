@@ -139,6 +139,28 @@
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user" >
+            <intent-filter android:label="@string/filter_title_item" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="news.ycombinator.com"
+                    android:pathPrefix="/user"
+                    android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:label="@string/filter_title_item" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="news.ycombinator.com"
+                    android:pathPrefix="/user"
+                    android:scheme="http" />
+            </intent-filter>
             <intent-filter android:label="@string/title_activity_user" >
                 <action android:name="android.intent.action.VIEW" />
 

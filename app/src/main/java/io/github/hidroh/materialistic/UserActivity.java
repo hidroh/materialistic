@@ -24,6 +24,7 @@ import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
 public class UserActivity extends InjectableActivity implements Scrollable {
     public static final String EXTRA_USERNAME = UserActivity.class.getName() + ".EXTRA_USERNAME";
     private static final String STATE_USER = "state:user";
+    private static final String PARAM_ID = "id";
     @Inject UserManager mUserManager;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManger;
     private String mUsername;
@@ -41,7 +42,11 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         super.onCreate(savedInstanceState);
         mUsername = getIntent().getStringExtra(EXTRA_USERNAME);
         if (TextUtils.isEmpty(mUsername) && getIntent().getData() != null) {
-            mUsername =  getIntent().getData().getLastPathSegment();
+            if (TextUtils.equals(getIntent().getData().getScheme(), BuildConfig.APPLICATION_ID)) {
+                mUsername = getIntent().getData().getLastPathSegment();
+            } else {
+                mUsername = getIntent().getData().getQueryParameter(PARAM_ID);
+            }
         }
         if (TextUtils.isEmpty(mUsername)) {
             finish();
