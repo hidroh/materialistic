@@ -226,9 +226,15 @@ public class UserActivityTest {
             public String getText() {
                 return "content";
             }
+
+            @Override
+            public int getScore() {
+                return 46;
+            }
         });
         adapter.bindViewHolder(viewHolder, 1);
-        assertThat((TextView) viewHolder.itemView.findViewById(R.id.parent)).isEmpty();
+        assertThat((TextView) viewHolder.itemView.findViewById(R.id.parent))
+                .containsText(activity.getString(R.string.score, 46));
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.title))
                 .isVisible()
                 .hasTextString("title");
