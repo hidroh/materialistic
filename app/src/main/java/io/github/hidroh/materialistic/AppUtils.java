@@ -116,7 +116,7 @@ public class AppUtils {
     }
 
     public static void setHtmlText(TextView textView, String htmlText) {
-        textView.setText(TextUtils.isEmpty(htmlText) ? null : Html.fromHtml(htmlText));
+        textView.setText(TextUtils.isEmpty(htmlText) ? null : trim(Html.fromHtml(htmlText)));
     }
 
     public static Intent makeEmailIntent(String subject, String text) {
@@ -352,6 +352,17 @@ public class AppUtils {
                     }
                 })
                 .show();
+    }
+
+    private static CharSequence trim(CharSequence charSequence) {
+        if (TextUtils.isEmpty(charSequence)) {
+            return charSequence;
+        }
+        int end = charSequence.length() - 1;
+        while (Character.isWhitespace(charSequence.charAt(end))) {
+            end--;
+        }
+        return charSequence.subSequence(0, end + 1);
     }
 
     private static Intent makeShareIntent(String subject, String text) {

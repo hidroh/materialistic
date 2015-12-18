@@ -72,7 +72,7 @@ public class ComposeActivityTest {
         activity.findViewById(R.id.toggle).performClick();
         assertThat(activity.findViewById(R.id.text)).isVisible();
         assertThat((TextView) activity.findViewById(R.id.text))
-                .hasTextString("Paragraph 1\n\nParagraph 2\n");
+                .hasTextString("Paragraph 1\n\nParagraph 2");
         activity.findViewById(R.id.toggle).performClick();
         assertThat(activity.findViewById(R.id.text)).isNotVisible();
     }
