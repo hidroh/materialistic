@@ -198,4 +198,15 @@ public class AppUtilsTest {
         AppUtils.showLogin(RuntimeEnvironment.application, alertDialogBuilder);
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
+
+    @Test
+    public void testTrimHtmlWhitespaces() {
+        TextView textView = new TextView(RuntimeEnvironment.application);
+        AppUtils.setHtmlText(textView, "<p>paragraph</p><p><br/><br/><br/></p>");
+        assertThat(textView).hasTextString("paragraph");
+        AppUtils.setHtmlText(textView, "");
+        assertThat(textView).hasTextString("");
+        AppUtils.setHtmlText(textView, "paragraph");
+        assertThat(textView).hasTextString("paragraph");
+    }
 }
