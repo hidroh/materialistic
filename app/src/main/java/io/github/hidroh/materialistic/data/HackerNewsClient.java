@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.R;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -355,7 +356,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
 
         @Override
-        public Spannable getDisplayedTime(Context context, boolean abbreviate) {
+        public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
             CharSequence relativeTime = "";
             if (abbreviate) {
                 relativeTime = AppUtils.getAbbreviatedTimeSpan(time * 1000);
@@ -375,10 +376,17 @@ public class HackerNewsClient implements ItemManager, UserManager {
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 return spannable;
             }
-            return new SpannableStringBuilder(relativeTime)
-                    .append(" - ")
-                    .append(Html.fromHtml(String.format(FORMAT_LINK_USER,
-                            BuildConfig.APPLICATION_ID, by)));
+            SpannableStringBuilder spannableBuilder = new SpannableStringBuilder();
+            if (dead) {
+                spannableBuilder.append(context.getString(R.string.dead_prefix)).append(" ");
+            }
+            spannableBuilder.append(relativeTime);
+            if (authorLink) {
+                spannableBuilder.append(" - ")
+                        .append(Html.fromHtml(String.format(FORMAT_LINK_USER,
+                                BuildConfig.APPLICATION_ID, by)));
+            }
+            return spannableBuilder;
         }
 
         @Override

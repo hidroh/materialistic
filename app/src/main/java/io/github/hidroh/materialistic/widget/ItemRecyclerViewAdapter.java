@@ -106,7 +106,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             return;
         }
         highlightUserItem(holder, item);
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false));
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
         decorateDead(holder, item);
         toggleCollapsibleContent(holder, item);
@@ -192,6 +191,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void bindActions(final VH holder, final ItemManager.Item item) {
+        if (item.isDead() || item.isDeleted()) {
+            holder.mMoreButton.setVisibility(View.GONE);
+            return;
+        }
+        holder.mMoreButton.setVisibility(View.VISIBLE);
         holder.mMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

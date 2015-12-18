@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/content"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding"
+    android:paddingBottom="@dimen/padding"
+    android:paddingLeft="@dimen/flat_card_horizontal_margin"
+    android:paddingRight="@dimen/flat_card_horizontal_margin"
+    style="@style/FlatCardView">
+    <io.github.hidroh.materialistic.widget.TextView
+        android:id="@id/title"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+        android:text="@string/loading_text"
+        android:paddingTop="@dimen/padding"
+        android:paddingLeft="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        style="@style/textTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <io.github.hidroh.materialistic.widget.TextView
+        android:id="@id/text"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        android:text="@string/loading_text"
+        android:paddingTop="@dimen/padding"
+        android:paddingLeft="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        style="@style/textContentStyle"
+        android:textIsSelectable="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/more"
+        android:text="@string/read_more"
+        android:visibility="gone"
+        tools:visibility="visible"
+        style="@style/textSubtitleStyle"
+        android:paddingLeft="@dimen/padding"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@id/posted"
+            tools:text="2 days ago"
+            android:text="@string/loading_text"
+            style="@style/textSubtitleStyle.Italic"
+            android:paddingRight="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:singleLine="false"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:id="@id/parent"
+            tools:text=" - parent"
+            style="@style/textSubtitleStyle.Italic"
+            android:paddingLeft="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:singleLine="false"
+            android:gravity="center_vertical" />
+
+        <include layout="@layout/button_comment"
+            android:id="@id/comment"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <include layout="@layout/button_more"
+            android:id="@+id/button_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

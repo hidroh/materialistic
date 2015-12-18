@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -19,7 +20,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.UserManager;
-import io.github.hidroh.materialistic.widget.UserItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 
 public class UserActivity extends InjectableActivity implements Scrollable {
     public static final String EXTRA_USERNAME = UserActivity.class.getName() + ".EXTRA_USERNAME";
@@ -32,7 +33,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private TextView mInfo;
     private TextView mAbout;
     private RecyclerView mRecyclerView;
-    private UserItemRecyclerViewAdapter mAdapter;
+    private SubmissionRecyclerViewAdapter mAdapter;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private View mEmpty;
@@ -80,6 +81,14 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         });
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        final int margin = getResources().getDimensionPixelSize(R.dimen.divider);
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                       RecyclerView.State state) {
+                outRect.set(0, 0, 0, margin);
+            }
+        });
         if (savedInstanceState != null) {
             mUser = savedInstanceState.getParcelable(STATE_USER);
         }
@@ -147,7 +156,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         }
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getString(R.string.submissions_count, mUser.getItems().length)));
-        mAdapter = new UserItemRecyclerViewAdapter(mItemManger, mUser.getItems());
+        mAdapter = new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems());
         mRecyclerView.setAdapter(mAdapter);
     }
 }

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
+import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
@@ -133,7 +134,8 @@ public class HackerNewsItemTest {
         assertEquals(5, item.getScore());
         assertTrue(item.isDead());
         assertTrue(item.isDeleted());
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, true)).doesNotContain("by");
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, true, true))
+                .doesNotContain("by");
         assertThat(item.getKids()).hasSize(1);
         assertEquals(1, item.getKidItems()[0].getLevel());
     }
@@ -216,8 +218,23 @@ public class HackerNewsItemTest {
                 return "author";
             }
         });
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false))
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, true))
                 .contains("author");
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, false))
+                .doesNotContain("author");
+        item.populate(new TestItem() {
+            @Override
+            public String getBy() {
+                return "author";
+            }
+
+            @Override
+            public boolean isDead() {
+                return true;
+            }
+        });
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, true))
+                .contains(RuntimeEnvironment.application.getString(R.string.dead_prefix));
     }
 
     @Test

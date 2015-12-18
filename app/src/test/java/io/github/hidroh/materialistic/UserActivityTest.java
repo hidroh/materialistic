@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -66,7 +67,22 @@ public class UserActivityTest {
         when(user.getCreated(any(Context.class))).thenReturn("May 01 2015");
         when(user.getKarma()).thenReturn(2016L);
         when(user.getAbout()).thenReturn("about");
-        when(user.getItems()).thenReturn(new ItemManager.Item[]{new TestHnItem(1L), new TestHnItem(2L)});
+        when(user.getItems()).thenReturn(new ItemManager.Item[]{
+                new TestHnItem(1L){
+                    @NonNull
+                    @Override
+                    public String getType() {
+                        return COMMENT_TYPE;
+                    }
+                },
+                new TestHnItem(2L) {
+                    @NonNull
+                    @Override
+                    public String getType() {
+                        return STORY_TYPE;
+                    }
+                }
+        });
     }
 
     @Test
@@ -160,7 +176,7 @@ public class UserActivityTest {
     }
 
     @Test
-    public void testItemBinding() {
+    public void testCommentBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
@@ -173,14 +189,71 @@ public class UserActivityTest {
             public String getText() {
                 return "content";
             }
+
+            @Override
+            public String getParent() {
+                return "2";
+            }
         });
         adapter.bindViewHolder(viewHolder, 0);
+        assertThat((TextView) viewHolder.itemView.findViewById(R.id.parent)).containsText("parent");
+        assertThat(viewHolder.itemView.findViewById(R.id.title)).isNotVisible();
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
+                .isVisible()
                 .hasTextString("content");
         viewHolder.itemView.findViewById(R.id.comment).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ItemActivity.class)
                 .hasExtra(ItemActivity.EXTRA_ITEM);
+    }
+
+    @Test
+    public void testStoryBinding() {
+        verify(userManager).getUser(eq("username"), userCaptor.capture());
+        userCaptor.getValue().onResponse(user);
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 1);
+        adapter.bindViewHolder(viewHolder, 1);
+        verify(itemManager).getItem(eq("2"), itemCaptor.capture());
+        itemCaptor.getValue().onResponse(new TestHnItem(2L) {
+            @Override
+            public String getTitle() {
+                return "title";
+            }
+
+            @Override
+            public String getText() {
+                return "content";
+            }
+        });
+        adapter.bindViewHolder(viewHolder, 1);
+        assertThat((TextView) viewHolder.itemView.findViewById(R.id.parent)).isEmpty();
+        assertThat((TextView) viewHolder.itemView.findViewById(R.id.title))
+                .isVisible()
+                .hasTextString("title");
+        assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
+                .isVisible()
+                .hasTextString("content");
+    }
+
+    @Test
+    public void testDeletedItemBinding() {
+        verify(userManager).getUser(eq("username"), userCaptor.capture());
+        userCaptor.getValue().onResponse(user);
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
+        adapter.bindViewHolder(viewHolder, 0);
+        verify(itemManager).getItem(eq("1"), itemCaptor.capture());
+        itemCaptor.getValue().onResponse(new TestHnItem(1L) {
+            @Override
+            public boolean isDeleted() {
+                return true;
+            }
+        });
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(viewHolder.itemView.findViewById(R.id.comment)).isNotVisible();
     }
 
     @After

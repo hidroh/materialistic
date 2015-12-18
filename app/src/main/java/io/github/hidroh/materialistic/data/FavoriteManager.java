@@ -333,7 +333,7 @@ public class FavoriteManager {
         }
 
         @Override
-        public Spannable getDisplayedTime(Context context, boolean abbreviate) {
+        public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
             return new SpannableString(context.getString(R.string.saved,
                     DateUtils.getRelativeDateTimeString(context, time,
                         DateUtils.MINUTE_IN_MILLIS,
