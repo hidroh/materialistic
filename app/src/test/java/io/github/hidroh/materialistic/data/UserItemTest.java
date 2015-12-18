@@ -5,9 +5,11 @@ import android.os.Parcel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class UserItemTest {
@@ -30,7 +32,7 @@ public class UserItemTest {
 
         HackerNewsClient.UserItem actualRead = HackerNewsClient.UserItem.CREATOR.createFromParcel(parcel);
         assertEquals("username", actualRead.getId());
-        assertEquals(2, actualRead.getCreated());
+        assertNotNull(actualRead.getCreated(RuntimeEnvironment.application));
         assertEquals(3, actualRead.getKarma());
         assertEquals("about", actualRead.getAbout());
         assertThat(actualRead.getItems()).hasSize(3);

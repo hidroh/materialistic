@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -17,6 +18,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -30,6 +32,7 @@ import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -60,7 +63,7 @@ public class UserActivityTest {
         activity = controller.withIntent(intent).create().start().resume().visible().get();
         user = mock(UserManager.User.class);
         when(user.getId()).thenReturn("username");
-        when(user.getCreated()).thenReturn(System.currentTimeMillis() / 1000);
+        when(user.getCreated(any(Context.class))).thenReturn("May 01 2015");
         when(user.getKarma()).thenReturn(2016L);
         when(user.getAbout()).thenReturn("about");
         when(user.getItems()).thenReturn(new ItemManager.Item[]{new TestHnItem(1L), new TestHnItem(2L)});
@@ -88,6 +91,28 @@ public class UserActivityTest {
     }
 
     @Test
+    public void testBindingNoAbout() {
+        when(user.getAbout()).thenReturn(null);
+        verify(userManager).getUser(eq("username"), userCaptor.capture());
+        userCaptor.getValue().onResponse(user);
+        assertThat((TextView) activity.findViewById(R.id.about)).isNotVisible();
+    }
+
+    @Test
+    public void testEmpty() {
+        verify(userManager).getUser(eq("username"), userCaptor.capture());
+        userCaptor.getValue().onResponse(null);
+        assertThat(activity.findViewById(android.R.id.empty)).isVisible();
+    }
+
+    @Test
+    public void testFailed() {
+        verify(userManager).getUser(eq("username"), userCaptor.capture());
+        userCaptor.getValue().onError(null);
+        assertEquals(activity.getString(R.string.user_failed), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
     public void testScrollToTop() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
@@ -102,18 +127,27 @@ public class UserActivityTest {
 
     @Test
     public void testNoId() {
-        controller = Robolectric.buildActivity(UserActivity.class).create();
-        activity = controller.get();
+        controller = Robolectric.buildActivity(UserActivity.class);
+        activity = controller.create().get();
         assertThat(activity).isFinishing();
     }
 
     @Test
     public void testNoDataId() {
-        controller = Robolectric.buildActivity(UserActivity.class).create();
+        controller = Robolectric.buildActivity(UserActivity.class);
         Intent intent = new Intent();
         intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://user/"));
-        activity = controller.withIntent(intent).get();
+        activity = controller.withIntent(intent).create().get();
         assertThat(activity).isFinishing();
+    }
+
+    @Test
+    public void testWithDataId() {
+        controller = Robolectric.buildActivity(UserActivity.class);
+        Intent intent = new Intent();
+        intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://user/123"));
+        activity = controller.withIntent(intent).create().get();
+        assertThat(activity).isNotFinishing();
     }
 
     @Test
