@@ -324,7 +324,7 @@ public interface ItemManager {
          * Gets formatted posted time for display
          * @param context       an instance of {@link Context}
          * @param abbreviate    true to abbreviate time span, false otherwise
-         * @param authorLink    true to display link to author, false otherwise
+         * @param authorLink    true to display author as a hyperlink, false otherwise
          * @return  displayed time
          */
         Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink);
