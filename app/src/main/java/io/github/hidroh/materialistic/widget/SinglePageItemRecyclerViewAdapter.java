@@ -142,10 +142,10 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     private void toggleKids(ToggleItemViewHolder holder, final ItemManager.Item item) {
+        holder.mToggle.setVisibility(item.getKidCount() > 0 ? View.VISIBLE : View.GONE);
         if (item.getKidCount() == 0) {
             return;
         }
-        holder.mToggle.setVisibility(View.VISIBLE);
         if (!item.isCollapsed() && mAutoExpand) {
             expand(item);
         }
