@@ -99,6 +99,11 @@ public class ListFragmentViewHolderTest {
             public int getRank() {
                 return 46;
             }
+
+            @Override
+            public String getBy() {
+                return "author";
+            }
         };
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
@@ -364,6 +369,21 @@ public class ListFragmentViewHolderTest {
         activity.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
         assertFalse(item.isFavorite());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testViewUser() {
+        verify(itemManager).getItem(anyString(), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_profile));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, UserActivity.class)
+                .hasExtra(UserActivity.EXTRA_USERNAME, "author");
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

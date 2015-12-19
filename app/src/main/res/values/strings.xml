@@ -247,5 +247,6 @@
     <string name="dead_prefix">[dead]</string>
     <string name="title_activity_thread_preview">Thread Preview</string>
     <string name="view_thread">View thread</string>
+    <string name="view_user">View user</string>
 
 </resources>

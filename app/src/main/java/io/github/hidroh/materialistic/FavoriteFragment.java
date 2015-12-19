@@ -523,10 +523,10 @@ public class FavoriteFragment extends BaseListFragment
                         return true;
                     }
                     if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                        Intent intent = new Intent(getActivity(), ComposeActivity.class);
-                        intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId());
-                        intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle());
-                        startActivity(intent);
+                        startActivity(new Intent(getActivity(), ComposeActivity.class)
+                                .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
+                        return true;
                     }
                     return false;
                 }
