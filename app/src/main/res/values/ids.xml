@@ -90,6 +90,7 @@
     <item type="id" name="menu_contextual_save" />
     <item type="id" name="menu_contextual_vote" />
     <item type="id" name="menu_contextual_comment" />
+    <item type="id" name="menu_contextual_profile" />
     <item type="id" name="menu_send" />
     <item type="id" name="menu_quote" />
     <item type="id" name="menu_guidelines" />

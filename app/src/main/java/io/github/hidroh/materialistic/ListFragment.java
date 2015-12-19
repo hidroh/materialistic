@@ -548,6 +548,12 @@ public class ListFragment extends BaseListFragment {
                         intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId());
                         intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getDisplayedTitle());
                         startActivity(intent);
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.menu_contextual_profile) {
+                        startActivity(new Intent(getActivity(), UserActivity.class)
+                                .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
+                        return true;
                     }
                     return false;
                 }
