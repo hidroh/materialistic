@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -54,6 +56,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
@@ -70,7 +73,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -223,6 +225,8 @@ public class FavoriteActivityTest {
 
     @Test
     public void testSwipeToDelete() {
+        BroadcastReceiver receiver = shadowOf(LocalBroadcastManager.getInstance(activity))
+                .getRegisteredBroadcastReceivers().get(0).broadcastReceiver;
         ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
                 .extract(adapter);
         shadowAdapter.makeItemVisible(0);
@@ -231,10 +235,21 @@ public class FavoriteActivityTest {
                 .onSwiped(holder, ItemTouchHelper.LEFT);
         verify(favoriteManager).remove(any(Context.class), anyCollection());
         resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
-        manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
-                .onReceive(activity, new Intent(FavoriteManager.ACTION_REMOVE));
+        receiver.onReceive(activity, new Intent(FavoriteManager.ACTION_REMOVE));
         assertEquals(1, adapter.getItemCount());
+        assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+                .isNotNull()
+                .containsText(R.string.toast_removed);
+        activity.findViewById(R.id.snackbar_action).performClick();
+        verify(favoriteManager).add(any(Context.class), any(ItemManager.WebItem.class));
+        ContentValues cv = new ContentValues();
+        cv.put("itemid", "2");
+        cv.put("title", "ask HN");
+        cv.put("url", "http://example.com");
+        cv.put("time", String.valueOf(System.currentTimeMillis()));
+        resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
+        receiver.onReceive(activity, new Intent(FavoriteManager.ACTION_ADD));
+        assertEquals(2, adapter.getItemCount());
     }
 
     @Test

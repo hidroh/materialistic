@@ -31,6 +31,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
@@ -114,6 +115,18 @@ public class FavoriteManagerTest {
                 return "new title";
             }
         });
+        Intent actual = getBroadcastIntent();
+        assertThat(actual).hasAction(FavoriteManager.ACTION_ADD);
+        assertEquals("3", actual.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
+    }
+
+    @Test
+    public void testReAdd() {
+        FavoriteManager.Favorite favorite = mock(FavoriteManager.Favorite.class);
+        when(favorite.getId()).thenReturn("3");
+        when(favorite.getUrl()).thenReturn("http://example.com");
+        when(favorite.getDisplayedTitle()).thenReturn("title");
+        manager.add(RuntimeEnvironment.application, favorite);
         Intent actual = getBroadcastIntent();
         assertThat(actual).hasAction(FavoriteManager.ACTION_ADD);
         assertEquals("3", actual.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));

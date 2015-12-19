@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -76,8 +77,7 @@ public class FavoriteFragment extends BaseListFragment
                 if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivity(emailIntent);
                 }
-            } else if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction()) ||
-                    FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
+            } else {
                 getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
             }
         }
@@ -139,6 +139,7 @@ public class FavoriteFragment extends BaseListFragment
         }
     };
     private ArrayMap<Integer, String> mSelected = new ArrayMap<>();
+    private int mPendingAdd = -1;
     private String mFilter;
     private boolean mSearchViewVisible;
     private boolean mIsResumed;
@@ -161,6 +162,8 @@ public class FavoriteFragment extends BaseListFragment
                 FavoriteManager.makeClearIntentFilter());
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
                 FavoriteManager.makeRemoveIntentFilter());
+        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
+                FavoriteManager.makeAddIntentFilter());
     }
 
     @Override
@@ -189,9 +192,19 @@ public class FavoriteFragment extends BaseListFragment
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 if (direction == ItemTouchHelper.LEFT || direction == ItemTouchHelper.RIGHT) {
-                    int position = viewHolder.getAdapterPosition();
-                    mSelected.put(position, mAdapter.getItem(position).getId());
+                    final int position = viewHolder.getAdapterPosition();
+                    final FavoriteManager.Favorite item = mAdapter.getItem(position);
+                    mSelected.put(position, item.getId());
                     mFavoriteManager.remove(getActivity(), mSelected.values());
+                    Snackbar.make(mRecyclerView, R.string.toast_removed, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.undo, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mPendingAdd = position;
+                                    mFavoriteManager.add(getActivity(), item);
+                                }
+                            })
+                            .show();
                 }
             }
         }).attachToRecyclerView(mRecyclerView);
@@ -345,6 +358,9 @@ public class FavoriteFragment extends BaseListFragment
             for (int i = positions.size() - 1; i >= 0; i--) {
                 mAdapter.notifyItemRemoved(positions.get(i));
             }
+        } else if (mPendingAdd >= 0) {
+            mAdapter.notifyItemInserted(mPendingAdd);
+            mPendingAdd = -1;
         } else {
             mAdapter.notifyDataSetChanged();
         }
