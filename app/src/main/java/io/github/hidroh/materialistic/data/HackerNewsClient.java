@@ -219,6 +219,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         int rank;
         private int lastKidCount = -1;
         private boolean hasNewDescendants = false;
+        private HackerNewsItem parentItem;
 
         public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
             @Override
@@ -265,6 +266,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
             rank = source.readInt();
             lastKidCount = source.readInt();
             hasNewDescendants = source.readInt() == 1;
+            parent = source.readLong();
+            parentItem = source.readParcelable(HackerNewsItem.class.getClassLoader());
         }
 
         @Override
@@ -340,6 +343,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
             dest.writeInt(rank);
             dest.writeInt(lastKidCount);
             dest.writeInt(hasNewDescendants ? 1 : 0);
+            dest.writeLong(parent);
+            dest.writeParcelable(parentItem, flags);
         }
 
         @Override
@@ -529,6 +534,17 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @Override
         public String getParent() {
             return String.valueOf(parent);
+        }
+
+        @Override
+        public Item getParentItem() {
+            if (parent == 0) {
+                return null;
+            }
+            if (parentItem == null) {
+                parentItem = new HackerNewsItem(parent);
+            }
+            return parentItem;
         }
 
         @Override

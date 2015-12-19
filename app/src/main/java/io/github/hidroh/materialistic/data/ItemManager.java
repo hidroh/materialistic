@@ -217,6 +217,12 @@ public interface ItemManager {
         String getParent();
 
         /**
+         * Gets parent item if any
+         * @return parent item or null
+         */
+        Item getParentItem();
+
+        /**
          * Checks if item has been deleted
          * @return true if deleted, false otherwise
          */

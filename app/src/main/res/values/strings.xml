@@ -242,8 +242,10 @@
     <string name="title_activity_user">My Profile</string>
     <string name="user_info" formatted="false">Created: %s - karma: %s</string>
     <string name="submissions_count">%s submissions</string>
-    <string name="view">View</string>
+    <string name="view_story">View story</string>
     <string name="user_failed">Unable to load user. Please try again.</string>
     <string name="dead_prefix">[dead]</string>
+    <string name="title_activity_thread_preview">Thread Preview</string>
+    <string name="view_thread">View thread</string>
 
 </resources>

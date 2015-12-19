@@ -42,6 +42,7 @@ import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 
 @Module(
         injects = {
@@ -60,6 +61,7 @@ import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
                 ComposeActivity.class,
                 SubmitActivity.class,
                 UserActivity.class,
+                ThreadPreviewActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -68,7 +70,8 @@ import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
                 ReadabilityFragment.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
-                SubmissionRecyclerViewAdapter.class
+                SubmissionRecyclerViewAdapter.class,
+                ThreadPreviewRecyclerViewAdapter.class
         },
         library = true
 )
