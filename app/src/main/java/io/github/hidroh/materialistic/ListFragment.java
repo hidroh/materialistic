@@ -264,7 +264,7 @@ public class ListFragment extends BaseListFragment {
     }
 
     @Override
-    protected RecyclerView.Adapter getAdapter() {
+    protected ListRecyclerViewAdapter getAdapter() {
         return mAdapter;
     }
 
@@ -596,10 +596,13 @@ public class ListFragment extends BaseListFragment {
                 }
             });
         }
-    }
 
-    private void highlightUserPost(ListRecyclerViewAdapter.ItemViewHolder holder, ItemManager.Item story) {
-        holder.mStoryView.setChecked(!TextUtils.isEmpty(mUsername) &&
-                TextUtils.equals(mUsername, story.getBy()));
+        private void highlightUserPost(ListRecyclerViewAdapter.ItemViewHolder holder,
+                                       ItemManager.Item story) {
+            holder.mStoryView.setChecked(isSelected(story.getId()) ||
+                    !TextUtils.isEmpty(mUsername) &&
+                    TextUtils.equals(mUsername, story.getBy()));
+        }
+
     }
 }

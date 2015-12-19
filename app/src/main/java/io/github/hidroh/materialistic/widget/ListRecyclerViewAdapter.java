@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -33,6 +34,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
  */
 public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem> extends RecyclerView.Adapter<VH> {
 
+    private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";
     private Context mContext;
     private int mLastSelectedPosition = -1;
     private int mCardElevation;
@@ -84,6 +86,19 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
             }
         });
         bindItem(holder);
+    }
+
+    public Bundle saveState() {
+        Bundle savedState = new Bundle();
+        savedState.putInt(STATE_LAST_SELECTION_POSITION, mLastSelectedPosition);
+        return savedState;
+    }
+
+    public void restoreState(Bundle savedState) {
+        if (savedState == null) {
+            return;
+        }
+        mLastSelectedPosition = savedState.getInt(STATE_LAST_SELECTION_POSITION);
     }
 
     protected abstract boolean shouldCompact();

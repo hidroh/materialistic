@@ -391,7 +391,7 @@ public class FavoriteFragment extends BaseListFragment
     }
 
     @Override
-    protected RecyclerView.Adapter getAdapter() {
+    protected ListRecyclerViewAdapter getAdapter() {
         return mAdapter;
     }
 
