@@ -29,9 +29,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
+
 public abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_CARD_VIEW = "state:cardView";
-
+    private static final String STATE_ADAPTER = "state:adapter";
     protected RecyclerView mRecyclerView;
     protected boolean mCardView = true;
     private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
@@ -60,6 +62,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
             mCardView = Preferences.isListItemCardView(getActivity());
         } else {
             mCardView = savedInstanceState.getBoolean(STATE_CARD_VIEW, true);
+            getAdapter().restoreState(savedInstanceState.getBundle(STATE_ADAPTER));
         }
     }
 
@@ -130,6 +133,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_CARD_VIEW, mCardView);
+        outState.putBundle(STATE_ADAPTER, getAdapter().saveState());
     }
 
     @Override
@@ -144,5 +148,5 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         mRecyclerView.smoothScrollToPosition(0);
     }
 
-    protected abstract RecyclerView.Adapter getAdapter();
+    protected abstract ListRecyclerViewAdapter getAdapter();
 }
