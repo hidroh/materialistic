@@ -59,7 +59,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private View mEmptyView;
     private ItemManager.Item mItem;
     private String mItemId;
-    private boolean mIsResumed;
+    private boolean mAttached;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
@@ -94,6 +94,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mAttached = true;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
@@ -144,12 +145,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             }
         });
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mIsResumed = true;
     }
 
     @Override
@@ -233,14 +228,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     @Override
-    public void onPause() {
-        mIsResumed = false;
-        super.onPause();
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
+        mAttached = false;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
     }
@@ -263,7 +253,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mItemManager.getItem(mItemId, new ResponseListener<ItemManager.Item>() {
             @Override
             public void onResponse(ItemManager.Item response) {
-                if (!mIsResumed) {
+                if (!mAttached) {
                     return;
                 }
 
@@ -301,7 +291,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
         mAdapter.setMaxLines(mMaxLines);
         mAdapter.setHighlightUsername(mUsername);
-        getActivity().supportInvalidateOptionsMenu();
+        invalidateOptionsMenu();
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -309,7 +299,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (mAdapter == null || !(mAdapter instanceof SinglePageItemRecyclerViewAdapter)) {
             return;
         }
-        getActivity().supportInvalidateOptionsMenu();
+        invalidateOptionsMenu();
         ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
     }
 
@@ -317,7 +307,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (mAdapter == null) {
             return;
         }
-        getActivity().supportInvalidateOptionsMenu();
+        invalidateOptionsMenu();
         mAdapter.setMaxLines(mMaxLines);
     }
 
@@ -326,5 +316,12 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             return;
         }
         mAdapter.setHighlightUsername(mUsername);
+    }
+
+    private void invalidateOptionsMenu() {
+        if (!mAttached) {
+            return;
+        }
+        getActivity().supportInvalidateOptionsMenu();
     }
 }
