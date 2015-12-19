@@ -397,10 +397,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
                 spannableBuilder.append(context.getString(R.string.dead_prefix)).append(" ");
             }
             spannableBuilder.append(relativeTime);
-            if (authorLink) {
+            if (!TextUtils.isEmpty(by)) {
                 spannableBuilder.append(" - ")
-                        .append(Html.fromHtml(String.format(FORMAT_LINK_USER,
-                                BuildConfig.APPLICATION_ID, by)));
+                        .append(authorLink ? Html.fromHtml(String.format(FORMAT_LINK_USER,
+                                BuildConfig.APPLICATION_ID, by)) : by);
             }
             return spannableBuilder;
         }

@@ -221,7 +221,7 @@ public class HackerNewsItemTest {
         assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, true))
                 .contains("author");
         assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, false))
-                .doesNotContain("author");
+                .contains("author");
         item.populate(new TestItem() {
             @Override
             public String getBy() {
