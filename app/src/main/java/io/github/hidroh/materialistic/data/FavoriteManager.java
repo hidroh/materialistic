@@ -115,7 +115,10 @@ public class FavoriteManager {
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME, String.valueOf(System.currentTimeMillis()));
+        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME,
+                story instanceof Favorite ?
+                        String.valueOf(((Favorite) story).time) :
+                        String.valueOf(System.currentTimeMillis()));
         new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
             void onInsertComplete() {

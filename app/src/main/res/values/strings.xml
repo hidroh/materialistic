@@ -51,7 +51,7 @@
     <string name="libraries_title">Libraries &amp; Resources</string>
     <string name="title_activity_favorite">Saved Stories</string>
     <string name="saved" formatted="false">Saved %s</string>
-    <string name="toast_saved">Story saved!</string>
+    <string name="toast_saved">Story saved</string>
     <string name="clear_all">Clear all</string>
     <string name="toast_removed">Story unsaved</string>
     <string name="no_saved_stories">No saved stories so far</string>
