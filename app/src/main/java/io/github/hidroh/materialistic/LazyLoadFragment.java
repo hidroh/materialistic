@@ -23,7 +23,6 @@ import android.os.Bundle;
  */
 public abstract class LazyLoadFragment extends BaseFragment {
     private static final String STATE_EAGER_LOAD = "state:eagerLoad";
-    private static final String STATE_ACTIVITY_CREATED = "state:activityCreated";
     private boolean mEagerLoad;
     private boolean mActivityCreated;
 
@@ -32,7 +31,6 @@ public abstract class LazyLoadFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
-            mActivityCreated = savedInstanceState.getBoolean(STATE_ACTIVITY_CREATED);
         } else {
             mEagerLoad = !Preferences.shouldLazyLoad(getActivity()) && AppUtils.isOnWiFi(getContext());
         }
@@ -58,7 +56,6 @@ public abstract class LazyLoadFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EAGER_LOAD, mEagerLoad);
-        outState.putBoolean(STATE_ACTIVITY_CREATED, mActivityCreated);
     }
 
     /**

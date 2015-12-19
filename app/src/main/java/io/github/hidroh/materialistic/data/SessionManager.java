@@ -125,7 +125,7 @@ public class SessionManager {
                 return;
             }
             if (cookie.equals(mItemId)) {
-                mCallback.onQueryComplete(cursor.getCount() > 0);
+                mCallback.onQueryComplete(cursor != null && cursor.getCount() > 0);
                 mCallback = null;
             }
         }
