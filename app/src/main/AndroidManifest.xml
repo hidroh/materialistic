@@ -188,6 +188,11 @@
                     android:scheme="${applicationId}" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ThreadPreviewActivity"
+            android:label="@string/title_activity_thread_preview"
+            android:theme="@style/AppAlertDialog">
+        </activity>
         <service android:name=".accounts.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

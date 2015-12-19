@@ -196,15 +196,14 @@ public class UserActivityTest {
             }
         });
         adapter.bindViewHolder(viewHolder, 0);
-        assertThat((TextView) viewHolder.itemView.findViewById(R.id.parent)).containsText("parent");
         assertThat(viewHolder.itemView.findViewById(R.id.title)).isNotVisible();
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
                 .isVisible()
                 .hasTextString("content");
         viewHolder.itemView.findViewById(R.id.comment).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
-                .hasComponent(activity, ItemActivity.class)
-                .hasExtra(ItemActivity.EXTRA_ITEM);
+                .hasComponent(activity, ThreadPreviewActivity.class)
+                .hasExtra(ThreadPreviewActivity.EXTRA_ITEM);
     }
 
     @Test
@@ -233,7 +232,7 @@ public class UserActivityTest {
             }
         });
         adapter.bindViewHolder(viewHolder, 1);
-        assertThat((TextView) viewHolder.itemView.findViewById(R.id.parent))
+        assertThat((TextView) viewHolder.itemView.findViewById(R.id.posted))
                 .containsText(activity.getString(R.string.score, 46));
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.title))
                 .isVisible()
@@ -241,6 +240,10 @@ public class UserActivityTest {
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
                 .isVisible()
                 .hasTextString("content");
+        viewHolder.itemView.findViewById(R.id.comment).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ItemActivity.class)
+                .hasExtra(ItemActivity.EXTRA_ITEM);
     }
 
     @Test

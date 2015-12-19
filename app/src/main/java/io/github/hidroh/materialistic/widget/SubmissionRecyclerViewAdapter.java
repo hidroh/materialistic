@@ -22,9 +22,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.ThreadPreviewActivity;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
@@ -56,14 +56,16 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
         if (item == null) {
             return;
         }
+        final boolean isComment = TextUtils.equals(item.getType(), ItemManager.Item.COMMENT_TYPE);
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, false));
-        if (TextUtils.equals(item.getType(), ItemManager.Item.COMMENT_TYPE)) {
-            AppUtils.setTextWithLinks(holder.mParentTextView,
-                    mContext.getString(R.string.parent_link, item.getParent()));
+        if (isComment) {
             holder.mTitleTextView.setText(null);
+            holder.mCommentButton.setText(R.string.view_thread);
         } else {
-            holder.mParentTextView.setText(" - " + mContext.getString(R.string.score, item.getScore()));
+            holder.mPostedTextView.append(" - ");
+            holder.mPostedTextView.append(mContext.getString(R.string.score, item.getScore()));
             holder.mTitleTextView.setText(item.getDisplayedTitle());
+            holder.mCommentButton.setText(R.string.view_story);
         }
         holder.mTitleTextView.setVisibility(holder.mTitleTextView.length() > 0 ?
                 View.VISIBLE : View.GONE);
@@ -73,7 +75,11 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
         holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openItem(item);
+                if (isComment) {
+                    openPreview(item);
+                } else {
+                    openItem(item);
+                }
             }
         });
     }
@@ -84,4 +90,9 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
         mContext.startActivity(intent);
     }
 
+    private void openPreview(ItemManager.Item item) {
+        final Intent intent = new Intent(mContext, ThreadPreviewActivity.class);
+        intent.putExtra(ThreadPreviewActivity.EXTRA_ITEM, item);
+        mContext.startActivity(intent);
+    }
 }

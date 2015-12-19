@@ -26,12 +26,10 @@ import io.github.hidroh.materialistic.R;
  */
 public class SubmissionViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
     final TextView mTitleTextView;
-    final TextView mParentTextView;
 
     public SubmissionViewHolder(View itemView) {
         super(itemView);
         mTitleTextView = (android.widget.TextView) itemView.findViewById(R.id.title);
-        mParentTextView = (android.widget.TextView) itemView.findViewById(R.id.parent);
-        mCommentButton.setText(R.string.view);
+        mCommentButton.setText(R.string.view_story);
     }
 }

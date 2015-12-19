@@ -36,6 +36,7 @@ import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -60,6 +61,7 @@ import static org.mockito.Mockito.when;
                 ComposeActivity.class,
                 SubmitActivity.class,
                 UserActivity.class,
+                ThreadPreviewActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -69,6 +71,7 @@ import static org.mockito.Mockito.when;
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,
+                ThreadPreviewRecyclerViewAdapter.class,
                 // test classes
                 AppUtilsTest.class,
                 SettingsActivityTest.class,
@@ -96,7 +99,8 @@ import static org.mockito.Mockito.when;
                 DrawerFragmentLoginTest.class,
                 ComposeActivityTest.class,
                 SubmitActivityTest.class,
-                UserActivityTest.class
+                UserActivityTest.class,
+                ThreadPreviewActivityTest.class
         },
         library = true,
         overrides = true

@@ -20,6 +20,11 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public ItemManager.Item getParentItem() {
+        return null;
+    }
+
+    @Override
     public void populate(ItemManager.Item info) {
 
     }
