@@ -294,6 +294,8 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
         final Fragment[] fragments = new Fragment[3];
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
+        viewPager.setPageMarginDrawable(R.color.blackT12);
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

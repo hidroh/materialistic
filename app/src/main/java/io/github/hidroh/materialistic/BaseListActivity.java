@@ -74,6 +74,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
         mViewPager = (ViewPager) findViewById(R.id.content);
+        mViewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
+        mViewPager.setPageMarginDrawable(R.color.blackT12);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
