@@ -14,13 +14,16 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import retrofit.Call;
 import retrofit.Callback;
+import retrofit.Response;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class FeedbackClientTest {
@@ -28,6 +31,7 @@ public class FeedbackClientTest {
     @Captor ArgumentCaptor<Callback<Object>> callbackCaptor;
     private FeedbackClient client;
     private FeedbackClient.Callback callback;
+    private Call call;
 
     @Before
     public void setUp() {
@@ -36,14 +40,19 @@ public class FeedbackClientTest {
         reset(TestRestServiceFactory.feedbackService);
         client = new FeedbackClient.Impl(factory);
         callback = mock(FeedbackClient.Callback.class);
+        call = mock(Call.class);
+        when(TestRestServiceFactory.feedbackService
+                .createGithubIssue(any(FeedbackClient.Impl.Issue.class)))
+                .thenReturn(call);
     }
 
     @Test
     public void testSendSuccessful() {
         client.send("title", "body", callback);
         verify(TestRestServiceFactory.feedbackService)
-                .createGithubIssue(any(FeedbackClient.Impl.Issue.class), callbackCaptor.capture());
-        callbackCaptor.getValue().success(null, null);
+                .createGithubIssue(any(FeedbackClient.Impl.Issue.class));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(Response.success(null), null);
         verify(callback).onSent(eq(true));
     }
 
@@ -51,8 +60,9 @@ public class FeedbackClientTest {
     public void testSendFailed() {
         client.send("title", "body", callback);
         verify(TestRestServiceFactory.feedbackService)
-                .createGithubIssue(any(FeedbackClient.Impl.Issue.class), callbackCaptor.capture());
-        callbackCaptor.getValue().failure(null);
+                .createGithubIssue(any(FeedbackClient.Impl.Issue.class));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(null);
         verify(callback).onSent(eq(false));
     }
 

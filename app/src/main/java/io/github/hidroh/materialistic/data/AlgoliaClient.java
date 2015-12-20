@@ -23,9 +23,10 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.Preferences;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Headers;
 import retrofit.http.Query;
@@ -33,7 +34,7 @@ import retrofit.http.Query;
 public class AlgoliaClient implements ItemManager {
 
     public static boolean sSortByTime = true;
-    private static final String BASE_API_URL = "https://hn.algolia.com/api/v1";
+    private static final String BASE_API_URL = "https://hn.algolia.com/api/v1/";
     protected RestService mRestService;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
 
@@ -48,10 +49,10 @@ public class AlgoliaClient implements ItemManager {
         if (listener == null) {
             return;
         }
-
-        Callback<AlgoliaHits> callback = new Callback<AlgoliaHits>() {
+        search(filter, new Callback<AlgoliaHits>() {
             @Override
-            public void success(AlgoliaHits algoliaHits, Response response) {
+            public void onResponse(Response<AlgoliaHits> response, Retrofit retrofit) {
+                AlgoliaHits algoliaHits = response.body();
                 Hit[] hits = algoliaHits.hits;
                 Item[] stories = new Item[hits == null ? 0 : hits.length];
                 for (int i = 0; i < stories.length; i++) {
@@ -64,11 +65,10 @@ public class AlgoliaClient implements ItemManager {
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                listener.onError(error != null ? error.getMessage() : "");
+            public void onFailure(Throwable t) {
+                listener.onError(t != null ? t.getMessage() : "");
             }
-        };
-        search(filter, callback);
+        });
     }
 
     @Override
@@ -77,25 +77,27 @@ public class AlgoliaClient implements ItemManager {
     }
 
     protected void search(String filter, Callback<AlgoliaHits> callback) {
+        Call<AlgoliaHits> call;
         if (sSortByTime) {
-            mRestService.searchByDate(filter, callback);
+            call = mRestService.searchByDate(filter);
         } else {
-            mRestService.search(filter, callback);
+            call = mRestService.search(filter);
         }
+        call.enqueue(callback);
     }
 
     interface RestService {
         @Headers("Cache-Control: max-age=600")
-        @GET("/search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        void searchByDate(@Query("query") String query, Callback<AlgoliaHits> callback);
+        @GET("search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> searchByDate(@Query("query") String query);
 
         @Headers("Cache-Control: max-age=600")
-        @GET("/search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        void search(@Query("query") String query, Callback<AlgoliaHits> callback);
+        @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> search(@Query("query") String query);
 
         @Headers("Cache-Control: max-age=600")
-        @GET("/search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        void searchByMinTimestamp(@Query("numericFilters") String timestampSeconds, Callback<AlgoliaHits> callback);
+        @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> searchByMinTimestamp(@Query("numericFilters") String timestampSeconds);
     }
 
     protected static class AlgoliaHits {

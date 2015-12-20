@@ -67,6 +67,7 @@ public class AlgoliaPopularClient extends AlgoliaClient {
                 timestamp -= DateUtils.YEAR_IN_MILLIS;
                 break;
         }
-        mRestService.searchByMinTimestamp(MIN_CREATED_AT + timestamp / 1000, callback);
+        mRestService.searchByMinTimestamp(MIN_CREATED_AT + timestamp / 1000)
+                .enqueue(callback);
     }
 }

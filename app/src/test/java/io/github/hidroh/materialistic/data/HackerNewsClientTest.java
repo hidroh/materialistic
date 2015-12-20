@@ -8,19 +8,15 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Header;
-import retrofit.client.Response;
-import retrofit.mime.TypedInput;
+import retrofit.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -35,11 +31,10 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricGradleTestRunner.class)
 public class HackerNewsClientTest {
     @Inject RestServiceFactory factory;
-    @Captor ArgumentCaptor<Callback<HackerNewsClient.HackerNewsItem>> getItemCallback;
-    @Captor ArgumentCaptor<Callback<HackerNewsClient.UserItem>> getUserCallback;
-    @Captor ArgumentCaptor<Callback<int[]>> getStoriesCallback;
-    @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
     private HackerNewsClient client;
+    private Call call;
+    @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
+    @Captor ArgumentCaptor<Callback> callbackCaptor;
     private ResponseListener<ItemManager.Item> itemListener;
     private ResponseListener<UserManager.User> userListener;
     private ResponseListener<ItemManager.Item[]> storiesListener;
@@ -53,52 +48,62 @@ public class HackerNewsClientTest {
         itemListener = mock(ResponseListener.class);
         storiesListener = mock(ResponseListener.class);
         userListener = mock(ResponseListener.class);
+        call = mock(Call.class);
+        when(TestRestServiceFactory.hnRestService.item(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.askStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.topStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.jobStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.newStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.showStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.user(anyString())).thenReturn(call);
     }
 
     @Test
     public void testGetItemNoListener() {
         client.getItem("1", null);
-        verify(TestRestServiceFactory.hnRestService, never()).item(anyString(), getItemCallback.capture());
+        verify(TestRestServiceFactory.hnRestService, never()).item(anyString());
     }
 
     @Test
     public void testGetItemSuccess() {
         client.getItem("1", itemListener);
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"), getItemCallback.capture());
+        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
+        verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.HackerNewsItem hnItem = mock(HackerNewsClient.HackerNewsItem.class);
-        getItemCallback.getValue().success(hnItem, createResponse(200));
+        callbackCaptor.getValue().onResponse(Response.success(hnItem), null);
         verify(itemListener).onResponse(eq(hnItem));
     }
 
     @Test
     public void testGetItemFailure() {
         client.getItem("1", itemListener);
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"), getItemCallback.capture());
-        RetrofitError retrofitError = mock(RetrofitError.class);
-        when(retrofitError.getMessage()).thenReturn("message");
-        getItemCallback.getValue().failure(retrofitError);
+        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(new Throwable("message"));
         verify(itemListener).onError(eq("message"));
     }
 
     @Test
     public void testGetItemFailureNoMessage() {
         client.getItem("1", itemListener);
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"), getItemCallback.capture());
-        getItemCallback.getValue().failure(null);
+        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(null);
         verify(itemListener).onError(eq(""));
     }
 
     @Test
     public void testGetStoriesNoListener() {
         client.getStories(ItemManager.TOP_FETCH_MODE, null);
-        verify(TestRestServiceFactory.hnRestService, never()).topStories(getStoriesCallback.capture());
+        verify(TestRestServiceFactory.hnRestService, never()).topStories();
     }
 
     @Test
     public void testGetTopStoriesSuccess() {
         client.getStories(ItemManager.TOP_FETCH_MODE, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).topStories(getStoriesCallback.capture());
-        getStoriesCallback.getValue().success(new int[]{1, 2}, createResponse(200));
+        verify(TestRestServiceFactory.hnRestService).topStories();
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(Response.success(new int[]{1, 2}), null);
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(2);
     }
@@ -106,8 +111,9 @@ public class HackerNewsClientTest {
     @Test
     public void testGetNewStoriesNull() {
         client.getStories(ItemManager.NEW_FETCH_MODE, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).newStories(getStoriesCallback.capture());
-        getStoriesCallback.getValue().success(null, createResponse(200));
+        verify(TestRestServiceFactory.hnRestService).newStories();
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(Response.success(null), null);
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -115,8 +121,9 @@ public class HackerNewsClientTest {
     @Test
     public void testGetAskEmpty() {
         client.getStories(ItemManager.ASK_FETCH_MODE, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).askStories(getStoriesCallback.capture());
-        getStoriesCallback.getValue().success(new int[]{}, createResponse(200));
+        verify(TestRestServiceFactory.hnRestService).askStories();
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(Response.success(new int[]{}), null);
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -124,64 +131,62 @@ public class HackerNewsClientTest {
     @Test
     public void testGetShowFailure() {
         client.getStories(ItemManager.SHOW_FETCH_MODE, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).showStories(getStoriesCallback.capture());
-        RetrofitError retrofitError = mock(RetrofitError.class);
-        when(retrofitError.getMessage()).thenReturn("message");
-        getStoriesCallback.getValue().failure(retrofitError);
+        verify(TestRestServiceFactory.hnRestService).showStories();
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(new Throwable("message"));
         verify(storiesListener).onError(eq("message"));
     }
 
     @Test
     public void testGetJobsFailureNoMessage() {
         client.getStories(ItemManager.JOBS_FETCH_MODE, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).jobStories(getStoriesCallback.capture());
-        getStoriesCallback.getValue().failure(null);
+        verify(TestRestServiceFactory.hnRestService).jobStories();
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(null);
         verify(storiesListener).onError(eq(""));
     }
 
     @Test
     public void testGetUserNoListener() {
         client.getUser("username", null);
-        verify(TestRestServiceFactory.hnRestService, never()).user(anyString(), getUserCallback.capture());
+        verify(TestRestServiceFactory.hnRestService, never()).user(anyString());
     }
 
     @Test
     public void testGetUserSuccess() {
         client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
+        verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.UserItem hnUser = mock(HackerNewsClient.UserItem.class);
-        getUserCallback.getValue().success(hnUser, createResponse(200));
+        callbackCaptor.getValue().onResponse(Response.success(hnUser), null);
         verify(userListener).onResponse(eq(hnUser));
     }
 
     @Test
     public void testGetUserNull() {
         client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
-        getUserCallback.getValue().success(null, createResponse(200));
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onResponse(Response.success(null), null);
         verify(userListener).onResponse((UserManager.User) isNull());
     }
 
     @Test
     public void testGetUserFailure() {
         client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
-        RetrofitError retrofitError = mock(RetrofitError.class);
-        when(retrofitError.getMessage()).thenReturn("message");
-        getUserCallback.getValue().failure(retrofitError);
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(new Throwable("message"));
         verify(userListener).onError(eq("message"));
     }
 
     @Test
     public void testGetUserFailureNoMessage() {
         client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"), getUserCallback.capture());
-        getUserCallback.getValue().failure(null);
+        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(null);
         verify(userListener).onError(eq(""));
-    }
-
-    private Response createResponse(int statusCode) {
-        return new Response("", statusCode, "", new ArrayList<Header>(), mock(TypedInput.class));
     }
 
     @Module(

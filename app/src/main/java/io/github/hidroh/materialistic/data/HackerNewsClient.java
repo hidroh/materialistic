@@ -34,9 +34,10 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Headers;
 import retrofit.http.Path;
@@ -47,7 +48,7 @@ import retrofit.http.Path;
 public class HackerNewsClient implements ItemManager, UserManager {
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
-    private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0";
+    private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0/";
     private RestService mRestService;
 
     @Inject
@@ -60,35 +61,36 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-
-        final Callback<int[]> callback = new Callback<int[]>() {
-            @Override
-            public void success(int[] ints, Response response) {
-                listener.onResponse(toItems(ints));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                listener.onError(error != null ? error.getMessage() : "");
-            }
-        };
+        Call<int[]> call;
         switch (filter) {
             case NEW_FETCH_MODE:
-                mRestService.newStories(callback);
+                call = mRestService.newStories();
                 break;
             case SHOW_FETCH_MODE:
-                mRestService.showStories(callback);
+                call = mRestService.showStories();
                 break;
             case ASK_FETCH_MODE:
-                mRestService.askStories(callback);
+                call = mRestService.askStories();
                 break;
             case JOBS_FETCH_MODE:
-                mRestService.jobStories(callback);
+                call = mRestService.jobStories();
                 break;
             default:
-                mRestService.topStories(callback);
+                call = mRestService.topStories();
                 break;
         }
+        call.enqueue(new Callback<int[]>() {
+            @Override
+            public void onResponse(Response<int[]> response, Retrofit retrofit) {
+                listener.onResponse(toItems(response.body()));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                listener.onError(t != null ? t.getMessage() : "");
+
+            }
+        });
     }
 
     @Override
@@ -97,17 +99,18 @@ public class HackerNewsClient implements ItemManager, UserManager {
             return;
         }
 
-        mRestService.item(itemId, new Callback<HackerNewsItem>() {
-            @Override
-            public void success(HackerNewsItem item, Response response) {
-                listener.onResponse(item);
-            }
+        mRestService.item(itemId)
+                .enqueue(new Callback<HackerNewsItem>() {
+                    @Override
+                    public void onResponse(Response<HackerNewsItem> response, Retrofit retrofit) {
+                        listener.onResponse(response.body());
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                listener.onError(error != null ? error.getMessage() : "");
-            }
-        });
+                    @Override
+                    public void onFailure(Throwable t) {
+                        listener.onError(t != null ? t.getMessage() : "");
+                    }
+                });
     }
 
     @Override
@@ -115,24 +118,24 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
+        mRestService.user(username)
+                .enqueue(new Callback<UserItem>() {
+                    @Override
+                    public void onResponse(Response<UserItem> response, Retrofit retrofit) {
+                        UserItem user = response.body();
+                        if (user == null) {
+                            listener.onResponse(null);
+                            return;
+                        }
+                        user.submittedItems = toItems(user.submitted);
+                        listener.onResponse(user);
+                    }
 
-        final Callback<UserItem> callback = new Callback<UserItem>() {
-            @Override
-            public void success(UserItem user, Response response) {
-                if (user == null) {
-                    listener.onResponse(null);
-                    return;
-                }
-                user.submittedItems = toItems(user.submitted);
-                listener.onResponse(user);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                listener.onError(error != null ? error.getMessage() : "");
-            }
-        };
-        mRestService.user(username, callback);
+                    @Override
+                    public void onFailure(Throwable t) {
+                        listener.onError(t != null ? t.getMessage() : "");
+                    }
+                });
     }
 
     @NonNull
@@ -148,32 +151,32 @@ public class HackerNewsClient implements ItemManager, UserManager {
 
     interface RestService {
         @Headers("Cache-Control: max-age=600")
-        @GET("/topstories.json")
-        void topStories(Callback<int[]> callback);
+        @GET("topstories.json")
+        Call<int[]> topStories();
 
         @Headers("Cache-Control: max-age=600")
-        @GET("/newstories.json")
-        void newStories(Callback<int[]> callback);
+        @GET("newstories.json")
+        Call<int[]> newStories();
 
         @Headers("Cache-Control: max-age=600")
-        @GET("/showstories.json")
-        void showStories(Callback<int[]> callback);
+        @GET("showstories.json")
+        Call<int[]> showStories();
 
         @Headers("Cache-Control: max-age=600")
-        @GET("/askstories.json")
-        void askStories(Callback<int[]> callback);
+        @GET("askstories.json")
+        Call<int[]> askStories();
 
         @Headers("Cache-Control: max-age=600")
-        @GET("/jobstories.json")
-        void jobStories(Callback<int[]> callback);
+        @GET("jobstories.json")
+        Call<int[]> jobStories();
 
         @Headers("Cache-Control: max-age=300")
-        @GET("/item/{itemId}.json")
-        void item(@Path("itemId") String itemId, Callback<HackerNewsItem> callback);
+        @GET("item/{itemId}.json")
+        Call<HackerNewsItem> item(@Path("itemId") String itemId);
 
         @Headers("Cache-Control: max-age=300")
-        @GET("/user/{userId}.json")
-        void user(@Path("userId") String userId, Callback<UserItem> callback);
+        @GET("user/{userId}.json")
+        Call<UserItem> user(@Path("userId") String userId);
     }
 
     static class HackerNewsItem implements Item {

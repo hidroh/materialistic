@@ -16,13 +16,16 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import retrofit.Call;
 import retrofit.Callback;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class AlgoliaPopularClientTest {
@@ -30,6 +33,7 @@ public class AlgoliaPopularClientTest {
     @Inject RestServiceFactory factory;
     private ItemManager hackerNewsClient = mock(ItemManager.class);
     private AlgoliaPopularClient client;
+    private Call call;
 
     public AlgoliaPopularClientTest(String range) {
         this.range = range;
@@ -52,13 +56,17 @@ public class AlgoliaPopularClientTest {
         reset(TestRestServiceFactory.algoliaRestService);
         client = new AlgoliaPopularClient(RuntimeEnvironment.application, factory);
         client.mHackerNewsClient = hackerNewsClient;
+        call = mock(Call.class);
+        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestamp(anyString()))
+                .thenReturn(call);
     }
 
     @Test
     public void testGetStories() {
         client.getStories(range, mock(ResponseListener.class));
         verify(TestRestServiceFactory.algoliaRestService)
-                .searchByMinTimestamp(contains("created_at_i>"), any(Callback.class));
+                .searchByMinTimestamp(contains("created_at_i>"));
+        verify(call).enqueue(any(Callback.class));
     }
 
     @Module(

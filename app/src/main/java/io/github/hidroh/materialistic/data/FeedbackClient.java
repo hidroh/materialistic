@@ -21,8 +21,9 @@ import android.os.Build;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
+import retrofit.Response;
+import retrofit.Retrofit;
 import retrofit.http.Body;
 import retrofit.http.Headers;
 import retrofit.http.POST;
@@ -50,26 +51,26 @@ public interface FeedbackClient {
                     Build.MODEL,
                     Build.VERSION.SDK_INT,
                     BuildConfig.VERSION_CODE);
-            mFeedbackService.createGithubIssue(new Issue(title, body),
-                    new retrofit.Callback<Object>() {
+            mFeedbackService.createGithubIssue(new Issue(title, body))
+                    .enqueue(new retrofit.Callback<Object>() {
                         @Override
-                        public void success(Object object, Response response) {
+                        public void onResponse(Response<Object> response, Retrofit retrofit) {
                             callback.onSent(true);
                         }
 
                         @Override
-                        public void failure(RetrofitError error) {
+                        public void onFailure(Throwable t) {
                             callback.onSent(false);
                         }
                     });
         }
 
         interface FeedbackService {
-            String GITHUB_API_URL = "https://api.github.com";
+            String GITHUB_API_URL = "https://api.github.com/";
 
-            @POST("/repos/hidroh/materialistic/issues")
+            @POST("repos/hidroh/materialistic/issues")
             @Headers("Authorization: token " + BuildConfig.GITHUB_TOKEN)
-            void createGithubIssue(@Body Issue issue, retrofit.Callback<Object> callback);
+            Call<Object> createGithubIssue(@Body Issue issue);
         }
 
         static class Issue {
