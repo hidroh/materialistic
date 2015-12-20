@@ -17,8 +17,11 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -48,7 +51,9 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.SessionManager;
 
 public class ItemActivity extends InjectableActivity implements Scrollable {
 
@@ -61,18 +66,33 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     private ItemManager.Item mItem;
     private String mItemId = null;
     private ImageView mBookmark;
-    private boolean mFavoriteBound;
     private boolean mExternalBrowser;
     private Preferences.StoryViewMode mStoryViewMode;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject UserServices mUserServices;
+    @Inject SessionManager mSessionManager;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
     private FloatingActionButton mReplyButton;
+    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (mItem == null) {
+                return;
+            }
+            if (FavoriteManager.isCleared(uri)) {
+                mItem.setFavorite(false);
+                bindFavorite();
+            } else if (TextUtils.equals(mItemId, uri.getLastPathSegment())) {
+                mItem.setFavorite(FavoriteManager.isAdded(uri));
+                bindFavorite();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +117,8 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final Intent intent = getIntent();
+        getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
+                true, mObserver);
         if (savedInstanceState != null) {
             mItem = savedInstanceState.getParcelable(STATE_ITEM);
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
@@ -127,7 +149,6 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                     mItem = response;
                     supportInvalidateOptionsMenu();
                     bindData(mItem);
-                    bindFavorite();
                 }
 
                 @Override
@@ -136,12 +157,6 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                 }
             });
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bindFavorite();
     }
 
     @Override
@@ -181,9 +196,9 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     }
 
     @Override
-    protected void onPause() {
-        mFavoriteBound = false;
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
+        getContentResolver().unregisterContentObserver(mObserver);
     }
 
     @Override
@@ -195,53 +210,36 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (mItem == null) {
             return;
         }
-
         if (!mItem.isStoryType()) {
             return;
         }
-
         mBookmark.setVisibility(View.VISIBLE);
-        if (mFavoriteBound) { // prevent binding twice from onResponse and onResume
-            return;
-        }
+        decorateFavorite(mItem.isFavorite());
+        mBookmark.setOnClickListener(new View.OnClickListener() {
+            private boolean mUndo;
 
-        mFavoriteBound = true;
-        mFavoriteManager.check(this, mItem.getId(), new FavoriteManager.OperationCallbacks() {
             @Override
-            public void onCheckComplete(boolean isFavorite) {
-                super.onCheckComplete(isFavorite);
-                decorateFavorite(isFavorite);
-                mItem.setFavorite(isFavorite);
-                mBookmark.setOnClickListener(new View.OnClickListener() {
-                    private boolean mUndo;
-
-                    @Override
-                    public void onClick(View v) {
-                        final int toastMessageResId;
-                        if (!mItem.isFavorite()) {
-                            mFavoriteManager.add(ItemActivity.this, mItem);
-                            toastMessageResId = R.string.toast_saved;
-                        } else {
-                            mFavoriteManager.remove(ItemActivity.this, mItem.getId());
-                            toastMessageResId = R.string.toast_removed;
-                        }
-                        if (!mUndo) {
-                            Snackbar.make(mCoordinatorLayout, toastMessageResId, Snackbar.LENGTH_SHORT)
-                                    .setAction(R.string.undo, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            mUndo = true;
-                                            mBookmark.performClick();
-                                        }
-                                    })
-                                    .show();
-                        }
-                        mItem.setFavorite(!mItem.isFavorite());
-                        decorateFavorite(mItem.isFavorite());
-                        mUndo = false;
-                    }
-                });
-
+            public void onClick(View v) {
+                final int toastMessageResId;
+                if (!mItem.isFavorite()) {
+                    mFavoriteManager.add(ItemActivity.this, mItem);
+                    toastMessageResId = R.string.toast_saved;
+                } else {
+                    mFavoriteManager.remove(ItemActivity.this, mItem.getId());
+                    toastMessageResId = R.string.toast_removed;
+                }
+                if (!mUndo) {
+                    Snackbar.make(mCoordinatorLayout, toastMessageResId, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.undo, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mUndo = true;
+                                    mBookmark.performClick();
+                                }
+                            })
+                            .show();
+                }
+                mUndo = false;
             }
         });
     }
@@ -250,6 +248,8 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (story == null) {
             return;
         }
+        bindFavorite();
+        mSessionManager.view(this, story.getId());
         toggleReplyButton(true);
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override

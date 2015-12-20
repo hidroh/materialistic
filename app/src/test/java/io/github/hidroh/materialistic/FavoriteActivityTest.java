@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,6 +42,7 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowProgressDialog;
@@ -217,16 +217,25 @@ public class FavoriteActivityTest {
         verify(actionMode).finish();
 
         resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
-        manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
-                .onReceive(activity, new Intent(FavoriteManager.ACTION_CLEAR));
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("clear")
+                .build());
         assertEquals(1, adapter.getItemCount());
     }
 
     @Test
     public void testSwipeToDelete() {
-        BroadcastReceiver receiver = shadowOf(LocalBroadcastManager.getInstance(activity))
-                .getRegisteredBroadcastReceivers().get(0).broadcastReceiver;
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
         ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
                 .extract(adapter);
         shadowAdapter.makeItemVisible(0);
@@ -235,7 +244,11 @@ public class FavoriteActivityTest {
                 .onSwiped(holder, ItemTouchHelper.LEFT);
         verify(favoriteManager).remove(any(Context.class), anyCollection());
         resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        receiver.onReceive(activity, new Intent(FavoriteManager.ACTION_REMOVE));
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("2")
+                .build());
         assertEquals(1, adapter.getItemCount());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
@@ -248,7 +261,11 @@ public class FavoriteActivityTest {
         cv.put("url", "http://example.com");
         cv.put("time", String.valueOf(System.currentTimeMillis()));
         resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        receiver.onReceive(activity, new Intent(FavoriteManager.ACTION_ADD));
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("add")
+                .appendPath("2")
+                .build());
         assertEquals(2, adapter.getItemCount());
     }
 

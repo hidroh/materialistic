@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.shadows.ShadowToast;
@@ -37,6 +39,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
@@ -58,7 +61,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowFloatingActionButton.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowFloatingActionButton.class, ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -327,30 +330,30 @@ public class ItemActivityTest {
     @Test
     public void testFavoriteStory() {
         Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+        TestHnItem item = new TestHnItem(1L) {
             @NonNull
             @Override
             public String getType() {
                 return STORY_TYPE;
             }
-
-            @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
-            }
-        });
+        };
+        item.setFavorite(true);
+        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume();
-        verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
-        callbacks.getValue().onCheckComplete(true);
         assertEquals(R.drawable.ic_bookmark_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
         activity.findViewById(R.id.bookmarked).performClick();
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("1")
+                .build());
         assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
@@ -358,6 +361,11 @@ public class ItemActivityTest {
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("add")
+                .appendPath("1")
+                .build());
         assertEquals(R.drawable.ic_bookmark_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
@@ -366,30 +374,28 @@ public class ItemActivityTest {
     @Test
     public void testNonFavoriteStory() {
         Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1L) {
             @NonNull
             @Override
             public String getType() {
                 return STORY_TYPE;
             }
-
-            @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
-            }
         });
         controller.withIntent(intent).create().start().resume();
-        verify(favoriteManager).check(any(Context.class), eq("1"), callbacks.capture());
-        callbacks.getValue().onCheckComplete(false);
         assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
         activity.findViewById(R.id.bookmarked).performClick();
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("add")
+                .appendPath("1")
+                .build());
         assertEquals(R.drawable.ic_bookmark_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());

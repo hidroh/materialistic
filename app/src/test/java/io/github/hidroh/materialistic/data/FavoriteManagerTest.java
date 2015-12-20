@@ -81,19 +81,19 @@ public class FavoriteManagerTest {
 
     @Test
     public void testCheckNoId() {
-        manager.check(RuntimeEnvironment.application, null, callbacks);
+        manager.check(RuntimeEnvironment.application.getContentResolver(), null, callbacks);
         verify(callbacks, never()).onCheckComplete(anyBoolean());
     }
 
     @Test
     public void testCheckTrue() {
-        manager.check(RuntimeEnvironment.application, "1", callbacks);
+        manager.check(RuntimeEnvironment.application.getContentResolver(), "1", callbacks);
         verify(callbacks).onCheckComplete(eq(true));
     }
 
     @Test
     public void testCheckFalse() {
-        manager.check(RuntimeEnvironment.application, "-1", callbacks);
+        manager.check(RuntimeEnvironment.application.getContentResolver(), "-1", callbacks);
         verify(callbacks).onCheckComplete(eq(false));
     }
 
@@ -115,9 +115,7 @@ public class FavoriteManagerTest {
                 return "new title";
             }
         });
-        Intent actual = getBroadcastIntent();
-        assertThat(actual).hasAction(FavoriteManager.ACTION_ADD);
-        assertEquals("3", actual.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 
     @Test
@@ -127,21 +125,19 @@ public class FavoriteManagerTest {
         when(favorite.getUrl()).thenReturn("http://example.com");
         when(favorite.getDisplayedTitle()).thenReturn("title");
         manager.add(RuntimeEnvironment.application, favorite);
-        Intent actual = getBroadcastIntent();
-        assertThat(actual).hasAction(FavoriteManager.ACTION_ADD);
-        assertEquals("3", actual.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 
     @Test
     public void testClearAll() {
         manager.clear(RuntimeEnvironment.application, null);
-        assertThat(getBroadcastIntent()).hasAction(FavoriteManager.ACTION_CLEAR);
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 
     @Test
     public void testClearQuery() {
         manager.clear(RuntimeEnvironment.application, "blah");
-        assertThat(getBroadcastIntent()).hasAction(FavoriteManager.ACTION_CLEAR);
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 
     @Test
@@ -154,22 +150,19 @@ public class FavoriteManagerTest {
     @Test
     public void testRemoveId() {
         manager.remove(RuntimeEnvironment.application, "1");
-        Intent actual = getBroadcastIntent();
-        assertThat(actual).hasAction(FavoriteManager.ACTION_REMOVE);
-        assertEquals("1", actual.getStringExtra(FavoriteManager.ACTION_REMOVE_EXTRA_DATA));
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 
     @Test
     public void testRemoveMultipleNoId() {
         manager.remove(RuntimeEnvironment.application, (Set<String>) null);
-        assertThat(shadowOf(LocalBroadcastManager.getInstance(RuntimeEnvironment.application))
-                .getSentBroadcastIntents()).isEmpty();
+        assertThat(resolver.getNotifiedUris()).isEmpty();
     }
 
     @Test
     public void testRemoveMultiple() {
         manager.remove(RuntimeEnvironment.application, new HashSet<String>(){{add("1");add("2");}});
-        assertThat(getBroadcastIntent()).hasAction(FavoriteManager.ACTION_CLEAR);
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 
     @Test

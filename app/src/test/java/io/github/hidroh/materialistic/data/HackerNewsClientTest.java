@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic.data;
 
+import android.content.ContentResolver;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,6 +22,7 @@ import retrofit.Callback;
 import retrofit.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
@@ -31,6 +35,8 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricGradleTestRunner.class)
 public class HackerNewsClientTest {
     @Inject RestServiceFactory factory;
+    @Inject SessionManager sessionManager;
+    @Inject FavoriteManager favoriteManager;
     private HackerNewsClient client;
     private Call call;
     @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
@@ -38,13 +44,18 @@ public class HackerNewsClientTest {
     private ResponseListener<ItemManager.Item> itemListener;
     private ResponseListener<UserManager.User> userListener;
     private ResponseListener<ItemManager.Item[]> storiesListener;
+    @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallback;
+    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallback;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         ObjectGraph.create(new TestModule()).inject(this);
         reset(TestRestServiceFactory.hnRestService);
-        client = new HackerNewsClient(factory);
+        reset(sessionManager);
+        reset(favoriteManager);
+        client = new HackerNewsClient(RuntimeEnvironment.application, factory, sessionManager,
+                favoriteManager);
         itemListener = mock(ResponseListener.class);
         storiesListener = mock(ResponseListener.class);
         userListener = mock(ResponseListener.class);
@@ -71,12 +82,24 @@ public class HackerNewsClientTest {
         verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.HackerNewsItem hnItem = mock(HackerNewsClient.HackerNewsItem.class);
         callbackCaptor.getValue().onResponse(Response.success(hnItem), null);
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
+                sessionCallback.capture());
+        sessionCallback.getValue().onCheckViewedComplete(false);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(false);
         verify(itemListener).onResponse(eq(hnItem));
     }
 
     @Test
     public void testGetItemFailure() {
         client.getItem("1", itemListener);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(true);
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
+                sessionCallback.capture());
+        sessionCallback.getValue().onCheckViewedComplete(true);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(new Throwable("message"));
@@ -86,6 +109,12 @@ public class HackerNewsClientTest {
     @Test
     public void testGetItemFailureNoMessage() {
         client.getItem("1", itemListener);
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
+                sessionCallback.capture());
+        sessionCallback.getValue().onCheckViewedComplete(true);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(true);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null);
@@ -198,6 +227,18 @@ public class HackerNewsClientTest {
         @Singleton
         public RestServiceFactory provideRestServiceFactory() {
             return new TestRestServiceFactory();
+        }
+
+        @Provides
+        @Singleton
+        public SessionManager provideSessionManager() {
+            return mock(SessionManager.class);
+        }
+
+        @Provides
+        @Singleton
+        public FavoriteManager provideFavoriteManager() {
+            return mock(FavoriteManager.class);
         }
     }
 }

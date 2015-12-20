@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.data;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
@@ -49,11 +50,19 @@ public class HackerNewsClient implements ItemManager, UserManager {
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
     private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0/";
-    private RestService mRestService;
+    private final RestService mRestService;
+    private final SessionManager mSessionManager;
+    private final FavoriteManager mFavoriteManager;
+    private final ContentResolver mContentResolver;
 
     @Inject
-    public HackerNewsClient(RestServiceFactory factory) {
+    public HackerNewsClient(Context context, RestServiceFactory factory,
+                            SessionManager sessionManager,
+                            FavoriteManager favoriteManager) {
         mRestService = factory.create(BASE_API_URL, RestService.class);
+        mSessionManager = sessionManager;
+        mFavoriteManager = favoriteManager;
+        mContentResolver = context.getApplicationContext().getContentResolver();
     }
 
     @Override
@@ -98,19 +107,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-
-        mRestService.item(itemId)
-                .enqueue(new Callback<HackerNewsItem>() {
-                    @Override
-                    public void onResponse(Response<HackerNewsItem> response, Retrofit retrofit) {
-                        listener.onResponse(response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        listener.onError(t != null ? t.getMessage() : "");
-                    }
-                });
+        ItemCallbackWrapper wrapper = new ItemCallbackWrapper(listener);
+        mSessionManager.isViewed(mContentResolver, itemId, wrapper);
+        mFavoriteManager.check(mContentResolver, itemId, wrapper);
+        mRestService.item(itemId).enqueue(wrapper);
     }
 
     @Override
@@ -214,7 +214,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         // view state
         private HackerNewsItem[] kidItems;
         private boolean favorite;
-        private Boolean viewed;
+        private boolean viewed;
         private int localRevision = -1;
         private int level = 0;
         private boolean collapsed;
@@ -289,6 +289,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
             deleted = info.isDeleted();
             dead = info.isDead();
             score = info.getScore();
+            viewed = info.isViewed();
+            favorite = info.isFavorite();
         }
 
         @Override
@@ -336,7 +338,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
             dest.writeInt(score);
             dest.writeTypedArray(kidItems, 0);
             dest.writeInt(favorite ? 1 : 0);
-            dest.writeInt(viewed != null && viewed ? 1 : 0);
+            dest.writeInt(viewed ? 1 : 0);
             dest.writeInt(localRevision);
             dest.writeInt(level);
             dest.writeInt(dead ? 1 : 0);
@@ -520,7 +522,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
 
         @Override
-        public Boolean isViewed() {
+        public boolean isViewed() {
             return viewed;
         }
 
@@ -673,6 +675,66 @@ public class HackerNewsClient implements ItemManager, UserManager {
             dest.writeString(about);
             dest.writeIntArray(submitted);
             dest.writeTypedArray(submittedItems, flags);
+        }
+    }
+
+    private static class ItemCallbackWrapper implements SessionManager.OperationCallbacks,
+            FavoriteManager.OperationCallbacks, Callback<HackerNewsItem> {
+        private final ResponseListener<Item> responseListener;
+        private Boolean isViewed;
+        private Boolean isFavorite;
+        private Item item;
+        private String errorMessage;
+        private boolean hasError;
+        private boolean hasResponse;
+
+        private ItemCallbackWrapper(@NonNull ResponseListener<Item> responseListener) {
+            this.responseListener = responseListener;
+        }
+
+        @Override
+        public void onCheckViewedComplete(boolean isViewed) {
+            this.isViewed = isViewed;
+            done();
+        }
+
+        @Override
+        public void onCheckComplete(boolean isFavorite) {
+            this.isFavorite = isFavorite;
+            done();
+        }
+
+        @Override
+        public void onResponse(Response<HackerNewsItem> response, Retrofit retrofit) {
+            this.item = response.body();
+            this.hasResponse = true;
+            done();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            this.errorMessage = t != null ? t.getMessage() : "";
+            this.hasError = true;
+            done();
+        }
+
+        private void done() {
+            if (isViewed == null) {
+                return;
+            }
+            if (isFavorite == null) {
+                return;
+            }
+            if (!(hasResponse || hasError)) {
+                return;
+            }
+            if (hasResponse) {
+                item.setFavorite(isFavorite);
+                item.setIsViewed(isViewed);
+                responseListener.onResponse(item);
+            } else {
+                responseListener.onError(errorMessage);
+            }
         }
     }
 }
