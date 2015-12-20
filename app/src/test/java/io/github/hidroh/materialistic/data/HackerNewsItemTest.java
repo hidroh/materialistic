@@ -40,9 +40,9 @@ public class HackerNewsItemTest {
 
     @Test
     public void testViewed() {
-        assertNull(item.isViewed());
-        item.setIsViewed(false);
         assertFalse(item.isViewed());
+        item.setIsViewed(true);
+        assertTrue(item.isViewed());
     }
 
     @Test

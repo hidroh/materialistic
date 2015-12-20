@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SessionManager;
 
 /**
  * List activity that renders alternative layouts for portrait/landscape
@@ -60,6 +61,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private CoordinatorLayout mContentView;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject SessionManager mSessionManager;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
 
@@ -300,6 +302,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void handleMultiPaneItemSelected(final ItemManager.WebItem item) {
+        mSessionManager.view(this, item.getId());
         setTitle(item.getDisplayedTitle());
         findViewById(R.id.empty).setVisibility(View.GONE);
         toggleReplyButton(true);

@@ -49,6 +49,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.SessionManager;
 
 public class ItemActivity extends InjectableActivity implements Scrollable {
 
@@ -68,6 +69,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject UserServices mUserServices;
+    @Inject SessionManager mSessionManager;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
@@ -250,6 +252,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (story == null) {
             return;
         }
+        mSessionManager.view(this, story.getId());
         toggleReplyButton(true);
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override

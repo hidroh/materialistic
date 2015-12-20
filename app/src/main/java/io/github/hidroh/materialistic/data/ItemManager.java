@@ -196,7 +196,7 @@ public interface ItemManager {
          * Indicates if this item has been viewed
          * @return true if viewed, falst if not, null if unknown
          */
-        Boolean isViewed();
+        boolean isViewed();
 
         /**
          * Sets item view status

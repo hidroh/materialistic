@@ -9,7 +9,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public abstract class TestItem implements ItemManager.Item {
     private boolean favorite;
-    private Boolean viewed;
+    private boolean viewed;
     private boolean collapsed;
     private int lastKidCount;
     private boolean contentCollapsed;
@@ -121,7 +121,7 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public Boolean isViewed() {
+    public boolean isViewed() {
         return viewed;
     }
 

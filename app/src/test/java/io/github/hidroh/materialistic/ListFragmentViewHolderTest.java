@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
@@ -30,13 +32,12 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
-
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,6 +46,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -69,7 +71,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowAnimation.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowAnimation.class, ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
@@ -80,7 +82,6 @@ public class ListFragmentViewHolderTest {
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallbacks;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
     @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> storiesListener;
     @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> itemListener;
@@ -126,6 +127,10 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testStory() {
+        ContentValues cv = new ContentValues();
+        cv.put("itemid", "1");
+        shadowOf(ShadowApplication.getInstance().getContentResolver())
+                .insert(MaterialisticProvider.URI_VIEWED, cv);
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
@@ -134,8 +139,6 @@ public class ListFragmentViewHolderTest {
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
-        verify(sessionManager).isViewed(any(Context.class), anyString(), sessionCallbacks.capture());
-        sessionCallbacks.getValue().onCheckComplete(true);
         assertViewed();
     }
 
@@ -298,16 +301,20 @@ public class ListFragmentViewHolderTest {
     }
 
     @Test
-    public void testViewedBroadcast() {
+    public void testViewedObserver() {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         assertNotViewed();
         controller.pause();
-        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
-        List<ShadowLocalBroadcastManager.Wrapper> receivers = manager.getRegisteredBroadcastReceivers();
-        Intent intent = new Intent(SessionManager.ACTION_ADD);
-        intent.putExtra(SessionManager.ACTION_ADD_EXTRA_DATA, "1");
-        receivers.get(0).broadcastReceiver.onReceive(activity, intent);
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_VIEWED)
+                .iterator()
+                .next());
+        observer.dispatchChange(false, MaterialisticProvider.URI_VIEWED
+                .buildUpon().appendPath("2").build()); // not in view
+        observer.dispatchChange(false, MaterialisticProvider.URI_VIEWED
+                    .buildUpon().appendPath("1").build()); // in view
         controller.resume();
         assertViewed();
     }

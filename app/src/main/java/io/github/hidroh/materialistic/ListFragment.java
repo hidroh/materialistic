@@ -21,7 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -50,8 +53,8 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
-import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 
@@ -97,12 +100,10 @@ public class ListFragment extends BaseListFragment {
     private View mErrorView;
     private View mEmptyView;
     private Set<String> mChangedFavorites = new HashSet<>();
-    private Set<String> mViewed = new HashSet<>();
     private MultiPaneListener mMultiPaneListener;
     private RefreshCallback mRefreshCallback;
     private String mFilter;
     @Inject FavoriteManager mFavoriteManager;
-    @Inject SessionManager mSessionManager;
     private boolean mResumed;
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
@@ -129,8 +130,6 @@ public class ListFragment extends BaseListFragment {
                     mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
                 } else if (FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
                     mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_REMOVE_EXTRA_DATA));
-                } else if (SessionManager.ACTION_ADD.equals(intent.getAction())) {
-                    mViewed.add(intent.getStringExtra(SessionManager.ACTION_ADD_EXTRA_DATA));
                 }
                 if (!mResumed) {
                     // refresh favorite/viewed state if any changes
@@ -144,8 +143,6 @@ public class ListFragment extends BaseListFragment {
                 .registerReceiver(mBroadcastReceiver, FavoriteManager.makeAddIntentFilter());
         LocalBroadcastManager.getInstance(getActivity())
                 .registerReceiver(mBroadcastReceiver, FavoriteManager.makeRemoveIntentFilter());
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(mBroadcastReceiver, SessionManager.makeAddIntentFilter());
         PreferenceManager.getDefaultSharedPreferences(context)
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
         mAttached = true;
@@ -383,6 +380,30 @@ public class ListFragment extends BaseListFragment {
     }
 
     private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, ItemManager.Item> {
+        private final ContentObserver mObserver = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                ItemManager.Item item = mItemIdMaps.get(Long.valueOf(uri.getLastPathSegment()));
+                if (item != null) {
+                    item.setIsViewed(true);
+                    notifyDataSetChanged();
+                }
+            }
+        };
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            recyclerView.getContext().getContentResolver()
+                    .registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
+        }
+
+        @Override
+        public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+            super.onDetachedFromRecyclerView(recyclerView);
+            recyclerView.getContext().getContentResolver().unregisterContentObserver(mObserver);
+        }
+
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new ItemViewHolder(getLayoutInflater(null)
@@ -446,18 +467,6 @@ public class ListFragment extends BaseListFragment {
         }
 
         @Override
-        protected void handleItemClick(ItemManager.Item item, ItemViewHolder holder) {
-            super.handleItemClick(item, holder);
-            markAsViewed(item, holder);
-        }
-
-        @Override
-        protected void handleCommentButtonClick(ItemManager.Item item, ItemViewHolder holder) {
-            super.handleCommentButtonClick(item, holder);
-            markAsViewed(item, holder);
-        }
-
-        @Override
         protected void onItemSelected(ItemManager.Item item, View itemView) {
             mMultiPaneListener.onItemSelected(item);
         }
@@ -489,18 +498,7 @@ public class ListFragment extends BaseListFragment {
         }
 
         private void bindViewed(final ItemViewHolder holder, final ItemManager.Item story) {
-            if (story.isViewed() != null || mViewed.contains(story.getId())) {
-                holder.mStoryView.setViewed(mViewed.contains(story.getId()) || story.isViewed());
-            } else {
-                mSessionManager.isViewed(getActivity(), story.getId(),
-                        new SessionManager.OperationCallbacks() {
-                            @Override
-                            public void onCheckComplete(boolean isViewed) {
-                                story.setIsViewed(isViewed);
-                                holder.mStoryView.setViewed(isViewed);
-                            }
-                        });
-            }
+            holder.mStoryView.setViewed(story.isViewed());
         }
 
         private void bindFavorite(final ItemViewHolder holder, final ItemManager.Item story) {
@@ -519,12 +517,6 @@ public class ListFragment extends BaseListFragment {
             } else {
                 holder.mStoryView.setFavorite(story.isFavorite());
             }
-        }
-
-        private void markAsViewed(ItemManager.Item item, ItemViewHolder holder) {
-            mSessionManager.view(getActivity(), item.getId());
-            item.setIsViewed(true);
-            holder.mStoryView.setViewed(true);
         }
 
         private void showMoreOptions(View v, final ItemManager.Item story, final ItemViewHolder holder) {

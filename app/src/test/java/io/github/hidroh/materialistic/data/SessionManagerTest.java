@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.ShadowAsyncQueryHandler;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -15,8 +14,6 @@ import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.support.v4.Shadows;
 
-import static junit.framework.Assert.assertEquals;
-import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
@@ -47,19 +44,19 @@ public class SessionManagerTest {
 
     @Test
     public void testIsViewNull() {
-        manager.isViewed(RuntimeEnvironment.application, null, callbacks);
+        manager.isViewed(RuntimeEnvironment.application.getContentResolver(), null, callbacks);
         verify(callbacks, never()).onCheckComplete(anyBoolean());
     }
 
     @Test
     public void testIsViewTrue() {
-        manager.isViewed(RuntimeEnvironment.application, "1", callbacks);
+        manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "1", callbacks);
         verify(callbacks).onCheckComplete(eq(true));
     }
 
     @Test
     public void testIsViewFalse() {
-        manager.isViewed(RuntimeEnvironment.application, "-1", callbacks);
+        manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "-1", callbacks);
         verify(callbacks).onCheckComplete(eq(false));
     }
 
@@ -72,9 +69,6 @@ public class SessionManagerTest {
     @Test
     public void testView() {
         manager.view(RuntimeEnvironment.application, "3");
-        Intent actual = Shadows.shadowOf(LocalBroadcastManager.getInstance(RuntimeEnvironment.application))
-                .getSentBroadcastIntents().get(0);
-        assertThat(actual).hasAction(SessionManager.ACTION_ADD);
-        assertEquals("3", actual.getStringExtra(SessionManager.ACTION_ADD_EXTRA_DATA));
+        assertThat(resolver.getNotifiedUris()).isNotEmpty();
     }
 }
