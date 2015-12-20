@@ -23,7 +23,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import retrofit.Call;
 import retrofit.Callback;
+import retrofit.Response;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowAsyncQueryHandler.class})
@@ -43,6 +46,7 @@ public class ReadabilityClientTest {
     private ReadabilityClient client;
     private ReadabilityClient.Callback callback;
     private ShadowContentResolver resolver;
+    private Call call;
 
     @Before
     public void setUp() {
@@ -51,37 +55,39 @@ public class ReadabilityClientTest {
         reset(TestRestServiceFactory.readabilityService);
         client = new ReadabilityClient.Impl(RuntimeEnvironment.application, factory);
         callback = mock(ReadabilityClient.Callback.class);
+        call = mock(Call.class);
+        when(TestRestServiceFactory.readabilityService.parse(anyString())).thenReturn(call);
         resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
     }
 
     @Test
     public void testWithContent() {
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService)
-                .parse(anyString(), callbackCaptor.capture());
+        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(call).enqueue(callbackCaptor.capture());
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().success(readable, null);
+        callbackCaptor.getValue().onResponse(Response.success(readable), null);
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
     @Test
     public void testEmptyContent() {
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService)
-                .parse(anyString(), callbackCaptor.capture());
+        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(call).enqueue(callbackCaptor.capture());
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().success(readable, null);
+        callbackCaptor.getValue().onResponse(Response.success(readable), null);
         verify(callback).onResponse((String) isNull());
     }
 
     @Test
     public void testError() {
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService)
-                .parse(anyString(), callbackCaptor.capture());
-        callbackCaptor.getValue().failure(null);
+        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(call).enqueue(callbackCaptor.capture());
+        callbackCaptor.getValue().onFailure(null);
         verify(callback).onResponse((String) isNull());
     }
 
@@ -92,7 +98,8 @@ public class ReadabilityClientTest {
         cv.put("content", "<div>content</div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString(), any(Callback.class));
+        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
+        verify(call, never()).enqueue(any(Callback.class));
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -103,7 +110,8 @@ public class ReadabilityClientTest {
         cv.put("content", "<div></div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString(), any(Callback.class));
+        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
+        verify(call, never()).enqueue(any(Callback.class));
         verify(callback).onResponse((String) isNull());
     }
 

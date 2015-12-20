@@ -23,6 +23,7 @@ ext {
     supportVersion = '23.1.1'
     okHttpVersion = '2.7.0'
     daggerVersion = '1.2.2'
+    retrofitVersion = '2.0.0-beta2'
 }
 
 dependencies {
@@ -34,7 +35,8 @@ dependencies {
     compile "com.android.support:preference-v7:$supportVersion"
     compile "com.android.support:customtabs:$supportVersion"
     compile "com.squareup.dagger:dagger:$daggerVersion"
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile "com.squareup.retrofit:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit:converter-gson:$retrofitVersion"
     compile "com.squareup.okhttp:okhttp-urlconnection:$okHttpVersion"
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"
     compile "com.squareup.okhttp:logging-interceptor:$okHttpVersion"

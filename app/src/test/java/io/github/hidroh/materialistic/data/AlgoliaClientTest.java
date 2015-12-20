@@ -11,21 +11,19 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Header;
-import retrofit.client.Response;
-import retrofit.mime.TypedInput;
+import retrofit.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -43,6 +41,7 @@ public class AlgoliaClientTest {
     private AlgoliaClient client;
     private ResponseListener<ItemManager.Item> itemListener;
     private ResponseListener<ItemManager.Item[]> storiesListener;
+    private Call call;
 
     @Before
     public void setUp() {
@@ -54,6 +53,9 @@ public class AlgoliaClientTest {
         client.sSortByTime = true;
         itemListener = mock(ResponseListener.class);
         storiesListener = mock(ResponseListener.class);
+        call = mock(Call.class);
+        when(TestRestServiceFactory.algoliaRestService.search(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.algoliaRestService.searchByDate(anyString())).thenReturn(call);
     }
 
     @Test
@@ -65,20 +67,19 @@ public class AlgoliaClientTest {
     @Test
     public void testGetStoriesNoListener() {
         client.getStories("filter", null);
-        verify(TestRestServiceFactory.algoliaRestService, never()).searchByDate(eq("filter"),
-                getStoriesCallback.capture());
+        verify(TestRestServiceFactory.algoliaRestService, never()).searchByDate(eq("filter"));
+        verify(call, never()).enqueue(any(Callback.class));
     }
 
     @Test
     public void testGetStoriesSuccess() {
         client.getStories("filter", storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"),
-                getStoriesCallback.capture());
+        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(call).enqueue(getStoriesCallback.capture());
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson(
                 "{\"hits\":[{\"objectID\":\"1\"}]}",
                 AlgoliaClient.AlgoliaHits.class);
-        getStoriesCallback.getValue().success(hits,
-                new Response("", 200, "", new ArrayList<Header>(), mock(TypedInput.class)));
+        getStoriesCallback.getValue().onResponse(Response.success(hits), null);
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(1);
     }
@@ -87,19 +88,18 @@ public class AlgoliaClientTest {
     public void testGetStoriesSuccessSortByPopularity() {
         client.sSortByTime = false;
         client.getStories("filter", storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).search(eq("filter"),
-                getStoriesCallback.capture());
+        verify(TestRestServiceFactory.algoliaRestService).search(eq("filter"));
+        verify(call).enqueue(any(Callback.class));
     }
 
     @Test
     public void testGetStoriesEmpty() {
         client.getStories("filter", storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"),
-                getStoriesCallback.capture());
+        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(call).enqueue(getStoriesCallback.capture());
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson("{\"hits\":[]}",
                 AlgoliaClient.AlgoliaHits.class);
-        getStoriesCallback.getValue().success(hits,
-                new Response("", 200, "", new ArrayList<Header>(), mock(TypedInput.class)));
+        getStoriesCallback.getValue().onResponse(Response.success(hits), null);
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -107,20 +107,18 @@ public class AlgoliaClientTest {
     @Test
     public void testGetStoriesFailure() {
         client.getStories("filter", storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"),
-                getStoriesCallback.capture());
-        RetrofitError retrofitError = mock(RetrofitError.class);
-        when(retrofitError.getMessage()).thenReturn("message");
-        getStoriesCallback.getValue().failure(retrofitError);
+        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(call).enqueue(getStoriesCallback.capture());
+        getStoriesCallback.getValue().onFailure(new Throwable("message"));
         verify(storiesListener).onError(eq("message"));
     }
 
     @Test
     public void testGetStoriesFailureNoMessage() {
         client.getStories("filter", storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"),
-                getStoriesCallback.capture());
-        getStoriesCallback.getValue().failure(null);
+        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(call).enqueue(getStoriesCallback.capture());
+        getStoriesCallback.getValue().onFailure(null);
         verify(storiesListener).onError(eq(""));
     }
 

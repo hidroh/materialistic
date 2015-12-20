@@ -27,8 +27,9 @@ import android.text.TextUtils;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Call;
+import retrofit.Response;
+import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
@@ -73,22 +74,24 @@ public interface ReadabilityClient {
         }
 
         private void readabilityParse(final String itemId, String url, final Callback callback) {
-            mReadabilityService.parse(url, new retrofit.Callback<Readable>() {
-                @Override
-                public void success(Readable readable, Response response) {
-                    cache(itemId, readable.content);
-                    if (TextUtils.equals(EMPTY_CONTENT, readable.content)) {
-                        callback.onResponse(null);
-                    } else {
-                        callback.onResponse(readable.content);
-                    }
-                }
+            mReadabilityService.parse(url)
+                    .enqueue(new retrofit.Callback<Readable>() {
+                        @Override
+                        public void onResponse(Response<Readable> response, Retrofit retrofit) {
+                            Readable readable = response.body();
+                            cache(itemId, readable.content);
+                            if (TextUtils.equals(EMPTY_CONTENT, readable.content)) {
+                                callback.onResponse(null);
+                            } else {
+                                callback.onResponse(readable.content);
+                            }
+                        }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    callback.onResponse(null);
-                }
-            });
+                        @Override
+                        public void onFailure(Throwable t) {
+                            callback.onResponse(null);
+                        }
+                    });
         }
 
         private void cache(String itemId, String content) {
@@ -100,10 +103,10 @@ public interface ReadabilityClient {
         }
 
         interface ReadabilityService {
-            String READABILITY_API_URL = "https://readability.com/api/content/v1";
+            String READABILITY_API_URL = "https://readability.com/api/content/v1/";
 
-            @GET("/parser?token=" + BuildConfig.READABILITY_TOKEN)
-            void parse(@Query("url") String url, retrofit.Callback<Readable> callback);
+            @GET("parser?token=" + BuildConfig.READABILITY_TOKEN)
+            Call<Readable> parse(@Query("url") String url);
         }
 
         static class Readable {

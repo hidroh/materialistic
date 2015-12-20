@@ -24,8 +24,8 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
 public interface RestServiceFactory {
     <T> T create(String baseUrl, Class<T> clazz);
@@ -33,10 +33,10 @@ public interface RestServiceFactory {
     class Impl implements RestServiceFactory {
         private static final String TAG_OK_HTTP = "OkHttp";
         private static final long CACHE_SIZE = 1024 * 1024;
-        private final RestAdapter.Builder mBuilder;
+        private final OkHttpClient okHttpClient;
 
         public Impl(Context context) {
-            final OkHttpClient okHttpClient = new OkHttpClient();
+            okHttpClient = new OkHttpClient();
             HttpLoggingInterceptor interceptor =
                     new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                         @Override
@@ -49,18 +49,14 @@ public interface RestServiceFactory {
             okHttpClient.networkInterceptors().add(interceptor);
             okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
                     CACHE_SIZE));
-
-            RestAdapter.Builder builder = new RestAdapter.Builder()
-                    .setClient(new OkClient(okHttpClient));
-            builder.setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.BASIC :
-                    RestAdapter.LogLevel.NONE);
-            mBuilder = builder;
         }
 
         @Override
         public <T> T create(String baseUrl, Class<T> clazz) {
-            return mBuilder
-                    .setEndpoint(baseUrl)
+            return new Retrofit.Builder()
+                    .client(okHttpClient)
+                    .baseUrl(baseUrl)
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(clazz);
         }
