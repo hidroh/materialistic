@@ -23,8 +23,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
@@ -53,6 +56,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 
@@ -65,21 +69,23 @@ public class FavoriteFragment extends BaseListFragment
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (FavoriteManager.ACTION_GET.equals(intent.getAction())) {
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                }
-                final Intent emailIntent = AppUtils.makeEmailIntent(
-                        getString(R.string.favorite_email_subject),
-                        makeEmailContent(
-                                (FavoriteManager.Favorite[]) intent.getParcelableArrayExtra(
-                                        FavoriteManager.ACTION_GET_EXTRA_DATA)));
-                if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(emailIntent);
-                }
-            } else {
-                getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
             }
+            final Intent emailIntent = AppUtils.makeEmailIntent(
+                    getString(R.string.favorite_email_subject),
+                    makeEmailContent(
+                            (FavoriteManager.Favorite[]) intent.getParcelableArrayExtra(
+                                    FavoriteManager.ACTION_GET_EXTRA_DATA)));
+            if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(emailIntent);
+            }
+        }
+    };
+    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
         }
     };
     private ProgressDialog mProgressDialog;
@@ -158,12 +164,8 @@ public class FavoriteFragment extends BaseListFragment
         mDataChangedListener = (DataChangedListener) context;
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
                 FavoriteManager.makeGetIntentFilter());
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
-                FavoriteManager.makeClearIntentFilter());
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
-                FavoriteManager.makeRemoveIntentFilter());
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
-                FavoriteManager.makeAddIntentFilter());
+        context.getContentResolver()
+                .registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
     }
 
     @Override
@@ -386,6 +388,7 @@ public class FavoriteFragment extends BaseListFragment
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
+        getActivity().getContentResolver().unregisterContentObserver(mObserver);
         mMultiPaneListener = null;
         mDataChangedListener = null;
         if (mActionMode != null) {

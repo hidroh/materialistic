@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
-import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
@@ -42,8 +41,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,6 +66,7 @@ public class ListFragment extends BaseListFragment {
     private static final String STATE_GREEN_ITEMS = "state:greenItems";
     private static final String STATE_HIGHLIGHT_UPDATED = "state:highlightUpdated";
     private static final String STATE_USERNAME = "state:username";
+    private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -84,8 +82,6 @@ public class ListFragment extends BaseListFragment {
             };
     private final ListRecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private BroadcastReceiver mBroadcastReceiver;
-    private int mLocalRevision = 0;
     private ArrayList<ItemManager.Item> mItems;
     private ArrayList<ItemManager.Item> mUpdated = new ArrayList<>();
     private ArrayList<String> mGreenItems = new ArrayList<>();
@@ -99,7 +95,6 @@ public class ListFragment extends BaseListFragment {
     @Inject PopupMenu mPopupMenu;
     private View mErrorView;
     private View mEmptyView;
-    private Set<String> mChangedFavorites = new HashSet<>();
     private MultiPaneListener mMultiPaneListener;
     private RefreshCallback mRefreshCallback;
     private String mFilter;
@@ -109,6 +104,7 @@ public class ListFragment extends BaseListFragment {
     private boolean mHighlightUpdated = true;
     private boolean mAttached;
     private String mUsername;
+    private int mFavoriteRevision = -1;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -121,28 +117,6 @@ public class ListFragment extends BaseListFragment {
         if (context instanceof RefreshCallback) {
             mRefreshCallback = (RefreshCallback) context;
         }
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (FavoriteManager.ACTION_CLEAR.equals(intent.getAction())) {
-                    mLocalRevision++;
-                } else if (FavoriteManager.ACTION_ADD.equals(intent.getAction())) {
-                    mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA));
-                } else if (FavoriteManager.ACTION_REMOVE.equals(intent.getAction())) {
-                    mChangedFavorites.add(intent.getStringExtra(FavoriteManager.ACTION_REMOVE_EXTRA_DATA));
-                }
-                if (!mResumed) {
-                    // refresh favorite/viewed state if any changes
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        };
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(mBroadcastReceiver, FavoriteManager.makeClearIntentFilter());
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(mBroadcastReceiver, FavoriteManager.makeAddIntentFilter());
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(mBroadcastReceiver, FavoriteManager.makeRemoveIntentFilter());
         PreferenceManager.getDefaultSharedPreferences(context)
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
         mAttached = true;
@@ -160,6 +134,7 @@ public class ListFragment extends BaseListFragment {
             mShowAll = savedInstanceState.getBoolean(STATE_SHOW_ALL, true);
             mHighlightUpdated = savedInstanceState.getBoolean(STATE_HIGHLIGHT_UPDATED, true);
             mUsername = savedInstanceState.getString(STATE_USERNAME);
+            mFavoriteRevision = savedInstanceState.getInt(STATE_FAVORITE_REVISION);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
             mHighlightUpdated = Preferences.highlightUpdatedEnabled(getActivity());
@@ -233,6 +208,7 @@ public class ListFragment extends BaseListFragment {
         outState.putString(STATE_FILTER, mFilter);
         outState.putBoolean(STATE_SHOW_ALL, mShowAll);
         outState.putBoolean(STATE_HIGHLIGHT_UPDATED, mHighlightUpdated);
+        outState.putInt(STATE_FAVORITE_REVISION, mFavoriteRevision);
     }
 
     @Override
@@ -244,10 +220,8 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onDetach() {
         mAttached = false;
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
-        mBroadcastReceiver = null;
         mMultiPaneListener = null;
         mRefreshCallback = null;
         super.onDetach();
@@ -383,19 +357,34 @@ public class ListFragment extends BaseListFragment {
         private final ContentObserver mObserver = new ContentObserver(new Handler()) {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
-                ItemManager.Item item = mItemIdMaps.get(Long.valueOf(uri.getLastPathSegment()));
-                if (item != null) {
-                    item.setIsViewed(true);
+                if (FavoriteManager.isCleared(uri)) {
+                    mFavoriteRevision++; // invalidate all favorite statuses
                     notifyDataSetChanged();
+                    return;
                 }
+                ItemManager.Item item = mItemIdMaps.get(Long.valueOf(uri.getLastPathSegment()));
+                if (item == null) {
+                    return;
+                }
+                if (FavoriteManager.isAdded(uri)) {
+                    item.setFavorite(true);
+                    item.setLocalRevision(mFavoriteRevision);
+                } else if (FavoriteManager.isRemoved(uri)) {
+                    item.setFavorite(false);
+                    item.setLocalRevision(mFavoriteRevision);
+                } else {
+                    item.setIsViewed(true);
+                }
+                notifyDataSetChanged();
             }
         };
 
         @Override
         public void onAttachedToRecyclerView(RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
-            recyclerView.getContext().getContentResolver()
-                    .registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
+            ContentResolver cr = recyclerView.getContext().getContentResolver();
+            cr.registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
+            cr.registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
         }
 
         @Override
@@ -443,9 +432,10 @@ public class ListFragment extends BaseListFragment {
         protected void bindItem(final ItemViewHolder holder) {
             final ItemManager.Item story = getItem(holder.getAdapterPosition());
             bindUpdated(holder, story);
-            bindFavorite(holder, story);
-            bindViewed(holder, story);
             highlightUserPost(holder, story);
+            holder.mStoryView.setViewed(story.isViewed());
+            holder.mStoryView.setFavorite(story.getLocalRevision() >= mFavoriteRevision &&
+                    story.isFavorite());
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -497,28 +487,6 @@ public class ListFragment extends BaseListFragment {
             }
         }
 
-        private void bindViewed(final ItemViewHolder holder, final ItemManager.Item story) {
-            holder.mStoryView.setViewed(story.isViewed());
-        }
-
-        private void bindFavorite(final ItemViewHolder holder, final ItemManager.Item story) {
-            if (story.getLocalRevision() < mLocalRevision || mChangedFavorites.contains(story.getId())) {
-                story.setLocalRevision(mLocalRevision);
-                mChangedFavorites.remove(story.getId());
-                mFavoriteManager.check(getActivity(), story.getId(),
-                        new FavoriteManager.OperationCallbacks() {
-                            @Override
-                            public void onCheckComplete(boolean isFavorite) {
-                                story.setFavorite(isFavorite);
-                                holder.mStoryView.setFavorite(story.isFavorite());
-                            }
-
-                        });
-            } else {
-                holder.mStoryView.setFavorite(story.isFavorite());
-            }
-        }
-
         private void showMoreOptions(View v, final ItemManager.Item story, final ItemViewHolder holder) {
             mPopupMenu.create(getActivity(), v, Gravity.NO_GRAVITY);
             mPopupMenu.inflate(R.menu.menu_contextual_story);
@@ -528,7 +496,7 @@ public class ListFragment extends BaseListFragment {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     if (item.getItemId() == R.id.menu_contextual_save) {
-                        toggleSave(story, holder);
+                        toggleSave(story);
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_vote) {
@@ -536,10 +504,10 @@ public class ListFragment extends BaseListFragment {
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_comment) {
-                        Intent intent = new Intent(getActivity(), ComposeActivity.class);
-                        intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId());
-                        intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getDisplayedTitle());
-                        startActivity(intent);
+                        startActivity(new Intent(getActivity(), ComposeActivity.class)
+                                .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
+                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
+                                        story.getDisplayedTitle()));
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_profile) {
@@ -553,7 +521,7 @@ public class ListFragment extends BaseListFragment {
             mPopupMenu.show();
         }
 
-        private void toggleSave(final ItemManager.Item story, final ItemViewHolder holder) {
+        private void toggleSave(final ItemManager.Item story) {
             final int toastMessageResId;
             if (!story.isFavorite()) {
                 mFavoriteManager.add(getActivity(), story);
@@ -566,12 +534,10 @@ public class ListFragment extends BaseListFragment {
                     .setAction(R.string.undo, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            toggleSave(story, holder);
+                            toggleSave(story);
                         }
                     })
                     .show();
-            story.setFavorite(!story.isFavorite());
-            holder.mStoryView.setFavorite(story.isFavorite());
         }
 
         private void vote(final ItemManager.Item story, final ItemViewHolder holder) {

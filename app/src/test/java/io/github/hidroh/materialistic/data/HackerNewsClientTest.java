@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 public class HackerNewsClientTest {
     @Inject RestServiceFactory factory;
     @Inject SessionManager sessionManager;
+    @Inject FavoriteManager favoriteManager;
     private HackerNewsClient client;
     private Call call;
     @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
@@ -44,6 +45,7 @@ public class HackerNewsClientTest {
     private ResponseListener<UserManager.User> userListener;
     private ResponseListener<ItemManager.Item[]> storiesListener;
     @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallback;
+    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallback;
 
     @Before
     public void setUp() {
@@ -51,7 +53,9 @@ public class HackerNewsClientTest {
         ObjectGraph.create(new TestModule()).inject(this);
         reset(TestRestServiceFactory.hnRestService);
         reset(sessionManager);
-        client = new HackerNewsClient(RuntimeEnvironment.application, factory, sessionManager);
+        reset(favoriteManager);
+        client = new HackerNewsClient(RuntimeEnvironment.application, factory, sessionManager,
+                favoriteManager);
         itemListener = mock(ResponseListener.class);
         storiesListener = mock(ResponseListener.class);
         userListener = mock(ResponseListener.class);
@@ -80,16 +84,22 @@ public class HackerNewsClientTest {
         callbackCaptor.getValue().onResponse(Response.success(hnItem), null);
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
-        sessionCallback.getValue().onCheckComplete(false);
+        sessionCallback.getValue().onCheckViewedComplete(false);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(false);
         verify(itemListener).onResponse(eq(hnItem));
     }
 
     @Test
     public void testGetItemFailure() {
         client.getItem("1", itemListener);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(true);
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
-        sessionCallback.getValue().onCheckComplete(true);
+        sessionCallback.getValue().onCheckViewedComplete(true);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(new Throwable("message"));
@@ -101,7 +111,10 @@ public class HackerNewsClientTest {
         client.getItem("1", itemListener);
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
-        sessionCallback.getValue().onCheckComplete(true);
+        sessionCallback.getValue().onCheckViewedComplete(true);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(true);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null);
@@ -220,6 +233,12 @@ public class HackerNewsClientTest {
         @Singleton
         public SessionManager provideSessionManager() {
             return mock(SessionManager.class);
+        }
+
+        @Provides
+        @Singleton
+        public FavoriteManager provideFavoriteManager() {
+            return mock(FavoriteManager.class);
         }
     }
 }

@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -69,7 +67,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowAnimation.class, ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
@@ -320,39 +317,41 @@ public class ListFragmentViewHolderTest {
     }
 
     @Test
-    public void testFavoriteBroadcast() {
-        BroadcastReceiver receiver = shadowOf(LocalBroadcastManager.getInstance(activity))
-                .getRegisteredBroadcastReceivers().get(0).broadcastReceiver;
+    public void testFavoriteObserver() {
         verify(itemManager).getItem(anyString(), itemListener.capture());
+        item.setFavorite(true);
         itemListener.getValue().onResponse(item);
-        // initial bind should trigger fav manager
-        verify(favoriteManager).check(any(Context.class), eq("1"), favoriteCallbacks.capture());
-        favoriteCallbacks.getValue().onCheckComplete(true);
         assertTrue(item.isFavorite());
 
         controller.pause();
 
-        // broadcast clear should trigger fav manager
-        reset(favoriteManager);
-        receiver.onReceive(activity, new Intent(FavoriteManager.ACTION_CLEAR));
-        verify(favoriteManager).check(any(Context.class), eq("1"), favoriteCallbacks.capture());
-        favoriteCallbacks.getValue().onCheckComplete(false);
-        assertFalse(item.isFavorite());
-        // broadcast add should trigger fav manager
-        reset(favoriteManager);
-        Intent addIntent = new Intent(FavoriteManager.ACTION_ADD);
-        addIntent.putExtra(FavoriteManager.ACTION_ADD_EXTRA_DATA, "1");
-        receiver.onReceive(activity, addIntent);
-        verify(favoriteManager).check(any(Context.class), eq("1"), favoriteCallbacks.capture());
-        favoriteCallbacks.getValue().onCheckComplete(true);
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
+        // observed clear
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("clear")
+                .build());
+        adapter.makeItemVisible(0);
+        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
+        assertTrue(item.isFavorite()); // item is still favorite but invalidated
+        assertThat(viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
+        // observed add
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("add")
+                .appendPath("1")
+                .build());
         assertTrue(item.isFavorite());
-        // broadcast remove should trigger fav manager
-        reset(favoriteManager);
-        Intent removeIntent = new Intent(FavoriteManager.ACTION_REMOVE);
-        removeIntent.putExtra(FavoriteManager.ACTION_REMOVE_EXTRA_DATA, "1");
-        receiver.onReceive(activity, removeIntent);
-        verify(favoriteManager).check(any(Context.class), eq("1"), favoriteCallbacks.capture());
-        favoriteCallbacks.getValue().onCheckComplete(false);
+        // observed remove
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("1")
+                .build());
         assertFalse(item.isFavorite());
 
         controller.resume();
@@ -361,6 +360,11 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testSaveItem() {
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
@@ -369,12 +373,22 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_save));
         verify(favoriteManager).add(any(Context.class), eq(item));
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("add")
+                .appendPath("1")
+                .build());
         assertTrue(item.isFavorite());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(R.string.toast_saved);
         activity.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("1")
+                .build());
         assertFalse(item.isFavorite());
     }
 

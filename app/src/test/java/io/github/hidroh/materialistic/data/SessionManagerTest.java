@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.ContentValues;
 import android.content.ShadowAsyncQueryHandler;
-import android.support.v4.content.LocalBroadcastManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.support.v4.Shadows;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -45,26 +43,25 @@ public class SessionManagerTest {
     @Test
     public void testIsViewNull() {
         manager.isViewed(RuntimeEnvironment.application.getContentResolver(), null, callbacks);
-        verify(callbacks, never()).onCheckComplete(anyBoolean());
+        verify(callbacks, never()).onCheckViewedComplete(anyBoolean());
     }
 
     @Test
     public void testIsViewTrue() {
         manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "1", callbacks);
-        verify(callbacks).onCheckComplete(eq(true));
+        verify(callbacks).onCheckViewedComplete(eq(true));
     }
 
     @Test
     public void testIsViewFalse() {
         manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "-1", callbacks);
-        verify(callbacks).onCheckComplete(eq(false));
+        verify(callbacks).onCheckViewedComplete(eq(false));
     }
 
     @Test
     public void testViewNoId() {
         manager.view(RuntimeEnvironment.application, null);
-        assertThat(Shadows.shadowOf(LocalBroadcastManager.getInstance(RuntimeEnvironment.application))
-                .getSentBroadcastIntents()).isEmpty();
+        assertThat(resolver.getNotifiedUris()).isEmpty();
     }
     @Test
     public void testView() {

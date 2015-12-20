@@ -74,12 +74,12 @@ public class SessionManager {
     /**
      * Callback interface for asynchronous session operations
      */
-    static abstract class OperationCallbacks {
+    interface OperationCallbacks {
         /**
          * Fired when checking of view status is completed
          * @param isViewed  true if is viewed, false otherwise
          */
-        public void onCheckComplete(boolean isViewed) { }
+        void onCheckViewedComplete(boolean isViewed);
     }
 
     private static class SessionHandler extends AsyncQueryHandler {
@@ -105,7 +105,7 @@ public class SessionManager {
                 return;
             }
             if (cookie.equals(mItemId)) {
-                mCallback.onCheckComplete(cursor != null && cursor.getCount() > 0);
+                mCallback.onCheckViewedComplete(cursor != null && cursor.getCount() > 0);
                 mCallback = null;
             }
         }
