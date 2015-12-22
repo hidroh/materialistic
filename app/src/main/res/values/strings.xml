@@ -173,17 +173,19 @@
                 <style type="text/css">
                     @font-face {
                         font-family: materialistic;
-                        src: url("file:///android_asset/%s")}
+                        src: url("file:///android_asset/%1$s")}
                     body {
                         font-family: materialistic;
-                        font-size: %fpx;
-                        color: #%s;
+                        font-size: %2$fpx;
+                        color: #%3$s;
+                        margin: %6$fpx %7$fpx %6$fpx %7$fpx;
                     }
-                    a {color: #%s;}
+                    a {color: #%4$s;}
                     img {display: inline; height: auto; max-width: 100%%;}
+                    pre {white-space: pre-wrap;}
                 </style>
             </head>
-            <body>%s</body>
+            <body>%5$s</body>
             </html>"
         ]]>
     </string>

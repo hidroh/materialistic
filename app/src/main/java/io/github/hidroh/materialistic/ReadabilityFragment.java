@@ -213,7 +213,9 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
                 mTextSize,
                 mTextColor,
                 mTextLinkColor,
-                html);
+                html,
+                toHtmlPx(getResources().getDimension(R.dimen.activity_vertical_margin)),
+                toHtmlPx(getResources().getDimension(R.dimen.activity_horizontal_margin)));
     }
 
     private String toHtmlColor(@AttrRes int colorAttr) {
@@ -222,7 +224,10 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     private float toHtmlPx(@StyleRes int textStyleAttr) {
-        return AppUtils.getDimension(getActivity(), textStyleAttr, R.attr.contentTextSize) /
-                getResources().getDisplayMetrics().density;
+        return toHtmlPx(AppUtils.getDimension(getActivity(), textStyleAttr, R.attr.contentTextSize));
+    }
+
+    private float toHtmlPx(float dimen) {
+        return dimen / getResources().getDisplayMetrics().density;
     }
 }
