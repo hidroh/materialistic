@@ -37,49 +37,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@android:id/list"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include layout="@layout/list"
-            android:id="@android:id/list" />
-
-        <TextView
-            android:id="@id/empty"
-            android:layout_toRightOf="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|center_vertical"
-            android:background="?attr/colorCardHighlight"
-            android:text="@string/select_story"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="@dimen/abc_text_size_headline_material"/>
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
-            app:tabTextColor="?android:attr/textColorPrimary"
-            android:background="?attr/colorPrimary"
-            android:layout_toRightOf="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@id/content"
-            android:layout_below="@id/tab_layout"
-            android:layout_toRightOf="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </RelativeLayout>
-
-    <include layout="@layout/button_reply"
-        android:id="@+id/reply_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/fab_scrolling_view_behavior"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/content"
-        app:layout_anchorGravity="bottom|right" />
+        android:layout_height="match_parent" />
 
 </android.support.design.widget.CoordinatorLayout>

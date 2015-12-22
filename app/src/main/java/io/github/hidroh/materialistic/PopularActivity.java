@@ -81,11 +81,6 @@ public class PopularActivity extends BaseListActivity {
     }
 
     @Override
-    protected boolean isItemOptionsMenuVisible() {
-        return mSelectedItem != null;
-    }
-
-    @Override
     protected boolean isSearchable() {
         return false;
     }

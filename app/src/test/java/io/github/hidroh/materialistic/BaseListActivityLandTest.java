@@ -2,6 +2,8 @@ package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,7 @@ import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -62,37 +65,45 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testRotate() {
-        activity.onItemSelected(new TestWebItem() {
+        activity.onItemSelected(new TestHnItem(1L) {
             @Override
             public String getDisplayedTitle() {
                 return "item title";
             }
 
+            @NonNull
             @Override
-            public String getId() {
-                return "1";
+            public String getType() {
+                return STORY_TYPE;
             }
         });
         assertThat(activity).hasTitle("item title");
 
+        Bundle savedState = new Bundle();
+        activity.onSaveInstanceState(savedState);
         RuntimeEnvironment.setQualifiers("");
-        activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
+        controller = Robolectric.buildActivity(TestListActivity.class);
+        activity = controller.create(savedState).postCreate(null).start().resume().get();
         assertThat(activity).hasTitle(activity.getString(R.string.title_activity_list));
 
+        savedState = new Bundle();
+        activity.onSaveInstanceState(savedState);
         RuntimeEnvironment.setQualifiers("w820dp-land");
-        activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
+        controller = Robolectric.buildActivity(TestListActivity.class);
+        activity = controller.create(savedState).postCreate(null).start().resume().get();
         assertThat(activity).hasTitle("item title");
-        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @Test
     public void testSelectItemOpenStory() {
         assertThat(activity.findViewById(R.id.empty)).isVisible();
-        activity.onItemSelected(new TestWebItem() {
+        activity.onItemSelected(new TestHnItem(1L) {
+            @NonNull
             @Override
-            public String getId() {
-                return "1";
+            public String getType() {
+                return STORY_TYPE;
             }
 
             @Override
@@ -120,10 +131,16 @@ public class BaseListActivityLandTest {
                         activity.getString(R.string.pref_story_display_value_comments))
                 .commit();
         controller.pause().resume();
-        activity.onItemSelected(new TestWebItem() {
+        activity.onItemSelected(new TestHnItem(1L) {
             @Override
             public String getId() {
                 return "1";
+            }
+
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
             }
         });
         assertCommentMode();
@@ -140,10 +157,11 @@ public class BaseListActivityLandTest {
                         activity.getString(R.string.pref_story_display_value_readability))
                 .commit();
         controller.pause().resume();
-        activity.onItemSelected(new TestWebItem() {
+        activity.onItemSelected(new TestHnItem(1L) {
+            @NonNull
             @Override
-            public String getId() {
-                return "1";
+            public String getType() {
+                return STORY_TYPE;
             }
         });
         ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
@@ -183,7 +201,7 @@ public class BaseListActivityLandTest {
             }
         });
         assertThat(activity.findViewById(R.id.empty)).isNotVisible();
-        activity.clearSelection();
+        activity.onItemSelected(null);
         assertThat(activity.findViewById(R.id.empty)).isVisible();
         assertFalse(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
@@ -215,24 +233,23 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testScrollItemToTop() {
-        activity.onItemSelected(new TestWebItem() {
+        activity.onItemSelected(new TestHnItem(1L) {
+            @NonNull
             @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
+            public String getType() {
+                return STORY_TYPE;
             }
         });
-        RecyclerView itemRecyclerView = (RecyclerView) activity.findViewById(R.id.content)
-                .findViewById(R.id.recycler_view);
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(3, tabLayout.getTabCount());
+        tabLayout.getTabAt(0).select();
+        ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
+        viewPager.getAdapter().instantiateItem(viewPager, 0);
+        viewPager.getAdapter().finishUpdate(viewPager);
+        RecyclerView itemRecyclerView = (RecyclerView) viewPager.findViewById(R.id.recycler_view);
         itemRecyclerView.smoothScrollToPosition(1);
         assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(itemRecyclerView))
                 .getSmoothScrollToPosition());
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertEquals(3, tabLayout.getTabCount());
         tabLayout.getTabAt(1).select();
         tabLayout.getTabAt(0).select();
         tabLayout.getTabAt(0).select();
@@ -248,13 +265,13 @@ public class BaseListActivityLandTest {
 
     private void assertStoryMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
-        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     private void assertReadabilityMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2);
-        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
+        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 

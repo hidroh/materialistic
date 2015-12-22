@@ -20,7 +20,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
@@ -185,12 +184,6 @@ public class ListFragment extends BaseListFragment {
         } else {
             refresh();
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -463,7 +456,8 @@ public class ListFragment extends BaseListFragment {
 
         @Override
         protected boolean isSelected(String itemId) {
-            return mMultiPaneListener.getSelectedItem() != null &&
+            return mMultiPaneListener.isMultiPane() &&
+                    mMultiPaneListener.getSelectedItem() != null &&
                     itemId.equals(mMultiPaneListener.getSelectedItem().getId());
         }
 

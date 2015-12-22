@@ -28,7 +28,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
@@ -39,7 +38,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -54,11 +52,11 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 
 public class ItemActivity extends InjectableActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
-    public static final String EXTRA_ITEM_LEVEL = ItemActivity.class.getName() + ".EXTRA_ITEM_LEVEL";
     public static final String EXTRA_OPEN_COMMENTS = ItemActivity.class.getName() + ".EXTRA_OPEN_COMMENTS";
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
@@ -108,14 +106,11 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
-        toggleReplyButton(false);
         mVoteButton = (ImageButton) findViewById(R.id.vote_button);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final Intent intent = getIntent();
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
@@ -250,7 +245,6 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
         bindFavorite();
         mSessionManager.view(this, story.getId());
-        toggleReplyButton(true);
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -292,65 +286,17 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                         R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
                 break;
         }
-        final Fragment[] fragments = new Fragment[3];
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
         viewPager.setPageMarginDrawable(R.color.blackT12);
-        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                if (position == 0) {
-                    Bundle args = new Bundle();
-                    args.putInt(EXTRA_ITEM_LEVEL, getIntent().getIntExtra(EXTRA_ITEM_LEVEL, 0));
-                    args.putParcelable(ItemFragment.EXTRA_ITEM, story);
-                    return Fragment.instantiate(ItemActivity.this, ItemFragment.class.getName(), args);
-                } else if (position == getCount() - 1) {
-                    Bundle readabilityArgs = new Bundle();
-                    readabilityArgs.putParcelable(ReadabilityFragment.EXTRA_ITEM, story);
-                    return Fragment.instantiate(ItemActivity.this,
-                            ReadabilityFragment.class.getName(), readabilityArgs);
-                } else {
-                    return WebFragment.instantiate(ItemActivity.this, story);
-                }
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                fragments[position] = (Fragment) super.instantiateItem(container, position);
-                return fragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                if (story.isStoryType()) {
-                    return !mExternalBrowser ? 3 : 2;
-                } else {
-                    return 1;
-                }
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                if (position == 0) {
-                    return getString(R.string.comments_count, story.getKidCount());
-                } else if (position == getCount() - 1) {
-                    return getString(R.string.readability);
-                } else {
-                    return getString(R.string.article);
-                }
-            }
-        });
+        final ItemPagerAdapter adapter = new ItemPagerAdapter(this, getSupportFragmentManager(),
+                story, !mExternalBrowser);
+        viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                toggleReplyButton(tab.getPosition() == 0);
-            }
-
-            @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment activeFragment = fragments[viewPager.getCurrentItem()];
+                Fragment activeFragment = adapter.getItem(viewPager.getCurrentItem());
                 if (activeFragment != null) {
                     ((Scrollable) activeFragment).scrollToTop();
                 }
@@ -407,18 +353,5 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                         Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void toggleReplyButton(boolean visible) {
-        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams)
-                mReplyButton.getLayoutParams();
-        if (visible) {
-            mReplyButton.show();
-            p.setBehavior(new ScrollAwareFABBehavior());
-        } else {
-            mReplyButton.hide();
-            p.setBehavior(null);
-        }
-        mReplyButton.setLayoutParams(p);
     }
 }

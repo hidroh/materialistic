@@ -57,7 +57,6 @@ public class SearchActivityTest {
         assertEquals(activity.getString(R.string.title_activity_search),
                 activity.getDefaultTitle());
         assertEquals("filter", activity.getSupportActionBar().getSubtitle());
-        assertFalse(activity.isItemOptionsMenuVisible());
     }
 
 
@@ -68,7 +67,6 @@ public class SearchActivityTest {
         assertEquals(activity.getString(R.string.title_activity_search),
                 activity.getDefaultTitle());
         assertNull(activity.getSupportActionBar().getSubtitle());
-        assertFalse(activity.isItemOptionsMenuVisible());
     }
 
     @Test

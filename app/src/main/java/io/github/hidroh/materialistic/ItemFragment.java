@@ -286,8 +286,8 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mAdapter = new SinglePageItemRecyclerViewAdapter(mItemManager, mAdapterItems, autoExpand);
             ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
         } else {
-            mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems(),
-                    getArguments().getInt(ItemActivity.EXTRA_ITEM_LEVEL, 0));
+            mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems()
+            );
         }
         mAdapter.setMaxLines(mMaxLines);
         mAdapter.setHighlightUsername(mUsername);

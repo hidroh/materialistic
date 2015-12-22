@@ -27,14 +27,11 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class MultiPageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ItemRecyclerViewAdapter.ItemViewHolder> {
     private final ItemManager.Item[] mItems;
-    private final int mItemLevel;
 
     public MultiPageItemRecyclerViewAdapter(ItemManager itemManager,
-                                            ItemManager.Item[] items,
-                                            int itemLevel) {
+                                            ItemManager.Item[] items) {
         super(itemManager);
         this.mItems = items;
-        this.mItemLevel = itemLevel;
     }
 
     @Override
@@ -74,7 +71,6 @@ public class MultiPageItemRecyclerViewAdapter
     private void openItem(ItemManager.Item item) {
         final Intent intent = new Intent(mContext, ItemActivity.class);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, mItemLevel + 1);
         intent.putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
         mContext.startActivity(intent);
     }

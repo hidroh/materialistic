@@ -26,12 +26,12 @@ public class ListActivity extends InjectableActivity implements MultiPaneListene
     }
 
     @Override
-    public void clearSelection() {
-        multiPaneListener.clearSelection();
+    public ItemManager.WebItem getSelectedItem() {
+        return multiPaneListener.getSelectedItem();
     }
 
     @Override
-    public ItemManager.WebItem getSelectedItem() {
-        return multiPaneListener.getSelectedItem();
+    public boolean isMultiPane() {
+        return getResources().getBoolean(R.bool.multi_pane);
     }
 }

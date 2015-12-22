@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 
@@ -50,8 +51,11 @@ public class BaseListActivityTest {
 
     @Test
     public void testRotate() {
+        Bundle savedState = new Bundle();
+        activity.onSaveInstanceState(savedState);
         RuntimeEnvironment.setQualifiers("w820dp-land");
-        activity.onConfigurationChanged(RuntimeEnvironment.application.getResources().getConfiguration());
+        controller = Robolectric.buildActivity(TestListActivity.class);
+        activity = controller.create(savedState).postCreate(null).start().resume().visible().get();
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
     }
 
@@ -146,7 +150,7 @@ public class BaseListActivityTest {
                 return "1";
             }
         });
-        assertNull(activity.getSelectedItem());
+        assertNotNull(activity.getSelectedItem());
     }
 
     @Test
@@ -164,7 +168,10 @@ public class BaseListActivityTest {
         activity.getSupportActionBar().setSubtitle(null);
         controller.pause().resume();
         assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
-        shadowOf(activity).recreate();
+        Bundle savedState = new Bundle();
+        activity.onSaveInstanceState(savedState);
+        controller = Robolectric.buildActivity(TestListActivity.class);
+        activity = controller.create(savedState).postCreate(null).start().resume().visible().get();
         assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
     }
 

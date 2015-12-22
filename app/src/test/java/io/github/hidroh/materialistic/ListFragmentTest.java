@@ -71,7 +71,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isRefreshing();
@@ -85,7 +85,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
@@ -104,7 +104,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -156,7 +156,7 @@ public class ListFragmentTest {
         Fragment fragment = Fragment.instantiate(activity, ListFragment.class.getName(), args);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content, fragment)
+                .add(android.R.id.list, fragment)
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
         listener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {
@@ -178,7 +178,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -195,7 +195,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -212,7 +212,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -236,7 +236,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -252,7 +252,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
@@ -268,7 +268,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         Rect rect = new Rect();
@@ -287,7 +287,7 @@ public class ListFragmentTest {
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
         activity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content,
+                .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args),
                         ListFragment.class.getName())
                 .commit();

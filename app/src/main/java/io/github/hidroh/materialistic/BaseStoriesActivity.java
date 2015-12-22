@@ -95,8 +95,4 @@ public abstract class BaseStoriesActivity extends BaseListActivity
         return Fragment.instantiate(this, ListFragment.class.getName(), args);
     }
 
-    @Override
-    protected boolean isItemOptionsMenuVisible() {
-        return mSelectedItem != null;
-    }
 }
