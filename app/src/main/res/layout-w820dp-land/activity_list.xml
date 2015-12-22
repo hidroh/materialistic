@@ -45,6 +45,7 @@
         <android.support.v7.widget.CardView
             android:id="@android:id/list"
             app:cardCornerRadius="0dp"
+            app:cardBackgroundColor="?attr/colorCardBackground"
             android:layout_width="@dimen/list_width"
             android:layout_height="match_parent" />
 
