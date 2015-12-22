@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.os.Bundle;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +71,10 @@ public class PopularActivityTest {
                 any(ResponseListener.class));
         assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
         assertEquals(expectedRange, Preferences.getPopularRange(activity));
-        shadowOf(activity).recreate();
+        Bundle savedState = new Bundle();
+        activity.onSaveInstanceState(savedState);
+        controller = Robolectric.buildActivity(PopularActivity.class);
+        activity = controller.create(savedState).start().resume().visible().get();
         assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
     }
 

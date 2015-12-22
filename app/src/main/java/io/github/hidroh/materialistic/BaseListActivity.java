@@ -20,29 +20,28 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 
 /**
  * List activity that renders alternative layouts for portrait/landscape
@@ -52,103 +51,87 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() +
             ".LIST_FRAGMENT_TAG";
     private static final String STATE_SELECTED_ITEM = "state:selectedItem";
+    private static final String STATE_STORY_VIEW_MODE = "state:storyViewMode";
+    private static final String STATE_EXTERNAL_BROWSER = "state:externalBrowser";
     private boolean mIsMultiPane;
-    private boolean mIsResumed;
     protected ItemManager.WebItem mSelectedItem;
     private Preferences.StoryViewMode mStoryViewMode;
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
-    private CoordinatorLayout mContentView;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject SessionManager mSessionManager;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
+            = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (TextUtils.equals(key, getString(R.string.pref_external))) {
+                mExternalBrowser = Preferences.externalBrowserEnabled(BaseListActivity.this);
+            } else if (TextUtils.equals(key, getString(R.string.pref_story_display))) {
+                mStoryViewMode = Preferences.getDefaultStoryView(BaseListActivity.this);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mExternalBrowser = Preferences.externalBrowserEnabled(this);
+        setContentView(R.layout.activity_list);
         setTitle(getDefaultTitle());
-        super.setContentView(R.layout.activity_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
-        mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
-        mViewPager = (ViewPager) findViewById(R.id.content);
-        mViewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
-        mViewPager.setPageMarginDrawable(R.color.blackT12);
-        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mTabLayout.setTabMode(TabLayout.MODE_FIXED);
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
-        toggleReplyButton(false);
-        onCreateView();
-        final Fragment fragment;
+        findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+                if (fragment instanceof Scrollable) {
+                    ((Scrollable) fragment).scrollToTop();
+                }
+            }
+        });
+        mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
+        if (mIsMultiPane) {
+            mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+            mTabLayout.setVisibility(View.GONE);
+            mViewPager = (ViewPager) findViewById(R.id.content);
+            mViewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
+            mViewPager.setPageMarginDrawable(R.color.blackT12);
+            mViewPager.setVisibility(View.GONE);
+            mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
+            mReplyButton.hide();
+        }
         if (savedInstanceState == null) {
-            fragment = instantiateListFragment();
+            mStoryViewMode = Preferences.getDefaultStoryView(this);
+            mExternalBrowser = Preferences.externalBrowserEnabled(this);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(android.R.id.list,
-                            fragment,
+                            instantiateListFragment(),
                             LIST_FRAGMENT_TAG)
                     .commit();
         } else {
+            mStoryViewMode = Preferences.StoryViewMode.values()[
+                    savedInstanceState.getInt(STATE_STORY_VIEW_MODE, 0)];
+            mExternalBrowser = savedInstanceState.getBoolean(STATE_EXTERNAL_BROWSER);
             mSelectedItem = savedInstanceState.getParcelable(STATE_SELECTED_ITEM);
-            fragment = getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+            if (mIsMultiPane) {
+                openMultiPaneItem(mSelectedItem);
+            } else {
+                unbindViewPager();
+            }
         }
-        if (fragment instanceof Scrollable) {
-            findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((Scrollable) fragment).scrollToTop();
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        handleConfigurationChanged();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mStoryViewMode = Preferences.getDefaultStoryView(this);
-        mExternalBrowser = Preferences.externalBrowserEnabled(this);
-        if (isSearchable()) {
-            // close search view
-            supportInvalidateOptionsMenu();
-        }
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        mIsResumed = true;
-        handleConfigurationChanged();
-    }
-
-    @Override
-    protected void onPause() {
-        mIsResumed = false;
-        super.onPause();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (getResources().getBoolean(R.bool.multi_pane)) {
+        if (mIsMultiPane) {
             getMenuInflater().inflate(R.menu.menu_item, menu);
         }
-
         if (isSearchable()) {
             getMenuInflater().inflate(R.menu.menu_search, menu);
             MenuItem menuSearch = menu.findItem(R.id.menu_search);
@@ -164,12 +147,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!getResources().getBoolean(R.bool.multi_pane)) {
-            return isSearchable() || super.onPrepareOptionsMenu(menu);
+        if (mIsMultiPane) {
+            menu.findItem(R.id.menu_share).setVisible(mSelectedItem != null);
+            menu.findItem(R.id.menu_external).setVisible(mSelectedItem != null);
         }
-
-        menu.findItem(R.id.menu_share).setVisible(isItemOptionsMenuVisible());
-        menu.findItem(R.id.menu_external).setVisible(isItemOptionsMenuVisible());
         return isSearchable() || super.onPrepareOptionsMenu(menu);
     }
 
@@ -187,47 +168,46 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     @Override
-    public void setContentView(int layoutResID) {
-        addContentView(layoutResID);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
+        outState.putInt(STATE_STORY_VIEW_MODE, mStoryViewMode.ordinal());
     }
 
     @Override
-    public void onItemSelected(ItemManager.WebItem item) {
-        if (getSelectedItem() != null && item.getId().equals(getSelectedItem().getId())) {
-            return;
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+    }
 
-        mSelectedItem = item;
+    @Override
+    public void onItemSelected(@Nullable ItemManager.WebItem item) {
         if (mIsMultiPane) {
-            handleMultiPaneItemSelected(item);
-        } else {
-            if (mExternalBrowser) {
-                AppUtils.openWebUrlExternal(this, item.getDisplayedTitle(), item.getUrl());
-            } else {
-                openItem(item);
+            ItemManager.WebItem previousItem = mSelectedItem;
+            if (previousItem != null && item != null &&
+                    TextUtils.equals(item.getId(), previousItem.getId())) {
+                return;
             }
+            if (previousItem == null && item != null ||
+                    previousItem != null && item == null) {
+                supportInvalidateOptionsMenu();
+            }
+            openMultiPaneItem(item);
+        } else if (item != null) {
+            openSinglePaneItem(item);
         }
-        supportInvalidateOptionsMenu();
-    }
-
-    @Override
-    public void clearSelection() {
-        mSelectedItem = null;
-        if (mIsMultiPane) {
-            toggleReplyButton(false);
-            setTitle(getDefaultTitle());
-            findViewById(R.id.empty).setVisibility(View.VISIBLE);
-        }
-        supportInvalidateOptionsMenu();
+        mSelectedItem = item;
     }
 
     @Override
     public ItemManager.WebItem getSelectedItem() {
-        if (!mIsMultiPane) {
-            return null; // item selection not applicable for single pane
-        }
-
         return mSelectedItem;
+    }
+
+    @Override
+    public boolean isMultiPane() {
+        return mIsMultiPane;
     }
 
     /**
@@ -250,129 +230,52 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
      */
     protected abstract Fragment instantiateListFragment();
 
-    /**
-     * Checks if item options menu should be displayed
-     * @return  true to display item options menu, false otherwise
-     */
-    protected abstract boolean isItemOptionsMenuVisible();
-
-    protected View addContentView(@LayoutRes int layoutResID) {
-        View view = getLayoutInflater().inflate(layoutResID, mContentView, false);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
-                view.getLayoutParams();
-        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        view.setLayoutParams(params);
-        mContentView.addView(view);
-        return view;
-    }
-
-    /**
-     * Recreates view on first load or on orientation change that triggers layout change
-     */
-    protected void onCreateView() {}
-
-    private void handleConfigurationChanged() {
-        if (!mIsResumed) {
-            return;
-        }
-
-        // only recreate view if orientation change triggers layout change
-        if (mIsMultiPane == getResources().getBoolean(R.bool.multi_pane)) {
-            return;
-        }
-
-        mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
-        final RelativeLayout.LayoutParams params;
-        if (mIsMultiPane) {
-            params = new RelativeLayout.LayoutParams(
-                    getResources().getDimensionPixelSize(R.dimen.list_width),
-                    RelativeLayout.LayoutParams.MATCH_PARENT);
-            if (mSelectedItem != null) {
-                handleMultiPaneItemSelected(mSelectedItem);
-            }
+    private void openSinglePaneItem(ItemManager.WebItem item) {
+        if (mExternalBrowser) {
+            AppUtils.openWebUrlExternal(this, item.getDisplayedTitle(), item.getUrl());
         } else {
-            setTitle(getDefaultTitle());
-            params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT);
-            toggleReplyButton(false);
+            startActivity(new Intent(this, ItemActivity.class)
+                    .putExtra(ItemActivity.EXTRA_ITEM, item));
         }
-        findViewById(android.R.id.list).setLayoutParams(params);
-        supportInvalidateOptionsMenu();
     }
 
-    private void handleMultiPaneItemSelected(final ItemManager.WebItem item) {
-        mSessionManager.view(this, item.getId());
-        setTitle(item.getDisplayedTitle());
-        findViewById(R.id.empty).setVisibility(View.GONE);
-        toggleReplyButton(true);
-        mReplyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(BaseListActivity.this, ComposeActivity.class);
-                intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId());
-                intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle());
-                startActivity(intent);
-            }
-        });
-        final Fragment[] fragments = new Fragment[3];
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                switch (position) {
-                    case 0:
-                    default:
-                        Bundle args = new Bundle();
-                        args.putParcelable(ItemFragment.EXTRA_ITEM, item);
-                        return Fragment.instantiate(BaseListActivity.this,
-                                ItemFragment.class.getName(), args);
-                    case 1:
-                        return WebFragment.instantiate(BaseListActivity.this, item);
-                    case 2:
-                        Bundle readabilityArgs = new Bundle();
-                        readabilityArgs.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
-                        return Fragment.instantiate(BaseListActivity.this,
-                                ReadabilityFragment.class.getName(), readabilityArgs);
+    private void openMultiPaneItem(final ItemManager.WebItem item) {
+        if (item == null) {
+            setTitle(getDefaultTitle());
+            findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            mTabLayout.setVisibility(View.GONE);
+            mViewPager.setVisibility(View.GONE);
+            mReplyButton.hide();
+        } else {
+            setTitle(item.getDisplayedTitle());
+            findViewById(R.id.empty).setVisibility(View.GONE);
+            mTabLayout.setVisibility(View.VISIBLE);
+            mViewPager.setVisibility(View.VISIBLE);
+            mReplyButton.show();
+            mReplyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(BaseListActivity.this, ComposeActivity.class)
+                            .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
                 }
-            }
+            });
+            bindViewPager(item);
+            mSessionManager.view(this, item.getId());
+        }
+    }
 
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                fragments[position] = (Fragment) super.instantiateItem(container, position);
-                return fragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                return 3; // items in landscape are always stories
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                switch (position) {
-                    case 0:
-                    default:
-                        return getString(R.string.title_activity_item);
-                    case 1:
-                        return getString(R.string.article);
-                    case 2:
-                        return getString(R.string.readability);
-                }
-            }
-        });
+    private void bindViewPager(ItemManager.WebItem item) {
+        final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
+                getSupportFragmentManager(), item, true);
+        mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                toggleReplyButton(tab.getPosition() == 0);
-            }
-
-            @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment activeFragment = fragments[mViewPager.getCurrentItem()];
-                if (activeFragment != null) {
-                    ((Scrollable) activeFragment).scrollToTop();
+                Fragment fragment = adapter.getItem(mViewPager.getCurrentItem());
+                if (fragment != null) {
+                    ((Scrollable) fragment).scrollToTop();
                 }
             }
         });
@@ -386,22 +289,17 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     }
 
-    private void openItem(ItemManager.WebItem item) {
-        final Intent intent = new Intent(this, ItemActivity.class);
-        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        startActivity(intent);
+    private void unbindViewPager() {
+        // fragment manager always restores view pager fragments,
+        // even when view pager no longer exists (e.g. after rotation),
+        // so we have to explicitly remove those with view pager ID
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null && fragment.getId() == R.id.content) {
+                transaction.remove(fragment);
+            }
+        }
+        transaction.commit();
     }
 
-    private void toggleReplyButton(boolean visible) {
-        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams)
-                mReplyButton.getLayoutParams();
-        if (visible) {
-            mReplyButton.show();
-            p.setBehavior(new ScrollAwareFABBehavior());
-        } else {
-            mReplyButton.hide();
-            p.setBehavior(null);
-        }
-        mReplyButton.setLayoutParams(p);
-    }
 }

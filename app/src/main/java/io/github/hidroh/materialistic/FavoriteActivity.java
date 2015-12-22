@@ -19,6 +19,9 @@ package io.github.hidroh.materialistic;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,9 +29,9 @@ import android.view.View;
 public class FavoriteActivity extends BaseListActivity implements FavoriteFragment.DataChangedListener {
 
     private static final String STATE_FILTER = "state:filter";
+    private CoordinatorLayout mContentView;
     private View mEmptyView;
     private View mEmptySearchView;
-    private boolean mIsEmpty;
     private String mFilter;
 
     @Override
@@ -50,25 +53,28 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     }
 
     @Override
-    protected void onCreateView() {
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_FILTER, mFilter);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
         mEmptyView = addContentView(R.layout.empty_favorite);
         mEmptyView.findViewById(R.id.header_card_view).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                final View bookmark = mEmptyView.findViewById(R.id.bookmarked);
-                bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                View bookmark = mEmptyView.findViewById(R.id.bookmarked);
+                bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ?
+                        View.INVISIBLE : View.VISIBLE);
                 return true;
             }
         });
         mEmptyView.setVisibility(View.INVISIBLE);
         mEmptySearchView = addContentView(R.layout.empty_favorite_search);
         mEmptySearchView.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(STATE_FILTER, mFilter);
     }
 
     @Override
@@ -84,11 +90,6 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     }
 
     @Override
-    protected boolean isItemOptionsMenuVisible() {
-        return mSelectedItem != null && !mIsEmpty;
-    }
-
-    @Override
     protected boolean isSearchable() {
         return false;
     }
@@ -96,7 +97,6 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     @Override
     public void onDataChanged(boolean isEmpty, String filter) {
         mFilter = filter;
-        mIsEmpty = isEmpty;
         if (isEmpty) {
             if (TextUtils.isEmpty(filter)) {
                 mEmptySearchView.setVisibility(View.INVISIBLE);
@@ -113,5 +113,15 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
         }
 
         supportInvalidateOptionsMenu();
+    }
+
+    private View addContentView(@LayoutRes int layoutResID) {
+        View view = getLayoutInflater().inflate(layoutResID, mContentView, false);
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
+                view.getLayoutParams();
+        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+        view.setLayoutParams(params);
+        mContentView.addView(view);
+        return view;
     }
 }

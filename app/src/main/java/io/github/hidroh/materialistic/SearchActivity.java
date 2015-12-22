@@ -94,11 +94,6 @@ public class SearchActivity extends BaseListActivity {
         return Fragment.instantiate(this, ListFragment.class.getName(), args);
     }
 
-    @Override
-    protected boolean isItemOptionsMenuVisible() {
-        return mSelectedItem != null;
-    }
-
     private void sort(boolean byTime) {
         if (AlgoliaClient.sSortByTime == byTime) {
             return;

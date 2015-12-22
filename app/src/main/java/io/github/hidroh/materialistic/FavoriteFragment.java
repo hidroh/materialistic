@@ -22,7 +22,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -96,6 +95,7 @@ public class FavoriteFragment extends BaseListFragment
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
+            mMultiPaneListener.onItemSelected(null);
             mMenuTintDelegate.onOptionsMenuCreated(menu);
             return true;
         }
@@ -119,7 +119,7 @@ public class FavoriteFragment extends BaseListFragment
                                     return;
                                 }
                                 mPendingClear = true;
-                                mMultiPaneListener.clearSelection();
+                                mMultiPaneListener.onItemSelected(null);
                                 mFavoriteManager.remove(getActivity(), mSelected.values());
                                 actionMode.finish();
                             }
@@ -228,15 +228,10 @@ public class FavoriteFragment extends BaseListFragment
                     return;
                 }
                 mDataChangedListener.onDataChanged(mAdapter.getItemCount() == 0, mFilter);
+                getBaseActivity().supportInvalidateOptionsMenu();
             }
         });
         return view;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -288,6 +283,7 @@ public class FavoriteFragment extends BaseListFragment
         final boolean menuEnabled = !mSearchViewVisible && mAdapter.getItemCount() > 0;
         menu.findItem(R.id.menu_clear).setVisible(menuEnabled);
         menu.findItem(R.id.menu_email).setVisible(menuEnabled);
+        menu.findItem(R.id.menu_list_toggle).setVisible(menuEnabled);
     }
 
     @Override
@@ -443,10 +439,6 @@ public class FavoriteFragment extends BaseListFragment
                     if (mActionMode == null && !mSearchViewVisible) {
                         mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
                         toggle(favorite.getId(), holder.getAdapterPosition());
-                        if (mMultiPaneListener.getSelectedItem() != null) {
-                            mSelected.put(holder.getAdapterPosition(),
-                                    mMultiPaneListener.getSelectedItem().getId());
-                        }
                         return true;
                     }
 
@@ -496,7 +488,8 @@ public class FavoriteFragment extends BaseListFragment
 
         @Override
         protected boolean isSelected(String itemId) {
-            return mMultiPaneListener.getSelectedItem() != null &&
+            return mMultiPaneListener.isMultiPane() &&
+                    mMultiPaneListener.getSelectedItem() != null &&
                     itemId.equals(mMultiPaneListener.getSelectedItem().getId()) ||
                     mSelected.containsValue(itemId);
         }

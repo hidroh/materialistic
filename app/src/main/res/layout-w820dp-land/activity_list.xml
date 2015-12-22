@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015 Ha Duy Trung
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/content_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@id/toolbar"
+            android:theme="@style/AppToolbarTheme"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|snap|enterAlways" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.CardView
+            android:id="@android:id/list"
+            app:cardCornerRadius="0dp"
+            android:layout_width="@dimen/list_width"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@id/empty"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|center_vertical"
+            android:background="?attr/colorCardHighlight"
+            android:text="@string/select_story"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="@dimen/abc_text_size_headline_material"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            app:tabTextColor="?android:attr/textColorPrimary"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            android:background="?attr/colorPrimary"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@id/content"
+            android:layout_below="@id/tab_layout"
+            android:layout_toRightOf="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/button_reply"
+        android:id="@+id/reply_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/fab_scrolling_view_behavior"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/content"
+        app:layout_anchorGravity="bottom|right" />
+
+</android.support.design.widget.CoordinatorLayout>

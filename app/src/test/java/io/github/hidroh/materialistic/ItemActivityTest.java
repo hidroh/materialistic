@@ -48,8 +48,6 @@ import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -98,7 +96,6 @@ public class ItemActivityTest {
     public void testCustomScheme() {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 1);
         intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://item/1"));
         controller.withIntent(intent).create().start().resume();
         verify(hackerNewsClient).getItem(eq("1"), any(ResponseListener.class));
@@ -108,7 +105,6 @@ public class ItemActivityTest {
     public void testJobGivenDeepLink() {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 1);
         intent.setData(Uri.parse("https://news.ycombinator.com/item?id=1"));
         controller.withIntent(intent).create().start().resume();
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
@@ -151,7 +147,6 @@ public class ItemActivityTest {
     @Test
     public void testPoll() {
         Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM_LEVEL, 3);
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull
             @Override
@@ -517,15 +512,8 @@ public class ItemActivityTest {
     @Test
     public void testReply() {
         Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1L));
         controller.withIntent(intent).create().start().resume();
-        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(1).select();
-        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
-        ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).select();
-        assertThat(activity.findViewById(R.id.reply_button)).isVisible();
-        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
         activity.findViewById(R.id.reply_button).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class);

@@ -21,10 +21,12 @@
         android:id="@id/menu_external"
         android:title="@string/view_in_browser"
         android:icon="@drawable/ic_open_in_browser_white_24dp"
+        android:menuCategory="secondary"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@id/menu_share"
         android:title="@string/share"
         android:icon="@drawable/ic_share_grey600_24dp"
+        android:menuCategory="secondary"
         app:showAsAction="ifRoom" />
 </menu>
