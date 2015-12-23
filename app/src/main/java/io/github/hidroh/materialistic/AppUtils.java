@@ -40,6 +40,8 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.util.Pair;
@@ -368,6 +370,17 @@ public class AppUtils {
                     }
                 })
                 .show();
+    }
+
+    public static void toggleFab(FloatingActionButton fab, boolean visible) {
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        if (visible) {
+            fab.show();
+            p.setBehavior(new ScrollAwareFABBehavior());
+        } else {
+            fab.hide();
+            p.setBehavior(null);
+        }
     }
 
     private static CharSequence trim(CharSequence charSequence) {
