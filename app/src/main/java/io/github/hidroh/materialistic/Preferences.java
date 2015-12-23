@@ -222,7 +222,7 @@ public class Preferences {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putString(context.getString(R.string.pref_username), username)
-                .apply();;
+                .apply();
     }
 
     public static void reset(Context context) {

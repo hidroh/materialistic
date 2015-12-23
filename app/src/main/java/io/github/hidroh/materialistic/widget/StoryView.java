@@ -131,12 +131,12 @@ public class StoryView extends RelativeLayout implements Checkable {
             case ItemManager.Item.JOB_TYPE:
                 mSourceTextView.setText(null);
                 mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_work_grey600_18dp, 0, 0, 0);
+                        R.drawable.ic_work_white_18dp, 0, 0, 0);
                 break;
             case ItemManager.Item.POLL_TYPE:
                 mSourceTextView.setText(null);
                 mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
+                        R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;
             default:
                 mSourceTextView.setText(story.getSource());

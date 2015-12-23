@@ -18,9 +18,11 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/content_frame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="InconsistentLayout">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -52,13 +54,14 @@
         <TextView
             android:id="@id/empty"
             android:layout_toRightOf="@android:id/list"
+            android:layout_toEndOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_vertical"
             android:background="?attr/colorCardHighlight"
             android:text="@string/select_story"
             android:textColor="?android:attr/textColorSecondary"
-            android:textSize="@dimen/abc_text_size_headline_material"/>
+            android:textSize="@dimen/text_size_empty" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
@@ -67,6 +70,7 @@
             app:tabGravity="fill"
             android:background="?attr/colorPrimary"
             android:layout_toRightOf="@android:id/list"
+            android:layout_toEndOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -74,6 +78,7 @@
             android:id="@id/content"
             android:layout_below="@id/tab_layout"
             android:layout_toRightOf="@android:id/list"
+            android:layout_toEndOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

@@ -29,7 +29,8 @@
         android:layout_marginTop="@dimen/margin"
         android:layout_marginBottom="@dimen/margin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
         <io.github.hidroh.materialistic.widget.TextView
             android:id="@android:id/text2"
             android:text="@string/loading_text"
@@ -48,6 +49,7 @@
             android:gravity="center_vertical"
             android:layout_below="@android:id/text2"
             android:layout_toLeftOf="@+id/action_container"
+            android:layout_toStartOf="@+id/action_container"
             android:layout_alignTop="@id/action_container"
             android:layout_alignBottom="@id/action_container"
             android:layout_width="match_parent"
@@ -85,11 +87,13 @@
             android:gravity="center_vertical"
             android:layout_below="@android:id/text2"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <ImageButton
                 android:id="@+id/vote_button"
+                android:contentDescription="@string/vote_up"
                 tools:visibility="visible"
                 android:visibility="invisible"
                 android:src="@drawable/ic_thumb_up_white_24dp"
@@ -101,9 +105,10 @@
 
             <ImageButton
                 android:id="@id/bookmarked"
+                android:contentDescription="@string/save"
                 android:visibility="gone"
                 tools:visibility="visible"
-                android:src="@drawable/ic_bookmark_outline_white_24dp"
+                android:src="@drawable/ic_bookmark_border_white_24dp"
                 android:tint="?android:attr/textColorPrimary"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:minWidth="@null"

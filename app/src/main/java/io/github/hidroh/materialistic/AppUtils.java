@@ -320,6 +320,7 @@ public class AppUtils {
         }, null, true);
     }
 
+    @SuppressWarnings("deprecation")
     public static void openPlayStore(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |

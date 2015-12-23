@@ -23,7 +23,7 @@
     <!-- The navigation drawer -->
     <ScrollView
         android:id="@id/drawer"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:background="?attr/colorCardHighlight"
         android:scrollbars="none"
         android:layout_width="match_parent"
@@ -32,6 +32,6 @@
             android:name="io.github.hidroh.materialistic.DrawerFragment"
             android:tag="io.github.hidroh.materialistic.DrawerFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
     </ScrollView>
 </android.support.v4.widget.DrawerLayout>

@@ -25,7 +25,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <io.github.hidroh.materialistic.widget.TintableTextView
-        android:drawableTop="@drawable/ic_cloud_off_grey600_48dp"
+        android:drawableTop="@drawable/ic_cloud_off_white_48dp"
         android:text="@string/connection_error"
         style="@style/textEmptyStyle"/>
 </LinearLayout>

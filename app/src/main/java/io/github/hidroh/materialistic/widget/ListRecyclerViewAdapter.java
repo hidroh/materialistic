@@ -149,7 +149,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     /**
      * Handles item selection
      * @param item  item that has been selected
-     * @param itemView
+     * @param itemView selected item view
      */
     protected abstract void onItemSelected(T item, View itemView);
 

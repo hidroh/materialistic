@@ -24,8 +24,9 @@
         android:background="?attr/colorCardHighlight" />
     <ImageView
         android:id="@id/bookmarked"
-        android:src="@drawable/ic_bookmark_grey600_24dp"
-        android:gravity="top|left"
+        android:contentDescription="@string/saved"
+        android:src="@drawable/ic_bookmark_white_24dp"
+        android:gravity="top|start"
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,6 +37,7 @@
         android:inAnimation="@anim/slide_in_right"
         android:outAnimation="@anim/slide_out_right"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignTop="@id/title"
         android:layout_alignBottom="@id/meta_container"
         android:layout_width="@dimen/min_cardview_height"
@@ -64,6 +66,7 @@
 
         <ImageView
             android:src="@drawable/ic_thumb_up_white_24dp"
+            android:contentDescription="@string/voted"
             android:tint="@color/greenA700"
             android:layout_gravity="center_vertical|center_horizontal"
             android:layout_width="wrap_content"
@@ -76,6 +79,7 @@
         android:text="@string/loading_text"
         style="@style/textTitleStyle"
         android:layout_toRightOf="@id/rank_container"
+        android:layout_toEndOf="@id/rank_container"
         android:paddingTop="@dimen/padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -87,7 +91,9 @@
         android:orientation="vertical"
         android:layout_below="@id/title"
         android:layout_toRightOf="@id/rank_container"
+        android:layout_toEndOf="@id/rank_container"
         android:layout_toLeftOf="@id/comment"
+        android:layout_toStartOf="@id/comment"
         android:paddingBottom="@dimen/padding">
         <io.github.hidroh.materialistic.widget.TintableTextView
             android:id="@id/source"
@@ -103,6 +109,7 @@
     <include layout="@layout/button_comment"
         android:id="@id/comment"
         android:layout_toLeftOf="@+id/button_more"
+        android:layout_toStartOf="@+id/button_more"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignTop="@id/meta_container"
         android:layout_alignBottom="@id/meta_container"
@@ -112,6 +119,7 @@
     <include layout="@layout/button_more"
         android:id="@id/button_more"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignTop="@id/meta_container"
         android:layout_alignBottom="@id/meta_container"
         android:layout_width="wrap_content"
