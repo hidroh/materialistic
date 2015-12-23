@@ -15,8 +15,8 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <string name="license_text">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string translatable="false" name="license_text">
         <![CDATA[
             <p>Copyright 2015 Ha Duy Trung</p>
             <p>Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@
             limitations under the License.</p>
         ]]>
     </string>
-    <string name="libraries_text">
+    <string translatable="false" name="libraries_text">
         <![CDATA[
             <p><a href="https://github.com/square/retrofit">Square Retrofit</a> - Apache License v2.0</p>
             <p><a href="https://github.com/square/okhttp">Square OkHttp</a> - Apache License v2.0</p>
@@ -46,7 +46,7 @@
             <p>&nbsp;&nbsp;&nbsp;&nbsp;Roboto Slab - Apache License v2.0</p>
         ]]>
     </string>
-    <string name="third_party_licenses_text">
+    <string translatable="false" name="third_party_licenses_text" tools:ignore="TypographyOther">
         <![CDATA[
 <p>
 <b>The MIT License (MIT)</b>
