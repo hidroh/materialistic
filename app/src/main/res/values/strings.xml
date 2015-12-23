@@ -15,14 +15,13 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Materialistic</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_list">Top Stories</string>
     <string name="title_activity_item">Comments</string>
     <string name="filter_title_item">Materialistic</string>
-    <string name="loading_text">...</string>
     <string name="title_activity_web">Story</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
@@ -33,14 +32,6 @@
     <string name="license_title">License</string>
     <string name="third_party_licenses_title">3rd Party Licenses</string>
     <string name="developer_info_title">Developer Info</string>
-    <string name="developer_info_text">
-        <![CDATA[
-            <p>Ha Duy Trung</p>
-            <p><a href="https://twitter.com/hadt">@hadt</a></p>
-            <p><a href="https://github.com/hidroh">Github</a></p>
-            <p><a href="https://hidroh.github.io">Blog</a></p>
-        ]]>
-    </string>
     <string name="application_info_title">Application Info</string>
     <string name="application_info_text" formatted="false">
         <![CDATA[
@@ -58,7 +49,7 @@
     <string name="no_comments">It\'s still quiet here</string>
     <string name="confirm_clear">Clear all saved stories?</string>
     <string name="email">Export via email</string>
-    <string name="preparing">Preparing...</string>
+    <string name="preparing" tools:ignore="TypographyEllipsis">Preparing...</string>
     <string name="clear_selected">Clear selected</string>
     <string name="confirm_clear_selected">Clear selected saved stories?</string>
     <string name="search">Search</string>
@@ -105,7 +96,6 @@
     <string name="comments">Comments</string>
     <string name="comments_count" formatted="false">%s Comments</string>
     <string name="article">Article</string>
-    <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.ScrollAwareFABBehavior</string>
     <string name="reset_settings">Reset all settings</string>
     <string name="reset_settings_confirm">Reset all your preferences to app defaults?</string>
     <string name="last_updated" formatted="false">Last updated %s</string>
@@ -166,29 +156,6 @@
     <string name="comment_max_lines_4">Max 4 lines</string>
     <string name="comment_max_lines_5">Max 5 lines</string>
     <string name="comment_max_lines_all">All</string>
-    <string name="readability_html" formatted="false">
-        <![CDATA[
-        <html>
-            <head>
-                <style type="text/css">
-                    @font-face {
-                        font-family: materialistic;
-                        src: url("file:///android_asset/%1$s")}
-                    body {
-                        font-family: materialistic;
-                        font-size: %2$fpx;
-                        color: #%3$s;
-                        margin: %6$fpx %7$fpx %6$fpx %7$fpx;
-                    }
-                    a {color: #%4$s;}
-                    img {display: inline; height: auto; max-width: 100%%;}
-                    pre {white-space: pre-wrap;}
-                </style>
-            </head>
-            <body>%5$s</body>
-            </html>"
-        ]]>
-    </string>
     <string name="file_not_supported">Content type not supported</string>
     <string name="card_view">Card view</string>
     <string name="compact_view">Compact view</string>
@@ -210,7 +177,7 @@
     <string name="vote_up">Vote up</string>
     <string name="voted">Successfully voted</string>
     <string name="vote_failed">Fail to record vote. Please try again.</string>
-    <string name="sending">Sending...</string>
+    <string name="sending" tools:ignore="TypographyEllipsis">Sending...</string>
     <string name="add_comment">Add comment</string>
     <string name="title_activity_compose">Compose</string>
     <string name="send">Send</string>
