@@ -101,7 +101,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mViewPager.setPageMarginDrawable(R.color.blackT12);
             mViewPager.setVisibility(View.GONE);
             mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
-            mReplyButton.hide();
+            AppUtils.toggleFab(mReplyButton, false);
         }
         if (savedInstanceState == null) {
             mStoryViewMode = Preferences.getDefaultStoryView(this);
@@ -245,13 +245,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             findViewById(R.id.empty).setVisibility(View.VISIBLE);
             mTabLayout.setVisibility(View.GONE);
             mViewPager.setVisibility(View.GONE);
-            mReplyButton.hide();
+            AppUtils.toggleFab(mReplyButton, false);
         } else {
             setTitle(item.getDisplayedTitle());
             findViewById(R.id.empty).setVisibility(View.GONE);
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
-            mReplyButton.show();
+            AppUtils.toggleFab(mReplyButton, true);
             mReplyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
