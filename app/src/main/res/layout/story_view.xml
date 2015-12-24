@@ -15,7 +15,9 @@
   ~ limitations under the License.
   -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
     <View
         android:layout_width="@dimen/min_cardview_height"
         android:layout_height="match_parent"

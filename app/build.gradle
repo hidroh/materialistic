@@ -15,8 +15,10 @@ android {
     }
 
     lintOptions {
+        htmlReport false
+        xmlReport false
         textReport true
-        ignoreWarnings true
+        ignoreWarnings false
         abortOnError true
     }
 }
