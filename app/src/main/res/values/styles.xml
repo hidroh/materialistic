@@ -18,95 +18,6 @@
 <resources>
 
     <!-- ========================= -->
-    <!-- Application themes        -->
-    <!-- ========================= -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- color palette -->
-        <item name="colorPrimary">@color/orange500</item>
-        <item name="colorPrimaryDark">@color/orange700</item>
-        <item name="colorAccent">@color/redA200</item>
-        <item name="colorCardBackground">@color/grey100</item>
-        <item name="colorCardHighlight">@color/orange100</item>
-        <item name="android:textColorPrimary">@color/blackT87</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
-
-        <!-- default theme override -->
-        <item name="android:textColorTertiary">?android:textColorPrimary</item>
-        <item name="android:textColorLink">?colorAccent</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">?colorPrimary</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog</item>
-        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
-        <item name="popupMenuStyle">@style/Widget.AppCompat.Light.PopupMenu.Overflow</item>
-
-        <!-- custom themed attributes -->
-        <item name="titleTextSize">@dimen/text_size_medium</item>
-        <item name="subtitleTextSize">@dimen/text_size_small</item>
-        <item name="contentTextSize">@dimen/text_size_small</item>
-    </style>
-    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
-        <!-- color palette -->
-        <item name="colorPrimary">@color/orange500</item>
-        <item name="colorPrimaryDark">@color/orange700</item>
-        <item name="colorAccent">@color/redA100</item>
-        <item name="colorCardBackground">@color/cardview_dark_background</item>
-        <item name="colorCardHighlight">@color/grey800</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
-
-        <!-- default theme override -->
-        <item name="android:textColorTertiary">?android:textColorPrimary</item>
-        <item name="android:textColorLink">?colorAccent</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">?colorPrimary</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
-        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
-        <item name="popupMenuStyle">@style/Widget.AppCompat.PopupMenu.Overflow</item>
-
-        <!-- custom themed attributes -->
-        <item name="titleTextSize">@dimen/text_size_medium</item>
-        <item name="subtitleTextSize">@dimen/text_size_small</item>
-        <item name="contentTextSize">@dimen/text_size_small</item>
-    </style>
-    <style name="AppTheme.Sepia">
-        <item name="colorPrimary">@color/orange300</item>
-        <item name="colorPrimaryDark">@color/orange500</item>
-        <item name="colorCardBackground">@color/orange50</item>
-        <item name="android:textColorPrimary">@color/brown500</item>
-        <item name="android:textColorSecondary">@color/brown300</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog.Sepia</item>
-    </style>
-    <style name="AppTheme.Green">
-        <item name="colorPrimary">@color/orange300</item>
-        <item name="colorPrimaryDark">@color/orange500</item>
-        <item name="colorCardBackground">@color/teal50</item>
-        <item name="colorCardHighlight">@color/teal100</item>
-        <item name="android:textColorPrimary">@color/teal900</item>
-        <item name="android:textColorSecondary">@color/teal500</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog.Green</item>
-    </style>
-    <style name="AppTheme.Solarized">
-        <item name="colorPrimary">@color/orange300</item>
-        <item name="colorPrimaryDark">@color/orange500</item>
-        <item name="colorAccent">@color/solarizedOrange</item>
-        <item name="colorCardBackground">@color/solarizedBase3</item>
-        <item name="colorCardHighlight">@color/solarizedBase2</item>
-        <item name="android:textColorPrimary">@color/solarizedBase01</item>
-        <item name="android:textColorSecondary">@color/solarizedBase1</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog.Solarized</item>
-    </style>
-    <style name="AppTheme.Dark.Solarized">
-        <item name="colorPrimary">@color/grey900</item>
-        <item name="colorPrimaryDark">@color/blackT87</item>
-        <item name="colorAccent">@color/solarizedOrange</item>
-        <item name="colorCardBackground">@color/solarizedBase03</item>
-        <item name="colorCardHighlight">@color/solarizedBase02</item>
-        <item name="android:textColorPrimary">@color/solarizedBase1</item>
-        <item name="android:textColorSecondary">@color/solarizedBase01</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog.Dark.Solarized</item>
-    </style>
-
-    <!-- ========================= -->
     <!-- Action bar/toolbar styles -->
     <!-- ========================= -->
     <style name="AppToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
@@ -120,58 +31,9 @@
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
     </style>
+
     <style name="Preference.PreferenceHelp" parent="Preference">
         <item name="android:layout">@layout/preference_help</item>
-    </style>
-
-    <!-- =================== -->
-    <!-- Alert dialog themes -->
-    <!-- =================== -->
-    <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorPrimary">@color/orange500</item>
-        <item name="colorAccent">@color/redA200</item>
-        <item name="android:textColorPrimary">@color/blackT87</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
-        <item name="android:textColorTertiary">?android:textColorPrimary</item>
-        <item name="android:textColorLink">?colorAccent</item>
-        <item name="colorCardBackground">@color/grey100</item>
-        <item name="colorCardHighlight">@color/orange100</item>
-    </style>
-    <style name="AppAlertDialog.Dark" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/redA100</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
-        <item name="android:textColorTertiary">?android:textColorPrimary</item>
-        <item name="android:textColorLink">?colorAccent</item>
-        <item name="colorCardBackground">@color/cardview_dark_background</item>
-        <item name="colorCardHighlight">@color/grey800</item>
-    </style>
-    <style name="AppAlertDialog.Sepia">
-        <item name="colorPrimary">@color/orange300</item>
-        <item name="android:textColorPrimary">@color/brown500</item>
-        <item name="android:textColorSecondary">@color/brown300</item>
-        <item name="colorCardBackground">@color/orange50</item>
-    </style>
-    <style name="AppAlertDialog.Green">
-        <item name="colorPrimary">@color/orange300</item>
-        <item name="android:textColorPrimary">@color/teal900</item>
-        <item name="android:textColorSecondary">@color/teal500</item>
-        <item name="colorCardBackground">@color/teal50</item>
-        <item name="colorCardHighlight">@color/teal100</item>
-    </style>
-    <style name="AppAlertDialog.Solarized">
-        <item name="colorPrimary">@color/orange300</item>
-        <item name="android:textColorPrimary">@color/solarizedBase01</item>
-        <item name="android:textColorSecondary">@color/solarizedBase1</item>
-        <item name="colorCardBackground">@color/solarizedBase3</item>
-        <item name="colorCardHighlight">@color/solarizedBase2</item>
-    </style>
-    <style name="AppAlertDialog.Dark.Solarized">
-        <item name="colorPrimary">@color/grey900</item>
-        <item name="android:textColorPrimary">@color/solarizedBase1</item>
-        <item name="android:textColorSecondary">@color/solarizedBase01</item>
-        <item name="colorCardBackground">@color/solarizedBase03</item>
-        <item name="colorCardHighlight">@color/solarizedBase02</item>
     </style>
 
     <!-- ================== -->
@@ -197,12 +59,14 @@
         <item name="android:gravity">center|center_vertical</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
     </style>
+
     <style name="textTitleStyle">
         <item name="android:textSize">?attr/titleTextSize</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
+
     <style name="textSubtitleStyle">
         <item name="android:textSize">?attr/subtitleTextSize</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
@@ -213,12 +77,15 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
     <style name="textSubtitleStyle.Italic">
         <item name="android:textStyle">italic</item>
     </style>
+
     <style name="textContentStyle">
         <item name="android:textSize">?attr/contentTextSize</item>
     </style>
+
     <style name="textEmptyStyle">
         <item name="android:textAppearance">@style/TextAppearance.App.Empty</item>
         <item name="android:padding">@dimen/activity_vertical_margin</item>
@@ -229,9 +96,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
     <style name="TextAppearance.App.Empty" parent="TextAppearance.AppCompat.Headline">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
+
     <style name="DrawerTextStyle">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingTop">@dimen/padding</item>
@@ -244,15 +113,18 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
     </style>
+
     <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
     <style name="textAppearanceContentNormal">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
+
     <style name="textAppearanceContentDisabled">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
@@ -265,21 +137,25 @@
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
+
     <style name="AppTextSize.XSmall">
         <item name="titleTextSize">16sp</item>
         <item name="subtitleTextSize">12sp</item>
         <item name="contentTextSize">12sp</item>
     </style>
+
     <style name="AppTextSize.Medium">
         <item name="titleTextSize">20sp</item>
         <item name="subtitleTextSize">16sp</item>
         <item name="contentTextSize">16sp</item>
     </style>
+
     <style name="AppTextSize.Large">
         <item name="titleTextSize">22sp</item>
         <item name="subtitleTextSize">18sp</item>
         <item name="contentTextSize">18sp</item>
     </style>
+
     <style name="AppTextSize.XLarge">
         <item name="titleTextSize">24sp</item>
         <item name="subtitleTextSize">20sp</item>
@@ -292,9 +168,11 @@
     <style name="BaseAppCardView" parent="CardView">
         <item name="cardPreventCornerOverlap">false</item>
     </style>
+
     <style name="AppCardView" parent="BaseAppCardView">
         <item name="android:foreground">@drawable/abc_item_background_holo_light</item>
     </style>
+
     <style name="FlatCardView">
         <item name="android:background">?attr/colorCardBackground</item>
     </style>
