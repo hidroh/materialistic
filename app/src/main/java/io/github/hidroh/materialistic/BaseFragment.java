@@ -43,4 +43,10 @@ public abstract class BaseFragment extends Fragment {
         mMenuTintDelegate.onOptionsMenuCreated(menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Application.getRefWatcher(getActivity()).watch(this);
+    }
 }
