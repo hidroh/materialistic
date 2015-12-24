@@ -18,7 +18,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/empty_search"
-    android:background="?android:attr/colorBackground"
     tools:visibility="visible"
     android:visibility="gone"
     android:layout_width="match_parent"

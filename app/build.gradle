@@ -18,8 +18,11 @@ android {
         htmlReport false
         xmlReport false
         textReport true
-        ignoreWarnings false
+        warningsAsErrors true
         abortOnError true
+        informational 'Overdraw' // http://b.android.com/169879
+        explainIssues false
+        absolutePaths false
     }
 }
 

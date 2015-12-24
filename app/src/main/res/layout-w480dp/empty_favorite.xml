@@ -20,10 +20,10 @@
     android:layout_gravity="center_vertical|center"
     android:gravity="center|center_vertical"
     android:orientation="vertical"
-    android:background="?android:attr/colorBackground"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <TextView
         android:id="@android:id/title"
         android:text="@string/no_saved_stories"

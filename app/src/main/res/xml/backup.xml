@@ -15,8 +15,4 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <style name="AppCardView" parent="BaseAppCardView">
-        <item name="android:foreground">?android:attr/selectableItemBackground</item>
-    </style>
-</resources>
+<full-backup-content />
