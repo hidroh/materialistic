@@ -230,6 +230,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onDetach() {
         super.onDetach();
+        mRecyclerView.setAdapter(null);
         mAttached = false;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);

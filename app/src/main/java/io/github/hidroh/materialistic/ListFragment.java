@@ -217,6 +217,7 @@ public class ListFragment extends BaseListFragment {
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
         mMultiPaneListener = null;
         mRefreshCallback = null;
+        mRecyclerView.setAdapter(null);
         super.onDetach();
     }
 
