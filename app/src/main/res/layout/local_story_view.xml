@@ -44,7 +44,6 @@
     <include layout="@layout/button_comment"
         android:id="@id/comment"
         android:layout_toLeftOf="@+id/button_more"
-        android:layout_toStartOf="@+id/button_more"
         android:layout_below="@id/title"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignTop="@id/button_more"
@@ -56,7 +55,6 @@
         android:id="@id/button_more"
         android:layout_below="@id/title"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

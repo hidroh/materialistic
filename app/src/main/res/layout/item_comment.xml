@@ -57,13 +57,11 @@
                     android:text="@string/loading_text"
                     style="@style/textSubtitleStyle.Italic"
                     android:paddingRight="0dp"
-                    android:paddingEnd="0dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:singleLine="false"
-                    android:gravity="center_vertical"
-                    tools:ignore="RtlSymmetry" />
+                    android:gravity="center_vertical" />
 
                 <TextView
                     android:id="@id/parent"
@@ -73,14 +71,12 @@
                     android:text="@string/loading_text"
                     style="@style/textSubtitleStyle.Italic"
                     android:paddingLeft="0dp"
-                    android:paddingStart="0dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:singleLine="false"
-                    android:gravity="center_vertical"
-                    tools:ignore="RtlSymmetry" />
+                    android:gravity="center_vertical" />
 
                 <include layout="@layout/button_more"
                     android:id="@+id/button_more"
@@ -105,11 +101,9 @@
                 android:visibility="gone"
                 style="@style/textSubtitleStyle"
                 android:paddingLeft="@dimen/padding"
-                android:paddingStart="@dimen/padding"
                 android:paddingBottom="@dimen/padding"
                 android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                tools:ignore="RtlSymmetry" />
+                android:gravity="center_vertical" />
             <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@+id/toggle"
                 tools:text="@string/hide_comments"
@@ -124,8 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginRight="@dimen/margin"
-                android:layout_marginEnd="@dimen/margin" />
+                android:layout_marginRight="@dimen/margin" />
         </LinearLayout>
 
     </LinearLayout>

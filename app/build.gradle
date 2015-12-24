@@ -15,7 +15,9 @@ android {
     }
 
     lintOptions {
-        abortOnError false
+        textReport true
+        ignoreWarnings true
+        abortOnError true
     }
 }
 
