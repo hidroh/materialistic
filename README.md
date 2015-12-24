@@ -56,6 +56,9 @@ You may need to set up Android Studio for unit test, by changing 'Build Variants
 <img src="assets/screenshot-10.png" width="600px" />
 <img src="assets/screenshot-12.png" width="600px" />
 
+### Contributing
+Contributions are always welcome. Please make sure you read [Contributing notes](CONTRIBUTING.md) first.
+
 ### License
     Copyright 2015 Ha Duy Trung
     
