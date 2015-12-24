@@ -16,17 +16,28 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.graphics.Typeface;
+
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import dagger.ObjectGraph;
 
 public class Application extends android.app.Application {
     public static Typeface TYPE_FACE = null;
+    private RefWatcher mRefWatcher;
     private ObjectGraph mApplicationGraph;
+
+    public static RefWatcher getRefWatcher(Context context) {
+        Application application = (Application) context.getApplicationContext();
+        return application.mRefWatcher;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mRefWatcher = LeakCanary.install(this);
         mApplicationGraph = ObjectGraph.create();
         Preferences.migrate(this);
         TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
