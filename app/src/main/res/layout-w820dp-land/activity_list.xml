@@ -54,7 +54,6 @@
         <TextView
             android:id="@id/empty"
             android:layout_toRightOf="@android:id/list"
-            android:layout_toEndOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center|center_vertical"
@@ -70,7 +69,6 @@
             app:tabGravity="fill"
             android:background="?attr/colorPrimary"
             android:layout_toRightOf="@android:id/list"
-            android:layout_toEndOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -78,7 +76,6 @@
             android:id="@id/content"
             android:layout_below="@id/tab_layout"
             android:layout_toRightOf="@android:id/list"
-            android:layout_toEndOf="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

@@ -61,10 +61,8 @@
             tools:visibility="visible"
             style="@style/textSubtitleStyle"
             android:paddingLeft="@dimen/padding"
-            android:paddingStart="@dimen/padding"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            tools:ignore="RtlSymmetry" />
+            android:gravity="center_vertical" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
@@ -76,14 +74,12 @@
                 android:text="@string/loading_text"
                 style="@style/textSubtitleStyle.Italic"
                 android:paddingRight="0dp"
-                android:paddingEnd="0dp"
                 android:layout_gravity="center_vertical"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:gravity="center_vertical"
-                tools:ignore="RtlSymmetry" />
+                android:gravity="center_vertical" />
 
             <include layout="@layout/button_comment"
                 android:id="@id/comment"
