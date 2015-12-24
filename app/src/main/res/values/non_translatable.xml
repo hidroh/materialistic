@@ -25,7 +25,7 @@
             <p><a href="https://hidroh.github.io">Blog</a></p>
         ]]>
     </string>
-    <string name="readability_html" translatable="false" formatted="false">
+    <string name="readability_html" translatable="false">
         <![CDATA[
         <html>
             <head>

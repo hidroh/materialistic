@@ -22,7 +22,6 @@
     <string name="title_activity_list">Top Stories</string>
     <string name="title_activity_item">Comments</string>
     <string name="filter_title_item">Materialistic</string>
-    <string name="title_activity_web">Story</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="view_in_browser">View in external browser</string>
@@ -33,15 +32,15 @@
     <string name="third_party_licenses_title">3rd Party Licenses</string>
     <string name="developer_info_title">Developer Info</string>
     <string name="application_info_title">Application Info</string>
-    <string name="application_info_text" formatted="false">
+    <string name="application_info_text">
         <![CDATA[
-            <p>Version: %s</p>
+            <p>Version: %1$s</p>
             <p>This application is open source at <a href="https://github.com/hidroh/materialistic">github.com/hidroh/materialistic</a></p>
         ]]>
     </string>
     <string name="libraries_title">Libraries &amp; Resources</string>
     <string name="title_activity_favorite">Saved Stories</string>
-    <string name="saved" formatted="false">Saved %s</string>
+    <string name="saved">Saved %1$s</string>
     <string name="toast_saved">Story saved</string>
     <string name="clear_all">Clear all</string>
     <string name="toast_removed">Story unsaved</string>
@@ -87,23 +86,22 @@
     <string name="title_activity_search">Search HN</string>
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
-    <string name="hide_comments" formatted="false">Hide comments (%s)</string>
-    <string name="show_comments" formatted="false">Show comments (%s)</string>
-    <string name="parent" formatted="false"><![CDATA[&nbsp;-&nbsp;<a href="#">parent</a>]]></string>
-    <string name="parent_link" formatted="false"><![CDATA[&nbsp;-&nbsp;<a href="io.github.hidroh.materialistic://item/%s">parent</a>]]></string>
+    <string name="hide_comments">Hide comments (%1$s)</string>
+    <string name="show_comments">Show comments (%1$s)</string>
+    <string name="parent"><![CDATA[&nbsp;-&nbsp;<a href="#">parent</a>]]></string>
     <string name="undo">Undo</string>
-    <string name="score" formatted="false">%s pts</string>
+    <string name="score">%1$s pts</string>
     <string name="comments">Comments</string>
-    <string name="comments_count" formatted="false">%s Comments</string>
+    <string name="comments_count">%1$s Comments</string>
     <string name="article">Article</string>
     <string name="reset_settings">Reset all settings</string>
     <string name="reset_settings_confirm">Reset all your preferences to app defaults?</string>
-    <string name="last_updated" formatted="false">Last updated %s</string>
+    <string name="last_updated">Last updated %1$s</string>
     <string name="feedback">Feedback</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="title_hint">Title</string>
     <string name="comment_hint">Comment</string>
-    <string name="feedback_note" formatted="false">
+    <string name="feedback_note">
         <![CDATA[
             Your feedback will be made public as a <a href="https://github.com/hidroh/materialistic/issues">Materialistic Github issue</a>.
         ]]>
@@ -119,9 +117,9 @@
     <string name="popular_range_past_week">Past week</string>
     <string name="popular_range_past_month">Past month</string>
     <string name="popular_range_past_year">Past year</string>
-    <string name="new_stories_count" formatted="false">%s new stories</string>
+    <string name="new_stories_count">%1$s new stories</string>
     <string name="show_me">Show me</string>
-    <string name="showing_new_stories">Showing %s new stories</string>
+    <string name="showing_new_stories">Showing %1$s new stories</string>
     <string name="show_all">Show all</string>
     <string name="whats_this">What\'s this?</string>
     <string name="got_it">Got it</string>
@@ -151,7 +149,7 @@
     <string name="search_sort_popularity">Popularity</string>
     <string name="story_display_readability">Readability</string>
     <string name="font_options">Font options</string>
-    <string name="read_more">Read all %s lines</string>
+    <string name="read_more">Read all %1$s lines</string>
     <string name="comment_max_lines_3">Max 3 lines</string>
     <string name="comment_max_lines_4">Max 4 lines</string>
     <string name="comment_max_lines_5">Max 5 lines</string>
@@ -166,7 +164,7 @@
     <string name="username_required">Username is required</string>
     <string name="password_required">Password is required</string>
     <string name="login_failed">Login/create account failed, please try again</string>
-    <string name="welcome" formatted="false">Welcome %s!</string>
+    <string name="welcome">Welcome %1$s!</string>
     <string name="logout_confirm">Do you want to log out?</string>
     <string name="choose_account">Choose an account</string>
     <string name="add_account">Add account</string>
@@ -197,7 +195,6 @@
     <string name="or">or</string>
     <string name="leave_feedback">Leave feedback</string>
     <string name="no_playstore">No Play Store app found</string>
-    <string name="submit">Submit</string>
     <string name="submit_content_hint">URL or text</string>
     <string name="title_activity_submit">Submit to HN</string>
     <string name="url_text_required">URL or text is required</string>
@@ -209,13 +206,16 @@
     <string name="confirm_submit_question">Submit as question?</string>
     <string name="submission_guidelines">Submission guidelines</string>
     <string name="title_activity_user">My Profile</string>
-    <string name="user_info" formatted="false">Created: %s - karma: %s</string>
-    <string name="submissions_count">%s submissions</string>
+    <string name="user_info">Created: %1$s - karma: %2$s</string>
+    <string name="submissions_count">%1$s submissions</string>
     <string name="view_story">View story</string>
     <string name="user_failed">Unable to load user. Please try again.</string>
     <string name="dead_prefix">[dead]</string>
     <string name="title_activity_thread_preview">Thread Preview</string>
     <string name="view_thread">View thread</string>
     <string name="view_user">View user</string>
+    <string name="toggle_list_view">Toggle list view</string>
+    <string name="more">More</string>
+    <string name="logout">Logout</string>
 
 </resources>

@@ -15,16 +15,19 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@id/menu_quote"
         android:title="@string/quote"
         android:icon="@drawable/ic_format_quote_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
     <item
         android:id="@id/menu_send"
         android:title="@string/send"
         android:icon="@drawable/ic_send_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
 </menu>

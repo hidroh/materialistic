@@ -151,11 +151,11 @@ public class SinglePageItemRecyclerViewAdapter
         }
         if(mState.expanded.containsKey(item.getId())) {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ic_expand_less_grey600_24dp, 0);
+                    R.drawable.ic_expand_less_white_24dp, 0);
             holder.mToggle.setText(mContext.getString(R.string.hide_comments, item.getKidCount()));
         } else {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ic_expand_more_grey600_24dp, 0);
+                    R.drawable.ic_expand_more_white_24dp, 0);
             holder.mToggle.setText(mContext.getString(R.string.show_comments, item.getKidCount()));
         }
         holder.mToggle.setOnClickListener(new View.OnClickListener() {

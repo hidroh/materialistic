@@ -21,9 +21,6 @@ import android.widget.TextView;
 
 import io.github.hidroh.materialistic.R;
 
-/**
- * Created by hadt on 18/12/15.
- */
 public class SubmissionViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
     final TextView mTitleTextView;
 

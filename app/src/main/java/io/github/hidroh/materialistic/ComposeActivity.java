@@ -101,12 +101,12 @@ public class ComposeActivity extends InjectableActivity {
                 public void onClick(View v) {
                     if (textView.getVisibility() == View.VISIBLE) {
                         toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                                R.drawable.ic_expand_more_grey600_24dp, 0);
+                                R.drawable.ic_expand_more_white_24dp, 0);
                         textView.setVisibility(View.GONE);
 
                     } else {
                         toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                                R.drawable.ic_expand_less_grey600_24dp, 0);
+                                R.drawable.ic_expand_less_white_24dp, 0);
                         textView.setVisibility(View.VISIBLE);
                     }
                 }

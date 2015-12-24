@@ -135,7 +135,7 @@ public class ItemActivityTest {
                 return true;
             }
         });
-        assertEquals(R.drawable.ic_work_grey600_18dp,
+        assertEquals(R.drawable.ic_work_white_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
         assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
@@ -161,7 +161,7 @@ public class ItemActivityTest {
         });
         controller.withIntent(intent).create().start().resume();
         assertThat(activity.findViewById(R.id.source)).isNotVisible();
-        assertEquals(R.drawable.ic_poll_grey600_18dp,
+        assertEquals(R.drawable.ic_poll_white_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());
     }
@@ -349,7 +349,7 @@ public class ItemActivityTest {
                 .appendPath("remove")
                 .appendPath("1")
                 .build());
-        assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
+        assertEquals(R.drawable.ic_bookmark_border_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
@@ -377,7 +377,7 @@ public class ItemActivityTest {
             }
         });
         controller.withIntent(intent).create().start().resume();
-        assertEquals(R.drawable.ic_bookmark_outline_white_24dp,
+        assertEquals(R.drawable.ic_bookmark_border_white_24dp,
                 shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
                         .getCreatedFromResId());
         activity.findViewById(R.id.bookmarked).performClick();

@@ -17,6 +17,7 @@
 
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nested_scroll_view"
     android:background="?attr/colorCardBackground"
     android:scrollbarStyle="insideOverlay"
@@ -43,7 +44,8 @@
             android:id="@id/progress"
             android:indeterminate="true"
             android:scaleY="3"
-            style="@style/AppProgressBarHorizontalStyle" />
+            style="@style/AppProgressBarHorizontalStyle"
+            tools:ignore="UnusedAttribute" />
 
     </FrameLayout>
 

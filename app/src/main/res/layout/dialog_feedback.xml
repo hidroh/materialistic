@@ -49,30 +49,35 @@
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
+                android:contentDescription="@string/rate_app"
                 android:tint="@color/orange500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
+                android:contentDescription="@string/rate_app"
                 android:tint="@color/orange500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
+                android:contentDescription="@string/rate_app"
                 android:tint="@color/orange500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
+                android:contentDescription="@string/rate_app"
                 android:tint="@color/orange500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
+                android:contentDescription="@string/rate_app"
                 android:tint="@color/orange500"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -140,7 +145,7 @@
             android:text="@string/send_feedback"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_marginTop="@dimen/margin"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

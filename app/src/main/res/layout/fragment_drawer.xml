@@ -31,15 +31,19 @@
             android:text="@string/login"
             android:textColor="?android:attr/textColorPrimary"
             android:drawableLeft="@drawable/ic_lock_white_24dp"
+            android:drawableStart="@drawable/ic_lock_white_24dp"
             android:paddingRight="88dp"
-            style="@style/DrawerTextStyle"/>
+            android:paddingEnd="88dp"
+            style="@style/DrawerTextStyle"
+            tools:ignore="RtlSymmetry" />
 
         <ImageButton
             android:id="@id/drawer_logout"
             android:src="@drawable/ic_power_settings_new_white_24dp"
+            android:contentDescription="@string/logout"
             android:tint="?android:attr/textColorPrimary"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_gravity="center_vertical|right"
+            android:layout_gravity="center_vertical|end"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
     </FrameLayout>
@@ -52,37 +56,43 @@
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_list"
         android:text="@string/title_activity_list"
-        android:drawableLeft="@drawable/ic_trending_up_grey600_24dp"
+        android:drawableLeft="@drawable/ic_trending_up_white_24dp"
+        android:drawableStart="@drawable/ic_trending_up_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_popular"
         android:text="@string/title_activity_popular"
-        android:drawableLeft="@drawable/ic_whatshot_grey600_24dp"
+        android:drawableLeft="@drawable/ic_whatshot_white_24dp"
+        android:drawableStart="@drawable/ic_whatshot_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_new"
         android:text="@string/title_activity_new"
-        android:drawableLeft="@drawable/ic_new_releases_grey600_24dp"
+        android:drawableLeft="@drawable/ic_new_releases_white_24dp"
+        android:drawableStart="@drawable/ic_new_releases_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_show"
         android:text="@string/title_activity_show"
-        android:drawableLeft="@drawable/ic_done_grey600_24dp"
+        android:drawableLeft="@drawable/ic_done_white_24dp"
+        android:drawableStart="@drawable/ic_done_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_ask"
         android:text="@string/title_activity_ask"
-        android:drawableLeft="@drawable/ic_live_help_grey600_24dp"
+        android:drawableLeft="@drawable/ic_live_help_white_24dp"
+        android:drawableStart="@drawable/ic_live_help_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_job"
         android:text="@string/title_activity_jobs"
-        android:drawableLeft="@drawable/ic_work_grey600_24dp"
+        android:drawableLeft="@drawable/ic_work_white_24dp"
+        android:drawableStart="@drawable/ic_work_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <View
@@ -94,12 +104,14 @@
         android:id="@id/drawer_user"
         android:text="@string/title_activity_user"
         android:drawableLeft="@drawable/ic_person_white_24dp"
+        android:drawableStart="@drawable/ic_person_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_submit"
         android:text="@string/title_activity_submit"
         android:drawableLeft="@drawable/ic_add_white_24dp"
+        android:drawableStart="@drawable/ic_add_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <View
@@ -110,25 +122,29 @@
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_favorite"
         android:text="@string/title_activity_favorite"
-        android:drawableLeft="@drawable/ic_bookmark_grey600_24dp"
+        android:drawableLeft="@drawable/ic_bookmark_white_24dp"
+        android:drawableStart="@drawable/ic_bookmark_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_settings"
         android:text="@string/action_settings"
-        android:drawableLeft="@drawable/ic_settings_grey600_24dp"
+        android:drawableLeft="@drawable/ic_settings_white_24dp"
+        android:drawableStart="@drawable/ic_settings_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_feedback"
         android:text="@string/feedback"
-        android:drawableLeft="@drawable/ic_feedback_grey600_24dp"
+        android:drawableLeft="@drawable/ic_feedback_white_24dp"
+        android:drawableStart="@drawable/ic_feedback_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_about"
         android:text="@string/title_activity_about"
-        android:drawableLeft="@drawable/ic_info_grey600_24dp"
+        android:drawableLeft="@drawable/ic_info_white_24dp"
+        android:drawableStart="@drawable/ic_info_white_24dp"
         style="@style/DrawerTextStyle"/>
 
 </LinearLayout>

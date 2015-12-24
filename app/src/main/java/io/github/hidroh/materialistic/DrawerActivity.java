@@ -113,7 +113,7 @@ public abstract class DrawerActivity extends InjectableActivity {
     }
 
     void showFeedback() {
-        showFeedbackDialog(getLayoutInflater().inflate(R.layout.dialog_feedback, null, false));
+        showFeedbackDialog(getLayoutInflater().inflate(R.layout.dialog_feedback, mDrawerLayout, false));
         closeDrawers();
     }
 

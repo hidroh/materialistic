@@ -65,7 +65,7 @@
             android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:orientation="horizontal"
             android:layout_marginTop="@dimen/margin"
             android:layout_width="wrap_content"

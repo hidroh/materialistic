@@ -43,18 +43,21 @@
         android:fillViewport="true"
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="0dp"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:id="@id/content_frame"
             android:orientation="vertical"
             android:animateLayoutChanges="true"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            tools:ignore="UnusedAttribute">
 
             <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@+id/toggle"
-                android:drawableRight="@drawable/ic_expand_more_grey600_24dp"
+                android:drawableRight="@drawable/ic_expand_more_white_24dp"
+                android:drawableEnd="@drawable/ic_expand_more_white_24dp"
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:gravity="center_vertical"
                 android:hint="@string/original_content"

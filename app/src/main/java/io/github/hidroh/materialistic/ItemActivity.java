@@ -279,11 +279,11 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         switch (story.getType()) {
             case ItemManager.Item.JOB_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_work_grey600_18dp, 0, 0, 0);
+                        R.drawable.ic_work_white_18dp, 0, 0, 0);
                 break;
             case ItemManager.Item.POLL_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_poll_grey600_18dp, 0, 0, 0);
+                        R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;
         }
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -329,7 +329,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
 
     private void decorateFavorite(boolean isFavorite) {
         mBookmark.setImageResource(isFavorite ?
-                R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_outline_white_24dp);
+                R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_border_white_24dp);
     }
 
     private void vote(final ItemManager.Item story) {

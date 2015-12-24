@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -146,6 +147,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         outState.putParcelable(EXTRA_ITEM, mItem);
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setWebViewSettings(WebSettings webSettings) {
         webSettings.setJavaScriptEnabled(true);

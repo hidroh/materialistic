@@ -48,7 +48,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private TextView mInfo;
     private TextView mAbout;
     private RecyclerView mRecyclerView;
-    private SubmissionRecyclerViewAdapter mAdapter;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private View mEmpty;
@@ -164,7 +163,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         }
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getString(R.string.submissions_count, mUser.getItems().length)));
-        mAdapter = new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems());
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems()));
     }
 }
