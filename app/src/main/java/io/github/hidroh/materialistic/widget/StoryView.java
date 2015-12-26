@@ -54,7 +54,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final TextView mSourceTextView;
     private final View mCommentButton;
     private final boolean mIsLocal;
-    private final ViewSwitcher mRankContainer;
+    private final ViewSwitcher mVoteSwitcher;
     private final View mMoreButton;
     private boolean mChecked;
 
@@ -79,7 +79,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mPromotedColorResId = ContextCompat.getColor(context, R.color.greenA700);
         inflate(context, mIsLocal ? R.layout.local_story_view : R.layout.story_view, this);
         setBackgroundColor(mBackgroundColor);
-        mRankContainer = (ViewSwitcher) findViewById(R.id.rank_container);
+        mVoteSwitcher = (ViewSwitcher) findViewById(R.id.vote_switcher);
         mRankTextView = (TextView) findViewById(R.id.rank);
         mScoreTextView = (TextView) findViewById(R.id.score);
         mBookmarked = findViewById(R.id.bookmarked);
@@ -203,7 +203,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         if (mIsLocal) {
             return;
         }
-        mRankContainer.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
+        mVoteSwitcher.getInAnimation().setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 // no op
@@ -214,11 +214,11 @@ public class StoryView extends RelativeLayout implements Checkable {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRankContainer.showNext();
+                        mVoteSwitcher.showNext();
                     }
                 }, VOTE_DELAY_MILLIS);
                 mScoreTextView.setText(getContext().getString(R.string.score, newScore));
-                mRankContainer.getInAnimation().setAnimationListener(null);
+                mVoteSwitcher.getInAnimation().setAnimationListener(null);
             }
 
             @Override
@@ -226,7 +226,7 @@ public class StoryView extends RelativeLayout implements Checkable {
                 // no op
             }
         });
-        mRankContainer.showNext();
+        mVoteSwitcher.showNext();
     }
 
     public View getMoreOptions() {

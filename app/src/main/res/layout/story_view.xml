@@ -34,46 +34,50 @@
         android:layout_height="wrap_content"
         android:tint="@color/orange500" />
 
-    <ViewSwitcher
+    <LinearLayout
         android:id="@+id/rank_container"
-        android:inAnimation="@anim/slide_in_right"
-        android:outAnimation="@anim/slide_out_right"
+        android:orientation="vertical"
+        android:gravity="center|center_vertical"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@id/title"
-        android:layout_alignBottom="@id/meta_container"
+        android:layout_centerVertical="true"
         android:layout_width="@dimen/min_cardview_height"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:gravity="center|center_vertical"
+        <ViewSwitcher
+            android:id="@+id/vote_switcher"
+            android:inAnimation="@anim/slide_in_right"
+            android:outAnimation="@anim/slide_out_right"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+
             <TextView
                 android:id="@id/rank"
                 android:text="46"
                 style="@style/textRankStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@id/score"
-                android:text="128 pts"
-                style="@style/textSubtitleStyle"
-                android:singleLine="false"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+                android:layout_height="match_parent"/>
 
-        <ImageView
-            android:src="@drawable/ic_thumb_up_white_24dp"
-            android:contentDescription="@string/voted"
-            android:tint="@color/greenA700"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <ImageView
+                android:src="@drawable/ic_thumb_up_white_24dp"
+                android:contentDescription="@string/voted"
+                android:tint="@color/greenA700"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
 
-    </ViewSwitcher>
+        </ViewSwitcher>
+
+        <TextView
+            android:id="@id/score"
+            android:text="128 pts"
+            style="@style/textSubtitleStyle"
+            android:singleLine="false"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
     <io.github.hidroh.materialistic.widget.TextView
         android:id="@id/title"
