@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -98,10 +99,8 @@ public class ListFragment extends BaseListFragment {
     private RefreshCallback mRefreshCallback;
     private String mFilter;
     @Inject FavoriteManager mFavoriteManager;
-    private boolean mResumed;
     private boolean mShowAll = true;
     private boolean mHighlightUpdated = true;
-    private boolean mAttached;
     private String mUsername;
     private int mFavoriteRevision = -1;
 
@@ -118,7 +117,6 @@ public class ListFragment extends BaseListFragment {
         }
         PreferenceManager.getDefaultSharedPreferences(context)
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
-        mAttached = true;
     }
 
     @Override
@@ -187,12 +185,6 @@ public class ListFragment extends BaseListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mResumed = true;
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_ITEMS, mItems);
@@ -205,14 +197,7 @@ public class ListFragment extends BaseListFragment {
     }
 
     @Override
-    public void onPause() {
-        mResumed = false;
-        super.onPause();
-    }
-
-    @Override
     public void onDetach() {
-        mAttached = false;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
         mMultiPaneListener = null;
@@ -235,42 +220,30 @@ public class ListFragment extends BaseListFragment {
 
     private void refresh() {
         mShowAll = true;
-        mItemManager.getStories(mFilter, new ResponseListener<ItemManager.Item[]>() {
-            @Override
-            public void onResponse(final ItemManager.Item[] response) {
-                if (!mAttached) {
-                    return;
-                }
-                if (response == null) {
-                    onError(null);
-                } else {
-                    ArrayList<ItemManager.Item> updated = new ArrayList<>(Arrays.asList(response));
-                    bindUpdated(updated);
-                    setItems(updated);
-                    bindData();
-                    if (mRefreshCallback != null) {
-                        mRefreshCallback.onRefreshed();
-                    }
-                }
-            }
+        mItemManager.getStories(mFilter, new ListResponseListener(this));
+    }
 
-            @Override
-            public void onError(String errorMessage) {
-                if (!mAttached) {
-                    return;
-                }
-                mSwipeRefreshLayout.setRefreshing(false);
-                if (mItems == null || mItems.isEmpty()) {
-                    // TODO make refreshing indicator visible in error view
-                    mEmptyView.setVisibility(View.GONE);
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                    mErrorView.setVisibility(View.VISIBLE);
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.connection_error),
-                            Toast.LENGTH_SHORT).show();
-                }
+    private void onItemsLoaded(ItemManager.Item[] items) {
+        if (items == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (mItems == null || mItems.isEmpty()) {
+                // TODO make refreshing indicator visible in error view
+                mEmptyView.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.INVISIBLE);
+                mErrorView.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.connection_error),
+                        Toast.LENGTH_SHORT).show();
             }
-        });
+        } else {
+            ArrayList<ItemManager.Item> updated = new ArrayList<>(Arrays.asList(items));
+            bindUpdated(updated);
+            setItems(updated);
+            bindData();
+            if (mRefreshCallback != null) {
+                mRefreshCallback.onRefreshed();
+            }
+        }
     }
 
     private void bindUpdated(ArrayList<ItemManager.Item> updated) {
@@ -404,22 +377,8 @@ public class ListFragment extends BaseListFragment {
 
         @Override
         protected void loadItem(final int adapterPosition) {
-            final ItemManager.Item partialStory = getItem(adapterPosition);
-            mItemManager.getItem(partialStory.getId(), new ResponseListener<ItemManager.Item>() {
-                @Override
-                public void onResponse(ItemManager.Item response) {
-                    if (!mResumed || response == null) {
-                        return;
-                    }
-                    partialStory.populate(response);
-                    notifyItemChanged(adapterPosition);
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    // do nothing
-                }
-            });
+            mItemManager.getItem(getItem(adapterPosition).getId(),
+                    new ItemResponseListener(this, adapterPosition));
         }
 
         @Override
@@ -474,6 +433,11 @@ public class ListFragment extends BaseListFragment {
         @Override
         protected boolean shouldCompact() {
             return !mCardView;
+        }
+
+        private void onItemLoaded(int position, ItemManager.Item story) {
+            getItem(position).populate(story);
+            notifyItemChanged(position);
         }
 
         private void bindUpdated(ItemViewHolder holder, ItemManager.Item story) {
@@ -562,6 +526,48 @@ public class ListFragment extends BaseListFragment {
                     !TextUtils.isEmpty(mUsername) &&
                     TextUtils.equals(mUsername, story.getBy()));
         }
+    }
 
+    private static class ListResponseListener implements ResponseListener<ItemManager.Item[]> {
+        private final WeakReference<ListFragment> mListFragment;
+
+        public ListResponseListener(ListFragment listFragment) {
+            mListFragment = new WeakReference<>(listFragment);
+        }
+        @Override
+        public void onResponse(final ItemManager.Item[] response) {
+            if (mListFragment.get() != null) {
+                mListFragment.get().onItemsLoaded(response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            if (mListFragment.get() != null) {
+                mListFragment.get().onItemsLoaded(null);
+            }
+        }
+    }
+
+    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+        private final WeakReference<RecyclerViewAdapter> mAdapter;
+        private final int mPosition;
+
+        public ItemResponseListener(RecyclerViewAdapter adapter, int position) {
+            mAdapter = new WeakReference<>(adapter);
+            mPosition = position;
+        }
+
+        @Override
+        public void onResponse(ItemManager.Item response) {
+            if (mAdapter.get() != null && response != null) {
+                mAdapter.get().onItemLoaded(mPosition, response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            // do nothing
+        }
     }
 }
