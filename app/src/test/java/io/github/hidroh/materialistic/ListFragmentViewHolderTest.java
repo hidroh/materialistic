@@ -421,7 +421,7 @@ public class ListFragmentViewHolderTest {
         voteCallback.getValue().onDone(true);
         assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
         Animation animation = ((ViewSwitcher) adapter.getViewHolder(0).itemView
-                .findViewById(R.id.rank_container))
+                .findViewById(R.id.vote_switcher))
                 .getInAnimation();
         ((ShadowAnimation) ShadowExtractor.extract(animation))
                 .getAnimationListener().onAnimationEnd(animation);
