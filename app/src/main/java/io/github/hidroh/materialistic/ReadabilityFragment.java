@@ -35,6 +35,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -180,14 +182,12 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         if (item == null) {
             return;
         }
-        mReadabilityClient.parse(item.getId(),
-                item.getUrl(), new ReadabilityClient.Callback() {
-                    @Override
-                    public void onResponse(String content) {
-                        mContent = content;
-                        bind();
-                    }
-                });
+        mReadabilityClient.parse(item.getId(), item.getUrl(), new ReadabilityCallback(this));
+    }
+
+    private void onParsed(String content) {
+        mContent = content;
+        bind();
     }
 
     private void bind() {
@@ -229,5 +229,20 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
 
     private float toHtmlPx(float dimen) {
         return dimen / getResources().getDisplayMetrics().density;
+    }
+
+    private static class ReadabilityCallback implements ReadabilityClient.Callback {
+        private final WeakReference<ReadabilityFragment> mReadabilityFragment;
+
+        public ReadabilityCallback(ReadabilityFragment readabilityFragment) {
+            mReadabilityFragment = new WeakReference<>(readabilityFragment);
+        }
+
+        @Override
+        public void onResponse(String content) {
+            if (mReadabilityFragment.get() != null) {
+                mReadabilityFragment.get().onParsed(content);
+            }
+        }
     }
 }

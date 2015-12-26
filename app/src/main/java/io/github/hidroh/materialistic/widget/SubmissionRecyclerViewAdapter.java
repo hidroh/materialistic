@@ -85,14 +85,12 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
     }
 
     private void openItem(ItemManager.Item item) {
-        final Intent intent = new Intent(mContext, ItemActivity.class);
-        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        mContext.startActivity(intent);
+        mContext.startActivity(new Intent(mContext, ItemActivity.class)
+                .putExtra(ItemActivity.EXTRA_ITEM, item));
     }
 
     private void openPreview(ItemManager.Item item) {
-        final Intent intent = new Intent(mContext, ThreadPreviewActivity.class);
-        intent.putExtra(ThreadPreviewActivity.EXTRA_ITEM, item);
-        mContext.startActivity(intent);
+        mContext.startActivity(new Intent(mContext, ThreadPreviewActivity.class)
+                .putExtra(ThreadPreviewActivity.EXTRA_ITEM, item));
     }
 }

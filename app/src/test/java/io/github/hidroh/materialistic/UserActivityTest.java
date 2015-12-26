@@ -30,6 +30,7 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -41,7 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = ShadowRecyclerView.class)
+@Config(shadows = {ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class UserActivityTest {
     private ActivityController<UserActivity> controller;
@@ -180,9 +181,9 @@ public class UserActivityTest {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
+        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
+                ShadowExtractor.extract(recyclerView.getAdapter());
+        adapter.makeItemVisible(0);
         verify(itemManager).getItem(eq("1"), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(1L) {
             @Override
@@ -195,7 +196,8 @@ public class UserActivityTest {
                 return "2";
             }
         });
-        adapter.bindViewHolder(viewHolder, 0);
+        adapter.makeItemVisible(0);
+        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
         assertThat(viewHolder.itemView.findViewById(R.id.title)).isNotVisible();
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
                 .isVisible()
@@ -211,9 +213,9 @@ public class UserActivityTest {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 1);
-        adapter.bindViewHolder(viewHolder, 1);
+        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
+                ShadowExtractor.extract(recyclerView.getAdapter());
+        adapter.makeItemVisible(1);
         verify(itemManager).getItem(eq("2"), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(2L) {
             @Override
@@ -231,7 +233,8 @@ public class UserActivityTest {
                 return 46;
             }
         });
-        adapter.bindViewHolder(viewHolder, 1);
+        adapter.makeItemVisible(1);
+        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(1);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.posted))
                 .containsText(activity.getString(R.string.score, 46));
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.title))
@@ -251,9 +254,9 @@ public class UserActivityTest {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
+        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
+                ShadowExtractor.extract(recyclerView.getAdapter());
+        adapter.makeItemVisible(0);
         verify(itemManager).getItem(eq("1"), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(1L) {
             @Override
@@ -261,7 +264,8 @@ public class UserActivityTest {
                 return true;
             }
         });
-        adapter.bindViewHolder(viewHolder, 0);
+        adapter.makeItemVisible(0);
+        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
         assertThat(viewHolder.itemView.findViewById(R.id.comment)).isNotVisible();
     }
 

@@ -43,6 +43,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -138,19 +140,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (mItem != null) {
             bindData(mItem);
         } else if (!TextUtils.isEmpty(mItemId)) {
-            mItemManager.getItem(mItemId, new ResponseListener<ItemManager.Item>() {
-                @Override
-                public void onResponse(ItemManager.Item response) {
-                    mItem = response;
-                    supportInvalidateOptionsMenu();
-                    bindData(mItem);
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    // do nothing
-                }
-            });
+            mItemManager.getItem(mItemId, new ItemResponseListener(this));
         }
     }
 
@@ -201,6 +191,12 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         mAppBar.setExpanded(true, true);
     }
 
+    private void onItemLoaded(ItemManager.Item response) {
+        mItem = response;
+        supportInvalidateOptionsMenu();
+        bindData(mItem);
+    }
+
     private void bindFavorite() {
         if (mItem == null) {
             return;
@@ -248,10 +244,9 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ItemActivity.this, ComposeActivity.class);
-                intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId());
-                intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getText());
-                startActivity(intent);
+                startActivity(new Intent(ItemActivity.this, ComposeActivity.class)
+                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
+                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getText()));
             }
         });
         mVoteButton.setVisibility(View.VISIBLE);
@@ -353,5 +348,25 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+        private final WeakReference<ItemActivity> mItemActivity;
+
+        public ItemResponseListener(ItemActivity itemActivity) {
+            mItemActivity = new WeakReference<>(itemActivity);
+        }
+
+        @Override
+        public void onResponse(ItemManager.Item response) {
+            if (mItemActivity.get() != null) {
+                mItemActivity.get().onItemLoaded(response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            // do nothing
+        }
     }
 }

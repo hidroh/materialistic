@@ -29,6 +29,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -128,22 +130,16 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     }
 
     private void load() {
-        mUserManager.getUser(mUsername, new ResponseListener<UserManager.User>() {
-            @Override
-            public void onResponse(UserManager.User response) {
-                if (response != null) {
-                    mUser = response;
-                    bind();
-                } else {
-                    showEmpty();
-                }
-            }
+        mUserManager.getUser(mUsername, new UserResponseListener(this));
+    }
 
-            @Override
-            public void onError(String errorMessage) {
-                Toast.makeText(UserActivity.this, R.string.user_failed, Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void onUserLoaded(UserManager.User response) {
+        if (response != null) {
+            mUser = response;
+            bind();
+        } else {
+            showEmpty();
+        }
     }
 
     private void showEmpty() {
@@ -164,5 +160,27 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getString(R.string.submissions_count, mUser.getItems().length)));
         mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems()));
+    }
+
+    private static class UserResponseListener implements ResponseListener<UserManager.User> {
+        private final WeakReference<UserActivity> mUserActivity;
+
+        public UserResponseListener(UserActivity userActivity) {
+            mUserActivity = new WeakReference<>(userActivity);
+        }
+
+        @Override
+        public void onResponse(UserManager.User response) {
+            if (mUserActivity.get() != null) {
+                mUserActivity.get().onUserLoaded(response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            if (mUserActivity.get() != null) {
+                Toast.makeText(mUserActivity.get(), R.string.user_failed, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

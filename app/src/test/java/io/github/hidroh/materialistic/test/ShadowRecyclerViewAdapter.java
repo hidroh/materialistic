@@ -38,6 +38,13 @@ public class ShadowRecyclerViewAdapter {
         }
     }
 
+    @Implementation
+    public void notifyItemRangeChanged(int positionStart, int itemCount) {
+        for (int i = positionStart; i < itemCount; i++) {
+            notifyItemChanged(i);
+        }
+    }
+
     public void makeItemVisible(int position) {
         RecyclerView.ViewHolder holder = realObject
                 .createViewHolder(recyclerView, realObject.getItemViewType(position));

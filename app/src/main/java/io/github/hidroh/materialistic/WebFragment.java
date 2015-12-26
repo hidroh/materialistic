@@ -39,6 +39,8 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -50,6 +52,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private ItemManager.WebItem mItem;
     private WebView mWebView;
+    private TextView mText;
     private NestedScrollView mScrollView;
     private boolean mIsHackerNewsUrl;
     private boolean mExternalRequired = false;
@@ -134,29 +137,10 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         return view;
     }
 
-    private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState)
-                .inflate(R.layout.fragment_web_hn, container, false);
-        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
-        return view;
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_ITEM, mItem);
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setWebViewSettings(WebSettings webSettings) {
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setBuiltInZoomControls(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webSettings.setDisplayZoomControls(false);
-        }
     }
 
     @Override
@@ -173,24 +157,55 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
     }
 
+    private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
+        final View view = getLayoutInflater(savedInstanceState)
+                .inflate(R.layout.fragment_web_hn, container, false);
+        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
+        mText = (TextView) view.findViewById(R.id.text);
+        return view;
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setWebViewSettings(WebSettings webSettings) {
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setBuiltInZoomControls(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            webSettings.setDisplayZoomControls(false);
+        }
+    }
+
+    private void onItemLoaded(ItemManager.Item response) {
+        AppUtils.setTextWithLinks(mText, response.getText());
+    }
+
     private void bindContent() {
         if (mItem instanceof ItemManager.Item) {
-            AppUtils.setTextWithLinks((TextView) getView().findViewById(R.id.text),
-                    ((ItemManager.Item) mItem).getText());
+            AppUtils.setTextWithLinks(mText, ((ItemManager.Item) mItem).getText());
         } else {
-            mItemManager.getItem(mItem.getId(),
-                    new ResponseListener<ItemManager.Item>() {
-                        @Override
-                        public void onResponse(ItemManager.Item response) {
-                            AppUtils.setTextWithLinks((TextView) getView().findViewById(R.id.text),
-                                    response.getText());
-                        }
+            mItemManager.getItem(mItem.getId(), new ItemResponseListener(this));
+        }
+    }
 
-                        @Override
-                        public void onError(String errorMessage) {
-                            // do nothing
-                        }
-                    });
+    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+        private final WeakReference<WebFragment> mWebFragment;
+
+        public ItemResponseListener(WebFragment webFragment) {
+            mWebFragment = new WeakReference<>(webFragment);
+        }
+
+        @Override
+        public void onResponse(ItemManager.Item response) {
+            if (mWebFragment.get() != null) {
+                mWebFragment.get().onItemLoaded(response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            // do nothing
         }
     }
 }

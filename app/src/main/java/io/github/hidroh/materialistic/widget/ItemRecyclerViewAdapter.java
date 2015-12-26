@@ -33,6 +33,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AlertDialogBuilder;
@@ -89,8 +91,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        mContext = null;
         super.onDetachedFromRecyclerView(recyclerView);
+        mContext = null;
     }
 
     @Override
@@ -98,7 +100,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         final ItemManager.Item item = getItem(position);
         if (item.getLocalRevision() < mLocalRevision) {
             clear(holder);
-            load(holder, item);
+            load(holder.getAdapterPosition(), item);
         } else {
             bind(holder, item);
         }
@@ -122,9 +124,14 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             return;
         }
         highlightUserItem(holder, item);
-        AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
         decorateDead(holder, item);
-        toggleCollapsibleContent(holder, item);
+        AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
+        holder.mContentTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                toggleCollapsibleContent(holder, item);
+            }
+        });
         bindActions(holder, item);
     }
 
@@ -136,27 +143,17 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mReadMoreTextView.setVisibility(View.GONE);
     }
 
-    private void load(final VH holder, final ItemManager.Item item) {
-        mItemManager.getItem(item.getId(),
-                new ResponseListener<ItemManager.Item>() {
-                    @Override
-                    public void onResponse(ItemManager.Item response) {
-                        if (response == null) {
-                            return;
-                        }
-                        if (mContext == null) {
-                            return;
-                        }
-                        item.populate(response);
-                        item.setLocalRevision(mLocalRevision);
-                        bind(holder, item);
-                    }
+    private void load(int adapterPosition, ItemManager.Item item) {
+        mItemManager.getItem(item.getId(), new ItemResponseListener(this, adapterPosition));
+    }
 
-                    @Override
-                    public void onError(String errorMessage) {
-                        // do nothing
-                    }
-                });
+    private void onItemLoaded(int position, ItemManager.Item item) {
+        if (item == null) {
+            return;
+        }
+        getItem(position).populate(item);
+        getItem(position).setLocalRevision(mLocalRevision);
+        notifyItemChanged(position);
     }
 
     private void highlightUserItem(VH holder, ItemManager.Item item) {
@@ -172,7 +169,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void toggleCollapsibleContent(final VH holder, final ItemManager.Item item) {
-        final int lineCount = holder.mContentTextView.getLineCount(); // TODO 0 on restore state
+        final int lineCount = holder.mContentTextView.getLineCount();
         if (item.isContentExpanded() || lineCount <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
             setTextIsSelectable(holder.mContentTextView, true);
@@ -225,10 +222,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                             return true;
                         }
                         if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                            Intent intent = new Intent(mContext, ComposeActivity.class);
-                            intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId());
-                            intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText());
-                            mContext.startActivity(intent);
+                            mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                                    .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                                    .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
                             return true;
                         }
                         return false;
@@ -240,22 +236,17 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void vote(final ItemManager.Item item) {
-        mUserServices.voteUp(mContext, item.getId(), new UserServices.Callback() {
-            @Override
-            public void onDone(boolean successful) {
-                if (successful) {
-                    Toast.makeText(mContext, R.string.voted, Toast.LENGTH_SHORT).show();
-                } else {
-                    AppUtils.showLogin(mContext, mAlertDialogBuilder);
-                }
-            }
+        mUserServices.voteUp(mContext, item.getId(), new VoteCallback(this));
+    }
 
-            @Override
-            public void onError() {
-                Toast.makeText(mContext, R.string.vote_failed, Toast.LENGTH_SHORT).show();
-            }
-        });
-
+    private void onVoted(Boolean successful) {
+        if (successful == null) {
+            Toast.makeText(mContext, R.string.vote_failed, Toast.LENGTH_SHORT).show();
+        } else if (successful) {
+            Toast.makeText(mContext, R.string.voted, Toast.LENGTH_SHORT).show();
+        } else {
+            AppUtils.showLogin(mContext, mAlertDialogBuilder);
+        }
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -276,6 +267,50 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mCommentButton.setVisibility(View.GONE);
             mMoreButton = itemView.findViewById(R.id.button_more);
             mContentView = itemView.findViewById(R.id.content);
+        }
+    }
+
+    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+        private final WeakReference<ItemRecyclerViewAdapter> mAdapter;
+        private final int mPosition;
+
+        public ItemResponseListener(ItemRecyclerViewAdapter adapter, int position) {
+            mAdapter = new WeakReference<>(adapter);
+            mPosition = position;
+        }
+
+        @Override
+        public void onResponse(ItemManager.Item response) {
+            if (mAdapter.get() != null) {
+                mAdapter.get().onItemLoaded(mPosition, response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            // do nothing
+        }
+    }
+
+    private static class VoteCallback extends UserServices.Callback {
+        private final WeakReference<ItemRecyclerViewAdapter> mAdapter;
+
+        public VoteCallback(ItemRecyclerViewAdapter adapter) {
+            mAdapter = new WeakReference<>(adapter);
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            if (mAdapter.get() != null) {
+                mAdapter.get().onVoted(successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mAdapter.get() != null) {
+                mAdapter.get().onVoted(null);
+            }
         }
     }
 }
