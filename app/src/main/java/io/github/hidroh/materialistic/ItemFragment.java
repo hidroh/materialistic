@@ -33,6 +33,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -251,24 +252,16 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     private void loadKidData() {
-        mItemManager.getItem(mItemId, new ResponseListener<ItemManager.Item>() {
-            @Override
-            public void onResponse(ItemManager.Item response) {
-                if (!mAttached) {
-                    return;
-                }
+        mItemManager.getItem(mItemId, new ItemResponseListener(this));
+    }
 
-                mSwipeRefreshLayout.setRefreshing(false);
-                mAdapterItems = null;
-                mItem = response;
-                bindKidData();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
+    private void onItemLoaded(ItemManager.Item item) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if (item != null) {
+            mAdapterItems = null;
+            mItem = item;
+            bindKidData();
+        }
     }
 
     private void bindKidData() {
@@ -324,5 +317,27 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             return;
         }
         getActivity().supportInvalidateOptionsMenu();
+    }
+
+    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+        private WeakReference<ItemFragment> mItemFragment;
+
+        public ItemResponseListener(ItemFragment itemFragment) {
+            mItemFragment = new WeakReference<>(itemFragment);
+        }
+
+        @Override
+        public void onResponse(ItemManager.Item response) {
+            if (mItemFragment.get() != null) {
+                mItemFragment.get().onItemLoaded(response);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            if (mItemFragment.get() != null) {
+                mItemFragment.get().onItemLoaded(null);
+            }
+        }
     }
 }

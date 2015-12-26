@@ -69,9 +69,8 @@ public class MultiPageItemRecyclerViewAdapter
     }
 
     private void openItem(ItemManager.Item item) {
-        final Intent intent = new Intent(mContext, ItemActivity.class);
-        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        intent.putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
-        mContext.startActivity(intent);
+        mContext.startActivity(new Intent(mContext, ItemActivity.class)
+                .putExtra(ItemActivity.EXTRA_ITEM, item)
+                .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true));
     }
 }

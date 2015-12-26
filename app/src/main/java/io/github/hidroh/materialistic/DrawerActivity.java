@@ -32,6 +32,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FeedbackClient;
@@ -45,6 +47,7 @@ public abstract class DrawerActivity extends InjectableActivity {
     private View mDrawer;
     private Class<? extends Activity> mPendingNavigation;
     private Bundle mPendingNavigationExtras;
+    private Dialog mFeedbackDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +134,7 @@ public abstract class DrawerActivity extends InjectableActivity {
         final EditText title = (EditText) dialogView.findViewById(R.id.edittext_title);
         final EditText body = (EditText) dialogView.findViewById(R.id.edittext_body);
         final View sendButton = dialogView.findViewById(R.id.feedback_button);
-        final Dialog dialog = mAlertDialogBuilder
+        mFeedbackDialog = mAlertDialogBuilder
                 .init(this)
                 .setView(dialogView)
                 .create();
@@ -139,7 +142,7 @@ public abstract class DrawerActivity extends InjectableActivity {
             @Override
             public void onClick(View v) {
                 AppUtils.openPlayStore(DrawerActivity.this);
-                dialog.dismiss();
+                mFeedbackDialog.dismiss();
             }
         });
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -158,25 +161,39 @@ public abstract class DrawerActivity extends InjectableActivity {
                 }
                 sendButton.setEnabled(false);
                 mFeedbackClient.send(title.getText().toString(), body.getText().toString(),
-                        new FeedbackClient.Callback() {
-                            @Override
-                            public void onSent(boolean success) {
-                                Toast.makeText(DrawerActivity.this,
-                                        success ? R.string.feedback_sent : R.string.feedback_failed,
-                                        Toast.LENGTH_SHORT)
-                                        .show();
-                                if (!dialog.isShowing()) {
-                                    return;
-                                }
-                                if (success) {
-                                    dialog.dismiss();
-                                } else {
-                                    sendButton.setEnabled(true);
-                                }
-                            }
-                        });
+                        new FeedbackCallback(DrawerActivity.this));
             }
         });
-        dialog.show();
+        mFeedbackDialog.show();
+    }
+
+    private void onFeedbackSent(boolean success) {
+        Toast.makeText(DrawerActivity.this,
+                success ? R.string.feedback_sent : R.string.feedback_failed,
+                Toast.LENGTH_SHORT)
+                .show();
+        if (mFeedbackDialog == null || !mFeedbackDialog.isShowing()) {
+            return;
+        }
+        if (success) {
+            mFeedbackDialog.dismiss();
+        } else {
+            mFeedbackDialog.findViewById(R.id.feedback_button).setEnabled(true);
+        }
+    }
+
+    private static class FeedbackCallback implements FeedbackClient.Callback {
+        private final WeakReference<DrawerActivity> mDrawerActivity;
+
+        public FeedbackCallback(DrawerActivity drawerActivity) {
+            mDrawerActivity = new WeakReference<>(drawerActivity);
+        }
+
+        @Override
+        public void onSent(boolean success) {
+            if (mDrawerActivity.get() != null) {
+                mDrawerActivity.get().onFeedbackSent(success);
+            }
+        }
     }
 }

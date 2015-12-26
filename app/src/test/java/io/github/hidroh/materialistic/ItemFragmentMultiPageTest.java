@@ -29,10 +29,13 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
-import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestItemActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -46,7 +49,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
@@ -136,9 +139,10 @@ public class ItemFragmentMultiPageTest {
                 R.id.content_frame);
         assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
+        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
+                ShadowExtractor.extract(recyclerView.getAdapter());
+        adapter.makeItemVisible(0);
+        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text)).hasTextString("text");
         assertThat(viewHolder.itemView.findViewById(R.id.comment)).isVisible();
         viewHolder.itemView.findViewById(R.id.comment).performClick();
@@ -149,39 +153,32 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testBindRemotelKidData() {
-        final ItemManager.Item kidItem = mock(ItemManager.Item.class);
-        when(kidItem.getId()).thenReturn("1");
-        when(kidItem.getLocalRevision()).thenReturn(-1); // force remote retrieval
         Bundle args = new Bundle();
-        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+        ItemManager.Item item = new TestHnItem(2L);
+        item.populate(new TestHnItem(2L) {
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{kidItem};
-            }
-
-            @Override
-            public int getKidCount() {
-                return 1;
+            public long[] getKids() {
+                return new long[]{1L};
             }
         });
+        args.putParcelable(ItemFragment.EXTRA_ITEM, item);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
                 R.id.content_frame);
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        RecyclerView.ViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
+        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
+                ShadowExtractor.extract(recyclerView.getAdapter());
+        adapter.makeItemVisible(0);
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
-        TestItem remoteKidItem = new TestItem() {
+        listener.getValue().onResponse(new TestHnItem(1L) {
             @Override
-            public String getId() {
-                return "1";
+            public String getTitle() {
+                return "title";
             }
-        };
-        listener.getValue().onResponse(remoteKidItem);
-        verify(kidItem).populate(eq(remoteKidItem));
-        verify(kidItem).setLocalRevision(eq(0));
+        });
+        assertEquals(0, item.getKidItems()[0].getLocalRevision());
+        assertEquals("title", item.getKidItems()[0].getTitle());
     }
 
     @Test
