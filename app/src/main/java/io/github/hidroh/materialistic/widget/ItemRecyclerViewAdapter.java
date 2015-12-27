@@ -50,7 +50,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         extends RecyclerView.Adapter<VH> {
     private static final String PROPERTY_MAX_LINES = "maxLines";
     private static final int DURATION_PER_LINE_MILLIS = 20;
-    private int mLocalRevision = 0;
     protected LayoutInflater mLayoutInflater;
     private ItemManager mItemManager;
     @Inject UserServices mUserServices;
@@ -98,7 +97,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         final ItemManager.Item item = getItem(position);
-        if (item.getLocalRevision() < mLocalRevision) {
+        if (item.getLocalRevision() < 0) {
             clear(holder);
             load(holder.getAdapterPosition(), item);
         } else {
@@ -144,15 +143,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void load(int adapterPosition, ItemManager.Item item) {
-        mItemManager.getItem(item.getId(), new ItemResponseListener(this, adapterPosition));
+        mItemManager.getItem(item.getId(), new ItemResponseListener(this, adapterPosition, item));
     }
 
-    private void onItemLoaded(int position, ItemManager.Item item) {
-        if (item == null) {
-            return;
-        }
-        getItem(position).populate(item);
-        getItem(position).setLocalRevision(mLocalRevision);
+    protected void onItemLoaded(int position, ItemManager.Item item) {
         notifyItemChanged(position);
     }
 
@@ -273,16 +267,21 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
         private final WeakReference<ItemRecyclerViewAdapter> mAdapter;
         private final int mPosition;
+        private final ItemManager.Item mPartialItem;
 
-        public ItemResponseListener(ItemRecyclerViewAdapter adapter, int position) {
+        public ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
+                                    ItemManager.Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;
+            mPartialItem = partialItem;
         }
 
         @Override
         public void onResponse(ItemManager.Item response) {
-            if (mAdapter.get() != null) {
-                mAdapter.get().onItemLoaded(mPosition, response);
+            if (mAdapter.get() != null && response != null) {
+                mPartialItem.populate(response);
+                mPartialItem.setLocalRevision(0);
+                mAdapter.get().onItemLoaded(mPosition, mPartialItem);
             }
         }
 
