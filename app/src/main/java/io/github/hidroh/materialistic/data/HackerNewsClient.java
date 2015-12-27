@@ -457,7 +457,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
 
         @Override
         public String getSource() {
-            return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
+            return TextUtils.isEmpty(getUrl()) ? null : Uri.parse(getUrl()).getHost();
         }
 
         @Override

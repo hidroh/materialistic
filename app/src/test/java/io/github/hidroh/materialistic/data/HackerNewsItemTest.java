@@ -13,7 +13,6 @@ import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -349,7 +348,7 @@ public class HackerNewsItemTest {
 
     @Test
     public void testGetSource() {
-        assertNull(item.getSource());
+        assertEquals("news.ycombinator.com", item.getSource());
         item.populate(new TestItem() {
             @Override
             public String getRawUrl() {
