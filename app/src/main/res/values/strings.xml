@@ -96,7 +96,7 @@
         <item quantity="one">Show %1$s comment</item>
         <item quantity="other">Show %1$s comments</item>
     </plurals>
-    <string name="parent"><![CDATA[&nbsp;-&nbsp;<a href="#">parent</a>]]></string>
+    <string name="parent">Parent</string>
     <string name="undo">Undo</string>
     <plurals name="score">
         <item quantity="one">%1$s pt</item>

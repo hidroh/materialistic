@@ -130,7 +130,6 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     private void bindNavigation(ToggleItemViewHolder holder, final ItemManager.Item item) {
-        AppUtils.setHtmlText(holder.mParent, mContext.getString(R.string.parent));
         if (!mState.expanded.containsKey(item.getParent())) {
             holder.mParent.setVisibility(View.INVISIBLE);
             return;
