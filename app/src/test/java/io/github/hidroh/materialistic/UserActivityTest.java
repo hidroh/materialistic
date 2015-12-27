@@ -99,7 +99,7 @@ public class UserActivityTest {
         assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username");
         assertThat((TextView) activity.findViewById(R.id.user_info)).containsText("karma: 2016");
         assertThat((TextView) activity.findViewById(R.id.about)).hasTextString("about");
-        assertEquals(activity.getString(R.string.submissions_count, 2),
+        assertEquals(activity.getResources().getQuantityString(R.plurals.submissions_count, 2, 2),
                 ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
         assertEquals(2, (((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter())
                 .getItemCount());
@@ -236,7 +236,7 @@ public class UserActivityTest {
         adapter.makeItemVisible(1);
         RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(1);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.posted))
-                .containsText(activity.getString(R.string.score, 46));
+                .containsText(activity.getResources().getQuantityString(R.plurals.score, 46, 46));
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.title))
                 .isVisible()
                 .hasTextString("title");

@@ -137,12 +137,12 @@ public class ListFragmentTest {
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
         Assertions.assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
-                .containsText(activity.getString(R.string.new_stories_count, 1));
+                .containsText(activity.getResources().getQuantityString(R.plurals.new_stories_count, 1, 1));
         activity.findViewById(R.id.snackbar_action).performClick();
         assertEquals(1, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
         Assertions.assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
-                .containsText(activity.getString(R.string.showing_new_stories, 1));
+                .containsText(activity.getResources().getQuantityString(R.plurals.showing_new_stories, 1, 1));
         activity.findViewById(R.id.snackbar_action).performClick();
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
         controller.pause().stop().destroy();

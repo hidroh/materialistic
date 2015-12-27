@@ -86,13 +86,28 @@
     <string name="title_activity_search">Search HN</string>
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
-    <string name="hide_comments">Hide comments (%1$s)</string>
-    <string name="show_comments">Show comments (%1$s)</string>
+    <plurals name="hide_comments">
+        <item quantity="zero">Hide %1$s comment</item>
+        <item quantity="one">Hide %1$s comment</item>
+        <item quantity="other">Hide %1$s comments</item>
+    </plurals>
+    <plurals name="show_comments">
+        <item quantity="zero">Show %1$s comment</item>
+        <item quantity="one">Show %1$s comment</item>
+        <item quantity="other">Show %1$s comments</item>
+    </plurals>
     <string name="parent"><![CDATA[&nbsp;-&nbsp;<a href="#">parent</a>]]></string>
     <string name="undo">Undo</string>
-    <string name="score">%1$s pts</string>
+    <plurals name="score">
+        <item quantity="one">%1$s pt</item>
+        <item quantity="other">%1$s pts</item>
+    </plurals>
     <string name="comments">Comments</string>
-    <string name="comments_count">%1$s Comments</string>
+    <plurals name="comments_count">
+        <item quantity="zero">%1$s Comment</item>
+        <item quantity="one">%1$s Comment</item>
+        <item quantity="other">%1$s Comments</item>
+    </plurals>
     <string name="article">Article</string>
     <string name="reset_settings">Reset all settings</string>
     <string name="reset_settings_confirm">Reset all your preferences to app defaults?</string>
@@ -117,9 +132,17 @@
     <string name="popular_range_past_week">Past week</string>
     <string name="popular_range_past_month">Past month</string>
     <string name="popular_range_past_year">Past year</string>
-    <string name="new_stories_count">%1$s new stories</string>
+    <plurals name="new_stories_count">
+        <item quantity="zero">%1$s new story</item>
+        <item quantity="one">%1$s new story</item>
+        <item quantity="other">%1$s new stories</item>
+    </plurals>
     <string name="show_me">Show me</string>
-    <string name="showing_new_stories">Showing %1$s new stories</string>
+    <plurals name="showing_new_stories">
+        <item quantity="zero">Showing %1$s new story</item>
+        <item quantity="one">Showing %1$s new story</item>
+        <item quantity="other">Showing %1$s new stories</item>
+    </plurals>
     <string name="show_all">Show all</string>
     <string name="whats_this">What\'s this?</string>
     <string name="got_it">Got it</string>
@@ -207,7 +230,11 @@
     <string name="submission_guidelines">Submission guidelines</string>
     <string name="title_activity_user">My Profile</string>
     <string name="user_info">Created: %1$s - karma: %2$s</string>
-    <string name="submissions_count">%1$s submissions</string>
+    <plurals name="submissions_count">
+        <item quantity="zero">%1$s submission</item>
+        <item quantity="one">%1$s submission</item>
+        <item quantity="other">%1$s submissions</item>
+    </plurals>
     <string name="view_story">View story</string>
     <string name="user_failed">Unable to load user. Please try again.</string>
     <string name="dead_prefix">[dead]</string>

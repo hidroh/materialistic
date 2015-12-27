@@ -271,7 +271,8 @@ public class ListFragment extends BaseListFragment {
             return;
         }
         Snackbar.make(mRecyclerView,
-                getString(R.string.new_stories_count, mUpdated.size()),
+                getResources().getQuantityString(R.plurals.new_stories_count,
+                        mUpdated.size(), mUpdated.size()),
                 Snackbar.LENGTH_LONG)
                 .setAction(R.string.show_me, new View.OnClickListener() {
                     @Override
@@ -286,7 +287,8 @@ public class ListFragment extends BaseListFragment {
     private void bindData() {
         if (!mShowAll) {
             final Snackbar snackbar = Snackbar.make(mRecyclerView,
-                    getString(R.string.showing_new_stories, mUpdated.size()),
+                    getResources().getQuantityString(R.plurals.showing_new_stories,
+                            mUpdated.size(), mUpdated.size()),
                     Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.show_all, new View.OnClickListener() {
                 @Override

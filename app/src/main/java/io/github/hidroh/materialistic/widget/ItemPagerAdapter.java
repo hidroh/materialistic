@@ -82,8 +82,9 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
             if (mItem instanceof ItemManager.Item) {
-                return mContext.getString(R.string.comments_count,
-                        ((ItemManager.Item) mItem).getKidCount());
+                int count = ((ItemManager.Item) mItem).getKidCount();
+                return mContext.getResources()
+                        .getQuantityString(R.plurals.comments_count, count, count);
             }
             return mContext.getString(R.string.title_activity_item);
         }

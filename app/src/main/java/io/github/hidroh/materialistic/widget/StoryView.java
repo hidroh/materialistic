@@ -115,10 +115,11 @@ public class StoryView extends RelativeLayout implements Checkable {
         if (!mIsLocal && story instanceof ItemManager.Item) {
             ItemManager.Item item = (ItemManager.Item) story;
             mRankTextView.setText(String.valueOf(item.getRank()));
-            mScoreTextView.setText(getContext().getString(R.string.score, item.getScore()));
+            mScoreTextView.setText(getContext().getResources()
+                    .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             if (item.getKidCount() > 0) {
-                ((Button) mCommentButton).setText(getContext()
-                        .getString(R.string.comments_count, item.getKidCount()));
+                ((Button) mCommentButton).setText(getContext().getResources()
+                        .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));
                 mCommentButton.setVisibility(View.VISIBLE);
             } else {
                 mCommentButton.setVisibility(View.GONE);
@@ -193,8 +194,8 @@ public class StoryView extends RelativeLayout implements Checkable {
                 String.valueOf(story.getRank()), updated.contains(story)));
         setPromoted(promotedIds.contains(story.getId()));
         if (story.getKidCount() > 0) {
-            ((Button) mCommentButton).setText(decorateUpdated(
-                    getContext().getString(R.string.comments_count, story.getKidCount()),
+            ((Button) mCommentButton).setText(decorateUpdated(getContext().getResources()
+                    .getQuantityString(R.plurals.comments_count, story.getKidCount(), story.getKidCount()),
                     story.hasNewKids()));
         }
     }
@@ -217,7 +218,8 @@ public class StoryView extends RelativeLayout implements Checkable {
                         mVoteSwitcher.showNext();
                     }
                 }, VOTE_DELAY_MILLIS);
-                mScoreTextView.setText(getContext().getString(R.string.score, newScore));
+                mScoreTextView.setText(getContext().getResources()
+                        .getQuantityString(R.plurals.score, newScore, newScore));
                 mVoteSwitcher.getInAnimation().setAnimationListener(null);
             }
 

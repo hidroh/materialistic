@@ -427,7 +427,7 @@ public class ListFragmentViewHolderTest {
                 .getAnimationListener().onAnimationEnd(animation);
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
         assertThat((TextView) adapter.getViewHolder(0).itemView.findViewById(R.id.score))
-                .hasTextString(activity.getString(R.string.score, 1));
+                .hasTextString(activity.getResources().getQuantityString(R.plurals.score, 1, 1));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
