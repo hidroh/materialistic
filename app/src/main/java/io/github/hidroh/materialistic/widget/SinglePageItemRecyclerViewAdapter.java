@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -141,7 +142,6 @@ public class SinglePageItemRecyclerViewAdapter
                 ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
                 int position = mState.list.indexOf(parent);
                 mRecyclerView.smoothScrollToPosition(position);
-                notifyItemChanged(position); // flash parent
             }
         });
     }
@@ -174,7 +174,12 @@ public class SinglePageItemRecyclerViewAdapter
                 } else {
                     expand(item);
                 }
-                notifyItemChanged(mState.list.indexOf(item)); // TODO prevent exception
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyItemChanged(mState.list.indexOf(item));
+                    }
+                });
             }
         });
     }
@@ -188,17 +193,23 @@ public class SinglePageItemRecyclerViewAdapter
         mState.expanded.putParcelable(item.getId(), item);
         // recursive here!!!
         mState.list.addAll(index, Arrays.asList(item.getKidItems()));
-        try {
-            notifyItemRangeInserted(index, item.getKidCount());
-        } catch (IllegalStateException e) {
-            // TODO Cannot call this method while RecyclerView is computing a layout or scrolling
-        }
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemRangeInserted(index, item.getKidCount());
+            }
+        });
     }
 
     private void collapse(ItemManager.Item item) {
         final int index = mState.list.indexOf(item) + 1;
         final int count = recursiveRemove(item);
-        notifyItemRangeRemoved(index, count);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemRangeRemoved(index, count);
+            }
+        });
     }
 
     private int recursiveRemove(ItemManager.Item item) {
