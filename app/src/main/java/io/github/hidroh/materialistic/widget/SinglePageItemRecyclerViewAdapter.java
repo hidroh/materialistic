@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -130,7 +131,6 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     private void bindNavigation(ToggleItemViewHolder holder, final ItemManager.Item item) {
-        AppUtils.setHtmlText(holder.mParent, mContext.getString(R.string.parent));
         if (!mState.expanded.containsKey(item.getParent())) {
             holder.mParent.setVisibility(View.INVISIBLE);
             return;
@@ -142,7 +142,6 @@ public class SinglePageItemRecyclerViewAdapter
                 ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
                 int position = mState.list.indexOf(parent);
                 mRecyclerView.smoothScrollToPosition(position);
-                notifyItemChanged(position); // flash parent
             }
         });
     }
@@ -158,11 +157,13 @@ public class SinglePageItemRecyclerViewAdapter
         if(mState.expanded.containsKey(item.getId())) {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_less_white_24dp, 0);
-            holder.mToggle.setText(mContext.getString(R.string.hide_comments, item.getKidCount()));
+            holder.mToggle.setText(mContext.getResources()
+                    .getQuantityString(R.plurals.hide_comments, item.getKidCount(), item.getKidCount()));
         } else {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_more_white_24dp, 0);
-            holder.mToggle.setText(mContext.getString(R.string.show_comments, item.getKidCount()));
+            holder.mToggle.setText(mContext.getResources()
+                    .getQuantityString(R.plurals.show_comments, item.getKidCount(), item.getKidCount()));
         }
         holder.mToggle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +174,12 @@ public class SinglePageItemRecyclerViewAdapter
                 } else {
                     expand(item);
                 }
-                notifyItemChanged(mState.list.indexOf(item)); // TODO prevent exception
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyItemChanged(mState.list.indexOf(item));
+                    }
+                });
             }
         });
     }
@@ -187,17 +193,23 @@ public class SinglePageItemRecyclerViewAdapter
         mState.expanded.putParcelable(item.getId(), item);
         // recursive here!!!
         mState.list.addAll(index, Arrays.asList(item.getKidItems()));
-        try {
-            notifyItemRangeInserted(index, item.getKidCount());
-        } catch (IllegalStateException e) {
-            // TODO Cannot call this method while RecyclerView is computing a layout or scrolling
-        }
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemRangeInserted(index, item.getKidCount());
+            }
+        });
     }
 
     private void collapse(ItemManager.Item item) {
         final int index = mState.list.indexOf(item) + 1;
         final int count = recursiveRemove(item);
-        notifyItemRangeRemoved(index, count);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemRangeRemoved(index, count);
+            }
+        });
     }
 
     private int recursiveRemove(ItemManager.Item item) {

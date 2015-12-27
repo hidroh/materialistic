@@ -147,7 +147,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mAbout.setVisibility(View.GONE);
         mEmpty.setVisibility(View.VISIBLE);
         mTabLayout.addTab(mTabLayout.newTab()
-                .setText(getString(R.string.submissions_count, "").trim()));
+                .setText(getResources().getQuantityString(R.plurals.submissions_count, 0, "").trim()));
     }
 
     private void bind() {
@@ -157,8 +157,9 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         } else {
             AppUtils.setHtmlText(mAbout, mUser.getAbout());
         }
+        int count = mUser.getItems().length;
         mTabLayout.addTab(mTabLayout.newTab()
-                .setText(getString(R.string.submissions_count, mUser.getItems().length)));
+                .setText(getResources().getQuantityString(R.plurals.submissions_count, count, count)));
         mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems()));
     }
 

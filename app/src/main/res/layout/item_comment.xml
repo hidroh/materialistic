@@ -42,7 +42,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingBottom="@dimen/padding"
             android:paddingLeft="@dimen/flat_card_horizontal_margin"
             android:paddingRight="@dimen/flat_card_horizontal_margin"
             style="@style/FlatCardView">
@@ -58,24 +57,22 @@
                     style="@style/textSubtitleStyle.Italic"
                     android:paddingRight="0dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:singleLine="false"
                     android:gravity="center_vertical" />
 
-                <TextView
+                <io.github.hidroh.materialistic.widget.TintableTextView
                     android:id="@id/parent"
                     android:visibility="invisible"
                     tools:visibility="visible"
-                    tools:text=" - parent"
-                    android:text="@string/loading_text"
-                    style="@style/textSubtitleStyle.Italic"
-                    android:paddingLeft="0dp"
+                    android:text="@string/parent"
+                    android:drawableRight="@drawable/ic_arrow_upward_white_18dp"
+                    style="@style/textSubtitleStyle"
                     android:layout_gravity="center_vertical"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:singleLine="false"
                     android:gravity="center_vertical" />
 
                 <include layout="@layout/button_more"
@@ -101,16 +98,19 @@
                 android:visibility="gone"
                 style="@style/textSubtitleStyle"
                 android:paddingLeft="@dimen/padding"
-                android:paddingBottom="@dimen/padding"
+                android:paddingTop="@dimen/padding_text"
+                android:paddingBottom="@dimen/padding_text"
                 android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical" />
             <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@+id/toggle"
-                tools:text="@string/hide_comments"
+                tools:text="Hide comments"
                 tools:drawableRight="@drawable/ic_expand_less_white_24dp"
                 tools:visibility="visible"
                 android:visibility="gone"
                 style="@style/textSubtitleStyle"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
                 android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical|center" />
             <include layout="@layout/button_comment"

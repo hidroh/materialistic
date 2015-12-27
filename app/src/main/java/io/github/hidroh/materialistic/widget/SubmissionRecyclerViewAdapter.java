@@ -63,7 +63,8 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
             holder.mCommentButton.setText(R.string.view_thread);
         } else {
             holder.mPostedTextView.append(" - ");
-            holder.mPostedTextView.append(mContext.getString(R.string.score, item.getScore()));
+            holder.mPostedTextView.append(mContext.getResources()
+                    .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             holder.mTitleTextView.setText(item.getDisplayedTitle());
             holder.mCommentButton.setText(R.string.view_story);
         }
