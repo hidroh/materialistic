@@ -33,7 +33,7 @@
             android:visibility="gone"
             tools:visibility="visible"
             tools:background="@color/red500"
-            android:layout_width="@dimen/padding"
+            android:layout_width="@dimen/padding_text"
             android:layout_height="match_parent" />
 
         <LinearLayout
@@ -67,9 +67,9 @@
                     android:id="@id/parent"
                     android:visibility="invisible"
                     tools:visibility="visible"
+                    tools:text="parent"
                     android:text="@string/parent"
-                    android:drawableRight="@drawable/ic_arrow_upward_white_18dp"
-                    style="@style/textSubtitleStyle"
+                    style="@style/textSubtitleStyle.Italic"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -77,8 +77,8 @@
 
                 <include layout="@layout/button_more"
                     android:id="@+id/button_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="36dp"
+                    android:layout_height="36dp" />
 
             </LinearLayout>
             <io.github.hidroh.materialistic.widget.TextView
@@ -87,7 +87,8 @@
                 android:text="@string/loading_text"
                 android:paddingLeft="@dimen/padding"
                 android:paddingRight="@dimen/padding"
-                android:paddingBottom="@dimen/padding"
+                android:paddingTop="@dimen/padding_text"
+                android:paddingBottom="@dimen/padding_text"
                 style="@style/textContentStyle"
                 android:textIsSelectable="true"
                 android:layout_width="match_parent"
