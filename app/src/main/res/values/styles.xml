@@ -56,20 +56,19 @@
     <!-- Text styles -->
     <!-- =========== -->
     <style name="textRankStyle">
+        <item name="android:textAppearance">@style/TextAppearance.App.Large</item>
         <item name="android:gravity">center|center_vertical</item>
-        <item name="android:textSize">@dimen/text_size_medium</item>
     </style>
 
     <style name="textTitleStyle">
-        <item name="android:textSize">?attr/titleTextSize</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Title</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
         <item name="android:paddingRight">@dimen/padding</item>
     </style>
 
     <style name="textSubtitleStyle">
-        <item name="android:textSize">?attr/subtitleTextSize</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Subtitle</item>
         <item name="android:singleLine">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/padding</item>
@@ -79,11 +78,11 @@
     </style>
 
     <style name="textSubtitleStyle.Italic">
-        <item name="android:textStyle">italic</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Subtitle.Italic</item>
     </style>
 
     <style name="textContentStyle">
-        <item name="android:textSize">?attr/contentTextSize</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Small</item>
     </style>
 
     <style name="textEmptyStyle">
@@ -97,24 +96,45 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="TextAppearance.App.Large" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="TextAppearance.App.Small" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">?attr/contentTextSize</item>
+    </style>
+
+    <style name="TextAppearance.App.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">?attr/titleTextSize</item>
+    </style>
+
+    <style name="TextAppearance.App.Subtitle" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">?attr/subtitleTextSize</item>
+    </style>
+
+    <style name="TextAppearance.App.Subtitle.Italic">
+        <item name="android:textStyle">italic</item>
+    </style>
+
     <style name="TextAppearance.App.Empty" parent="TextAppearance.AppCompat.Headline">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="DrawerTextStyle">
+        <item name="android:textAppearance">@style/TextAppearance.App.Large</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingTop">@dimen/padding</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:paddingRight">16dp</item>
         <item name="android:drawablePadding">32dp</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
     </style>
 
-    <style name="HeadlineTextStyle" parent="TextAppearance.AppCompat.Headline">
+    <style name="HeadlineTextStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">@dimen/padding</item>
         <item name="android:layout_width">match_parent</item>
