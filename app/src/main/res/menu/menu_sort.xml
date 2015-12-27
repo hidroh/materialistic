@@ -21,7 +21,6 @@
         android:id="@id/menu_sort"
         android:title="@string/pref_search_sort_title"
         android:icon="@drawable/ic_sort_white_24dp"
-        android:menuCategory="secondary"
         app:showAsAction="ifRoom">
         <menu>
             <group
