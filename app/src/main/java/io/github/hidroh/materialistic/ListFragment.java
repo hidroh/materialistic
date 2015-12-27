@@ -379,8 +379,9 @@ public class ListFragment extends BaseListFragment {
 
         @Override
         protected void loadItem(final int adapterPosition) {
-            mItemManager.getItem(getItem(adapterPosition).getId(),
-                    new ItemResponseListener(this, adapterPosition));
+            ItemManager.Item item = getItem(adapterPosition);
+            mItemManager.getItem(item.getId(),
+                    new ItemResponseListener(this, adapterPosition, item));
         }
 
         @Override
@@ -437,9 +438,10 @@ public class ListFragment extends BaseListFragment {
             return !mCardView;
         }
 
-        private void onItemLoaded(int position, ItemManager.Item story) {
-            getItem(position).populate(story);
-            notifyItemChanged(position);
+        private void onItemLoaded(int position) {
+            if (position < getItemCount()) { // no need to update if filtered out
+                notifyItemChanged(position);
+            }
         }
 
         private void bindUpdated(ItemViewHolder holder, ItemManager.Item story) {
@@ -554,16 +556,20 @@ public class ListFragment extends BaseListFragment {
     private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
         private final WeakReference<RecyclerViewAdapter> mAdapter;
         private final int mPosition;
+        private final ItemManager.Item mPartialItem;
 
-        public ItemResponseListener(RecyclerViewAdapter adapter, int position) {
+        public ItemResponseListener(RecyclerViewAdapter adapter, int position,
+                                    ItemManager.Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;
+            mPartialItem = partialItem;
         }
 
         @Override
         public void onResponse(ItemManager.Item response) {
             if (mAdapter.get() != null && response != null) {
-                mAdapter.get().onItemLoaded(mPosition, response);
+                mPartialItem.populate(response);
+                mAdapter.get().onItemLoaded(mPosition);
             }
         }
 
