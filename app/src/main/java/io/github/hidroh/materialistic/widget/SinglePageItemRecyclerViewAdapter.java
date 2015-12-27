@@ -107,6 +107,12 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
+    protected void onItemLoaded(int position, ItemManager.Item item) {
+        // item position may already be shifted due to expansion, need to get new position
+        notifyItemChanged(mState.list.indexOf(item));
+    }
+
+    @Override
     protected void clear(ToggleItemViewHolder holder) {
         super.clear(holder);
         holder.mToggle.setVisibility(View.GONE);
@@ -136,7 +142,7 @@ public class SinglePageItemRecyclerViewAdapter
                 ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
                 int position = mState.list.indexOf(parent);
                 mRecyclerView.smoothScrollToPosition(position);
-                notifyItemChanged(position);
+                notifyItemChanged(position); // flash parent
             }
         });
     }
@@ -167,7 +173,6 @@ public class SinglePageItemRecyclerViewAdapter
                 } else {
                     expand(item);
                 }
-
                 notifyItemChanged(mState.list.indexOf(item)); // TODO prevent exception
             }
         });

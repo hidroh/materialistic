@@ -729,8 +729,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
                 return;
             }
             if (hasResponse) {
-                item.setFavorite(isFavorite);
-                item.setIsViewed(isViewed);
+                if (item != null) {
+                    item.setFavorite(isFavorite);
+                    item.setIsViewed(isViewed);
+                }
                 responseListener.onResponse(item);
             } else {
                 responseListener.onError(errorMessage);

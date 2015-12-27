@@ -32,6 +32,11 @@ public class ShadowRecyclerViewAdapter {
     }
 
     @Implementation
+    public void notifyItemInserted(int position) {
+        makeItemVisible(position);
+    }
+
+    @Implementation
     public void notifyDataSetChanged() {
         for (int i = 0; i < holders.size(); i++) {
             notifyItemChanged(holders.keyAt(i));
