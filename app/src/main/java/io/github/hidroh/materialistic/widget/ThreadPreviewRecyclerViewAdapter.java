@@ -101,7 +101,8 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    notifyItemRangeChanged(0, mItems.size());
+                    notifyItemRangeChanged(1, mItems.size());
+                    notifyItemInserted(0);
                 }
             });
         }
