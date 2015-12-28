@@ -79,6 +79,10 @@ public interface ReadabilityClient {
                         @Override
                         public void onResponse(Response<Readable> response, Retrofit retrofit) {
                             Readable readable = response.body();
+                            if (readable == null) {
+                                callback.onResponse(null);
+                                return;
+                            }
                             cache(itemId, readable.content);
                             if (TextUtils.equals(EMPTY_CONTENT, readable.content)) {
                                 callback.onResponse(null);
