@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -120,7 +119,7 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    protected void bind(final ToggleItemViewHolder holder, final ItemManager.Item item) {
+    protected void bind(ToggleItemViewHolder holder, ItemManager.Item item) {
         super.bind(holder, item);
         if (item == null) {
             return;
@@ -146,7 +145,7 @@ public class SinglePageItemRecyclerViewAdapter
         });
     }
 
-    private void toggleKids(ToggleItemViewHolder holder, final ItemManager.Item item) {
+    private void toggleKids(final ToggleItemViewHolder holder, final ItemManager.Item item) {
         holder.mToggle.setVisibility(item.getKidCount() > 0 ? View.VISIBLE : View.GONE);
         if (item.getKidCount() == 0) {
             return;
@@ -154,7 +153,24 @@ public class SinglePageItemRecyclerViewAdapter
         if (!item.isCollapsed() && mAutoExpand) {
             expand(item);
         }
-        if(mState.expanded.containsKey(item.getId())) {
+        bindToggle(holder, item, isExpanded(item));
+        holder.mToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean expanded = isExpanded(item);
+                bindToggle(holder, item, !expanded);
+                item.setCollapsed(!item.isCollapsed());
+                if (expanded) {
+                    collapse(item);
+                } else {
+                    expand(item);
+                }
+            }
+        });
+    }
+
+    private void bindToggle(ToggleItemViewHolder holder, ItemManager.Item item, boolean expanded) {
+        if(expanded) {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_less_white_24dp, 0);
             holder.mToggle.setText(mContext.getResources()
@@ -165,58 +181,33 @@ public class SinglePageItemRecyclerViewAdapter
             holder.mToggle.setText(mContext.getResources()
                     .getQuantityString(R.plurals.show_comments, item.getKidCount(), item.getKidCount()));
         }
-        holder.mToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                item.setCollapsed(!item.isCollapsed());
-                if (mState.expanded.containsKey(item.getId())) {
-                    collapse(item);
-                } else {
-                    expand(item);
-                }
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyItemChanged(mState.list.indexOf(item));
-                    }
-                });
-            }
-        });
     }
 
     private void expand(final ItemManager.Item item) {
-        if (mState.expanded.containsKey(item.getId())) {
+        if (isExpanded(item)) {
             return;
         }
-
-        final int index = mState.list.indexOf(item) + 1;
         mState.expanded.putParcelable(item.getId(), item);
-        // recursive here!!!
-        mState.list.addAll(index, Arrays.asList(item.getKidItems()));
-        new Handler().post(new Runnable() {
+        mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
+                int index = mState.list.indexOf(item) + 1;
+                mState.list.addAll(index, Arrays.asList(item.getKidItems())); // recursive
                 notifyItemRangeInserted(index, item.getKidCount());
             }
         });
     }
 
-    private void collapse(ItemManager.Item item) {
-        final int index = mState.list.indexOf(item) + 1;
-        final int count = recursiveRemove(item);
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                notifyItemRangeRemoved(index, count);
-            }
-        });
+    private void collapse(final ItemManager.Item item) {
+        int index = mState.list.indexOf(item) + 1;
+        int count = recursiveRemove(item);
+        notifyItemRangeRemoved(index, count);
     }
 
     private int recursiveRemove(ItemManager.Item item) {
-        if (!mState.expanded.containsKey(item.getId())) {
+        if (!isExpanded(item)) {
             return 0;
         }
-
         // if item is already expanded, its kids must be added, so we need to remove them
         int count = item.getKidCount();
         mState.expanded.remove(item.getId());
@@ -225,6 +216,10 @@ public class SinglePageItemRecyclerViewAdapter
             mState.list.remove(kid);
         }
         return count;
+    }
+
+    private boolean isExpanded(ItemManager.Item item) {
+        return mState.expanded.containsKey(item.getId());
     }
 
     public static class SavedState implements Parcelable {
