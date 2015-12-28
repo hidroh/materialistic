@@ -40,6 +40,10 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     private int mCardElevation;
     private int mCardRadius;
 
+    public ListRecyclerViewAdapter() {
+        setHasStableIds(true);
+    }
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -86,6 +90,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
             }
         });
         bindItem(holder);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return Long.valueOf(getItem(position).getId());
     }
 
     public Bundle saveState() {

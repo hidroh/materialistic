@@ -65,6 +65,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
+        setHasStableIds(true);
     }
 
     @Override
@@ -103,6 +104,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         } else {
             bind(holder, item);
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return Long.valueOf(getItem(position).getId());
     }
 
     public void setMaxLines(int maxLines) {

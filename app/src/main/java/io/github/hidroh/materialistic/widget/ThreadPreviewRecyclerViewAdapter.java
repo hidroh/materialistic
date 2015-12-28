@@ -97,10 +97,10 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
                 View.VISIBLE : View.GONE);
         if (!mExpanded.contains(item.getId()) && item.getParentItem() != null) {
             mExpanded.add(item.getId());
-            mItems.add(0, item.getParentItem()); // recursive
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
+                    mItems.add(0, item.getParentItem()); // recursive
                     notifyItemRangeChanged(1, mItems.size());
                     notifyItemInserted(0);
                 }
