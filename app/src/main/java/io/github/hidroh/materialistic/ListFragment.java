@@ -103,6 +103,7 @@ public class ListFragment extends BaseListFragment {
     private boolean mHighlightUpdated = true;
     private String mUsername;
     private int mFavoriteRevision = -1;
+    private boolean mAttached;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -111,6 +112,7 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mAttached = true;
         mMultiPaneListener = (MultiPaneListener) context;
         if (context instanceof RefreshCallback) {
             mRefreshCallback = (RefreshCallback) context;
@@ -198,6 +200,7 @@ public class ListFragment extends BaseListFragment {
 
     @Override
     public void onDetach() {
+        mAttached = false;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
         mMultiPaneListener = null;
@@ -224,6 +227,9 @@ public class ListFragment extends BaseListFragment {
     }
 
     private void onItemsLoaded(ItemManager.Item[] items) {
+        if (!mAttached) {
+            return;
+        }
         if (items == null) {
             mSwipeRefreshLayout.setRefreshing(false);
             if (mItems == null || mItems.isEmpty()) {
