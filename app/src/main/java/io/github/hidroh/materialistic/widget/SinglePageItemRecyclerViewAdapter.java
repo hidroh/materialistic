@@ -109,7 +109,10 @@ public class SinglePageItemRecyclerViewAdapter
     @Override
     protected void onItemLoaded(int position, ItemManager.Item item) {
         // item position may already be shifted due to expansion, need to get new position
-        notifyItemChanged(mState.list.indexOf(item));
+        int index = mState.list.indexOf(item);
+        if (index >= 0 && index < getItemCount()) {
+            notifyItemChanged(index);
+        }
     }
 
     @Override

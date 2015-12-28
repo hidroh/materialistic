@@ -153,7 +153,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     protected void onItemLoaded(int position, ItemManager.Item item) {
-        notifyItemChanged(position);
+        if (position < getItemCount()) {
+            notifyItemChanged(position);
+        }
     }
 
     private void highlightUserItem(VH holder, ItemManager.Item item) {
