@@ -381,6 +381,10 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder, 0);
         assertThat(textView).hasMaxLines(3);
         assertThat(more).isVisible();
+        // rebind should not post runnable
+        adapter.bindViewHolder(viewHolder, 0);
+        assertThat(textView).hasMaxLines(3);
+        assertThat(more).isVisible();
 
         // content shorter than max lines
         clickSubMenuItem(R.id.menu_max_lines, 2); // 5 lines

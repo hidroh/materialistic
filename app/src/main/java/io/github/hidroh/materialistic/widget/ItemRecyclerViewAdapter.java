@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -62,6 +64,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private int mCardHighlightColorResId;
     private int mContentMaxLines = Integer.MAX_VALUE;
     private String mUsername;
+    private final Set<String> mLineCounted = new HashSet<>();
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
@@ -131,12 +134,17 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         highlightUserItem(holder, item);
         decorateDead(holder, item);
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
+        if (mLineCounted.contains(item.getId())) {
+            toggleCollapsibleContent(holder, item);
+        } else {
         holder.mContentTextView.post(new Runnable() {
             @Override
             public void run() {
                 toggleCollapsibleContent(holder, item);
+                mLineCounted.add(item.getId());
             }
         });
+        }
         bindActions(holder, item);
     }
 
