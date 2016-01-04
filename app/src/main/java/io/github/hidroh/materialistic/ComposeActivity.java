@@ -30,6 +30,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -171,33 +173,25 @@ public class ComposeActivity extends InjectableActivity {
         toggleControls(true);
         Toast.makeText(this, R.string.sending, Toast.LENGTH_SHORT).show();
         mUserServices.reply(this, mParentId, mEditText.getText().toString(),
-                new UserServices.Callback() {
-                    @Override
-                    public void onDone(boolean successful) {
-                        if (successful) {
-                            Toast.makeText(ComposeActivity.this, R.string.comment_successful,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                            if (!isFinishing()) {
-                                finish();
-                                // TODO refresh parent
-                            }
-                        } else {
-                            if (!isFinishing()) {
-                                AppUtils.showLogin(ComposeActivity.this, mAlertDialogBuilder);
-                            }
-                            toggleControls(false);
-                        }
-                    }
+                new ComposeCallback(this));
+    }
 
-                    @Override
-                    public void onError() {
-                        Toast.makeText(ComposeActivity.this, R.string.comment_failed,
-                                Toast.LENGTH_SHORT)
-                                .show();
-                        toggleControls(false);
-                    }
-                });
+    private void onSent(Boolean successful) {
+        if (successful == null) {
+            Toast.makeText(this, R.string.comment_failed, Toast.LENGTH_SHORT).show();
+            toggleControls(false);
+        } else if (successful) {
+            Toast.makeText(this, R.string.comment_successful, Toast.LENGTH_SHORT).show();
+            if (!isFinishing()) {
+                finish();
+                // TODO refresh parent
+            }
+        } else {
+            if (!isFinishing()) {
+                AppUtils.showLogin(this, mAlertDialogBuilder);
+            }
+            toggleControls(false);
+        }
     }
 
     private String createQuote() {
@@ -217,5 +211,27 @@ public class ComposeActivity extends InjectableActivity {
         mSending = sending;
         mEditText.setEnabled(!sending);
         supportInvalidateOptionsMenu();
+    }
+
+    private static class ComposeCallback extends UserServices.Callback {
+        private final WeakReference<ComposeActivity> mComposeActivity;
+
+        public ComposeCallback(ComposeActivity composeActivity) {
+            mComposeActivity = new WeakReference<>(composeActivity);
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            if (mComposeActivity.get() != null && !mComposeActivity.get().isActivityDestroyed()) {
+                mComposeActivity.get().onSent(successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mComposeActivity.get() != null && !mComposeActivity.get().isActivityDestroyed()) {
+                mComposeActivity.get().onSent(null);
+            }
+        }
     }
 }

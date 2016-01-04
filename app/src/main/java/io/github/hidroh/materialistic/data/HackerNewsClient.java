@@ -223,6 +223,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         private int lastKidCount = -1;
         private boolean hasNewDescendants = false;
         private HackerNewsItem parentItem;
+        private boolean voted;
 
         public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
             @Override
@@ -271,6 +272,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
             hasNewDescendants = source.readInt() == 1;
             parent = source.readLong();
             parentItem = source.readParcelable(HackerNewsItem.class.getClassLoader());
+            voted = source.readInt() == 1;
         }
 
         @Override
@@ -350,6 +352,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
             dest.writeInt(hasNewDescendants ? 1 : 0);
             dest.writeLong(parent);
             dest.writeParcelable(parentItem, flags);
+            dest.writeInt(voted ? 1 : 0);
         }
 
         @Override
@@ -570,6 +573,17 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @Override
         public void incrementScore() {
             score++;
+            voted = true;
+        }
+
+        @Override
+        public boolean isVoted() {
+            return voted;
+        }
+
+        @Override
+        public void clearVoted() {
+            voted = false;
         }
 
         @Override

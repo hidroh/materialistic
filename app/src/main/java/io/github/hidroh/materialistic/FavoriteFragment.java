@@ -47,6 +47,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +64,11 @@ public class FavoriteFragment extends BaseListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
+
+    public interface DataChangedListener {
+        void onDataChanged(boolean isEmpty, String filter);
+    }
+
     private FavoriteManager.Cursor mCursor;
     private final RecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -531,25 +537,39 @@ public class FavoriteFragment extends BaseListFragment
         }
 
         private void vote(final FavoriteManager.Favorite item) {
-            mUserServices.voteUp(getActivity(), item.getId(), new UserServices.Callback() {
-                @Override
-                public void onDone(boolean successful) {
-                    if (successful) {
-                        Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
-                    } else {
-                        AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
-                    }
-                }
+            mUserServices.voteUp(getActivity(), item.getId(), new VoteCallback(this));
+        }
 
-                @Override
-                public void onError() {
-                    Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
-                }
-            });
+        private void onVoted(Boolean successful) {
+            if (successful == null) {
+                Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
+            } else if (successful) {
+                Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
+            } else {
+                AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
+            }
         }
     }
 
-    public interface DataChangedListener {
-        void onDataChanged(boolean isEmpty, String filter);
+    private static class VoteCallback extends UserServices.Callback {
+        private final WeakReference<RecyclerViewAdapter> mAdapter;
+
+        public VoteCallback(RecyclerViewAdapter adapter) {
+            mAdapter = new WeakReference<>(adapter);
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
+                mAdapter.get().onVoted(successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
+                mAdapter.get().onVoted(null);
+            }
+        }
     }
 }

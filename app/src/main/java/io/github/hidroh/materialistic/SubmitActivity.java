@@ -28,6 +28,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -142,35 +143,25 @@ public class SubmitActivity extends InjectableActivity {
         toggleControls(true);
         Toast.makeText(this, R.string.sending, Toast.LENGTH_SHORT).show();
         mUserServices.submit(this, mTitleEditText.getText().toString(),
-                mContentEditText.getText().toString(), isUrl, new UserServices.Callback() {
-                    @Override
-                    public void onDone(boolean successful) {
-                        toggleControls(false);
-                        if (successful) {
-                            Toast.makeText(SubmitActivity.this, R.string.submit_successful,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                            if (!isFinishing()) {
-                                Intent intent = new Intent(SubmitActivity.this, NewActivity.class);
-                                intent.putExtra(NewActivity.EXTRA_REFRESH, true);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                startActivity(intent); // TODO should go to profile instead?
-                                finish();
-                            }
-                        } else if (!isFinishing()) {
-                            AppUtils.showLogin(SubmitActivity.this, mAlertDialogBuilder);
-                        }
+                mContentEditText.getText().toString(), isUrl, new SubmitCallback(this));
+    }
 
-                    }
-
-                    @Override
-                    public void onError() {
-                        toggleControls(false);
-                        Toast.makeText(SubmitActivity.this,
-                                R.string.submit_failed, Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                });
+    private void onSubmitted(Boolean successful) {
+        if (successful == null) {
+            toggleControls(false);
+            Toast.makeText(this, R.string.submit_failed, Toast.LENGTH_SHORT).show();
+        } else if (successful) {
+            Toast.makeText(this, R.string.submit_successful, Toast.LENGTH_SHORT).show();
+            if (!isFinishing()) {
+                Intent intent = new Intent(this, NewActivity.class);
+                intent.putExtra(NewActivity.EXTRA_REFRESH, true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent); // TODO should go to profile instead?
+                finish();
+            }
+        } else if (!isFinishing()) {
+            AppUtils.showLogin(this, mAlertDialogBuilder);
+        }
     }
 
     private boolean isUrl() {
@@ -190,5 +181,27 @@ public class SubmitActivity extends InjectableActivity {
         mTitleEditText.setEnabled(!sending);
         mContentEditText.setEnabled(!sending);
         supportInvalidateOptionsMenu();
+    }
+
+    private static class SubmitCallback extends UserServices.Callback {
+        private final WeakReference<SubmitActivity> mSubmitActivity;
+
+        public SubmitCallback(SubmitActivity submitActivity) {
+            mSubmitActivity = new WeakReference<>(submitActivity);
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            if (mSubmitActivity.get() != null && !mSubmitActivity.get().isActivityDestroyed()) {
+                mSubmitActivity.get().onSubmitted(successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mSubmitActivity.get() != null && !mSubmitActivity.get().isActivityDestroyed()) {
+                mSubmitActivity.get().onSubmitted(null);
+            }
+        }
     }
 }

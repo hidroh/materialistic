@@ -246,6 +246,20 @@ public interface ItemManager {
         void incrementScore();
 
         /**
+         * Checks if item has been voted via a user action
+         * @return true if voted at least once, false otherwise
+         * @see #incrementScore()
+         */
+        boolean isVoted();
+
+        /**
+         * Clears voted status
+         * @see #isVoted()
+         * @see #incrementScore()
+         */
+        void clearVoted();
+
+        /**
          * Checks if item is collapsed
          * @return true if collapsed, false otherwise
          */

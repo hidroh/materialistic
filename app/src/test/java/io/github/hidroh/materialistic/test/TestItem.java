@@ -196,6 +196,16 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public boolean isVoted() {
+        return false;
+    }
+
+    @Override
+    public void clearVoted() {
+
+    }
+
+    @Override
     public boolean isCollapsed() {
         return collapsed;
     }
