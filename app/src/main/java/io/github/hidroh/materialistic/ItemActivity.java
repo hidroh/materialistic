@@ -359,7 +359,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
 
         @Override
         public void onResponse(ItemManager.Item response) {
-            if (mItemActivity.get() != null) {
+            if (mItemActivity.get() != null && !mItemActivity.get().isActivityDestroyed()) {
                 mItemActivity.get().onItemLoaded(response);
             }
         }

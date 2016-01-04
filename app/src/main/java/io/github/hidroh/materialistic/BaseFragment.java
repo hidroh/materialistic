@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,13 @@ import android.view.MenuInflater;
  */
 public abstract class BaseFragment extends Fragment {
     protected final MenuTintDelegate mMenuTintDelegate = new MenuTintDelegate();
+    private boolean mAttached;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mAttached = true;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -45,8 +53,18 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mAttached = false;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Application.getRefWatcher(getActivity()).watch(this);
+    }
+
+    public boolean isAttached() {
+        return mAttached;
     }
 }

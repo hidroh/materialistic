@@ -22,6 +22,7 @@ import dagger.ObjectGraph;
 
 public abstract class InjectableActivity extends ThemedActivity implements Injectable {
     private ObjectGraph mActivityGraph;
+    private boolean mDestroyed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,17 @@ public abstract class InjectableActivity extends ThemedActivity implements Injec
 
     @Override
     protected void onDestroy() {
-        mActivityGraph = null;
         super.onDestroy();
+        mDestroyed = true;
+        mActivityGraph = null;
     }
 
     @Override
     public void inject(Object object) {
         mActivityGraph.inject(object);
+    }
+
+    public boolean isActivityDestroyed() {
+        return mDestroyed;
     }
 }

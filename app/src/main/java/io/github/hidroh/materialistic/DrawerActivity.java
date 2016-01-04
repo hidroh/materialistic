@@ -191,7 +191,7 @@ public abstract class DrawerActivity extends InjectableActivity {
 
         @Override
         public void onSent(boolean success) {
-            if (mDrawerActivity.get() != null) {
+            if (mDrawerActivity.get() != null && !mDrawerActivity.get().isActivityDestroyed()) {
                 mDrawerActivity.get().onFeedbackSent(success);
             }
         }

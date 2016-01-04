@@ -60,7 +60,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private View mEmptyView;
     private ItemManager.Item mItem;
     private String mItemId;
-    private boolean mAttached;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
@@ -95,7 +94,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mAttached = true;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
@@ -232,7 +230,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     public void onDetach() {
         super.onDetach();
         mRecyclerView.setAdapter(null);
-        mAttached = false;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
     }
@@ -313,7 +310,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     private void invalidateOptionsMenu() {
-        if (!mAttached) {
+        if (!isAttached()) {
             return;
         }
         getActivity().supportInvalidateOptionsMenu();
@@ -328,14 +325,14 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
 
         @Override
         public void onResponse(ItemManager.Item response) {
-            if (mItemFragment.get() != null) {
+            if (mItemFragment.get() != null && mItemFragment.get().isAttached()) {
                 mItemFragment.get().onItemLoaded(response);
             }
         }
 
         @Override
         public void onError(String errorMessage) {
-            if (mItemFragment.get() != null) {
+            if (mItemFragment.get() != null && mItemFragment.get().isAttached()) {
                 mItemFragment.get().onItemLoaded(null);
             }
         }

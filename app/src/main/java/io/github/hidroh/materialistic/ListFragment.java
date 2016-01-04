@@ -103,7 +103,6 @@ public class ListFragment extends BaseListFragment {
     private boolean mHighlightUpdated = true;
     private String mUsername;
     private int mFavoriteRevision = -1;
-    private boolean mAttached;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -112,7 +111,6 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mAttached = true;
         mMultiPaneListener = (MultiPaneListener) context;
         if (context instanceof RefreshCallback) {
             mRefreshCallback = (RefreshCallback) context;
@@ -200,7 +198,6 @@ public class ListFragment extends BaseListFragment {
 
     @Override
     public void onDetach() {
-        mAttached = false;
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
         mMultiPaneListener = null;
@@ -227,7 +224,7 @@ public class ListFragment extends BaseListFragment {
     }
 
     private void onItemsLoaded(ItemManager.Item[] items) {
-        if (!mAttached) {
+        if (!isAttached()) {
             return;
         }
         if (items == null) {
@@ -546,14 +543,14 @@ public class ListFragment extends BaseListFragment {
         }
         @Override
         public void onResponse(final ItemManager.Item[] response) {
-            if (mListFragment.get() != null) {
+            if (mListFragment.get() != null && mListFragment.get().isAttached()) {
                 mListFragment.get().onItemsLoaded(response);
             }
         }
 
         @Override
         public void onError(String errorMessage) {
-            if (mListFragment.get() != null) {
+            if (mListFragment.get() != null && mListFragment.get().isAttached()) {
                 mListFragment.get().onItemsLoaded(null);
             }
         }
@@ -573,7 +570,7 @@ public class ListFragment extends BaseListFragment {
 
         @Override
         public void onResponse(ItemManager.Item response) {
-            if (mAdapter.get() != null && response != null) {
+            if (mAdapter.get() != null && mAdapter.get().isAttached() && response != null) {
                 mPartialItem.populate(response);
                 mAdapter.get().onItemLoaded(mPosition);
             }

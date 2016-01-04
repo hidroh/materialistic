@@ -124,6 +124,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         notifyDataSetChanged();
     }
 
+    public boolean isAttached() {
+        return mContext != null;
+    }
+
     protected abstract ItemManager.Item getItem(int position);
 
     @CallSuper
@@ -294,7 +298,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
         @Override
         public void onResponse(ItemManager.Item response) {
-            if (mAdapter.get() != null && response != null) {
+            if (mAdapter.get() != null && mAdapter.get().isAttached() && response != null) {
                 mPartialItem.populate(response);
                 mPartialItem.setLocalRevision(0);
                 mAdapter.get().onItemLoaded(mPosition, mPartialItem);
@@ -316,14 +320,14 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
         @Override
         public void onDone(boolean successful) {
-            if (mAdapter.get() != null) {
+            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(successful);
             }
         }
 
         @Override
         public void onError() {
-            if (mAdapter.get() != null) {
+            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(null);
             }
         }
