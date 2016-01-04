@@ -86,7 +86,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         holder.mStoryView.setOnCommentClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleCommentButtonClick(item, holder);
+                openItem(item);
             }
         });
         bindItem(holder);
@@ -141,15 +141,6 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     }
 
     /**
-     * Handles comment button click
-     * @param item      clicked item
-     * @param holder    clicked item view holder
-     */
-    protected void handleCommentButtonClick(T item, VH holder) {
-        openItem(item);
-    }
-
-    /**
      * Clears previously bind data from given view holder
      * @param holder    view holder to clear
      */
@@ -181,10 +172,9 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     protected abstract T getItem(int position);
 
     private void openItem(T item) {
-        final Intent intent = new Intent(mContext, ItemActivity.class);
-        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        intent.putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
-        mContext.startActivity(intent);
+        mContext.startActivity(new Intent(mContext, ItemActivity.class)
+                .putExtra(ItemActivity.EXTRA_ITEM, item)
+                .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true));
     }
 
     /**
