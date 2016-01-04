@@ -110,6 +110,10 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         mLastSelectedPosition = savedState.getInt(STATE_LAST_SELECTION_POSITION);
     }
 
+    public boolean isAttached() {
+        return mContext != null;
+    }
+
     protected abstract boolean shouldCompact();
 
     protected void loadItem(int adapterPosition) {

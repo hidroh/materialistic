@@ -240,7 +240,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
 
         @Override
         public void onResponse(String content) {
-            if (mReadabilityFragment.get() != null) {
+            if (mReadabilityFragment.get() != null && mReadabilityFragment.get().isAttached()) {
                 mReadabilityFragment.get().onParsed(content);
             }
         }

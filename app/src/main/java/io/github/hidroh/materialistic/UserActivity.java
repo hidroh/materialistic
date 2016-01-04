@@ -172,14 +172,14 @@ public class UserActivity extends InjectableActivity implements Scrollable {
 
         @Override
         public void onResponse(UserManager.User response) {
-            if (mUserActivity.get() != null) {
+            if (mUserActivity.get() != null && !mUserActivity.get().isActivityDestroyed()) {
                 mUserActivity.get().onUserLoaded(response);
             }
         }
 
         @Override
         public void onError(String errorMessage) {
-            if (mUserActivity.get() != null) {
+            if (mUserActivity.get() != null && !mUserActivity.get().isActivityDestroyed()) {
                 Toast.makeText(mUserActivity.get(), R.string.user_failed, Toast.LENGTH_SHORT).show();
             }
         }
