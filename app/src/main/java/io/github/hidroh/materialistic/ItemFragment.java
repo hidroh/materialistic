@@ -147,7 +147,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_item_view, menu);
         mDisplayOptionValues = getResources().getStringArray(R.array.pref_comment_display_values);
         SubMenu subMenu = menu.findItem(R.id.menu_thread).getSubMenu();
@@ -163,12 +163,10 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             subMenu.add(R.id.menu_max_lines_group, Menu.NONE, i, options[i]);
         }
         subMenu.setGroupCheckable(R.id.menu_max_lines_group, true, true);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+    protected void prepareOptionsMenu(Menu menu) {
         MenuItem itemColorCode = menu.findItem(R.id.menu_color_code);
         itemColorCode.setEnabled(mAdapter != null &&
                 mAdapter instanceof SinglePageItemRecyclerViewAdapter);

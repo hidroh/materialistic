@@ -85,7 +85,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_font_options, menu);
         mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
         mFontOptionValues = getResources().getStringArray(R.array.font_values);
@@ -105,11 +105,10 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             item.setChecked(TextUtils.equals(initialTypeface, mFontOptionValues[i]));
         }
         subMenu.setGroupCheckable(R.id.menu_font_group, true, true);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    protected void prepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_font_options).setVisible(!TextUtils.isEmpty(mContent));
     }
 

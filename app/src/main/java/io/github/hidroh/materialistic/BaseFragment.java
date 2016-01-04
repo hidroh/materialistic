@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,11 +44,19 @@ public abstract class BaseFragment extends Fragment {
         mMenuTintDelegate.onActivityCreated(getActivity());
     }
 
-    @CallSuper
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        mMenuTintDelegate.onOptionsMenuCreated(menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    public final void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (isAttached()) { // TODO http://b.android.com/80783
+            createOptionsMenu(menu, inflater);
+            mMenuTintDelegate.onOptionsMenuCreated(menu);
+        }
+    }
+
+    @Override
+    public final void onPrepareOptionsMenu(Menu menu) {
+        if (isAttached()) { // TODO http://b.android.com/80783
+            prepareOptionsMenu(menu);
+        }
     }
 
     @Override
@@ -66,5 +73,13 @@ public abstract class BaseFragment extends Fragment {
 
     public boolean isAttached() {
         return mAttached;
+    }
+
+    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
+        // override to create options menu
+    }
+
+    protected void prepareOptionsMenu(Menu menu) {
+        // override to prepare options menu
     }
 }

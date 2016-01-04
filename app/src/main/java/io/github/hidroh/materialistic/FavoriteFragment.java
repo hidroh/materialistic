@@ -248,7 +248,7 @@ public class FavoriteFragment extends BaseListFragment
     }
 
     @Override
-    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
+    protected void createOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_favorite, menu);
         final MenuItem menuSearch = menu.findItem(R.id.menu_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -274,15 +274,15 @@ public class FavoriteFragment extends BaseListFragment
                 return false;
             }
         });
-        super.onCreateOptionsMenu(menu, inflater);
+        super.createOptionsMenu(menu, inflater);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    protected void prepareOptionsMenu(Menu menu) {
         invalidateMenuItems(menu);
         menu.findItem(R.id.menu_search).setVisible(!TextUtils.isEmpty(mFilter) ||
                 mAdapter.getItemCount() > 0);
-        super.onPrepareOptionsMenu(menu);
+        super.prepareOptionsMenu(menu);
     }
 
     private void invalidateMenuItems(Menu menu) {
