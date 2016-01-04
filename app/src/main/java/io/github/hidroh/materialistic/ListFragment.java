@@ -507,24 +507,21 @@ public class ListFragment extends BaseListFragment {
         }
 
         private void vote(final ItemManager.Item story, final ItemViewHolder holder) {
-            mUserServices.voteUp(getActivity(), story.getId(), new UserServices.Callback() {
-                @Override
-                public void onDone(boolean successful) {
-                    if (successful) {
-                        // TODO update locally only, as API does not update instantly
-                        story.incrementScore();
-                        holder.mStoryView.animateVote(story.getScore());
-                        Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
-                    } else {
-                        AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
-                    }
-                }
+            mUserServices.voteUp(getActivity(), story.getId(),
+                    new VoteCallback(this, holder.getAdapterPosition(), story));
+        }
 
-                @Override
-                public void onError() {
-                    Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
+        private void onVoted(int position, Boolean successful) {
+            if (successful == null) {
+                Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
+            } else if (successful) {
+                Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
+                if (position < getItemCount()) {
+                    notifyItemChanged(position);
                 }
-            });
+            } else {
+                AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
+            }
         }
 
         private void highlightUserPost(ListRecyclerViewAdapter.ItemViewHolder holder,
@@ -579,6 +576,35 @@ public class ListFragment extends BaseListFragment {
         @Override
         public void onError(String errorMessage) {
             // do nothing
+        }
+    }
+
+    private static class VoteCallback extends UserServices.Callback {
+        private final WeakReference<RecyclerViewAdapter> mAdapter;
+        private final int mPosition;
+        private final ItemManager.Item mItem;
+
+        public VoteCallback(RecyclerViewAdapter adapter, int position,
+                                    ItemManager.Item item) {
+            mAdapter = new WeakReference<>(adapter);
+            mPosition = position;
+            mItem = item;
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            // TODO update locally only, as API does not update instantly
+            mItem.incrementScore();
+            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
+                mAdapter.get().onVoted(mPosition, successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
+                mAdapter.get().onVoted(mPosition, null);
+            }
         }
     }
 }

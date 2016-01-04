@@ -114,9 +114,14 @@ public class StoryView extends RelativeLayout implements Checkable {
     public void setStory(@NonNull ItemManager.WebItem story) {
         if (!mIsLocal && story instanceof ItemManager.Item) {
             ItemManager.Item item = (ItemManager.Item) story;
-            mRankTextView.setText(String.valueOf(item.getRank()));
-            mScoreTextView.setText(getContext().getResources()
-                    .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
+            if (item.isVoted()) {
+                item.clearVoted();
+                animateVote(item.getScore());
+            } else {
+                mRankTextView.setText(String.valueOf(item.getRank()));
+                mScoreTextView.setText(getContext().getResources()
+                        .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
+            }
             if (item.getKidCount() > 0) {
                 ((Button) mCommentButton).setText(getContext().getResources()
                         .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));
@@ -200,7 +205,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         }
     }
 
-    public void animateVote(final int newScore) {
+    private void animateVote(final int newScore) {
         if (mIsLocal) {
             return;
         }

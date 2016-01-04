@@ -328,26 +328,19 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     }
 
     private void vote(final ItemManager.Item story) {
-        mUserServices.voteUp(ItemActivity.this, story.getId(), new UserServices.Callback() {
-            @Override
-            public void onDone(boolean successful) {
-                if (successful) {
-                    Drawable drawable = DrawableCompat.wrap(mVoteButton.getDrawable());
-                    DrawableCompat.setTint(drawable,
-                            ContextCompat.getColor(ItemActivity.this, R.color.greenA700));
-                    Toast.makeText(ItemActivity.this, R.string.voted,
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    AppUtils.showLogin(ItemActivity.this, mAlertDialogBuilder);
-                }
-            }
+        mUserServices.voteUp(ItemActivity.this, story.getId(), new VoteCallback(this));
+    }
 
-            @Override
-            public void onError() {
-                Toast.makeText(ItemActivity.this, R.string.vote_failed,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void onVoted(Boolean successful) {
+        if (successful == null) {
+            Toast.makeText(this, R.string.vote_failed, Toast.LENGTH_SHORT).show();
+        } else if (successful) {
+            Drawable drawable = DrawableCompat.wrap(mVoteButton.getDrawable());
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.greenA700));
+            Toast.makeText(this, R.string.voted, Toast.LENGTH_SHORT).show();
+        } else {
+            AppUtils.showLogin(this, mAlertDialogBuilder);
+        }
     }
 
     private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
@@ -367,6 +360,28 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         @Override
         public void onError(String errorMessage) {
             // do nothing
+        }
+    }
+
+    private static class VoteCallback extends UserServices.Callback {
+        private final WeakReference<ItemActivity> mItemActivity;
+
+        public VoteCallback(ItemActivity itemActivity) {
+            mItemActivity = new WeakReference<>(itemActivity);
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            if (mItemActivity.get() != null && !mItemActivity.get().isActivityDestroyed()) {
+                mItemActivity.get().onVoted(successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mItemActivity.get() != null && !mItemActivity.get().isActivityDestroyed()) {
+                mItemActivity.get().onVoted(null);
+            }
         }
     }
 }

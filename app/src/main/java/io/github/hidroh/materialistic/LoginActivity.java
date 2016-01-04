@@ -25,6 +25,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -39,6 +41,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     private TextInputLayout mPasswordLayout;
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
+    private String mUsername;
+    private String mPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,33 +106,27 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         return mUsernameEditText.length() > 0 && mPasswordEditText.length() > 0;
     }
 
-    private void login(final String username, final String password, boolean createAccount) {
-        mUserServices.login(username, password, createAccount, new UserServices.Callback() {
-            @Override
-            public void onDone(boolean successful) {
-                mLoginButton.setEnabled(true);
-                mRegisterButton.setEnabled(true);
-                if (successful) {
-                    addAccount(username, password);
-                    Toast.makeText(LoginActivity.this,
-                            getString(R.string.welcome, username), Toast.LENGTH_SHORT)
-                            .show();
-                } else {
-                    Toast.makeText(LoginActivity.this,
-                            R.string.login_failed, Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
+    private void login(String username, String password, boolean createAccount) {
+        mUsername = username;
+        mPassword = password;
+        mUserServices.login(username, password, createAccount, new LoginCallback(this));
+    }
 
-            @Override
-            public void onError() {
-                mLoginButton.setEnabled(true);
-                mRegisterButton.setEnabled(true);
-                Toast.makeText(LoginActivity.this,
-                        R.string.login_failed, Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
+    private void onLoggedIn(Boolean successful) {
+        if (successful == null) {
+            mLoginButton.setEnabled(true);
+            mRegisterButton.setEnabled(true);
+            Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mLoginButton.setEnabled(true);
+        mRegisterButton.setEnabled(true);
+        if (successful) {
+            addAccount(mUsername, mPassword);
+            Toast.makeText(this, getString(R.string.welcome, mUsername), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addAccount(String username, String password) {
@@ -141,5 +139,27 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         setAccountAuthenticatorResult(bundle);
         Preferences.setUsername(this, username);
         finish();
+    }
+
+    private static class LoginCallback extends UserServices.Callback {
+        private final WeakReference<LoginActivity> mLoginActivity;
+
+        public LoginCallback(LoginActivity loginActivity) {
+            mLoginActivity = new WeakReference<>(loginActivity);
+        }
+
+        @Override
+        public void onDone(boolean successful) {
+            if (mLoginActivity.get() != null && !mLoginActivity.get().isActivityDestroyed()) {
+                mLoginActivity.get().onLoggedIn(successful);
+            }
+        }
+
+        @Override
+        public void onError() {
+            if (mLoginActivity.get() != null && !mLoginActivity.get().isActivityDestroyed()) {
+                mLoginActivity.get().onLoggedIn(null);
+            }
+        }
     }
 }
