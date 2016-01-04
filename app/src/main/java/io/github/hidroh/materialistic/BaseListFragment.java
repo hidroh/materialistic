@@ -100,13 +100,12 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+    protected void prepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.menu_list_toggle);
         if (mCardView) {
             item.setTitle(R.string.compact_view);
