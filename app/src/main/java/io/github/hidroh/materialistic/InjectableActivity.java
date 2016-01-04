@@ -40,6 +40,16 @@ public abstract class InjectableActivity extends ThemedActivity implements Injec
     }
 
     @Override
+    public void onBackPressed() {
+        // TODO http://b.android.com/176265
+        try {
+            super.onBackPressed();
+        } catch (IllegalStateException e) {
+            supportFinishAfterTransition();
+        }
+    }
+
+    @Override
     public void inject(Object object) {
         mActivityGraph.inject(object);
     }
