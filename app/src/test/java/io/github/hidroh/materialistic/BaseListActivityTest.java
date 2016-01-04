@@ -94,7 +94,7 @@ public class BaseListActivityTest {
     }
 
     @Test
-    public void testSelectItemOpenChooser() {
+    public void testSelectItemStartActionView() {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
@@ -114,6 +114,32 @@ public class BaseListActivityTest {
             @Override
             public String getUrl() {
                 return "http://example.com";
+            }
+        });
+        assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    public void testSelectItemOpenChooser() {
+        RobolectricPackageManager packageManager = (RobolectricPackageManager)
+                RuntimeEnvironment.application.getPackageManager();
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://news.ycombinator.com/item?id=1")),
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
+        packageManager.addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://news.ycombinator.com/item?id=1")),
+                ShadowResolveInfo.newResolveInfo("label", "com.android.browser", "DefaultActivity"));
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_external), true)
+                .commit();
+        controller.pause().resume();
+        activity.onItemSelected(new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://news.ycombinator.com/item?id=1";
             }
         });
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_CHOOSER);

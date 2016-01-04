@@ -74,6 +74,12 @@ public class AppUtils {
 
     public static void openWebUrlExternal(Context context, String title, String url) {
         Intent intent = createViewIntent(context, title, url);
+        if (!HackerNewsClient.BASE_WEB_URL.contains(Uri.parse(url).getHost())) {
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            }
+            return;
+        }
         List<ResolveInfo> activities = context.getPackageManager()
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         ArrayList<Intent> intents = new ArrayList<>();
@@ -81,7 +87,8 @@ public class AppUtils {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, title, url).setPackage(info.activityInfo.packageName));
+            intents.add(createViewIntent(context, title, url)
+                    .setPackage(info.activityInfo.packageName));
         }
         if (intents.isEmpty()) {
             return;
