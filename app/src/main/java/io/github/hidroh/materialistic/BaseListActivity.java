@@ -172,6 +172,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
         outState.putInt(STATE_STORY_VIEW_MODE, mStoryViewMode.ordinal());
+        outState.putBoolean(STATE_EXTERNAL_BROWSER, mExternalBrowser);
     }
 
     @Override
