@@ -17,7 +17,6 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.AttrRes;
 import android.support.annotation.Nullable;
@@ -137,9 +136,6 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_readability, container, false);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-        mProgressBar.getIndeterminateDrawable()
-                .setColorFilter(ContextCompat.getColor(getActivity(), R.color.redA200),
-                        PorterDuff.Mode.SRC_IN);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         mWebView = (WebView) view.findViewById(R.id.content);
         mWebView.setBackgroundColor(ContextCompat.getColor(getActivity(),
@@ -181,6 +177,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         if (item == null) {
             return;
         }
+        mProgressBar.setVisibility(View.VISIBLE);
         mReadabilityClient.parse(item.getId(), item.getUrl(), new ReadabilityCallback(this));
     }
 
