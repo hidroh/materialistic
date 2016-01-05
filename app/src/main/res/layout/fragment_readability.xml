@@ -42,7 +42,11 @@
 
         <ProgressBar
             android:id="@id/progress"
+            android:visibility="gone"
+            tools:visibility="visible"
             android:indeterminate="true"
+            android:indeterminateTint="@color/lightBlueA700"
+            android:indeterminateTintMode="src_in"
             android:scaleY="3"
             style="@style/AppProgressBarHorizontalStyle"
             tools:ignore="UnusedAttribute" />

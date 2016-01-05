@@ -48,7 +48,9 @@
     <!-- ============= -->
     <style name="AppProgressBarHorizontalStyle" parent="Base.Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">4dp</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:minHeight">2dp</item>
+        <item name="android:maxHeight">2dp</item>
         <item name="android:progressDrawable">@drawable/progress</item>
     </style>
 

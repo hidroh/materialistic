@@ -18,7 +18,6 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="blackT87">#DE000000</color>
-    <color name="blackT38">#61000000</color>
     <color name="blackT12">#1F000000</color>
     <color name="grey100">#F5F5F5</color>
     <color name="grey500">#9E9E9E</color>
@@ -34,6 +33,7 @@
     <color name="indigo500">#3F51B5</color>
     <color name="blue500">#2196F3</color>
     <color name="lightBlue500">#03A9F4</color>
+    <color name="lightBlueA700">#0091EA</color>
     <color name="cyan500">#00BCD4</color>
     <color name="teal50">#E0F2F1</color>
     <color name="teal100">#B2DFDB</color>
