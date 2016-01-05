@@ -189,6 +189,7 @@
     <!-- =========== -->
     <style name="BaseAppCardView" parent="CardView">
         <item name="cardPreventCornerOverlap">false</item>
+        <item name="cardUseCompatPadding">true</item>
     </style>
 
     <style name="AppCardView" parent="BaseAppCardView">

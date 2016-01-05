@@ -19,7 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText">
     <View
-        android:layout_width="@dimen/min_cardview_height"
+        android:layout_width="@dimen/cardview_min_height"
         android:layout_height="match_parent"
         android:layout_alignTop="@id/title"
         android:layout_alignBottom="@+id/meta_container"
@@ -40,7 +40,7 @@
         android:gravity="center|center_vertical"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_width="@dimen/min_cardview_height"
+        android:layout_width="@dimen/cardview_min_height"
         android:layout_height="wrap_content">
 
         <ViewSwitcher
