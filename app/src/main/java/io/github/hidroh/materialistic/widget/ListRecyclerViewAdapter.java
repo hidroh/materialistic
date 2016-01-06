@@ -35,10 +35,12 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem> extends RecyclerView.Adapter<VH> {
 
     private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";
+    private static final String STATE_CARD_VIEW_ENABLED = "state:cardViewEnabled";
     private Context mContext;
     private int mLastSelectedPosition = -1;
     private int mCardElevation;
     private int mCardRadius;
+    private boolean mCardViewEnabled = true;
 
     public ListRecyclerViewAdapter() {
         setHasStableIds(true);
@@ -63,14 +65,14 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     @Override
     public final void onBindViewHolder(final VH holder, int position) {
         final T item = getItem(position);
-        if (shouldCompact()) {
-            holder.mCardView.setCardElevation(0);
-            holder.mCardView.setRadius(0);
-            holder.mCardView.setUseCompatPadding(false);
-        } else {
+        if (mCardViewEnabled) {
             holder.mCardView.setCardElevation(mCardElevation);
             holder.mCardView.setRadius(mCardRadius);
             holder.mCardView.setUseCompatPadding(true);
+        } else {
+            holder.mCardView.setCardElevation(0);
+            holder.mCardView.setRadius(0);
+            holder.mCardView.setUseCompatPadding(false);
         }
         if (!isItemAvailable(item)) {
             clearViewHolder(holder);
@@ -99,9 +101,18 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         return Long.valueOf(getItem(position).getId());
     }
 
+    public boolean isCardViewEnabled() {
+        return mCardViewEnabled;
+    }
+
+    public void setCardViewEnabled(boolean cardViewEnabled) {
+        this.mCardViewEnabled = cardViewEnabled;
+    }
+
     public Bundle saveState() {
         Bundle savedState = new Bundle();
         savedState.putInt(STATE_LAST_SELECTION_POSITION, mLastSelectedPosition);
+        savedState.putBoolean(STATE_CARD_VIEW_ENABLED, mCardViewEnabled);
         return savedState;
     }
 
@@ -109,14 +120,13 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         if (savedState == null) {
             return;
         }
+        mCardViewEnabled = savedState.getBoolean(STATE_CARD_VIEW_ENABLED, true);
         mLastSelectedPosition = savedState.getInt(STATE_LAST_SELECTION_POSITION);
     }
 
     public boolean isAttached() {
         return mContext != null;
     }
-
-    protected abstract boolean shouldCompact();
 
     protected void loadItem(int adapterPosition) {
         // override to load item if needed

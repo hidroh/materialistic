@@ -500,11 +500,6 @@ public class FavoriteFragment extends BaseListFragment
                     mSelected.containsValue(itemId);
         }
 
-        @Override
-        protected boolean shouldCompact() {
-            return !mCardView;
-        }
-
         private void toggle(String itemId, int position) {
             if (mSelected.containsValue(itemId)) {
                 mSelected.remove(position);

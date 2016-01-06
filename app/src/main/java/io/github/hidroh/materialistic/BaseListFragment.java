@@ -32,17 +32,15 @@ import android.view.View;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public abstract class BaseListFragment extends BaseFragment implements Scrollable {
-    private static final String STATE_CARD_VIEW = "state:cardView";
     private static final String STATE_ADAPTER = "state:adapter";
     protected RecyclerView mRecyclerView;
-    protected boolean mCardView = true;
     private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                                       String key) {
                     mChanged = true;
-                    mCardView = Preferences.isListItemCardView(getActivity());
+                    getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
                 }
             };
     private boolean mChanged;
@@ -59,9 +57,8 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if (savedInstanceState == null) {
-            mCardView = Preferences.isListItemCardView(getActivity());
+            getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
         } else {
-            mCardView = savedInstanceState.getBoolean(STATE_CARD_VIEW, true);
             getAdapter().restoreState(savedInstanceState.getBundle(STATE_ADAPTER));
         }
     }
@@ -80,7 +77,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                        RecyclerView.State state) {
-                if (mCardView) {
+                if (getAdapter().isCardViewEnabled()) {
                     outRect.set(horizontalMargin, verticalMargin, horizontalMargin, 0);
                 } else {
                     outRect.set(0, 0, 0, divider);
@@ -107,7 +104,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Override
     protected void prepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.menu_list_toggle);
-        if (mCardView) {
+        if (getAdapter().isCardViewEnabled()) {
             item.setTitle(R.string.compact_view);
             mMenuTintDelegate.setIcon(item, R.drawable.ic_view_stream_white_24dp);
         } else {
@@ -121,8 +118,8 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         if (item.getItemId() != R.id.menu_list_toggle) {
             return super.onOptionsItemSelected(item);
         }
-        mCardView = !mCardView;
-        Preferences.setListItemCardView(getActivity(), mCardView);
+        getAdapter().setCardViewEnabled(!getAdapter().isCardViewEnabled());
+        Preferences.setListItemCardView(getActivity(), getAdapter().isCardViewEnabled());
         getActivity().supportInvalidateOptionsMenu();
         getAdapter().notifyDataSetChanged();
         return true;
@@ -131,7 +128,6 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_CARD_VIEW, mCardView);
         outState.putBundle(STATE_ADAPTER, getAdapter().saveState());
     }
 
