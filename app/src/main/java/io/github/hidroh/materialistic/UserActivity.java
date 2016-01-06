@@ -37,6 +37,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.UserManager;
+import io.github.hidroh.materialistic.widget.CommentItemDecoration;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 
 public class UserActivity extends InjectableActivity implements Scrollable {
@@ -161,6 +162,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getResources().getQuantityString(R.plurals.submissions_count, count, count)));
         mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems()));
+        mRecyclerView.addItemDecoration(new CommentItemDecoration(this));
     }
 
     private static class UserResponseListener implements ResponseListener<UserManager.User> {

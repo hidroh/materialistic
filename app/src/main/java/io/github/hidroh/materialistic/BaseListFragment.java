@@ -71,17 +71,17 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
-        final int margin = getResources().getDimensionPixelSize(R.dimen.margin);
+        final int verticalMargin = getResources()
+                .getDimensionPixelSize(R.dimen.cardview_vertical_margin);
+        final int horizontalMargin = getResources()
+                .getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
         final int divider = getResources().getDimensionPixelSize(R.dimen.divider);
         mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                        RecyclerView.State state) {
                 if (mCardView) {
-                    outRect.set(margin * 2,
-                            parent.getChildAdapterPosition(view) == 0 ? margin * 2 : margin,
-                            margin * 2,
-                            margin);
+                    outRect.set(horizontalMargin, verticalMargin, horizontalMargin, 0);
                 } else {
                     outRect.set(0, 0, 0, divider);
                 }

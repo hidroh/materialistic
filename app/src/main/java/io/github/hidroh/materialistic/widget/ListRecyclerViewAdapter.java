@@ -66,9 +66,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         if (shouldCompact()) {
             holder.mCardView.setCardElevation(0);
             holder.mCardView.setRadius(0);
+            holder.mCardView.setUseCompatPadding(false);
         } else {
             holder.mCardView.setCardElevation(mCardElevation);
             holder.mCardView.setRadius(mCardRadius);
+            holder.mCardView.setUseCompatPadding(true);
         }
         if (!isItemAvailable(item)) {
             clearViewHolder(holder);

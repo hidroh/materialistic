@@ -311,10 +311,13 @@ public class ListFragmentTest {
                 .extract(recyclerView);
         shadowRecyclerView.getItemDecorations().get(0)
                 .getItemOffsets(rect, null, recyclerView, null);
-        int margin = activity.getResources().getDimensionPixelSize(R.dimen.margin);
-        assertThat(rect).hasLeft(margin * 2)
-                .hasRight(margin * 2)
-                .hasBottom(margin);
+        int horizontalMargin = activity.getResources()
+                .getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
+        int verticalMargin = activity.getResources()
+                .getDimensionPixelSize(R.dimen.cardview_vertical_margin);
+        assertThat(rect).hasLeft(horizontalMargin)
+                .hasRight(horizontalMargin)
+                .hasTop(verticalMargin);
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_list_toggle))
                 .hasTitle(activity.getString(R.string.compact_view));
     }

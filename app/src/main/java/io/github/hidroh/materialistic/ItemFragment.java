@@ -42,6 +42,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.widget.CommentItemDecoration;
 import io.github.hidroh.materialistic.widget.ItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -130,6 +131,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new CommentItemDecoration(getActivity()));
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);

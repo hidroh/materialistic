@@ -23,7 +23,9 @@
     <dimen name="padding_asterisk">2dp</dimen>
     <dimen name="padding">8dp</dimen>
     <dimen name="margin">8dp</dimen>
-    <dimen name="min_cardview_height">56dp</dimen>
+    <dimen name="cardview_vertical_margin">4dp</dimen>
+    <dimen name="cardview_horizontal_margin">8dp</dimen>
+    <dimen name="cardview_min_height">64dp</dimen>
     <dimen name="cardview_default_radius">4dp</dimen>
     <dimen name="level_indicator_width">24dp</dimen>
     <dimen name="fab_margin">16dp</dimen>

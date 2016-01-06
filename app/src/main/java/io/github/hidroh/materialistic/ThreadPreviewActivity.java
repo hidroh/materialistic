@@ -16,20 +16,19 @@
 
 package io.github.hidroh.materialistic;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.widget.CommentItemDecoration;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 
 public class ThreadPreviewActivity extends InjectableActivity {
@@ -53,14 +52,7 @@ public class ThreadPreviewActivity extends InjectableActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        final int margin = getResources().getDimensionPixelSize(R.dimen.margin);
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                       RecyclerView.State state) {
-                outRect.set(margin, parent.getChildAdapterPosition(view) == 0 ? margin : 0, margin, 0);
-            }
-        });
+        recyclerView.addItemDecoration(new CommentItemDecoration(this));
         recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(mItemManager, item));
     }
 
