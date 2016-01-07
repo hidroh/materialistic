@@ -41,6 +41,7 @@ import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 
@@ -68,6 +69,7 @@ import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
                 WebFragment.class,
                 DrawerFragment.class,
                 ReadabilityFragment.class,
+                StoryRecyclerViewAdapter.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,
