@@ -361,6 +361,11 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
 
         @Override
+        public long getLongId() {
+            return id;
+        }
+
+        @Override
         public String getTitle() {
             return title;
         }

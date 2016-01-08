@@ -111,7 +111,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     @Override
     public long getItemId(int position) {
-        return Long.valueOf(getItem(position).getId());
+        return getItem(position).getLongId();
     }
 
     public void setMaxLines(int maxLines) {

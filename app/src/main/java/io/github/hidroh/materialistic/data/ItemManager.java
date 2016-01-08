@@ -329,10 +329,16 @@ public interface ItemManager {
         boolean isStoryType();
 
         /**
+         * Gets item ID string
+         * @return item ID string
+         */
+        String getId();
+
+        /**
          * Gets item ID
          * @return item ID
          */
-        String getId();
+        long getLongId();
 
         /**
          * Gets item source

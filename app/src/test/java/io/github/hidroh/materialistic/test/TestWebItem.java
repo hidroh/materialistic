@@ -29,6 +29,11 @@ public abstract class TestWebItem implements ItemManager.WebItem {
     }
 
     @Override
+    public long getLongId() {
+        return 0;
+    }
+
+    @Override
     public String getSource() {
         return null;
     }
