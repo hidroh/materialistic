@@ -53,6 +53,9 @@
         <item name="android:maxHeight">2dp</item>
         <item name="android:progressDrawable">@drawable/progress</item>
     </style>
+    <style name="AppNavigationDrawer">
+        <item name="android:layout_width">match_parent</item>
+    </style>
 
     <!-- =========== -->
     <!-- Text styles -->
