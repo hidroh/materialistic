@@ -98,7 +98,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
 
     @Override
     public long getItemId(int position) {
-        return Long.valueOf(getItem(position).getId());
+        return getItem(position).getLongId();
     }
 
     public boolean isCardViewEnabled() {

@@ -34,8 +34,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import java.util.List;
-
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -189,15 +187,13 @@ public class StoryView extends RelativeLayout implements Checkable {
         mCommentButton.setOnClickListener(listener);
     }
 
-    public void setUpdated(@NonNull ItemManager.Item story,
-                              @NonNull List<ItemManager.Item> updated,
-                              @NonNull List<String> promotedIds) {
+    public void setUpdated(@NonNull ItemManager.Item story, boolean updated, boolean promoted) {
         if (mIsLocal) {
             return; // local items do not change
         }
         mRankTextView.setText(decorateUpdated(
-                String.valueOf(story.getRank()), updated.contains(story)));
-        setPromoted(promotedIds.contains(story.getId()));
+                String.valueOf(story.getRank()), updated));
+        setPromoted(promoted);
         if (story.getKidCount() > 0) {
             ((Button) mCommentButton).setText(decorateUpdated(getContext().getResources()
                     .getQuantityString(R.plurals.comments_count, story.getKidCount(), story.getKidCount()),

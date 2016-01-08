@@ -27,6 +27,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -121,18 +122,8 @@ public class ListFragmentTest {
         // should trigger another data request
         verify(itemManager).getStories(any(String.class), listener.capture());
         listener.getValue().onResponse(new ItemManager.Item[]{
-                new TestItem() {
-                    @Override
-                    public String getId() {
-                        return "1";
-                    }
-                },
-                new TestItem() {
-                    @Override
-                    public String getId() {
-                        return "2";
-                    }
-                }
+                new TestHnItem(1L),
+                new TestHnItem(2L)
         });
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
         Assertions.assertThat((TextView) activity.findViewById(R.id.snackbar_text))

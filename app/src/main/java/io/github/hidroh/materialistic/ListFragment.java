@@ -137,7 +137,6 @@ public class ListFragment extends BaseListFragment {
         } else {
             mItemManager = mHnItemManager;
         }
-        mAdapter.setItemManager(mItemManager);
         if (mAdapter.getItems() != null) {
             mAdapter.notifyDataSetChanged();
         } else {
@@ -162,7 +161,7 @@ public class ListFragment extends BaseListFragment {
 
     public void filter(String filter) {
         mFilter = filter;
-        mAdapter.setItems(null); // prevent updated comparison
+        mAdapter.setHighlightUpdated(false);
         mSwipeRefreshLayout.setRefreshing(true);
         refresh();
     }

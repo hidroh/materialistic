@@ -287,6 +287,11 @@ public class FavoriteManager {
         }
 
         @Override
+        public long getLongId() {
+            return Long.valueOf(itemId);
+        }
+
+        @Override
         public String getDisplayedTitle() {
             return title;
         }

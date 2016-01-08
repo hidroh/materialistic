@@ -161,6 +161,11 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
+    public long getLongId() {
+        return 1;
+    }
+
+    @Override
     public int getLevel() {
         return 0;
     }
