@@ -82,7 +82,8 @@
         </activity>
         <activity
             android:name=".FavoriteActivity"
-            android:label="@string/title_activity_favorite">
+            android:label="@string/title_activity_favorite"
+            android:launchMode="singleTop"> <!-- required to get search intents -->
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable_favorite" />
             <intent-filter>
