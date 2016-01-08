@@ -323,10 +323,10 @@ public class StoryRecyclerViewAdapter extends
     }
 
     private void onItemLoaded(ItemManager.Item item) {
-        int position = mShowAll ? mItemPositions.get(item.getLongId()) :
+        Integer position = mShowAll ? mItemPositions.get(item.getLongId()) :
                 mUpdatedPositions.get(item.getLongId());
         // ignore changes if item was invalidated by refresh / filter
-        if (position >= 0 && position < getItemCount()) {
+        if (position != null && position >= 0 && position < getItemCount()) {
             notifyItemChanged(position);
         }
     }
