@@ -144,6 +144,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mContentTextView.post(new Runnable() {
             @Override
             public void run() {
+                if (mContext == null) {
+                    return;
+                }
                 toggleCollapsibleContent(holder, item);
                 mLineCounted.add(item.getId());
             }
