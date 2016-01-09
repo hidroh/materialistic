@@ -21,10 +21,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 
+import javax.inject.Inject;
+
+import io.github.hidroh.materialistic.AlertDialogBuilder;
+import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
+import io.github.hidroh.materialistic.MultiPaneListener;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 /**
@@ -32,11 +40,20 @@ import io.github.hidroh.materialistic.data.ItemManager;
  * @param <VH>  view holder type, should contain title, posted, source and comment views
  * @param <T>   item type, should provide title, posted, source
  */
-public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem> extends RecyclerView.Adapter<VH> {
+public abstract class ListRecyclerViewAdapter
+        <VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem>
+        extends RecyclerView.Adapter<VH> {
 
     private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";
     private static final String STATE_CARD_VIEW_ENABLED = "state:cardViewEnabled";
-    private Context mContext;
+    protected Context mContext;
+    private MultiPaneListener mMultiPaneListener;
+    protected RecyclerView mRecyclerView;
+    protected LayoutInflater mInflater;
+    @Inject PopupMenu mPopupMenu;
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject UserServices mUserServices;
+    @Inject FavoriteManager mFavoriteManager;
     private int mLastSelectedPosition = -1;
     private int mCardElevation;
     private int mCardRadius;
@@ -49,7 +66,11 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
         mContext = recyclerView.getContext();
+        mInflater = LayoutInflater.from(mContext);
+        ((Injectable) mContext).inject(this);
+        mMultiPaneListener = (MultiPaneListener) mContext;
         mCardElevation = mContext.getResources()
                 .getDimensionPixelSize(R.dimen.cardview_default_elevation);
         mCardRadius = mContext.getResources()
@@ -58,8 +79,10 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        mContext = null;
         super.onDetachedFromRecyclerView(recyclerView);
+        mContext = null;
+        mMultiPaneListener = null;
+        mRecyclerView = null;
     }
 
     @Override
@@ -97,15 +120,15 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     }
 
     @Override
-    public long getItemId(int position) {
+    public final long getItemId(int position) {
         return getItem(position).getLongId();
     }
 
-    public boolean isCardViewEnabled() {
+    public final boolean isCardViewEnabled() {
         return mCardViewEnabled;
     }
 
-    public void setCardViewEnabled(boolean cardViewEnabled) {
+    public final void setCardViewEnabled(boolean cardViewEnabled) {
         this.mCardViewEnabled = cardViewEnabled;
     }
 
@@ -124,7 +147,7 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
         mLastSelectedPosition = savedState.getInt(STATE_LAST_SELECTION_POSITION);
     }
 
-    public boolean isAttached() {
+    public final boolean isAttached() {
         return mContext != null;
     }
 
@@ -137,22 +160,6 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     protected abstract boolean isItemAvailable(T item);
 
     /**
-     * Handles item click
-     * @param item      clicked item
-     * @param holder    clicked item view holder
-     */
-    protected void handleItemClick(T item, VH holder) {
-        onItemSelected(item, holder.itemView);
-        if (isSelected(item.getId())) {
-            notifyItemChanged(holder.getAdapterPosition());
-            if (mLastSelectedPosition >= 0) {
-                notifyItemChanged(mLastSelectedPosition);
-            }
-            mLastSelectedPosition = holder.getAdapterPosition();
-        }
-    }
-
-    /**
      * Clears previously bind data from given view holder
      * @param holder    view holder to clear
      */
@@ -163,18 +170,15 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
     }
 
     /**
-     * Handles item selection
-     * @param item  item that has been selected
-     * @param itemView selected item view
-     */
-    protected abstract void onItemSelected(T item, View itemView);
-
-    /**
      * Checks if item with given ID has been selected
      * @param itemId    item ID to check
      * @return  true if selected, false otherwise or if selection is disabled
      */
-    protected abstract boolean isSelected(String itemId);
+    protected boolean isSelected(String itemId) {
+        return mMultiPaneListener.isMultiPane() &&
+                mMultiPaneListener.getSelectedItem() != null &&
+                itemId.equals(mMultiPaneListener.getSelectedItem().getId());
+    }
 
     /**
      * Gets item at position
@@ -182,6 +186,22 @@ public abstract class ListRecyclerViewAdapter<VH extends ListRecyclerViewAdapter
      * @return item at given position or null
      */
     protected abstract T getItem(int position);
+
+    /**
+     * Handles item click
+     * @param item      clicked item
+     * @param holder    clicked item view holder
+     */
+    protected void handleItemClick(T item, VH holder) {
+        mMultiPaneListener.onItemSelected(item);
+        if (isSelected(item.getId())) {
+            notifyItemChanged(holder.getAdapterPosition());
+            if (mLastSelectedPosition >= 0) {
+                notifyItemChanged(mLastSelectedPosition);
+            }
+            mLastSelectedPosition = holder.getAdapterPosition();
+        }
+    }
 
     private void openItem(T item) {
         mContext.startActivity(new Intent(mContext, ItemActivity.class)

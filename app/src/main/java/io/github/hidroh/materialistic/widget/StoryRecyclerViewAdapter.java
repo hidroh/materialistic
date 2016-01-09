@@ -17,7 +17,6 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -28,7 +27,6 @@ import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +39,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
-import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ComposeActivity;
-import io.github.hidroh.materialistic.Injectable;
-import io.github.hidroh.materialistic.MultiPaneListener;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.UserActivity;
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -88,14 +83,6 @@ public class StoryRecyclerViewAdapter extends
             notifyItemChanged(position);
         }
     };
-    private Context mContext;
-    private LayoutInflater mLayoutInflater;
-    private MultiPaneListener mMultiPaneListener;
-    private RecyclerView mRecyclerView;
-    @Inject PopupMenu mPopupMenu;
-    @Inject AlertDialogBuilder mAlertDialogBuilder;
-    @Inject UserServices mUserServices;
-    @Inject FavoriteManager mFavoriteManager;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private ArrayList<ItemManager.Item> mItems;
     private ArrayList<ItemManager.Item> mUpdated = new ArrayList<>();
@@ -110,11 +97,6 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        mRecyclerView = recyclerView;
-        mContext = recyclerView.getContext();
-        mMultiPaneListener = (MultiPaneListener) mContext;
-        ((Injectable) mContext).inject(this);
-        mLayoutInflater = LayoutInflater.from(mContext);
         ContentResolver cr = recyclerView.getContext().getContentResolver();
         cr.registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
         cr.registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
@@ -124,14 +106,11 @@ public class StoryRecyclerViewAdapter extends
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         recyclerView.getContext().getContentResolver().unregisterContentObserver(mObserver);
-        mRecyclerView = null;
-        mContext = null;
-        mMultiPaneListener = null;
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemViewHolder(mLayoutInflater.inflate(R.layout.item_story, parent, false));
+        return new ItemViewHolder(mInflater.inflate(R.layout.item_story, parent, false));
     }
 
     @Override
@@ -182,7 +161,6 @@ public class StoryRecyclerViewAdapter extends
     }
 
     public void setItems(ArrayList<ItemManager.Item> items) {
-        mMultiPaneListener.onItemSelected(null);
         setUpdated(items);
         setItemsInternal(items);
         notifyDataSetChanged();
@@ -234,18 +212,6 @@ public class StoryRecyclerViewAdapter extends
     @Override
     protected boolean isItemAvailable(ItemManager.Item item) {
         return item != null && !TextUtils.isEmpty(item.getTitle());
-    }
-
-    @Override
-    protected void onItemSelected(ItemManager.Item item, View itemView) {
-        mMultiPaneListener.onItemSelected(item);
-    }
-
-    @Override
-    protected boolean isSelected(String itemId) {
-        return mMultiPaneListener.isMultiPane() &&
-                mMultiPaneListener.getSelectedItem() != null &&
-                itemId.equals(mMultiPaneListener.getSelectedItem().getId());
     }
 
     @Override

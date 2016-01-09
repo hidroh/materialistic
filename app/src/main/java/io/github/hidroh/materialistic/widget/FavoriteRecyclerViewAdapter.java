@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.widget;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
@@ -25,7 +24,6 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,14 +35,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ComposeActivity;
-import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.MenuTintDelegate;
-import io.github.hidroh.materialistic.MultiPaneListener;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -64,7 +57,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
-            mMultiPaneListener.onItemSelected(null);
             mMenuTintDelegate.onOptionsMenuCreated(menu);
             return true;
         }
@@ -112,16 +104,8 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             notifyDataSetChanged();
         }
     };
-    private Context mContext;
-    private RecyclerView mRecyclerView;
-    private MultiPaneListener mMultiPaneListener;
     private ActionModeDelegate mActionModeDelegate;
     private MenuTintDelegate mMenuTintDelegate;
-    private LayoutInflater mInflater;
-    @Inject FavoriteManager mFavoriteManager;
-    @Inject AlertDialogBuilder mAlertDialogBuilder;
-    @Inject UserServices mUserServices;
-    @Inject PopupMenu mPopupMenu;
     private FavoriteManager.Cursor mCursor;
     private ArrayMap<Integer, String> mSelected = new ArrayMap<>();
     private int mPendingAdd = -1;
@@ -134,11 +118,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     @Override
     public void onAttachedToRecyclerView(final RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        mRecyclerView = recyclerView;
-        mContext = recyclerView.getContext();
-        ((Injectable) mContext).inject(this);
-        mMultiPaneListener = (MultiPaneListener) mContext;
-        mInflater = LayoutInflater.from(mContext);
         mMenuTintDelegate = new MenuTintDelegate();
         mMenuTintDelegate.onActivityCreated(mContext);
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -169,9 +148,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        mRecyclerView = null;
-        mContext = null;
-        mMultiPaneListener = null;
         mActionModeDelegate = null;
         if (mCursor != null) {
             mCursor.close();
@@ -226,11 +202,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Override
-    protected void onItemSelected(FavoriteManager.Favorite item, View itemView) {
-        mMultiPaneListener.onItemSelected(item);
-    }
-
-    @Override
     protected FavoriteManager.Favorite getItem(int position) {
         if (mCursor == null || !mCursor.moveToPosition(position)) {
             return null;
@@ -240,10 +211,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
     @Override
     protected boolean isSelected(String itemId) {
-        return mMultiPaneListener.isMultiPane() &&
-                mMultiPaneListener.getSelectedItem() != null &&
-                itemId.equals(mMultiPaneListener.getSelectedItem().getId()) ||
-                mSelected.containsValue(itemId);
+        return super.isSelected(itemId) || mSelected.containsValue(itemId);
     }
 
     public void setCursor(FavoriteManager.Cursor cursor) {
@@ -252,17 +220,17 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             notifyDataSetChanged();
             return;
         }
-        if (!mSelected.isEmpty()) {
+        if (!mSelected.isEmpty()) { // has pending removals, notify removed
             List<Integer> positions = new ArrayList<>(mSelected.keySet());
             Collections.sort(positions);
             mSelected.clear();
             for (int i = positions.size() - 1; i >= 0; i--) {
                 notifyItemRemoved(positions.get(i));
             }
-        } else if (mPendingAdd >= 0) {
+        } else if (mPendingAdd >= 0) { // has pending insertion, notify inserted
             notifyItemInserted(mPendingAdd);
             mPendingAdd = -1;
-        } else {
+        } else { // no pending changes, simply refresh list
             notifyDataSetChanged();
         }
     }
