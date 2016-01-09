@@ -102,7 +102,7 @@ public class ListFragment extends BaseListFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_list, container, false);
-        mErrorView = view.findViewById(android.R.id.empty);
+        mErrorView = view.findViewById(R.id.empty);
         mEmptyView = view.findViewById(R.id.empty_search);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);

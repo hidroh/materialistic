@@ -76,6 +76,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -167,7 +168,10 @@ public class FavoriteActivityTest {
         assertEquals(2, adapter.getItemCount());
         ((FavoriteFragment) fragment).filter("ask");
         assertEquals(1, adapter.getItemCount());
+        reset(searchView);
         closeListener.onClose();
+        verify(searchView).setQuery(eq(FavoriteActivity.EMPTY_QUERY), eq(true));
+        controller.newIntent(new Intent().putExtra(SearchManager.QUERY, FavoriteActivity.EMPTY_QUERY));
         assertEquals(2, adapter.getItemCount());
     }
 

@@ -80,7 +80,7 @@ public class ItemFragmentMultiPageTest {
                 ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
                 R.id.content_frame);
-        assertThat(fragment.getView().findViewById(android.R.id.empty)).isVisible();
+        assertThat(fragment.getView().findViewById(R.id.empty)).isVisible();
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ItemFragmentMultiPageTest {
                 return 1;
             }
         });
-        assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
+        assertThat(fragment.getView().findViewById(R.id.empty)).isNotVisible();
     }
 
     @Test
@@ -137,7 +137,7 @@ public class ItemFragmentMultiPageTest {
                 ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
                 R.id.content_frame);
-        assertThat(fragment.getView().findViewById(android.R.id.empty)).isNotVisible();
+        assertThat(fragment.getView().findViewById(R.id.empty)).isNotVisible();
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
                 ShadowExtractor.extract(recyclerView.getAdapter());

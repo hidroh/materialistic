@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
 
 import org.junit.After;
@@ -24,7 +26,7 @@ public class FavoriteActivityEmptyTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(FavoriteActivity.class);
-        activity = controller.create().start().resume().visible().get(); // skip menu due to search view
+        activity = controller.create().start().resume().visible().get();
     }
 
     @Test
@@ -43,7 +45,7 @@ public class FavoriteActivityEmptyTest {
     @Test
     public void testDataChanged() {
         assertThat(activity.findViewById(R.id.empty_search)).isNotVisible();
-        activity.onDataChanged(true, "query");
+        controller.newIntent(new Intent().putExtra(SearchManager.QUERY, "query"));
         assertThat(activity.findViewById(R.id.empty_search)).isVisible();
     }
 

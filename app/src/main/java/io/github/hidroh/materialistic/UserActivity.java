@@ -78,7 +78,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         ((TextView) findViewById(R.id.title)).setText(mUsername);
         mInfo = (TextView) findViewById(R.id.user_info);
         mAbout = (TextView) findViewById(R.id.about);
-        mEmpty = findViewById(android.R.id.empty);
+        mEmpty = findViewById(R.id.empty);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

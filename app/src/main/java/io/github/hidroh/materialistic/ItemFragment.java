@@ -127,7 +127,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
-        mEmptyView = view.findViewById(android.R.id.empty);
+        mEmptyView = view.findViewById(R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
