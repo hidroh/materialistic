@@ -57,6 +57,8 @@
         android:paddingBottom="@dimen/padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:autoLink="all"
+        android:textIsSelectable="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="?attr/contentTextSize" />
