@@ -337,7 +337,7 @@ public class ListFragmentViewHolderTest {
                 .build());
         adapter.makeItemVisible(0);
         RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
-        assertTrue(item.isFavorite()); // item is still favorite but invalidated
+        assertFalse(item.isFavorite());
         assertThat(viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         // observed add
         observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE

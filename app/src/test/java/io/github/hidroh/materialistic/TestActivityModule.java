@@ -32,6 +32,7 @@ import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.WebActivity;
+import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -70,6 +71,7 @@ import static org.mockito.Mockito.when;
                 DrawerFragment.class,
                 ReadabilityFragment.class,
                 StoryRecyclerViewAdapter.class,
+                FavoriteRecyclerViewAdapter.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,

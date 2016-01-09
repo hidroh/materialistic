@@ -68,7 +68,6 @@ public class MaterialisticProvider extends ContentProvider {
                     null, null,
                     ReadabilityEntry.COLUMN_NAME_ITEM_ID + DbHelper.ORDER_DESC);
         }
-
         return null;
     }
 
@@ -94,7 +93,6 @@ public class MaterialisticProvider extends ContentProvider {
             if (updated == 0) {
                 id = db.insert(FavoriteEntry.TABLE_NAME, null, values);
             }
-
             return id == -1 ? null : ContentUris.withAppendedId(URI_FAVORITE, id);
         } else if (URI_VIEWED.equals(uri)) {
             int updated = update(uri, values, ViewedEntry.COLUMN_NAME_ITEM_ID + " = ?",
@@ -135,7 +133,6 @@ public class MaterialisticProvider extends ContentProvider {
         if (TextUtils.isEmpty(table)) {
             return 0;
         }
-
         return db.delete(table, selection, selectionArgs);
     }
 

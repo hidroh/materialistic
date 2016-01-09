@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -180,6 +181,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+    }
+
+    @NonNull
+    @Override
+    public ActionBar getSupportActionBar() {
+        //noinspection ConstantConditions
+        return super.getSupportActionBar();
     }
 
     @Override

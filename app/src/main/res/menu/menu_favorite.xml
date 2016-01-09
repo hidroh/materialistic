@@ -15,19 +15,12 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@id/menu_search"
-        android:title="@string/search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        android:menuCategory="secondary"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
     <item android:id="@id/menu_clear"
         android:title="@string/clear_all"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="never" />
     <item android:id="@id/menu_email"
         android:title="@string/email"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="never" />
 </menu>

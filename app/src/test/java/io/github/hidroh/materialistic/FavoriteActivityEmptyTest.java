@@ -11,7 +11,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
-import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -36,8 +36,8 @@ public class FavoriteActivityEmptyTest {
         activity.findViewById(R.id.header_card_view).performLongClick();
         assertThat(activity.findViewById(R.id.header_card_view)
                 .findViewById(R.id.bookmarked)).isNotVisible();
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_search).isVisible());
+        assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear));
+        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_search)).isNotVisible();
     }
 
     @Test

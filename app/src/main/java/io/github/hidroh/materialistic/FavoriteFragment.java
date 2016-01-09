@@ -22,156 +22,68 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.ArrayMap;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
-import io.github.hidroh.materialistic.widget.PopupMenu;
 
 public class FavoriteFragment extends BaseListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        FavoriteRecyclerViewAdapter.ActionModeDelegate {
     public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
+    private static final String STATE_SEARCH_VIEW_EXPANDED = "state:searchViewExpanded";
 
     public interface DataChangedListener {
         void onDataChanged(boolean isEmpty, String filter);
     }
 
-    private FavoriteManager.Cursor mCursor;
-    private final RecyclerViewAdapter mAdapter = new RecyclerViewAdapter();
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-            }
-            final Intent emailIntent = AppUtils.makeEmailIntent(
-                    getString(R.string.favorite_email_subject),
-                    makeEmailContent(
-                            (FavoriteManager.Favorite[]) intent.getParcelableArrayExtra(
-                                    FavoriteManager.ACTION_GET_EXTRA_DATA)));
-            if (emailIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                startActivity(emailIntent);
-            }
+            ArrayList<FavoriteManager.Favorite> favorites =
+                    intent.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA);
+            export(favorites);
         }
     };
-    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            getLoaderManager().restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
-        }
-    };
+    private final FavoriteRecyclerViewAdapter mAdapter = new FavoriteRecyclerViewAdapter(this);
     private ProgressDialog mProgressDialog;
     private ActionMode mActionMode;
-    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-        private boolean mPendingClear;
-
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            actionMode.getMenuInflater().inflate(R.menu.menu_favorite_action, menu);
-            mMultiPaneListener.onItemSelected(null);
-            mMenuTintDelegate.onOptionsMenuCreated(menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
-            if (menuItem.getItemId() == R.id.menu_clear) {
-                mAlertDialogBuilder
-                        .init(getActivity())
-                        .setMessage(R.string.confirm_clear_selected)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (!mIsResumed) {
-                                    // TODO should dismiss dialog on orientation changed
-                                    return;
-                                }
-                                mPendingClear = true;
-                                mMultiPaneListener.onItemSelected(null);
-                                mFavoriteManager.remove(getActivity(), mSelected.values());
-                                actionMode.finish();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .create()
-                        .show();
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            if (mPendingClear) {
-                mPendingClear = false;
-            } else {
-                mSelected.clear();
-            }
-            mAdapter.notifyDataSetChanged();
-            mActionMode = null;
-        }
-    };
-    private ArrayMap<Integer, String> mSelected = new ArrayMap<>();
-    private int mPendingAdd = -1;
     private String mFilter;
-    private boolean mSearchViewVisible;
-    private boolean mIsResumed;
-    private MultiPaneListener mMultiPaneListener;
+    private boolean mSearchViewExpanded;
     private DataChangedListener mDataChangedListener;
     @Inject FavoriteManager mFavoriteManager;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
-    @Inject UserServices mUserServices;
-    @Inject PopupMenu mPopupMenu;
 
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
-        mMultiPaneListener = (MultiPaneListener) context;
         mDataChangedListener = (DataChangedListener) context;
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
                 FavoriteManager.makeGetIntentFilter());
-        context.getContentResolver()
-                .registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
     }
 
     @Override
@@ -179,147 +91,57 @@ public class FavoriteFragment extends BaseListFragment
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mFilter = savedInstanceState.getString(STATE_FILTER);
+            mSearchViewExpanded = savedInstanceState.getBoolean(STATE_SEARCH_VIEW_EXPANDED);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_favorite, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                                  RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                if (direction == ItemTouchHelper.LEFT || direction == ItemTouchHelper.RIGHT) {
-                    final int position = viewHolder.getAdapterPosition();
-                    final FavoriteManager.Favorite item = mAdapter.getItem(position);
-                    mSelected.put(position, item.getId());
-                    mFavoriteManager.remove(getActivity(), mSelected.values());
-                    Snackbar.make(mRecyclerView, R.string.toast_removed, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.undo, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mPendingAdd = position;
-                                    mFavoriteManager.add(getActivity(), item);
-                                }
-                            })
-                            .show();
-                }
-            }
-        }).attachToRecyclerView(mRecyclerView);
-        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                super.onItemRangeRemoved(positionStart, itemCount);
-                toggleEmpty();
-            }
-
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                toggleEmpty();
-            }
-
-            private void toggleEmpty() {
-                if (!mIsResumed) {
-                    return;
-                }
-                mDataChangedListener.onDataChanged(mAdapter.getItemCount() == 0, mFilter);
-                getBaseActivity().supportInvalidateOptionsMenu();
-            }
-        });
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mIsResumed = true;
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         getLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
     }
 
     @Override
     protected void createOptionsMenu(final Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_favorite, menu);
-        final MenuItem menuSearch = menu.findItem(R.id.menu_search);
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSearchViewVisible = true;
-                invalidateMenuItems(menu);
-            }
-        });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mSearchViewVisible = false;
-                if (!TextUtils.isEmpty(mFilter)) {
-                    mFilter = null;
-                    getLoaderManager()
-                            .restartLoader(FavoriteManager.LOADER, null, FavoriteFragment.this);
-                }
-                invalidateMenuItems(menu);
-                return false;
-            }
-        });
-        super.createOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_search, menu);
+        createSearchView(menu.findItem(R.id.menu_search));
+        if (mAdapter.getItemCount() > 0) {
+            inflater.inflate(R.menu.menu_favorite, menu);
+            super.createOptionsMenu(menu, inflater);
+        }
     }
 
     @Override
     protected void prepareOptionsMenu(Menu menu) {
-        invalidateMenuItems(menu);
+        // allow clearing filter if empty, or filter if non-empty
         menu.findItem(R.id.menu_search).setVisible(!TextUtils.isEmpty(mFilter) ||
                 mAdapter.getItemCount() > 0);
-        super.prepareOptionsMenu(menu);
-    }
-
-    private void invalidateMenuItems(Menu menu) {
-        final boolean menuEnabled = !mSearchViewVisible && mAdapter.getItemCount() > 0;
-        menu.findItem(R.id.menu_clear).setVisible(menuEnabled);
-        menu.findItem(R.id.menu_email).setVisible(menuEnabled);
-        menu.findItem(R.id.menu_list_toggle).setVisible(menuEnabled);
+        if (mAdapter.getItemCount() > 0) {
+            super.prepareOptionsMenu(menu);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_clear) {
-            mAlertDialogBuilder
-                    .init(getActivity())
-                    .setMessage(R.string.confirm_clear)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mFavoriteManager.clear(getActivity(), mFilter);
-                            mCursor = null;
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .create().show();
+            clear();
             return true;
         }
-
         if (item.getItemId() == R.id.menu_email) {
-            if (mProgressDialog == null) {
-                mProgressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.preparing), true, true);
-            } else {
-                mProgressDialog.show();
-            }
-            mFavoriteManager.get(getActivity(), mFilter);
+            startExport();
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -327,78 +149,36 @@ public class FavoriteFragment extends BaseListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, mFilter);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id != FavoriteManager.LOADER) {
-            return null;
-        }
-
-        if (TextUtils.isEmpty(mFilter)) {
-            ((DrawerActivity) getActivity()).getSupportActionBar().setSubtitle(null);
-            return new FavoriteManager.CursorLoader(getActivity());
-        } else {
-            ((DrawerActivity) getActivity()).getSupportActionBar().setSubtitle(mFilter);
-            return new FavoriteManager.CursorLoader(getActivity(), mFilter);
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (loader.getId() != FavoriteManager.LOADER) {
-            return;
-        }
-
-        if (data == null) {
-            mCursor = null;
-        } else {
-            mCursor = new FavoriteManager.Cursor(data);
-        }
-        if (!mSelected.isEmpty()) {
-            List<Integer> positions = new ArrayList<>(mSelected.keySet());
-            Collections.sort(positions);
-            mSelected.clear();
-            for (int i = positions.size() - 1; i >= 0; i--) {
-                mAdapter.notifyItemRemoved(positions.get(i));
-            }
-        } else if (mPendingAdd >= 0) {
-            mAdapter.notifyItemInserted(mPendingAdd);
-            mPendingAdd = -1;
-        } else {
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        if (loader.getId() != FavoriteManager.LOADER) {
-            return;
-        }
-
-        mCursor = null;
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onPause() {
-        mIsResumed = false;
-        super.onPause();
+        outState.putBoolean(STATE_SEARCH_VIEW_EXPANDED, mSearchViewExpanded);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
-        getActivity().getContentResolver().unregisterContentObserver(mObserver);
-        mMultiPaneListener = null;
+        mRecyclerView.setAdapter(null); // detach adapter
         mDataChangedListener = null;
         if (mActionMode != null) {
             mActionMode.finish();
         }
-        if (mCursor != null) {
-            mCursor.close();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (!TextUtils.isEmpty(mFilter)) {
+            return new FavoriteManager.CursorLoader(getActivity(), mFilter);
         }
+        return new FavoriteManager.CursorLoader(getActivity());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        swapCursor(data == null ? null : new FavoriteManager.Cursor(data));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        swapCursor(null);
     }
 
     /**
@@ -406,8 +186,8 @@ public class FavoriteFragment extends BaseListFragment
      * @param query query used to filter data
      */
     public void filter(String query) {
+        mSearchViewExpanded = false;
         mFilter = query;
-        mSearchViewVisible = false;
         getLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
     }
 
@@ -416,155 +196,101 @@ public class FavoriteFragment extends BaseListFragment
         return mAdapter;
     }
 
-    private String makeEmailContent(FavoriteManager.Favorite[] favorites) {
+    @Override
+    public boolean startActionMode(ActionMode.Callback callback) {
+        if (mSearchViewExpanded) {
+            return false;
+        }
+        if (mActionMode == null) {
+            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(callback);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isInActionMode() {
+        return mActionMode != null && !mSearchViewExpanded;
+    }
+
+    @Override
+    public void stopActionMode() {
+        mActionMode = null;
+    }
+
+    private void swapCursor(FavoriteManager.Cursor cursor) {
+        if (cursor != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(),
+                    MaterialisticProvider.URI_FAVORITE);
+        }
+        mAdapter.setCursor(cursor);
+        if (!isDetached()) {
+            mDataChangedListener.onDataChanged(mAdapter.getItemCount() == 0, mFilter);
+            getActivity().supportInvalidateOptionsMenu();
+        }
+    }
+
+    private void createSearchView(MenuItem menuSearch) {
+        SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
+        searchView.setQueryHint(getString(R.string.hint_search_saved_stories));
+        searchView.setSearchableInfo(((SearchManager) getActivity()
+                .getSystemService(Context.SEARCH_SERVICE))
+                .getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconified(!mSearchViewExpanded);
+        searchView.setQuery(mFilter, false);
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchViewExpanded = true;
+                v.requestFocus();
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                filter(null);
+                return false;
+            }
+        });
+    }
+
+    private void clear() {
+        mAlertDialogBuilder
+                .init(getActivity())
+                .setMessage(R.string.confirm_clear)
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mFavoriteManager.clear(getActivity(), mFilter);
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create().show();
+    }
+
+    private void startExport() {
+        if (mProgressDialog == null) {
+            mProgressDialog = ProgressDialog.show(getActivity(), null,
+                    getString(R.string.preparing), true, true);
+        } else {
+            mProgressDialog.show();
+        }
+        mFavoriteManager.get(getActivity(), mFilter);
+    }
+
+    private void export(ArrayList<FavoriteManager.Favorite> favorites) {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+        final Intent intent = AppUtils.makeEmailIntent(
+                getString(R.string.favorite_email_subject),
+                makeEmailContent(favorites));
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    private String makeEmailContent(ArrayList<FavoriteManager.Favorite> favorites) {
         return TextUtils.join("\n\n", favorites);
-    }
-
-    private DrawerActivity getBaseActivity() {
-        return (DrawerActivity) getActivity();
-    }
-
-    private class RecyclerViewAdapter extends ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, FavoriteManager.Favorite> {
-        @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ItemViewHolder(getLayoutInflater(null)
-                    .inflate(R.layout.item_favorite, parent, false));
-        }
-
-        @Override
-        public int getItemCount() {
-            return mCursor == null ? 0 : mCursor.getCount();
-        }
-
-        @Override
-        protected void bindItem(final ItemViewHolder holder) {
-            final FavoriteManager.Favorite favorite = getItem(holder.getAdapterPosition());
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (mActionMode == null && !mSearchViewVisible) {
-                        mActionMode = getBaseActivity().startSupportActionMode(mActionModeCallback);
-                        toggle(favorite.getId(), holder.getAdapterPosition());
-                        return true;
-                    }
-
-                    return false;
-                }
-            });
-            holder.mStoryView.getMoreOptions().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showMoreOptions(v, favorite);
-                }
-            });
-        }
-
-        @Override
-        protected boolean isItemAvailable(FavoriteManager.Favorite item) {
-            return item != null;
-        }
-
-        @Override
-        protected void handleItemClick(FavoriteManager.Favorite item, ItemViewHolder holder) {
-            if (mActionMode == null) {
-                mSearchViewVisible = false;
-                super.handleItemClick(item, holder);
-            } else {
-                toggle(item.getId(), holder.getLayoutPosition());
-            }
-        }
-
-        @Override
-        protected void onItemSelected(FavoriteManager.Favorite item, View itemView) {
-            mMultiPaneListener.onItemSelected(item);
-        }
-
-        @Override
-        protected FavoriteManager.Favorite getItem(int position) {
-            if (mCursor == null) {
-                return null;
-            }
-
-            if (!mCursor.moveToPosition(position)) {
-                return null;
-            }
-
-            return mCursor.getFavorite();
-        }
-
-        @Override
-        protected boolean isSelected(String itemId) {
-            return mMultiPaneListener.isMultiPane() &&
-                    mMultiPaneListener.getSelectedItem() != null &&
-                    itemId.equals(mMultiPaneListener.getSelectedItem().getId()) ||
-                    mSelected.containsValue(itemId);
-        }
-
-        private void toggle(String itemId, int position) {
-            if (mSelected.containsValue(itemId)) {
-                mSelected.remove(position);
-            } else {
-                mSelected.put(position, itemId);
-            }
-            notifyItemChanged(position);
-        }
-
-        private void showMoreOptions(View v, final FavoriteManager.Favorite item) {
-            mPopupMenu.create(getActivity(), v, Gravity.NO_GRAVITY);
-            mPopupMenu.inflate(R.menu.menu_contextual_favorite);
-            mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    if (menuItem.getItemId() == R.id.menu_contextual_vote) {
-                        vote(item);
-                        return true;
-                    }
-                    if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                        startActivity(new Intent(getActivity(), ComposeActivity.class)
-                                .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            mPopupMenu.show();
-        }
-
-        private void vote(final FavoriteManager.Favorite item) {
-            mUserServices.voteUp(getActivity(), item.getId(), new VoteCallback(this));
-        }
-
-        private void onVoted(Boolean successful) {
-            if (successful == null) {
-                Toast.makeText(getActivity(), R.string.vote_failed, Toast.LENGTH_SHORT).show();
-            } else if (successful) {
-                Toast.makeText(getActivity(), R.string.voted, Toast.LENGTH_SHORT).show();
-            } else {
-                AppUtils.showLogin(getActivity(), mAlertDialogBuilder);
-            }
-        }
-    }
-
-    private static class VoteCallback extends UserServices.Callback {
-        private final WeakReference<RecyclerViewAdapter> mAdapter;
-
-        public VoteCallback(RecyclerViewAdapter adapter) {
-            mAdapter = new WeakReference<>(adapter);
-        }
-
-        @Override
-        public void onDone(boolean successful) {
-            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
-                mAdapter.get().onVoted(successful);
-            }
-        }
-
-        @Override
-        public void onError() {
-            if (mAdapter.get() != null && mAdapter.get().isAttached()) {
-                mAdapter.get().onVoted(null);
-            }
-        }
     }
 }

@@ -33,6 +33,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import io.github.hidroh.materialistic.R;
@@ -48,7 +49,7 @@ public class FavoriteManager {
      */
     public static final String ACTION_GET = FavoriteManager.class.getName() + ".ACTION_GET";
     /**
-     * {@link android.os.Bundle} key for {@link #ACTION_GET} that contains array of
+     * {@link android.os.Bundle} key for {@link #ACTION_GET} that contains {@link ArrayList} of
      * {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
      */
     public static final String ACTION_GET_EXTRA_DATA = ACTION_GET + ".EXTRA_DATA";
@@ -78,7 +79,7 @@ public class FavoriteManager {
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
         new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
             @Override
-            void onQueryComplete(Favorite[] favorites) {
+            void onQueryComplete(ArrayList<Favorite> favorites) {
                 broadcastManager.sendBroadcast(makeGetBroadcastIntent(favorites));
             }
         }).startQuery(0, null, MaterialisticProvider.URI_FAVORITE,
@@ -179,7 +180,6 @@ public class FavoriteManager {
         if (itemIds == null || itemIds.isEmpty()) {
             return;
         }
-
         final ContentResolver contentResolver = context.getContentResolver();
         new AsyncTask<String, Integer, Void>() {
             @Override
@@ -231,7 +231,7 @@ public class FavoriteManager {
         return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
     }
 
-    private static Intent makeGetBroadcastIntent(Favorite[] favorites) {
+    private static Intent makeGetBroadcastIntent(ArrayList<Favorite> favorites) {
         final Intent intent = new Intent(ACTION_GET);
         intent.putExtra(ACTION_GET_EXTRA_DATA, favorites);
         return intent;
@@ -410,14 +410,12 @@ public class FavoriteManager {
             if (cookie != null) {
                 mCallback.onCheckComplete(cursor.getCount() > 0);
             } else {
-                Favorite[] favorites = new Favorite[cursor.getCount()];
-                int count = 0;
+                ArrayList<Favorite> favorites = new ArrayList<>(cursor.getCount());
                 Cursor favoriteCursor = new Cursor(cursor);
                 boolean any = favoriteCursor.moveToFirst();
                 if (any) {
                     do {
-                        favorites[count] = favoriteCursor.getFavorite();
-                        count++;
+                        favorites.add(favoriteCursor.getFavorite());
                     } while (favoriteCursor.moveToNext());
 
                 }
@@ -428,7 +426,7 @@ public class FavoriteManager {
     }
 
     private static abstract class FavoriteCallback {
-        void onQueryComplete(Favorite[] favorites) {}
+        void onQueryComplete(ArrayList<Favorite> favorites) {}
         void onCheckComplete(boolean isFavorite) {}
     }
 }
