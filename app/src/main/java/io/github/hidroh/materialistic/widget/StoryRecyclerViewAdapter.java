@@ -182,6 +182,7 @@ public class StoryRecyclerViewAdapter extends
     }
 
     public void setItems(ArrayList<ItemManager.Item> items) {
+        mMultiPaneListener.onItemSelected(null);
         setUpdated(items);
         setItemsInternal(items);
         notifyDataSetChanged();

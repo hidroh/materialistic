@@ -22,19 +22,16 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.LayoutRes;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.view.View;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 
-public class FavoriteActivity extends BaseListActivity implements FavoriteFragment.DataChangedListener {
+public class FavoriteActivity extends BaseListActivity {
 
+    static final String EMPTY_QUERY = MaterialisticProvider.class.getName();
     private static final String STATE_FILTER = "state:filter";
     private final ContentObserver mObserver = new ContentObserver(new Handler()) {
         @Override
@@ -50,9 +47,6 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
             }
         }
     };
-    private CoordinatorLayout mContentView;
-    private View mEmptyView;
-    private View mEmptySearchView;
     private String mFilter;
 
     @Override
@@ -60,6 +54,7 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mFilter = savedInstanceState.getString(STATE_FILTER);
+            getSupportActionBar().setSubtitle(mFilter);
         }
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
@@ -71,10 +66,16 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
         if (!intent.hasExtra(SearchManager.QUERY)) {
             return;
         }
+        onItemSelected(null);
+        mFilter = intent.getStringExtra(SearchManager.QUERY);
+        if (TextUtils.equals(mFilter, EMPTY_QUERY)) {
+            mFilter = null;
+        }
+        getSupportActionBar().setSubtitle(mFilter);
         FavoriteFragment fragment = (FavoriteFragment) getSupportFragmentManager()
                 .findFragmentByTag(LIST_FRAGMENT_TAG);
         if (fragment != null) {
-            fragment.filter(intent.getStringExtra(SearchManager.QUERY));
+            fragment.filter(mFilter);
         }
     }
 
@@ -88,25 +89,6 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     protected void onDestroy() {
         super.onDestroy();
         getContentResolver().unregisterContentObserver(mObserver);
-    }
-
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-        mContentView = (CoordinatorLayout) findViewById(R.id.content_frame);
-        mEmptyView = addContentView(R.layout.empty_favorite);
-        mEmptyView.findViewById(R.id.header_card_view).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                View bookmark = mEmptyView.findViewById(R.id.bookmarked);
-                bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ?
-                        View.INVISIBLE : View.VISIBLE);
-                return true;
-            }
-        });
-        mEmptyView.setVisibility(View.INVISIBLE);
-        mEmptySearchView = addContentView(R.layout.empty_favorite_search);
-        mEmptySearchView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -124,37 +106,5 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     @Override
     protected boolean isSearchable() {
         return false;
-    }
-
-    @Override
-    public void onDataChanged(boolean isEmpty, String filter) {
-        getSupportActionBar().setSubtitle(filter);
-        mFilter = filter;
-        if (isEmpty) {
-            if (TextUtils.isEmpty(filter)) {
-                mEmptySearchView.setVisibility(View.INVISIBLE);
-                mEmptyView.setVisibility(View.VISIBLE);
-                mEmptyView.bringToFront();
-            } else {
-                mEmptyView.setVisibility(View.INVISIBLE);
-                mEmptySearchView.setVisibility(View.VISIBLE);
-                mEmptySearchView.bringToFront();
-            }
-        } else {
-            mEmptyView.setVisibility(View.INVISIBLE);
-            mEmptySearchView.setVisibility(View.INVISIBLE);
-        }
-
-        supportInvalidateOptionsMenu();
-    }
-
-    private View addContentView(@LayoutRes int layoutResID) {
-        View view = getLayoutInflater().inflate(layoutResID, mContentView, false);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
-                view.getLayoutParams();
-        params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-        view.setLayoutParams(params);
-        mContentView.addView(view);
-        return view;
     }
 }

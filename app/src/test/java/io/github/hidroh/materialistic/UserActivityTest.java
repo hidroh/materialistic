@@ -119,7 +119,7 @@ public class UserActivityTest {
     public void testEmpty() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(null);
-        assertThat(activity.findViewById(android.R.id.empty)).isVisible();
+        assertThat(activity.findViewById(R.id.empty)).isVisible();
     }
 
     @Test

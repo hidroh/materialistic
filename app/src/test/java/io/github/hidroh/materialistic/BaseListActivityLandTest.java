@@ -98,7 +98,7 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testSelectItemOpenStory() {
-        assertThat(activity.findViewById(R.id.empty)).isVisible();
+        assertThat(activity.findViewById(R.id.empty_selection)).isVisible();
         activity.onItemSelected(new TestHnItem(1L) {
             @NonNull
             @Override
@@ -111,7 +111,7 @@ public class BaseListActivityLandTest {
                 return "http://example.com";
             }
         });
-        assertThat(activity.findViewById(R.id.empty)).isNotVisible();
+        assertThat(activity.findViewById(R.id.empty_selection)).isNotVisible();
         assertStoryMode();
         shadowOf(activity).clickMenuItem(R.id.menu_share);
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -200,9 +200,9 @@ public class BaseListActivityLandTest {
                 return "1";
             }
         });
-        assertThat(activity.findViewById(R.id.empty)).isNotVisible();
+        assertThat(activity.findViewById(R.id.empty_selection)).isNotVisible();
         activity.onItemSelected(null);
-        assertThat(activity.findViewById(R.id.empty)).isVisible();
+        assertThat(activity.findViewById(R.id.empty_selection)).isVisible();
         assertFalse(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }

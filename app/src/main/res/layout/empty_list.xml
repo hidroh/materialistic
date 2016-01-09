@@ -17,6 +17,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/empty"
     android:layout_gravity="center_vertical"
     android:gravity="center"
     tools:visibility="visible"

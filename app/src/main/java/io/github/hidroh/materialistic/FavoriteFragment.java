@@ -56,10 +56,6 @@ public class FavoriteFragment extends BaseListFragment
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_SEARCH_VIEW_EXPANDED = "state:searchViewExpanded";
 
-    public interface DataChangedListener {
-        void onDataChanged(boolean isEmpty, String filter);
-    }
-
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -73,15 +69,15 @@ public class FavoriteFragment extends BaseListFragment
     private ActionMode mActionMode;
     private String mFilter;
     private boolean mSearchViewExpanded;
-    private DataChangedListener mDataChangedListener;
     @Inject FavoriteManager mFavoriteManager;
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    private View mEmptySearchView;
+    private View mEmptyView;
 
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
-        mDataChangedListener = (DataChangedListener) context;
         LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
                 FavoriteManager.makeGetIntentFilter());
     }
@@ -103,6 +99,19 @@ public class FavoriteFragment extends BaseListFragment
         View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_favorite, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mEmptySearchView = view.findViewById(R.id.empty_search);
+        mEmptyView = view.findViewById(R.id.empty);
+        mEmptyView.findViewById(R.id.header_card_view)
+                .setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        View bookmark = mEmptyView.findViewById(R.id.bookmarked);
+                        bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ?
+                                        View.INVISIBLE : View.VISIBLE);
+                        return true;
+                    }
+                });
+        mEmptyView.setVisibility(View.INVISIBLE);
         return view;
     }
 
@@ -157,7 +166,6 @@ public class FavoriteFragment extends BaseListFragment
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mRecyclerView.setAdapter(null); // detach adapter
-        mDataChangedListener = null;
         if (mActionMode != null) {
             mActionMode.finish();
         }
@@ -224,13 +232,30 @@ public class FavoriteFragment extends BaseListFragment
         }
         mAdapter.setCursor(cursor);
         if (!isDetached()) {
-            mDataChangedListener.onDataChanged(mAdapter.getItemCount() == 0, mFilter);
+            toggleEmptyView(mAdapter.getItemCount() == 0, mFilter);
             getActivity().supportInvalidateOptionsMenu();
         }
     }
 
+    private void toggleEmptyView(boolean isEmpty, String filter) {
+        if (isEmpty) {
+            if (TextUtils.isEmpty(filter)) {
+                mEmptySearchView.setVisibility(View.INVISIBLE);
+                mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyView.bringToFront();
+            } else {
+                mEmptyView.setVisibility(View.INVISIBLE);
+                mEmptySearchView.setVisibility(View.VISIBLE);
+                mEmptySearchView.bringToFront();
+            }
+        } else {
+            mEmptyView.setVisibility(View.INVISIBLE);
+            mEmptySearchView.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void createSearchView(MenuItem menuSearch) {
-        SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
+        final SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
         searchView.setQueryHint(getString(R.string.hint_search_saved_stories));
         searchView.setSearchableInfo(((SearchManager) getActivity()
                 .getSystemService(Context.SEARCH_SERVICE))
@@ -247,7 +272,8 @@ public class FavoriteFragment extends BaseListFragment
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                filter(null);
+                // trigger a dummy empty search intent, as empty query does not get submitted
+                searchView.setQuery(FavoriteActivity.EMPTY_QUERY, true);
                 return false;
             }
         });

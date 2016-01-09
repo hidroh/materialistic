@@ -35,7 +35,7 @@
             android:layout_height="match_parent" />
 
         <ViewStub
-            android:id="@+id/empty"
+            android:id="@id/empty"
             android:inflatedId="@id/empty"
             android:layout="@layout/button_download"
             android:layout_gravity="center_horizontal"

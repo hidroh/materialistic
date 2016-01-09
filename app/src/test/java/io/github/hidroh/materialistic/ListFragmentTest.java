@@ -175,7 +175,7 @@ public class ListFragmentTest {
         verify(itemManager).getStories(anyString(), listener.capture());
         listener.getValue().onResponse(new ItemManager.Item[0]);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
-        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
+        Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         controller.pause().stop().destroy();
     }
 
@@ -192,7 +192,7 @@ public class ListFragmentTest {
         verify(itemManager).getStories(anyString(), listener.capture());
         listener.getValue().onError(null);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
-        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isVisible();
+        Assertions.assertThat(activity.findViewById(R.id.empty)).isVisible();
         controller.pause().stop().destroy();
     }
 
@@ -208,14 +208,14 @@ public class ListFragmentTest {
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
         listener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {}});
-        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
+        Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         reset(itemManager);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(anyString(), listener.capture());
         listener.getValue().onError(null);
-        Assertions.assertThat(activity.findViewById(android.R.id.empty)).isNotVisible();
+        Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         assertNotNull(ShadowToast.getLatestToast());
         controller.pause().stop().destroy();
     }

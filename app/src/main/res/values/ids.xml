@@ -102,6 +102,7 @@
     <item type="id" name="text_3rd_party_licenses" />
     <item type="id" name="text_libraries" />
     <item type="id" name="empty" />
+    <item type="id" name="empty_selection" />
     <item type="id" name="empty_search" />
     <item type="id" name="content" />
 

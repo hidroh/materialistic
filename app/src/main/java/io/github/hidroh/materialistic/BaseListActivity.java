@@ -251,13 +251,14 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private void openMultiPaneItem(final ItemManager.WebItem item) {
         if (item == null) {
             setTitle(getDefaultTitle());
-            findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            findViewById(R.id.empty_selection).setVisibility(View.VISIBLE);
             mTabLayout.setVisibility(View.GONE);
             mViewPager.setVisibility(View.GONE);
+            mViewPager.setAdapter(null);
             AppUtils.toggleFab(mReplyButton, false);
         } else {
             setTitle(item.getDisplayedTitle());
-            findViewById(R.id.empty).setVisibility(View.GONE);
+            findViewById(R.id.empty_selection).setVisibility(View.GONE);
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
             AppUtils.toggleFab(mReplyButton, true);
