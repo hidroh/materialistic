@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.AttrRes;
@@ -131,6 +132,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         return true;
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,6 +140,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         mWebView = (WebView) view.findViewById(R.id.content);
+        mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(ContextCompat.getColor(getActivity(),
                 AppUtils.getThemedResId(getActivity(), R.attr.colorCardBackground)));
         mEmptyView = view.findViewById(R.id.empty);
