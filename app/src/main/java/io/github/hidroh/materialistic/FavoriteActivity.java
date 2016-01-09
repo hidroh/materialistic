@@ -18,7 +18,10 @@ package io.github.hidroh.materialistic;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -26,9 +29,27 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
+import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
+
 public class FavoriteActivity extends BaseListActivity implements FavoriteFragment.DataChangedListener {
 
     private static final String STATE_FILTER = "state:filter";
+    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (FavoriteManager.isRemoved(uri)) {
+                ItemManager.WebItem selected = getSelectedItem();
+                if (selected != null &&
+                        TextUtils.equals(selected.getId(), uri.getLastPathSegment())) {
+                    onItemSelected(null);
+                }
+            } else if (FavoriteManager.isCleared(uri)) {
+                onItemSelected(null);
+            }
+        }
+    };
     private CoordinatorLayout mContentView;
     private View mEmptyView;
     private View mEmptySearchView;
@@ -40,6 +61,8 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
         if (savedInstanceState != null) {
             mFilter = savedInstanceState.getString(STATE_FILTER);
         }
+        getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
+                true, mObserver);
     }
 
     @Override
@@ -59,6 +82,12 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, mFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getContentResolver().unregisterContentObserver(mObserver);
     }
 
     @Override
