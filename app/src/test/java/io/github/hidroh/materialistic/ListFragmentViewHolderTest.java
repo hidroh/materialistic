@@ -62,7 +62,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -291,9 +290,6 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testItemClick() {
-        // initial refresh should clear selected item
-        verify(activity.multiPaneListener).onItemSelected((ItemManager.WebItem) isNull());
-        reset(activity.multiPaneListener);
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performClick();

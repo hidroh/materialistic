@@ -78,6 +78,7 @@ public abstract class BaseStoriesActivity extends BaseListActivity
 
     @Override
     public void onRefreshed() {
+        onItemSelected(null);
         mLastUpdated = System.currentTimeMillis();
         mHandler.removeCallbacks(mLastUpdateTask);
         mHandler.post(mLastUpdateTask);
