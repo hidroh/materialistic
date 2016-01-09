@@ -268,7 +268,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     private void removeSelection() {
-        mMultiPaneListener.onItemSelected(null);
         mFavoriteManager.remove(mContext, mSelected.values());
     }
 

@@ -42,6 +42,7 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowProgressDialog;
@@ -59,6 +60,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -123,6 +125,14 @@ public class FavoriteActivityTest {
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
+    }
+
+    @Test
+    public void testNewIntent() {
+        controller.newIntent(new Intent().putExtra(SearchManager.QUERY, "title"));
+        assertEquals(1, adapter.getItemCount());
+        controller.newIntent(new Intent()); // should not clear filter
+        assertEquals(1, adapter.getItemCount());
     }
 
     @Test
@@ -366,6 +376,49 @@ public class FavoriteActivityTest {
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_comment));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class);
+    }
+
+    @Test
+    public void testRemoveClearSelection() {
+        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next());
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("3")
+                .build());
+        assertNull(activity.getSelectedItem());
+        activity.onItemSelected(new TestHnItem(1L));
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("2")
+                .build());
+        assertNotNull(activity.getSelectedItem());
+        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .buildUpon()
+                .appendPath("remove")
+                .appendPath("1")
+                .build());
+        assertNull(activity.getSelectedItem());
+    }
+
+    @Test
+    public void testClearClearSelection() {
+        activity.onItemSelected(new TestHnItem(1L));
+        shadowOf(shadowOf(ShadowApplication.getInstance()
+                .getContentResolver())
+                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .iterator()
+                .next())
+                .dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                        .buildUpon()
+                        .appendPath("clear")
+                        .build());
+        assertNull(activity.getSelectedItem());
     }
 
     private void notifyChange(Uri uri) {
