@@ -38,6 +38,7 @@ import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.UserManager;
+import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -70,6 +71,7 @@ import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
                 DrawerFragment.class,
                 ReadabilityFragment.class,
                 StoryRecyclerViewAdapter.class,
+                FavoriteRecyclerViewAdapter.class,
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,

@@ -66,8 +66,8 @@ public class FavoriteManagerTest {
         manager.get(RuntimeEnvironment.application, null);
         Intent actual = getBroadcastIntent();
         assertThat(actual).hasAction(FavoriteManager.ACTION_GET);
-        assertThat((FavoriteManager.Favorite[])
-                actual.getParcelableArrayExtra(FavoriteManager.ACTION_GET_EXTRA_DATA)).hasSize(2);
+        assertThat(actual.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA))
+                .hasSize(2);
     }
 
     @Test
@@ -75,8 +75,8 @@ public class FavoriteManagerTest {
         manager.get(RuntimeEnvironment.application, "blah");
         Intent actual = getBroadcastIntent();
         assertThat(actual).hasAction(FavoriteManager.ACTION_GET);
-        assertThat((FavoriteManager.Favorite[])
-                actual.getParcelableArrayExtra(FavoriteManager.ACTION_GET_EXTRA_DATA)).isEmpty();
+        assertThat(actual.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA))
+                .isEmpty();
     }
 
     @Test

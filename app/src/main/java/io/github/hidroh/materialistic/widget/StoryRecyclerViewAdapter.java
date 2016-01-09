@@ -211,8 +211,10 @@ public class StoryRecyclerViewAdapter extends
         bindItemUpdated(holder, story);
         highlightUserPost(holder, story);
         holder.mStoryView.setViewed(story.isViewed());
-        holder.mStoryView.setFavorite(story.getLocalRevision() >= mFavoriteRevision &&
-                story.isFavorite());
+        if (story.getLocalRevision() < mFavoriteRevision) {
+            story.setFavorite(false);
+        }
+        holder.mStoryView.setFavorite(story.isFavorite());
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

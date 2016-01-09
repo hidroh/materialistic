@@ -42,7 +42,6 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowProgressDialog;
@@ -50,6 +49,8 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -135,6 +136,9 @@ public class FavoriteActivityTest {
         shadowOf(activity).clickMenuItem(R.id.menu_clear);
         dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        verify(favoriteManager).clear(any(Context.class), anyString());
+        resolver.delete(MaterialisticProvider.URI_FAVORITE, null, null);
+        notifyChange(MaterialisticProvider.URI_FAVORITE);
         assertEquals(0, adapter.getItemCount());
     }
 
@@ -143,17 +147,13 @@ public class FavoriteActivityTest {
         SearchView searchView = (SearchView) actionViewResolver.getActionView(mock(MenuItem.class));
         verify(searchView, atLeastOnce()).setOnSearchClickListener(searchViewClickListener.capture());
         verify(searchView, atLeastOnce()).setOnCloseListener(searchViewCloseListener.capture());
-
-        View.OnClickListener clickListener =
-                searchViewClickListener.getAllValues().get(searchViewClickListener.getAllValues().size() - 1);
-        clickListener.onClick(searchView);
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
-
-        SearchView.OnCloseListener closeListener =
-                searchViewCloseListener.getAllValues().get(searchViewCloseListener.getAllValues().size() - 1);
+        searchViewClickListener.getAllValues()
+                .get(searchViewClickListener.getAllValues().size() - 1)
+                .onClick(searchView);
+        assertFalse(((FavoriteFragment) fragment).startActionMode(null));
+        SearchView.OnCloseListener closeListener = searchViewCloseListener.getAllValues()
+                .get(searchViewCloseListener.getAllValues().size() - 1);
         closeListener.onClose();
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear).isVisible());
-
         assertEquals(2, adapter.getItemCount());
         ((FavoriteFragment) fragment).filter("ask");
         assertEquals(1, adapter.getItemCount());
@@ -217,25 +217,12 @@ public class FavoriteActivityTest {
         verify(actionMode).finish();
 
         resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
-                .getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
-                .iterator()
-                .next());
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
-                .buildUpon()
-                .appendPath("clear")
-                .build());
+        notifyChange(MaterialisticProvider.URI_FAVORITE);
         assertEquals(1, adapter.getItemCount());
     }
 
     @Test
     public void testSwipeToDelete() {
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
-                .getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
-                .iterator()
-                .next());
         ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
                 .extract(adapter);
         shadowAdapter.makeItemVisible(0);
@@ -244,11 +231,7 @@ public class FavoriteActivityTest {
                 .onSwiped(holder, ItemTouchHelper.LEFT);
         verify(favoriteManager).remove(any(Context.class), anyCollection());
         resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
-                .buildUpon()
-                .appendPath("remove")
-                .appendPath("2")
-                .build());
+        notifyChange(MaterialisticProvider.URI_FAVORITE);
         assertEquals(1, adapter.getItemCount());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
@@ -261,11 +244,7 @@ public class FavoriteActivityTest {
         cv.put("url", "http://example.com");
         cv.put("time", String.valueOf(System.currentTimeMillis()));
         resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
-                .buildUpon()
-                .appendPath("add")
-                .appendPath("2")
-                .build());
+        notifyChange(MaterialisticProvider.URI_FAVORITE);
         assertEquals(2, adapter.getItemCount());
     }
 
@@ -287,7 +266,7 @@ public class FavoriteActivityTest {
                 emailResolveInfo);
         ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
         Intent intent = new Intent(FavoriteManager.ACTION_GET);
-        intent.putExtra(FavoriteManager.ACTION_GET_EXTRA_DATA, new FavoriteManager.Favorite[]{});
+        intent.putExtra(FavoriteManager.ACTION_GET_EXTRA_DATA, new ArrayList<FavoriteManager.Favorite>());
         manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
                 .onReceive(activity, intent);
         assertThat(progressDialog).isNotShowing();
@@ -387,6 +366,14 @@ public class FavoriteActivityTest {
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_comment));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class);
+    }
+
+    private void notifyChange(Uri uri) {
+        try {
+            resolver.notifyChange(uri, null);
+        } catch (ConcurrentModificationException e) {
+            // TODO not sure why
+        }
     }
 
     @After

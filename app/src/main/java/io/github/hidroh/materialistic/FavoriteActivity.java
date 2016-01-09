@@ -45,6 +45,9 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (!intent.hasExtra(SearchManager.QUERY)) {
+            return;
+        }
         FavoriteFragment fragment = (FavoriteFragment) getSupportFragmentManager()
                 .findFragmentByTag(LIST_FRAGMENT_TAG);
         if (fragment != null) {
@@ -96,6 +99,7 @@ public class FavoriteActivity extends BaseListActivity implements FavoriteFragme
 
     @Override
     public void onDataChanged(boolean isEmpty, String filter) {
+        getSupportActionBar().setSubtitle(filter);
         mFilter = filter;
         if (isEmpty) {
             if (TextUtils.isEmpty(filter)) {
