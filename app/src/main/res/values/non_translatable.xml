@@ -42,6 +42,7 @@
                     a {color: #%4$s;}
                     img {display: inline; height: auto; max-width: 100%%;}
                     pre {white-space: pre-wrap;}
+                    iframe {width: 90vw; height: 50.625vw;} /* 16:9 */
                 </style>
             </head>
             <body>%5$s</body>
