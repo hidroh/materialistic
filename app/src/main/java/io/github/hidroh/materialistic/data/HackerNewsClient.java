@@ -35,13 +35,12 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Path;
 
 /**
  * Client to retrieve Hacker News content asynchronously
@@ -90,7 +89,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
         call.enqueue(new Callback<int[]>() {
             @Override
-            public void onResponse(Response<int[]> response, Retrofit retrofit) {
+            public void onResponse(Response<int[]> response) {
                 listener.onResponse(toItems(response.body()));
             }
 
@@ -121,7 +120,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         mRestService.user(username)
                 .enqueue(new Callback<UserItem>() {
                     @Override
-                    public void onResponse(Response<UserItem> response, Retrofit retrofit) {
+                    public void onResponse(Response<UserItem> response) {
                         UserItem user = response.body();
                         if (user == null) {
                             listener.onResponse(null);
@@ -724,7 +723,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
 
         @Override
-        public void onResponse(Response<HackerNewsItem> response, Retrofit retrofit) {
+        public void onResponse(Response<HackerNewsItem> response) {
             this.item = response.body();
             this.hasResponse = true;
             done();

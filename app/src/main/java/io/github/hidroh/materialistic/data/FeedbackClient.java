@@ -21,12 +21,11 @@ import android.os.Build;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit.Call;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.Body;
-import retrofit.http.Headers;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 
 public interface FeedbackClient {
     interface Callback {
@@ -52,9 +51,9 @@ public interface FeedbackClient {
                     Build.VERSION.SDK_INT,
                     BuildConfig.VERSION_CODE);
             mFeedbackService.createGithubIssue(new Issue(title, body))
-                    .enqueue(new retrofit.Callback<Object>() {
+                    .enqueue(new retrofit2.Callback<Object>() {
                         @Override
-                        public void onResponse(Response<Object> response, Retrofit retrofit) {
+                        public void onResponse(Response<Object> response) {
                             callback.onSent(true);
                         }
 

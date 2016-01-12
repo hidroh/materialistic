@@ -16,8 +16,8 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
-import retrofit.Call;
-import retrofit.Callback;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;

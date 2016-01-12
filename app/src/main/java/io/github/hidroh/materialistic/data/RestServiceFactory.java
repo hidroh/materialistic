@@ -16,45 +16,27 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.Context;
-import android.util.Log;
+import javax.inject.Inject;
 
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
-
-import io.github.hidroh.materialistic.BuildConfig;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import okhttp3.OkHttpClient;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Retrofit;
 
 public interface RestServiceFactory {
     <T> T create(String baseUrl, Class<T> clazz);
 
     class Impl implements RestServiceFactory {
-        private static final String TAG_OK_HTTP = "OkHttp";
-        private static final long CACHE_SIZE = 1024 * 1024;
         private final OkHttpClient okHttpClient;
 
-        public Impl(Context context) {
-            okHttpClient = new OkHttpClient();
-            HttpLoggingInterceptor interceptor =
-                    new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                        @Override
-                        public void log(String message) {
-                            Log.d(TAG_OK_HTTP, message);
-                        }
-                    });
-            interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                    HttpLoggingInterceptor.Level.NONE);
-            okHttpClient.networkInterceptors().add(interceptor);
-            okHttpClient.setCache(new Cache(context.getApplicationContext().getCacheDir(),
-                    CACHE_SIZE));
+        @Inject
+        public Impl(OkHttpClient okHttpClient) {
+            this.okHttpClient = okHttpClient;
         }
 
         @Override
         public <T> T create(String baseUrl, Class<T> clazz) {
             return new Retrofit.Builder()
-                    .client(okHttpClient)
+                    .callFactory(okHttpClient)
                     .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()

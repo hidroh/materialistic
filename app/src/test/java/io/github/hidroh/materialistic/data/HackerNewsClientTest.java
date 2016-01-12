@@ -17,9 +17,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -81,7 +81,7 @@ public class HackerNewsClientTest {
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.HackerNewsItem hnItem = mock(HackerNewsClient.HackerNewsItem.class);
-        callbackCaptor.getValue().onResponse(Response.success(hnItem), null);
+        callbackCaptor.getValue().onResponse(Response.success(hnItem));
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
         sessionCallback.getValue().onCheckViewedComplete(false);
@@ -132,7 +132,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.TOP_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).topStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(new int[]{1, 2}), null);
+        callbackCaptor.getValue().onResponse(Response.success(new int[]{1, 2}));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(2);
     }
@@ -142,7 +142,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.NEW_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).newStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(null), null);
+        callbackCaptor.getValue().onResponse(Response.success(null));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -152,7 +152,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.ASK_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).askStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(new int[]{}), null);
+        callbackCaptor.getValue().onResponse(Response.success(new int[]{}));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -187,7 +187,7 @@ public class HackerNewsClientTest {
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.UserItem hnUser = mock(HackerNewsClient.UserItem.class);
-        callbackCaptor.getValue().onResponse(Response.success(hnUser), null);
+        callbackCaptor.getValue().onResponse(Response.success(hnUser));
         verify(userListener).onResponse(eq(hnUser));
     }
 
@@ -196,7 +196,7 @@ public class HackerNewsClientTest {
         client.getUser("username", userListener);
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(null), null);
+        callbackCaptor.getValue().onResponse(Response.success(null));
         verify(userListener).onResponse((UserManager.User) isNull());
     }
 

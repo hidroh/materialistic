@@ -14,9 +14,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -52,7 +52,7 @@ public class FeedbackClientTest {
         verify(TestRestServiceFactory.feedbackService)
                 .createGithubIssue(any(FeedbackClient.Impl.Issue.class));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(null), null);
+        callbackCaptor.getValue().onResponse(Response.success(null));
         verify(callback).onSent(eq(true));
     }
 
