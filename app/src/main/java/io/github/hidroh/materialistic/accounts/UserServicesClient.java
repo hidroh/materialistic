@@ -22,29 +22,25 @@ import android.os.Looper;
 import android.support.annotation.WorkerThread;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
-
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class UserServicesClient implements UserServices {
-    private static final String TAG_OK_HTTP = "OkHttp";
     private static final String BASE_WEB_URL = "https://news.ycombinator.com";
     private static final String LOGIN_PATH = "login";
     private static final String VOTE_PATH = "vote";
@@ -74,37 +70,24 @@ public class UserServicesClient implements UserServices {
     private static final String REGEX_VALUE = "value[^\"]*\"([^\"]*)\"";
     private static final String HEADER_LOCATION = "location";
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
-    private final OkHttpClient mClient;
+    private final Call.Factory mCallFactory;
 
-    public UserServicesClient(OkHttpClient okHttpClient) {
-        mClient = okHttpClient;
-        HttpLoggingInterceptor interceptor =
-                new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                    @Override
-                    public void log(String message) {
-                        Log.d(TAG_OK_HTTP, message);
-                    }
-                });
-        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                HttpLoggingInterceptor.Level.NONE);
-        mClient.networkInterceptors().add(interceptor);
-        mClient.setFollowRedirects(false);
-        CookieManager cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-        mClient.setCookieHandler(cookieManager);
+    @Inject
+    public UserServicesClient(Call.Factory callFactory) {
+        mCallFactory = callFactory;
     }
 
     @Override
     public void login(final String username, final String password, boolean createAccount,
                       final Callback callback) {
-        FormEncodingBuilder formBuilder = new FormEncodingBuilder()
+        FormBody.Builder formBuilder = new FormBody.Builder()
                 .add(LOGIN_PARAM_ACCT, username)
                 .add(LOGIN_PARAM_PW, password)
                 .add(LOGIN_PARAM_GOTO, DEFAULT_REDIRECT);
         if (createAccount) {
             formBuilder.add(LOGIN_PARAM_CREATING, CREATING_TRUE);
         }
-        mClient.newCall(new Request.Builder()
+        mCallFactory.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(LOGIN_PATH)
@@ -122,12 +105,12 @@ public class UserServicesClient implements UserServices {
             return;
         }
         Toast.makeText(context, R.string.sending, Toast.LENGTH_SHORT).show();
-        mClient.newCall(new Request.Builder()
+        mCallFactory.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(VOTE_PATH)
                         .build())
-                .post(new FormEncodingBuilder()
+                .post(new FormBody.Builder()
                         .add(LOGIN_PARAM_ACCT, credentials.first)
                         .add(LOGIN_PARAM_PW, credentials.second)
                         .add(VOTE_PARAM_FOR, itemId)
@@ -145,12 +128,12 @@ public class UserServicesClient implements UserServices {
             callback.onDone(false);
             return;
         }
-        mClient.newCall(new Request.Builder()
+        mCallFactory.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(COMMENT_PATH)
                         .build())
-                .post(new FormEncodingBuilder()
+                .post(new FormBody.Builder()
                         .add(LOGIN_PARAM_ACCT, credentials.first)
                         .add(LOGIN_PARAM_PW, credentials.second)
                         .add(COMMENT_PARAM_PARENT, parentId)
@@ -178,17 +161,17 @@ public class UserServicesClient implements UserServices {
          *  if 200 or anything else, considered error
          */
         // fetch submit page with given credentials
-        mClient.newCall(new Request.Builder()
+        mCallFactory.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(SUBMIT_PATH)
                         .build())
-                .post(new FormEncodingBuilder()
+                .post(new FormBody.Builder()
                         .add(LOGIN_PARAM_ACCT, credentials.first)
                         .add(LOGIN_PARAM_PW, credentials.second)
                         .build())
                 .build())
-                .enqueue(new com.squareup.okhttp.Callback() {
+                .enqueue(new okhttp3.Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
                         postError(callback);
@@ -202,11 +185,13 @@ public class UserServicesClient implements UserServices {
                             postResult(callback, false);
                         } else {
                             // grab fnid from HTML and submit
+                            ResponseBody body = response.body();
                             doSubmit(title,
                                     content,
-                                    getInputValue(response.body().string(), SUBMIT_PARAM_FNID),
+                                    getInputValue(body.string(), SUBMIT_PARAM_FNID),
                                     isUrl,
                                     callback);
+                            body.close();
                         }
                     }
                 });
@@ -218,19 +203,19 @@ public class UserServicesClient implements UserServices {
             postError(callback);
             return;
         }
-        mClient.newCall(new Request.Builder()
+        mCallFactory.newCall(new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(SUBMIT_POST_PATH)
                         .build())
-                .post(new FormEncodingBuilder()
+                .post(new FormBody.Builder()
                         .add(SUBMIT_PARAM_FNID, fnid)
                         .add(SUBMIT_PARAM_FNOP, DEFAULT_FNOP)
                         .add(SUBMIT_PARAM_TITLE, title)
                         .add(isUrl ? SUBMIT_PARAM_URL : SUBMIT_PARAM_TEXT, content)
                         .build())
                 .build())
-                .enqueue(new com.squareup.okhttp.Callback() {
+                .enqueue(new okhttp3.Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
                         postError(callback);
@@ -256,8 +241,8 @@ public class UserServicesClient implements UserServices {
                 });
     }
 
-    private com.squareup.okhttp.Callback wrap(final Callback callback) {
-        return new com.squareup.okhttp.Callback() {
+    private okhttp3.Callback wrap(final Callback callback) {
+        return new okhttp3.Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
                 UserServicesClient.this.postError(callback);
