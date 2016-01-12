@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic.data;
 
 import javax.inject.Inject;
 
-import okhttp3.OkHttpClient;
+import okhttp3.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 
@@ -26,17 +26,17 @@ public interface RestServiceFactory {
     <T> T create(String baseUrl, Class<T> clazz);
 
     class Impl implements RestServiceFactory {
-        private final OkHttpClient okHttpClient;
+        private final Call.Factory mCallFactory;
 
         @Inject
-        public Impl(OkHttpClient okHttpClient) {
-            this.okHttpClient = okHttpClient;
+        public Impl(Call.Factory callFactory) {
+            this.mCallFactory = callFactory;
         }
 
         @Override
         public <T> T create(String baseUrl, Class<T> clazz) {
             return new Retrofit.Builder()
-                    .callFactory(okHttpClient)
+                    .callFactory(mCallFactory)
                     .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()

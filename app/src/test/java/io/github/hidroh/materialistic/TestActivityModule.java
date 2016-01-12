@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -244,21 +245,25 @@ public class TestActivityModule {
         return new PopupMenu() {
             private android.widget.PopupMenu popupMenu;
 
+            @SuppressLint("NewApi")
             @Override
             public void create(Context context, View anchor, int gravity) {
                 popupMenu = new android.widget.PopupMenu(context, anchor, gravity);
             }
 
+            @SuppressLint("NewApi")
             @Override
             public void inflate(@MenuRes int menuRes) {
                 popupMenu.inflate(menuRes);
             }
 
+            @SuppressLint("NewApi")
             @Override
             public Menu getMenu() {
                 return popupMenu.getMenu();
             }
 
+            @SuppressLint("NewApi")
             @Override
             public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
                 popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
@@ -269,6 +274,7 @@ public class TestActivityModule {
                 });
             }
 
+            @SuppressLint("NewApi")
             @Override
             public void show() {
                 popupMenu.show();

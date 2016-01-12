@@ -2,15 +2,6 @@ package io.github.hidroh.materialistic.accounts;
 
 import android.accounts.Account;
 
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Protocol;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,12 +17,18 @@ import java.net.HttpURLConnection;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.Preferences;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,9 +45,9 @@ public class UserServicesClientTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         call = mock(Call.class);
-        OkHttpClient client = mock(OkHttpClient.class);
-        when(client.newCall(any(Request.class))).thenReturn(call);
-        userServices = new UserServicesClient(client);
+        Call.Factory callFactory = mock(Call.Factory.class);
+        when(callFactory.newCall(any(Request.class))).thenReturn(call);
+        userServices = new UserServicesClient(callFactory);
         Preferences.setUsername(RuntimeEnvironment.application, "username");
         account = new Account("username", BuildConfig.APPLICATION_ID);
         ShadowAccountManager.get(RuntimeEnvironment.application)

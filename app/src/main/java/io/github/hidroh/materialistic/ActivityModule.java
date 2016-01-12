@@ -20,7 +20,9 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -47,6 +49,11 @@ import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 import okhttp3.Cache;
+import okhttp3.Call;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @Module(
@@ -141,8 +148,8 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public RestServiceFactory provideRestServiceFactory(okhttp3.OkHttpClient okHttpClient) {
-        return new RestServiceFactory.Impl(okHttpClient);
+    public RestServiceFactory provideRestServiceFactory(Call.Factory callFactory) {
+        return new RestServiceFactory.Impl(callFactory);
     }
 
     @Provides @Singleton
@@ -151,17 +158,17 @@ public class ActivityModule {
     }
 
     @Provides
-    public AlertDialogBuilder provideAlertDialogBuilder(Context context) {
+    public AlertDialogBuilder provideAlertDialogBuilder() {
         return new AlertDialogBuilder.Impl();
     }
 
     @Provides @Singleton
-    public UserServices provideUserServices() {
-        return new UserServicesClient(new OkHttpClient());
+    public UserServices provideUserServices(Call.Factory callFactory) {
+        return new UserServicesClient(callFactory);
     }
 
     @Provides @Singleton
-    public okhttp3.OkHttpClient provideOkHttpClient(Context context) {
+    public Call.Factory provideCallFactory(Context context) {
         HttpLoggingInterceptor interceptor =
                 new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                     @Override
@@ -171,9 +178,24 @@ public class ActivityModule {
                 });
         interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                 HttpLoggingInterceptor.Level.NONE);
-        return new okhttp3.OkHttpClient.Builder()
+        return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .cache(new Cache(context.getApplicationContext().getCacheDir(), CACHE_SIZE))
+                .followRedirects(false)
+                .cookieJar(new CookieJar() {
+                    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        cookieStore.put(url, cookies);
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        List<Cookie> cookies = cookieStore.get(url);
+                        return cookies != null ? cookies : new ArrayList<Cookie>();
+                    }
+                })
                 .build();
 
     }
