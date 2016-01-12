@@ -27,11 +27,10 @@ import android.text.TextUtils;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit.Call;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface ReadabilityClient {
     interface Callback {
@@ -75,9 +74,9 @@ public interface ReadabilityClient {
 
         private void readabilityParse(final String itemId, String url, final Callback callback) {
             mReadabilityService.parse(url)
-                    .enqueue(new retrofit.Callback<Readable>() {
+                    .enqueue(new retrofit2.Callback<Readable>() {
                         @Override
-                        public void onResponse(Response<Readable> response, Retrofit retrofit) {
+                        public void onResponse(Response<Readable> response) {
                             Readable readable = response.body();
                             if (readable == null) {
                                 callback.onResponse(null);

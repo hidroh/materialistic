@@ -35,7 +35,7 @@ ext {
     okHttpVersion = '2.7.1'
     daggerVersion = '1.2.2'
     leakCanaryVersion = '1.4-beta1'
-    retrofitVersion = '2.0.0-beta2'
+    retrofitVersion = '2.0.0-beta3'
 }
 
 dependencies {
@@ -51,10 +51,11 @@ dependencies {
     debugCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    compile "com.squareup.retrofit:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit:converter-gson:$retrofitVersion"
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"
     compile "com.squareup.okhttp:logging-interceptor:$okHttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:3.0.0-RC1"
     provided "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 

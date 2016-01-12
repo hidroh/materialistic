@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 
@@ -45,6 +46,8 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
+import okhttp3.Cache;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 @Module(
         injects = {
@@ -83,6 +86,8 @@ public class ActivityModule {
     public static final String ALGOLIA = "algolia";
     public static final String POPULAR = "popular";
     public static final String HN = "hn";
+    private static final String TAG_OK_HTTP = "OkHttp";
+    private static final long CACHE_SIZE = 1024 * 1024;
 
     private final Context mContext;
 
@@ -136,8 +141,8 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public RestServiceFactory provideRestServiceFactory(Context context) {
-        return new RestServiceFactory.Impl(context);
+    public RestServiceFactory provideRestServiceFactory(okhttp3.OkHttpClient okHttpClient) {
+        return new RestServiceFactory.Impl(okHttpClient);
     }
 
     @Provides @Singleton
@@ -155,6 +160,23 @@ public class ActivityModule {
         return new UserServicesClient(new OkHttpClient());
     }
 
+    @Provides @Singleton
+    public okhttp3.OkHttpClient provideOkHttpClient(Context context) {
+        HttpLoggingInterceptor interceptor =
+                new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                    @Override
+                    public void log(String message) {
+                        Log.d(TAG_OK_HTTP, message);
+                    }
+                });
+        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
+                HttpLoggingInterceptor.Level.NONE);
+        return new okhttp3.OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .cache(new Cache(context.getApplicationContext().getCacheDir(), CACHE_SIZE))
+                .build();
+
+    }
     @Provides
     public AccountManager provideAccountManager(Context context) {
         return AccountManager.get(context);

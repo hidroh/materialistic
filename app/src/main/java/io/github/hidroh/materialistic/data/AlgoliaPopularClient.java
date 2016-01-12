@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Inject;
 
-import retrofit.Callback;
+import retrofit2.Callback;
 
 public class AlgoliaPopularClient extends AlgoliaClient {
 

@@ -17,9 +17,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -79,7 +79,7 @@ public class AlgoliaClientTest {
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson(
                 "{\"hits\":[{\"objectID\":\"1\"}]}",
                 AlgoliaClient.AlgoliaHits.class);
-        getStoriesCallback.getValue().onResponse(Response.success(hits), null);
+        getStoriesCallback.getValue().onResponse(Response.success(hits));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(1);
     }
@@ -99,7 +99,7 @@ public class AlgoliaClientTest {
         verify(call).enqueue(getStoriesCallback.capture());
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson("{\"hits\":[]}",
                 AlgoliaClient.AlgoliaHits.class);
-        getStoriesCallback.getValue().onResponse(Response.success(hits), null);
+        getStoriesCallback.getValue().onResponse(Response.success(hits));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }

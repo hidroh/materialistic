@@ -23,13 +23,12 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.Preferences;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Query;
 
 public class AlgoliaClient implements ItemManager {
 
@@ -51,7 +50,7 @@ public class AlgoliaClient implements ItemManager {
         }
         search(filter, new Callback<AlgoliaHits>() {
             @Override
-            public void onResponse(Response<AlgoliaHits> response, Retrofit retrofit) {
+            public void onResponse(Response<AlgoliaHits> response) {
                 AlgoliaHits algoliaHits = response.body();
                 Hit[] hits = algoliaHits.hits;
                 Item[] stories = new Item[hits == null ? 0 : hits.length];

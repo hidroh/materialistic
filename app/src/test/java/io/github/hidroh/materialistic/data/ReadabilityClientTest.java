@@ -23,9 +23,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -67,7 +67,7 @@ public class ReadabilityClientTest {
         verify(call).enqueue(callbackCaptor.capture());
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().onResponse(Response.success(readable), null);
+        callbackCaptor.getValue().onResponse(Response.success(readable));
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -78,7 +78,7 @@ public class ReadabilityClientTest {
         verify(call).enqueue(callbackCaptor.capture());
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().onResponse(Response.success(readable), null);
+        callbackCaptor.getValue().onResponse(Response.success(readable));
         verify(callback).onResponse((String) isNull());
     }
 
