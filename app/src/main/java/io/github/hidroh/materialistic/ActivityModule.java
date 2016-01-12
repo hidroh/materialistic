@@ -20,6 +20,7 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Log;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -187,7 +188,17 @@ public class ActivityModule {
 
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                        cookieStore.put(url, cookies);
+                        if (cookies == null) {
+                            return;
+                        }
+                        // accept original server
+                        ArrayList<Cookie> originalCookies = new ArrayList<>();
+                        for (Cookie cookie : cookies) {
+                            if (HttpCookie.domainMatches(cookie.domain(), url.host())) {
+                                originalCookies.add(cookie);
+                            }
+                        }
+                        cookieStore.put(url, originalCookies);
                     }
 
                     @Override
