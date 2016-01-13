@@ -18,8 +18,9 @@
 <ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/ic_more_vert_white_24dp"
     android:contentDescription="@string/more"
-    style="@style/Widget.AppCompat.Button.Borderless.Colored"
     android:tint="?android:attr/textColorSecondary"
-    android:minWidth="@null"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:paddingLeft="@dimen/padding"
+    android:paddingRight="@dimen/padding"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
