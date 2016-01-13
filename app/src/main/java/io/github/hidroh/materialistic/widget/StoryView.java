@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatButton;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -50,7 +51,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final TextView mPostedTextView;
     private final TextView mTitleTextView;
     private final TextView mSourceTextView;
-    private final View mCommentButton;
+    private final AppCompatButton mCommentButton;
     private final boolean mIsLocal;
     private final ViewSwitcher mVoteSwitcher;
     private final View mMoreButton;
@@ -84,7 +85,8 @@ public class StoryView extends RelativeLayout implements Checkable {
         mPostedTextView = (TextView) findViewById(R.id.posted);
         mTitleTextView = (TextView) findViewById(R.id.title);
         mSourceTextView = (TextView) findViewById(R.id.source);
-        mCommentButton = findViewById(R.id.comment);
+        mCommentButton = (AppCompatButton) findViewById(R.id.comment);
+        mCommentButton.setSupportAllCaps(false);
         mMoreButton = findViewById(R.id.button_more);
         ta.recycle();
         a.recycle();
