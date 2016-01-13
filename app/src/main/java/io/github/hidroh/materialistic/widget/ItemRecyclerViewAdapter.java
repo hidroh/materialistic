@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -29,7 +30,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -270,7 +270,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         final TextView mPostedTextView;
         final TextView mContentTextView;
         final TextView mReadMoreTextView;
-        final Button mCommentButton;
+        final AppCompatButton mCommentButton;
         final View mMoreButton;
         final View mContentView;
 
@@ -280,8 +280,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
             mContentTextView = (TextView) itemView.findViewById(R.id.text);
             mReadMoreTextView = (TextView) itemView.findViewById(R.id.more);
-            mCommentButton = (Button) itemView.findViewById(R.id.comment);
+            mCommentButton = (AppCompatButton) itemView.findViewById(R.id.comment);
             mCommentButton.setVisibility(View.GONE);
+            mCommentButton.setSupportAllCaps(false);
             mMoreButton = itemView.findViewById(R.id.button_more);
             mContentView = itemView.findViewById(R.id.content);
         }
