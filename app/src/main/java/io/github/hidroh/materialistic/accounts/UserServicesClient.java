@@ -173,12 +173,12 @@ public class UserServicesClient implements UserServices {
                 .build())
                 .enqueue(new okhttp3.Callback() {
                     @Override
-                    public void onFailure(Request request, IOException e) {
+                    public void onFailure(Call call, IOException e) {
                         postError(callback);
                     }
 
                     @Override
-                    public void onResponse(Response response) throws IOException {
+                    public void onResponse(Call call, Response response) throws IOException {
                         final boolean redirect = response.code() == HttpURLConnection.HTTP_MOVED_TEMP;
                         if (redirect) {
                             // redirect = failed login
@@ -217,12 +217,12 @@ public class UserServicesClient implements UserServices {
                 .build())
                 .enqueue(new okhttp3.Callback() {
                     @Override
-                    public void onFailure(Request request, IOException e) {
+                    public void onFailure(Call call, IOException e) {
                         postError(callback);
                     }
 
                     @Override
-                    public void onResponse(Response response) throws IOException {
+                    public void onResponse(Call call, Response response) throws IOException {
                         boolean redirect = response.code() == HttpURLConnection.HTTP_MOVED_TEMP;
                         if (!redirect) {
                             postError(callback);
@@ -244,12 +244,12 @@ public class UserServicesClient implements UserServices {
     private okhttp3.Callback wrap(final Callback callback) {
         return new okhttp3.Callback() {
             @Override
-            public void onFailure(Request request, IOException e) {
+            public void onFailure(Call call, IOException e) {
                 UserServicesClient.this.postError(callback);
             }
 
             @Override
-            public void onResponse(Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 // redirect = successful submit
                 postResult(callback, response.code() == HttpURLConnection.HTTP_MOVED_TEMP);
             }
