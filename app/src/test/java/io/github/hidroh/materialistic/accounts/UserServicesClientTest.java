@@ -59,7 +59,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", false, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(responseBuilder
+        callbackCaptor.getValue().onResponse(null, responseBuilder
                 .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(eq(true));
     }
@@ -69,7 +69,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(responseBuilder
+        callbackCaptor.getValue().onResponse(null, responseBuilder
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(callback).onDone(eq(false));
     }
@@ -88,7 +88,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.voteUp(RuntimeEnvironment.application, "1", callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(responseBuilder
+        callbackCaptor.getValue().onResponse(null, responseBuilder
                 .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(eq(true));
     }
@@ -98,7 +98,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.voteUp(RuntimeEnvironment.application, "1", callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(responseBuilder
+        callbackCaptor.getValue().onResponse(null, responseBuilder
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(callback).onDone(eq(false));
     }
@@ -126,7 +126,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.reply(RuntimeEnvironment.application, "1", "reply", callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(responseBuilder
+        callbackCaptor.getValue().onResponse(null, responseBuilder
                 .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(eq(true));
     }
@@ -165,12 +165,12 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "content", false, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .code(HttpURLConnection.HTTP_MOVED_TEMP)
                 .header("location", "newest")
                 .build());
@@ -182,12 +182,12 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .code(HttpURLConnection.HTTP_MOVED_TEMP)
                 .header("location", "x")
                 .build());
@@ -199,12 +199,12 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .code(HttpURLConnection.HTTP_OK)
                 .build());
         verify(callback).onError();
@@ -215,7 +215,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
@@ -229,7 +229,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"), ""))
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(callback).onError();
@@ -240,7 +240,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"hiddenfield\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
@@ -252,7 +252,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
@@ -264,7 +264,7 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(createResponseBuilder()
+        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(false);
     }
