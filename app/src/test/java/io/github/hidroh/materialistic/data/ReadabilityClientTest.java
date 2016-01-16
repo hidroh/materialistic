@@ -67,7 +67,7 @@ public class ReadabilityClientTest {
         verify(call).enqueue(callbackCaptor.capture());
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().onResponse(Response.success(readable));
+        callbackCaptor.getValue().onResponse(null, Response.success(readable));
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -78,7 +78,7 @@ public class ReadabilityClientTest {
         verify(call).enqueue(callbackCaptor.capture());
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().onResponse(Response.success(readable));
+        callbackCaptor.getValue().onResponse(null, Response.success(readable));
         verify(callback).onResponse((String) isNull());
     }
 
@@ -87,7 +87,7 @@ public class ReadabilityClientTest {
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.readabilityService).parse(anyString());
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null);
+        callbackCaptor.getValue().onFailure(null, null);
         verify(callback).onResponse((String) isNull());
     }
 

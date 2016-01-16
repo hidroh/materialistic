@@ -52,7 +52,7 @@ public class FeedbackClientTest {
         verify(TestRestServiceFactory.feedbackService)
                 .createGithubIssue(any(FeedbackClient.Impl.Issue.class));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(null));
+        callbackCaptor.getValue().onResponse(null, Response.success(null));
         verify(callback).onSent(eq(true));
     }
 
@@ -62,7 +62,7 @@ public class FeedbackClientTest {
         verify(TestRestServiceFactory.feedbackService)
                 .createGithubIssue(any(FeedbackClient.Impl.Issue.class));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null);
+        callbackCaptor.getValue().onFailure(null, null);
         verify(callback).onSent(eq(false));
     }
 

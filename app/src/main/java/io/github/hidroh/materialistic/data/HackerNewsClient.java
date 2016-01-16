@@ -89,12 +89,12 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
         call.enqueue(new Callback<int[]>() {
             @Override
-            public void onResponse(Response<int[]> response) {
+            public void onResponse(Call<int[]> call, Response<int[]> response) {
                 listener.onResponse(toItems(response.body()));
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<int[]> call, Throwable t) {
                 listener.onError(t != null ? t.getMessage() : "");
 
             }
@@ -120,7 +120,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         mRestService.user(username)
                 .enqueue(new Callback<UserItem>() {
                     @Override
-                    public void onResponse(Response<UserItem> response) {
+                    public void onResponse(Call<UserItem> call, Response<UserItem> response) {
                         UserItem user = response.body();
                         if (user == null) {
                             listener.onResponse(null);
@@ -131,7 +131,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
                     }
 
                     @Override
-                    public void onFailure(Throwable t) {
+                    public void onFailure(Call<UserItem> call, Throwable t) {
                         listener.onError(t != null ? t.getMessage() : "");
                     }
                 });
@@ -723,14 +723,14 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
 
         @Override
-        public void onResponse(Response<HackerNewsItem> response) {
+        public void onResponse(Call<HackerNewsItem> call, Response<HackerNewsItem> response) {
             this.item = response.body();
             this.hasResponse = true;
             done();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<HackerNewsItem> call, Throwable t) {
             this.errorMessage = t != null ? t.getMessage() : "";
             this.hasError = true;
             done();
