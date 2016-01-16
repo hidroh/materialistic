@@ -79,7 +79,7 @@ public class AlgoliaClientTest {
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson(
                 "{\"hits\":[{\"objectID\":\"1\"}]}",
                 AlgoliaClient.AlgoliaHits.class);
-        getStoriesCallback.getValue().onResponse(Response.success(hits));
+        getStoriesCallback.getValue().onResponse(null, Response.success(hits));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(1);
     }
@@ -99,7 +99,7 @@ public class AlgoliaClientTest {
         verify(call).enqueue(getStoriesCallback.capture());
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson("{\"hits\":[]}",
                 AlgoliaClient.AlgoliaHits.class);
-        getStoriesCallback.getValue().onResponse(Response.success(hits));
+        getStoriesCallback.getValue().onResponse(null, Response.success(hits));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -109,7 +109,7 @@ public class AlgoliaClientTest {
         client.getStories("filter", storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
-        getStoriesCallback.getValue().onFailure(new Throwable("message"));
+        getStoriesCallback.getValue().onFailure(null, new Throwable("message"));
         verify(storiesListener).onError(eq("message"));
     }
 
@@ -118,7 +118,7 @@ public class AlgoliaClientTest {
         client.getStories("filter", storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
-        getStoriesCallback.getValue().onFailure(null);
+        getStoriesCallback.getValue().onFailure(null, null);
         verify(storiesListener).onError(eq(""));
     }
 

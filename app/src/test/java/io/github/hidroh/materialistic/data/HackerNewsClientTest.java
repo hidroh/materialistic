@@ -81,7 +81,7 @@ public class HackerNewsClientTest {
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.HackerNewsItem hnItem = mock(HackerNewsClient.HackerNewsItem.class);
-        callbackCaptor.getValue().onResponse(Response.success(hnItem));
+        callbackCaptor.getValue().onResponse(null, Response.success(hnItem));
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
         sessionCallback.getValue().onCheckViewedComplete(false);
@@ -102,7 +102,7 @@ public class HackerNewsClientTest {
         sessionCallback.getValue().onCheckViewedComplete(true);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(new Throwable("message"));
+        callbackCaptor.getValue().onFailure(null, new Throwable("message"));
         verify(itemListener).onError(eq("message"));
     }
 
@@ -117,7 +117,7 @@ public class HackerNewsClientTest {
         favoriteCallback.getValue().onCheckComplete(true);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null);
+        callbackCaptor.getValue().onFailure(null, null);
         verify(itemListener).onError(eq(""));
     }
 
@@ -132,7 +132,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.TOP_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).topStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(new int[]{1, 2}));
+        callbackCaptor.getValue().onResponse(null, Response.success(new int[]{1, 2}));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(2);
     }
@@ -142,7 +142,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.NEW_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).newStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(null));
+        callbackCaptor.getValue().onResponse(null, Response.success(null));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -152,7 +152,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.ASK_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).askStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(new int[]{}));
+        callbackCaptor.getValue().onResponse(null, Response.success(new int[]{}));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
@@ -162,7 +162,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.SHOW_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).showStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(new Throwable("message"));
+        callbackCaptor.getValue().onFailure(null, new Throwable("message"));
         verify(storiesListener).onError(eq("message"));
     }
 
@@ -171,7 +171,7 @@ public class HackerNewsClientTest {
         client.getStories(ItemManager.JOBS_FETCH_MODE, storiesListener);
         verify(TestRestServiceFactory.hnRestService).jobStories();
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null);
+        callbackCaptor.getValue().onFailure(null, null);
         verify(storiesListener).onError(eq(""));
     }
 
@@ -187,7 +187,7 @@ public class HackerNewsClientTest {
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
         HackerNewsClient.UserItem hnUser = mock(HackerNewsClient.UserItem.class);
-        callbackCaptor.getValue().onResponse(Response.success(hnUser));
+        callbackCaptor.getValue().onResponse(null, Response.success(hnUser));
         verify(userListener).onResponse(eq(hnUser));
     }
 
@@ -196,7 +196,7 @@ public class HackerNewsClientTest {
         client.getUser("username", userListener);
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(Response.success(null));
+        callbackCaptor.getValue().onResponse(null, Response.success(null));
         verify(userListener).onResponse((UserManager.User) isNull());
     }
 
@@ -205,7 +205,7 @@ public class HackerNewsClientTest {
         client.getUser("username", userListener);
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(new Throwable("message"));
+        callbackCaptor.getValue().onFailure(null, new Throwable("message"));
         verify(userListener).onError(eq("message"));
     }
 
@@ -214,7 +214,7 @@ public class HackerNewsClientTest {
         client.getUser("username", userListener);
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null);
+        callbackCaptor.getValue().onFailure(null, null);
         verify(userListener).onError(eq(""));
     }
 

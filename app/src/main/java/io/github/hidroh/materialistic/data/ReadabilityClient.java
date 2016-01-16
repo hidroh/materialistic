@@ -76,7 +76,7 @@ public interface ReadabilityClient {
             mReadabilityService.parse(url)
                     .enqueue(new retrofit2.Callback<Readable>() {
                         @Override
-                        public void onResponse(Response<Readable> response) {
+                        public void onResponse(Call<Readable> call, Response<Readable> response) {
                             Readable readable = response.body();
                             if (readable == null) {
                                 callback.onResponse(null);
@@ -91,7 +91,7 @@ public interface ReadabilityClient {
                         }
 
                         @Override
-                        public void onFailure(Throwable t) {
+                        public void onFailure(Call<Readable> call, Throwable t) {
                             callback.onResponse(null);
                         }
                     });

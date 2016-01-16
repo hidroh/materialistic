@@ -53,12 +53,12 @@ public interface FeedbackClient {
             mFeedbackService.createGithubIssue(new Issue(title, body))
                     .enqueue(new retrofit2.Callback<Object>() {
                         @Override
-                        public void onResponse(Response<Object> response) {
+                        public void onResponse(Call<Object> call, Response<Object> response) {
                             callback.onSent(true);
                         }
 
                         @Override
-                        public void onFailure(Throwable t) {
+                        public void onFailure(Call<Object> call, Throwable t) {
                             callback.onSent(false);
                         }
                     });

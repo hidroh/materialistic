@@ -50,7 +50,7 @@ public class AlgoliaClient implements ItemManager {
         }
         search(filter, new Callback<AlgoliaHits>() {
             @Override
-            public void onResponse(Response<AlgoliaHits> response) {
+            public void onResponse(Call<AlgoliaHits> call, Response<AlgoliaHits> response) {
                 AlgoliaHits algoliaHits = response.body();
                 Hit[] hits = algoliaHits.hits;
                 Item[] stories = new Item[hits == null ? 0 : hits.length];
@@ -64,7 +64,7 @@ public class AlgoliaClient implements ItemManager {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<AlgoliaHits> call, Throwable t) {
                 listener.onError(t != null ? t.getMessage() : "");
             }
         });
