@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016 Farble Dast
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="app_name">骇客资讯</string>
+    <string name="action_settings">设置</string>
+    <string name="title_activity_list">热门帖子</string>
+    <string name="title_activity_item">评论</string>
+    <string name="filter_title_item">骇客资讯</string>
+    <string name="open_drawer">打开侧边栏</string>
+    <string name="close_drawer">关闭侧边栏</string>
+    <string name="view_in_browser">浏览器中打开</string>
+    <string name="favorite_email_subject">您在骇客资讯上保存的帖子</string>
+    <string name="share">分享</string>
+    <string name="title_activity_about">关于</string>
+    <string name="license_title">许可</string>
+    <string name="third_party_licenses_title">第三方许可证</string>
+    <string name="developer_info_title">开发者信息</string>
+    <string name="application_info_title">应用详情</string>
+    <string name="application_info_text">
+        <![CDATA[
+            <p>版本: %1$s</p>
+            <p>本应用开源，源代码托管在 <a href="https://github.com/hidroh/materialistic">github.com/hidroh/materialistic</a></p>
+        ]]>
+    </string>
+    <string name="libraries_title">库 &amp; 资源</string>
+    <string name="title_activity_favorite">收藏帖子</string>
+    <string name="saved">收藏 %1$s</string>
+    <string name="toast_saved">帖子已收藏</string>
+    <string name="clear_all">清除全部</string>
+    <string name="toast_removed">取消收藏</string>
+    <string name="no_saved_stories">暂无收藏</string>
+    <string name="no_comments">暂无评论</string>
+    <string name="confirm_clear">确定清空收藏吗？</string>
+    <string name="email">导出到邮箱</string>
+    <string name="preparing" tools:ignore="TypographyEllipsis">准备中...</string>
+    <string name="clear_selected">清空选中选项</string>
+    <string name="confirm_clear_selected">确定要清空选中选项吗？</string>
+    <string name="search">搜索</string>
+    <string name="hint_search_saved_stories">在已收藏的帖子中查找</string>
+    <string name="no_stories_search">未搜索到您想要搜索的帖子</string>
+
+    <!-- preferences -->
+    <string name="pref_external_title">使用其他浏览器</string>
+    <string name="pref_external_summary">浏览器中查看帖子</string>
+    <string name="pref_color_code_title">标题颜色</string>
+    <string name="pref_highlight_updated_title">高亮有更新的帖子</string>
+    <string name="pref_highlight_updated_summary">显示与上次刷新所不同的地方</string>
+    <string name="pref_custom_tab_title">使用谷歌浏览器扩展功能 (公测版)</string>
+    <string name="pref_custom_tab_summary">一律使用谷歌浏览器的扩展功能</string>
+    <string name="pref_story_display_title">帖子默认展示项</string>
+    <string name="pref_theme_title">主题</string>
+    <string name="pref_search_sort_title">排序</string>
+    <string name="pref_search_sort_value_recent">最近</string>
+    <string name="pref_search_sort_value_default">默认</string>
+    <string name="pref_text_size_title">文本大小</string>
+    <string name="pref_font_title">字体</string>
+    <string name="pref_comment_display_title">显示主题</string>
+    <string name="pref_max_lines_title">显示评论</string>
+    <string name="pref_lazy_load_title">懒加载内容</string>
+    <string name="pref_lazy_load_summary">当只切换到该标签的时候才加载内容</string>
+
+    <string name="connection_error">无法连接到 Hacker News。 请检查网络或稍后重试。</string>
+    <string name="select_story">选中并阅读一则帖子</string>
+    <string name="download_external">从其他应用中打开</string>
+    <string name="try_me">长按保存</string>
+    <string name="title_activity_jobs">招聘</string>
+    <string name="title_activity_show">发现</string>
+    <string name="title_activity_ask">问答</string>
+    <string name="title_activity_new">最新帖子</string>
+    <string name="title_activity_search">搜索</string>
+    <string name="clear_search_history">清空搜索历史</string>
+    <string name="clear_search_history_confirm">确定清空搜索历史吗？</string>
+    <plurals name="hide_comments">
+        <item quantity="other"> %1$s 条评论已隐藏</item>
+    </plurals>
+    <plurals name="show_comments">
+        <item quantity="other"> %1$s 条评论已展示</item>
+    </plurals>
+    <string name="parent"><![CDATA[<a href="#">上一层</a>]]></string>
+    <string name="undo">取消</string>
+    <plurals name="score">
+        <item quantity="other">%1$s 点</item>
+    </plurals>
+    <string name="comments">评论</string>
+    <plurals name="comments_count">
+        <item quantity="other">%1$s 条评论</item>
+    </plurals>
+    <string name="article">文章</string>
+    <string name="reset_settings">重置所有设置项</string>
+    <string name="reset_settings_confirm">恢复所有个性化设置为默认设置？</string>
+    <string name="last_updated">最近更新 %1$s</string>
+    <string name="feedback">反馈</string>
+    <string name="send_feedback">发送反馈</string>
+    <string name="title_hint">标题</string>
+    <string name="comment_hint">内容</string>
+    <string name="feedback_note">
+        <![CDATA[
+            您的反馈将成为 <a href="https://github.com/hidroh/materialistic/issues">Materialistic 项目在Github上的问题</a>.
+        ]]>
+    </string>
+    <string name="title_required">标题不能为空</string>
+    <string name="comment_required">反馈内容不能为空</string>
+    <string name="feedback_sent">十分感谢您的反馈</string>
+    <string name="feedback_failed">反馈失败，请稍后重试</string>
+    <string name="chooser_title">打开使用</string>
+    <string name="title_activity_popular">热门资讯</string>
+    <string name="range">范围</string>
+    <string name="popular_range_last_24h">24小时内</string>
+    <string name="popular_range_past_week">一周之内</string>
+    <string name="popular_range_past_month">一个月内</string>
+    <string name="popular_range_past_year">一年之内</string>
+    <plurals name="new_stories_count">
+        <item quantity="other">%1$s 条新帖子</item>
+    </plurals>
+    <string name="show_me">推送</string>
+    <plurals name="showing_new_stories">
+        <item quantity="other">展示 %1$s 条新帖子</item>
+    </plurals>
+    <string name="show_all">显示全部</string>
+    <string name="whats_this">新特性是什么？</string>
+    <string name="got_it">知道了</string>
+    <string name="help_new_story">自上次刷新以来新帖子</string>
+    <string name="help_promoted_story">自上次刷新以来的新资讯</string>
+    <string name="help_new_comments">自上次刷新以来的新评论</string>
+    <string name="help_lazy_load">启用懒加载设置后，只有您的帖子第一次打开时，默认选项卡才会加载。\n\n如果您处于较差的网络下并因此导致加载缓慢，启用该选项会给你带来帮助。\n\n懒加载在非WiFi连接下默认启用</string>
+    <string name="readability">可读性</string>
+    <string name="text_size_extra_small">特小号</string>
+    <string name="text_size_small">小号</string>
+    <string name="text_size_medium">中号</string>
+    <string name="text_size_large">大号</string>
+    <string name="text_size_extra_large">特大号</string>
+    <string name="readability_failed">无法解析帖子</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_sepia">Sepia</string>
+    <string name="theme_green">Green</string>
+    <string name="theme_solarized_dark">Solarized Dark</string>
+    <string name="theme_solarized">Solarized</string>
+    <string name="comment_display_multiple">分页</string>
+    <string name="comment_display_single">单页 - 自动展开</string>
+    <string name="comment_display_collapsed">单页 - 折叠</string>
+    <string name="story_display_article">文章</string>
+    <string name="story_display_comments">评论</string>
+    <string name="search_sort_recent">最近</string>
+    <string name="search_sort_popularity">人气</string>
+    <string name="story_display_readability">可读性</string>
+    <string name="font_options">字体选项</string>
+    <string name="read_more">读取所有 %1$s 行</string>
+    <string name="comment_max_lines_3">最多3行</string>
+    <string name="comment_max_lines_4">最多4行</string>
+    <string name="comment_max_lines_5">最多5行</string>
+    <string name="comment_max_lines_all">全部</string>
+    <string name="file_not_supported">内容不支持</string>
+    <string name="card_view">卡片模式</string>
+    <string name="compact_view">紧凑模式</string>
+    <string name="username_hint">用户名</string>
+    <string name="password_hint">密码</string>
+    <string name="login">登录</string>
+    <string name="title_activity_login">登录到 Hacker News</string>
+    <string name="username_required">用户名不能为空</string>
+    <string name="password_required">密码不能为空</string>
+    <string name="login_failed">登录/创建账户失败，请稍后重试。</string>
+    <string name="welcome">欢迎你 %1$s!</string>
+    <string name="logout_confirm">确认退出登录吗？</string>
+    <string name="choose_account">选择一个账户</string>
+    <string name="add_account">添加账户</string>
+    <string name="login_note">您的证书将安全地保存在您的设备中的设置->账户中</string>
+    <string name="save">保存</string>
+    <string name="unsave">取消保存</string>
+    <string name="re_enter_password">重新输入密码</string>
+    <string name="vote_up">点赞</string>
+    <string name="voted">点赞成功</string>
+    <string name="vote_failed">点赞失败，请稍后重试.</string>
+    <string name="sending" tools:ignore="TypographyEllipsis">发送中...</string>
+    <string name="add_comment">添加评论</string>
+    <string name="title_activity_compose">创作</string>
+    <string name="send">发表</string>
+    <string name="original_content">原创内容</string>
+    <string name="quote">引用</string>
+    <string name="formatting_guidelines">
+        <![CDATA[
+            <a href="#">Hacker News 版面指南</a>
+        ]]>
+    </string>
+    <string name="confirm_discard">放弃保存草稿？</string>
+    <string name="create_account">创建账户</string>
+    <string name="comment_failed">发送评论失败</string>
+    <string name="comment_successful">评论已添加，请刷新后查看</string>
+    <string name="confirm_no_waiting">立即退出？</string>
+    <string name="rate_app">给应用打分</string>
+    <string name="or">或</string>
+    <string name="leave_feedback">反馈</string>
+    <string name="no_playstore">无相关应用程序</string>
+    <string name="submit_content_hint">链接或文本</string>
+    <string name="title_activity_submit">提交到 HN</string>
+    <string name="url_text_required">链接或文本不能为空</string>
+    <string name="submit_failed">提交失败，请稍后重试。</string>
+    <string name="submit_successful">提交成功</string>
+    <string name="confirm_no_submit">确定返回并取消提交？</string>
+    <string name="submit_note">您可以提交文本或链接来参与讨论。您也可以直接分享链接到其他应用程序。</string>
+    <string name="confirm_submit_url">确定提交该链接？</string>
+    <string name="confirm_submit_question">确定提交该问题？</string>
+    <string name="submission_guidelines">提交指南</string>
+    <string name="title_activity_user">个人中心</string>
+    <string name="user_info">创建者: %1$s - 因: %2$s</string>
+    <plurals name="submissions_count">
+        <item quantity="other">%1$s 条意见</item>
+    </plurals>
+    <string name="view_story">查看帖子</string>
+    <string name="user_failed">用户信息加载失败，请稍后重试</string>
+    <string name="dead_prefix">[过期]</string>
+    <string name="title_activity_thread_preview">主题预览</string>
+    <string name="view_thread">查看关联项</string>
+    <string name="view_user">查看用户</string>
+    <string name="toggle_list_view">切换为列表视图</string>
+    <string name="more">更多</string>
+    <string name="logout">退出登录</string>
+    <string name="pref_story_display_value_article">文章</string>
+    <string name="pref_story_display_value_comments">评论</string>
+    <string name="pref_story_display_value_readability">可读性</string>
+    <string name="pref_comment_display_value_single">单行</string>
+    <string name="pref_comment_display_value_collapsed">折叠</string>
+    <string name="pref_comment_display_value_multiple">多行</string>
+
+</resources>
