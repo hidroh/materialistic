@@ -24,7 +24,7 @@
         <item>@string/text_size_large</item>
         <item>@string/text_size_extra_large</item>
     </string-array>
-    <string-array name="pref_text_size_values">
+    <string-array name="pref_text_size_values" translatable="false">
         <item>-1</item>
         <item>0</item>
         <item>1</item>
@@ -40,7 +40,7 @@
         <item>Libre Baskerville</item>
         <item>Roboto Slab</item>
     </string-array>
-    <string-array name="font_values">
+    <string-array name="font_values" translatable="false">
         <item/>
         <item>DroidSans.ttf</item>
         <item>DroidSerif.ttf</item>
@@ -85,7 +85,7 @@
         <item>@string/comment_max_lines_5</item>
         <item>@string/comment_max_lines_all</item>
     </string-array>
-    <string-array name="comment_max_lines_values">
+    <string-array name="comment_max_lines_values" translatable="false">
         <item>3</item>
         <item>4</item>
         <item>5</item>
