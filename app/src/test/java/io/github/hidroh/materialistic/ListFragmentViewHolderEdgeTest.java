@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ListActivity;
@@ -39,8 +40,8 @@ public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;
     private RecyclerView.ViewHolder holder;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> storiesListener;
+    @Captor ArgumentCaptor<ResponseListener<Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<Item[]>> storiesListener;
 
     @Before
     public void setUp() {
@@ -59,7 +60,7 @@ public class ListFragmentViewHolderEdgeTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
-        storiesListener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {
+        storiesListener.getValue().onResponse(new Item[]{new TestItem() {
         }});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         ShadowRecyclerViewAdapter shadowAdapter = ((ShadowRecyclerViewAdapter) ShadowExtractor

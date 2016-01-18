@@ -23,8 +23,8 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
@@ -62,7 +62,7 @@ public class ReadabilityFragmentTest {
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         Bundle args = new Bundle();
-        ItemManager.WebItem item = new TestWebItem() {
+        WebItem item = new TestWebItem() {
             @Override
             public String getId() {
                 return "1";

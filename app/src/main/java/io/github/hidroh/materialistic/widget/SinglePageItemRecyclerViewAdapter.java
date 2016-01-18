@@ -30,6 +30,7 @@ import java.util.Arrays;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SinglePageItemRecyclerViewAdapter
@@ -102,12 +103,12 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    protected ItemManager.Item getItem(int position) {
+    protected Item getItem(int position) {
         return mState.list.get(position);
     }
 
     @Override
-    protected void onItemLoaded(int position, ItemManager.Item item) {
+    protected void onItemLoaded(int position, Item item) {
         // item position may already be shifted due to expansion, need to get new position
         int index = mState.list.indexOf(item);
         if (index >= 0 && index < getItemCount()) {
@@ -122,7 +123,7 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    protected void bind(ToggleItemViewHolder holder, ItemManager.Item item) {
+    protected void bind(ToggleItemViewHolder holder, Item item) {
         super.bind(holder, item);
         if (item == null) {
             return;
@@ -132,7 +133,7 @@ public class SinglePageItemRecyclerViewAdapter
         toggleKids(holder, item);
     }
 
-    private void bindNavigation(ToggleItemViewHolder holder, final ItemManager.Item item) {
+    private void bindNavigation(ToggleItemViewHolder holder, final Item item) {
         if (!mState.expanded.containsKey(item.getParent())) {
             holder.mParent.setVisibility(View.INVISIBLE);
             return;
@@ -141,14 +142,14 @@ public class SinglePageItemRecyclerViewAdapter
         holder.mParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemManager.Item parent = mState.expanded.getParcelable(item.getParent());
+                Item parent = mState.expanded.getParcelable(item.getParent());
                 int position = mState.list.indexOf(parent);
                 mRecyclerView.smoothScrollToPosition(position);
             }
         });
     }
 
-    private void toggleKids(final ToggleItemViewHolder holder, final ItemManager.Item item) {
+    private void toggleKids(final ToggleItemViewHolder holder, final Item item) {
         holder.mToggle.setVisibility(item.getKidCount() > 0 ? View.VISIBLE : View.GONE);
         if (item.getKidCount() == 0) {
             return;
@@ -172,7 +173,7 @@ public class SinglePageItemRecyclerViewAdapter
         });
     }
 
-    private void bindToggle(ToggleItemViewHolder holder, ItemManager.Item item, boolean expanded) {
+    private void bindToggle(ToggleItemViewHolder holder, Item item, boolean expanded) {
         if(expanded) {
             holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                     R.drawable.ic_expand_less_white_24dp, 0);
@@ -186,7 +187,7 @@ public class SinglePageItemRecyclerViewAdapter
         }
     }
 
-    private void expand(final ItemManager.Item item) {
+    private void expand(final Item item) {
         if (isExpanded(item)) {
             return;
         }
@@ -201,27 +202,27 @@ public class SinglePageItemRecyclerViewAdapter
         });
     }
 
-    private void collapse(final ItemManager.Item item) {
+    private void collapse(final Item item) {
         int index = mState.list.indexOf(item) + 1;
         int count = recursiveRemove(item);
         notifyItemRangeRemoved(index, count);
     }
 
-    private int recursiveRemove(ItemManager.Item item) {
+    private int recursiveRemove(Item item) {
         if (!isExpanded(item)) {
             return 0;
         }
         // if item is already expanded, its kids must be added, so we need to remove them
         int count = item.getKidCount();
         mState.expanded.remove(item.getId());
-        for (ItemManager.Item kid : item.getKidItems()) {
+        for (Item kid : item.getKidItems()) {
             count += recursiveRemove(kid);
             mState.list.remove(kid);
         }
         return count;
     }
 
-    private boolean isExpanded(ItemManager.Item item) {
+    private boolean isExpanded(Item item) {
         return mState.expanded.containsKey(item.getId());
     }
 
@@ -238,17 +239,17 @@ public class SinglePageItemRecyclerViewAdapter
             }
         };
 
-        private ArrayList<ItemManager.Item> list;
+        private ArrayList<Item> list;
         private Bundle expanded;
 
-        public SavedState(ArrayList<ItemManager.Item> list) {
+        public SavedState(ArrayList<Item> list) {
             this.list = list;
             expanded = new Bundle();
         }
 
         @SuppressWarnings("unchecked")
         private SavedState(Parcel source) {
-            list = source.readArrayList(ItemManager.Item.class.getClassLoader());
+            list = source.readArrayList(Item.class.getClassLoader());
             expanded = source.readBundle(list.isEmpty() ? null :
                     list.get(0).getClass().getClassLoader());
         }

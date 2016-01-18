@@ -62,7 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class AppUtils {
     private static final String ABBR_YEAR = "y";
@@ -157,7 +157,7 @@ public class AppUtils {
 
     public static void openExternal(@NonNull final Context context,
                                     @NonNull AlertDialogBuilder alertDialogBuilder,
-                                    @NonNull final ItemManager.WebItem item) {
+                                    @NonNull final WebItem item) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
@@ -191,7 +191,7 @@ public class AppUtils {
 
     public static void share(@NonNull final Context context,
                              @NonNull AlertDialogBuilder alertDialogBuilder,
-                             @NonNull final ItemManager.WebItem item) {
+                             @NonNull final WebItem item) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             context.startActivity(makeChooserShareIntent(context,
@@ -236,7 +236,7 @@ public class AppUtils {
         return size;
     }
 
-    public static boolean isHackerNewsUrl(ItemManager.WebItem item) {
+    public static boolean isHackerNewsUrl(WebItem item) {
         return !TextUtils.isEmpty(item.getUrl()) &&
                 item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
     }

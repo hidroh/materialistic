@@ -38,6 +38,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
@@ -176,7 +177,7 @@ public class ListFragment extends BaseListFragment {
         mItemManager.getStories(mFilter, new ListResponseListener(this));
     }
 
-    private void onItemsLoaded(ItemManager.Item[] items) {
+    private void onItemsLoaded(Item[] items) {
         if (!isAttached()) {
             return;
         }
@@ -208,14 +209,14 @@ public class ListFragment extends BaseListFragment {
         }
     }
 
-    private static class ListResponseListener implements ResponseListener<ItemManager.Item[]> {
+    private static class ListResponseListener implements ResponseListener<Item[]> {
         private final WeakReference<ListFragment> mListFragment;
 
         public ListResponseListener(ListFragment listFragment) {
             mListFragment = new WeakReference<>(listFragment);
         }
         @Override
-        public void onResponse(final ItemManager.Item[] response) {
+        public void onResponse(final Item[] response) {
             if (mListFragment.get() != null && mListFragment.get().isAttached()) {
                 mListFragment.get().onItemsLoaded(response);
             }

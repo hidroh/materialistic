@@ -27,16 +27,17 @@ import io.github.hidroh.materialistic.ItemFragment;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ReadabilityFragment;
 import io.github.hidroh.materialistic.WebFragment;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     private final Fragment[] mFragments = new Fragment[3];
     private final Context mContext;
-    private final ItemManager.WebItem mItem;
+    private final WebItem mItem;
     private final boolean mShowArticle;
 
     public ItemPagerAdapter(Context context, FragmentManager fm,
-                            ItemManager.WebItem item, boolean showArticle) {
+                            WebItem item, boolean showArticle) {
         super(fm);
         mContext = context;
         mItem = item;
@@ -81,8 +82,8 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
-            if (mItem instanceof ItemManager.Item) {
-                int count = ((ItemManager.Item) mItem).getKidCount();
+            if (mItem instanceof Item) {
+                int count = ((Item) mItem).getKidCount();
                 return mContext.getResources()
                         .getQuantityString(R.plurals.comments_count, count, count);
             }

@@ -57,10 +57,11 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -251,7 +252,7 @@ public class FavoriteActivityTest {
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
-        verify(favoriteManager).add(any(Context.class), any(ItemManager.WebItem.class));
+        verify(favoriteManager).add(any(Context.class), any(WebItem.class));
         ContentValues cv = new ContentValues();
         cv.put("itemid", "2");
         cv.put("title", "ask HN");
@@ -280,7 +281,7 @@ public class FavoriteActivityTest {
                 emailResolveInfo);
         ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
         Intent intent = new Intent(FavoriteManager.ACTION_GET);
-        intent.putExtra(FavoriteManager.ACTION_GET_EXTRA_DATA, new ArrayList<FavoriteManager.Favorite>());
+        intent.putExtra(FavoriteManager.ACTION_GET_EXTRA_DATA, new ArrayList<Favorite>());
         manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
                 .onReceive(activity, intent);
         assertThat(progressDialog).isNotShowing();

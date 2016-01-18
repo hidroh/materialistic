@@ -36,7 +36,8 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class StoryView extends RelativeLayout implements Checkable {
     private static final int VOTE_DELAY_MILLIS = 500;
@@ -111,9 +112,9 @@ public class StoryView extends RelativeLayout implements Checkable {
         setChecked(!mChecked);
     }
 
-    public void setStory(@NonNull ItemManager.WebItem story) {
-        if (!mIsLocal && story instanceof ItemManager.Item) {
-            ItemManager.Item item = (ItemManager.Item) story;
+    public void setStory(@NonNull WebItem story) {
+        if (!mIsLocal && story instanceof Item) {
+            Item item = (Item) story;
             if (item.isVoted()) {
                 item.clearVoted();
                 animateVote(item.getScore());
@@ -134,12 +135,12 @@ public class StoryView extends RelativeLayout implements Checkable {
         mTitleTextView.setText(story.getDisplayedTitle());
         mPostedTextView.setText(story.getDisplayedTime(getContext(), true, false));
         switch (story.getType()) {
-            case ItemManager.Item.JOB_TYPE:
+            case Item.JOB_TYPE:
                 mSourceTextView.setText(null);
                 mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_work_white_18dp, 0, 0, 0);
                 break;
-            case ItemManager.Item.POLL_TYPE:
+            case Item.POLL_TYPE:
                 mSourceTextView.setText(null);
                 mSourceTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_poll_white_18dp, 0, 0, 0);
@@ -189,7 +190,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mCommentButton.setOnClickListener(listener);
     }
 
-    public void setUpdated(@NonNull ItemManager.Item story, boolean updated, boolean promoted) {
+    public void setUpdated(@NonNull Item story, boolean updated, boolean promoted) {
         if (mIsLocal) {
             return; // local items do not change
         }

@@ -23,14 +23,14 @@ public class UserItemTest {
         parcel.writeLong(3);
         parcel.writeString("about");
         parcel.writeIntArray(new int[]{1, 2, 3});
-        parcel.writeTypedArray(new HackerNewsClient.HackerNewsItem[]{
-                new HackerNewsClient.HackerNewsItem(1L),
-                new HackerNewsClient.HackerNewsItem(2L),
-                new HackerNewsClient.HackerNewsItem(3L),
+        parcel.writeTypedArray(new HackerNewsItem[]{
+                new HackerNewsItem(1L),
+                new HackerNewsItem(2L),
+                new HackerNewsItem(3L),
         }, 0);
         parcel.setDataPosition(0);
 
-        HackerNewsClient.UserItem actualRead = HackerNewsClient.UserItem.CREATOR.createFromParcel(parcel);
+        UserItem actualRead = UserItem.CREATOR.createFromParcel(parcel);
         assertEquals("username", actualRead.getId());
         assertNotNull(actualRead.getCreated(RuntimeEnvironment.application));
         assertEquals(3, actualRead.getKarma());
@@ -38,7 +38,7 @@ public class UserItemTest {
         assertThat(actualRead.getItems()).hasSize(3);
         assertEquals(0, actualRead.describeContents());
 
-        assertThat(HackerNewsClient.UserItem.CREATOR.newArray(1)).hasSize(1);
+        assertThat(UserItem.CREATOR.newArray(1)).hasSize(1);
 
         Parcel actualWrite = Parcel.obtain();
         actualRead.writeToParcel(actualWrite, 0);
@@ -49,6 +49,6 @@ public class UserItemTest {
         assertEquals(3, actualWrite.readLong());
         assertEquals("about", actualWrite.readString());
         assertThat(actualWrite.createIntArray()).hasSize(3);
-        assertThat(actualWrite.createTypedArray(HackerNewsClient.HackerNewsItem.CREATOR)).hasSize(3);
+        assertThat(actualWrite.createTypedArray(HackerNewsItem.CREATOR)).hasSize(3);
     }
 }

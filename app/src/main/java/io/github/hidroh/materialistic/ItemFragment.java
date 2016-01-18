@@ -40,8 +40,10 @@ import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.CommentItemDecoration;
 import io.github.hidroh.materialistic.widget.ItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
@@ -59,7 +61,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private static final String STATE_USERNAME = "state:username";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
-    private ItemManager.Item mItem;
+    private Item mItem;
     private String mItemId;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -112,9 +114,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mMaxLines = savedInstanceState.getInt(STATE_MAX_LINES, Integer.MAX_VALUE);
             mUsername = savedInstanceState.getString(STATE_USERNAME);
         } else {
-            ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
-            if (item instanceof ItemManager.Item) {
-                mItem = (ItemManager.Item) item;
+            WebItem item = getArguments().getParcelable(EXTRA_ITEM);
+            if (item instanceof Item) {
+                mItem = (Item) item;
             }
             mItemId = item != null ? item.getId() : null;
             mColorCoded = Preferences.colorCodeEnabled(getActivity());
@@ -252,7 +254,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mItemManager.getItem(mItemId, new ItemResponseListener(this));
     }
 
-    private void onItemLoaded(ItemManager.Item item) {
+    private void onItemLoaded(Item item) {
         mSwipeRefreshLayout.setRefreshing(false);
         if (item != null) {
             mAdapterItems = null;
@@ -316,7 +318,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         getActivity().supportInvalidateOptionsMenu();
     }
 
-    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+    private static class ItemResponseListener implements ResponseListener<Item> {
         private WeakReference<ItemFragment> mItemFragment;
 
         public ItemResponseListener(ItemFragment itemFragment) {
@@ -324,7 +326,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
 
         @Override
-        public void onResponse(ItemManager.Item response) {
+        public void onResponse(Item response) {
             if (mItemFragment.get() != null && mItemFragment.get().isAttached()) {
                 mItemFragment.get().onItemLoaded(response);
             }

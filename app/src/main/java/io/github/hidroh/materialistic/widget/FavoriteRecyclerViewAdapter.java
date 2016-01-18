@@ -40,10 +40,11 @@ import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.MenuTintDelegate;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 
 public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
-        <ListRecyclerViewAdapter.ItemViewHolder, FavoriteManager.Favorite> {
+        <ListRecyclerViewAdapter.ItemViewHolder, Favorite> {
 
     public interface ActionModeDelegate {
 
@@ -167,7 +168,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
     @Override
     protected void bindItem(final ItemViewHolder holder) {
-        final FavoriteManager.Favorite favorite = getItem(holder.getAdapterPosition());
+        final Favorite favorite = getItem(holder.getAdapterPosition());
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -188,12 +189,12 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Override
-    protected boolean isItemAvailable(FavoriteManager.Favorite item) {
+    protected boolean isItemAvailable(Favorite item) {
         return item != null;
     }
 
     @Override
-    protected void handleItemClick(FavoriteManager.Favorite item, ItemViewHolder holder) {
+    protected void handleItemClick(Favorite item, ItemViewHolder holder) {
         if (!mActionModeDelegate.isInActionMode()) {
             super.handleItemClick(item, holder);
         } else {
@@ -202,7 +203,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Override
-    protected FavoriteManager.Favorite getItem(int position) {
+    protected Favorite getItem(int position) {
         if (mCursor == null || !mCursor.moveToPosition(position)) {
             return null;
         }
@@ -240,7 +241,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     private void dismiss(final int position) {
-        final FavoriteManager.Favorite item = getItem(position);
+        final Favorite item = getItem(position);
         mSelected.put(position, item.getId());
         mFavoriteManager.remove(mContext, mSelected.values());
         Snackbar.make(mRecyclerView, R.string.toast_removed, Snackbar.LENGTH_LONG)
@@ -263,7 +264,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         notifyItemChanged(position);
     }
 
-    private void showMoreOptions(View v, final FavoriteManager.Favorite item) {
+    private void showMoreOptions(View v, final Favorite item) {
         mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY);
         mPopupMenu.inflate(R.menu.menu_contextual_favorite);
         mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -285,7 +286,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         mPopupMenu.show();
     }
 
-    private void vote(final FavoriteManager.Favorite item) {
+    private void vote(final Favorite item) {
         mUserServices.voteUp(mContext, item.getId(), new VoteCallback(this));
     }
 

@@ -5,9 +5,9 @@ import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.Item;
 
-public abstract class TestItem implements ItemManager.Item {
+public abstract class TestItem implements Item {
     private boolean favorite;
     private boolean viewed;
     private boolean collapsed;
@@ -20,12 +20,12 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public ItemManager.Item getParentItem() {
+    public Item getParentItem() {
         return null;
     }
 
     @Override
-    public void populate(ItemManager.Item info) {
+    public void populate(Item info) {
 
     }
 
@@ -91,8 +91,8 @@ public abstract class TestItem implements ItemManager.Item {
     }
 
     @Override
-    public ItemManager.Item[] getKidItems() {
-        return new ItemManager.Item[0];
+    public Item[] getKidItems() {
+        return new Item[0];
     }
 
     @Override

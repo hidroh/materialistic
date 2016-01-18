@@ -30,7 +30,8 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowWebView;
@@ -49,7 +50,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class WebFragmentTest {
     private WebActivity activity;
     private ActivityController<WebActivity> controller;
-    private ItemManager.WebItem item;
+    private WebItem item;
     @Inject FavoriteManager favoriteManager;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
 
@@ -58,8 +59,8 @@ public class WebFragmentTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(favoriteManager);
-        item = mock(ItemManager.WebItem.class);
-        when(item.getType()).thenReturn(ItemManager.Item.STORY_TYPE);
+        item = mock(WebItem.class);
+        when(item.getType()).thenReturn(Item.STORY_TYPE);
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);

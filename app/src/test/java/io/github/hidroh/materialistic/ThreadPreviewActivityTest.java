@@ -36,6 +36,7 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -55,7 +56,7 @@ public class ThreadPreviewActivityTest {
     private ActivityController<ThreadPreviewActivity> controller;
     private ThreadPreviewActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> itemCaptor;
+    @Captor ArgumentCaptor<ResponseListener<Item>> itemCaptor;
 
     @Before
     public void setUp() {
@@ -98,7 +99,7 @@ public class ThreadPreviewActivityTest {
             @NonNull
             @Override
             public String getRawType() {
-                return ItemManager.Item.COMMENT_TYPE;
+                return Item.COMMENT_TYPE;
             }
 
             @Override
@@ -121,7 +122,7 @@ public class ThreadPreviewActivityTest {
             @NonNull
             @Override
             public String getRawType() {
-                return ItemManager.Item.STORY_TYPE;
+                return Item.STORY_TYPE;
             }
 
             @Override

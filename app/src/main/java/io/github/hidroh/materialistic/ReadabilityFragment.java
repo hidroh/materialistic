@@ -39,8 +39,8 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class ReadabilityFragment extends LazyLoadFragment implements Scrollable {
     public static final String EXTRA_ITEM = ReadabilityFragment.class.getName() +".EXTRA_ITEM";
@@ -176,7 +176,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     private void parse() {
-        ItemManager.WebItem item = getArguments().getParcelable(EXTRA_ITEM);
+        WebItem item = getArguments().getParcelable(EXTRA_ITEM);
         if (item == null) {
             return;
         }

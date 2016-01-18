@@ -28,6 +28,6 @@ public interface UserManager {
         String getAbout();
         long getKarma();
         String getCreated(Context context);
-        @NonNull ItemManager.Item[] getItems();
+        @NonNull Item[] getItems();
     }
 }

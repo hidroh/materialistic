@@ -120,7 +120,7 @@ public class FavoriteManagerTest {
 
     @Test
     public void testReAdd() {
-        FavoriteManager.Favorite favorite = mock(FavoriteManager.Favorite.class);
+        Favorite favorite = mock(Favorite.class);
         when(favorite.getId()).thenReturn("3");
         when(favorite.getUrl()).thenReturn("http://example.com");
         when(favorite.getDisplayedTitle()).thenReturn("title");
@@ -172,13 +172,13 @@ public class FavoriteManagerTest {
         parcel.writeString("http://example.com");
         parcel.writeString("title");
         parcel.setDataPosition(0);
-        FavoriteManager.Favorite favorite = FavoriteManager.Favorite.CREATOR.createFromParcel(parcel);
+        Favorite favorite = Favorite.CREATOR.createFromParcel(parcel);
         assertEquals("title", favorite.getDisplayedTitle());
         assertEquals("example.com", favorite.getSource());
         assertEquals("http://example.com", favorite.getUrl());
         assertEquals("1", favorite.getId());
         assertNotNull(favorite.getDisplayedTime(RuntimeEnvironment.application, false, true));
-        assertEquals(ItemManager.Item.STORY_TYPE, favorite.getType());
+        assertEquals(Item.STORY_TYPE, favorite.getType());
         assertTrue(favorite.isStoryType());
         assertEquals("title (http://example.com) - https://news.ycombinator.com/item?id=1", favorite.toString());
         assertEquals(0, favorite.describeContents());
@@ -186,7 +186,7 @@ public class FavoriteManagerTest {
         favorite.writeToParcel(output, 0);
         output.setDataPosition(0);
         assertEquals("1", output.readString());
-        assertThat(FavoriteManager.Favorite.CREATOR.newArray(1)).hasSize(1);
+        assertThat(Favorite.CREATOR.newArray(1)).hasSize(1);
     }
 
     private Intent getBroadcastIntent() {

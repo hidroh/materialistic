@@ -44,13 +44,15 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class WebFragment extends LazyLoadFragment implements Scrollable {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
-    private ItemManager.WebItem mItem;
+    private WebItem mItem;
     private WebView mWebView;
     private TextView mText;
     private NestedScrollView mScrollView;
@@ -58,7 +60,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     private boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
 
-    public static WebFragment instantiate(Context context, ItemManager.WebItem item) {
+    public static WebFragment instantiate(Context context, WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
         fragment.mItem = item;
         fragment.mIsHackerNewsUrl = AppUtils.isHackerNewsUrl(item);
@@ -177,19 +179,19 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
     }
 
-    private void onItemLoaded(ItemManager.Item response) {
+    private void onItemLoaded(Item response) {
         AppUtils.setTextWithLinks(mText, response.getText());
     }
 
     private void bindContent() {
-        if (mItem instanceof ItemManager.Item) {
-            AppUtils.setTextWithLinks(mText, ((ItemManager.Item) mItem).getText());
+        if (mItem instanceof Item) {
+            AppUtils.setTextWithLinks(mText, ((Item) mItem).getText());
         } else {
             mItemManager.getItem(mItem.getId(), new ItemResponseListener(this));
         }
     }
 
-    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+    private static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<WebFragment> mWebFragment;
 
         public ItemResponseListener(WebFragment webFragment) {
@@ -197,7 +199,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
 
         @Override
-        public void onResponse(ItemManager.Item response) {
+        public void onResponse(Item response) {
             if (mWebFragment.get() != null && mWebFragment.get().isAttached()) {
                 mWebFragment.get().onItemLoaded(response);
             }

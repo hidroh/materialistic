@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
@@ -63,7 +64,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class ItemFragmentSinglePageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<Item>> listener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
     private RecyclerView recyclerView;
     private SinglePageItemRecyclerViewAdapter adapter;
@@ -104,8 +105,8 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{};
+            public Item[] getKidItems() {
+                return new Item[]{};
             }
         };
         final TestItem item1 = new TestItem() { // level 1
@@ -135,8 +136,8 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{item2};
+            public Item[] getKidItems() {
+                return new Item[]{item2};
             }
         };
         final TestItem item0 = new TestItem() { // level 0
@@ -161,15 +162,15 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{item1};
+            public Item[] getKidItems() {
+                return new Item[]{item1};
             }
         };
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{item0};
+            public Item[] getKidItems() {
+                return new Item[]{item0};
             }
 
             @Override
@@ -215,8 +216,8 @@ public class ItemFragmentSinglePageTest {
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{new TestItem() {
+            public Item[] getKidItems() {
+                return new Item[]{new TestItem() {
                     @Override
                     public int getLocalRevision() {
                         return -1;
@@ -297,8 +298,8 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{new TestItem() {
+            public Item[] getKidItems() {
+                return new Item[]{new TestItem() {
                     @Override
                     public String getId() {
                         return "2";
@@ -309,8 +310,8 @@ public class ItemFragmentSinglePageTest {
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{item0};
+            public Item[] getKidItems() {
+                return new Item[]{item0};
             }
 
             @Override
