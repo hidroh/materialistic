@@ -26,8 +26,8 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class FavoriteActivity extends BaseListActivity {
 
@@ -37,7 +37,7 @@ public class FavoriteActivity extends BaseListActivity {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (FavoriteManager.isRemoved(uri)) {
-                ItemManager.WebItem selected = getSelectedItem();
+                WebItem selected = getSelectedItem();
                 if (selected != null &&
                         TextUtils.equals(selected.getId(), uri.getLastPathSegment())) {
                     onItemSelected(null);

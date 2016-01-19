@@ -50,10 +50,12 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 
 public class ItemActivity extends InjectableActivity implements Scrollable {
@@ -63,7 +65,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
-    private ItemManager.Item mItem;
+    private Item mItem;
     private String mItemId = null;
     private ImageView mBookmark;
     private boolean mExternalBrowser;
@@ -129,10 +131,10 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                     }
                 }
             } else if (intent.hasExtra(EXTRA_ITEM)) {
-                ItemManager.WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
+                WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
                 mItemId = item.getId();
-                if (item instanceof ItemManager.Item) {
-                    mItem = (ItemManager.Item) item;
+                if (item instanceof Item) {
+                    mItem = (Item) item;
                 }
             }
         }
@@ -191,7 +193,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         mAppBar.setExpanded(true, true);
     }
 
-    private void onItemLoaded(ItemManager.Item response) {
+    private void onItemLoaded(Item response) {
         mItem = response;
         supportInvalidateOptionsMenu();
         bindData(mItem);
@@ -235,7 +237,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         });
     }
 
-    private void bindData(final ItemManager.Item story) {
+    private void bindData(final Item story) {
         if (story == null) {
             return;
         }
@@ -272,11 +274,11 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         postedTextView.setText(story.getDisplayedTime(this, false, true));
         postedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
-            case ItemManager.Item.JOB_TYPE:
+            case Item.JOB_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_work_white_18dp, 0, 0, 0);
                 break;
-            case ItemManager.Item.POLL_TYPE:
+            case Item.POLL_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;
@@ -327,7 +329,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                 R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_border_white_24dp);
     }
 
-    private void vote(final ItemManager.Item story) {
+    private void vote(final Item story) {
         mUserServices.voteUp(ItemActivity.this, story.getId(), new VoteCallback(this));
     }
 
@@ -343,7 +345,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
     }
 
-    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+    private static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<ItemActivity> mItemActivity;
 
         public ItemResponseListener(ItemActivity itemActivity) {
@@ -351,7 +353,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
 
         @Override
-        public void onResponse(ItemManager.Item response) {
+        public void onResponse(Item response) {
             if (mItemActivity.get() != null && !mItemActivity.get().isActivityDestroyed()) {
                 mItemActivity.get().onItemLoaded(response);
             }

@@ -35,12 +35,12 @@ import static org.mockito.Mockito.when;
 public class AlgoliaClientTest {
     @Inject RestServiceFactory factory;
     private ItemManager hackerNewsClient = mock(ItemManager.class);
-    @Captor ArgumentCaptor<Callback<AlgoliaClient.Item>> getItemCallback;
+    @Captor ArgumentCaptor<Callback<Item>> getItemCallback;
     @Captor ArgumentCaptor<Callback<AlgoliaClient.AlgoliaHits>> getStoriesCallback;
-    @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
+    @Captor ArgumentCaptor<Item[]> getStoriesResponse;
     private AlgoliaClient client;
-    private ResponseListener<ItemManager.Item> itemListener;
-    private ResponseListener<ItemManager.Item[]> storiesListener;
+    private ResponseListener<Item> itemListener;
+    private ResponseListener<Item[]> storiesListener;
     private Call call;
 
     @Before

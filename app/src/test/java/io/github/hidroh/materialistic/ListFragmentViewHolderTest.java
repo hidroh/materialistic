@@ -43,11 +43,13 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowAnimation;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -80,8 +82,8 @@ public class ListFragmentViewHolderTest {
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> storiesListener;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> itemListener;
+    @Captor ArgumentCaptor<ResponseListener<Item[]>> storiesListener;
+    @Captor ArgumentCaptor<ResponseListener<Item>> itemListener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
 
     @Before
@@ -115,7 +117,7 @@ public class ListFragmentViewHolderTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
-        storiesListener.getValue().onResponse(new ItemManager.Item[]{item});
+        storiesListener.getValue().onResponse(new Item[]{item});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = (ShadowRecyclerViewAdapter) ShadowExtractor.extract(recyclerView.getAdapter());
         adapter.makeItemVisible(0);
@@ -146,7 +148,7 @@ public class ListFragmentViewHolderTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
-        storiesListener.getValue().onResponse(new ItemManager.Item[]{new TestHnItem(2) {
+        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(2) {
             @Override
             public int getRank() {
                 return 46;
@@ -166,7 +168,7 @@ public class ListFragmentViewHolderTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
-        storiesListener.getValue().onResponse(new ItemManager.Item[]{new TestHnItem(1) {
+        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1) {
             @Override
             public int getRank() {
                 return 45;
@@ -186,7 +188,7 @@ public class ListFragmentViewHolderTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
-        storiesListener.getValue().onResponse(new ItemManager.Item[]{new TestHnItem(1)});
+        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1)});
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(1) {
             @Override
@@ -210,7 +212,7 @@ public class ListFragmentViewHolderTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
-        storiesListener.getValue().onResponse(new ItemManager.Item[]{new TestHnItem(2) {
+        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(2) {
             @Override
             public int getRank() {
                 return 46;
@@ -248,7 +250,7 @@ public class ListFragmentViewHolderTest {
         assertThat(commentButton).isVisible();
         reset(activity.multiPaneListener);
         commentButton.performClick();
-        verify(activity.multiPaneListener, never()).onItemSelected(any(ItemManager.WebItem.class)
+        verify(activity.multiPaneListener, never()).onItemSelected(any(WebItem.class)
         );
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
@@ -294,7 +296,7 @@ public class ListFragmentViewHolderTest {
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performClick();
         assertViewed();
-        verify(activity.multiPaneListener).onItemSelected(any(ItemManager.WebItem.class)
+        verify(activity.multiPaneListener).onItemSelected(any(WebItem.class)
         );
     }
 

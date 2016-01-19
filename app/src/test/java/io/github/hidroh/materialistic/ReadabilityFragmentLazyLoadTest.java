@@ -17,8 +17,8 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -45,7 +45,7 @@ public class ReadabilityFragmentLazyLoadTest {
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
         Bundle args = new Bundle();
-        ItemManager.WebItem item = new TestWebItem() {
+        WebItem item = new TestWebItem() {
             @Override
             public String getId() {
                 return "1";

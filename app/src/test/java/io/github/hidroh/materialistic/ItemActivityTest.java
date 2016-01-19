@@ -38,10 +38,12 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -67,7 +69,7 @@ public class ItemActivityTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<Item>> listener;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
 
@@ -85,7 +87,7 @@ public class ItemActivityTest {
     @Test
     public void testStoryGivenWebItem() {
         Intent intent = new Intent();
-        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
+        WebItem webItem = mock(WebItem.class);
         when(webItem.getId()).thenReturn("1");
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
         controller.withIntent(intent).create().start().resume().visible();

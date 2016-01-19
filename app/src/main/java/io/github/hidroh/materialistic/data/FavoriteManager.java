@@ -25,21 +25,15 @@ import android.content.IntentFilter;
 import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import io.github.hidroh.materialistic.R;
-
 /**
- * Data repository for {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
+ * Data repository for {@link Favorite}
  */
 public class FavoriteManager {
 
@@ -50,7 +44,7 @@ public class FavoriteManager {
     public static final String ACTION_GET = FavoriteManager.class.getName() + ".ACTION_GET";
     /**
      * {@link android.os.Bundle} key for {@link #ACTION_GET} that contains {@link ArrayList} of
-     * {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
+     * {@link Favorite}
      */
     public static final String ACTION_GET_EXTRA_DATA = ACTION_GET + ".EXTRA_DATA";
     private static final String URI_PATH_ADD = "add";
@@ -91,14 +85,14 @@ public class FavoriteManager {
      * @param context   an instance of {@link android.content.Context}
      * @param story     story to be added as favorite
      */
-    public void add(Context context, ItemManager.WebItem story) {
+    public void add(Context context, WebItem story) {
         final ContentValues contentValues = new ContentValues();
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
         contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME,
                 story instanceof Favorite ?
-                        String.valueOf(((Favorite) story).time) :
+                        String.valueOf(((Favorite) story).getTime()) :
                         String.valueOf(System.currentTimeMillis()));
         ContentResolver cr = context.getContentResolver();
         new FavoriteHandler(cr).startInsert(0, story.getId(),
@@ -238,105 +232,7 @@ public class FavoriteManager {
     }
 
     /**
-     * Represents a favorite item
-     */
-    public static class Favorite implements ItemManager.WebItem {
-        private String itemId;
-        private String url;
-        private String title;
-        private long time;
-
-        public static final Creator<Favorite> CREATOR = new Creator<Favorite>() {
-            @Override
-            public Favorite createFromParcel(Parcel source) {
-                return new Favorite(source);
-            }
-
-            @Override
-            public Favorite[] newArray(int size) {
-                return new Favorite[size];
-            }
-        };
-
-        private Favorite(String itemId, String url, String title, long time) {
-            this.itemId = itemId;
-            this.url = url;
-            this.title = title;
-            this.time = time;
-        }
-
-        private Favorite(Parcel source) {
-            itemId = source.readString();
-            url = source.readString();
-            title = source.readString();
-        }
-
-        @Override
-        public String getUrl() {
-            return url;
-        }
-
-        @Override
-        public boolean isStoryType() {
-            return true;
-        }
-
-        @Override
-        public String getId() {
-            return itemId;
-        }
-
-        @Override
-        public long getLongId() {
-            return Long.valueOf(itemId);
-        }
-
-        @Override
-        public String getDisplayedTitle() {
-            return title;
-        }
-
-        @Override
-        public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
-            return new SpannableString(context.getString(R.string.saved,
-                    DateUtils.getRelativeDateTimeString(context, time,
-                        DateUtils.MINUTE_IN_MILLIS,
-                        DateUtils.YEAR_IN_MILLIS,
-                        DateUtils.FORMAT_ABBREV_MONTH)));
-        }
-
-        @Override
-        public String getSource() {
-            return TextUtils.isEmpty(url) ? null : Uri.parse(url).getHost();
-        }
-
-        @NonNull
-        @Override
-        public String getType() {
-            // TODO treating all saved items as stories for now
-            return STORY_TYPE;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%s (%s) - %s", title, url, String.format(HackerNewsClient.WEB_ITEM_PATH, itemId));
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(itemId);
-            dest.writeString(url);
-            dest.writeString(title);
-        }
-    }
-
-    /**
-     * A cursor wrapper to retrieve associated {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
+     * A cursor wrapper to retrieve associated {@link Favorite}
      */
     public static class Cursor extends CursorWrapper {
         public Cursor(android.database.Cursor cursor) {
@@ -353,11 +249,11 @@ public class FavoriteManager {
     }
 
     /**
-     * A {@link android.support.v4.content.CursorLoader} to query {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
+     * A {@link android.support.v4.content.CursorLoader} to query {@link Favorite}
      */
     public static class CursorLoader extends android.support.v4.content.CursorLoader {
         /**
-         * Constructs a cursor loader to query all {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
+         * Constructs a cursor loader to query all {@link Favorite}
          * @param context    an instance of {@link android.content.Context}
          */
         public CursorLoader(Context context) {
@@ -365,7 +261,7 @@ public class FavoriteManager {
         }
 
         /**
-         * Constructs a cursor loader to query {@link io.github.hidroh.materialistic.data.FavoriteManager.Favorite}
+         * Constructs a cursor loader to query {@link Favorite}
          * with title matching given query
          * @param context   an instance of {@link android.content.Context}
          * @param query     query to filter

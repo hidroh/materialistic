@@ -44,6 +44,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
@@ -59,7 +60,7 @@ public class FavoriteFragment extends BaseListFragment
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ArrayList<FavoriteManager.Favorite> favorites =
+            ArrayList<Favorite> favorites =
                     intent.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA);
             export(favorites);
         }
@@ -304,7 +305,7 @@ public class FavoriteFragment extends BaseListFragment
         mFavoriteManager.get(getActivity(), mFilter);
     }
 
-    private void export(ArrayList<FavoriteManager.Favorite> favorites) {
+    private void export(ArrayList<Favorite> favorites) {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
@@ -316,7 +317,7 @@ public class FavoriteFragment extends BaseListFragment
         }
     }
 
-    private String makeEmailContent(ArrayList<FavoriteManager.Favorite> favorites) {
+    private String makeEmailContent(ArrayList<Favorite> favorites) {
         return TextUtils.join("\n\n", favorites);
     }
 }

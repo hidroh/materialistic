@@ -33,7 +33,7 @@ import io.github.hidroh.materialistic.MultiPaneListener;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
 /**
  * Base {@link android.support.v7.widget.RecyclerView.Adapter} class for list items
@@ -41,7 +41,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
  * @param <T>   item type, should provide title, posted, source
  */
 public abstract class ListRecyclerViewAdapter
-        <VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends ItemManager.WebItem>
+        <VH extends ListRecyclerViewAdapter.ItemViewHolder, T extends WebItem>
         extends RecyclerView.Adapter<VH> {
 
     private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";

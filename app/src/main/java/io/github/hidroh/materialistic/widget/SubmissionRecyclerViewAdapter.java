@@ -25,12 +25,13 @@ import android.view.ViewGroup;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ThreadPreviewActivity;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
-    private final ItemManager.Item[] mItems;
+    private final Item[] mItems;
 
-    public SubmissionRecyclerViewAdapter(ItemManager itemManager, @NonNull ItemManager.Item[] items) {
+    public SubmissionRecyclerViewAdapter(ItemManager itemManager, @NonNull Item[] items) {
         super(itemManager);
         mItems = items;
     }
@@ -46,17 +47,17 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
     }
 
     @Override
-    protected ItemManager.Item getItem(int position) {
+    protected Item getItem(int position) {
         return mItems[position];
     }
 
     @Override
-    protected void bind(final SubmissionViewHolder holder, final ItemManager.Item item) {
+    protected void bind(final SubmissionViewHolder holder, final Item item) {
         super.bind(holder, item);
         if (item == null) {
             return;
         }
-        final boolean isComment = TextUtils.equals(item.getType(), ItemManager.Item.COMMENT_TYPE);
+        final boolean isComment = TextUtils.equals(item.getType(), Item.COMMENT_TYPE);
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, false));
         if (isComment) {
             holder.mTitleTextView.setText(null);
@@ -85,12 +86,12 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
         });
     }
 
-    private void openItem(ItemManager.Item item) {
+    private void openItem(Item item) {
         mContext.startActivity(new Intent(mContext, ItemActivity.class)
                 .putExtra(ItemActivity.EXTRA_ITEM, item));
     }
 
-    private void openPreview(ItemManager.Item item) {
+    private void openPreview(Item item) {
         mContext.startActivity(new Intent(mContext, ThreadPreviewActivity.class)
                 .putExtra(ThreadPreviewActivity.EXTRA_ITEM, item));
     }

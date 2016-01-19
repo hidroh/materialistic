@@ -39,11 +39,11 @@ public class HackerNewsClientTest {
     @Inject FavoriteManager favoriteManager;
     private HackerNewsClient client;
     private Call call;
-    @Captor ArgumentCaptor<ItemManager.Item[]> getStoriesResponse;
+    @Captor ArgumentCaptor<Item[]> getStoriesResponse;
     @Captor ArgumentCaptor<Callback> callbackCaptor;
-    private ResponseListener<ItemManager.Item> itemListener;
+    private ResponseListener<Item> itemListener;
     private ResponseListener<UserManager.User> userListener;
-    private ResponseListener<ItemManager.Item[]> storiesListener;
+    private ResponseListener<Item[]> storiesListener;
     @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallback;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallback;
 
@@ -80,7 +80,7 @@ public class HackerNewsClientTest {
         client.getItem("1", itemListener);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
-        HackerNewsClient.HackerNewsItem hnItem = mock(HackerNewsClient.HackerNewsItem.class);
+        HackerNewsItem hnItem = mock(HackerNewsItem.class);
         callbackCaptor.getValue().onResponse(null, Response.success(hnItem));
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
@@ -186,7 +186,7 @@ public class HackerNewsClientTest {
         client.getUser("username", userListener);
         verify(TestRestServiceFactory.hnRestService).user(eq("username"));
         verify(call).enqueue(callbackCaptor.capture());
-        HackerNewsClient.UserItem hnUser = mock(HackerNewsClient.UserItem.class);
+        UserItem hnUser = mock(UserItem.class);
         callbackCaptor.getValue().onResponse(null, Response.success(hnUser));
         verify(userListener).onResponse(eq(hnUser));
     }

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -53,7 +54,7 @@ public class ListFragmentTest {
     private ActivityController<ListActivity> controller;
     private ListActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item[]>> listener;
+    @Captor ArgumentCaptor<ResponseListener<Item[]>> listener;
 
     @Before
     public void setUp() {
@@ -109,7 +110,7 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
-        listener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {
+        listener.getValue().onResponse(new Item[]{new TestItem() {
             @Override
             public String getId() {
                 return "1";
@@ -121,7 +122,7 @@ public class ListFragmentTest {
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
         verify(itemManager).getStories(any(String.class), listener.capture());
-        listener.getValue().onResponse(new ItemManager.Item[]{
+        listener.getValue().onResponse(new Item[]{
                 new TestHnItem(1L),
                 new TestHnItem(2L)
         });
@@ -150,7 +151,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list, fragment)
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
-        listener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {
+        listener.getValue().onResponse(new Item[]{new TestItem() {
         }});
         reset(itemManager);
         Bundle state = new Bundle();
@@ -173,7 +174,7 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
-        listener.getValue().onResponse(new ItemManager.Item[0]);
+        listener.getValue().onResponse(new Item[0]);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         controller.pause().stop().destroy();
@@ -207,7 +208,7 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         verify(itemManager).getStories(anyString(), listener.capture());
-        listener.getValue().onResponse(new ItemManager.Item[]{new TestItem() {}});
+        listener.getValue().onResponse(new Item[]{new TestItem() {}});
         Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         reset(itemManager);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)

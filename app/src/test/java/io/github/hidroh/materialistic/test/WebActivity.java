@@ -5,7 +5,7 @@ import android.os.Bundle;
 import io.github.hidroh.materialistic.InjectableActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.WebFragment;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class WebActivity extends InjectableActivity {
     public static final String EXTRA_ITEM = WebActivity.class.getName() + ".EXTRA_ITEM";
@@ -15,7 +15,7 @@ public class WebActivity extends InjectableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        ItemManager.WebItem item = getIntent().getParcelableExtra(EXTRA_ITEM);
+        WebItem item = getIntent().getParcelableExtra(EXTRA_ITEM);
         fragment = WebFragment.instantiate(this, item);
         getSupportFragmentManager()
                 .beginTransaction()

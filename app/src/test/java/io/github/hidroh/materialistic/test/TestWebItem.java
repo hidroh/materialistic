@@ -5,9 +5,9 @@ import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
-public abstract class TestWebItem implements ItemManager.WebItem {
+public abstract class TestWebItem implements WebItem {
     @Override
     public String getDisplayedTitle() {
         return null;

@@ -25,6 +25,7 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -50,7 +51,7 @@ public class UserActivityTest {
     @Inject UserManager userManager;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Captor ArgumentCaptor<ResponseListener<UserManager.User>> userCaptor;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> itemCaptor;
+    @Captor ArgumentCaptor<ResponseListener<Item>> itemCaptor;
     private UserManager.User user;
 
     @Before
@@ -68,7 +69,7 @@ public class UserActivityTest {
         when(user.getCreated(any(Context.class))).thenReturn("May 01 2015");
         when(user.getKarma()).thenReturn(2016L);
         when(user.getAbout()).thenReturn("about");
-        when(user.getItems()).thenReturn(new ItemManager.Item[]{
+        when(user.getItems()).thenReturn(new Item[]{
                 new TestHnItem(1L){
                     @NonNull
                     @Override

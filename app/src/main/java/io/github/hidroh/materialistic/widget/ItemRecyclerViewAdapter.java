@@ -45,6 +45,7 @@ import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 
@@ -100,7 +101,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final VH holder, int position) {
-        final ItemManager.Item item = getItem(position);
+        final Item item = getItem(position);
         if (item.getLocalRevision() < 0) {
             clear(holder);
             load(holder.getAdapterPosition(), item);
@@ -128,10 +129,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         return mContext != null;
     }
 
-    protected abstract ItemManager.Item getItem(int position);
+    protected abstract Item getItem(int position);
 
     @CallSuper
-    protected void bind(final VH holder, final ItemManager.Item item) {
+    protected void bind(final VH holder, final Item item) {
         if (item == null) {
             return;
         }
@@ -163,29 +164,29 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mReadMoreTextView.setVisibility(View.GONE);
     }
 
-    private void load(int adapterPosition, ItemManager.Item item) {
+    private void load(int adapterPosition, Item item) {
         mItemManager.getItem(item.getId(), new ItemResponseListener(this, adapterPosition, item));
     }
 
-    protected void onItemLoaded(int position, ItemManager.Item item) {
+    protected void onItemLoaded(int position, Item item) {
         if (position < getItemCount()) {
             notifyItemChanged(position);
         }
     }
 
-    private void highlightUserItem(VH holder, ItemManager.Item item) {
+    private void highlightUserItem(VH holder, Item item) {
         boolean highlight = !TextUtils.isEmpty(mUsername) &&
                 TextUtils.equals(mUsername, item.getBy());
         holder.mContentView.setBackgroundColor(highlight ?
                 mCardHighlightColorResId : mCardBackgroundColorResId);
     }
 
-    private void decorateDead(VH holder, ItemManager.Item item) {
+    private void decorateDead(VH holder, Item item) {
         holder.mContentTextView.setTextColor(item.isDead() ?
                 mSecondaryTextColorResId : mTertiaryTextColorResId);
     }
 
-    private void toggleCollapsibleContent(final VH holder, final ItemManager.Item item) {
+    private void toggleCollapsibleContent(final VH holder, final Item item) {
         final int lineCount = holder.mContentTextView.getLineCount();
         if (item.isContentExpanded() || lineCount <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
@@ -220,7 +221,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
     }
 
-    private void bindActions(final VH holder, final ItemManager.Item item) {
+    private void bindActions(final VH holder, final Item item) {
         if (item.isDead() || item.isDeleted()) {
             holder.mMoreButton.setVisibility(View.GONE);
             return;
@@ -252,7 +253,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         });
     }
 
-    private void vote(final ItemManager.Item item) {
+    private void vote(final Item item) {
         mUserServices.voteUp(mContext, item.getId(), new VoteCallback(this));
     }
 
@@ -288,20 +289,20 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
     }
 
-    private static class ItemResponseListener implements ResponseListener<ItemManager.Item> {
+    private static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<ItemRecyclerViewAdapter> mAdapter;
         private final int mPosition;
-        private final ItemManager.Item mPartialItem;
+        private final Item mPartialItem;
 
         public ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
-                                    ItemManager.Item partialItem) {
+                                    Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;
             mPartialItem = partialItem;
         }
 
         @Override
-        public void onResponse(ItemManager.Item response) {
+        public void onResponse(Item response) {
             if (mAdapter.get() != null && mAdapter.get().isAttached() && response != null) {
                 mPartialItem.populate(response);
                 mPartialItem.setLocalRevision(0);

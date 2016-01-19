@@ -27,9 +27,11 @@ import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -53,7 +55,7 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
-    @Captor ArgumentCaptor<ResponseListener<ItemManager.Item>> listener;
+    @Captor ArgumentCaptor<ResponseListener<Item>> listener;
 
     @Before
     public void setUp() {
@@ -85,7 +87,7 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testWebItem() {
-        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
+        WebItem webItem = mock(WebItem.class);
         when(webItem.getId()).thenReturn("1");
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
@@ -96,8 +98,8 @@ public class ItemFragmentMultiPageTest {
         verify(hackerNewsClient).getItem(eq("1"), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{new TestItem() {
+            public Item[] getKidItems() {
+                return new Item[]{new TestItem() {
                 }};
             }
 
@@ -114,8 +116,8 @@ public class ItemFragmentMultiPageTest {
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
             @Override
-            public ItemManager.Item[] getKidItems() {
-                return new ItemManager.Item[]{new TestItem() {
+            public Item[] getKidItems() {
+                return new Item[]{new TestItem() {
                     @Override
                     public String getText() {
                         return "text";
@@ -154,7 +156,7 @@ public class ItemFragmentMultiPageTest {
     @Test
     public void testBindRemotelKidData() {
         Bundle args = new Bundle();
-        ItemManager.Item item = new TestHnItem(2L);
+        Item item = new TestHnItem(2L);
         item.populate(new TestHnItem(2L) {
             @Override
             public long[] getKids() {
@@ -183,7 +185,7 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testRefresh() {
-        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
+        WebItem webItem = mock(WebItem.class);
         when(webItem.getId()).thenReturn("1");
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
@@ -202,7 +204,7 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testDisabledColorCode() {
-        ItemManager.WebItem webItem = mock(ItemManager.WebItem.class);
+        WebItem webItem = mock(WebItem.class);
         when(webItem.getId()).thenReturn("1");
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);

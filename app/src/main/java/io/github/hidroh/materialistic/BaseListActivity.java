@@ -40,8 +40,8 @@ import android.view.View;
 
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 
 /**
@@ -55,7 +55,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private static final String STATE_STORY_VIEW_MODE = "state:storyViewMode";
     private static final String STATE_EXTERNAL_BROWSER = "state:externalBrowser";
     private boolean mIsMultiPane;
-    protected ItemManager.WebItem mSelectedItem;
+    protected WebItem mSelectedItem;
     private Preferences.StoryViewMode mStoryViewMode;
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
@@ -191,9 +191,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     @Override
-    public void onItemSelected(@Nullable ItemManager.WebItem item) {
+    public void onItemSelected(@Nullable WebItem item) {
         if (mIsMultiPane) {
-            ItemManager.WebItem previousItem = mSelectedItem;
+            WebItem previousItem = mSelectedItem;
             if (previousItem != null && item != null &&
                     TextUtils.equals(item.getId(), previousItem.getId())) {
                 return;
@@ -210,7 +210,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     @Override
-    public ItemManager.WebItem getSelectedItem() {
+    public WebItem getSelectedItem() {
         return mSelectedItem;
     }
 
@@ -239,7 +239,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
      */
     protected abstract Fragment instantiateListFragment();
 
-    private void openSinglePaneItem(ItemManager.WebItem item) {
+    private void openSinglePaneItem(WebItem item) {
         if (mExternalBrowser) {
             AppUtils.openWebUrlExternal(this, item.getDisplayedTitle(), item.getUrl());
         } else {
@@ -248,7 +248,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     }
 
-    private void openMultiPaneItem(final ItemManager.WebItem item) {
+    private void openMultiPaneItem(final WebItem item) {
         if (item == null) {
             setTitle(getDefaultTitle());
             findViewById(R.id.empty_selection).setVisibility(View.VISIBLE);
@@ -275,7 +275,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     }
 
-    private void bindViewPager(ItemManager.WebItem item) {
+    private void bindViewPager(WebItem item) {
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
                 getSupportFragmentManager(), item, true);
         mViewPager.setAdapter(adapter);

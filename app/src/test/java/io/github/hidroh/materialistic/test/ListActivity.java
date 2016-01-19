@@ -6,7 +6,7 @@ import android.support.v7.widget.Toolbar;
 import io.github.hidroh.materialistic.InjectableActivity;
 import io.github.hidroh.materialistic.MultiPaneListener;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
 import static org.mockito.Mockito.mock;
 
@@ -21,12 +21,12 @@ public class ListActivity extends InjectableActivity implements MultiPaneListene
     }
 
     @Override
-    public void onItemSelected(ItemManager.WebItem story) {
+    public void onItemSelected(WebItem story) {
         multiPaneListener.onItemSelected(story);
     }
 
     @Override
-    public ItemManager.WebItem getSelectedItem() {
+    public WebItem getSelectedItem() {
         return multiPaneListener.getSelectedItem();
     }
 

@@ -29,15 +29,16 @@ import java.util.List;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
-    private final List<ItemManager.Item> mItems = new ArrayList<>();
+    private final List<Item> mItems = new ArrayList<>();
     private final List<String> mExpanded = new ArrayList<>();
     private int mLevelIndicatorWidth;
     private final String mUsername;
 
-    public ThreadPreviewRecyclerViewAdapter(ItemManager itemManager, ItemManager.Item item) {
+    public ThreadPreviewRecyclerViewAdapter(ItemManager itemManager, Item item) {
         super(itemManager);
         mItems.add(item);
         mUsername = item.getBy();
@@ -72,12 +73,12 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     }
 
     @Override
-    protected void bind(SubmissionViewHolder holder, final ItemManager.Item item) {
+    protected void bind(SubmissionViewHolder holder, final Item item) {
         super.bind(holder, item);
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false,
                 !TextUtils.equals(item.getBy(), mUsername)));
         holder.mMoreButton.setVisibility(View.GONE);
-        if (TextUtils.equals(item.getType(), ItemManager.Item.COMMENT_TYPE)) {
+        if (TextUtils.equals(item.getType(), Item.COMMENT_TYPE)) {
             holder.mTitleTextView.setText(null);
             holder.itemView.setOnClickListener(null);
             holder.mCommentButton.setVisibility(View.GONE);
@@ -109,11 +110,11 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     }
 
     @Override
-    protected ItemManager.Item getItem(int position) {
+    protected Item getItem(int position) {
         return mItems.get(position);
     }
 
-    private void openItem(ItemManager.Item item) {
+    private void openItem(Item item) {
         mContext.startActivity(new Intent(mContext, ItemActivity.class)
                 .putExtra(ItemActivity.EXTRA_ITEM, item));
     }

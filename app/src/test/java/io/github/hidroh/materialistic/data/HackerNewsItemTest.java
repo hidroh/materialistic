@@ -18,11 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class HackerNewsItemTest {
-    private HackerNewsClient.HackerNewsItem item;
+    private HackerNewsItem item;
 
     @Before
     public void setUp() {
-        item = new HackerNewsClient.HackerNewsItem(1l);
+        item = new HackerNewsItem(1l);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class HackerNewsItemTest {
                 return null;
             }
         });
-        assertEquals(ItemManager.Item.STORY_TYPE, item.getType());
+        assertEquals(Item.STORY_TYPE, item.getType());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class HackerNewsItemTest {
                 return "poll";
             }
         });
-        assertEquals(ItemManager.Item.POLL_TYPE, item.getType());
+        assertEquals(Item.POLL_TYPE, item.getType());
     }
 
     @Test
@@ -402,7 +402,7 @@ public class HackerNewsItemTest {
         });
         item.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
-        ItemManager.Item actual = HackerNewsClient.HackerNewsItem.CREATOR.createFromParcel(parcel);
+        Item actual = HackerNewsItem.CREATOR.createFromParcel(parcel);
         assertEquals("title", actual.getDisplayedTitle());
         assertFalse(actual.isFavorite());
     }
@@ -415,12 +415,12 @@ public class HackerNewsItemTest {
         item.setFavorite(true);
         item.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
-        assertTrue(HackerNewsClient.HackerNewsItem.CREATOR.createFromParcel(parcel).isFavorite());
+        assertTrue(HackerNewsItem.CREATOR.createFromParcel(parcel).isFavorite());
     }
 
     @Test
     public void testParcelable() {
-        assertThat(HackerNewsClient.HackerNewsItem.CREATOR.newArray(1)).hasSize(1);
+        assertThat(HackerNewsItem.CREATOR.newArray(1)).hasSize(1);
         assertEquals(0, item.describeContents());
     }
 
@@ -428,8 +428,8 @@ public class HackerNewsItemTest {
     public void testEquals() {
         assertFalse(item.equals(null));
         assertFalse(item.equals(new TestItem(){}));
-        assertFalse(item.equals(new HackerNewsClient.HackerNewsItem(2l)));
+        assertFalse(item.equals(new HackerNewsItem(2l)));
         assertTrue(item.equals(item));
-        assertTrue(item.equals(new HackerNewsClient.HackerNewsItem(1l)));
+        assertTrue(item.equals(new HackerNewsItem(1l)));
     }
 }

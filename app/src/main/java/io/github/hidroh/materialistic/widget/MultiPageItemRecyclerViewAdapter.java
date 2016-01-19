@@ -22,14 +22,15 @@ import android.view.ViewGroup;
 
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class MultiPageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ItemRecyclerViewAdapter.ItemViewHolder> {
-    private final ItemManager.Item[] mItems;
+    private final Item[] mItems;
 
     public MultiPageItemRecyclerViewAdapter(ItemManager itemManager,
-                                            ItemManager.Item[] items) {
+                                            Item[] items) {
         super(itemManager);
         this.mItems = items;
     }
@@ -40,12 +41,12 @@ public class MultiPageItemRecyclerViewAdapter
     }
 
     @Override
-    protected ItemManager.Item getItem(int position) {
+    protected Item getItem(int position) {
         return mItems[position];
     }
 
     @Override
-    protected void bind(final ItemViewHolder holder, final ItemManager.Item item) {
+    protected void bind(final ItemViewHolder holder, final Item item) {
         super.bind(holder, item);
         if (item == null) {
             return;
@@ -69,7 +70,7 @@ public class MultiPageItemRecyclerViewAdapter
         return mItems.length;
     }
 
-    private void openItem(ItemManager.Item item) {
+    private void openItem(Item item) {
         mContext.startActivity(new Intent(mContext, ItemActivity.class)
                 .putExtra(ItemActivity.EXTRA_ITEM, item)
                 .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true));
