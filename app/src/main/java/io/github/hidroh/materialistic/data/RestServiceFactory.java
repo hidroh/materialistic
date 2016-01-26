@@ -19,7 +19,7 @@ package io.github.hidroh.materialistic.data;
 import javax.inject.Inject;
 
 import okhttp3.Call;
-import retrofit2.GsonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
 
 public interface RestServiceFactory {
