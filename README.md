@@ -1,7 +1,7 @@
 ## Materialistic for Hacker News
 Material design [Hacker News](https://news.ycombinator.com/) client for Android, uses official [HackerNews/API](https://github.com/HackerNews/API), [Dagger](http://square.github.io/dagger/) for dependency injection and [Robolectric](http://robolectric.org/) for unit testing.
 
-[![Get it on Google Play](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic&referrer=utm_source%3Dgithub)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" width="185px" />](https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic&referrer=utm_source%3Dgithub)
 
 ### Setup
 **Requirements**
