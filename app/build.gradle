@@ -35,7 +35,7 @@ ext {
     okHttpVersion = '3.0.1'
     daggerVersion = '1.2.2'
     leakCanaryVersion = '1.4-beta1'
-    retrofitVersion = '2.0.0-SNAPSHOT'
+    retrofitVersion = '2.0.0-beta4'
 }
 
 dependencies {
