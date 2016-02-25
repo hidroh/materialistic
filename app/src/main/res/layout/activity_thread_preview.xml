@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -30,8 +30,8 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@id/recycler_view"
+        android:layout_below="@id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent" />
 
-</LinearLayout>
+</RelativeLayout>
