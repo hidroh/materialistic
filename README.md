@@ -10,7 +10,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 - Android SDK Build tools 23.0.2
 - Android SDK 23
 - Android Support Repository
-- Android Support Library 23.1.1
+- Android Support Library 23.2.0
 
 **Dependencies**
 - [Official Hacker News API](https://github.com/HackerNews/API), user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
