@@ -146,14 +146,6 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="textAppearanceContentNormal">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-
-    <style name="textAppearanceContentDisabled">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-    </style>
-
     <!-- ========== -->
     <!-- Text sizes -->
     <!-- ========== -->
