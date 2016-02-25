@@ -1,26 +1,28 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
-import android.support.v4.widget.DrawerLayout;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ShadowSupportDrawerLayout;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
+@Config(shadows = {ShadowSupportDrawerLayout.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class DrawerFragmentTest {
     private final int drawerResId;
@@ -64,13 +66,13 @@ public class DrawerFragmentTest {
 
     @Test
     public void test() {
-        shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
-                .getDrawerListener()
+        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+                .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertNull(shadowOf(activity).getNextStartedActivity());
         activity.findViewById(drawerResId).performClick();
-        shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
-                .getDrawerListener()
+        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+                .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertEquals(startedActivity.getName(),
                 shadowOf(activity).getNextStartedActivity().getComponent().getClassName());
