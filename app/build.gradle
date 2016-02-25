@@ -10,6 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 44
         versionName "2.5"
+        vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "READABILITY_TOKEN", "\"\""
     }
