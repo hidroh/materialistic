@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceGroup;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 
 import io.github.hidroh.materialistic.R;
@@ -50,5 +51,11 @@ public class PreferenceHelp extends PreferenceGroup {
                 .setPositiveButton(R.string.got_it, null)
                 .create()
                 .show();
+    }
+
+    @Override
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        holder.setDividerAllowedAbove(false);
     }
 }
