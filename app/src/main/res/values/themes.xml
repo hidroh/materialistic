@@ -38,6 +38,7 @@
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
         <item name="popupMenuStyle">@style/Widget.AppCompat.Light.PopupMenu.Overflow</item>
+        <item name="drawerArrowStyle">@style/AppDrawerArrowToggle</item>
 
         <!-- custom themed attributes -->
         <item name="titleTextSize">@dimen/text_size_medium</item>
@@ -63,6 +64,7 @@
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
         <item name="popupMenuStyle">@style/Widget.AppCompat.PopupMenu.Overflow</item>
+        <item name="drawerArrowStyle">@style/AppDrawerArrowToggle</item>
 
         <!-- custom themed attributes -->
         <item name="titleTextSize">@dimen/text_size_medium</item>
