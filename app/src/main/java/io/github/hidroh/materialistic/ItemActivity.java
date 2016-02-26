@@ -315,7 +315,6 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                 @Override
                 public void onClick(View v) {
                     AppUtils.openWebUrlExternal(ItemActivity.this,
-                            story.getDisplayedTitle(),
                             story.getUrl());
                 }
             });

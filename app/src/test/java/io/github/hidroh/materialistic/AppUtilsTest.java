@@ -86,18 +86,6 @@ public class AppUtilsTest {
     }
 
     @Test
-    public void testShareBroadcastReceiver() {
-        TestItemActivity activity = Robolectric.buildActivity(TestItemActivity.class).create().get();
-        Intent intent = new Intent();
-        intent.setData(Uri.parse("http://example.com"));
-        new AppUtils.ShareBroadcastReceiver().onReceive(activity, intent);
-        Intent actual = shadowOf(activity).getNextStartedActivity();
-        assertThat(actual)
-                .isNotNull()
-                .hasAction(Intent.ACTION_CHOOSER);
-    }
-
-    @Test
     public void testNoActiveNetwork() {
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE)).setActiveNetworkInfo(null);
