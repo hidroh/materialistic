@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic;
 import android.accounts.Account;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,11 +13,12 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.support.v4.Shadows;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.test.ShadowSupportDrawerLayout;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
@@ -26,7 +26,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportDrawerLayout.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class DrawerFragmentLoginTest {
     private ActivityController<TestListActivity> controller;
@@ -70,8 +70,8 @@ public class DrawerFragmentLoginTest {
     public void testOpenUserProfile() {
         Preferences.setUsername(activity, "username");
         drawerUser.performClick();
-        Shadows.shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
-                .getDrawerListener()
+        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+                .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, UserActivity.class)
@@ -105,8 +105,8 @@ public class DrawerFragmentLoginTest {
         assertThat(alertDialog.getListView().getAdapter()).hasCount(2); // existing + add account
         shadowOf(alertDialog).clickOnItem(1);
         assertThat(alertDialog).isNotShowing();
-        Shadows.shadowOf((DrawerLayout) activity.findViewById(R.id.drawer_layout))
-                .getDrawerListener()
+        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+                .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, LoginActivity.class);
