@@ -46,17 +46,13 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public final void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (isAttached()) { // TODO http://b.android.com/80783
-            createOptionsMenu(menu, inflater);
-            mMenuTintDelegate.onOptionsMenuCreated(menu);
-        }
+        createOptionsMenu(menu, inflater);
+        mMenuTintDelegate.onOptionsMenuCreated(menu);
     }
 
     @Override
     public final void onPrepareOptionsMenu(Menu menu) {
-        if (isAttached()) { // TODO http://b.android.com/80783
-            prepareOptionsMenu(menu);
-        }
+        prepareOptionsMenu(menu);
     }
 
     @Override
