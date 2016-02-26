@@ -204,7 +204,6 @@
             android:authorities="io.github.hidroh.materialistic.recentprovider"
             android:name=".data.SearchRecentSuggestionsProvider"
             android:exported="false" />
-        <receiver android:name=".AppUtils$ShareBroadcastReceiver" />
     </application>
 
 </manifest>

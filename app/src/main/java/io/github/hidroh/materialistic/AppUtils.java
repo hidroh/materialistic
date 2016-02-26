@@ -22,16 +22,13 @@ import android.accounts.OnAccountsUpdateListener;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -72,8 +69,8 @@ public class AppUtils {
     private static final String ABBR_MINUTE = "m";
     private static final String PLAY_STORE_URL = "market://details?id=" + BuildConfig.APPLICATION_ID;
 
-    public static void openWebUrlExternal(Context context, String title, String url) {
-        Intent intent = createViewIntent(context, title, url);
+    public static void openWebUrlExternal(Context context, String url) {
+        Intent intent = createViewIntent(context, url);
         if (!HackerNewsClient.BASE_WEB_URL.contains(Uri.parse(url).getHost())) {
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
@@ -87,7 +84,7 @@ public class AppUtils {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, title, url)
+            intents.add(createViewIntent(context, url)
                     .setPackage(info.activityInfo.packageName));
         }
         if (intents.isEmpty()) {
@@ -161,7 +158,6 @@ public class AppUtils {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
-                    item.getDisplayedTitle(),
                     String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
             return;
         }
@@ -172,7 +168,6 @@ public class AppUtils {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         openWebUrlExternal(context,
-                                item.getDisplayedTitle(),
                                 item.getUrl());
                     }
                 })
@@ -180,7 +175,6 @@ public class AppUtils {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         openWebUrlExternal(context,
-                                item.getDisplayedTitle(),
                                 String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
                     }
                 })
@@ -422,32 +416,16 @@ public class AppUtils {
     }
 
     @NonNull
-    private static Intent createViewIntent(Context context, String title, String url) {
+    private static Intent createViewIntent(Context context, String url) {
         if (Preferences.customChromeTabEnabled(context)) {
-            Intent shareIntent = new Intent(context, ShareBroadcastReceiver.class);
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, url);
-            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+            return new CustomTabsIntent.Builder()
                     .setToolbarColor(ContextCompat.getColor(context, R.color.orange500))
-                    .setActionButton(BitmapFactory.decodeResource(context.getResources(),
-                                    R.drawable.ic_share_grey600_24dp),
-                            context.getString(R.string.share),
-                            PendingIntent.getBroadcast(context, 0, shareIntent,
-                                    PendingIntent.FLAG_ONE_SHOT))
-                    .build();
-            customTabsIntent.intent.setData(Uri.parse(url));
-            return customTabsIntent.intent;
+                    .addDefaultShareMenuItem()
+                    .build()
+                    .intent
+                    .setData(Uri.parse(url));
         } else {
             return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        }
-    }
-
-    public static class ShareBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            context.startActivity(makeChooserShareIntent(context,
-                    intent.getStringExtra(Intent.EXTRA_SUBJECT),
-                    intent.getStringExtra(Intent.EXTRA_TEXT)));
         }
     }
 }
