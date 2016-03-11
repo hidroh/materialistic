@@ -32,7 +32,7 @@ android {
 }
 
 ext {
-    supportVersion = '23.2.0'
+    supportVersion = '23.2.1'
     okHttpVersion = '3.2.0'
     daggerVersion = '1.2.2'
     leakCanaryVersion = '1.4-beta1'
@@ -41,11 +41,17 @@ ext {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleDependency http://b.android.com/203321
     compile "com.android.support:appcompat-v7:$supportVersion"
+    //noinspection GradleDependency http://b.android.com/203321
     compile "com.android.support:recyclerview-v7:$supportVersion"
+    //noinspection GradleDependency http://b.android.com/203321
     compile "com.android.support:cardview-v7:$supportVersion"
+    //noinspection GradleDependency http://b.android.com/203321
     compile "com.android.support:design:$supportVersion"
+    //noinspection GradleDependency http://b.android.com/203321
     compile "com.android.support:preference-v7:$supportVersion"
+    //noinspection GradleDependency http://b.android.com/203321
     compile "com.android.support:customtabs:$supportVersion"
     compile "com.squareup.dagger:dagger:$daggerVersion"
     leakCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
