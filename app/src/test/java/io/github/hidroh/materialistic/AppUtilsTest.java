@@ -4,9 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -27,13 +25,13 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.TestItemActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -63,9 +61,11 @@ public class AppUtilsTest {
     @Test
     public void testDefaultTextSize() {
         Activity activity = Robolectric.setupActivity(Activity.class);
-        shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
-        Preferences.Theme.apply(activity, false);
-        assertEquals(R.style.AppTextSize, shadowOf(activity.getTheme()).getStyleResourceId());
+        float expected = activity.getTheme().obtainStyledAttributes(R.style.AppTextSize,
+                new int[]{R.attr.contentTextSize}).getDimension(0, 0);
+        float actual = activity.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.contentTextSize}).getDimension(0, 0);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
