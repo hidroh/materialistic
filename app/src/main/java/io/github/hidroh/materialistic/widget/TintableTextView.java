@@ -19,6 +19,7 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -26,10 +27,9 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.R;
 
 public class TintableTextView extends TextView {
-
-    private final int mTextColor;
 
     public TintableTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -37,37 +37,41 @@ public class TintableTextView extends TextView {
 
     public TintableTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        int textColor = getTextColor(context, attrs);
+        TypedArray ta = context.getTheme().obtainStyledAttributes(attrs,
+                R.styleable.TintableTextView, 0, 0);
+        setCompoundDrawablesWithIntrinsicBounds(
+                tint(ta.getDrawable(R.styleable.TintableTextView_iconStart), textColor),
+                tint(ta.getDrawable(R.styleable.TintableTextView_iconTop), textColor),
+                tint(ta.getDrawable(R.styleable.TintableTextView_iconEnd), textColor),
+                tint(ta.getDrawable(R.styleable.TintableTextView_iconBottom), textColor));
+        ta.recycle();
+    }
+
+    private int getTextColor(Context context, AttributeSet attrs) {
         int defaultTextColor = ContextCompat.getColor(getContext(),
                 AppUtils.getThemedResId(getContext(), android.R.attr.textColorTertiary));
         TypedArray ta = context.obtainStyledAttributes(attrs,
                 new int[]{android.R.attr.textAppearance, android.R.attr.textColor});
         int ap = ta.getResourceId(0, 0);
+        int textColor;
         if (ap == 0) {
-            mTextColor = ta.getColor(1, defaultTextColor);
+            textColor = ta.getColor(1, defaultTextColor);
         } else {
             TypedArray tap = context.obtainStyledAttributes(ap, new int[]{android.R.attr.textColor});
-            mTextColor = tap.getColor(0, defaultTextColor);
+            textColor = tap.getColor(0, defaultTextColor);
             tap.recycle();
         }
         ta.recycle();
-        Drawable[] drawables = getCompoundDrawables();
-        setCompoundDrawablesWithIntrinsicBounds(drawables[0], drawables[1], drawables[2], drawables[3]);
+        return textColor;
     }
 
-    @Override
-    public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {
-        tint(left);
-        tint(top);
-        tint(right);
-        tint(bottom);
-        super.setCompoundDrawables(left, top, right, bottom);
-    }
-
-    private void tint(@Nullable Drawable drawable) {
+    private Drawable tint(@Nullable Drawable drawable, @ColorInt int color) {
         if (drawable == null) {
-            return;
+            return null;
         }
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, mTextColor);
+        DrawableCompat.setTint(drawable, color);
+        return drawable;
     }
 }

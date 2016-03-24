@@ -33,4 +33,10 @@
     <declare-styleable name="StoryView">
         <attr name="local" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="TintableTextView">
+        <attr name="iconStart" format="reference" />
+        <attr name="iconEnd" format="reference" />
+        <attr name="iconTop" format="reference" />
+        <attr name="iconBottom" format="reference" />
+    </declare-styleable>
 </resources>
