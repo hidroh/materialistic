@@ -26,6 +26,7 @@ android {
         warningsAsErrors true
         abortOnError true
         informational 'Overdraw' // http://b.android.com/169879
+        informational 'MissingTranslation'
         explainIssues false
         absolutePaths false
     }

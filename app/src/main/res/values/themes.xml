@@ -72,6 +72,17 @@
         <item name="contentTextSize">@dimen/text_size_small</item>
     </style>
 
+    <style name="AppTheme.Dark.Black">
+        <item name="colorPrimary">@color/grey900</item>
+        <item name="colorPrimaryDark">@color/blackT87</item>
+        <item name="colorAccent">@color/redA100</item>
+        <item name="colorCardBackground">@color/blackT87</item>
+        <item name="colorCardHighlight">@color/grey900</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/whiteT70</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
+    </style>
+
     <style name="AppTheme.Sepia">
         <item name="colorPrimary">@color/orange300</item>
         <item name="colorPrimaryDark">@color/orange500</item>

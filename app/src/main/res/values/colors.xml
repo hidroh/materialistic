@@ -17,6 +17,7 @@
 
 <resources>
     <color name="white">#FFFFFF</color>
+    <color name="whiteT70">#B3FFFFFF</color>
     <color name="blackT87">#DE000000</color>
     <color name="blackT12">#1F000000</color>
     <color name="grey100">#F5F5F5</color>
