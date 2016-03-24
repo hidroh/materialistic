@@ -35,6 +35,7 @@ public class ThemePreference extends Preference {
     public static final @StyleRes int DIALOG_THEME_DEFAULT = R.style.AppAlertDialog;
     private static final String VALUE_LIGHT = "light";
     private static final String VALUE_DARK = "dark";
+    private static final String VALUE_BLACK = "black";
     private static final String VALUE_SEPIA = "sepia";
     private static final String VALUE_GREEN = "green";
     private static final String VALUE_SOLARIZED = "solarized";
@@ -44,6 +45,7 @@ public class ThemePreference extends Preference {
     static {
         BUTTON_VALUE.put(R.id.theme_light, VALUE_LIGHT);
         BUTTON_VALUE.put(R.id.theme_dark, VALUE_DARK);
+        BUTTON_VALUE.put(R.id.theme_black, VALUE_BLACK);
         BUTTON_VALUE.put(R.id.theme_sepia, VALUE_SEPIA);
         BUTTON_VALUE.put(R.id.theme_green, VALUE_GREEN);
         BUTTON_VALUE.put(R.id.theme_solarized, VALUE_SOLARIZED);
@@ -53,6 +55,8 @@ public class ThemePreference extends Preference {
                 new ThemeSpec(R.string.theme_light, R.style.AppTheme, R.style.AppAlertDialog));
         VALUE_THEME.put(VALUE_DARK,
                 new ThemeSpec(R.string.theme_dark, R.style.AppTheme_Dark, R.style.AppAlertDialog_Dark));
+        VALUE_THEME.put(VALUE_BLACK,
+                new ThemeSpec(R.string.theme_black, R.style.AppTheme_Dark_Black, R.style.AppAlertDialog_Dark));
         VALUE_THEME.put(VALUE_SEPIA,
                 new ThemeSpec(R.string.theme_sepia, R.style.AppTheme_Sepia, R.style.AppAlertDialog_Sepia));
         VALUE_THEME.put(VALUE_GREEN,

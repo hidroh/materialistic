@@ -159,6 +159,7 @@
     <string name="readability_failed">Unable to parse article</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="theme_black">Black</string>
     <string name="theme_sepia">Sepia</string>
     <string name="theme_green">Green</string>
     <string name="theme_solarized_dark">Solarized Dark</string>
