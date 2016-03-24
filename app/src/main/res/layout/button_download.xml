@@ -15,8 +15,8 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:layout_width="match_parent"
@@ -24,7 +24,7 @@
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:text="@string/file_not_supported"
-        android:drawableTop="@drawable/ic_save_white_48dp"
+        app:iconTop="@drawable/ic_save_white_48dp"
         android:padding="@dimen/activity_vertical_margin"
         android:drawablePadding="@dimen/padding"
         style="@style/textEmptyStyle"
