@@ -48,10 +48,10 @@
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <!-- color palette -->
-        <item name="colorPrimary">@color/orange500</item>
-        <item name="colorPrimaryDark">@color/orange700</item>
+        <item name="colorPrimary">@color/grey900</item>
+        <item name="colorPrimaryDark">@color/blackT87</item>
         <item name="colorAccent">@color/redA100</item>
-        <item name="colorCardBackground">@color/cardview_dark_background</item>
+        <item name="colorCardBackground">@color/grey900</item>
         <item name="colorCardHighlight">@color/grey800</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/grey500</item>
