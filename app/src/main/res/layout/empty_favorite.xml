@@ -16,6 +16,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/empty"
     android:layout_gravity="center_vertical|center"
     android:gravity="center|center_vertical"
@@ -34,7 +35,7 @@
         android:layout_height="wrap_content" />
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:text="@string/try_me"
-        android:drawableTop="@drawable/ic_touch_app_white_48dp"
+        app:iconTop="@drawable/ic_touch_app_white_48dp"
         style="@style/textEmptyStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

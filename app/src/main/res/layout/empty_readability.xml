@@ -18,9 +18,10 @@
 <io.github.hidroh.materialistic.widget.TintableTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/empty"
     android:visibility="gone"
     tools:visibility="visible"
-    android:drawableTop="@drawable/ic_local_hotel_white_48dp"
+    app:iconTop="@drawable/ic_local_hotel_white_48dp"
     android:text="@string/readability_failed"
     style="@style/textEmptyStyle" />

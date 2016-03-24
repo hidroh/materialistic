@@ -17,13 +17,14 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/empty_search"
     tools:visibility="visible"
     android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <io.github.hidroh.materialistic.widget.TintableTextView
-        android:drawableTop="@drawable/ic_local_library_white_48dp"
+        app:iconTop="@drawable/ic_local_library_white_48dp"
         android:layout_centerInParent="true"
         android:text="@string/no_stories_search"
         style="@style/textEmptyStyle"/>

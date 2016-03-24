@@ -17,6 +17,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/empty"
     android:layout_gravity="center_vertical"
     android:gravity="center"
@@ -26,7 +27,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <io.github.hidroh.materialistic.widget.TintableTextView
-        android:drawableTop="@drawable/ic_cloud_off_white_48dp"
+        app:iconTop="@drawable/ic_cloud_off_white_48dp"
         android:text="@string/connection_error"
         style="@style/textEmptyStyle"/>
 </LinearLayout>
