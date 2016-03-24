@@ -263,7 +263,6 @@ public class Preferences {
             if (dialogTheme || theme != ThemePreference.THEME_DEFAULT) {
                 context.setTheme(theme);
             }
-            context.getTheme().applyStyle(resolvePreferredTextSize(context), true);
         }
 
         public static @Nullable String getTypeface(Context context) {

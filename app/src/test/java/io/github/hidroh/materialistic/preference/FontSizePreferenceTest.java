@@ -4,26 +4,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Spinner;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
 
-import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 
-import static junit.framework.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class FontSizePreferenceTest {
     private final int selection;
     private final int styleResId;
+    private ActivityController<SettingsActivity> controller;
     private SettingsActivity activity;
     private View preferenceView;
 
@@ -45,9 +47,8 @@ public class FontSizePreferenceTest {
 
     @Before
     public void setUp() {
-        activity = Robolectric.buildActivity(SettingsActivity.class)
-                .create().postCreate(null).start().resume().visible().get();
-        shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
+        controller = Robolectric.buildActivity(SettingsActivity.class);
+        activity = controller.create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
         RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(1));
@@ -59,7 +60,16 @@ public class FontSizePreferenceTest {
     public void test() {
         preferenceView.performClick();
         ((Spinner) preferenceView.findViewById(R.id.spinner)).setSelection(selection);
-        Preferences.Theme.apply(activity, false);
-        assertEquals(styleResId, shadowOf(activity.getTheme()).getStyleResourceId());
+        shadowOf(activity).recreate();
+        float expected = activity.getTheme().obtainStyledAttributes(styleResId,
+                new int[]{R.attr.contentTextSize}).getDimension(0, 0);
+        float actual = activity.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.contentTextSize}).getDimension(0, 0);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @After
+    public void tearDown() {
+        controller.pause().stop().destroy();
     }
 }
