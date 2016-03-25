@@ -91,6 +91,7 @@
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/edittext_body"
                 android:hint="@string/comment_hint"
+                android:inputType="textCapSentences"
                 android:gravity="top"
                 android:singleLine="false"
                 android:background="@null"
