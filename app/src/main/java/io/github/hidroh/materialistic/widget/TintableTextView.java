@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -31,21 +30,28 @@ import io.github.hidroh.materialistic.R;
 
 public class TintableTextView extends TextView {
 
+    private final int mTextColor;
+
     public TintableTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
     public TintableTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        int textColor = getTextColor(context, attrs);
+        mTextColor = getTextColor(context, attrs);
         TypedArray ta = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.TintableTextView, 0, 0);
         setCompoundDrawablesWithIntrinsicBounds(
-                tint(ta.getDrawable(R.styleable.TintableTextView_iconStart), textColor),
-                tint(ta.getDrawable(R.styleable.TintableTextView_iconTop), textColor),
-                tint(ta.getDrawable(R.styleable.TintableTextView_iconEnd), textColor),
-                tint(ta.getDrawable(R.styleable.TintableTextView_iconBottom), textColor));
+                ta.getDrawable(R.styleable.TintableTextView_iconStart),
+                ta.getDrawable(R.styleable.TintableTextView_iconTop),
+                ta.getDrawable(R.styleable.TintableTextView_iconEnd),
+                ta.getDrawable(R.styleable.TintableTextView_iconBottom));
         ta.recycle();
+    }
+
+    @Override
+    public void setCompoundDrawablesWithIntrinsicBounds(Drawable left, Drawable top, Drawable right, Drawable bottom) {
+        super.setCompoundDrawablesWithIntrinsicBounds(tint(left), tint(top), tint(right), tint(bottom));
     }
 
     private int getTextColor(Context context, AttributeSet attrs) {
@@ -66,12 +72,12 @@ public class TintableTextView extends TextView {
         return textColor;
     }
 
-    private Drawable tint(@Nullable Drawable drawable, @ColorInt int color) {
+    private Drawable tint(@Nullable Drawable drawable) {
         if (drawable == null) {
             return null;
         }
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, color);
+        DrawableCompat.setTint(drawable, mTextColor);
         return drawable;
     }
 }

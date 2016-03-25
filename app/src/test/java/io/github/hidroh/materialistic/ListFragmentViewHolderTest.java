@@ -269,9 +269,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertEquals(R.drawable.ic_work_white_18dp,
-                shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
-                        .getCompoundDrawables()[0]).getCreatedFromResId());
+        assertThat((TextView) holder.itemView.findViewById(R.id.source)).isEmpty();
     }
 
     @Test
@@ -285,9 +283,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertEquals(R.drawable.ic_poll_white_18dp,
-                shadowOf(((TextView) holder.itemView.findViewById(R.id.source))
-                        .getCompoundDrawables()[0]).getCreatedFromResId());
+        assertThat((TextView) holder.itemView.findViewById(R.id.source)).isEmpty();
     }
 
     @Test
