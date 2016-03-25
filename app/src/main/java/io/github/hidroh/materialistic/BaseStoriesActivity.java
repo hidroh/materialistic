@@ -37,6 +37,10 @@ public abstract class BaseStoriesActivity extends BaseListActivity
             if (mLastUpdated == null) {
                 return;
             }
+            //noinspection ConstantConditions
+            if (getSupportActionBar() == null) {
+                return;
+            }
             getSupportActionBar().setSubtitle(getString(R.string.last_updated,
                     DateUtils.getRelativeTimeSpanString(mLastUpdated,
                             System.currentTimeMillis(),
