@@ -24,4 +24,6 @@
     tools:visibility="visible"
     app:iconTop="@drawable/ic_local_hotel_white_48dp"
     android:text="@string/readability_failed"
-    style="@style/textEmptyStyle" />
+    android:breakStrategy="balanced"
+    style="@style/textEmptyStyle"
+    tools:ignore="UnusedAttribute" />

@@ -29,6 +29,8 @@
         android:text="@string/no_comments"
         android:layout_gravity="center_horizontal"
         app:iconTop="@drawable/ic_chat_bubble_outline_white_48dp"
-        style="@style/textEmptyStyle" />
+        android:breakStrategy="balanced"
+        style="@style/textEmptyStyle"
+        tools:ignore="UnusedAttribute" />
 
 </android.support.v4.widget.NestedScrollView>
