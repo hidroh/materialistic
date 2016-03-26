@@ -124,9 +124,11 @@ public class HackerNewsClient implements ItemManager, UserManager {
                 });
     }
 
-    @NonNull
     private HackerNewsItem[] toItems(int[] ids) {
-        HackerNewsItem[] items = new HackerNewsItem[ids == null ? 0 : ids.length];
+        if (ids == null) {
+            return null;
+        }
+        HackerNewsItem[] items = new HackerNewsItem[ids.length];
         for (int i = 0; i < items.length; i++) {
             HackerNewsItem item = new HackerNewsItem(ids[i]);
             item.rank = i + 1;

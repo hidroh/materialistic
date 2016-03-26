@@ -96,7 +96,7 @@ class UserItem implements UserManager.User {
     }
 
     void setSubmittedItems(HackerNewsItem[] submittedItems) {
-        this.submittedItems = submittedItems;
+        this.submittedItems = submittedItems != null ? submittedItems : new HackerNewsItem[0];
     }
 
     int[] getSubmitted() {
