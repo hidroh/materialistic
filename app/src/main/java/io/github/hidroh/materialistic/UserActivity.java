@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -106,6 +107,12 @@ public class UserActivity extends InjectableActivity implements Scrollable {
             load();
         } else {
             bind();
+        }
+        if (!AppUtils.hasConnection(this)) {
+            //noinspection ConstantConditions
+            Snackbar.make(findViewById(R.id.content_frame),
+                    R.string.offline_notice, Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 

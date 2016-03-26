@@ -144,6 +144,9 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         } else if (!TextUtils.isEmpty(mItemId)) {
             mItemManager.getItem(mItemId, new ItemResponseListener(this));
         }
+        if (!AppUtils.hasConnection(this)) {
+            Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override

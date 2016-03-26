@@ -29,5 +29,7 @@
     <io.github.hidroh.materialistic.widget.TintableTextView
         app:iconTop="@drawable/ic_cloud_off_white_48dp"
         android:text="@string/connection_error"
-        style="@style/textEmptyStyle"/>
+        android:breakStrategy="balanced"
+        style="@style/textEmptyStyle"
+        tools:ignore="UnusedAttribute" />
 </LinearLayout>

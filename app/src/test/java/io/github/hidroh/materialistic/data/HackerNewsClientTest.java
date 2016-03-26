@@ -144,7 +144,7 @@ public class HackerNewsClientTest {
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(null, Response.success(null));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
-        assertThat(getStoriesResponse.getValue()).isEmpty();
+        assertThat(getStoriesResponse.getValue()).isNullOrEmpty();
     }
 
     @Test

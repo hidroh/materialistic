@@ -27,5 +27,7 @@
         app:iconTop="@drawable/ic_local_library_white_48dp"
         android:layout_centerInParent="true"
         android:text="@string/no_stories_search"
-        style="@style/textEmptyStyle"/>
+        android:breakStrategy="balanced"
+        style="@style/textEmptyStyle"
+        tools:ignore="UnusedAttribute" />
 </RelativeLayout>

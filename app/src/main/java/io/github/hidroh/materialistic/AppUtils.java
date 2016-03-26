@@ -272,6 +272,12 @@ public class AppUtils {
                 activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
+    public static boolean hasConnection(Context context) {
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService(
+                Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
     public static Pair<String, String> getCredentials(Context context) {
         String username = Preferences.getUsername(context);
         if (TextUtils.isEmpty(username)) {

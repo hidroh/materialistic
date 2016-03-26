@@ -20,10 +20,13 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.IOException;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -50,11 +53,13 @@ import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 import okhttp3.Cache;
+import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Cookie;
-import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 @Module(
@@ -95,7 +100,7 @@ public class ActivityModule {
     public static final String POPULAR = "popular";
     public static final String HN = "hn";
     private static final String TAG_OK_HTTP = "OkHttp";
-    private static final long CACHE_SIZE = 1024 * 1024;
+    private static final long CACHE_SIZE = 20 * 1024 * 1024; // 20 MB
 
     private final Context mContext;
 
@@ -170,43 +175,13 @@ public class ActivityModule {
 
     @Provides @Singleton
     public Call.Factory provideCallFactory(Context context) {
-        HttpLoggingInterceptor interceptor =
-                new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                    @Override
-                    public void log(String message) {
-                        Log.d(TAG_OK_HTTP, message);
-                    }
-                });
-        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
-                HttpLoggingInterceptor.Level.NONE);
         return new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
                 .cache(new Cache(context.getApplicationContext().getCacheDir(), CACHE_SIZE))
+                .addNetworkInterceptor(new CacheOverrideNetworkInterceptor())
+                .addInterceptor(new ConnectionAwareInterceptor(context))
+                .addInterceptor(new LoggingInterceptor())
                 .followRedirects(false)
-                .cookieJar(new CookieJar() {
-                    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
-
-                    @Override
-                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                        if (cookies == null) {
-                            return;
-                        }
-                        // accept original server
-                        ArrayList<Cookie> originalCookies = new ArrayList<>();
-                        for (Cookie cookie : cookies) {
-                            if (HttpCookie.domainMatches(cookie.domain(), url.host())) {
-                                originalCookies.add(cookie);
-                            }
-                        }
-                        cookieStore.put(url, originalCookies);
-                    }
-
-                    @Override
-                    public List<Cookie> loadForRequest(HttpUrl url) {
-                        List<Cookie> cookies = cookieStore.get(url);
-                        return cookies != null ? cookies : new ArrayList<Cookie>();
-                    }
-                })
+                .cookieJar(new CookieJar())
                 .build();
 
     }
@@ -218,5 +193,90 @@ public class ActivityModule {
     @Provides
     public PopupMenu providePopupMenu() {
         return new PopupMenu.Impl();
+    }
+
+    static class ConnectionAwareInterceptor implements Interceptor {
+
+        static final Set<String> CACHE_ENABLED_HOSTS = new HashSet<>();
+        static {
+            CACHE_ENABLED_HOSTS.add(HackerNewsClient.HOST);
+            CACHE_ENABLED_HOSTS.add(AlgoliaClient.HOST);
+        }
+        private final Context mContext;
+
+        public ConnectionAwareInterceptor(Context context) {
+            mContext = context.getApplicationContext();
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            if (!CACHE_ENABLED_HOSTS.contains(chain.request().url().host())) {
+                return chain.proceed(chain.request());
+            }
+            return chain.proceed(chain.request().newBuilder()
+                    .cacheControl(AppUtils.hasConnection(mContext) ?
+                            CacheControl.FORCE_NETWORK : CacheControl.FORCE_CACHE)
+                    .build());
+        }
+    }
+
+    static class CacheOverrideNetworkInterceptor implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            if (!ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS
+                    .contains(chain.request().url().host())) {
+                return chain.proceed(chain.request());
+            }
+            return chain.proceed(chain.request())
+                    .newBuilder()
+                    .removeHeader("Cache-Control")
+                    .build();
+
+        }
+    }
+
+    static class LoggingInterceptor implements Interceptor {
+        private final Interceptor debugInterceptor = new HttpLoggingInterceptor(
+                new HttpLoggingInterceptor.Logger() {
+                    @Override
+                    public void log(String message) {
+                        Log.d(TAG_OK_HTTP, message);
+                    }
+                })
+                .setLevel(BuildConfig.DEBUG ?
+                        HttpLoggingInterceptor.Level.BODY :
+                        HttpLoggingInterceptor.Level.NONE);
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            return debugInterceptor.intercept(chain);
+        }
+    }
+
+    static class CookieJar implements okhttp3.CookieJar {
+
+        private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
+        @Override
+        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+            if (cookies == null) {
+                return;
+            }
+            // accept original server
+            ArrayList<Cookie> originalCookies = new ArrayList<>();
+            for (Cookie cookie : cookies) {
+                if (HttpCookie.domainMatches(cookie.domain(), url.host())) {
+                    originalCookies.add(cookie);
+                }
+            }
+            cookieStore.put(url, originalCookies);
+        }
+
+        @Override
+        public List<Cookie> loadForRequest(HttpUrl url) {
+            List<Cookie> cookies = cookieStore.get(url);
+            return cookies != null ? cookies : new ArrayList<Cookie>();
+        }
     }
 }
