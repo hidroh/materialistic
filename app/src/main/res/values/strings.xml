@@ -245,5 +245,7 @@
     <string name="toggle_list_view">Toggle list view</string>
     <string name="more">More</string>
     <string name="logout">Logout</string>
+    <string name="offline">Offline</string>
+    <string name="offline_notice">You\'re currently offline</string>
 
 </resources>

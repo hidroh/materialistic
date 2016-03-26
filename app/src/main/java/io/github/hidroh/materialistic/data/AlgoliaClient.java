@@ -27,13 +27,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 public class AlgoliaClient implements ItemManager {
 
     public static boolean sSortByTime = true;
-    private static final String BASE_API_URL = "https://hn.algolia.com/api/v1/";
+    public static final String HOST = "hn.algolia.com";
+    private static final String BASE_API_URL = "https://" + HOST + "/api/v1/";
     protected RestService mRestService;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
 
@@ -52,6 +52,10 @@ public class AlgoliaClient implements ItemManager {
             @Override
             public void onResponse(Call<AlgoliaHits> call, Response<AlgoliaHits> response) {
                 AlgoliaHits algoliaHits = response.body();
+                if (algoliaHits == null) {
+                    listener.onResponse(new Item[0]);
+                    return;
+                }
                 Hit[] hits = algoliaHits.hits;
                 Item[] stories = new Item[hits == null ? 0 : hits.length];
                 for (int i = 0; i < stories.length; i++) {
@@ -86,15 +90,12 @@ public class AlgoliaClient implements ItemManager {
     }
 
     interface RestService {
-        @Headers("Cache-Control: max-age=600")
         @GET("search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         Call<AlgoliaHits> searchByDate(@Query("query") String query);
 
-        @Headers("Cache-Control: max-age=600")
         @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         Call<AlgoliaHits> search(@Query("query") String query);
 
-        @Headers("Cache-Control: max-age=600")
         @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         Call<AlgoliaHits> searchByMinTimestamp(@Query("numericFilters") String timestampSeconds);
     }

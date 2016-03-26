@@ -26,16 +26,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
 /**
  * Client to retrieve Hacker News content asynchronously
  */
 public class HackerNewsClient implements ItemManager, UserManager {
+    public static final String HOST = "hacker-news.firebaseio.com";
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
-    private static final String BASE_API_URL = "https://hacker-news.firebaseio.com/v0/";
+    private static final String BASE_API_URL = "https://" + HOST + "/v0/";
     private final RestService mRestService;
     private final SessionManager mSessionManager;
     private final FavoriteManager mFavoriteManager;
@@ -136,31 +136,24 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     interface RestService {
-        @Headers("Cache-Control: max-age=600")
         @GET("topstories.json")
         Call<int[]> topStories();
 
-        @Headers("Cache-Control: max-age=600")
         @GET("newstories.json")
         Call<int[]> newStories();
 
-        @Headers("Cache-Control: max-age=600")
         @GET("showstories.json")
         Call<int[]> showStories();
 
-        @Headers("Cache-Control: max-age=600")
         @GET("askstories.json")
         Call<int[]> askStories();
 
-        @Headers("Cache-Control: max-age=600")
         @GET("jobstories.json")
         Call<int[]> jobStories();
 
-        @Headers("Cache-Control: max-age=300")
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> item(@Path("itemId") String itemId);
 
-        @Headers("Cache-Control: max-age=300")
         @GET("user/{userId}.json")
         Call<UserItem> user(@Path("userId") String userId);
     }
