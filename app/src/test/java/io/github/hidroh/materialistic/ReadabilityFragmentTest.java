@@ -162,7 +162,8 @@ public class ReadabilityFragmentTest {
     public void testBindAfterDetached() {
         assertThat(activity.findViewById(R.id.progress)).isVisible();
         controller.pause().stop().destroy();
-        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"), callback.capture());
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
+                callback.capture());
         callback.getValue().onResponse("<div>content</div>");
     }
 }

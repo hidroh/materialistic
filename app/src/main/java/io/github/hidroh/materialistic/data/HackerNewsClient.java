@@ -178,55 +178,55 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     interface RestService {
-        @Headers("Cache-Control: max-age=3600")
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
         @GET("topstories.json")
         Call<int[]> topStories();
 
-        @Headers("Cache-Control: max-age=3600")
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
         @GET("newstories.json")
         Call<int[]> newStories();
 
-        @Headers("Cache-Control: max-age=3600")
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
         @GET("showstories.json")
         Call<int[]> showStories();
 
-        @Headers("Cache-Control: max-age=3600")
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
         @GET("askstories.json")
         Call<int[]> askStories();
 
-        @Headers("Cache-Control: max-age=3600")
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
         @GET("jobstories.json")
         Call<int[]> jobStories();
 
-        @Headers("Cache-Control: no-cache")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("topstories.json")
         Call<int[]> networkTopStories();
 
-        @Headers("Cache-Control: no-cache")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("newstories.json")
         Call<int[]> networkNewStories();
 
-        @Headers("Cache-Control: no-cache")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("showstories.json")
         Call<int[]> networkShowStories();
 
-        @Headers("Cache-Control: no-cache")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("askstories.json")
         Call<int[]> networkAskStories();
 
-        @Headers("Cache-Control: no-cache")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("jobstories.json")
         Call<int[]> networkJobStories();
 
-        @Headers("Cache-Control: max-age=3600")
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> item(@Path("itemId") String itemId);
 
-        @Headers("Cache-Control: no-cache")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> networkItem(@Path("itemId") String itemId);
 
-        @Headers("Cache-Control: only-if-cached, max-stale=2147483647")
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_CACHE)
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> cachedItem(@Path("itemId") String itemId);
 

@@ -24,10 +24,8 @@ import java.io.IOException;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -187,8 +185,8 @@ public class ActivityModule {
                 .followRedirects(false)
                 .cookieJar(new CookieJar())
                 .build();
-
     }
+
     @Provides
     public AccountManager provideAccountManager(Context context) {
         return AccountManager.get(context);
@@ -201,10 +199,14 @@ public class ActivityModule {
 
     static class ConnectionAwareInterceptor implements Interceptor {
 
-        static final Set<String> CACHE_ENABLED_HOSTS = new HashSet<>();
+        static final Map<String, String> CACHE_ENABLED_HOSTS = new HashMap<>();
         static {
-            CACHE_ENABLED_HOSTS.add(HackerNewsClient.HOST);
-            CACHE_ENABLED_HOSTS.add(AlgoliaClient.HOST);
+            CACHE_ENABLED_HOSTS.put(HackerNewsClient.HOST,
+                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H);
+            CACHE_ENABLED_HOSTS.put(AlgoliaClient.HOST,
+                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H);
+            CACHE_ENABLED_HOSTS.put(ReadabilityClient.HOST,
+                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_24H);
         }
         private final Context mContext;
 
@@ -215,7 +217,7 @@ public class ActivityModule {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
-            boolean forceCache = CACHE_ENABLED_HOSTS.contains(request.url().host()) &&
+            boolean forceCache = CACHE_ENABLED_HOSTS.containsKey(request.url().host()) &&
                     !AppUtils.hasConnection(mContext);
             return chain.proceed(forceCache ?
                     request.newBuilder()
@@ -231,14 +233,14 @@ public class ActivityModule {
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             Response response = chain.proceed(request);
-            if (!ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS.contains(request.url().host())) {
+            if (!ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS
+                    .containsKey(request.url().host())) {
                 return response;
             } else {
                 return response.newBuilder()
-                        .header("Cache-Control", new CacheControl.Builder()
-                                .maxAge(1, TimeUnit.HOURS)
-                                .build()
-                                .toString())
+                        .header("Cache-Control",
+                                ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS
+                                        .get(request.url().host()))
                         .build();
             }
         }
