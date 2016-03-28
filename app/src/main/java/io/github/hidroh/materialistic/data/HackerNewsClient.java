@@ -56,26 +56,32 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     @Override
-    public void getStories(@FetchMode String filter, final ResponseListener<Item[]> listener) {
+    public void getStories(@FetchMode String filter, @CacheMode int cacheMode,
+                           final ResponseListener<Item[]> listener) {
         if (listener == null) {
             return;
         }
         Call<int[]> call;
         switch (filter) {
             case NEW_FETCH_MODE:
-                call = mRestService.newStories();
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkNewStories() : mRestService.newStories();
                 break;
             case SHOW_FETCH_MODE:
-                call = mRestService.showStories();
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkShowStories() : mRestService.showStories();
                 break;
             case ASK_FETCH_MODE:
-                call = mRestService.askStories();
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkAskStories() : mRestService.askStories();
                 break;
             case JOBS_FETCH_MODE:
-                call = mRestService.jobStories();
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkJobStories() : mRestService.jobStories();
                 break;
             default:
-                call = mRestService.topStories();
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkTopStories() : mRestService.topStories();
                 break;
         }
         call.enqueue(new Callback<int[]>() {
@@ -172,20 +178,45 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     interface RestService {
+        @Headers("Cache-Control: max-age=3600")
         @GET("topstories.json")
         Call<int[]> topStories();
 
+        @Headers("Cache-Control: max-age=3600")
         @GET("newstories.json")
         Call<int[]> newStories();
 
+        @Headers("Cache-Control: max-age=3600")
         @GET("showstories.json")
         Call<int[]> showStories();
 
+        @Headers("Cache-Control: max-age=3600")
         @GET("askstories.json")
         Call<int[]> askStories();
 
+        @Headers("Cache-Control: max-age=3600")
         @GET("jobstories.json")
         Call<int[]> jobStories();
+
+        @Headers("Cache-Control: no-cache")
+        @GET("topstories.json")
+        Call<int[]> networkTopStories();
+
+        @Headers("Cache-Control: no-cache")
+        @GET("newstories.json")
+        Call<int[]> networkNewStories();
+
+        @Headers("Cache-Control: no-cache")
+        @GET("showstories.json")
+        Call<int[]> networkShowStories();
+
+        @Headers("Cache-Control: no-cache")
+        @GET("askstories.json")
+        Call<int[]> networkAskStories();
+
+        @Headers("Cache-Control: no-cache")
+        @GET("jobstories.json")
+        Call<int[]> networkJobStories();
 
         @Headers("Cache-Control: max-age=3600")
         @GET("item/{itemId}.json")

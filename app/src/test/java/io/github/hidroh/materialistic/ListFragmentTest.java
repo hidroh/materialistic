@@ -42,9 +42,9 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -94,7 +94,11 @@ public class ListFragmentTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
-        verify(itemManager, times(2)).getStories(any(String.class),
+        verify(itemManager).getStories(any(String.class),
+                eq(ItemManager.MODE_DEFAULT),
+                any(ResponseListener.class));
+        verify(itemManager).getStories(any(String.class),
+                eq(ItemManager.MODE_NETWORK),
                 any(ResponseListener.class));
         controller.pause().stop().destroy();
     }
@@ -109,7 +113,9 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {
             @Override
             public String getId() {
@@ -121,7 +127,9 @@ public class ListFragmentTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
-        verify(itemManager).getStories(any(String.class), listener.capture());
+        verify(itemManager).getStories(any(String.class),
+                eq(ItemManager.MODE_NETWORK),
+                listener.capture());
         listener.getValue().onResponse(new Item[]{
                 new TestHnItem(1L),
                 new TestHnItem(2L)
@@ -150,7 +158,9 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.list, fragment)
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {
         }});
         reset(itemManager);
@@ -159,6 +169,7 @@ public class ListFragmentTest {
         fragment.onActivityCreated(state);
         // should not trigger another data request
         verify(itemManager, never()).getStories(any(String.class),
+                eq(ItemManager.MODE_DEFAULT),
                 any(ResponseListener.class));
         controller.pause().stop().destroy();
     }
@@ -173,7 +184,9 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new Item[0]);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
@@ -190,7 +203,9 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onError(null);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat(activity.findViewById(R.id.empty)).isVisible();
@@ -207,14 +222,18 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {}});
         Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         reset(itemManager);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_NETWORK),
+                listener.capture());
         listener.getValue().onError(null);
         Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
         assertNotNull(ShadowToast.getLatestToast());
@@ -231,7 +250,9 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         controller.pause().stop().destroy();
         listener.getValue().onError(null);
         // no exception
@@ -247,7 +268,9 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), listener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         controller.pause().stop().destroy();
         listener.getValue().onResponse(null);
         // no exception

@@ -63,7 +63,7 @@ public class AlgoliaPopularClientTest {
 
     @Test
     public void testGetStories() {
-        client.getStories(range, mock(ResponseListener.class));
+        client.getStories(range, ItemManager.MODE_DEFAULT, mock(ResponseListener.class));
         verify(TestRestServiceFactory.algoliaRestService)
                 .searchByMinTimestamp(contains("created_at_i>"));
         verify(call).enqueue(any(Callback.class));

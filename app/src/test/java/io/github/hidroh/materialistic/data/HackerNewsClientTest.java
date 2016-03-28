@@ -70,6 +70,11 @@ public class HackerNewsClientTest {
         when(TestRestServiceFactory.hnRestService.jobStories()).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.newStories()).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.showStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkAskStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkTopStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkJobStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkNewStories()).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkShowStories()).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.user(anyString())).thenReturn(call);
     }
 
@@ -158,13 +163,13 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetStoriesNoListener() {
-        client.getStories(ItemManager.TOP_FETCH_MODE, null);
+        client.getStories(ItemManager.TOP_FETCH_MODE, ItemManager.MODE_DEFAULT, null);
         verify(TestRestServiceFactory.hnRestService, never()).topStories();
     }
 
     @Test
     public void testGetTopStoriesSuccess() {
-        client.getStories(ItemManager.TOP_FETCH_MODE, storiesListener);
+        client.getStories(ItemManager.TOP_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.hnRestService).topStories();
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(null, Response.success(new int[]{1, 2}));
@@ -174,7 +179,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetNewStoriesNull() {
-        client.getStories(ItemManager.NEW_FETCH_MODE, storiesListener);
+        client.getStories(ItemManager.NEW_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.hnRestService).newStories();
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(null, Response.success(null));
@@ -184,7 +189,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetAskEmpty() {
-        client.getStories(ItemManager.ASK_FETCH_MODE, storiesListener);
+        client.getStories(ItemManager.ASK_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.hnRestService).askStories();
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(null, Response.success(new int[]{}));
@@ -194,7 +199,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetShowFailure() {
-        client.getStories(ItemManager.SHOW_FETCH_MODE, storiesListener);
+        client.getStories(ItemManager.SHOW_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.hnRestService).showStories();
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, new Throwable("message"));
@@ -203,11 +208,29 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetJobsFailureNoMessage() {
-        client.getStories(ItemManager.JOBS_FETCH_MODE, storiesListener);
+        client.getStories(ItemManager.JOBS_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.hnRestService).jobStories();
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
         verify(storiesListener).onError(eq(""));
+    }
+
+    @Test
+    public void testGetStoriesForceNetwork() {
+        client.getStories(ItemManager.TOP_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
+        verify(TestRestServiceFactory.hnRestService).networkTopStories();
+
+        client.getStories(ItemManager.NEW_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
+        verify(TestRestServiceFactory.hnRestService).networkNewStories();
+
+        client.getStories(ItemManager.ASK_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
+        verify(TestRestServiceFactory.hnRestService).networkAskStories();
+
+        client.getStories(ItemManager.JOBS_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
+        verify(TestRestServiceFactory.hnRestService).networkJobStories();
+
+        client.getStories(ItemManager.SHOW_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
+        verify(TestRestServiceFactory.hnRestService).networkShowStories();
     }
 
     @Test

@@ -60,7 +60,9 @@ public class ListFragmentViewHolderEdgeTest {
                 .add(android.R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestItem() {
         }});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
