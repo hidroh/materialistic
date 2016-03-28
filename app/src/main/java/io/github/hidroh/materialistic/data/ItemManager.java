@@ -56,14 +56,15 @@ public interface ItemManager {
     /**
      * Gets array of top stories
      * @param filter    filter of stories to fetch
+     * @param cacheMode cache mode
      * @param listener  callback to be notified on response
      */
-    void getStories(String filter, final ResponseListener<Item[]> listener);
+    void getStories(String filter, @CacheMode int cacheMode, final ResponseListener<Item[]> listener);
 
     /**
      * Gets individual item by ID
      * @param itemId        item ID
-     * @param cacheMode     cache mode,
+     * @param cacheMode     cache mode
      * @param listener      callback to be notified on response
      */
     void getItem(String itemId, @CacheMode int cacheMode, ResponseListener<Item> listener);

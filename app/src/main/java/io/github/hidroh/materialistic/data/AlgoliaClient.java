@@ -44,7 +44,8 @@ public class AlgoliaClient implements ItemManager {
     }
 
     @Override
-    public void getStories(String filter, final ResponseListener<Item[]> listener) {
+    public void getStories(String filter, @CacheMode int cacheMode,
+                           final ResponseListener<Item[]> listener) {
         if (listener == null) {
             return;
         }
@@ -80,7 +81,7 @@ public class AlgoliaClient implements ItemManager {
     }
 
     protected void search(String filter, Callback<AlgoliaHits> callback) {
-        // TODO add cache header
+        // TODO add ETag header
         Call<AlgoliaHits> call;
         if (sSortByTime) {
             call = mRestService.searchByDate(filter);

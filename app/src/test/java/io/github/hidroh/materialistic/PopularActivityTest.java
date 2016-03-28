@@ -68,7 +68,7 @@ public class PopularActivityTest {
     public void testFilter() {
         shadowOf(activity).clickMenuItem(menuResId);
         verify(itemManager, atLeastOnce()).getStories(eq(expectedRange),
-                any(ResponseListener.class));
+                eq(ItemManager.MODE_DEFAULT), any(ResponseListener.class));
         assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
         assertEquals(expectedRange, Preferences.getPopularRange(activity));
         Bundle savedState = new Bundle();

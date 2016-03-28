@@ -181,7 +181,7 @@ public class ListFragment extends BaseListFragment {
 
     private void refresh() {
         mAdapter.setShowAll(true);
-        mItemManager.getStories(mFilter, new ListResponseListener(this));
+        mItemManager.getStories(mFilter, mCacheMode, new ListResponseListener(this));
     }
 
     private void onItemsLoaded(Item[] items) {

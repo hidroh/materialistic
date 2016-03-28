@@ -66,14 +66,14 @@ public class AlgoliaClientTest {
 
     @Test
     public void testGetStoriesNoListener() {
-        client.getStories("filter", null);
+        client.getStories("filter", ItemManager.MODE_DEFAULT, null);
         verify(TestRestServiceFactory.algoliaRestService, never()).searchByDate(eq("filter"));
         verify(call, never()).enqueue(any(Callback.class));
     }
 
     @Test
     public void testGetStoriesSuccess() {
-        client.getStories("filter", storiesListener);
+        client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson(
@@ -87,14 +87,14 @@ public class AlgoliaClientTest {
     @Test
     public void testGetStoriesSuccessSortByPopularity() {
         client.sSortByTime = false;
-        client.getStories("filter", storiesListener);
+        client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).search(eq("filter"));
         verify(call).enqueue(any(Callback.class));
     }
 
     @Test
     public void testGetStoriesEmpty() {
-        client.getStories("filter", storiesListener);
+        client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson("{\"hits\":[]}",
@@ -106,7 +106,7 @@ public class AlgoliaClientTest {
 
     @Test
     public void testGetStoriesFailure() {
-        client.getStories("filter", storiesListener);
+        client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
         getStoriesCallback.getValue().onFailure(null, new Throwable("message"));
@@ -115,7 +115,7 @@ public class AlgoliaClientTest {
 
     @Test
     public void testGetStoriesFailureNoMessage() {
-        client.getStories("filter", storiesListener);
+        client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
         getStoriesCallback.getValue().onFailure(null, null);

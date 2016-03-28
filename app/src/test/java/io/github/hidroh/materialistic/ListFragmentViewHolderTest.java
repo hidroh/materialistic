@@ -116,7 +116,9 @@ public class ListFragmentViewHolderTest {
                 .add(android.R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{item});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = (ShadowRecyclerViewAdapter) ShadowExtractor.extract(recyclerView.getAdapter());
@@ -149,7 +151,9 @@ public class ListFragmentViewHolderTest {
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_NETWORK),
+                storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestHnItem(2) {
             @Override
             public int getRank() {
@@ -171,7 +175,9 @@ public class ListFragmentViewHolderTest {
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_NETWORK),
+                storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1) {
             @Override
             public int getRank() {
@@ -191,7 +197,9 @@ public class ListFragmentViewHolderTest {
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_NETWORK),
+                storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1)});
         verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(1) {
@@ -215,7 +223,9 @@ public class ListFragmentViewHolderTest {
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(anyString(), storiesListener.capture());
+        verify(itemManager).getStories(anyString(),
+                eq(ItemManager.MODE_NETWORK),
+                storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestHnItem(2) {
             @Override
             public int getRank() {
