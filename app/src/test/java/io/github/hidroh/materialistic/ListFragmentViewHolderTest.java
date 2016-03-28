@@ -137,7 +137,9 @@ public class ListFragmentViewHolderTest {
         assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
-        assertThat(holder.itemView.findViewById(R.id.comment)).isNotVisible();
+        assertThat((TextView) holder.itemView.findViewById(R.id.comment))
+                .isVisible()
+                .hasTextString(R.string.comments);
         assertViewed();
     }
 

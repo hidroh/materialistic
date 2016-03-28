@@ -29,7 +29,6 @@ import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -124,13 +123,14 @@ public class StoryView extends RelativeLayout implements Checkable {
                         .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             }
             if (item.getKidCount() > 0) {
-                ((Button) mCommentButton).setText(getContext().getResources()
-                        .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));
-                mCommentButton.setVisibility(View.VISIBLE);
+                mCommentButton.setText(getContext().getResources()
+                        .getQuantityString(R.plurals.comments_count,
+                                item.getKidCount(), item.getKidCount()));
             } else {
-                mCommentButton.setVisibility(View.GONE);
+                mCommentButton.setText(R.string.comments);
             }
         }
+        mCommentButton.setVisibility(View.VISIBLE);
         mTitleTextView.setText(getContext().getString(R.string.loading_text));
         mTitleTextView.setText(story.getDisplayedTitle());
         mPostedTextView.setText(story.getDisplayedTime(getContext(), true, false));
@@ -198,8 +198,9 @@ public class StoryView extends RelativeLayout implements Checkable {
                 String.valueOf(story.getRank()), updated));
         setPromoted(promoted);
         if (story.getKidCount() > 0) {
-            ((Button) mCommentButton).setText(decorateUpdated(getContext().getResources()
-                    .getQuantityString(R.plurals.comments_count, story.getKidCount(), story.getKidCount()),
+            mCommentButton.setText(decorateUpdated(getContext().getResources()
+                    .getQuantityString(R.plurals.comments_count,
+                            story.getKidCount(), story.getKidCount()),
                     story.hasNewKids()));
         }
     }
