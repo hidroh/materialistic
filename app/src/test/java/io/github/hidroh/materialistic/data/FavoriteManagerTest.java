@@ -19,6 +19,7 @@ import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
@@ -116,6 +117,8 @@ public class FavoriteManagerTest {
             }
         });
         assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        assertTrue(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
+                MaterialisticProvider.PROVIDER_AUTHORITY));
     }
 
     @Test

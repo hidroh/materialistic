@@ -23,6 +23,15 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
+    <permission android:name="io.github.hidroh.materialistic.permission.SYNC_ITEM"
+        android:protectionLevel="signature" />
+    <permission android:name="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="io.github.hidroh.materialistic.permission.SYNC_ITEM" />
+    <uses-permission android:name="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS" />
 
     <uses-sdk tools:overrideLibrary="android.support.customtabs" />
 
@@ -188,13 +197,31 @@
             android:theme="@style/AppAlertDialog">
         </activity>
         <service android:name=".accounts.AuthenticatorService"
-            tools:ignore="ExportedService">
+            android:permission="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
+        </service>
+        <service android:name=".data.ItemSyncService$DummyAuthenticatorService"
+            android:permission="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/syncauthenticator" />
+        </service>
+        <service android:name=".data.ItemSyncService"
+            android:process=":sync"
+            android:permission="io.github.hidroh.materialistic.permission.SYNC_ITEM">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
         </service>
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"
@@ -204,6 +231,11 @@
             android:authorities="io.github.hidroh.materialistic.recentprovider"
             android:name=".data.SearchRecentSuggestionsProvider"
             android:exported="false" />
+        <receiver android:name=".data.ItemSyncWifiReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -42,6 +42,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ItemSyncService;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
@@ -93,7 +94,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
                 SinglePageItemRecyclerViewAdapter.class,
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,
-                ThreadPreviewRecyclerViewAdapter.class
+                ThreadPreviewRecyclerViewAdapter.class,
+                ItemSyncService.class
         },
         library = true
 )
