@@ -74,6 +74,8 @@
     <string name="pref_max_lines_title">Comment display</string>
     <string name="pref_lazy_load_title">Lazy load content</string>
     <string name="pref_lazy_load_summary">Load content only when you switch to its tab</string>
+    <string name="pref_saved_item_sync_title">Auto-download saved stories</string>
+    <string name="pref_saved_item_sync_summary">Prefetch for offline access (when on wifi)</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>

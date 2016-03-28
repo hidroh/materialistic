@@ -82,4 +82,10 @@
         app:dialogTitle="@string/pref_lazy_load_title"
         app:dialogLayout="@layout/help_lazy_load" />
 
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_saved_item_sync"
+        android:title="@string/pref_saved_item_sync_title"
+        android:summary="@string/pref_saved_item_sync_summary"
+        android:defaultValue="false" />
+
 </android.support.v7.preference.PreferenceScreen>

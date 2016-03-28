@@ -213,6 +213,11 @@ public class Preferences {
                 .getBoolean(context.getString(R.string.pref_lazy_load), true);
     }
 
+    public static boolean isSavedItemSyncEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.pref_saved_item_sync), false);
+    }
+
     public static String getUsername(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.pref_username), null);
