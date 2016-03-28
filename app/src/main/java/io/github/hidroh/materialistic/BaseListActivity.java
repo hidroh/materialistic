@@ -40,6 +40,7 @@ import android.view.View;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
@@ -239,11 +240,21 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
      */
     protected abstract Fragment instantiateListFragment();
 
+    /**
+     * Gets cache mode for {@link ItemManager}
+     * @return  cache mode
+     */
+    @ItemManager.CacheMode
+    protected int getItemCacheMode() {
+        return ItemManager.MODE_DEFAULT;
+    }
+
     private void openSinglePaneItem(WebItem item) {
         if (mExternalBrowser) {
             AppUtils.openWebUrlExternal(this, item.getUrl());
         } else {
             startActivity(new Intent(this, ItemActivity.class)
+                    .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
                     .putExtra(ItemActivity.EXTRA_ITEM, item));
         }
     }
@@ -277,7 +288,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     private void bindViewPager(WebItem item) {
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
-                getSupportFragmentManager(), item, true);
+                getSupportFragmentManager(), item, true, getItemCacheMode());
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {

@@ -46,7 +46,6 @@ import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
@@ -95,7 +94,9 @@ public class ItemFragmentMultiPageTest {
                 ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
                 R.id.content_frame);
-        verify(hackerNewsClient).getItem(eq("1"), listener.capture());
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
             public Item[] getKidItems() {
@@ -172,7 +173,9 @@ public class ItemFragmentMultiPageTest {
         ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
                 ShadowExtractor.extract(recyclerView.getAdapter());
         adapter.makeItemVisible(0);
-        verify(hackerNewsClient).getItem(eq("1"), listener.capture());
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new TestHnItem(1L) {
             @Override
             public String getTitle() {
@@ -196,7 +199,12 @@ public class ItemFragmentMultiPageTest {
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(fragment.getView().findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(hackerNewsClient, times(2)).getItem(eq("1"), listener.capture());
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_NETWORK),
+                listener.capture());
         listener.getAllValues().get(1).onError(null);
         assertThat((SwipeRefreshLayout) fragment.getView().findViewById(R.id.swipe_layout))
                 .isNotRefreshing();

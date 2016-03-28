@@ -18,7 +18,10 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -26,6 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
 /**
@@ -89,14 +93,44 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     @Override
-    public void getItem(String itemId, final ResponseListener<Item> listener) {
+    public void getItem(final String itemId, @CacheMode int cacheMode, ResponseListener<Item> listener) {
         if (listener == null) {
             return;
         }
-        ItemCallbackWrapper wrapper = new ItemCallbackWrapper(listener);
+        final ItemCallbackWrapper wrapper = new ItemCallbackWrapper(listener);
         mSessionManager.isViewed(mContentResolver, itemId, wrapper);
         mFavoriteManager.check(mContentResolver, itemId, wrapper);
-        mRestService.item(itemId).enqueue(wrapper);
+        switch (cacheMode) {
+            case MODE_DEFAULT:
+            default:
+                mRestService.item(itemId).enqueue(wrapper);
+                break;
+            case MODE_NETWORK:
+                mRestService.networkItem(itemId).enqueue(wrapper);
+                break;
+            case MODE_CACHE:
+                // try fetching from cache first, fallback to default fetching if no results
+                new AsyncTask<String, Void, Response<HackerNewsItem>>() {
+                    @Override
+                    protected Response<HackerNewsItem> doInBackground(String... params) {
+                        try {
+                            return mRestService.cachedItem(params[0]).execute();
+                        } catch (IOException e) {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(Response<HackerNewsItem> response) {
+                        if (response != null) {
+                            wrapper.onResponse(null, response);
+                        } else {
+                            mRestService.item(itemId).enqueue(wrapper);
+                        }
+                    }
+                }.execute(itemId);
+                break;
+        }
     }
 
     @Override
@@ -153,8 +187,17 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @GET("jobstories.json")
         Call<int[]> jobStories();
 
+        @Headers("Cache-Control: max-age=3600")
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> item(@Path("itemId") String itemId);
+
+        @Headers("Cache-Control: no-cache")
+        @GET("item/{itemId}.json")
+        Call<HackerNewsItem> networkItem(@Path("itemId") String itemId);
+
+        @Headers("Cache-Control: max-age=2147483647")
+        @GET("item/{itemId}.json")
+        Call<HackerNewsItem> cachedItem(@Path("itemId") String itemId);
 
         @GET("user/{userId}.json")
         Call<UserItem> user(@Path("userId") String userId);

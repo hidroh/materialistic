@@ -42,6 +42,7 @@ import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.ItemManager;
 
 public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         <ListRecyclerViewAdapter.ItemViewHolder, Favorite> {
@@ -213,6 +214,11 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     @Override
     protected boolean isSelected(String itemId) {
         return super.isSelected(itemId) || mSelected.containsValue(itemId);
+    }
+
+    @Override
+    protected int getItemCacheMode() {
+        return ItemManager.MODE_CACHE;
     }
 
     public void setCursor(FavoriteManager.Cursor cursor) {

@@ -11,6 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -61,6 +63,8 @@ public class HackerNewsClientTest {
         userListener = mock(ResponseListener.class);
         call = mock(Call.class);
         when(TestRestServiceFactory.hnRestService.item(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.askStories()).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.topStories()).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.jobStories()).thenReturn(call);
@@ -71,13 +75,13 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetItemNoListener() {
-        client.getItem("1", null);
+        client.getItem("1", ItemManager.MODE_DEFAULT, null);
         verify(TestRestServiceFactory.hnRestService, never()).item(anyString());
     }
 
     @Test
     public void testGetItemSuccess() {
-        client.getItem("1", itemListener);
+        client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
         verify(TestRestServiceFactory.hnRestService).item(eq("1"));
         verify(call).enqueue(callbackCaptor.capture());
         HackerNewsItem hnItem = mock(HackerNewsItem.class);
@@ -92,8 +96,39 @@ public class HackerNewsClientTest {
     }
 
     @Test
+    public void testGetItemForceNetwork() {
+        client.getItem("1", ItemManager.MODE_NETWORK, itemListener);
+        verify(TestRestServiceFactory.hnRestService).networkItem(eq("1"));
+    }
+
+    @Test
+    public void testGetItemForceCache() throws IOException {
+        HackerNewsItem hnItem = mock(HackerNewsItem.class);
+        when(call.execute()).thenReturn(Response.success(hnItem));
+        client.getItem("1", ItemManager.MODE_CACHE, itemListener);
+        verify(TestRestServiceFactory.hnRestService).cachedItem(eq("1"));
+        verify(call).execute();
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
+                sessionCallback.capture());
+        sessionCallback.getValue().onCheckViewedComplete(false);
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
+                favoriteCallback.capture());
+        favoriteCallback.getValue().onCheckComplete(false);
+        verify(itemListener).onResponse(eq(hnItem));
+    }
+
+    @Test
+    public void testGetItemForceCacheUnsatisfiable() throws IOException {
+        when(call.execute()).thenThrow(IOException.class);
+        client.getItem("1", ItemManager.MODE_CACHE, itemListener);
+        verify(TestRestServiceFactory.hnRestService).cachedItem(eq("1"));
+        verify(call).execute();
+        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
+    }
+
+    @Test
     public void testGetItemFailure() {
-        client.getItem("1", itemListener);
+        client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
         verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
                 favoriteCallback.capture());
         favoriteCallback.getValue().onCheckComplete(true);
@@ -108,7 +143,7 @@ public class HackerNewsClientTest {
 
     @Test
     public void testGetItemFailureNoMessage() {
-        client.getItem("1", itemListener);
+        client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
         verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
                 sessionCallback.capture());
         sessionCallback.getValue().onCheckViewedComplete(true);

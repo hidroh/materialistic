@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.data;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
@@ -41,6 +42,17 @@ public interface ItemManager {
     String SHOW_FETCH_MODE = "show";
     String JOBS_FETCH_MODE = "jobs";
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({
+            MODE_DEFAULT,
+            MODE_CACHE,
+            MODE_NETWORK
+    })
+    @interface CacheMode {}
+    int MODE_DEFAULT = 0;
+    int MODE_CACHE =1;
+    int MODE_NETWORK = 2;
+
     /**
      * Gets array of top stories
      * @param filter    filter of stories to fetch
@@ -50,9 +62,10 @@ public interface ItemManager {
 
     /**
      * Gets individual item by ID
-     * @param itemId    item ID
-     * @param listener  callback to be notified on response
+     * @param itemId        item ID
+     * @param cacheMode     cache mode,
+     * @param listener      callback to be notified on response
      */
-    void getItem(String itemId, ResponseListener<Item> listener);
+    void getItem(String itemId, @CacheMode int cacheMode, ResponseListener<Item> listener);
 
 }

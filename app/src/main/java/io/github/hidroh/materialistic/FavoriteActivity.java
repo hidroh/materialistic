@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.WebItem;
 
@@ -106,5 +107,10 @@ public class FavoriteActivity extends BaseListActivity {
     @Override
     protected boolean isSearchable() {
         return false;
+    }
+
+    @Override
+    protected int getItemCacheMode() {
+        return ItemManager.MODE_CACHE;
     }
 }

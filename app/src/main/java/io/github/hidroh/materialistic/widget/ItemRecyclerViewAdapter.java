@@ -66,6 +66,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private int mContentMaxLines = Integer.MAX_VALUE;
     private String mUsername;
     private final Set<String> mLineCounted = new HashSet<>();
+    private int mCacheMode = ItemManager.MODE_DEFAULT;
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
@@ -129,6 +130,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         return mContext != null;
     }
 
+    public void setCacheMode(int cacheMode) {
+        mCacheMode = cacheMode;
+    }
+
     protected abstract Item getItem(int position);
 
     @CallSuper
@@ -165,7 +170,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void load(int adapterPosition, Item item) {
-        mItemManager.getItem(item.getId(), new ItemResponseListener(this, adapterPosition, item));
+        mItemManager.getItem(item.getId(), mCacheMode,
+                new ItemResponseListener(this, adapterPosition, item));
     }
 
     protected void onItemLoaded(int position, Item item) {

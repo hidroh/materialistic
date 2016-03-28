@@ -90,7 +90,7 @@ public class WebFragmentLocalTest {
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume().visible();
-        verify(itemManager).getItem(eq("1"), listener.capture());
+        verify(itemManager).getItem(eq("1"), eq(ItemManager.MODE_DEFAULT), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
             public String getText() {

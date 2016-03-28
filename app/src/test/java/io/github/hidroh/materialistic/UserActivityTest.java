@@ -185,7 +185,9 @@ public class UserActivityTest {
         ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
                 ShadowExtractor.extract(recyclerView.getAdapter());
         adapter.makeItemVisible(0);
-        verify(itemManager).getItem(eq("1"), itemCaptor.capture());
+        verify(itemManager).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(1L) {
             @Override
             public String getText() {
@@ -217,7 +219,9 @@ public class UserActivityTest {
         ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
                 ShadowExtractor.extract(recyclerView.getAdapter());
         adapter.makeItemVisible(1);
-        verify(itemManager).getItem(eq("2"), itemCaptor.capture());
+        verify(itemManager).getItem(eq("2"),
+                eq(ItemManager.MODE_DEFAULT),
+                itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(2L) {
             @Override
             public String getTitle() {
@@ -258,7 +262,9 @@ public class UserActivityTest {
         ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
                 ShadowExtractor.extract(recyclerView.getAdapter());
         adapter.makeItemVisible(0);
-        verify(itemManager).getItem(eq("1"), itemCaptor.capture());
+        verify(itemManager).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(1L) {
             @Override
             public boolean isDeleted() {

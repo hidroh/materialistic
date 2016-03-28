@@ -31,6 +31,7 @@ import io.github.hidroh.materialistic.test.TestItem;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
@@ -71,7 +72,7 @@ public class ListFragmentViewHolderEdgeTest {
 
     @Test
     public void testNullResponse() {
-        verify(itemManager).getItem(anyString(), listener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), listener.capture());
         listener.getValue().onResponse(null);
         assertThat((TextView) holder.itemView.findViewById(R.id.title))
                 .hasText(R.string.loading_text);
@@ -79,7 +80,7 @@ public class ListFragmentViewHolderEdgeTest {
 
     @Test
     public void testErrorResponse() {
-        verify(itemManager).getItem(anyString(), listener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), listener.capture());
         listener.getValue().onError(null);
         assertThat((TextView) holder.itemView.findViewById(R.id.title))
                 .hasText(R.string.loading_text);

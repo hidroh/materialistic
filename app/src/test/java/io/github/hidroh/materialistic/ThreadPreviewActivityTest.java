@@ -94,7 +94,7 @@ public class ThreadPreviewActivityTest {
         ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter)
                 ShadowExtractor.extract(recyclerView.getAdapter());
         shadowAdapter.makeItemVisible(0);
-        verify(itemManager).getItem(eq("2"), itemCaptor.capture());
+        verify(itemManager).getItem(eq("2"), eq(ItemManager.MODE_DEFAULT), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(2L) {
             @NonNull
             @Override
@@ -117,7 +117,7 @@ public class ThreadPreviewActivityTest {
                 return "username";
             }
         });
-        verify(itemManager).getItem(eq("1"), itemCaptor.capture());
+        verify(itemManager).getItem(eq("1"), eq(ItemManager.MODE_DEFAULT), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(1L) {
             @NonNull
             @Override
