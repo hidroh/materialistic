@@ -130,7 +130,7 @@ public class ListFragmentViewHolderTest {
         cv.put("itemid", "1");
         shadowOf(ShadowApplication.getInstance().getContentResolver())
                 .insert(MaterialisticProvider.URI_VIEWED, cv);
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
@@ -157,7 +157,9 @@ public class ListFragmentViewHolderTest {
             }
         }});
         activity.findViewById(R.id.snackbar_action).performClick();
-        verify(itemManager, atLeastOnce()).getItem(anyString(), itemListener.capture());
+        verify(itemManager, atLeastOnce()).getItem(anyString(),
+                eq(ItemManager.MODE_NETWORK),
+                itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(2));
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
@@ -176,7 +178,7 @@ public class ListFragmentViewHolderTest {
                 return 45;
             }
         }});
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(1));
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank))
@@ -191,7 +193,7 @@ public class ListFragmentViewHolderTest {
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(anyString(), storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1)});
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(1) {
             @Override
             public int getDescendants() {
@@ -220,7 +222,7 @@ public class ListFragmentViewHolderTest {
                 return 46;
             }
         }});
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(2));
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
@@ -245,7 +247,7 @@ public class ListFragmentViewHolderTest {
                 return new long[]{2};
             }
         });
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         View commentButton = holder.itemView.findViewById(R.id.comment);
@@ -268,7 +270,7 @@ public class ListFragmentViewHolderTest {
                 return JOB_TYPE;
             }
         });
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.source)).isEmpty();
@@ -282,7 +284,7 @@ public class ListFragmentViewHolderTest {
                 return POLL_TYPE;
             }
         });
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.source)).isEmpty();
@@ -290,7 +292,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testItemClick() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performClick();
         assertViewed();
@@ -300,7 +302,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testViewedObserver() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         assertNotViewed();
         controller.pause();
@@ -319,7 +321,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testFavoriteObserver() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         item.setFavorite(true);
         itemListener.getValue().onResponse(item);
         assertTrue(item.isFavorite());
@@ -366,7 +368,7 @@ public class ListFragmentViewHolderTest {
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
                 .next());
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
@@ -396,7 +398,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testViewUser() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
@@ -411,7 +413,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testVoteItem() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
@@ -434,7 +436,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testVoteItemPromptToLogin() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
@@ -450,7 +452,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testVoteItemFailed() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
@@ -465,7 +467,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testReply() {
-        verify(itemManager).getItem(anyString(), itemListener.capture());
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();

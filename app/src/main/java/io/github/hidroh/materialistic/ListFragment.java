@@ -49,6 +49,7 @@ public class ListFragment extends BaseListFragment {
     public static final String EXTRA_ITEM_MANAGER = ListFragment.class.getName() + ".EXTRA_ITEM_MANAGER";
     public static final String EXTRA_FILTER = ListFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
+    private static final String STATE_CACHE_MODE = "state:cacheMode";
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -72,6 +73,7 @@ public class ListFragment extends BaseListFragment {
     private View mEmptyView;
     private RefreshCallback mRefreshCallback;
     private String mFilter;
+    private int mCacheMode = ItemManager.MODE_DEFAULT;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -92,11 +94,13 @@ public class ListFragment extends BaseListFragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mFilter = savedInstanceState.getString(STATE_FILTER);
+            mCacheMode = savedInstanceState.getInt(STATE_CACHE_MODE);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
             mAdapter.setHighlightUpdated(Preferences.highlightUpdatedEnabled(getActivity()));
             mAdapter.setUsername(Preferences.getUsername(getActivity()));
         }
+        mAdapter.setCacheMode(mCacheMode);
     }
 
     @Override
@@ -121,6 +125,8 @@ public class ListFragment extends BaseListFragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mCacheMode = ItemManager.MODE_NETWORK;
+                mAdapter.setCacheMode(mCacheMode);
                 refresh();
             }
         });
@@ -149,6 +155,7 @@ public class ListFragment extends BaseListFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, mFilter);
+        outState.putInt(STATE_CACHE_MODE, mCacheMode);
     }
 
     @Override

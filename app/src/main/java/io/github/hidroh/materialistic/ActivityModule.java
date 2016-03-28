@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -59,6 +60,7 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -210,29 +212,33 @@ public class ActivityModule {
 
         @Override
         public Response intercept(Chain chain) throws IOException {
-            if (!CACHE_ENABLED_HOSTS.contains(chain.request().url().host())) {
-                return chain.proceed(chain.request());
-            }
-            return chain.proceed(chain.request().newBuilder()
-                    .cacheControl(AppUtils.hasConnection(mContext) ?
-                            CacheControl.FORCE_NETWORK : CacheControl.FORCE_CACHE)
-                    .build());
+            Request request = chain.request();
+            boolean forceCache = CACHE_ENABLED_HOSTS.contains(request.url().host()) &&
+                    !AppUtils.hasConnection(mContext);
+            return chain.proceed(forceCache ?
+                    request.newBuilder()
+                            .cacheControl(CacheControl.FORCE_CACHE)
+                            .build() :
+                    request);
         }
     }
 
-    static class CacheOverrideNetworkInterceptor implements Interceptor {
+    public static class CacheOverrideNetworkInterceptor implements Interceptor {
 
         @Override
         public Response intercept(Chain chain) throws IOException {
-            if (!ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS
-                    .contains(chain.request().url().host())) {
-                return chain.proceed(chain.request());
+            Request request = chain.request();
+            Response response = chain.proceed(request);
+            if (!ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS.contains(request.url().host())) {
+                return response;
+            } else {
+                return response.newBuilder()
+                        .header("Cache-Control", new CacheControl.Builder()
+                                .maxAge(1, TimeUnit.HOURS)
+                                .build()
+                                .toString())
+                        .build();
             }
-            return chain.proceed(chain.request())
-                    .newBuilder()
-                    .removeHeader("Cache-Control")
-                    .build();
-
         }
     }
 

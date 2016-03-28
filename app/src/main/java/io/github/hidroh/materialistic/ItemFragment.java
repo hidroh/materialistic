@@ -52,6 +52,7 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 public class ItemFragment extends LazyLoadFragment implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
+    public static final String EXTRA_CACHE_MODE = ItemFragment.class.getName() + ".EXTRA_CACHE_MODE";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
     private static final String STATE_ADAPTER_ITEMS = "state:adapterItems";
@@ -59,6 +60,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private static final String STATE_DISPLAY_OPTION = "state:displayOption";
     private static final String STATE_MAX_LINES = "state:maxLines";
     private static final String STATE_USERNAME = "state:username";
+    private static final String STATE_CACHE_MODE = "state:cacheMode";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
     private Item mItem;
@@ -73,6 +75,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private String mDisplayOption;
     private int mMaxLines;
     private String mUsername;
+    private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -106,6 +109,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
+            mCacheMode = savedInstanceState.getInt(STATE_CACHE_MODE, ItemManager.MODE_DEFAULT);
             mItem = savedInstanceState.getParcelable(STATE_ITEM);
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
             mAdapterItems = savedInstanceState.getParcelable(STATE_ADAPTER_ITEMS);
@@ -114,6 +118,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mMaxLines = savedInstanceState.getInt(STATE_MAX_LINES, Integer.MAX_VALUE);
             mUsername = savedInstanceState.getString(STATE_USERNAME);
         } else {
+            mCacheMode = getArguments().getInt(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT);
             WebItem item = getArguments().getParcelable(EXTRA_ITEM);
             if (item instanceof Item) {
                 mItem = (Item) item;
@@ -143,7 +148,10 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                 if (TextUtils.isEmpty(mItemId)) {
                     return;
                 }
-
+                mCacheMode = ItemManager.MODE_NETWORK;
+                if (mAdapter != null) {
+                    mAdapter.setCacheMode(mCacheMode);
+                }
                 loadKidData();
             }
         });
@@ -226,6 +234,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         outState.putString(STATE_DISPLAY_OPTION, mDisplayOption);
         outState.putInt(STATE_MAX_LINES, mMaxLines);
         outState.putString(STATE_USERNAME, mUsername);
+        outState.putInt(STATE_CACHE_MODE, mCacheMode);
     }
 
     @Override
@@ -251,7 +260,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     private void loadKidData() {
-        mItemManager.getItem(mItemId, new ItemResponseListener(this));
+        mItemManager.getItem(mItemId, mCacheMode, new ItemResponseListener(this));
     }
 
     private void onItemLoaded(Item item) {
@@ -282,6 +291,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems()
             );
         }
+        mAdapter.setCacheMode(mCacheMode);
         mAdapter.setMaxLines(mMaxLines);
         mAdapter.setHighlightUsername(mUsername);
         invalidateOptionsMenu();

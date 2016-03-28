@@ -60,8 +60,8 @@ public class AlgoliaClientTest {
 
     @Test
     public void testGetItem() {
-        client.getItem("1", itemListener);
-        verify(hackerNewsClient).getItem(eq("1"), eq(itemListener));
+        client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
+        verify(hackerNewsClient).getItem(eq("1"), eq(ItemManager.MODE_DEFAULT), eq(itemListener));
     }
 
     @Test

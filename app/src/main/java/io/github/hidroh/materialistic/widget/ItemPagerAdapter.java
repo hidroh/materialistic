@@ -35,13 +35,15 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     private final Context mContext;
     private final WebItem mItem;
     private final boolean mShowArticle;
+    private final int mCacheMode;
 
     public ItemPagerAdapter(Context context, FragmentManager fm,
-                            WebItem item, boolean showArticle) {
+                            WebItem item, boolean showArticle, int cacheMode) {
         super(fm);
         mContext = context;
         mItem = item;
         mShowArticle = showArticle;
+        mCacheMode = cacheMode;
     }
 
     @Override
@@ -52,6 +54,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         if (position == 0) {
             Bundle args = new Bundle();
             args.putParcelable(ItemFragment.EXTRA_ITEM, mItem);
+            args.putInt(ItemFragment.EXTRA_CACHE_MODE, mCacheMode);
             return Fragment.instantiate(mContext,
                     ItemFragment.class.getName(), args);
         }

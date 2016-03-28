@@ -187,7 +187,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         if (mItem instanceof Item) {
             AppUtils.setTextWithLinks(mText, ((Item) mItem).getText());
         } else {
-            mItemManager.getItem(mItem.getId(), new ItemResponseListener(this));
+            mItemManager.getItem(mItem.getId(), ItemManager.MODE_DEFAULT, new ItemResponseListener(this));
         }
     }
 

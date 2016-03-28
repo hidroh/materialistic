@@ -94,6 +94,7 @@ public class StoryRecyclerViewAdapter extends
     private String mUsername;
     private boolean mHighlightUpdated = true;
     private boolean mShowAll = true;
+    private int mCacheMode = ItemManager.MODE_DEFAULT;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -182,7 +183,7 @@ public class StoryRecyclerViewAdapter extends
     @Override
     protected void loadItem(final int adapterPosition) {
         Item item = getItem(adapterPosition);
-        mItemManager.getItem(item.getId(), new ItemResponseListener(this, item));
+        mItemManager.getItem(item.getId(), getItemCacheMode(), new ItemResponseListener(this, item));
     }
 
     @Override
@@ -222,6 +223,11 @@ public class StoryRecyclerViewAdapter extends
         } else {
             return mUpdated.get(position);
         }
+    }
+
+    @Override
+    protected int getItemCacheMode() {
+        return mCacheMode;
     }
 
     private void setItemsInternal(ArrayList<Item> items) {
@@ -385,6 +391,10 @@ public class StoryRecyclerViewAdapter extends
         holder.mStoryView.setChecked(isSelected(story.getId()) ||
                 !TextUtils.isEmpty(mUsername) &&
                 TextUtils.equals(mUsername, story.getBy()));
+    }
+
+    public void setCacheMode(int cacheMode) {
+        mCacheMode = cacheMode;
     }
 
     private static class ItemResponseListener implements ResponseListener<Item> {

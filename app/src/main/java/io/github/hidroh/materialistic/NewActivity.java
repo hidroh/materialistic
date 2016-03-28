@@ -48,4 +48,8 @@ public class NewActivity extends BaseStoriesActivity {
         return ItemManager.NEW_FETCH_MODE;
     }
 
+    @Override
+    protected int getItemCacheMode() {
+        return ItemManager.MODE_NETWORK;
+    }
 }

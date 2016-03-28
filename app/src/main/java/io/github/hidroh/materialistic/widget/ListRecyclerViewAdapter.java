@@ -33,6 +33,7 @@ import io.github.hidroh.materialistic.MultiPaneListener;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.WebItem;
 
 /**
@@ -203,8 +204,16 @@ public abstract class ListRecyclerViewAdapter
         }
     }
 
+    /**
+     * Gets cache mode for {@link ItemManager}
+     * @return  cache mode
+     */
+    @ItemManager.CacheMode
+    protected abstract int getItemCacheMode();
+
     private void openItem(T item) {
         mContext.startActivity(new Intent(mContext, ItemActivity.class)
+                .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
                 .putExtra(ItemActivity.EXTRA_ITEM, item)
                 .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true));
     }

@@ -91,7 +91,9 @@ public class ItemActivityTest {
         when(webItem.getId()).thenReturn("1");
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
         controller.withIntent(intent).create().start().resume().visible();
-        verify(hackerNewsClient).getItem(eq("1"), any(ResponseListener.class));
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                any(ResponseListener.class));
     }
 
     @Test
@@ -100,7 +102,9 @@ public class ItemActivityTest {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://item/1"));
         controller.withIntent(intent).create().start().resume();
-        verify(hackerNewsClient).getItem(eq("1"), any(ResponseListener.class));
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                any(ResponseListener.class));
     }
 
     @Test
@@ -109,7 +113,9 @@ public class ItemActivityTest {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("https://news.ycombinator.com/item?id=1"));
         controller.withIntent(intent).create().start().resume();
-        verify(hackerNewsClient).getItem(eq("1"), listener.capture());
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @NonNull
             @Override
@@ -143,7 +149,9 @@ public class ItemActivityTest {
         assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
         reset(hackerNewsClient);
         shadowOf(activity).recreate();
-        verify(hackerNewsClient, never()).getItem(anyString(), any(ResponseListener.class));
+        verify(hackerNewsClient, never()).getItem(anyString(),
+                eq(ItemManager.MODE_DEFAULT),
+                any(ResponseListener.class));
     }
 
     @Test

@@ -61,6 +61,7 @@ import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 public class ItemActivity extends InjectableActivity implements Scrollable {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
+    public static final String EXTRA_CACHE_MODE = ItemActivity.class.getName() + ".EXTRA_CACHE_MODE";
     public static final String EXTRA_OPEN_COMMENTS = ItemActivity.class.getName() + ".EXTRA_OPEN_COMMENTS";
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
@@ -142,7 +143,9 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         if (mItem != null) {
             bindData(mItem);
         } else if (!TextUtils.isEmpty(mItemId)) {
-            mItemManager.getItem(mItemId, new ItemResponseListener(this));
+            mItemManager.getItem(mItemId,
+                    getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT),
+                    new ItemResponseListener(this));
         }
         if (!AppUtils.hasConnection(this)) {
             Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_LONG).show();
@@ -290,7 +293,8 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         viewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
         viewPager.setPageMarginDrawable(R.color.blackT12);
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this, getSupportFragmentManager(),
-                story, !mExternalBrowser);
+                story, !mExternalBrowser,
+                getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT));
         viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {

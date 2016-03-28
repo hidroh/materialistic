@@ -75,11 +75,12 @@ public class AlgoliaClient implements ItemManager {
     }
 
     @Override
-    public void getItem(String itemId, ResponseListener<Item> listener) {
-        mHackerNewsClient.getItem(itemId, listener);
+    public void getItem(String itemId, @CacheMode int cacheMode, ResponseListener<Item> listener) {
+        mHackerNewsClient.getItem(itemId, cacheMode, listener);
     }
 
     protected void search(String filter, Callback<AlgoliaHits> callback) {
+        // TODO add cache header
         Call<AlgoliaHits> call;
         if (sSortByTime) {
             call = mRestService.searchByDate(filter);
