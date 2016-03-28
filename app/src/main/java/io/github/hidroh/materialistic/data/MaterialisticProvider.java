@@ -29,7 +29,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 public class MaterialisticProvider extends ContentProvider {
-    private static final String PROVIDER_AUTHORITY = "io.github.hidroh.materialistic.provider";
+    static final String PROVIDER_AUTHORITY = "io.github.hidroh.materialistic.provider";
     private static final Uri BASE_URI = Uri.parse("content://" + PROVIDER_AUTHORITY);
     public static final Uri URI_FAVORITE = BASE_URI.buildUpon()
             .appendPath(FavoriteEntry.TABLE_NAME)

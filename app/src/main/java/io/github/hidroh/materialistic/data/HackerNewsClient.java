@@ -39,7 +39,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
     public static final String HOST = "hacker-news.firebaseio.com";
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
-    private static final String BASE_API_URL = "https://" + HOST + "/v0/";
+    static final String BASE_API_URL = "https://" + HOST + "/v0/";
     private final RestService mRestService;
     private final SessionManager mSessionManager;
     private final FavoriteManager mFavoriteManager;
@@ -226,7 +226,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> networkItem(@Path("itemId") String itemId);
 
-        @Headers("Cache-Control: max-age=2147483647")
+        @Headers("Cache-Control: only-if-cached, max-stale=2147483647")
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> cachedItem(@Path("itemId") String itemId);
 
