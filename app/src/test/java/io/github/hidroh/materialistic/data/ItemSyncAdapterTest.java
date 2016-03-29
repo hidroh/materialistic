@@ -70,12 +70,13 @@ public class ItemSyncAdapterTest {
     private @Captor ArgumentCaptor<Callback<HackerNewsItem>> callbackCapture;
     private ServiceController<ItemSyncService> serviceController;
     private ItemSyncService service;
+    private ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         reset(TestRestServiceFactory.hnRestService);
-        reset(TestRestServiceFactory.readabilityService);
+        reset(readabilityClient);
         serviceController = Robolectric.buildService(ItemSyncService.class);
         service = serviceController.attach().create().get();
         setNetworkType(ConnectivityManager.TYPE_WIFI);
@@ -83,7 +84,7 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_saved_item_sync), true)
                 .commit();
-        adapter = new ItemSyncAdapter(service, new TestRestServiceFactory());
+        adapter = new ItemSyncAdapter(service, new TestRestServiceFactory(), readabilityClient);
         syncPreferences = service.getSharedPreferences(
                 service.getPackageName() +
                         ItemSyncAdapter.SYNC_PREFERENCES_FILE, Context.MODE_PRIVATE);
@@ -189,51 +190,14 @@ public class ItemSyncAdapterTest {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.readabilityService.cachedParse(anyString()))
-                .thenThrow(IOException.class);
-        Call readableCall = mock(Call.class);
-        when(TestRestServiceFactory.readabilityService.parse(anyString()))
-                .thenReturn(readableCall);
 
         Bundle bundle = new Bundle();
         bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
         adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.readabilityService).cachedParse(eq("http://example.com"));
-        verify(TestRestServiceFactory.readabilityService).parse(eq("http://example.com"));
-        verify(readableCall).enqueue(any(Callback.class));
-    }
-
-    @Test
-    public void testSyncReadabilityCached() throws IOException {
-        HackerNewsItem item = new TestHnItem(1L) {
-            @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getRawUrl() {
-                return "http://example.com";
-            }
-        };
-        Call<HackerNewsItem> call = mock(Call.class);
-        when(call.execute()).thenReturn(Response.success(item));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
-        ReadabilityClient.Readable readable = mock(ReadabilityClient.Readable.class);
-        Call readableCall = mock(Call.class);
-        when(readableCall.execute()).thenReturn(Response.success(readable));
-        when(TestRestServiceFactory.readabilityService.cachedParse(anyString()))
-                .thenReturn(readableCall);
-
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
-
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.readabilityService).cachedParse(eq("http://example.com"));
-        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
+        verify(readabilityClient).parse(anyString(), eq("http://example.com"),
+                any(ReadabilityClient.Callback.class));
     }
 
     @Test
@@ -254,7 +218,8 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.readabilityService, never()).cachedParse(anyString());
+        verify(readabilityClient, never()).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
     }
 
     @Test
@@ -274,7 +239,8 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.readabilityService, never()).cachedParse(anyString());
+        verify(readabilityClient, never()).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
     }
 
     @Test
