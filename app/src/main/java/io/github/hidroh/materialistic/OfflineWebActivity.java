@@ -19,6 +19,7 @@ package io.github.hidroh.materialistic;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -46,7 +47,15 @@ public class OfflineWebActivity extends InjectableActivity {
         }
         setTitle(url);
         setContentView(R.layout.activity_offline_web);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        final NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollTo(0, 0);
+            }
+        });
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setSubtitle(R.string.offline);
