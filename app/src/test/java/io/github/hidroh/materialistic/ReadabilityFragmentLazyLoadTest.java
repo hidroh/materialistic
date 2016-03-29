@@ -25,6 +25,7 @@ import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -68,11 +69,13 @@ public class ReadabilityFragmentLazyLoadTest {
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
                 .commit();
-        verify(readabilityClient, never()).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
         fragment.setUserVisibleHint(true);
         fragment.setUserVisibleHint(false);
-        verify(readabilityClient).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
     }
 
     @Test
@@ -85,11 +88,13 @@ public class ReadabilityFragmentLazyLoadTest {
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
                 .commit();
-        verify(readabilityClient, never()).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
         fragment.setUserVisibleHint(true);
         fragment.setUserVisibleHint(false);
-        verify(readabilityClient).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
     }
 
     @Test
@@ -102,13 +107,15 @@ public class ReadabilityFragmentLazyLoadTest {
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         fragment.setUserVisibleHint(true);
-        verify(readabilityClient, never()).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
                 .commit();
-        verify(readabilityClient).parse(anyString(), anyString(), any(ReadabilityClient.Callback.class));
+        verify(readabilityClient).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
     }
 
     @After

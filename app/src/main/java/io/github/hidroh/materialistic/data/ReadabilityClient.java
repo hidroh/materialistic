@@ -30,14 +30,33 @@ import io.github.hidroh.materialistic.BuildConfig;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 public interface ReadabilityClient {
+    String HOST = "readability.com";
+
     interface Callback {
         void onResponse(String content);
     }
 
     void parse(String itemId, String url, Callback callback);
+
+    interface ReadabilityService {
+        String READABILITY_API_URL = "https://" + HOST + "/api/content/v1/";
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_24H)
+        @GET("parser?token=" + BuildConfig.READABILITY_TOKEN)
+        Call<Readable> parse(@Query("url") String url);
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_CACHE)
+        @GET("parser?token=" + BuildConfig.READABILITY_TOKEN)
+        Call<Readable> cachedParse(@Query("url") String url);
+    }
+
+    class Readable {
+        private String content;
+    }
 
     class Impl implements ReadabilityClient {
         private static final CharSequence EMPTY_CONTENT = "<div></div>";
@@ -73,28 +92,27 @@ public interface ReadabilityClient {
         }
 
         private void readabilityParse(final String itemId, String url, final Callback callback) {
-            mReadabilityService.parse(url)
-                    .enqueue(new retrofit2.Callback<Readable>() {
-                        @Override
-                        public void onResponse(Call<Readable> call, Response<Readable> response) {
-                            Readable readable = response.body();
-                            if (readable == null) {
-                                callback.onResponse(null);
-                                return;
-                            }
-                            cache(itemId, readable.content);
-                            if (TextUtils.equals(EMPTY_CONTENT, readable.content)) {
-                                callback.onResponse(null);
-                            } else {
-                                callback.onResponse(readable.content);
-                            }
-                        }
+            mReadabilityService.parse(url).enqueue(new retrofit2.Callback<Readable>() {
+                @Override
+                public void onResponse(Call<Readable> call, Response<Readable> response) {
+                    Readable readable = response.body();
+                    if (readable == null) {
+                        callback.onResponse(null);
+                        return;
+                    }
+                    cache(itemId, readable.content);
+                    if (TextUtils.equals(EMPTY_CONTENT, readable.content)) {
+                        callback.onResponse(null);
+                    } else {
+                        callback.onResponse(readable.content);
+                    }
+                }
 
-                        @Override
-                        public void onFailure(Call<Readable> call, Throwable t) {
-                            callback.onResponse(null);
-                        }
-                    });
+                @Override
+                public void onFailure(Call<Readable> call, Throwable t) {
+                    callback.onResponse(null);
+                }
+            });
         }
 
         private void cache(String itemId, String content) {
@@ -103,17 +121,6 @@ public interface ReadabilityClient {
             contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT, content);
             new ReadabilityHandler(mContentResolver, itemId).startInsert(0, itemId,
                     MaterialisticProvider.URI_READABILITY, contentValues);
-        }
-
-        interface ReadabilityService {
-            String READABILITY_API_URL = "https://readability.com/api/content/v1/";
-
-            @GET("parser?token=" + BuildConfig.READABILITY_TOKEN)
-            Call<Readable> parse(@Query("url") String url);
-        }
-
-        static class Readable {
-            private String content;
         }
 
         private static class ReadabilityHandler extends AsyncQueryHandler {

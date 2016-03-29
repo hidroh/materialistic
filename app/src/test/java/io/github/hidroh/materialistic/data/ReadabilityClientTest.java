@@ -38,6 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("unchecked")
 @Config(shadows = {ShadowAsyncQueryHandler.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityClientTest {
@@ -57,6 +58,7 @@ public class ReadabilityClientTest {
         callback = mock(ReadabilityClient.Callback.class);
         call = mock(Call.class);
         when(TestRestServiceFactory.readabilityService.parse(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.readabilityService.cachedParse(anyString())).thenReturn(call);
         resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
     }
 

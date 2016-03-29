@@ -23,6 +23,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
 
 public interface RestServiceFactory {
+    String CACHE_CONTROL_FORCE_CACHE = "Cache-Control: only-if-cached, max-stale=" + Integer.MAX_VALUE;
+    String CACHE_CONTROL_FORCE_NETWORK = "Cache-Control: no-cache";
+    String CACHE_CONTROL_MAX_AGE_1H = "Cache-Control: max-age=3600";
+    String CACHE_CONTROL_MAX_AGE_24H = "Cache-Control: max-age=86400";
+
     <T> T create(String baseUrl, Class<T> clazz);
 
     class Impl implements RestServiceFactory {

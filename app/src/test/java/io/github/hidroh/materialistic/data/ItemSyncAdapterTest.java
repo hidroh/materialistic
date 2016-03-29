@@ -50,7 +50,9 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -73,6 +75,7 @@ public class ItemSyncAdapterTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         reset(TestRestServiceFactory.hnRestService);
+        reset(TestRestServiceFactory.readabilityService);
         serviceController = Robolectric.buildService(ItemSyncService.class);
         service = serviceController.attach().create().get();
         setNetworkType(ConnectivityManager.TYPE_WIFI);
@@ -168,6 +171,110 @@ public class ItemSyncAdapterTest {
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
         adapter.onPerformSync(mock(Account.class), new Bundle(), null, null, null);
         verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(anyString());
+    }
+
+    @Test
+    public void testSyncReadability() throws IOException {
+        HackerNewsItem item = new TestHnItem(1L) {
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+
+            @Override
+            public String getRawUrl() {
+                return "http://example.com";
+            }
+        };
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success(item));
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.readabilityService.cachedParse(anyString()))
+                .thenThrow(IOException.class);
+        Call readableCall = mock(Call.class);
+        when(TestRestServiceFactory.readabilityService.parse(anyString()))
+                .thenReturn(readableCall);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(TestRestServiceFactory.readabilityService).cachedParse(eq("http://example.com"));
+        verify(TestRestServiceFactory.readabilityService).parse(eq("http://example.com"));
+        verify(readableCall).enqueue(any(Callback.class));
+    }
+
+    @Test
+    public void testSyncReadabilityCached() throws IOException {
+        HackerNewsItem item = new TestHnItem(1L) {
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+
+            @Override
+            public String getRawUrl() {
+                return "http://example.com";
+            }
+        };
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success(item));
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        ReadabilityClient.Readable readable = mock(ReadabilityClient.Readable.class);
+        Call readableCall = mock(Call.class);
+        when(readableCall.execute()).thenReturn(Response.success(readable));
+        when(TestRestServiceFactory.readabilityService.cachedParse(anyString()))
+                .thenReturn(readableCall);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(TestRestServiceFactory.readabilityService).cachedParse(eq("http://example.com"));
+        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
+    }
+
+    @Test
+    public void testSyncReadabilityNoWifi() throws IOException {
+        HackerNewsItem item = new TestHnItem(1L) {
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+        };
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success(item));
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+
+        setNetworkType(ConnectivityManager.TYPE_MOBILE);
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(TestRestServiceFactory.readabilityService, never()).cachedParse(anyString());
+    }
+
+    @Test
+    public void testSyncReadabilityNotStory() throws IOException {
+        HackerNewsItem item = new TestHnItem(1L) {
+            @Override
+            public boolean isStoryType() {
+                return false;
+            }
+        };
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success(item));
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(TestRestServiceFactory.readabilityService, never()).cachedParse(anyString());
     }
 
     @Test
