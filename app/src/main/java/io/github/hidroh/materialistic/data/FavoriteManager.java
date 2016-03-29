@@ -106,6 +106,7 @@ public class FavoriteManager {
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         ContentResolver.requestSync(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY, extras);
+        ItemSyncAdapter.saveWebCache(context, story.getUrl());
     }
 
     /**

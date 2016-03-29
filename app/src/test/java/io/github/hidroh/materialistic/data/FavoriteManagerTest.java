@@ -1,8 +1,10 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ShadowAsyncQueryHandler;
+import android.net.ConnectivityManager;
 import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -14,12 +16,14 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
@@ -36,7 +40,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowAsyncQueryHandler.class})
+@Config(shadows = {ShadowAsyncQueryHandler.class, ShadowWebView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
@@ -100,6 +104,10 @@ public class FavoriteManagerTest {
 
     @Test
     public void testAdd() {
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+                        ConnectivityManager.TYPE_WIFI, 0, true, true));
         manager.add(RuntimeEnvironment.application, new TestWebItem() {
             @Override
             public String getId() {
@@ -119,6 +127,7 @@ public class FavoriteManagerTest {
         assertThat(resolver.getNotifiedUris()).isNotEmpty();
         assertTrue(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://newitem.com");
     }
 
     @Test

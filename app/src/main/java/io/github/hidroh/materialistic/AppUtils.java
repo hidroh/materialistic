@@ -70,6 +70,11 @@ public class AppUtils {
     private static final String PLAY_STORE_URL = "market://details?id=" + BuildConfig.APPLICATION_ID;
 
     public static void openWebUrlExternal(Context context, String url) {
+        if (!hasConnection(context)) {
+            context.startActivity(new Intent(context, OfflineWebActivity.class)
+                    .putExtra(OfflineWebActivity.EXTRA_URL, url));
+            return;
+        }
         Intent intent = createViewIntent(context, url);
         if (!HackerNewsClient.BASE_WEB_URL.contains(Uri.parse(url).getHost())) {
             if (intent.resolveActivity(context.getPackageManager()) != null) {

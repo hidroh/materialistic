@@ -46,6 +46,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ItemSyncAdapter;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.WebItem;
 
@@ -170,7 +171,9 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     @SuppressLint("SetJavaScriptEnabled")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setWebViewSettings(WebSettings webSettings) {
-        webSettings.setJavaScriptEnabled(true);
+        ItemSyncAdapter.enableCache(getActivity(), webSettings);
+        webSettings.setCacheMode(AppUtils.hasConnection(getActivity()) ?
+                WebSettings.LOAD_DEFAULT : WebSettings.LOAD_CACHE_ONLY);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setBuiltInZoomControls(true);

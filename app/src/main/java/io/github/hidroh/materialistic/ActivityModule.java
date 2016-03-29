@@ -81,6 +81,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
                 SubmitActivity.class,
                 UserActivity.class,
                 ThreadPreviewActivity.class,
+                OfflineWebActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,

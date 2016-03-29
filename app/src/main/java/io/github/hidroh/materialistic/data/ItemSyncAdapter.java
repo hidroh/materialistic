@@ -17,13 +17,20 @@
 package io.github.hidroh.materialistic.data;
 
 import android.accounts.Account;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
+import android.text.TextUtils;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import java.io.IOException;
 import java.util.Set;
@@ -41,6 +48,32 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
+
+    /**
+     * Triggers a {@link WebView#loadUrl(String)} without actual UI
+     * to save content to app cache if available
+     * @param context    context
+     * @param url        url to load
+     */
+    @UiThread
+    public static void saveWebCache(Context context, String url) {
+        if (!TextUtils.isEmpty(url) && AppUtils.isOnWiFi(context)) {
+            WebView webView = new WebView(context);
+            enableCache(context, webView.getSettings());
+            webView.loadUrl(url);
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static void enableCache(Context context, WebSettings webSettings) {
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAppCachePath(context.getApplicationContext()
+                .getCacheDir().getAbsolutePath());
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setJavaScriptEnabled(true);
+    }
 
     private final HackerNewsClient.RestService mHnRestService;
     private final ReadabilityClient mReadabilityClient;
