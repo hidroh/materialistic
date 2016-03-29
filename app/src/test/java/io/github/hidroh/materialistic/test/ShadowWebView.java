@@ -11,6 +11,7 @@ import org.robolectric.fakes.RoboWebSettings;
 @Implements(value = WebView.class, inheritImplementationMethods = true)
 public class ShadowWebView extends org.robolectric.shadows.ShadowWebView {
     private DownloadListener downloadListener;
+    private static String lastGlobalLoadedUrl;
 
     @Override @Implementation
     public WebSettings getSettings() {
@@ -24,5 +25,17 @@ public class ShadowWebView extends org.robolectric.shadows.ShadowWebView {
 
     public DownloadListener getDownloadListener() {
         return downloadListener;
+    }
+
+    @Override
+    public void loadUrl(String url) {
+        super.loadUrl(url);
+        lastGlobalLoadedUrl = url;
+    }
+
+    public static String getLastGlobalLoadedUrl() {
+        String lastLoaded = lastGlobalLoadedUrl;
+        lastGlobalLoadedUrl = null;
+        return lastLoaded;
     }
 }

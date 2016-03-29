@@ -197,4 +197,15 @@ public class AppUtilsTest {
         AppUtils.setHtmlText(textView, "paragraph");
         assertThat(textView).hasTextString("paragraph");
     }
+
+    @Test
+    public void testOpenExternalUrlNoConnection() {
+        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+                .getSystemService(Context.CONNECTIVITY_SERVICE))
+                .setActiveNetworkInfo(null);
+        AppUtils.openWebUrlExternal(RuntimeEnvironment.application, "http://example.com");
+        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
+                .hasComponent(RuntimeEnvironment.application, OfflineWebActivity.class)
+                .hasExtra(OfflineWebActivity.EXTRA_URL, "http://example.com");
+    }
 }
