@@ -8,7 +8,9 @@ import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import org.junit.After;
@@ -40,11 +42,13 @@ import io.github.hidroh.materialistic.test.WebActivity;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentTest {
@@ -61,6 +65,7 @@ public class WebFragmentTest {
         reset(favoriteManager);
         item = mock(WebItem.class);
         when(item.getType()).thenReturn(Item.STORY_TYPE);
+        when(item.getUrl()).thenReturn("http://example.com");
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);
@@ -116,6 +121,28 @@ public class WebFragmentTest {
         assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
                 .getSmoothScrollY());
 
+    }
+
+    @Test
+    public void testForceNetwork() {
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebViewClient webViewClient = shadowOf(webView).getWebViewClient();
+        assertThat(webView.getSettings().getCacheMode())
+                .isEqualTo(WebSettings.LOAD_CACHE_ONLY);
+
+        webViewClient.onReceivedError(webView, 404, null, "http://bootstrap.css");
+        assertThat(shadowOf(webView).getLastLoadedUrl()).contains(item.getUrl());
+        assertThat(webView.getSettings().getCacheMode())
+                .isEqualTo(WebSettings.LOAD_CACHE_ONLY);
+
+        webViewClient.onReceivedError(webView, 504, null, item.getUrl());
+        assertThat(webView.getSettings().getCacheMode())
+                .isEqualTo(WebSettings.LOAD_NO_CACHE);
+
+        assertThat(shadowOf(webView).getLastLoadedUrl()).contains(item.getUrl());
+        webViewClient.onReceivedError(webView, 500, null, item.getUrl());
+        assertThat(webView.getSettings().getCacheMode())
+                .isEqualTo(WebSettings.LOAD_NO_CACHE);
     }
 
     @After
