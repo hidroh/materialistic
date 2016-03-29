@@ -26,13 +26,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
+import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowWebView;
 import org.robolectric.util.ActivityController;
+
+import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
+@Config(shadows = ShadowNestedScrollView.class)
 @SuppressWarnings("ConstantConditions")
 @RunWith(RobolectricGradleTestRunner.class)
 public class OfflineWebActivityTest {
@@ -70,6 +75,20 @@ public class OfflineWebActivityTest {
         assertThat(progress).isNotVisible();
     }
 
+    @Test
+    public void testScrollToTop() {
+        activity = controller.withIntent(new Intent()
+                .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"))
+                .create()
+                .start()
+                .resume()
+                .visible()
+                .get();
+        activity.findViewById(R.id.toolbar).performClick();
+        assertThat(((ShadowNestedScrollView) ShadowExtractor
+                .extract(activity.findViewById(R.id.nested_scroll_view))).getSmoothScrollY())
+                .isEqualTo(0);
+    }
     @Test
     public void testHomeButton() {
         activity = controller.withIntent(new Intent()

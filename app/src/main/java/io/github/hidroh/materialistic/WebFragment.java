@@ -27,12 +27,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -53,6 +56,7 @@ import io.github.hidroh.materialistic.data.WebItem;
 public class WebFragment extends LazyLoadFragment implements Scrollable {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
+    private static final String ABOUT_BLANK = "about:blank";
     private WebItem mItem;
     private WebView mWebView;
     private TextView mText;
@@ -87,11 +91,27 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
-        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.setWebViewClient(new WebViewClient() {
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request,
+                                        WebResourceError error) {
+                forceNetwork(view, request.getUrl().toString());
+            }
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onReceivedError(WebView view, int errorCode,
+                                        String description, String failingUrl) {
+                forceNetwork(view, failingUrl);
+            }
+        });
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
+                if (TextUtils.equals(view.getUrl(), ABOUT_BLANK)) {
+                    return;
+                }
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
@@ -160,6 +180,15 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
     }
 
+    private void forceNetwork(WebView view, String failingUrl) {
+        if (view.getSettings().getCacheMode() == WebSettings.LOAD_CACHE_ONLY &&
+                TextUtils.equals(failingUrl, mItem.getUrl())) {
+            view.loadUrl(ABOUT_BLANK);
+            view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+            view.loadUrl(mItem.getUrl());
+        }
+    }
+
     private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web_hn, container, false);
@@ -172,8 +201,8 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setWebViewSettings(WebSettings webSettings) {
         ItemSyncAdapter.enableCache(getActivity(), webSettings);
-        webSettings.setCacheMode(AppUtils.hasConnection(getActivity()) ?
-                WebSettings.LOAD_DEFAULT : WebSettings.LOAD_CACHE_ONLY);
+        // force cache, fallback to network later if error
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ONLY);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setBuiltInZoomControls(true);
