@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.ContentValues;
-import android.content.ShadowAsyncQueryHandler;
 
 import com.google.gson.GsonBuilder;
 
@@ -13,9 +12,10 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,7 +27,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
@@ -39,7 +38,6 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("unchecked")
-@Config(shadows = {ShadowAsyncQueryHandler.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityClientTest {
     @Inject RestServiceFactory factory;
@@ -58,62 +56,61 @@ public class ReadabilityClientTest {
         callback = mock(ReadabilityClient.Callback.class);
         call = mock(Call.class);
         when(TestRestServiceFactory.readabilityService.parse(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.readabilityService.cachedParse(anyString())).thenReturn(call);
         resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
     }
 
     @Test
-    public void testWithContent() {
-        client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(anyString());
-        verify(call).enqueue(callbackCaptor.capture());
+    public void testWithContent() throws IOException {
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().onResponse(null, Response.success(readable));
+        when(call.execute()).thenReturn(Response.success(readable));
+        client.parse("1", "http://example.com/article.html", callback);
+        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(call).execute();
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
     @Test
-    public void testEmptyContent() {
-        client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(anyString());
-        verify(call).enqueue(callbackCaptor.capture());
+    public void testEmptyContent() throws IOException {
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
-        callbackCaptor.getValue().onResponse(null, Response.success(readable));
-        verify(callback).onResponse((String) isNull());
-    }
-
-    @Test
-    public void testError() {
+        when(call.execute()).thenReturn(Response.success(readable));
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.readabilityService).parse(anyString());
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
+        verify(call).execute();
         verify(callback).onResponse((String) isNull());
     }
 
     @Test
-    public void testCachedContent() {
+    public void testError() throws IOException {
+        when(call.execute()).thenThrow(IOException.class);
+        client.parse("1", "http://example.com/article.html", callback);
+        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(call).execute();
+        verify(callback).onResponse((String) isNull());
+    }
+
+    @Test
+    public void testCachedContent() throws IOException {
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
         cv.put("content", "<div>content</div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
-        verify(call, never()).enqueue(any(Callback.class));
+        verify(call, never()).execute();
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
     @Test
-    public void testEmptyCachedContent() {
+    public void testEmptyCachedContent() throws IOException {
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
         cv.put("content", "<div></div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
-        verify(call, never()).enqueue(any(Callback.class));
+        verify(call, never()).execute();
         verify(callback).onResponse((String) isNull());
     }
 

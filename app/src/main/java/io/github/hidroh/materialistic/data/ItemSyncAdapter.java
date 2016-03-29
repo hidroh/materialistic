@@ -32,7 +32,6 @@ import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Preferences;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Simple sync adapter that triggers OkHttp requests so their responses become available in
@@ -44,18 +43,17 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
 
     private final HackerNewsClient.RestService mHnRestService;
-    private final ReadabilityClient.ReadabilityService mReadabilityService;
+    private final ReadabilityClient mReadabilityClient;
     private final SharedPreferences mSharedPreferences;
 
-    public ItemSyncAdapter(Context context, RestServiceFactory factory) {
+    public ItemSyncAdapter(Context context, RestServiceFactory factory,
+                           ReadabilityClient readabilityClient) {
         super(context, true);
         mSharedPreferences = context.getSharedPreferences(
                 context.getPackageName() + SYNC_PREFERENCES_FILE, Context.MODE_PRIVATE);
         mHnRestService = factory.create(HackerNewsClient.BASE_API_URL,
                 HackerNewsClient.RestService.class);
-        mReadabilityService = factory.create(
-                ReadabilityClient.ReadabilityService.READABILITY_API_URL,
-                ReadabilityClient.ReadabilityService.class);
+        mReadabilityClient = readabilityClient;
     }
 
     @Override
@@ -107,24 +105,15 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void syncReadability(@NonNull HackerNewsItem item) {
-        if (!item.isStoryType() ||
-                !AppUtils.isOnWiFi(getContext()) ||
-                getReadableFromCache(item.getRawUrl()) != null) {
-            return;
+        if (item.isStoryType() && AppUtils.isOnWiFi(getContext())) {
+            mReadabilityClient.parse(item.getId(), item.getRawUrl(),
+                    new ReadabilityClient.Callback() {
+                        @Override
+                        public void onResponse(String content) {
+                            // no op
+                        }
+                    });
         }
-        mReadabilityService.parse(item.getRawUrl())
-                .enqueue(new Callback<ReadabilityClient.Readable>() {
-                    @Override
-                    public void onResponse(Call<ReadabilityClient.Readable> call,
-                                           Response<ReadabilityClient.Readable> response) {
-                        // no op
-                    }
-
-                    @Override
-                    public void onFailure(Call<ReadabilityClient.Readable> call, Throwable t) {
-                        // no op
-                    }
-                });
     }
 
     private void syncChildren(@NonNull HackerNewsItem item) {
@@ -142,14 +131,6 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     private HackerNewsItem getFromCache(String itemId) {
         try {
             return mHnRestService.cachedItem(itemId).execute().body();
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    private ReadabilityClient.Readable getReadableFromCache(String url) {
-        try {
-            return mReadabilityService.cachedParse(url).execute().body();
         } catch (IOException e) {
             return null;
         }
