@@ -17,15 +17,12 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Application;
 
 public class ItemSyncWifiReceiver extends BroadcastReceiver {
     @Override
@@ -34,10 +31,7 @@ public class ItemSyncWifiReceiver extends BroadcastReceiver {
             return;
         }
         if (AppUtils.isOnWiFi(context)) {
-            Bundle extras = new Bundle();
-            extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-            ContentResolver.requestSync(Application.createSyncAccount(),
-                    MaterialisticProvider.PROVIDER_AUTHORITY, extras);
+            ItemSyncAdapter.initSync(context, null);
         }
     }
 }

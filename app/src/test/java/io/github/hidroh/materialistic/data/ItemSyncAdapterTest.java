@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic.data;
 
 import android.accounts.Account;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +37,8 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowNotification;
+import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.util.ServiceController;
 
 import java.io.IOException;
@@ -50,6 +53,7 @@ import retrofit2.Response;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -70,6 +74,7 @@ public class ItemSyncAdapterTest {
     private ItemSyncAdapter adapter;
     private SharedPreferences syncPreferences;
     private @Captor ArgumentCaptor<Callback<HackerNewsItem>> callbackCapture;
+    private @Captor ArgumentCaptor<ReadabilityClient.Callback> readabilityCallback;
     private ServiceController<ItemSyncService> serviceController;
     private ItemSyncService service;
     private ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
@@ -97,14 +102,9 @@ public class ItemSyncAdapterTest {
     public void testSyncDisabled() {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit().clear().commit();
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
-
-        // should not try cache or network or defer
-        verify(TestRestServiceFactory.hnRestService, never()).cachedItem(anyString());
-        verify(TestRestServiceFactory.hnRestService, never()).networkItem(anyString());
-        assertThat(syncPreferences.getAll()).isEmpty();
+        ItemSyncAdapter.initSync(service, "1");
+        assertNull(ShadowContentResolver.getStatus(Application.createSyncAccount(),
+                MaterialisticProvider.PROVIDER_AUTHORITY));
     }
 
     @Test
@@ -114,9 +114,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(hnItem));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // cache hit, should not try network or defer
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -131,9 +130,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache, then defer
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -154,9 +152,8 @@ public class ItemSyncAdapterTest {
                         service.getString(R.string.offline_data_default))
                 .commit();
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache, then network
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -171,9 +168,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache before network
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -200,9 +196,8 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_comments), false)
                 .commit();
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should not sync children
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -216,7 +211,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
 
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
-        adapter.onPerformSync(mock(Account.class), new Bundle(), null, null, null);
+        ItemSyncAdapter.initSync(service, null);
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(anyString());
     }
 
@@ -241,9 +237,8 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_readability), false)
                 .commit();
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
         verify(readabilityClient, never()).parse(anyString(), anyString(),
@@ -267,9 +262,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
         verify(readabilityClient).parse(anyString(), eq("http://example.com"),
@@ -289,9 +283,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
         verify(readabilityClient, never()).parse(anyString(), anyString(),
@@ -310,9 +303,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        Bundle bundle = new Bundle();
-        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
-        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
         verify(readabilityClient, never()).parse(anyString(), anyString(),
@@ -357,6 +349,63 @@ public class ItemSyncAdapterTest {
     }
 
     @Test
+    public void testNotification() throws IOException {
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success((HackerNewsItem) new TestHnItem(1L) {
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+
+            @Override
+            public String getRawUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public long[] getKids() {
+                return new long[]{2L, 3L};
+            }
+        }));
+        when(TestRestServiceFactory.hnRestService.cachedItem(eq("1"))).thenReturn(call);
+        Call<HackerNewsItem> kid1Call = mock(Call.class);
+        when(kid1Call.execute()).thenReturn(Response.success((HackerNewsItem) new TestHnItem(2L) {
+            @Override
+            public boolean isStoryType() {
+                return false;
+            }
+        }));
+        when(TestRestServiceFactory.hnRestService.cachedItem(eq("2"))).thenReturn(kid1Call);
+        Call<HackerNewsItem> kid2Call = mock(Call.class);
+        when(kid2Call.execute()).thenThrow(IOException.class);
+        when(TestRestServiceFactory.hnRestService.cachedItem(eq("3"))).thenReturn(kid2Call);
+        when(TestRestServiceFactory.hnRestService.networkItem(eq("3"))).thenReturn(kid2Call);
+
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putBoolean(service.getString(R.string.pref_offline_notification), true)
+                .commit();
+        ItemSyncAdapter.initSync(service, "1");
+        adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
+
+        ShadowNotificationManager notificationManager = shadowOf((NotificationManager) service
+                .getSystemService(Context.NOTIFICATION_SERVICE));
+        ShadowNotification.Progress progress = shadowOf(notificationManager.getNotification(1))
+                .getProgress();
+        assertThat(progress.progress).isEqualTo(2); // self + kid 1
+        assertThat(progress.max).isEqualTo(4); // self + 2 kids + readability
+
+        verify(kid2Call).enqueue(callbackCapture.capture());
+        callbackCapture.getValue().onFailure(null, null);
+        assertThat(shadowOf(notificationManager.getNotification(1)).getProgress().progress)
+                .isEqualTo(3); // self + kid 1 + kid 2
+
+        verify(readabilityClient).parse(anyString(), anyString(), readabilityCallback.capture());
+        readabilityCallback.getValue().onResponse(null);
+        assertThat(notificationManager.getAllNotifications()).isEmpty();
+    }
+
+    @Test
     public void testBindService() {
         assertNotNull(service.onBind(null));
     }
@@ -384,6 +433,11 @@ public class ItemSyncAdapterTest {
     private void setNetworkType(int type) {
         shadowOf((ConnectivityManager) service.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null, type, 0, true, true));
+    }
+
+    private Bundle getLastSyncExtras() {
+        return ShadowContentResolver.getStatus(Application.createSyncAccount(),
+                MaterialisticProvider.PROVIDER_AUTHORITY).syncExtras;
     }
 
     @After
