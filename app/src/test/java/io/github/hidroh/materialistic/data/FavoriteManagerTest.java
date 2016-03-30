@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
@@ -40,7 +42,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowAsyncQueryHandler.class, ShadowWebView.class})
+@Config(shadows = {ShadowAsyncQueryHandler.class, ShadowWebView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
@@ -104,6 +106,13 @@ public class FavoriteManagerTest {
 
     @Test
     public void testAdd() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+                .edit()
+                .putBoolean(RuntimeEnvironment.application
+                        .getString(R.string.pref_saved_item_sync), true)
+                .putBoolean(RuntimeEnvironment.application
+                        .getString(R.string.pref_offline_article), true)
+                .commit();
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,

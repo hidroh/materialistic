@@ -87,38 +87,26 @@ public class Preferences {
     }
 
     public static boolean isListItemCardView(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_list_item_view), true);
+        return get(context, R.string.pref_list_item_view, true);
     }
 
     public static void setListItemCardView(Context context, boolean isCardView) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putBoolean(context.getString(R.string.pref_list_item_view), isCardView)
-                .apply();
+        set(context, R.string.pref_list_item_view, isCardView);
     }
 
     public static boolean isSortByRecent(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_search_sort),
-                        context.getString(R.string.pref_search_sort_value_recent))
+        return get(context, R.string.pref_search_sort, R.string.pref_search_sort_value_recent)
                 .equals(context.getString(R.string.pref_search_sort_value_recent));
     }
 
     public static void setSortByRecent(Context context, boolean byRecent) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(context.getString(R.string.pref_search_sort),
-                        context.getString(byRecent ?
-                                R.string.pref_search_sort_value_recent :
-                                R.string.pref_search_sort_value_default))
-                .apply();
+        set(context, R.string.pref_search_sort, context.getString(byRecent ?
+                R.string.pref_search_sort_value_recent : R.string.pref_search_sort_value_default));
     }
 
     public static StoryViewMode getDefaultStoryView(Context context) {
-        String pref = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_story_display),
-                        context.getString(R.string.pref_story_display_value_article));
+        String pref = get(context, R.string.pref_story_display,
+                        R.string.pref_story_display_value_article);
         if (TextUtils.equals(context.getString(R.string.pref_story_display_value_comments), pref)) {
             return StoryViewMode.Comment;
         }
@@ -129,30 +117,23 @@ public class Preferences {
     }
 
     public static boolean externalBrowserEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_external), false);
+        return get(context, R.string.pref_external, false);
     }
 
     public static boolean colorCodeEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_color_code), true);
+        return get(context, R.string.pref_color_code, true);
     }
 
     public static void setColorCodeEnabled(Context context, boolean enabled) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putBoolean(context.getString(R.string.pref_color_code), enabled)
-                .apply();
+        set(context, R.string.pref_color_code, enabled);
     }
 
     public static boolean highlightUpdatedEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_highlight_updated), true);
+        return get(context, R.string.pref_highlight_updated, true);
     }
 
     public static boolean customChromeTabEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_custom_tab), true);
+        return get(context, R.string.pref_custom_tab, true);
     }
 
     public static boolean isSinglePage(Context context, String displayOption) {
@@ -166,34 +147,25 @@ public class Preferences {
     }
 
     public static String getCommentDisplayOption(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_comment_display),
-                        context.getString(R.string.pref_comment_display_value_single));
+        return get(context, R.string.pref_comment_display,
+                        R.string.pref_comment_display_value_single);
     }
 
     public static void setCommentDisplayOption(Context context, String choice) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(context.getString(R.string.pref_comment_display), choice)
-                .apply();
+        set(context, R.string.pref_comment_display, choice);
     }
 
     public static void setPopularRange(Context context, @AlgoliaPopularClient.Range @NonNull String range) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(context.getString(R.string.pref_popular_range), range)
-                .apply();
+        set(context, R.string.pref_popular_range, range);
     }
 
     @NonNull
     public static String getPopularRange(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_popular_range), AlgoliaPopularClient.LAST_24H);
+        return get(context, R.string.pref_popular_range, AlgoliaPopularClient.LAST_24H);
     }
 
     public static int getCommentMaxLines(Context context) {
-        String maxLinesString = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_max_lines), null);
+        String maxLinesString = get(context, R.string.pref_max_lines, null);
         int maxLines = maxLinesString == null ? -1 : Integer.parseInt(maxLinesString);
         if (maxLines < 0) {
             maxLines = Integer.MAX_VALUE;
@@ -202,38 +174,54 @@ public class Preferences {
     }
 
     public static void setCommentMaxLines(Context context, String choice) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(context.getString(R.string.pref_max_lines), choice)
-                .apply();
+        set(context, R.string.pref_max_lines, choice);
     }
 
     public static boolean shouldLazyLoad(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_lazy_load), true);
-    }
-
-    public static boolean isSavedItemSyncEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.pref_saved_item_sync), false);
+        return get(context, R.string.pref_lazy_load, true);
     }
 
     public static String getUsername(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.pref_username), null);
+        return get(context, R.string.pref_username, null);
     }
 
     public static void setUsername(Context context, String username) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putString(context.getString(R.string.pref_username), username)
-                .apply();
+        set(context, R.string.pref_username, username);
     }
 
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .clear()
+                .apply();
+    }
+
+    private static boolean get(Context context, @StringRes int key, boolean defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(key), defaultValue);
+    }
+
+    private static String get(Context context, @StringRes int key, String defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(key), defaultValue);
+    }
+
+    private static String get(Context context, @StringRes int key, @StringRes int defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(key), context.getString(defaultValue));
+    }
+
+    private static void set(Context context, @StringRes int key, boolean value) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(context.getString(key), value)
+                .apply();
+    }
+
+    private static void set(Context context, @StringRes int key, String value) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(context.getString(key), value)
                 .apply();
     }
 
@@ -271,13 +259,11 @@ public class Preferences {
         }
 
         public static @Nullable String getTypeface(Context context) {
-            return PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_font), null);
+            return get(context, R.string.pref_font, null);
         }
 
         public static @Nullable String getReadabilityTypeface(Context context) {
-            String typefaceName = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_readability_font), null);
+            String typefaceName = get(context, R.string.pref_readability_font, null);
             if (TextUtils.isEmpty(typefaceName)) {
                 return getTypeface(context);
             }
@@ -285,10 +271,7 @@ public class Preferences {
         }
 
         public static void savePreferredReadabilityTypeface(Context context, String typefaceName) {
-            PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit()
-                    .putString(context.getString(R.string.pref_readability_font), typefaceName)
-                    .apply();
+            set(context, R.string.pref_readability_font, typefaceName);
         }
 
         public static @StyleRes int resolveTextSize(String choice) {
@@ -316,8 +299,7 @@ public class Preferences {
         }
 
         public static @NonNull String getPreferredReadabilityTextSize(Context context) {
-            String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_readability_text_size), null);
+            String choice = get(context, R.string.pref_readability_text_size, null);
             if (TextUtils.isEmpty(choice)) {
                 return getPreferredTextSize(context);
             }
@@ -325,25 +307,51 @@ public class Preferences {
         }
 
         public static void savePreferredReadabilityTextSize(Context context, String choice) {
-            PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit()
-                    .putString(context.getString(R.string.pref_readability_text_size), choice)
-                    .apply();
+            set(context, R.string.pref_readability_text_size, choice);
         }
 
         private static @NonNull String getPreferredTextSize(Context context) {
-            return PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_text_size), String.valueOf(0));
+            return get(context, R.string.pref_text_size, String.valueOf(0));
         }
 
         private static @StyleRes int getTheme(Context context, boolean dialogTheme) {
-            String choice = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString(context.getString(R.string.pref_theme), null);
+            String choice = get(context, R.string.pref_theme, null);
             if (dialogTheme) {
                 return ThemePreference.getDialogTheme(choice);
             } else {
                 return ThemePreference.getTheme(choice);
             }
+        }
+    }
+
+    public static class Offline {
+
+        public static boolean isEnabled(Context context) {
+            return get(context, R.string.pref_saved_item_sync, false);
+        }
+
+        public static boolean isCommentsEnabled(Context context) {
+            return isEnabled(context) &&
+                    get(context, R.string.pref_offline_comments, true);
+        }
+
+        public static boolean isArticleEnabled(Context context) {
+            return isEnabled(context) &&
+                    get(context, R.string.pref_offline_article, true);
+        }
+
+        public static boolean isReadabilityEnabled(Context context) {
+            return isEnabled(context) &&
+                    get(context, R.string.pref_offline_readability, true);
+        }
+
+        public static boolean currentConnectionEnabled(Context context) {
+            return !isWifiOnly(context) || AppUtils.isOnWiFi(context);
+        }
+
+        private static boolean isWifiOnly(Context context) {
+            String wifiValue = context.getString(R.string.offline_data_wifi);
+            return TextUtils.equals(wifiValue, get(context, R.string.pref_offline_data, wifiValue));
         }
     }
 }

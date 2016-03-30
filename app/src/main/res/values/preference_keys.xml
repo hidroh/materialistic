@@ -28,6 +28,10 @@
     <string translatable="false" name="pref_lazy_load">pref_lazy_load</string>
     <string translatable="false" name="pref_lazy_load_help">pref_lazy_load_help</string>
     <string translatable="false" name="pref_saved_item_sync">pref_saved_item_sync</string>
+    <string translatable="false" name="pref_offline_data">pref_offline_data</string>
+    <string translatable="false" name="pref_offline_comments">pref_offline_comments</string>
+    <string translatable="false" name="pref_offline_article">pref_offline_article</string>
+    <string translatable="false" name="pref_offline_readability">pref_offline_readability</string>
     <string translatable="false" name="pref_list_item_view">pref_list_item_view</string>
     <string translatable="false" name="pref_max_lines">pref_max_lines</string>
     <string translatable="false" name="pref_popular_range">pref_popular_range</string>

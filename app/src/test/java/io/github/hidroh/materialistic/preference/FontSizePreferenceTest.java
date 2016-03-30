@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.preference;
 
+import android.support.v7.preference.PreferenceGroupAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Spinner;
@@ -17,6 +18,7 @@ import java.util.List;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -51,8 +53,11 @@ public class FontSizePreferenceTest {
         activity = controller.create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(1));
-        adapter.onBindViewHolder(holder, 1);
+        int position = ShadowSupportPreferenceManager
+                .getPreferencePosition((PreferenceGroupAdapter) adapter, FontSizePreference.class);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list,
+                adapter.getItemViewType(position));
+        adapter.onBindViewHolder(holder, position);
         preferenceView = holder.itemView;
     }
 

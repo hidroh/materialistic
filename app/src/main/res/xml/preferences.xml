@@ -20,72 +20,108 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.github.hidroh.materialistic.preference.ThemePreference
-        android:key="@string/pref_theme"
-        android:title="@string/pref_theme_title"
-        android:defaultValue="light" />
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/display">
 
-    <io.github.hidroh.materialistic.preference.FontSizePreference
-        android:key="@string/pref_text_size"
-        android:title="@string/pref_text_size_title"
-        android:defaultValue="0"
-        app:entries="@array/text_size_options"
-        app:entryValues="@array/pref_text_size_values" />
+        <io.github.hidroh.materialistic.preference.ThemePreference
+            android:key="@string/pref_theme"
+            android:title="@string/pref_theme_title"
+            android:defaultValue="light" />
 
-    <io.github.hidroh.materialistic.preference.FontPreference
-        android:key="@string/pref_font"
-        android:title="@string/pref_font_title"
-        android:defaultValue=""
-        app:entries="@array/font_options"
-        app:entryValues="@array/font_values" />
+        <io.github.hidroh.materialistic.preference.FontSizePreference
+            android:key="@string/pref_text_size"
+            android:title="@string/pref_text_size_title"
+            android:defaultValue="0"
+            app:entries="@array/text_size_options"
+            app:entryValues="@array/pref_text_size_values" />
 
-    <android.support.v7.preference.ListPreference
-        android:key="@string/pref_story_display"
-        android:title="@string/pref_story_display_title"
-        android:entries="@array/pref_story_display_options"
-        android:entryValues="@array/pref_story_display_values"
-        android:defaultValue="@string/pref_story_display_value_article" />
+        <io.github.hidroh.materialistic.preference.FontPreference
+            android:key="@string/pref_font"
+            android:title="@string/pref_font_title"
+            android:defaultValue=""
+            app:entries="@array/font_options"
+            app:entryValues="@array/font_values" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_highlight_updated"
-        android:title="@string/pref_highlight_updated_title"
-        android:summary="@string/pref_highlight_updated_summary"
-        android:defaultValue="true" />
+        <android.support.v7.preference.ListPreference
+            android:key="@string/pref_story_display"
+            android:title="@string/pref_story_display_title"
+            android:entries="@array/pref_story_display_options"
+            android:entryValues="@array/pref_story_display_values"
+            android:defaultValue="@string/pref_story_display_value_article" />
 
-    <io.github.hidroh.materialistic.preference.PreferenceHelp
-        android:key="@string/pref_highlight_updated_help"
-        android:title="@string/whats_this"
-        app:dialogTitle="@string/pref_highlight_updated_title"
-        app:dialogLayout="@layout/help_list_view" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_highlight_updated"
+            android:title="@string/pref_highlight_updated_title"
+            android:summary="@string/pref_highlight_updated_summary"
+            android:defaultValue="true" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_external"
-        android:title="@string/pref_external_title"
-        android:summary="@string/pref_external_summary"
-        android:defaultValue="false" />
+        <io.github.hidroh.materialistic.preference.PreferenceHelp
+            android:key="@string/pref_highlight_updated_help"
+            android:title="@string/whats_this"
+            app:dialogTitle="@string/pref_highlight_updated_title"
+            app:dialogLayout="@layout/help_list_view" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_custom_tab"
-        android:title="@string/pref_custom_tab_title"
-        android:summary="@string/pref_custom_tab_summary"
-        android:defaultValue="true" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_external"
+            android:title="@string/pref_external_title"
+            android:summary="@string/pref_external_summary"
+            android:defaultValue="false" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_lazy_load"
-        android:title="@string/pref_lazy_load_title"
-        android:summary="@string/pref_lazy_load_summary"
-        android:defaultValue="true" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_custom_tab"
+            android:title="@string/pref_custom_tab_title"
+            android:summary="@string/pref_custom_tab_summary"
+            android:defaultValue="true" />
 
-    <io.github.hidroh.materialistic.preference.PreferenceHelp
-        android:key="@string/pref_lazy_load_help"
-        android:title="@string/whats_this"
-        app:dialogTitle="@string/pref_lazy_load_title"
-        app:dialogLayout="@layout/help_lazy_load" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_lazy_load"
+            android:title="@string/pref_lazy_load_title"
+            android:summary="@string/pref_lazy_load_summary"
+            android:defaultValue="true" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_saved_item_sync"
-        android:title="@string/pref_saved_item_sync_title"
-        android:summary="@string/pref_saved_item_sync_summary"
-        android:defaultValue="false" />
+        <io.github.hidroh.materialistic.preference.PreferenceHelp
+            android:key="@string/pref_lazy_load_help"
+            android:title="@string/whats_this"
+            app:dialogTitle="@string/pref_lazy_load_title"
+            app:dialogLayout="@layout/help_lazy_load" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/offline">
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_saved_item_sync"
+            android:title="@string/pref_saved_item_sync_title"
+            android:summary="@string/pref_saved_item_sync_summary"
+            android:defaultValue="false" />
+
+        <io.github.hidroh.materialistic.preference.OfflineDataPreference
+            android:key="@string/pref_offline_data"
+            android:title="@string/pref_offline_data_title"
+            android:dependency="@string/pref_saved_item_sync"
+            android:defaultValue="wifi"
+            app:entries="@array/offline_data_options"
+            app:entryValues="@array/offline_data_values" />
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:key="@string/pref_offline_comments"
+            android:title="@string/pref_offline_comments_title"
+            android:dependency="@string/pref_saved_item_sync"
+            android:defaultValue="true" />
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:key="@string/pref_offline_article"
+            android:title="@string/pref_offline_article_title"
+            android:dependency="@string/pref_saved_item_sync"
+            android:defaultValue="true" />
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:key="@string/pref_offline_readability"
+            android:title="@string/pref_offline_readability_title"
+            android:dependency="@string/pref_saved_item_sync"
+            android:defaultValue="true" />
+
+    </android.support.v7.preference.PreferenceCategory>
 
 </android.support.v7.preference.PreferenceScreen>
