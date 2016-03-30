@@ -34,8 +34,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -91,21 +89,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
-        mWebView.setWebViewClient(new WebViewClient() {
-            @TargetApi(Build.VERSION_CODES.M)
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request,
-                                        WebResourceError error) {
-                forceNetwork(view, request.getUrl().toString());
-            }
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onReceivedError(WebView view, int errorCode,
-                                        String description, String failingUrl) {
-                forceNetwork(view, failingUrl);
-            }
-        });
+        mWebView.setWebViewClient(new ForceNetworkWebViewClient(mItem.getUrl()));
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -180,15 +164,6 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
     }
 
-    private void forceNetwork(WebView view, String failingUrl) {
-        if (view.getSettings().getCacheMode() == WebSettings.LOAD_CACHE_ONLY &&
-                TextUtils.equals(failingUrl, mItem.getUrl())) {
-            view.loadUrl(ABOUT_BLANK);
-            view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-            view.loadUrl(mItem.getUrl());
-        }
-    }
-
     private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web_hn, container, false);
@@ -240,6 +215,32 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         @Override
         public void onError(String errorMessage) {
             // do nothing
+        }
+    }
+
+    static class ForceNetworkWebViewClient extends WebViewClient {
+        private String mUrl;
+
+        public ForceNetworkWebViewClient(String originalUrl) {
+            this.mUrl = originalUrl;
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            mUrl = url; // record current url to check for network retry
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void onReceivedError(WebView view, int errorCode,
+                                    String description, String failingUrl) {
+            if (view.getSettings().getCacheMode() == WebSettings.LOAD_CACHE_ONLY &&
+                    TextUtils.equals(failingUrl, mUrl)) {
+                view.loadUrl(ABOUT_BLANK);
+                view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+                view.loadUrl(mUrl);
+            }
         }
     }
 }
