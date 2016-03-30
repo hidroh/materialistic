@@ -32,6 +32,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.ShadowWebView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,7 +64,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("unchecked")
-@Config(shadows = ShadowSupportPreferenceManager.class)
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowWebView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemSyncAdapterTest {
     private ItemSyncAdapter adapter;
@@ -83,6 +85,7 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_saved_item_sync), true)
+                .putBoolean(service.getString(R.string.pref_offline_comments), true)
                 .commit();
         adapter = new ItemSyncAdapter(service, new TestRestServiceFactory(), readabilityClient);
         syncPreferences = service.getSharedPreferences(
@@ -139,6 +142,29 @@ public class ItemSyncAdapterTest {
     }
 
     @Test
+    public void testSyncEnabledAnyConnection() throws IOException {
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenThrow(IOException.class);
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
+
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putString(service.getString(R.string.pref_offline_data),
+                        service.getString(R.string.offline_data_default))
+                .commit();
+        setNetworkType(ConnectivityManager.TYPE_MOBILE);
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        // should try cache, then network
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(TestRestServiceFactory.hnRestService).networkItem(anyString());
+        assertThat(syncPreferences.getAll()).isEmpty();
+    }
+
+    @Test
     public void testSyncEnabledWifi() throws IOException {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenThrow(IOException.class);
@@ -163,6 +189,26 @@ public class ItemSyncAdapterTest {
     }
 
     @Test
+    public void testSyncChildrenDisabled() throws IOException {
+        HackerNewsItem item = mock(HackerNewsItem.class);
+        when(item.getKids()).thenReturn(new long[]{2L, 3L});
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success(item));
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putBoolean(service.getString(R.string.pref_offline_comments), false)
+                .commit();
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        // should not sync children
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+    }
+
+    @Test
     public void testSyncDeferred() throws IOException {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenThrow(IOException.class);
@@ -172,6 +218,36 @@ public class ItemSyncAdapterTest {
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
         adapter.onPerformSync(mock(Account.class), new Bundle(), null, null, null);
         verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(anyString());
+    }
+
+    @Test
+    public void testSyncReadabilityDisabled() throws IOException {
+        HackerNewsItem item = new TestHnItem(1L) {
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+
+            @Override
+            public String getRawUrl() {
+                return "http://example.com";
+            }
+        };
+        Call<HackerNewsItem> call = mock(Call.class);
+        when(call.execute()).thenReturn(Response.success(item));
+        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putBoolean(service.getString(R.string.pref_offline_readability), false)
+                .commit();
+        Bundle bundle = new Bundle();
+        bundle.putString(ItemSyncAdapter.EXTRA_ID, "1");
+        adapter.onPerformSync(mock(Account.class), bundle, null, null, null);
+
+        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(readabilityClient, never()).parse(anyString(), anyString(),
+                any(ReadabilityClient.Callback.class));
     }
 
     @Test
@@ -241,6 +317,43 @@ public class ItemSyncAdapterTest {
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
         verify(readabilityClient, never()).parse(anyString(), anyString(),
                 any(ReadabilityClient.Callback.class));
+    }
+
+    @Test
+    public void testSyncWebCacheEmptyUrl() {
+        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, null);
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
+    }
+
+    @Test
+    public void testSyncWebCache() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putBoolean(service.getString(R.string.pref_offline_article), true)
+                .commit();
+        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, "http://example.com");
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://example.com");
+    }
+
+    @Test
+    public void testSyncWebCacheNonWifi() {
+        setNetworkType(ConnectivityManager.TYPE_MOBILE);
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putBoolean(service.getString(R.string.pref_offline_article), true)
+                .commit();
+        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, "http://example.com");
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
+    }
+
+    @Test
+    public void testSyncWebCacheDisabled() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+                .edit()
+                .putBoolean(service.getString(R.string.pref_offline_article), false)
+                .commit();
+        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, "http://example.com");
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
     @Test

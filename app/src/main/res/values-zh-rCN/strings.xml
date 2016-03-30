@@ -231,11 +231,5 @@
     <string name="toggle_list_view">切换为列表视图</string>
     <string name="more">更多</string>
     <string name="logout">退出登录</string>
-    <string name="pref_story_display_value_article">文章</string>
-    <string name="pref_story_display_value_comments">评论</string>
-    <string name="pref_story_display_value_readability">帖子预览</string>
-    <string name="pref_comment_display_value_single">单行</string>
-    <string name="pref_comment_display_value_collapsed">折叠</string>
-    <string name="pref_comment_display_value_multiple">多行</string>
 
 </resources>

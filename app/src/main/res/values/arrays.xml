@@ -59,9 +59,9 @@
         <item>@string/pref_comment_display_value_single</item>
         <item>@string/pref_comment_display_value_collapsed</item>
     </string-array>
-    <string name="pref_comment_display_value_multiple">multiple</string>
-    <string name="pref_comment_display_value_single">single</string>
-    <string name="pref_comment_display_value_collapsed">collapsed</string>
+    <string name="pref_comment_display_value_multiple" translatable="false">multiple</string>
+    <string name="pref_comment_display_value_single" translatable="false">single</string>
+    <string name="pref_comment_display_value_collapsed" translatable="false">collapsed</string>
 
     <!-- Story display -->
     <string-array name="pref_story_display_options">
@@ -74,9 +74,9 @@
         <item>@string/pref_story_display_value_article</item>
         <item>@string/pref_story_display_value_readability</item>
     </string-array>
-    <string name="pref_story_display_value_comments">comments</string>
-    <string name="pref_story_display_value_article">article</string>
-    <string name="pref_story_display_value_readability">readability</string>
+    <string name="pref_story_display_value_comments" translatable="false">comments</string>
+    <string name="pref_story_display_value_article" translatable="false">article</string>
+    <string name="pref_story_display_value_readability" translatable="false">readability</string>
 
     <!-- Comment max lines -->
     <string-array name="comment_max_lines_options">
@@ -91,6 +91,19 @@
         <item>5</item>
         <item>-1</item>
     </string-array>
+
+    <!-- Offline data -->
+    <string-array name="offline_data_options">
+        <item>@string/pref_offline_data_wifi</item>
+        <item>@string/pref_offline_data_always</item>
+    </string-array>
+    <string-array name="offline_data_values" translatable="false">
+        <item>@string/offline_data_wifi</item>
+        <item>@string/offline_data_default</item>
+    </string-array>
+
+    <string name="offline_data_wifi" translatable="false">wifi</string>
+    <string name="offline_data_default" translatable="false">default</string>
 
     <!-- Color codes -->
     <array name="color_codes">

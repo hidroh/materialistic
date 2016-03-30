@@ -35,7 +35,6 @@ import android.webkit.WebView;
 import java.io.IOException;
 import java.util.Set;
 
-import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Preferences;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,6 +47,9 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
+    private boolean mConnectionEnabled;
+    private boolean mReadabilityEnabled;
+    private boolean mCommentsEnabled;
 
     /**
      * Triggers a {@link WebView#loadUrl(String)} without actual UI
@@ -57,7 +59,9 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     @UiThread
     public static void saveWebCache(Context context, String url) {
-        if (!TextUtils.isEmpty(url) && AppUtils.isOnWiFi(context)) {
+        if (!TextUtils.isEmpty(url) &&
+                Preferences.Offline.currentConnectionEnabled(context) &&
+                Preferences.Offline.isArticleEnabled(context)) {
             WebView webView = new WebView(context);
             enableCache(context, webView.getSettings());
             webView.loadUrl(url);
@@ -92,9 +96,13 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        if (!Preferences.isSavedItemSyncEnabled(getContext())) {
+        if (!Preferences.Offline.isEnabled(getContext())) {
             return;
         }
+        // assume that connection wouldn't change until we finish syncing
+        mConnectionEnabled = Preferences.Offline.currentConnectionEnabled(getContext());
+        mReadabilityEnabled = Preferences.Offline.isReadabilityEnabled(getContext());
+        mCommentsEnabled = Preferences.Offline.isCommentsEnabled(getContext());
         if (extras.containsKey(EXTRA_ID)) {
             sync(extras.getString(EXTRA_ID));
         } else {
@@ -114,7 +122,8 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
         if ((cachedItem = getFromCache(itemId)) != null) {
             syncReadability(cachedItem);
             syncChildren(cachedItem);
-        } else if (AppUtils.isOnWiFi(getContext())) { // TODO defer on low battery as well
+        } else if (mConnectionEnabled) {
+            // TODO defer on low battery as well?
             mHnRestService.networkItem(itemId).enqueue(new Callback<HackerNewsItem>() {
                 @Override
                 public void onResponse(Call<HackerNewsItem> call,
@@ -138,7 +147,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void syncReadability(@NonNull HackerNewsItem item) {
-        if (item.isStoryType() && AppUtils.isOnWiFi(getContext())) {
+        if (mConnectionEnabled && mReadabilityEnabled && item.isStoryType()) {
             mReadabilityClient.parse(item.getId(), item.getRawUrl(),
                     new ReadabilityClient.Callback() {
                         @Override
@@ -150,7 +159,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void syncChildren(@NonNull HackerNewsItem item) {
-        if (item.getKids() != null) {
+        if (mCommentsEnabled && item.getKids() != null) {
             for (long id : item.getKids()) {
                 sync(String.valueOf(id));
             }

@@ -53,8 +53,6 @@
     </RelativeLayout>
 
     <HorizontalScrollView
-        android:layout_marginLeft="15dip"
-        android:layout_marginRight="6dip"
         android:layout_marginTop="6dip"
         android:layout_marginBottom="6dip"
         android:scrollbarStyle="outsideInset"
@@ -63,6 +61,8 @@
 
         <LinearLayout
             android:orientation="horizontal"
+            android:paddingLeft="15dip"
+            android:paddingRight="15dip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -71,6 +71,7 @@
                 android:theme="@style/AppTheme"
                 android:layout_marginTop="@dimen/margin"
                 android:layout_marginBottom="@dimen/margin"
+                android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -125,6 +126,7 @@
                 android:theme="@style/AppTheme.Dark.Solarized"
                 android:layout_marginTop="@dimen/margin"
                 android:layout_marginBottom="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

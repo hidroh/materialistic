@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.preference;
 
+import android.support.v7.preference.PreferenceGroupAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Spinner;
@@ -16,6 +17,7 @@ import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -46,8 +48,11 @@ public class FontPreferenceTest {
                 .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list, adapter.getItemViewType(2));
-        adapter.onBindViewHolder(holder, 2);
+        int position = ShadowSupportPreferenceManager
+                .getPreferencePosition((PreferenceGroupAdapter) adapter, FontPreference.class);
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list,
+                adapter.getItemViewType(position));
+        adapter.onBindViewHolder(holder, position);
         preferenceView = holder.itemView;
     }
 
