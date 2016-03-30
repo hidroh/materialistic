@@ -8,9 +8,7 @@ import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import org.junit.After;
@@ -40,10 +38,8 @@ import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.WebActivity;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -122,29 +118,6 @@ public class WebFragmentTest {
         assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
                 .getSmoothScrollY());
 
-    }
-
-    @Test
-    public void testForceNetwork() {
-        // should force cache initially
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
-        WebViewClient webViewClient = shadowOf(webView).getWebViewClient();
-        assertThat(webView.getSettings().getCacheMode()).isEqualTo(WebSettings.LOAD_CACHE_ONLY);
-
-        // should not force network on different URLs
-        webViewClient.onReceivedError(webView, 404, null, "http://random.com");
-        assertThat(shadowOf(webView).getLastLoadedUrl()).contains(item.getUrl());
-
-        // should force network on latest loaded URL
-        assertFalse(webViewClient.shouldOverrideUrlLoading(webView, "http://alias.com"));
-        webViewClient.onReceivedError(webView, 504, null, "http://alias.com");
-        assertThat(shadowOf(webView).getLastLoadedUrl()).contains("http://alias.com");
-        assertThat(webView.getSettings().getCacheMode()).isEqualTo(WebSettings.LOAD_NO_CACHE);
-
-        // already force network, should not retry
-        assertFalse(webViewClient.shouldOverrideUrlLoading(webView, "http://alias2.com"));
-        webViewClient.onReceivedError(webView, 504, null, "http://alias2.com");
-        assertThat(shadowOf(webView).getLastLoadedUrl()).contains("http://alias.com");
     }
 
     @After
