@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,13 +88,10 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
-        mWebView.setWebViewClient(new ForceNetworkWebViewClient(mItem.getUrl()));
+        mWebView.setWebViewClient(new WebViewClient());
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                if (TextUtils.equals(view.getUrl(), ABOUT_BLANK)) {
-                    return;
-                }
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
@@ -176,8 +172,6 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setWebViewSettings(WebSettings webSettings) {
         ItemSyncAdapter.enableCache(getActivity(), webSettings);
-        // force cache, fallback to network later if error
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ONLY);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setBuiltInZoomControls(true);
@@ -215,32 +209,6 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         @Override
         public void onError(String errorMessage) {
             // do nothing
-        }
-    }
-
-    static class ForceNetworkWebViewClient extends WebViewClient {
-        private String mUrl;
-
-        public ForceNetworkWebViewClient(String originalUrl) {
-            this.mUrl = originalUrl;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            mUrl = url; // record current url to check for network retry
-            return super.shouldOverrideUrlLoading(view, url);
-        }
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public void onReceivedError(WebView view, int errorCode,
-                                    String description, String failingUrl) {
-            if (view.getSettings().getCacheMode() == WebSettings.LOAD_CACHE_ONLY &&
-                    TextUtils.equals(failingUrl, mUrl)) {
-                view.loadUrl(ABOUT_BLANK);
-                view.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-                view.loadUrl(mUrl);
-            }
         }
     }
 }

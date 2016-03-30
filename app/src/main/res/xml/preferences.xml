@@ -96,6 +96,13 @@
             android:summary="@string/pref_saved_item_sync_summary"
             android:defaultValue="false" />
 
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_offline_notification"
+            android:title="@string/pref_offline_notification_title"
+            android:summary="@string/pref_offline_notification_summary"
+            android:dependency="@string/pref_saved_item_sync"
+            android:defaultValue="false" />
+
         <io.github.hidroh.materialistic.preference.OfflineDataPreference
             android:key="@string/pref_offline_data"
             android:title="@string/pref_offline_data_title"

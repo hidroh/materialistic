@@ -25,15 +25,12 @@ import android.content.IntentFilter;
 import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import io.github.hidroh.materialistic.Application;
 
 /**
  * Data repository for {@link Favorite}
@@ -101,11 +98,7 @@ public class FavoriteManager {
         new FavoriteHandler(cr).startInsert(0, story.getId(),
                 MaterialisticProvider.URI_FAVORITE, contentValues);
         cr.notifyChange(buildAdded().appendPath(story.getId()).build(), null);
-        Bundle extras = new Bundle();
-        extras.putString(ItemSyncAdapter.EXTRA_ID, story.getId());
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        ContentResolver.requestSync(Application.createSyncAccount(),
-                MaterialisticProvider.PROVIDER_AUTHORITY, extras);
+        ItemSyncAdapter.initSync(context, story.getId());
         ItemSyncAdapter.saveWebCache(context, story.getUrl());
     }
 

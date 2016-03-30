@@ -83,6 +83,8 @@
     <string name="pref_offline_readability_title">Download readability</string>
     <string name="pref_offline_data_wifi">Wifi only</string>
     <string name="pref_offline_data_always">Always</string>
+    <string name="pref_offline_notification_title">Display progress</string>
+    <string name="pref_offline_notification_summary">Show notification for download progress</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>
@@ -256,5 +258,6 @@
     <string name="logout">Logout</string>
     <string name="offline">Offline</string>
     <string name="offline_notice">You\'re currently offline</string>
+    <string name="download_in_progress">Download in progress</string>
 
 </resources>
