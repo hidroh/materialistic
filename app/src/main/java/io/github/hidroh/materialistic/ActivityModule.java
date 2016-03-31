@@ -203,9 +203,9 @@ public class ActivityModule {
         static final Map<String, String> CACHE_ENABLED_HOSTS = new HashMap<>();
         static {
             CACHE_ENABLED_HOSTS.put(HackerNewsClient.HOST,
-                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H);
+                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M);
             CACHE_ENABLED_HOSTS.put(AlgoliaClient.HOST,
-                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H);
+                    RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M);
             CACHE_ENABLED_HOSTS.put(ReadabilityClient.HOST,
                     RestServiceFactory.CACHE_CONTROL_MAX_AGE_24H);
         }
