@@ -8,8 +8,8 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 48
-        versionName "2.5"
+        versionCode 49
+        versionName "2.6"
         vectorDrawables.useSupportLibrary = true
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "READABILITY_TOKEN", "\"\""
