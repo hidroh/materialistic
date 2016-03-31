@@ -213,13 +213,8 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     private void syncReadability(@NonNull HackerNewsItem item) {
         if (mConnectionEnabled && mReadabilityEnabled && item.isStoryType()) {
             final String itemId = item.getId();
-            mReadabilityClient.parse(itemId, item.getRawUrl(),
-                    new ReadabilityClient.Callback() {
-                        @Override
-                        public void onResponse(String content) {
-                            notifyReadability(itemId);
-                        }
-                    });
+            mReadabilityClient.parse(itemId, item.getRawUrl());
+            notifyReadability(itemId);
         }
     }
 
