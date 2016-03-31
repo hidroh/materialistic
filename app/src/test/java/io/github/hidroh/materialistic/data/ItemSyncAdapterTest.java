@@ -56,7 +56,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -74,7 +73,6 @@ public class ItemSyncAdapterTest {
     private ItemSyncAdapter adapter;
     private SharedPreferences syncPreferences;
     private @Captor ArgumentCaptor<Callback<HackerNewsItem>> callbackCapture;
-    private @Captor ArgumentCaptor<ReadabilityClient.Callback> readabilityCallback;
     private ServiceController<ItemSyncService> serviceController;
     private ItemSyncService service;
     private ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
@@ -241,8 +239,7 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient, never()).parse(anyString(), anyString(),
-                any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString());
     }
 
     @Test
@@ -266,8 +263,7 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient).parse(anyString(), eq("http://example.com"),
-                any(ReadabilityClient.Callback.class));
+        verify(readabilityClient).parse(anyString(), eq("http://example.com"));
     }
 
     @Test
@@ -287,8 +283,7 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient, never()).parse(anyString(), anyString(),
-                any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString());
     }
 
     @Test
@@ -307,8 +302,7 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient, never()).parse(anyString(), anyString(),
-                any(ReadabilityClient.Callback.class));
+        verify(readabilityClient, never()).parse(anyString(), anyString());
     }
 
     @Test
@@ -392,16 +386,11 @@ public class ItemSyncAdapterTest {
                 .getSystemService(Context.NOTIFICATION_SERVICE));
         ShadowNotification.Progress progress = shadowOf(notificationManager.getNotification(1))
                 .getProgress();
-        assertThat(progress.progress).isEqualTo(2); // self + kid 1
+        assertThat(progress.progress).isEqualTo(3); // self + kid 1 + readability
         assertThat(progress.max).isEqualTo(4); // self + 2 kids + readability
 
         verify(kid2Call).enqueue(callbackCapture.capture());
         callbackCapture.getValue().onFailure(null, null);
-        assertThat(shadowOf(notificationManager.getNotification(1)).getProgress().progress)
-                .isEqualTo(3); // self + kid 1 + kid 2
-
-        verify(readabilityClient).parse(anyString(), anyString(), readabilityCallback.capture());
-        readabilityCallback.getValue().onResponse(null);
         assertThat(notificationManager.getAllNotifications()).isEmpty();
     }
 
