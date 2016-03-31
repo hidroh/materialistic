@@ -178,23 +178,23 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     interface RestService {
-        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("topstories.json")
         Call<int[]> topStories();
 
-        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("newstories.json")
         Call<int[]> newStories();
 
-        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("showstories.json")
         Call<int[]> showStories();
 
-        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("askstories.json")
         Call<int[]> askStories();
 
-        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("jobstories.json")
         Call<int[]> jobStories();
 
@@ -218,7 +218,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @GET("jobstories.json")
         Call<int[]> networkJobStories();
 
-        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_1H)
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("item/{itemId}.json")
         Call<HackerNewsItem> item(@Path("itemId") String itemId);
 
