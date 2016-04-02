@@ -7,7 +7,7 @@ Material design [Hacker News](https://news.ycombinator.com/) client for Android,
 **Requirements**
 - Latest Android SDK tools
 - Latest Android platform tools
-- Android SDK Build tools 23.0.2
+- Android SDK Build tools 23.0.3
 - Android SDK 23
 - Android Support Repository
 - Android Support Library 23.2.1
