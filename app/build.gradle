@@ -42,27 +42,21 @@ ext {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    //noinspection GradleDependency http://b.android.com/203321
-    compile "com.android.support:appcompat-v7:$supportVersion"
-    //noinspection GradleDependency http://b.android.com/203321
-    compile "com.android.support:recyclerview-v7:$supportVersion"
-    //noinspection GradleDependency http://b.android.com/203321
-    compile "com.android.support:cardview-v7:$supportVersion"
-    //noinspection GradleDependency http://b.android.com/203321
-    compile "com.android.support:design:$supportVersion"
-    //noinspection GradleDependency http://b.android.com/203321
-    compile "com.android.support:preference-v7:$supportVersion"
-    //noinspection GradleDependency http://b.android.com/203321
-    compile "com.android.support:customtabs:$supportVersion"
-    compile "com.squareup.dagger:dagger:$daggerVersion"
+    compile "com.android.support:appcompat-v7:$supportVersion",
+            "com.android.support:recyclerview-v7:$supportVersion",
+            "com.android.support:cardview-v7:$supportVersion",
+            "com.android.support:design:$supportVersion",
+            "com.android.support:preference-v7:$supportVersion",
+            "com.android.support:customtabs:$supportVersion",
+            "com.squareup.dagger:dagger:$daggerVersion",
+            "com.squareup.retrofit2:retrofit:$retrofitVersion",
+            "com.squareup.retrofit2:converter-gson:$retrofitVersion",
+            "com.squareup.okhttp3:okhttp:$okHttpVersion",
+            "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
     leakCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     debugCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
-    compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
     provided "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 
