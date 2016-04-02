@@ -32,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.BuildConfig;
@@ -141,7 +143,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
         mSharedPreferences = context.getSharedPreferences(
                 context.getPackageName() + SYNC_PREFERENCES_FILE, Context.MODE_PRIVATE);
         mHnRestService = factory.create(HackerNewsClient.BASE_API_URL,
-                HackerNewsClient.RestService.class);
+                HackerNewsClient.RestService.class, new BackgroundThreadExecutor());
         mReadabilityClient = readabilityClient;
         mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -341,6 +343,16 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
 
         private void finishKid() {
             finishedKids++;
+        }
+    }
+
+
+    static class BackgroundThreadExecutor implements Executor {
+
+        @Override
+        public void execute(@NonNull Runnable r) {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            r.run();
         }
     }
 }

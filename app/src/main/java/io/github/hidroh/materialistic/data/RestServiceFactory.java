@@ -16,6 +16,12 @@
 
 package io.github.hidroh.materialistic.data;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+
+import java.util.concurrent.Executor;
+
 import javax.inject.Inject;
 
 import okhttp3.Call;
@@ -30,6 +36,8 @@ public interface RestServiceFactory {
 
     <T> T create(String baseUrl, Class<T> clazz);
 
+    <T> T create(String baseUrl, Class<T> clazz, Executor callbackExecutor);
+
     class Impl implements RestServiceFactory {
         private final Call.Factory mCallFactory;
 
@@ -40,12 +48,27 @@ public interface RestServiceFactory {
 
         @Override
         public <T> T create(String baseUrl, Class<T> clazz) {
+            return create(baseUrl, clazz, null);
+        }
+
+        @Override
+        public <T> T create(String baseUrl, Class<T> clazz, Executor callbackExecutor) {
             return new Retrofit.Builder()
                     .callFactory(mCallFactory)
+                    .callbackExecutor(callbackExecutor != null ?
+                            callbackExecutor : new MainThreadExecutor())
                     .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(clazz);
+        }
+    }
+
+    class MainThreadExecutor implements Executor {
+        private final Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override public void execute(@NonNull Runnable r) {
+            handler.post(r);
         }
     }
 }

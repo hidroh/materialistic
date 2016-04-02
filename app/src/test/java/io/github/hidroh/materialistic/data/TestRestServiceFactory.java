@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic.data;
 
+import java.util.concurrent.Executor;
+
 import static org.mockito.Mockito.mock;
 
 public class TestRestServiceFactory implements RestServiceFactory {
@@ -14,6 +16,11 @@ public class TestRestServiceFactory implements RestServiceFactory {
 
     @Override
     public <T> T create(String baseUrl, Class<T> clazz) {
+        return create(baseUrl, clazz, null);
+    }
+
+    @Override
+    public <T> T create(String baseUrl, Class<T> clazz, Executor callbackExecutor) {
         if (clazz.isInstance(hnRestService)) {
             return (T) hnRestService;
         }
