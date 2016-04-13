@@ -29,10 +29,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_ADAPTER = "state:adapter";
+    @Inject CustomTabsDelegate mCustomTabsDelegate;
     protected RecyclerView mRecyclerView;
     private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -84,7 +87,14 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
         mRecyclerView.setAdapter(getAdapter());
+
     }
 
     @Override

@@ -39,6 +39,7 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -69,13 +70,13 @@ public class AppUtils {
     private static final String ABBR_MINUTE = "m";
     private static final String PLAY_STORE_URL = "market://details?id=" + BuildConfig.APPLICATION_ID;
 
-    public static void openWebUrlExternal(Context context, String url) {
+    public static void openWebUrlExternal(Context context, String url, CustomTabsSession session) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
             return;
         }
-        Intent intent = createViewIntent(context, url);
+        Intent intent = createViewIntent(context, url, session);
         if (!HackerNewsClient.BASE_WEB_URL.contains(Uri.parse(url).getHost())) {
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
@@ -89,7 +90,7 @@ public class AppUtils {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, url)
+            intents.add(createViewIntent(context, url, session)
                     .setPackage(info.activityInfo.packageName));
         }
         if (intents.isEmpty()) {
@@ -159,11 +160,13 @@ public class AppUtils {
 
     public static void openExternal(@NonNull final Context context,
                                     @NonNull AlertDialogBuilder alertDialogBuilder,
-                                    @NonNull final WebItem item) {
+                                    @NonNull final WebItem item,
+                                    final CustomTabsSession session) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
-                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
+                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()),
+                    session);
             return;
         }
         alertDialogBuilder
@@ -172,15 +175,15 @@ public class AppUtils {
                 .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        openWebUrlExternal(context,
-                                item.getUrl());
+                        openWebUrlExternal(context, item.getUrl(), session);
                     }
                 })
                 .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         openWebUrlExternal(context,
-                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
+                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()),
+                                session);
                     }
                 })
                 .create()
@@ -427,10 +430,12 @@ public class AppUtils {
     }
 
     @NonNull
-    private static Intent createViewIntent(Context context, String url) {
+    private static Intent createViewIntent(Context context, String url, CustomTabsSession session) {
         if (Preferences.customChromeTabEnabled(context)) {
-            return new CustomTabsIntent.Builder()
+            return new CustomTabsIntent.Builder(session)
                     .setToolbarColor(ContextCompat.getColor(context, R.color.orange500))
+                    .setShowTitle(true)
+                    .enableUrlBarHiding()
                     .addDefaultShareMenuItem()
                     .build()
                     .intent

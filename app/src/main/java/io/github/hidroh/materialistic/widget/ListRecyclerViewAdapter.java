@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import android.view.View;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AlertDialogBuilder;
+import io.github.hidroh.materialistic.CustomTabsDelegate;
 import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.MultiPaneListener;
@@ -47,6 +49,7 @@ public abstract class ListRecyclerViewAdapter
 
     private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";
     private static final String STATE_CARD_VIEW_ENABLED = "state:cardViewEnabled";
+    private CustomTabsDelegate mCustomTabsDelegate;
     protected Context mContext;
     private MultiPaneListener mMultiPaneListener;
     protected RecyclerView mRecyclerView;
@@ -103,6 +106,8 @@ public abstract class ListRecyclerViewAdapter
             loadItem(holder.getAdapterPosition());
             return;
         }
+        // TODO naive launch priority for now
+        mCustomTabsDelegate.mayLaunchUrl(Uri.parse(item.getUrl()), null, null);
         holder.mStoryView.setStory(item);
         holder.mStoryView.setChecked(isSelected(item.getId()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +136,10 @@ public abstract class ListRecyclerViewAdapter
 
     public final void setCardViewEnabled(boolean cardViewEnabled) {
         this.mCardViewEnabled = cardViewEnabled;
+    }
+
+    public void setCustomTabsDelegate(CustomTabsDelegate customTabsDelegate) {
+        mCustomTabsDelegate = customTabsDelegate;
     }
 
     public Bundle saveState() {

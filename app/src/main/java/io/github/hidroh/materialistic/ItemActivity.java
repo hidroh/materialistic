@@ -76,6 +76,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject UserServices mUserServices;
     @Inject SessionManager mSessionManager;
+    @Inject CustomTabsDelegate mCustomTabsDelegate;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
@@ -108,6 +109,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         }
         setContentView(R.layout.activity_item);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
@@ -153,6 +155,12 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mCustomTabsDelegate.bindCustomTabsService(this);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_item, menu);
         return super.onCreateOptionsMenu(menu);
@@ -171,7 +179,8 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
             return true;
         }
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openExternal(ItemActivity.this, mAlertDialogBuilder, mItem);
+            AppUtils.openExternal(ItemActivity.this, mAlertDialogBuilder, mItem,
+                    mCustomTabsDelegate.getSession());
             return true;
         }
         if (item.getItemId() == R.id.menu_share) {
@@ -186,6 +195,12 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_ITEM, mItem);
         outState.putString(STATE_ITEM_ID, mItemId);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mCustomTabsDelegate.unbindCustomTabsService(this);
     }
 
     @Override
@@ -243,10 +258,12 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         });
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void bindData(final Item story) {
         if (story == null) {
             return;
         }
+        mCustomTabsDelegate.mayLaunchUrl(Uri.parse(story.getUrl()), null, null);
         bindFavorite();
         mSessionManager.view(this, story.getId());
         mReplyButton.setOnClickListener(new View.OnClickListener() {
@@ -322,7 +339,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                 @Override
                 public void onClick(View v) {
                     AppUtils.openWebUrlExternal(ItemActivity.this,
-                            story.getUrl());
+                            story.getUrl(), mCustomTabsDelegate.getSession());
                 }
             });
         } else {

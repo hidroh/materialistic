@@ -168,6 +168,11 @@ public class ItemActivityTest {
             public boolean isStoryType() {
                 return true;
             }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
         });
         controller.withIntent(intent).create().start().resume();
         assertThat(activity.findViewById(R.id.source)).isNotVisible();
@@ -430,6 +435,11 @@ public class ItemActivityTest {
             public int getKidCount() {
                 return 10;
             }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
         });
         controller.withIntent(intent).create().start().resume();
         // see https://github.com/robolectric/robolectric/issues/1326
@@ -477,6 +487,11 @@ public class ItemActivityTest {
             @Override
             public int getKidCount() {
                 return 10;
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
             }
         });
         controller.withIntent(intent).create().start().resume();

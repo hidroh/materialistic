@@ -121,6 +121,7 @@ public class TestActivityModule {
     private final FeedbackClient feedbackClient = mock(FeedbackClient.class);
     private final ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
     private final UserServices userServices = mock(UserServices.class);
+    private final CustomTabsDelegate customTabsDelegate = mock(CustomTabsDelegate.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -280,5 +281,10 @@ public class TestActivityModule {
                 popupMenu.show();
             }
         };
+    }
+
+    @Provides @Singleton
+    public CustomTabsDelegate provideCustomTabsDelegate() {
+        return customTabsDelegate;
     }
 }
