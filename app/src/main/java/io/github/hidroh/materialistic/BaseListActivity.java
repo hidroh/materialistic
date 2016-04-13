@@ -63,6 +63,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject ActionViewResolver mActionViewResolver;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject SessionManager mSessionManager;
+    @Inject CustomTabsDelegate mCustomTabsDelegate;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
@@ -85,6 +86,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        //noinspection ConstantConditions
         findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +132,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mCustomTabsDelegate.bindCustomTabsService(this);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mIsMultiPane) {
             getMenuInflater().inflate(R.menu.menu_item, menu);
@@ -163,7 +171,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             return true;
         }
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openExternal(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem);
+            AppUtils.openExternal(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem,
+                    mCustomTabsDelegate.getSession());
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -175,6 +184,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
         outState.putInt(STATE_STORY_VIEW_MODE, mStoryViewMode.ordinal());
         outState.putBoolean(STATE_EXTERNAL_BROWSER, mExternalBrowser);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mCustomTabsDelegate.unbindCustomTabsService(this);
     }
 
     @Override
@@ -251,7 +266,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     private void openSinglePaneItem(WebItem item) {
         if (mExternalBrowser) {
-            AppUtils.openWebUrlExternal(this, item.getUrl());
+            AppUtils.openWebUrlExternal(this, item.getUrl(), mCustomTabsDelegate.getSession());
         } else {
             startActivity(new Intent(this, ItemActivity.class)
                     .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())

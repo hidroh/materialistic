@@ -149,7 +149,7 @@ public class AppUtilsTest {
     @Test
     public void testOpenExternalComment() {
         AppUtils.openExternal(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
-                new TestHnItem(1));
+                new TestHnItem(1), null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
         AppUtils.openExternal(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
                 new TestHnItem(1) {
@@ -157,7 +157,7 @@ public class AppUtilsTest {
                     public String getUrl() {
                         return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
                     }
-                });
+                }, null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
@@ -203,7 +203,7 @@ public class AppUtilsTest {
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(null);
-        AppUtils.openWebUrlExternal(RuntimeEnvironment.application, "http://example.com");
+        AppUtils.openWebUrlExternal(RuntimeEnvironment.application, "http://example.com", null);
         assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
                 .hasComponent(RuntimeEnvironment.application, OfflineWebActivity.class)
                 .hasExtra(OfflineWebActivity.EXTRA_URL, "http://example.com");
