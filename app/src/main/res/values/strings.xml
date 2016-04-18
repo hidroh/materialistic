@@ -62,7 +62,7 @@
     <string name="pref_color_code_title">Color code</string>
     <string name="pref_highlight_updated_title">Highlight updated stories</string>
     <string name="pref_highlight_updated_summary">Show changes from last refresh</string>
-    <string name="pref_custom_tab_title">Use custom Chrome tab (beta)</string>
+    <string name="pref_custom_tab_title">Use custom Chrome tab</string>
     <string name="pref_custom_tab_summary">Open Chrome tab instead of browser</string>
     <string name="pref_story_display_title">Default story display</string>
     <string name="pref_theme_title">Theme</string>
@@ -85,6 +85,8 @@
     <string name="pref_offline_data_always">Always</string>
     <string name="pref_offline_notification_title">Display progress</string>
     <string name="pref_offline_notification_summary">Show notification for download progress</string>
+    <string name="pref_volume_title">Use volume navigation</string>
+    <string name="pref_volume_summary">Scroll up/down with volume keys</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>
@@ -161,6 +163,9 @@
     <string name="help_promoted_story">Promoted story since last refresh</string>
     <string name="help_new_comments">Story with new comments since last refresh</string>
     <string name="help_lazy_load">With lazy loading setting enabled, only your preferred default tab will be loaded when an item is first opened.\n\nIf you are on a slow connection or encounter lagging, turning this on may help.\n\nLazy loading is enabled by default for non-wifi connections, regardless of this setting.</string>
+    <string name="help_volume_up">Press volume up to scroll up</string>
+    <string name="help_long_volume_up">Long press volume up to quick scroll to top</string>
+    <string name="help_volume_down">Press volume down to scroll down</string>
     <string name="readability">Readability</string>
     <string name="text_size_extra_small">Extra small</string>
     <string name="text_size_small">Small</string>

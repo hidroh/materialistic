@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentValues;
@@ -13,6 +14,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
@@ -20,6 +22,7 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -76,6 +79,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -96,6 +100,7 @@ public class FavoriteActivityTest {
     @Inject FavoriteManager favoriteManager;
     @Inject ActionViewResolver actionViewResolver;
     @Inject UserServices userServices;
+    @Inject VolumeNavigationDelegate volumeNavigationDelegate;
     @Captor ArgumentCaptor<Set<String>> selection;
     @Captor ArgumentCaptor<View.OnClickListener> searchViewClickListener;
     @Captor ArgumentCaptor<SearchView.OnCloseListener> searchViewCloseListener;
@@ -108,6 +113,7 @@ public class FavoriteActivityTest {
         TestApplication.applicationGraph.inject(this);
         reset(favoriteManager);
         reset(userServices);
+        reset(volumeNavigationDelegate);
         reset(actionViewResolver.getActionView(mock(MenuItem.class)));
         controller = Robolectric.buildActivity(TestFavoriteActivity.class);
         resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
@@ -127,6 +133,7 @@ public class FavoriteActivityTest {
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
+        verify(volumeNavigationDelegate).attach(any(Activity.class));
     }
 
     @Test
@@ -317,6 +324,7 @@ public class FavoriteActivityTest {
         assertEquals(1, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
                 .getAdapter().getItemCount());
         controller.pause().stop().destroy();
+        reset(volumeNavigationDelegate);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -426,6 +434,20 @@ public class FavoriteActivityTest {
         assertNull(activity.getSelectedItem());
     }
 
+    @Test
+    public void testVolumeNavigation() {
+        activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(volumeNavigationDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
+        activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
+        activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
+    }
+
     private void notifyChange(Uri uri) {
         try {
             resolver.notifyChange(uri, null);
@@ -436,6 +458,8 @@ public class FavoriteActivityTest {
 
     @After
     public void tearDown() {
-        controller.pause().stop().destroy();
+        controller.pause().stop();
+        verify(volumeNavigationDelegate).detach(any(Activity.class));
+        controller.destroy();
     }
 }

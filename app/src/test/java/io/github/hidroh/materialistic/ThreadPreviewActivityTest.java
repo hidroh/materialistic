@@ -18,7 +18,9 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,6 +47,8 @@ import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -56,6 +60,7 @@ public class ThreadPreviewActivityTest {
     private ActivityController<ThreadPreviewActivity> controller;
     private ThreadPreviewActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
+    @Inject VolumeNavigationDelegate volumeNavigationDelegate;
     @Captor ArgumentCaptor<ResponseListener<Item>> itemCaptor;
 
     @Before
@@ -63,6 +68,7 @@ public class ThreadPreviewActivityTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(itemManager);
+        reset(volumeNavigationDelegate);
         controller = Robolectric.buildActivity(ThreadPreviewActivity.class);
         activity = controller
                 .withIntent(new Intent().putExtra(ThreadPreviewActivity.EXTRA_ITEM,
@@ -146,6 +152,20 @@ public class ThreadPreviewActivityTest {
                 .hasComponent(activity, ItemActivity.class)
                 .hasExtra(ItemActivity.EXTRA_ITEM);
 
+    }
+
+    @Test
+    public void testVolumeNavigation() {
+        activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(volumeNavigationDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
+        activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
+        activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
     }
 
     @After

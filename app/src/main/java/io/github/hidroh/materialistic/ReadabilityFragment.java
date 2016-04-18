@@ -53,6 +53,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private ProgressBar mProgressBar;
     private View mEmptyView;
     @Inject ReadabilityClient mReadabilityClient;
+    private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
     private String mContent;
     private float mTextSize;
     private String[] mTextSizeOptionValues;
@@ -148,6 +149,12 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mScrollableHelper = new VolumeNavigationDelegate.NestedScrollViewHelper(mScrollView);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putFloat(STATE_TEXT_SIZE, mTextSize);
@@ -163,7 +170,17 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
 
     @Override
     public void scrollToTop() {
-        mScrollView.smoothScrollTo(0, 0);
+        mScrollableHelper.scrollToTop();
+    }
+
+    @Override
+    public boolean scrollToNext() {
+        return mScrollableHelper.scrollToNext();
+    }
+
+    @Override
+    public boolean scrollToPrevious() {
+        return mScrollableHelper.scrollToPrevious();
     }
 
     @Override

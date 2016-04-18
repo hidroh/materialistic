@@ -85,6 +85,18 @@
             app:dialogTitle="@string/pref_lazy_load_title"
             app:dialogLayout="@layout/help_lazy_load" />
 
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_volume"
+            android:title="@string/pref_volume_title"
+            android:summary="@string/pref_volume_summary"
+            android:defaultValue="false" />
+
+        <io.github.hidroh.materialistic.preference.PreferenceHelp
+            android:key="@string/pref_volume_help"
+            android:title="@string/whats_this"
+            app:dialogTitle="@string/pref_volume_title"
+            app:dialogLayout="@layout/help_volume" />
+
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory

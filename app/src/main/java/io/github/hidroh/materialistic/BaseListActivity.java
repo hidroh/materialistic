@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,7 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,6 +66,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
+    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
+    private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
@@ -90,12 +94,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
-                if (fragment instanceof Scrollable) {
-                    ((Scrollable) fragment).scrollToTop();
+                Scrollable scrollable = getScrollableList();
+                if (scrollable != null) {
+                    scrollable.scrollToTop();
                 }
             }
         });
+        mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
         if (mIsMultiPane) {
             mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -135,6 +140,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onStart() {
         super.onStart();
         mCustomTabsDelegate.bindCustomTabsService(this);
+        mVolumeNavigationDelegate.attach(this);
     }
 
     @Override
@@ -190,6 +196,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onStop() {
         super.onStop();
         mCustomTabsDelegate.unbindCustomTabsService(this);
+        mVolumeNavigationDelegate.detach(this);
     }
 
     @Override
@@ -197,6 +204,25 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        mVolumeNavigationDelegate.setScrollable(getScrollableList(), mAppBar);
+        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+                super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+                super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+                super.onKeyLongPress(keyCode, event);
     }
 
     @NonNull
@@ -262,6 +288,11 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @ItemManager.CacheMode
     protected int getItemCacheMode() {
         return ItemManager.MODE_DEFAULT;
+    }
+
+    private Scrollable getScrollableList() {
+        // TODO landscape behavior?
+        return (Scrollable) getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
     }
 
     private void openSinglePaneItem(WebItem item) {

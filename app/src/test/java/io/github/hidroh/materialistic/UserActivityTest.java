@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -36,6 +38,7 @@ import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -50,6 +53,7 @@ public class UserActivityTest {
     private UserActivity activity;
     @Inject UserManager userManager;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
+    @Inject VolumeNavigationDelegate volumeNavigationDelegate;
     @Captor ArgumentCaptor<ResponseListener<UserManager.User>> userCaptor;
     @Captor ArgumentCaptor<ResponseListener<Item>> itemCaptor;
     private UserManager.User user;
@@ -60,6 +64,7 @@ public class UserActivityTest {
         TestApplication.applicationGraph.inject(this);
         reset(userManager);
         reset(itemManager);
+        reset(volumeNavigationDelegate);
         controller = Robolectric.buildActivity(UserActivity.class);
         Intent intent = new Intent();
         intent.putExtra(UserActivity.EXTRA_USERNAME, "username");
@@ -274,6 +279,20 @@ public class UserActivityTest {
         adapter.makeItemVisible(0);
         RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
         assertThat(viewHolder.itemView.findViewById(R.id.comment)).isNotVisible();
+    }
+
+    @Test
+    public void testVolumeNavigation() {
+        activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(volumeNavigationDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
+        activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
+        activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
     }
 
     @After

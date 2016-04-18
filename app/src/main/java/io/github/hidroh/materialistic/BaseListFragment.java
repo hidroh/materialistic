@@ -22,7 +22,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,10 +31,12 @@ import android.view.View;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 
 public abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_ADAPTER = "state:adapter";
     @Inject CustomTabsDelegate mCustomTabsDelegate;
+    private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     protected RecyclerView mRecyclerView;
     private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -69,7 +70,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         final int verticalMargin = getResources()
                 .getDimensionPixelSize(R.dimen.cardview_vertical_margin);
@@ -94,7 +95,8 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         super.onActivityCreated(savedInstanceState);
         getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
         mRecyclerView.setAdapter(getAdapter());
-
+        mScrollableHelper = new VolumeNavigationDelegate.RecyclerViewHelper(mRecyclerView,
+                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_PAGE);
     }
 
     @Override
@@ -150,7 +152,17 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
 
     @Override
     public void scrollToTop() {
-        mRecyclerView.smoothScrollToPosition(0);
+        mScrollableHelper.scrollToTop();
+    }
+
+    @Override
+    public boolean scrollToNext() {
+        return mScrollableHelper.scrollToNext();
+    }
+
+    @Override
+    public boolean scrollToPrevious() {
+        return mScrollableHelper.scrollToPrevious();
     }
 
     protected abstract ListRecyclerViewAdapter getAdapter();

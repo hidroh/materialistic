@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.support.customtabs.CustomTabsSession;
 import android.util.Log;
 
 import java.io.IOException;
@@ -202,6 +201,11 @@ public class ActivityModule {
     @Provides @Singleton
     public CustomTabsDelegate provideCustomTabsDelegate() {
         return new CustomTabsDelegate();
+    }
+
+    @Provides @Singleton
+    public VolumeNavigationDelegate provideVolumeNavigationDelegate() {
+        return new VolumeNavigationDelegate();
     }
 
     static class ConnectionAwareInterceptor implements Interceptor {

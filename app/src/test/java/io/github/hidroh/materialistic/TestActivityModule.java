@@ -122,6 +122,7 @@ public class TestActivityModule {
     private final ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
     private final UserServices userServices = mock(UserServices.class);
     private final CustomTabsDelegate customTabsDelegate = mock(CustomTabsDelegate.class);
+    private final VolumeNavigationDelegate volumeNavigationDelegate = mock(VolumeNavigationDelegate.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -239,6 +240,11 @@ public class TestActivityModule {
     @Provides
     public AccountManager provideAccountManager() {
         return ShadowAccountManager.get(RuntimeEnvironment.application);
+    }
+
+    @Provides @Singleton
+    public VolumeNavigationDelegate provideVolumeNavigationDelegate() {
+        return volumeNavigationDelegate;
     }
 
     @Provides
