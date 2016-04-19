@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
+import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -52,8 +53,11 @@ public class CustomTabsDelegate {
         if (mClient != null) {
             return;
         }
+        if (TextUtils.isEmpty(getPackageNameToUse(activity))) {
+            return;
+        }
         mConnection = new ServiceConnection(this);
-        CustomTabsClient.bindCustomTabsService(activity, getPackageNameToUse(activity), mConnection);
+        CustomTabsClient.bindCustomTabsService(activity, sPackageNameToUse, mConnection);
     }
 
     /**

@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,7 +33,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
 import java.util.List;
@@ -72,13 +75,24 @@ public class CustomTabsDelegateTest {
 
     @Test
     public void testUnboundService() {
-        assertFalse(delegate.mayLaunchUrl(Uri.parse("http://example.com"), null, null));
+        assertFalse(delegate.mayLaunchUrl(Uri.parse("http://www.example.com"), null, null));
         assertNull(delegate.getSession());
     }
 
     @Test
     public void testBindService() throws RemoteException {
+        // no chrome installed should not bind service
+        delegate.bindCustomTabsService(activity);
+        assertThat(ShadowApplication.getInstance().getBoundServiceConnections()).isEmpty();
+
         // bind service should create connection
+        RuntimeEnvironment.getRobolectricPackageManager().addResolveInfoForIntent(
+                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com")),
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
+        RuntimeEnvironment.getRobolectricPackageManager().addResolveInfoForIntent(
+                new Intent("android.support.customtabs.action.CustomTabsService")
+                        .setPackage("com.android.chrome"),
+                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
         delegate.bindCustomTabsService(activity);
         List<ServiceConnection> connections = ShadowApplication.getInstance()
                 .getBoundServiceConnections();
@@ -92,7 +106,7 @@ public class CustomTabsDelegateTest {
         // may launch url should success
         when(service.mayLaunchUrl(any(ICustomTabsCallback.class),
                 any(Uri.class), any(Bundle.class), anyListOf(Bundle.class))).thenReturn(true);
-        assertTrue(delegate.mayLaunchUrl(Uri.parse("http://example.com"), null, null));
+        assertTrue(delegate.mayLaunchUrl(Uri.parse("http://www.example.com"), null, null));
 
         // on service disconnected should clear session
         delegate.unbindCustomTabsService(activity);
