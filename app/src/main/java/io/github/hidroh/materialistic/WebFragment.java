@@ -53,7 +53,6 @@ import io.github.hidroh.materialistic.data.WebItem;
 public class WebFragment extends LazyLoadFragment implements Scrollable {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
-    private static final String ABOUT_BLANK = "about:blank";
     private WebItem mItem;
     private WebView mWebView;
     private TextView mText;
