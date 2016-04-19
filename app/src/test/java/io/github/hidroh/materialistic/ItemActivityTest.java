@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,6 +54,7 @@ import io.github.hidroh.materialistic.test.TestItem;
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -69,6 +72,7 @@ public class ItemActivityTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
+    @Inject VolumeNavigationDelegate volumeNavigationDelegate;
     @Captor ArgumentCaptor<ResponseListener<Item>> listener;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
@@ -80,6 +84,7 @@ public class ItemActivityTest {
         reset(hackerNewsClient);
         reset(favoriteManager);
         reset(userServices);
+        reset(volumeNavigationDelegate);
         controller = Robolectric.buildActivity(ItemActivity.class);
         activity = controller.get();
     }
@@ -542,6 +547,25 @@ public class ItemActivityTest {
         activity.findViewById(R.id.reply_button).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class);
+    }
+
+    @Test
+    public void testVolumeNavigation() {
+        Intent intent = new Intent();
+        WebItem webItem = mock(WebItem.class);
+        when(webItem.getId()).thenReturn("1");
+        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
+        controller.withIntent(intent).create().start().resume().visible();
+        activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(volumeNavigationDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
+        activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
+        activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
+        verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
     }
 
     @After

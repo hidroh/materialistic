@@ -27,7 +27,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
@@ -35,6 +34,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,7 +58,7 @@ import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 
-public class ItemActivity extends InjectableActivity implements Scrollable {
+public class ItemActivity extends InjectableActivity {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_CACHE_MODE = ItemActivity.class.getName() + ".EXTRA_CACHE_MODE";
@@ -77,11 +77,14 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     @Inject UserServices mUserServices;
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
+    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
     private FloatingActionButton mReplyButton;
+    private ItemPagerAdapter mAdapter;
+    private ViewPager mViewPager;
     private final ContentObserver mObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
@@ -118,6 +121,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
         final Intent intent = getIntent();
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
@@ -158,6 +162,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     protected void onStart() {
         super.onStart();
         mCustomTabsDelegate.bindCustomTabsService(this);
+        mVolumeNavigationDelegate.attach(this);
     }
 
     @Override
@@ -201,6 +206,7 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     protected void onStop() {
         super.onStop();
         mCustomTabsDelegate.unbindCustomTabsService(this);
+        mVolumeNavigationDelegate.detach(this);
     }
 
     @Override
@@ -210,8 +216,22 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
     }
 
     @Override
-    public void scrollToTop() {
-        mAppBar.setExpanded(true, true);
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        mVolumeNavigationDelegate.setScrollable(getScrollable(), mAppBar);
+        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+                super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+                super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+                super.onKeyLongPress(keyCode, event);
     }
 
     private void onItemLoaded(Item response) {
@@ -306,32 +326,31 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                         R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;
         }
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
-        viewPager.setPageMarginDrawable(R.color.blackT12);
-        final ItemPagerAdapter adapter = new ItemPagerAdapter(this, getSupportFragmentManager(),
+        mViewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
+        mViewPager.setPageMarginDrawable(R.color.blackT12);
+        mAdapter = new ItemPagerAdapter(this, getSupportFragmentManager(),
                 story, !mExternalBrowser,
                 getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT));
-        viewPager.setAdapter(adapter);
-        mTabLayout.setupWithViewPager(viewPager);
-        mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Fragment activeFragment = adapter.getItem(viewPager.getCurrentItem());
-                if (activeFragment != null) {
-                    ((Scrollable) activeFragment).scrollToTop();
+                Scrollable scrollable = getScrollable();
+                if (scrollable != null) {
+                    scrollable.scrollToTop();
                 }
-                scrollToTop();
+                mAppBar.setExpanded(true, true);
             }
         });
         switch (mStoryViewMode) {
             case Article:
-                if (viewPager.getAdapter().getCount() == 3) {
-                    viewPager.setCurrentItem(1);
+                if (mViewPager.getAdapter().getCount() == 3) {
+                    mViewPager.setCurrentItem(1);
                 }
                 break;
             case Readability:
-                viewPager.setCurrentItem(viewPager.getAdapter().getCount() - 1);
+                mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
                 break;
         }
         if (story.isStoryType() && mExternalBrowser) {
@@ -352,6 +371,9 @@ public class ItemActivity extends InjectableActivity implements Scrollable {
                 R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_border_white_24dp);
     }
 
+    private Scrollable getScrollable() {
+        return mAdapter != null ? (Scrollable) mAdapter.getItem(mViewPager.getCurrentItem()) : null;
+    }
     private void vote(final Item story) {
         mUserServices.voteUp(ItemActivity.this, story.getId(), new VoteCallback(this));
     }

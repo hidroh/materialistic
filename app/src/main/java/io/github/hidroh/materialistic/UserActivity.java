@@ -21,10 +21,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -39,6 +39,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.widget.CommentItemDecoration;
+import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 
 public class UserActivity extends InjectableActivity implements Scrollable {
@@ -47,6 +48,8 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private static final String PARAM_ID = "id";
     @Inject UserManager mUserManager;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManger;
+    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
+    private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     private String mUsername;
     private UserManager.User mUser;
     private TextView mInfo;
@@ -99,7 +102,9 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         });
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this));
+        mScrollableHelper = new VolumeNavigationDelegate.RecyclerViewHelper(mRecyclerView,
+                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
         if (savedInstanceState != null) {
             mUser = savedInstanceState.getParcelable(STATE_USER);
         }
@@ -114,6 +119,12 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                     R.string.offline_notice, Snackbar.LENGTH_LONG)
                     .show();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mVolumeNavigationDelegate.attach(this);
     }
 
     @Override
@@ -132,9 +143,44 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mVolumeNavigationDelegate.detach(this);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        mVolumeNavigationDelegate.setScrollable(this, mAppBar);
+        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+                super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+                super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+                super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
     public void scrollToTop() {
-        mRecyclerView.smoothScrollToPosition(0);
+        mScrollableHelper.scrollToTop();
         mAppBar.setExpanded(true, true);
+    }
+
+    @Override
+    public boolean scrollToNext() {
+        return mScrollableHelper.scrollToNext();
+    }
+
+    @Override
+    public boolean scrollToPrevious() {
+        return mScrollableHelper.scrollToPrevious();
     }
 
     private void load() {

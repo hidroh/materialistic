@@ -61,6 +61,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     private boolean mIsHackerNewsUrl;
     private boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
 
     public static WebFragment instantiate(Context context, WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
@@ -141,6 +142,12 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mScrollableHelper = new VolumeNavigationDelegate.NestedScrollViewHelper(mScrollView);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_ITEM, mItem);
@@ -148,7 +155,17 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
 
     @Override
     public void scrollToTop() {
-        mScrollView.smoothScrollTo(0, 0);
+        mScrollableHelper.scrollToTop();
+    }
+
+    @Override
+    public boolean scrollToNext() {
+        return mScrollableHelper.scrollToNext();
+    }
+
+    @Override
+    public boolean scrollToPrevious() {
+        return mScrollableHelper.scrollToPrevious();
     }
 
     @Override

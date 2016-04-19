@@ -18,9 +18,9 @@ package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
 
@@ -30,12 +30,14 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.widget.CommentItemDecoration;
+import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 
 public class ThreadPreviewActivity extends InjectableActivity {
     public static final String EXTRA_ITEM = ThreadPreviewActivity.class.getName() + ".EXTRA_ITEM";
 
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +54,18 @@ public class ThreadPreviewActivity extends InjectableActivity {
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new SnappyLinearLayoutManager(this));
         recyclerView.addItemDecoration(new CommentItemDecoration(this));
         recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(mItemManager, item));
+        mVolumeNavigationDelegate.setScrollable(
+                new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
+                        VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM), null);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mVolumeNavigationDelegate.attach(this);
     }
 
     @Override
@@ -64,6 +75,30 @@ public class ThreadPreviewActivity extends InjectableActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mVolumeNavigationDelegate.detach(this);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+                super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+                super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+                super.onKeyLongPress(keyCode, event);
     }
 
     @Override

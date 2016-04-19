@@ -24,7 +24,7 @@
     android:scrollbarStyle="insideOverlay"
     android:scrollbars="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:id="@id/web_view"
             android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
 
         <ViewStub
             android:id="@id/empty"

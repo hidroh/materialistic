@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -48,6 +47,7 @@ import io.github.hidroh.materialistic.widget.CommentItemDecoration;
 import io.github.hidroh.materialistic.widget.ItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
+import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 
 public class ItemFragment extends LazyLoadFragment implements Scrollable {
 
@@ -69,6 +69,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
     private ItemRecyclerViewAdapter mAdapter;
+    private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     private boolean mColorCoded = true;
     private String[] mDisplayOptionValues;
     private String[] mMaxLinesOptionValues;
@@ -136,7 +137,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
         mEmptyView = view.findViewById(R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new CommentItemDecoration(getActivity()));
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
@@ -156,6 +157,13 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mScrollableHelper = new VolumeNavigationDelegate.RecyclerViewHelper(mRecyclerView,
+                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
     }
 
     @Override
@@ -247,7 +255,17 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
 
     @Override
     public void scrollToTop() {
-        mRecyclerView.smoothScrollToPosition(0);
+        mScrollableHelper.scrollToTop();
+    }
+
+    @Override
+    public boolean scrollToNext() {
+        return mScrollableHelper.scrollToNext();
+    }
+
+    @Override
+    public boolean scrollToPrevious() {
+        return mScrollableHelper.scrollToPrevious();
     }
 
     @Override
