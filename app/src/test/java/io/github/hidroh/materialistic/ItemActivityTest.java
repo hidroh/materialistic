@@ -10,7 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -52,6 +51,8 @@ import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -64,6 +65,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowFloatingActionButton.class, ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
@@ -355,23 +357,20 @@ public class ItemActivityTest {
         item.setFavorite(true);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume();
-        assertEquals(R.drawable.ic_bookmark_white_24dp,
-                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
-                        .getCreatedFromResId());
+        assertTrue(item.isFavorite());
         ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
                 .getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
                 .next());
         activity.findViewById(R.id.bookmarked).performClick();
+        verify(favoriteManager).remove(any(Context.class), eq("1"));
         observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
                 .build());
-        assertEquals(R.drawable.ic_bookmark_border_white_24dp,
-                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
-                        .getCreatedFromResId());
+        assertFalse(item.isFavorite());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(R.string.toast_removed);
@@ -381,25 +380,22 @@ public class ItemActivityTest {
                 .appendPath("add")
                 .appendPath("1")
                 .build());
-        assertEquals(R.drawable.ic_bookmark_white_24dp,
-                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
-                        .getCreatedFromResId());
+        assertTrue(item.isFavorite());
     }
 
     @Test
     public void testNonFavoriteStory() {
-        Intent intent = new Intent();
-        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1L) {
+        TestHnItem item = new TestHnItem(1L) {
             @NonNull
             @Override
             public String getType() {
                 return STORY_TYPE;
             }
-        });
+        };
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume();
-        assertEquals(R.drawable.ic_bookmark_border_white_24dp,
-                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
-                        .getCreatedFromResId());
+        assertFalse(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
         ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
                 .getContentResolver())
@@ -411,9 +407,7 @@ public class ItemActivityTest {
                 .appendPath("add")
                 .appendPath("1")
                 .build());
-        assertEquals(R.drawable.ic_bookmark_white_24dp,
-                shadowOf(((ImageView) activity.findViewById(R.id.bookmarked)).getDrawable())
-                        .getCreatedFromResId());
+        assertTrue(item.isFavorite());
     }
 
     @Test
