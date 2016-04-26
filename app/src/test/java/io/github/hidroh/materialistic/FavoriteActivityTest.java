@@ -44,7 +44,6 @@ import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowPopupMenu;
@@ -116,7 +115,7 @@ public class FavoriteActivityTest {
         reset(volumeNavigationDelegate);
         reset(actionViewResolver.getActionView(mock(MenuItem.class)));
         controller = Robolectric.buildActivity(TestFavoriteActivity.class);
-        resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
+        resolver = shadowOf(controller.get().getContentResolver());
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
         cv.put("title", "title");
@@ -393,8 +392,7 @@ public class FavoriteActivityTest {
 
     @Test
     public void testRemoveClearSelection() {
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
-                .getContentResolver())
+        ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
                 .next());
@@ -422,8 +420,7 @@ public class FavoriteActivityTest {
     @Test
     public void testClearClearSelection() {
         activity.onItemSelected(new TestHnItem(1L));
-        shadowOf(shadowOf(ShadowApplication.getInstance()
-                .getContentResolver())
+        shadowOf(shadowOf(activity.getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
                 .next())

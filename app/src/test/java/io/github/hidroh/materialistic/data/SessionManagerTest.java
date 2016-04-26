@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +29,7 @@ public class SessionManagerTest {
     @Before
     public void setUp() {
         callbacks = mock(SessionManager.OperationCallbacks.class);
-        resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
+        resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
         resolver.insert(MaterialisticProvider.URI_VIEWED, cv);

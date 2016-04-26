@@ -358,8 +358,7 @@ public class ItemActivityTest {
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume();
         assertTrue(item.isFavorite());
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
-                .getContentResolver())
+        ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
                 .next());
@@ -397,8 +396,7 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume();
         assertFalse(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
-                .getContentResolver())
+        ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
                 .next());

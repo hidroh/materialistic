@@ -30,7 +30,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
@@ -130,7 +129,7 @@ public class ListFragmentViewHolderTest {
     public void testStory() {
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
-        shadowOf(ShadowApplication.getInstance().getContentResolver())
+        shadowOf(activity.getContentResolver())
                 .insert(MaterialisticProvider.URI_VIEWED, cv);
         verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
@@ -316,7 +315,7 @@ public class ListFragmentViewHolderTest {
         itemListener.getValue().onResponse(item);
         assertNotViewed();
         controller.pause();
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+        ShadowContentObserver observer = shadowOf(shadowOf(activity
                 .getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_VIEWED)
                 .iterator()
@@ -338,7 +337,7 @@ public class ListFragmentViewHolderTest {
 
         controller.pause();
 
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+        ShadowContentObserver observer = shadowOf(shadowOf(activity
                 .getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()
@@ -373,7 +372,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testSaveItem() {
-        ShadowContentObserver observer = shadowOf(shadowOf(ShadowApplication.getInstance()
+        ShadowContentObserver observer = shadowOf(shadowOf(activity
                 .getContentResolver())
                 .getContentObservers(MaterialisticProvider.URI_FAVORITE)
                 .iterator()

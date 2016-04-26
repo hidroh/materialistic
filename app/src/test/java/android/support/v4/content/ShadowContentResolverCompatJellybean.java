@@ -4,9 +4,9 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowApplication;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -17,7 +17,7 @@ public class ShadowContentResolverCompatJellybean {
     public static Cursor query(ContentResolver resolver, Uri uri, String[] projection,
                                String selection, String[] selectionArgs, String sortOrder,
                                Object cancellationSignalObj) {
-        return shadowOf(ShadowApplication.getInstance().getContentResolver())
+        return shadowOf(RuntimeEnvironment.application.getContentResolver())
                 .query(uri, projection, selection, selectionArgs, sortOrder);
     }
 }
