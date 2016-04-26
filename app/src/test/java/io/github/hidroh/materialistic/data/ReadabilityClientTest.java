@@ -12,7 +12,6 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
 
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class ReadabilityClientTest {
         callback = mock(ReadabilityClient.Callback.class);
         call = mock(Call.class);
         when(TestRestServiceFactory.readabilityService.parse(anyString())).thenReturn(call);
-        resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
+        resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
     }
 
     @Test

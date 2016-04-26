@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
@@ -52,7 +51,7 @@ public class FavoriteManagerTest {
     @Before
     public void setUp() {
         callbacks = mock(FavoriteManager.OperationCallbacks.class);
-        resolver = shadowOf(ShadowApplication.getInstance().getContentResolver());
+        resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
         cv.put("title", "title");
