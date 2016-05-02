@@ -49,12 +49,10 @@ You may need to set up Android Studio for unit test, by changing 'Build Variants
 - [Building custom preferences with preference-v7](http://www.hidroh.com/2015/11/30/building-custom-preferences-v7/)
 
 ### Screenshots
-<img src="assets/screenshot-1.png" width="300px" />
-<img src="assets/screenshot-2.png" width="300px" />
-<img src="assets/screenshot-3.png" width="300px" />
-<img src="assets/screenshot-8.png" width="300px" />
-<img src="assets/screenshot-10.png" width="600px" />
-<img src="assets/screenshot-12.png" width="600px" />
+<img src="assets/screenshot-1.png" width="200px" />
+<img src="assets/screenshot-2.png" width="200px" />
+<img src="assets/screenshot-3.png" width="200px" />
+<img src="assets/screenshot-4.png" width="600px" />
 
 ### Contributing
 Contributions are always welcome. Please make sure you read [Contributing notes](CONTRIBUTING.md) first.
