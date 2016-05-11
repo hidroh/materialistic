@@ -257,21 +257,11 @@ public class UserServicesClient implements UserServices {
     }
 
     private void postResult(final Callback callback, final boolean successful) {
-        mUiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onDone(successful);
-            }
-        });
+        mUiHandler.post(() -> callback.onDone(successful));
     }
 
     private void postError(final Callback callback) {
-        mUiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onError();
-            }
-        });
+        mUiHandler.post(callback::onError);
     }
 
     private String getInputValue(String html, String name) {

@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.OnAccountsUpdateListener;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -109,6 +108,7 @@ public class AppUtils {
     public static void setTextWithLinks(TextView textView, String htmlText) {
         setHtmlText(textView, htmlText);
         // TODO https://code.google.com/p/android/issues/detail?id=191430
+        //noinspection Convert2Lambda
         textView.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
@@ -172,20 +172,12 @@ public class AppUtils {
         alertDialogBuilder
                 .init(context)
                 .setMessage(R.string.view_in_browser)
-                .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        openWebUrlExternal(context, item.getUrl(), session);
-                    }
-                })
-                .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setPositiveButton(R.string.article, (dialog, which) ->
+                        openWebUrlExternal(context, item.getUrl(), session))
+                .setNegativeButton(R.string.comments, (dialog, which) ->
                         openWebUrlExternal(context,
                                 String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()),
-                                session);
-                    }
-                })
+                                session))
                 .create()
                 .show();
 
@@ -204,22 +196,14 @@ public class AppUtils {
         alertDialogBuilder
                 .init(context)
                 .setMessage(R.string.share)
-                .setPositiveButton(R.string.article, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setPositiveButton(R.string.article, (dialog, which) ->
                         context.startActivity(makeChooserShareIntent(context,
                                 item.getDisplayedTitle(),
-                                item.getUrl()));
-                    }
-                })
-                .setNegativeButton(R.string.comments, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                                item.getUrl())))
+                .setNegativeButton(R.string.comments, (dialog, which) ->
                         context.startActivity(makeChooserShareIntent(context,
                                 item.getDisplayedTitle(),
-                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
-                    }
-                })
+                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()))))
                 .create()
                 .show();
     }
@@ -321,20 +305,17 @@ public class AppUtils {
     }
 
     public static void registerAccountsUpdatedListener(final Context context) {
-        AccountManager.get(context).addOnAccountsUpdatedListener(new OnAccountsUpdateListener() {
-            @Override
-            public void onAccountsUpdated(Account[] accounts) {
-                String username = Preferences.getUsername(context);
-                if (TextUtils.isEmpty(username)) {
+        AccountManager.get(context).addOnAccountsUpdatedListener(accounts -> {
+            String username = Preferences.getUsername(context);
+            if (TextUtils.isEmpty(username)) {
+                return;
+            }
+            for (Account account : accounts) {
+                if (TextUtils.equals(account.name, username)) {
                     return;
                 }
-                for (Account account : accounts) {
-                    if (TextUtils.equals(account.name, username)) {
-                        return;
-                    }
-                }
-                Preferences.setUsername(context, null);
             }
+            Preferences.setUsername(context, null);
         }, null, true);
     }
 
@@ -369,6 +350,7 @@ public class AppUtils {
             }
         }
         items[items.length - 1] = context.getString(R.string.add_account);
+        //noinspection Convert2Lambda
         alertDialogBuilder
                 .init(context)
                 .setTitle(R.string.choose_account)

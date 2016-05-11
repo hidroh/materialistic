@@ -91,13 +91,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         //noinspection ConstantConditions
-        findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Scrollable scrollable = getScrollableList();
-                if (scrollable != null) {
-                    scrollable.scrollToTop();
-                }
+        findViewById(R.id.toolbar).setOnClickListener(v -> {
+            Scrollable scrollable = getScrollableList();
+            if (scrollable != null) {
+                scrollable.scrollToTop();
             }
         });
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
@@ -319,14 +316,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
             AppUtils.toggleFab(mReplyButton, true);
-            mReplyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            mReplyButton.setOnClickListener(v ->
                     startActivity(new Intent(BaseListActivity.this, ComposeActivity.class)
                             .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
-                }
-            });
+                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle())));
             bindViewPager(item);
             mSessionManager.view(this, item.getId());
         }
@@ -361,6 +354,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         // even when view pager no longer exists (e.g. after rotation),
         // so we have to explicitly remove those with view pager ID
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        //noinspection Convert2streamapi
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment != null && fragment.getId() == R.id.content) {
                 transaction.remove(fragment);

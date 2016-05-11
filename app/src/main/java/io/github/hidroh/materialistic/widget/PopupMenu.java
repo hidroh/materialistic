@@ -99,12 +99,7 @@ public interface PopupMenu {
 
         @Override
         public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
-            mSupportPopupMenu.setOnMenuItemClickListener(new android.support.v7.widget.PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return listener.onMenuItemClick(item);
-                }
-            });
+            mSupportPopupMenu.setOnMenuItemClickListener(listener::onMenuItemClick);
         }
 
         @Override

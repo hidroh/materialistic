@@ -114,12 +114,9 @@ public class ThemePreference extends Preference {
             final String value = BUTTON_VALUE.valueAt(i);
             View button = holder.findViewById(buttonId);
             button.setClickable(true);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setSummary(VALUE_THEME.get(value).summary);
-                    persistString(value);
-                }
+            button.setOnClickListener(v -> {
+                setSummary(VALUE_THEME.get(value).summary);
+                persistString(value);
             });
         }
     }

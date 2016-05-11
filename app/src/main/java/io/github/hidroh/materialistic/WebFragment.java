@@ -101,40 +101,28 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
                 }
             }
         });
-        mWebView.setDownloadListener(new DownloadListener() {
-            @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition,
-                                        String mimetype, long contentLength) {
-                if (getActivity() == null) {
-                    return;
-                }
-                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                    return;
-                }
-                mExternalRequired = true;
-                mWebView.setVisibility(View.GONE);
-                view.findViewById(R.id.empty).setVisibility(View.VISIBLE);
-                view.findViewById(R.id.download_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(intent);
-                    }
-                });
+        mWebView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+            if (getActivity() == null) {
+                return;
             }
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+                return;
+            }
+            mExternalRequired = true;
+            mWebView.setVisibility(View.GONE);
+            view.findViewById(R.id.empty).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
         });
-        mWebView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                        keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (mWebView.canGoBack()) {
-                        mWebView.goBack();
-                        return true;
-                    }
+        mWebView.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                    keyCode == KeyEvent.KEYCODE_BACK) {
+                if (mWebView.canGoBack()) {
+                    mWebView.goBack();
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
         setWebViewSettings(mWebView.getSettings());
         return view;

@@ -85,12 +85,7 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
         } else {
             holder.mTitleTextView.setText(item.getDisplayedTitle());
             holder.mCommentButton.setVisibility(View.VISIBLE);
-            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openItem(item);
-                }
-            });
+            holder.mCommentButton.setOnClickListener(v -> openItem(item));
         }
         holder.mTitleTextView.setVisibility(holder.mTitleTextView.length() > 0 ?
                 View.VISIBLE : View.GONE);
@@ -98,13 +93,10 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
                 View.VISIBLE : View.GONE);
         if (!mExpanded.contains(item.getId()) && item.getParentItem() != null) {
             mExpanded.add(item.getId());
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    mItems.add(0, item.getParentItem()); // recursive
-                    notifyItemRangeChanged(1, mItems.size());
-                    notifyItemInserted(0);
-                }
+            new Handler().post(() -> {
+                mItems.add(0, item.getParentItem()); // recursive
+                notifyItemRangeChanged(1, mItems.size());
+                notifyItemInserted(0);
             });
         }
     }

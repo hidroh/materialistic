@@ -259,12 +259,7 @@ public class ActivityModule {
 
     static class LoggingInterceptor implements Interceptor {
         private final Interceptor debugInterceptor = new HttpLoggingInterceptor(
-                new HttpLoggingInterceptor.Logger() {
-                    @Override
-                    public void log(String message) {
-                        Log.d(TAG_OK_HTTP, message);
-                    }
-                })
+                message -> Log.d(TAG_OK_HTTP, message))
                 .setLevel(BuildConfig.DEBUG ?
                         HttpLoggingInterceptor.Level.BODY :
                         HttpLoggingInterceptor.Level.NONE);
@@ -286,6 +281,7 @@ public class ActivityModule {
             }
             // accept original server
             ArrayList<Cookie> originalCookies = new ArrayList<>();
+            //noinspection Convert2streamapi
             for (Cookie cookie : cookies) {
                 if (HttpCookie.domainMatches(cookie.domain(), url.host())) {
                     originalCookies.add(cookie);
@@ -297,7 +293,7 @@ public class ActivityModule {
         @Override
         public List<Cookie> loadForRequest(HttpUrl url) {
             List<Cookie> cookies = cookieStore.get(url);
-            return cookies != null ? cookies : new ArrayList<Cookie>();
+            return cookies != null ? cookies : new ArrayList<>();
         }
     }
 }

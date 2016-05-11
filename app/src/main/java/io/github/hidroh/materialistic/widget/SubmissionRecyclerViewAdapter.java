@@ -74,14 +74,11 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
         holder.mContentTextView.setVisibility(holder.mContentTextView.length() > 0 ?
                 View.VISIBLE : View.GONE);
         holder.mCommentButton.setVisibility(item.isDeleted() ? View.GONE : View.VISIBLE);
-        holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isComment) {
-                    openPreview(item);
-                } else {
-                    openItem(item);
-                }
+        holder.mCommentButton.setOnClickListener(v -> {
+            if (isComment) {
+                openPreview(item);
+            } else {
+                openItem(item);
             }
         });
     }

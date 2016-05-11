@@ -88,12 +88,7 @@ public class SubmitActivity extends InjectableActivity {
                     .init(SubmitActivity.this)
                     .setMessage(isUrl ? R.string.confirm_submit_url :
                             R.string.confirm_submit_question)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            submit(isUrl);
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> submit(isUrl))
                     .setNegativeButton(android.R.string.cancel, null)
                     .create()
                     .show();
@@ -118,12 +113,7 @@ public class SubmitActivity extends InjectableActivity {
                 .init(this)
                 .setMessage(mSending ? R.string.confirm_no_waiting : R.string.confirm_no_submit)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SubmitActivity.super.onBackPressed();
-                    }
-                })
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> SubmitActivity.super.onBackPressed())
                 .show();
     }
 

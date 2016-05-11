@@ -54,13 +54,9 @@ public class VolumeNavigationDelegate {
     private AppBarLayout mAppBarLayout;
 
     public VolumeNavigationDelegate() {
-        mPreferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                                  String key) {
-                if (TextUtils.equals(key, mPreferenceKey)) {
-                    mEnabled = sharedPreferences.getBoolean(key, false);
-                }
+        mPreferenceListener = (sharedPreferences, key) -> {
+            if (TextUtils.equals(key, mPreferenceKey)) {
+                mEnabled = sharedPreferences.getBoolean(key, false);
             }
         };
     }

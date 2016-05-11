@@ -75,14 +75,11 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
                         .init(mContext)
                         .setMessage(R.string.confirm_clear_selected)
                         .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mPendingClear = true;
-                                removeSelection();
-                                actionMode.finish();
-                            }
-                        })
+                                (dialog, which) -> {
+                                    mPendingClear = true;
+                                    removeSelection();
+                                    actionMode.finish();
+                                })
                         .setNegativeButton(android.R.string.cancel, null)
                         .create()
                         .show();
@@ -170,23 +167,15 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     @Override
     protected void bindItem(final ItemViewHolder holder) {
         final Favorite favorite = getItem(holder.getAdapterPosition());
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (mActionModeDelegate.startActionMode(mActionModeCallback)) {
-                    toggle(favorite.getId(), holder.getAdapterPosition());
-                    return true;
-                }
+        holder.itemView.setOnLongClickListener(v -> {
+            if (mActionModeDelegate.startActionMode(mActionModeCallback)) {
+                toggle(favorite.getId(), holder.getAdapterPosition());
+                return true;
+            }
 
-                return false;
-            }
+            return false;
         });
-        holder.mStoryView.getMoreOptions().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMoreOptions(v, favorite);
-            }
-        });
+        holder.mStoryView.getMoreOptions().setOnClickListener(v -> showMoreOptions(v, favorite));
     }
 
     @Override
@@ -251,12 +240,9 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         mSelected.put(position, item.getId());
         mFavoriteManager.remove(mContext, mSelected.values());
         Snackbar.make(mRecyclerView, R.string.toast_removed, Snackbar.LENGTH_LONG)
-                .setAction(R.string.undo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mPendingAdd = position;
-                        mFavoriteManager.add(mContext, item);
-                    }
+                .setAction(R.string.undo, v -> {
+                    mPendingAdd = position;
+                    mFavoriteManager.add(mContext, item);
                 })
                 .show();
     }
@@ -273,21 +259,18 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     private void showMoreOptions(View v, final Favorite item) {
         mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY);
         mPopupMenu.inflate(R.menu.menu_contextual_favorite);
-        mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.menu_contextual_vote) {
-                    vote(item);
-                    return true;
-                }
-                if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                    mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                            .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
-                    return true;
-                }
-                return false;
+        mPopupMenu.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                vote(item);
+                return true;
             }
+            if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
+                return true;
+            }
+            return false;
         });
         mPopupMenu.show();
     }

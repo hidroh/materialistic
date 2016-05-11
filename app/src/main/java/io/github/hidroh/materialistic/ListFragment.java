@@ -115,20 +115,12 @@ public class ListFragment extends BaseListFragment {
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
                 AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
         if (savedInstanceState == null) {
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            });
+            mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
         }
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mCacheMode = ItemManager.MODE_NETWORK;
-                mAdapter.setCacheMode(mCacheMode);
-                refresh();
-            }
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mCacheMode = ItemManager.MODE_NETWORK;
+            mAdapter.setCacheMode(mCacheMode);
+            refresh();
         });
         return view;
     }

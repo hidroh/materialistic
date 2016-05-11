@@ -56,12 +56,7 @@ public class MultiPageItemRecyclerViewAdapter
             holder.mCommentButton.setText(mContext.getResources()
                     .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));
             holder.mCommentButton.setVisibility(View.VISIBLE);
-            holder.mCommentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openItem(item);
-                }
-            });
+            holder.mCommentButton.setOnClickListener(v -> openItem(item));
         }
     }
 

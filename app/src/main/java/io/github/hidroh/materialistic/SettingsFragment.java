@@ -40,15 +40,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                Preferences.sync(getPreferenceManager(), key);
-                if (key.equals(getActivity().getString(R.string.pref_theme)) ||
-                        key.equals(getActivity().getString(R.string.pref_text_size)) ||
-                        key.equals(getActivity().getString(R.string.pref_font))) {
-                    AppUtils.restart(getActivity());
-                }
+        mListener = (sharedPreferences, key) -> {
+            Preferences.sync(getPreferenceManager(), key);
+            if (key.equals(getActivity().getString(R.string.pref_theme)) ||
+                    key.equals(getActivity().getString(R.string.pref_text_size)) ||
+                    key.equals(getActivity().getString(R.string.pref_font))) {
+                AppUtils.restart(getActivity());
             }
         };
     }

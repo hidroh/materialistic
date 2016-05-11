@@ -264,12 +264,9 @@ public class ItemActivity extends InjectableActivity {
                 }
                 if (!mUndo) {
                     Snackbar.make(mCoordinatorLayout, toastMessageResId, Snackbar.LENGTH_SHORT)
-                            .setAction(R.string.undo, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mUndo = true;
-                                    mBookmark.performClick();
-                                }
+                            .setAction(R.string.undo, v1 -> {
+                                mUndo = true;
+                                mBookmark.performClick();
                             })
                             .show();
                 }
@@ -286,21 +283,12 @@ public class ItemActivity extends InjectableActivity {
         mCustomTabsDelegate.mayLaunchUrl(Uri.parse(story.getUrl()), null, null);
         bindFavorite();
         mSessionManager.view(this, story.getId());
-        mReplyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mReplyButton.setOnClickListener(v ->
                 startActivity(new Intent(ItemActivity.this, ComposeActivity.class)
                         .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
-                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getText()));
-            }
-        });
+                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getText())));
         mVoteButton.setVisibility(View.VISIBLE);
-        mVoteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vote(story);
-            }
-        });
+        mVoteButton.setOnClickListener(v -> vote(story));
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         if (story.isStoryType()) {
             titleTextView.setText(story.getDisplayedTitle());
@@ -354,13 +342,9 @@ public class ItemActivity extends InjectableActivity {
                 break;
         }
         if (story.isStoryType() && mExternalBrowser) {
-            findViewById(R.id.header_card_view).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            findViewById(R.id.header_card_view).setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,
-                            story.getUrl(), mCustomTabsDelegate.getSession());
-                }
-            });
+                            story.getUrl(), mCustomTabsDelegate.getSession()));
         } else {
             findViewById(R.id.header_card_view).setClickable(false);
         }

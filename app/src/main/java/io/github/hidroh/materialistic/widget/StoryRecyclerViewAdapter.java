@@ -27,7 +27,6 @@ import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -196,19 +195,11 @@ public class StoryRecyclerViewAdapter extends
             story.setFavorite(false);
         }
         holder.mStoryView.setFavorite(story.isFavorite());
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showMoreOptions(holder.mStoryView.getMoreOptions(), story, holder);
-                return true;
-            }
+        holder.itemView.setOnLongClickListener(v -> {
+            showMoreOptions(holder.mStoryView.getMoreOptions(), story, holder);
+            return true;
         });
-        holder.mStoryView.getMoreOptions().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMoreOptions(v, story, holder);
-            }
-        });
+        holder.mStoryView.getMoreOptions().setOnClickListener(v -> showMoreOptions(v, story, holder));
     }
 
     @Override
@@ -272,13 +263,10 @@ public class StoryRecyclerViewAdapter extends
                     mContext.getResources().getQuantityString(R.plurals.new_stories_count,
                             mUpdated.size(), mUpdated.size()),
                     Snackbar.LENGTH_LONG)
-                    .setAction(R.string.show_me, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setShowAll(false);
-                            notifyUpdated();
-                            notifyDataSetChanged();
-                        }
+                    .setAction(R.string.show_me, v -> {
+                        setShowAll(false);
+                        notifyUpdated();
+                        notifyDataSetChanged();
                     })
                     .show();
         } else {
@@ -286,14 +274,11 @@ public class StoryRecyclerViewAdapter extends
                     mContext.getResources().getQuantityString(R.plurals.showing_new_stories,
                             mUpdated.size(), mUpdated.size()),
                     Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction(R.string.show_all, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snackbar.dismiss();
-                    mUpdated.clear();
-                    setShowAll(true);
-                    notifyDataSetChanged();
-                }
+            snackbar.setAction(R.string.show_all, v -> {
+                snackbar.dismiss();
+                mUpdated.clear();
+                setShowAll(true);
+                notifyDataSetChanged();
             }).show();
         }
     }
@@ -320,31 +305,28 @@ public class StoryRecyclerViewAdapter extends
         mPopupMenu.inflate(R.menu.menu_contextual_story);
         mPopupMenu.getMenu().findItem(R.id.menu_contextual_save)
                 .setTitle(story.isFavorite() ? R.string.unsave : R.string.save);
-        mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.menu_contextual_save) {
-                    toggleSave(story);
-                    return true;
-                }
-                if (item.getItemId() == R.id.menu_contextual_vote) {
-                    vote(story, holder);
-                    return true;
-                }
-                if (item.getItemId() == R.id.menu_contextual_comment) {
-                    mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                            .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
-                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
-                                    story.getDisplayedTitle()));
-                    return true;
-                }
-                if (item.getItemId() == R.id.menu_contextual_profile) {
-                    mContext.startActivity(new Intent(mContext, UserActivity.class)
-                            .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
-                    return true;
-                }
-                return false;
+        mPopupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.menu_contextual_save) {
+                toggleSave(story);
+                return true;
             }
+            if (item.getItemId() == R.id.menu_contextual_vote) {
+                vote(story, holder);
+                return true;
+            }
+            if (item.getItemId() == R.id.menu_contextual_comment) {
+                mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
+                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
+                                story.getDisplayedTitle()));
+                return true;
+            }
+            if (item.getItemId() == R.id.menu_contextual_profile) {
+                mContext.startActivity(new Intent(mContext, UserActivity.class)
+                        .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
+                return true;
+            }
+            return false;
         });
         mPopupMenu.show();
     }
@@ -359,12 +341,7 @@ public class StoryRecyclerViewAdapter extends
             toastMessageResId = R.string.toast_removed;
         }
         Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
-                .setAction(R.string.undo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        toggleSave(story);
-                    }
-                })
+                .setAction(R.string.undo, v -> toggleSave(story))
                 .show();
     }
 

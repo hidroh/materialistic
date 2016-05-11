@@ -49,12 +49,7 @@ public class OfflineWebActivity extends InjectableActivity {
         setContentView(R.layout.activity_offline_web);
         final NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nested_scroll_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scrollView.smoothScrollTo(0, 0);
-            }
-        });
+        toolbar.setOnClickListener(v -> scrollView.smoothScrollTo(0, 0));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);

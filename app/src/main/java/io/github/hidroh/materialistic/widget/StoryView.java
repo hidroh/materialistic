@@ -217,12 +217,7 @@ public class StoryView extends RelativeLayout implements Checkable {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mVoteSwitcher.showNext();
-                    }
-                }, VOTE_DELAY_MILLIS);
+                new Handler().postDelayed(mVoteSwitcher::showNext, VOTE_DELAY_MILLIS);
                 mScoreTextView.setText(getContext().getResources()
                         .getQuantityString(R.plurals.score, newScore, newScore));
                 mVoteSwitcher.getInAnimation().setAnimationListener(null);

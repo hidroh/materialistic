@@ -61,31 +61,25 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             mRegisterButton.setVisibility(View.GONE);
         }
         mPasswordEditText = (EditText) findViewById(R.id.edittext_password);
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!validate()) {
-                    return;
-                }
-                mLoginButton.setEnabled(false);
-                mRegisterButton.setEnabled(false);
-                login(mUsernameEditText.getText().toString(),
-                        mPasswordEditText.getText().toString(),
-                        false);
+        mLoginButton.setOnClickListener(v -> {
+            if (!validate()) {
+                return;
             }
+            mLoginButton.setEnabled(false);
+            mRegisterButton.setEnabled(false);
+            login(mUsernameEditText.getText().toString(),
+                    mPasswordEditText.getText().toString(),
+                    false);
         });
-        mRegisterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!validate()) {
-                    return;
-                }
-                mLoginButton.setEnabled(false);
-                mRegisterButton.setEnabled(false);
-                login(mUsernameEditText.getText().toString(),
-                        mPasswordEditText.getText().toString(),
-                        true);
+        mRegisterButton.setOnClickListener(v -> {
+            if (!validate()) {
+                return;
             }
+            mLoginButton.setEnabled(false);
+            mRegisterButton.setEnabled(false);
+            login(mUsernameEditText.getText().toString(),
+                    mPasswordEditText.getText().toString(),
+                    true);
         });
     }
 

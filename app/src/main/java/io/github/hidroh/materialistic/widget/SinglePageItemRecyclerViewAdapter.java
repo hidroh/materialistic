@@ -139,13 +139,10 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
         holder.mParent.setVisibility(View.VISIBLE);
-        holder.mParent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Item parent = mState.expanded.getParcelable(item.getParent());
-                int position = mState.list.indexOf(parent);
-                mRecyclerView.smoothScrollToPosition(position);
-            }
+        holder.mParent.setOnClickListener(v -> {
+            Item parent = mState.expanded.getParcelable(item.getParent());
+            int position = mState.list.indexOf(parent);
+            mRecyclerView.smoothScrollToPosition(position);
         });
     }
 
@@ -158,17 +155,14 @@ public class SinglePageItemRecyclerViewAdapter
             expand(item);
         }
         bindToggle(holder, item, isExpanded(item));
-        holder.mToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean expanded = isExpanded(item);
-                bindToggle(holder, item, !expanded);
-                item.setCollapsed(!item.isCollapsed());
-                if (expanded) {
-                    collapse(item);
-                } else {
-                    expand(item);
-                }
+        holder.mToggle.setOnClickListener(v -> {
+            boolean expanded = isExpanded(item);
+            bindToggle(holder, item, !expanded);
+            item.setCollapsed(!item.isCollapsed());
+            if (expanded) {
+                collapse(item);
+            } else {
+                expand(item);
             }
         });
     }
@@ -192,13 +186,10 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
         mState.expanded.putParcelable(item.getId(), item);
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                int index = mState.list.indexOf(item) + 1;
-                mState.list.addAll(index, Arrays.asList(item.getKidItems())); // recursive
-                notifyItemRangeInserted(index, item.getKidCount());
-            }
+        mRecyclerView.post(() -> {
+            int index = mState.list.indexOf(item) + 1;
+            mState.list.addAll(index, Arrays.asList(item.getKidItems())); // recursive
+            notifyItemRangeInserted(index, item.getKidCount());
         });
     }
 

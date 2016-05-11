@@ -120,6 +120,7 @@ public class CustomTabsDelegate {
         PackageManager pm = context.getPackageManager();
         List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(
                 new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com")), 0);
+        //noinspection Convert2streamapi
         for (ResolveInfo info : resolvedActivityList) {
             if (pm.resolveService(new Intent()
                     .setAction(ACTION_CUSTOM_TABS_CONNECTION)
