@@ -85,12 +85,7 @@ public abstract class SpinnerPreference extends Preference {
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         final Spinner spinner = (Spinner) holder.findViewById(R.id.spinner);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                spinner.performClick();
-            }
-        });
+        holder.itemView.setOnClickListener(v -> spinner.performClick());
         spinner.setAdapter(new SpinnerAdapter() {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {

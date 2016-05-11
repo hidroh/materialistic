@@ -103,14 +103,11 @@ public class FavoriteFragment extends BaseListFragment
         mEmptySearchView = view.findViewById(R.id.empty_search);
         mEmptyView = view.findViewById(R.id.empty);
         mEmptyView.findViewById(R.id.header_card_view)
-                .setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        View bookmark = mEmptyView.findViewById(R.id.bookmarked);
-                        bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ?
-                                        View.INVISIBLE : View.VISIBLE);
-                        return true;
-                    }
+                .setOnLongClickListener(v -> {
+                    View bookmark = mEmptyView.findViewById(R.id.bookmarked);
+                    bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ?
+                                    View.INVISIBLE : View.VISIBLE);
+                    return true;
                 });
         mEmptyView.setVisibility(View.INVISIBLE);
         return view;
@@ -263,20 +260,14 @@ public class FavoriteFragment extends BaseListFragment
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setIconified(!mSearchViewExpanded);
         searchView.setQuery(mFilter, false);
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSearchViewExpanded = true;
-                v.requestFocus();
-            }
+        searchView.setOnSearchClickListener(v -> {
+            mSearchViewExpanded = true;
+            v.requestFocus();
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                // trigger a dummy empty search intent, as empty query does not get submitted
-                searchView.setQuery(FavoriteActivity.EMPTY_QUERY, true);
-                return false;
-            }
+        searchView.setOnCloseListener(() -> {
+            // trigger a dummy empty search intent, as empty query does not get submitted
+            searchView.setQuery(FavoriteActivity.EMPTY_QUERY, true);
+            return false;
         });
     }
 
@@ -285,12 +276,7 @@ public class FavoriteFragment extends BaseListFragment
                 .init(getActivity())
                 .setMessage(R.string.confirm_clear)
                 .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mFavoriteManager.clear(getActivity(), mFilter);
-                            }
-                        })
+                        (dialog, which) -> mFavoriteManager.clear(getActivity(), mFilter))
                 .setNegativeButton(android.R.string.cancel, null)
                 .create().show();
     }

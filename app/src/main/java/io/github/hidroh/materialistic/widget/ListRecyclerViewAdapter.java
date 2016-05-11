@@ -110,18 +110,8 @@ public abstract class ListRecyclerViewAdapter
         mCustomTabsDelegate.mayLaunchUrl(Uri.parse(item.getUrl()), null, null);
         holder.mStoryView.setStory(item);
         holder.mStoryView.setChecked(isSelected(item.getId()));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleItemClick(item, holder);
-            }
-        });
-        holder.mStoryView.setOnCommentClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openItem(item);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> handleItemClick(item, holder));
+        holder.mStoryView.setOnCommentClickListener(v -> openItem(item));
         bindItem(holder);
     }
 

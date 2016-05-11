@@ -28,7 +28,6 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -147,15 +146,12 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         if (mLineCounted.contains(item.getId())) {
             toggleCollapsibleContent(holder, item);
         } else {
-        holder.mContentTextView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mContext == null) {
-                    return;
-                }
-                toggleCollapsibleContent(holder, item);
-                mLineCounted.add(item.getId());
+        holder.mContentTextView.post(() -> {
+            if (mContext == null) {
+                return;
             }
+            toggleCollapsibleContent(holder, item);
+            mLineCounted.add(item.getId());
         });
         }
         bindActions(holder, item);
@@ -204,19 +200,16 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         setTextIsSelectable(holder.mContentTextView, false);
         holder.mReadMoreTextView.setVisibility(View.VISIBLE);
         holder.mReadMoreTextView.setText(mContext.getString(R.string.read_more, lineCount));
-        holder.mReadMoreTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                item.setContentExpanded(true);
-                v.setVisibility(View.GONE);
-                setTextIsSelectable(holder.mContentTextView, true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
-                            .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)
-                            .start();
-                } else {
-                    holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
-                }
+        holder.mReadMoreTextView.setOnClickListener(v -> {
+            item.setContentExpanded(true);
+            v.setVisibility(View.GONE);
+            setTextIsSelectable(holder.mContentTextView, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
+                        .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)
+                        .start();
+            } else {
+                holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
             }
         });
     }
@@ -233,29 +226,23 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             return;
         }
         holder.mMoreButton.setVisibility(View.VISIBLE);
-        holder.mMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY);
-                mPopupMenu.inflate(R.menu.menu_contextual_comment);
-                mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        if (menuItem.getItemId() == R.id.menu_contextual_vote) {
-                            vote(item);
-                            return true;
-                        }
-                        if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                            mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                                    .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                                    .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                mPopupMenu.show();
-            }
+        holder.mMoreButton.setOnClickListener(v -> {
+            mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY);
+            mPopupMenu.inflate(R.menu.menu_contextual_comment);
+            mPopupMenu.setOnMenuItemClickListener(menuItem -> {
+                if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                    vote(item);
+                    return true;
+                }
+                if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                    mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                            .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
+                    return true;
+                }
+                return false;
+            });
+            mPopupMenu.show();
         });
     }
 

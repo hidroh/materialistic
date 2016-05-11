@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBar;
@@ -53,15 +52,11 @@ public class SettingsActivity extends DrawerActivity {
                     .init(this)
                     .setMessage(R.string.clear_search_history_confirm)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    .setPositiveButton(android.R.string.ok, (dialog, which) ->
                             new SearchRecentSuggestions(SettingsActivity.this,
                                     SearchRecentSuggestionsProvider.PROVIDER_AUTHORITY,
                                     SearchRecentSuggestionsProvider.MODE)
-                                    .clearHistory();
-                        }
-                    })
+                                    .clearHistory())
                     .create()
                     .show();
             return true;
@@ -72,12 +67,9 @@ public class SettingsActivity extends DrawerActivity {
                     .init(this)
                     .setMessage(R.string.reset_settings_confirm)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Preferences.reset(SettingsActivity.this);
-                            AppUtils.restart(SettingsActivity.this);
-                        }
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        Preferences.reset(SettingsActivity.this);
+                        AppUtils.restart(SettingsActivity.this);
                     })
                     .create()
                     .show();

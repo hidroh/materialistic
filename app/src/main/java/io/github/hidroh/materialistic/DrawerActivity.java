@@ -144,31 +144,25 @@ public abstract class DrawerActivity extends InjectableActivity {
                 .init(this)
                 .setView(dialogView)
                 .create();
-        dialogView.findViewById(R.id.button_rate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppUtils.openPlayStore(DrawerActivity.this);
-                mFeedbackDialog.dismiss();
-            }
+        dialogView.findViewById(R.id.button_rate).setOnClickListener(v -> {
+            AppUtils.openPlayStore(DrawerActivity.this);
+            mFeedbackDialog.dismiss();
         });
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                titleLayout.setErrorEnabled(false);
-                bodyLayout.setErrorEnabled(false);
-                if (title.length() == 0) {
-                    titleLayout.setError(getString(R.string.title_required));
-                }
-                if (body.length() == 0) {
-                    bodyLayout.setError(getString(R.string.comment_required));
-                }
-                if (title.length() == 0 || body.length() == 0) {
-                    return;
-                }
-                sendButton.setEnabled(false);
-                mFeedbackClient.send(title.getText().toString(), body.getText().toString(),
-                        new FeedbackCallback(DrawerActivity.this));
+        sendButton.setOnClickListener(v -> {
+            titleLayout.setErrorEnabled(false);
+            bodyLayout.setErrorEnabled(false);
+            if (title.length() == 0) {
+                titleLayout.setError(getString(R.string.title_required));
             }
+            if (body.length() == 0) {
+                bodyLayout.setError(getString(R.string.comment_required));
+            }
+            if (title.length() == 0 || body.length() == 0) {
+                return;
+            }
+            sendButton.setEnabled(false);
+            mFeedbackClient.send(title.getText().toString(), body.getText().toString(),
+                    new FeedbackCallback(DrawerActivity.this));
         });
         mFeedbackDialog.show();
     }

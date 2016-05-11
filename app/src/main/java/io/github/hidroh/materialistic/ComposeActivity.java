@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -64,32 +63,21 @@ public class ComposeActivity extends InjectableActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
         mEditText = (EditText) findViewById(R.id.edittext_body);
-        findViewById(R.id.empty).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEditText.requestFocus();
-            }
-        });
-        findViewById(R.id.empty).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mEditText.requestFocus();
-                return mEditText.performLongClick();
-            }
+        findViewById(R.id.empty).setOnClickListener(v -> mEditText.requestFocus());
+        findViewById(R.id.empty).setOnLongClickListener(v -> {
+            mEditText.requestFocus();
+            return mEditText.performLongClick();
         });
         TextView guidelines = (TextView) findViewById(R.id.guidelines);
         guidelines.setText(Html.fromHtml(getString(R.string.formatting_guidelines)));
-        guidelines.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WebView webView = new WebView(ComposeActivity.this);
-                webView.loadUrl(HN_FORMAT_DOC_URL);
-                mAlertDialogBuilder
-                        .init(ComposeActivity.this)
-                        .setView(webView)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-            }
+        guidelines.setOnClickListener(v -> {
+            WebView webView = new WebView(ComposeActivity.this);
+            webView.loadUrl(HN_FORMAT_DOC_URL);
+            mAlertDialogBuilder
+                    .init(ComposeActivity.this)
+                    .setView(webView)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
         });
         mParentText = getIntent().getStringExtra(EXTRA_PARENT_TEXT);
         final TextView toggle = (TextView) findViewById(R.id.toggle);
@@ -98,19 +86,16 @@ public class ComposeActivity extends InjectableActivity {
         } else {
             final TextView textView = (TextView) findViewById(R.id.text);
             AppUtils.setTextWithLinks(textView, mParentText);
-            toggle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (textView.getVisibility() == View.VISIBLE) {
-                        toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                                R.drawable.ic_expand_more_white_24dp, 0);
-                        textView.setVisibility(View.GONE);
+            toggle.setOnClickListener(v -> {
+                if (textView.getVisibility() == View.VISIBLE) {
+                    toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.drawable.ic_expand_more_white_24dp, 0);
+                    textView.setVisibility(View.GONE);
 
-                    } else {
-                        toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                                R.drawable.ic_expand_less_white_24dp, 0);
-                        textView.setVisibility(View.VISIBLE);
-                    }
+                } else {
+                    toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                            R.drawable.ic_expand_less_white_24dp, 0);
+                    textView.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -160,12 +145,8 @@ public class ComposeActivity extends InjectableActivity {
                 .init(this)
                 .setMessage(mSending ? R.string.confirm_no_waiting : R.string.confirm_discard)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ComposeActivity.super.onBackPressed();
-                    }
-                })
+                .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                        ComposeActivity.super.onBackPressed())
                 .show();
     }
 

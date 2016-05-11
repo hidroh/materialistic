@@ -143,18 +143,15 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (TextUtils.isEmpty(mItemId)) {
-                    return;
-                }
-                mCacheMode = ItemManager.MODE_NETWORK;
-                if (mAdapter != null) {
-                    mAdapter.setCacheMode(mCacheMode);
-                }
-                loadKidData();
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if (TextUtils.isEmpty(mItemId)) {
+                return;
             }
+            mCacheMode = ItemManager.MODE_NETWORK;
+            if (mAdapter != null) {
+                mAdapter.setCacheMode(mCacheMode);
+            }
+            loadKidData();
         });
         return view;
     }
