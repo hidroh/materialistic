@@ -17,7 +17,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - [Official Hacker News API][HackerNews/API], user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
 - [Algolia Hacker News Search API]
 - [Readability Parser API]
-- AOSP [appcompat-v7] / [recyclerview-v7] / [design] / [cardview-v7] / [preference-v7] / [customtabs]
+- [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [Retrolambda] & [Retrolambda Gradle plugin]
 - [Robolectric]
@@ -82,12 +82,7 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [Play Store Badge]: https://play.google.com/intl/en_us/badges/images/badge_new.png
 [Algolia Hacker News Search API]: https://github.com/algolia/hn-search
 [Readability Parser API]: https://www.readability.com/developers/api/parser
-[appcompat-v7]: https://developer.android.com/tools/support-library/features.html#v7-appcompat
-[recyclerview-v7]: https://developer.android.com/tools/support-library/features.html#v7-recyclerview
-[design]: https://developer.android.com/tools/support-library/features.html#design
-[cardview-v7]: https://developer.android.com/tools/support-library/features.html#v7-cardview
-[preference-v7]: https://developer.android.com/tools/support-library/features.html#v7-preference
-[customtabs]: https://developer.android.com/tools/support-library/features.html#custom-tabs
+[AOSP support library]: https://developer.android.com/tools/support-library/features.html
 [Retrofit]: https://github.com/square/retrofit
 [OkHttp]: https://github.com/square/okhttp
 [AssertJ]: https://github.com/square/assertj-android
