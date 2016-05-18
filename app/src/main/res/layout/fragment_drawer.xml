@@ -100,6 +100,12 @@
         android:layout_height="2dp" />
 
     <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_favorite"
+        android:text="@string/title_activity_favorite"
+        app:iconStart="@drawable/ic_bookmark_white_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_user"
         android:text="@string/title_activity_user"
         app:iconStart="@drawable/ic_person_white_24dp"
@@ -115,12 +121,6 @@
         android:background="@color/blackT12"
         android:layout_width="match_parent"
         android:layout_height="2dp" />
-
-    <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_favorite"
-        android:text="@string/title_activity_favorite"
-        app:iconStart="@drawable/ic_bookmark_white_24dp"
-        style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_settings"
