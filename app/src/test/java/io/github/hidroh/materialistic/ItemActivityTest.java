@@ -49,6 +49,7 @@ import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -58,11 +59,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
@@ -89,18 +88,6 @@ public class ItemActivityTest {
         reset(volumeNavigationDelegate);
         controller = Robolectric.buildActivity(ItemActivity.class);
         activity = controller.get();
-    }
-
-    @Test
-    public void testStoryGivenWebItem() {
-        Intent intent = new Intent();
-        WebItem webItem = mock(WebItem.class);
-        when(webItem.getId()).thenReturn("1");
-        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
-        verify(hackerNewsClient).getItem(eq("1"),
-                eq(ItemManager.MODE_DEFAULT),
-                any(ResponseListener.class));
     }
 
     @Test
@@ -544,8 +531,17 @@ public class ItemActivityTest {
     @Test
     public void testVolumeNavigation() {
         Intent intent = new Intent();
-        WebItem webItem = mock(WebItem.class);
-        when(webItem.getId()).thenReturn("1");
+        WebItem webItem = new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        };
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
         controller.withIntent(intent).create().start().resume().visible();
         activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,

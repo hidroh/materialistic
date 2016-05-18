@@ -115,20 +115,6 @@ public interface Item extends WebItem {
     Item[] getKidItems();
 
     /**
-     * Checks if item is marked as favorite
-     * @return true if favorite, false otherwise
-     * @see #setFavorite(boolean)
-     */
-    boolean isFavorite();
-
-    /**
-     * Updates item's favorite status to given status
-     * @param favorite true if favorite, false otherwise
-     * @see #isFavorite()
-     */
-    void setFavorite(boolean favorite);
-
-    /**
      * Gets item's current revision. A revision can be used to determined if item state is stale
      * and needs updated
      * @return current revision
