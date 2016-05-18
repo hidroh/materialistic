@@ -47,6 +47,7 @@
             <p>&nbsp;&nbsp;&nbsp;&nbsp;Droid Serif - Apache License v2.0</p>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;Libre Baskerville - OFL License v1.1</p>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;Roboto Slab - Apache License v2.0</p>
+            <p>Ad servers list by <a href="https://pgl.yoyo.org/as/">pgl.yoyo.org</a></p>
         ]]>
     </string>
     <string translatable="false" name="third_party_licenses_text" tools:ignore="TypographyOther">

@@ -72,7 +72,15 @@
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"
             android:summary="@string/pref_external_summary"
+            android:disableDependentsState="true"
             android:defaultValue="false" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:dependency="@string/pref_external"
+            android:key="@string/pref_ad_block"
+            android:title="@string/pref_ad_block_title"
+            android:summary="@string/pref_ad_block_summary"
+            android:defaultValue="true" />
 
         <android.support.v7.preference.SwitchPreferenceCompat
             android:key="@string/pref_custom_tab"
