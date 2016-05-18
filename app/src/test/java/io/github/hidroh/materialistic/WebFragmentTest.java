@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -9,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import org.junit.After;
@@ -39,6 +41,7 @@ import io.github.hidroh.materialistic.test.WebActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -54,6 +57,7 @@ public class WebFragmentTest {
     private WebItem item;
     @Inject FavoriteManager favoriteManager;
     @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
+    private Intent intent;
 
     @Before
     public void setUp() {
@@ -63,7 +67,7 @@ public class WebFragmentTest {
         item = mock(WebItem.class);
         when(item.getType()).thenReturn(Item.STORY_TYPE);
         when(item.getUrl()).thenReturn("http://example.com");
-        Intent intent = new Intent();
+        intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller = Robolectric.buildActivity(WebActivity.class);
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
@@ -73,6 +77,7 @@ public class WebFragmentTest {
         activity = controller.get();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
+                .putBoolean(activity.getString(R.string.pref_ad_block), true)
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .commit();
         controller.withIntent(intent).create().start().resume();
@@ -118,6 +123,36 @@ public class WebFragmentTest {
         assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
                 .getSmoothScrollY());
 
+    }
+
+    @SuppressWarnings("deprecation")
+    @SuppressLint("NewApi")
+    @Test
+    public void testAdBlocker() {
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebViewClient client = shadowOf(webView).getWebViewClient();
+        assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
+        assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
+        assertNotNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
+        assertNotNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
+    }
+
+    @SuppressWarnings("deprecation")
+    @SuppressLint("NewApi")
+    @Test
+    public void testAdBlockerDisabled() {
+        controller.pause().stop().destroy();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_ad_block), false)
+                .commit();
+        controller = Robolectric.buildActivity(WebActivity.class);
+        activity = controller.get();
+        controller.withIntent(intent).create().start().resume();
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebViewClient client = shadowOf(webView).getWebViewClient();
+        assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
+        assertNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
     }
 
     @After

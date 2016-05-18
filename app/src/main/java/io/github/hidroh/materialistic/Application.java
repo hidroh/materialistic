@@ -53,6 +53,7 @@ public class Application extends android.app.Application {
         TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
         AccountManager.get(this).addAccountExplicitly(createSyncAccount(), null, null);
         AppUtils.registerAccountsUpdatedListener(this);
+        AdBlocker.init(this);
     }
 
     public ObjectGraph getApplicationGraph() {

@@ -194,6 +194,10 @@ public class Preferences {
         return get(context, R.string.pref_launch_screen, R.string.pref_launch_screen_value_top);
     }
 
+    public static boolean adBlockEnabled(Context context) {
+        return get(context, R.string.pref_ad_block, true);
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
