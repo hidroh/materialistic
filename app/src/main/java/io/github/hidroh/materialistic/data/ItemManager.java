@@ -33,7 +33,8 @@ public interface ItemManager {
             NEW_FETCH_MODE,
             ASK_FETCH_MODE,
             SHOW_FETCH_MODE,
-            JOBS_FETCH_MODE
+            JOBS_FETCH_MODE,
+            BEST_FETCH_MODE
     })
     @interface FetchMode {}
     String TOP_FETCH_MODE = "top";
@@ -41,6 +42,7 @@ public interface ItemManager {
     String ASK_FETCH_MODE = "ask";
     String SHOW_FETCH_MODE = "show";
     String JOBS_FETCH_MODE = "jobs";
+    String BEST_FETCH_MODE = "best";
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({

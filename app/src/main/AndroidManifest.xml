@@ -116,6 +116,10 @@
             android:label="@string/title_activity_jobs" >
         </activity>
         <activity
+            android:name=".BestActivity"
+            android:label="@string/title_activity_best" >
+        </activity>
+        <activity
             android:name=".PopularActivity"
             android:label="@string/title_activity_popular" >
         </activity>

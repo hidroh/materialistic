@@ -59,6 +59,12 @@
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_best"
+        android:text="@string/title_activity_best"
+        app:iconStart="@drawable/ic_thumb_up_white_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_popular"
         android:text="@string/title_activity_popular"
         app:iconStart="@drawable/ic_whatshot_white_24dp"

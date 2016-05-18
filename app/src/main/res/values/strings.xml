@@ -20,6 +20,7 @@
     <string name="app_name">Materialistic</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_list">Top Stories</string>
+    <string name="title_activity_best">Best Stories</string>
     <string name="title_activity_item">Comments</string>
     <string name="filter_title_item">Materialistic</string>
     <string name="open_drawer">Open drawer</string>

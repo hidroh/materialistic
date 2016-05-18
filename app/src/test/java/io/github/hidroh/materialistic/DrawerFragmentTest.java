@@ -40,6 +40,7 @@ public class DrawerFragmentTest {
         return Arrays.asList(
                 new Object[]{R.id.drawer_account, LoginActivity.class},
                 new Object[]{R.id.drawer_list, ListActivity.class},
+                new Object[]{R.id.drawer_best, BestActivity.class},
                 new Object[]{R.id.drawer_new, NewActivity.class},
                 new Object[]{R.id.drawer_show, ShowActivity.class},
                 new Object[]{R.id.drawer_ask, AskActivity.class},

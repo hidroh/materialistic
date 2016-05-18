@@ -79,6 +79,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
                 call = cacheMode == MODE_NETWORK ?
                         mRestService.networkJobStories() : mRestService.jobStories();
                 break;
+            case BEST_FETCH_MODE:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkBestStories() : mRestService.bestStories();
+                break;
             default:
                 call = cacheMode == MODE_NETWORK ?
                         mRestService.networkTopStories() : mRestService.topStories();
@@ -198,6 +202,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @GET("jobstories.json")
         Call<int[]> jobStories();
 
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("beststories.json")
+        Call<int[]> bestStories();
+
         @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("topstories.json")
         Call<int[]> networkTopStories();
@@ -217,6 +225,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
         @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
         @GET("jobstories.json")
         Call<int[]> networkJobStories();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("beststories.json")
+        Call<int[]> networkBestStories();
 
         @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("item/{itemId}.json")
