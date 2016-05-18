@@ -86,6 +86,7 @@
     <string name="pref_offline_data_always">Always</string>
     <string name="pref_offline_notification_title">Display progress</string>
     <string name="pref_offline_notification_summary">Show notification for download progress</string>
+    <string name="pref_launch_screen_title">Default screen</string>
     <string name="pref_volume_title">Use volume navigation</string>
     <string name="pref_volume_summary">Scroll up/down with volume keys</string>
 

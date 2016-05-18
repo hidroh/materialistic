@@ -105,6 +105,37 @@
     <string name="offline_data_wifi" translatable="false">wifi</string>
     <string name="offline_data_default" translatable="false">default</string>
 
+
+    <!-- Launch screen -->
+    <string-array name="pref_launch_screen_options">
+        <item>@string/title_activity_list</item>
+        <item>@string/title_activity_best</item>
+        <item>@string/title_activity_popular</item>
+        <item>@string/title_activity_new</item>
+        <item>@string/title_activity_show</item>
+        <item>@string/title_activity_ask</item>
+        <item>@string/title_activity_jobs</item>
+        <item>@string/title_activity_favorite</item>
+    </string-array>
+    <string-array name="pref_launch_screen_values">
+        <item>@string/pref_launch_screen_value_top</item>
+        <item>@string/pref_launch_screen_value_best</item>
+        <item>@string/pref_launch_screen_value_hot</item>
+        <item>@string/pref_launch_screen_value_new</item>
+        <item>@string/pref_launch_screen_value_show</item>
+        <item>@string/pref_launch_screen_value_ask</item>
+        <item>@string/pref_launch_screen_value_jobs</item>
+        <item>@string/pref_launch_screen_value_saved</item>
+    </string-array>
+    <string name="pref_launch_screen_value_top" translatable="false">top</string>
+    <string name="pref_launch_screen_value_best" translatable="false">best</string>
+    <string name="pref_launch_screen_value_hot" translatable="false">hot</string>
+    <string name="pref_launch_screen_value_new" translatable="false">new</string>
+    <string name="pref_launch_screen_value_show" translatable="false">show</string>
+    <string name="pref_launch_screen_value_ask" translatable="false">ask</string>
+    <string name="pref_launch_screen_value_jobs" translatable="false">jobs</string>
+    <string name="pref_launch_screen_value_saved" translatable="false">saved</string>
+
     <!-- Color codes -->
     <array name="color_codes">
         <item>@color/red500</item>

@@ -25,15 +25,15 @@ import android.widget.TextView;
 
 import io.github.hidroh.materialistic.R;
 
-public class OfflineDataPreference extends SpinnerPreference {
+public class SimpleSpinnerPreference extends SpinnerPreference {
 
     private final LayoutInflater mLayoutInflater;
 
-    public OfflineDataPreference(Context context, AttributeSet attrs) {
+    public SimpleSpinnerPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public OfflineDataPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SimpleSpinnerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mLayoutInflater = LayoutInflater.from(getContext());
     }
