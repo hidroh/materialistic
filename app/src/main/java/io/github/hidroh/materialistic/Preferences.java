@@ -189,6 +189,11 @@ public class Preferences {
         set(context, R.string.pref_username, username);
     }
 
+    @NonNull
+    public static String getLaunchScreen(Context context) {
+        return get(context, R.string.pref_launch_screen, R.string.pref_launch_screen_value_top);
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()

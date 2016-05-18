@@ -45,12 +45,17 @@
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute" >
         <activity
-            android:name=".ListActivity" >
+            android:name=".LauncherActivity"
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ListActivity"
+            android:label="@string/title_activity_list">
         </activity>
         <activity
             android:name=".ItemActivity"

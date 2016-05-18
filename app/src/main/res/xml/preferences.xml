@@ -42,6 +42,13 @@
             app:entries="@array/font_options"
             app:entryValues="@array/font_values" />
 
+        <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
+            android:key="@string/pref_launch_screen"
+            android:title="@string/pref_launch_screen_title"
+            android:defaultValue="top"
+            app:entries="@array/pref_launch_screen_options"
+            app:entryValues="@array/pref_launch_screen_values" />
+
         <android.support.v7.preference.ListPreference
             android:key="@string/pref_story_display"
             android:title="@string/pref_story_display_title"
@@ -115,7 +122,7 @@
             android:dependency="@string/pref_saved_item_sync"
             android:defaultValue="false" />
 
-        <io.github.hidroh.materialistic.preference.OfflineDataPreference
+        <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
             android:key="@string/pref_offline_data"
             android:title="@string/pref_offline_data_title"
             android:dependency="@string/pref_saved_item_sync"
