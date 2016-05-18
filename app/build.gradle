@@ -19,6 +19,14 @@ android {
     }
 
     buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro',
+                    'proguard-square.pro',
+                    'proguard-support.pro'
+        }
         leak.initWith(buildTypes.debug)
     }
 
