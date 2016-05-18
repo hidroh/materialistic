@@ -24,15 +24,22 @@
     tools:context="io.github.hidroh.materialistic.DrawerFragment">
 
     <FrameLayout
-        android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/drawer_header_height">
+
+        <ImageView
+            android:src="?attr/backgroundDrawerHeader"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/login" />
 
         <io.github.hidroh.materialistic.widget.TintableTextView
             android:id="@id/drawer_account"
             android:text="@string/login"
             android:textColor="?android:attr/textColorPrimary"
             app:iconStart="@drawable/ic_lock_white_24dp"
+            android:layout_gravity="bottom"
             android:paddingRight="88dp"
             style="@style/DrawerTextStyle" />
 
@@ -42,9 +49,9 @@
             android:contentDescription="@string/logout"
             android:tint="?android:attr/textColorPrimary"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_gravity="center_vertical|end"
+            android:layout_gravity="bottom|end"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="?android:attr/listPreferredItemHeight" />
     </FrameLayout>
 
     <View
