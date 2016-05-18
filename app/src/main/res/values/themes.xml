@@ -44,6 +44,7 @@
         <item name="titleTextSize">@dimen/text_size_medium</item>
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
+        <item name="backgroundDrawerHeader">@drawable/bg_drawer_light</item>
     </style>
 
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
@@ -70,6 +71,7 @@
         <item name="titleTextSize">@dimen/text_size_medium</item>
         <item name="subtitleTextSize">@dimen/text_size_small</item>
         <item name="contentTextSize">@dimen/text_size_small</item>
+        <item name="backgroundDrawerHeader">@drawable/bg_drawer_dark</item>
     </style>
 
     <style name="AppTheme.Dark.Black">
