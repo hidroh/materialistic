@@ -97,4 +97,18 @@ public interface WebItem extends Parcelable {
     @NonNull
     @Type
     String getType();
+
+    /**
+     * Checks if item is marked as favorite
+     * @return true if favorite, false otherwise
+     * @see #setFavorite(boolean)
+     */
+    boolean isFavorite();
+
+    /**
+     * Updates item's favorite status to given status
+     * @param favorite true if favorite, false otherwise
+     * @see #isFavorite()
+     */
+    void setFavorite(boolean favorite);
 }

@@ -66,7 +66,7 @@ public class ItemActivity extends InjectableActivity {
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
-    private Item mItem;
+    private WebItem mItem;
     private String mItemId = null;
     private ImageView mBookmark;
     private boolean mExternalBrowser;
@@ -138,11 +138,8 @@ public class ItemActivity extends InjectableActivity {
                     }
                 }
             } else if (intent.hasExtra(EXTRA_ITEM)) {
-                WebItem item = intent.getParcelableExtra(EXTRA_ITEM);
-                mItemId = item.getId();
-                if (item instanceof Item) {
-                    mItem = (Item) item;
-                }
+                mItem = intent.getParcelableExtra(EXTRA_ITEM);
+                mItemId = mItem.getId();
             }
         }
 
@@ -276,7 +273,7 @@ public class ItemActivity extends InjectableActivity {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void bindData(final Item story) {
+    private void bindData(final WebItem story) {
         if (story == null) {
             return;
         }
@@ -286,7 +283,8 @@ public class ItemActivity extends InjectableActivity {
         mReplyButton.setOnClickListener(v ->
                 startActivity(new Intent(ItemActivity.this, ComposeActivity.class)
                         .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
-                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, story.getText())));
+                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
+                                story instanceof Item ? ((Item) story).getText() : null)));
         mVoteButton.setVisibility(View.VISIBLE);
         mVoteButton.setOnClickListener(v -> vote(story));
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
@@ -358,7 +356,7 @@ public class ItemActivity extends InjectableActivity {
     private Scrollable getScrollable() {
         return mAdapter != null ? (Scrollable) mAdapter.getItem(mViewPager.getCurrentItem()) : null;
     }
-    private void vote(final Item story) {
+    private void vote(final WebItem story) {
         mUserServices.voteUp(ItemActivity.this, story.getId(), new VoteCallback(this));
     }
 

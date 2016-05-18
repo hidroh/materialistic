@@ -43,6 +43,16 @@ public abstract class TestWebItem implements WebItem {
         return null;
     }
 
+    @Override
+    public boolean isFavorite() {
+        return false;
+    }
+
+    @Override
+    public void setFavorite(boolean favorite) {
+
+    }
+
     @NonNull
     @Override
     public String getType() {

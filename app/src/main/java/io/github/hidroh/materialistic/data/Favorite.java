@@ -35,6 +35,7 @@ public class Favorite implements WebItem {
     private String url;
     private String title;
     private long time;
+    private boolean favorite;
 
     public static final Creator<Favorite> CREATOR = new Creator<Favorite>() {
         @Override
@@ -53,12 +54,14 @@ public class Favorite implements WebItem {
         this.url = url;
         this.title = title;
         this.time = time;
+        this.favorite = true;
     }
 
     private Favorite(Parcel source) {
         itemId = source.readString();
         url = source.readString();
         title = source.readString();
+        favorite = source.readInt() != 0;
     }
 
     @Override
@@ -108,6 +111,16 @@ public class Favorite implements WebItem {
     }
 
     @Override
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    @Override
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    @Override
     public String toString() {
         return String.format("%s (%s) - %s", title, url, String.format(HackerNewsClient.WEB_ITEM_PATH, itemId));
     }
@@ -122,6 +135,7 @@ public class Favorite implements WebItem {
         dest.writeString(itemId);
         dest.writeString(url);
         dest.writeString(title);
+        dest.writeInt(favorite ? 1 : 0);
     }
 
     long getTime() {
