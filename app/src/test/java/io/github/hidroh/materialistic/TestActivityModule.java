@@ -56,6 +56,7 @@ import static org.mockito.Mockito.when;
                 ItemActivity.class,
                 JobsActivity.class,
                 ListActivity.class,
+                BestActivity.class,
                 NewActivity.class,
                 SearchActivity.class,
                 ShowActivity.class,

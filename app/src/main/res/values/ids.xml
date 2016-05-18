@@ -45,6 +45,7 @@
     <item type="id" name="content_frame"/>
     <item type="id" name="drawer" />
     <item type="id" name="drawer_list" />
+    <item type="id" name="drawer_best" />
     <item type="id" name="drawer_settings" />
     <item type="id" name="drawer_about" />
     <item type="id" name="drawer_favorite" />

@@ -80,17 +80,12 @@ public class DrawerFragment extends BaseFragment {
         mDrawerUser = view.findViewById(R.id.drawer_user);
 
         view.findViewById(R.id.drawer_list).setOnClickListener(v -> navigate(ListActivity.class));
-
+        view.findViewById(R.id.drawer_best).setOnClickListener(v -> navigate(BestActivity.class));
         view.findViewById(R.id.drawer_popular).setOnClickListener(v -> navigate(PopularActivity.class));
-
         view.findViewById(R.id.drawer_new).setOnClickListener(v -> navigate(NewActivity.class));
-
         view.findViewById(R.id.drawer_show).setOnClickListener(v -> navigate(ShowActivity.class));
-
         view.findViewById(R.id.drawer_ask).setOnClickListener(v -> navigate(AskActivity.class));
-
         view.findViewById(R.id.drawer_job).setOnClickListener(v -> navigate(JobsActivity.class));
-
         view.findViewById(R.id.drawer_settings).setOnClickListener(v -> navigate(SettingsActivity.class));
         view.findViewById(R.id.drawer_about).setOnClickListener(v -> navigate(AboutActivity.class));
         view.findViewById(R.id.drawer_favorite).setOnClickListener(v -> navigate(FavoriteActivity.class));
