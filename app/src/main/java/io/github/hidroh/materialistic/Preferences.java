@@ -87,7 +87,7 @@ public class Preferences {
     }
 
     public static boolean isListItemCardView(Context context) {
-        return get(context, R.string.pref_list_item_view, true);
+        return get(context, R.string.pref_list_item_view, false);
     }
 
     public static void setListItemCardView(Context context, boolean isCardView) {
