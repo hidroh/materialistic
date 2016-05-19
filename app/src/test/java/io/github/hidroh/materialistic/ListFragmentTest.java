@@ -287,11 +287,11 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         Rect rect = new Rect();
-        assertCardView(rect);
-        shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
         assertCompactView(rect);
         shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
         assertCardView(rect);
+        shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
+        assertCompactView(rect);
         controller.pause().stop().destroy();
     }
 
@@ -307,16 +307,16 @@ public class ListFragmentTest {
                         ListFragment.class.getName())
                 .commit();
         Rect rect = new Rect();
-        assertCardView(rect);
+        assertCompactView(rect);
         controller.pause();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
-                .putBoolean(activity.getString(R.string.pref_list_item_view), false)
+                .putBoolean(activity.getString(R.string.pref_list_item_view), true)
                 .commit();
         controller.resume().postResume();
         activity.getSupportFragmentManager().findFragmentByTag(ListFragment.class.getName())
                 .onPrepareOptionsMenu(shadowOf(activity).getOptionsMenu());
-        assertCompactView(rect);
+        assertCardView(rect);
         controller.pause().stop().destroy();
     }
 
