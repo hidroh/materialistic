@@ -47,6 +47,7 @@ Run all/selective tests:
 - [Supporting multiple themes in your Android app (Part 1)][article-theme1]
 - [Supporting multiple themes in your Android app (Part 2)][article-theme2] [![][Android Weekly 144 Badge]][Android Weekly 144]
 - [Building custom preferences with preference-v7][article-preference]
+- [Hacking up an ad blocker for Android][article-adblocker]
 
 ### Screenshots
 <img src="assets/screenshot-1.png" width="200px" />
@@ -95,5 +96,6 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [article-theme1]: http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/
 [article-theme2]: http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/
 [article-preference]: http://www.hidroh.com/2015/11/30/building-custom-preferences-v7/
+[article-adblocker]: http://www.hidroh.com/2016/05/19/hacking-up-ad-blocker-android/
 [Android Weekly 144 Badge]: https://img.shields.io/badge/android--weekly-144-blue.svg
 [Android Weekly 144]: http://androidweekly.net/issues/issue-144
