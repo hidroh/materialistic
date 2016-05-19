@@ -18,7 +18,9 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
@@ -38,11 +40,17 @@ public class AdBlocker {
     private static final Set<String> AD_HOSTS = new HashSet<>();
 
     public static void init(Context context) {
-        try {
-            loadFromAssets(context);
-        } catch (IOException e) {
-            Log.e(AdBlocker.class.getSimpleName(), e.toString());
-        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    loadFromAssets(context);
+                } catch (IOException e) {
+                    Log.e(AdBlocker.class.getSimpleName(), e.toString());
+                }
+                return null;
+            }
+        }.execute();
     }
 
     public static boolean isAd(String url) {
@@ -55,6 +63,7 @@ public class AdBlocker {
         return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("".getBytes()));
     }
 
+    @WorkerThread
     private static void loadFromAssets(Context context) throws IOException {
         InputStream stream = context.getAssets().open(AD_HOSTS_FILE);
         BufferedSource buffer = Okio.buffer(Okio.source(stream));
@@ -66,6 +75,10 @@ public class AdBlocker {
         stream.close();
     }
 
+    /**
+     * Recursively walking up sub domain chain until we exhaust or find a match,
+     * effectively doing a longest substring matching here
+     */
     private static boolean isAdHost(String host) {
         if (TextUtils.isEmpty(host)) {
             return false;
