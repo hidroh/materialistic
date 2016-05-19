@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     private boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
+    private SwipeRefreshLayout mSwipeContainer;
 
     public static WebFragment instantiate(Context context, WebItem item) {
         final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
@@ -148,6 +150,22 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
             return false;
         });
         setWebViewSettings(mWebView.getSettings());
+        mSwipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeContainer.setColorSchemeResources(R.color.white);
+        mSwipeContainer.setProgressBackgroundColorSchemeResource(
+            AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
+        mSwipeContainer.setOnRefreshListener(() -> {
+            WebSettings webSettings = mWebView.getSettings();
+            setWebViewSettings(webSettings);
+            if(AppUtils.hasConnection(getActivity())) {
+                webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            }
+            else {
+                webSettings.setCacheMode(WebSettings.LOAD_CACHE_ONLY);
+            }
+            mWebView.loadUrl("about:blank");
+            mWebView.loadUrl(mItem.getUrl());
+        });
         return view;
     }
 
@@ -219,6 +237,10 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
     }
 
+    private void removeRefreshing() {
+        mSwipeContainer.setRefreshing(false);
+    }
+
     private static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<WebFragment> mWebFragment;
 
@@ -231,11 +253,12 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
             if (mWebFragment.get() != null && mWebFragment.get().isAttached()) {
                 mWebFragment.get().onItemLoaded(response);
             }
+            mWebFragment.get().removeRefreshing();
         }
 
         @Override
         public void onError(String errorMessage) {
-            // do nothing
+            mWebFragment.get().removeRefreshing();
         }
     }
 }

@@ -14,39 +14,44 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<android.support.v4.widget.NestedScrollView
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:id="@+id/nested_scroll_view"
-    android:background="?attr/colorCardBackground"
-    android:scrollbarStyle="insideOverlay"
-    android:scrollbars="vertical"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <FrameLayout
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorCardBackground"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical">
 
-        <WebView
-            android:id="@id/web_view"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
 
-        <ViewStub
-            android:id="@id/empty"
-            android:inflatedId="@id/empty"
-            android:layout="@layout/button_download"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <WebView
+                android:id="@id/web_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-        <ProgressBar
-            android:id="@id/progress"
-            style="@style/AppProgressBarHorizontalStyle" />
+            <ViewStub
+                android:id="@id/empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:inflatedId="@id/empty"
+                android:layout="@layout/button_download"/>
 
-    </FrameLayout>
+            <ProgressBar
+                android:id="@id/progress"
+                style="@style/AppProgressBarHorizontalStyle"/>
 
-</android.support.v4.widget.NestedScrollView>
+        </FrameLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>
