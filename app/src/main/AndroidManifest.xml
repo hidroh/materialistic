@@ -148,6 +148,10 @@
         <activity
             android:name=".OfflineWebActivity" />
         <activity
+            android:name=".ReleaseNotesActivity"
+            android:label="@string/title_activity_release"
+            android:theme="@style/AppAlertDialog" />
+        <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppAlertDialog">

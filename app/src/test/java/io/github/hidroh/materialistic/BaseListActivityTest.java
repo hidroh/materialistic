@@ -50,6 +50,17 @@ public class BaseListActivityTest {
     }
 
     @Test
+    public void testShowReleaseNotes() {
+        controller.pause().stop().destroy();
+        Preferences.sReleaseNotesSeen = false;
+        controller = Robolectric.buildActivity(TestListActivity.class);
+        activity = controller.create().postCreate(null).start().resume().visible().get();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ReleaseNotesActivity.class);
+        Preferences.sReleaseNotesSeen = null;
+    }
+
+    @Test
     public void testRotate() {
         Bundle savedState = new Bundle();
         activity.onSaveInstanceState(savedState);

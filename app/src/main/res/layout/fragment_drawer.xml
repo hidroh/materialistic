@@ -147,4 +147,10 @@
         app:iconStart="@drawable/ic_info_white_24dp"
         style="@style/DrawerTextStyle"/>
 
+    <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_release"
+        android:text="@string/title_activity_release"
+        app:iconStart="@drawable/ic_new_releases_white_24dp"
+        style="@style/DrawerTextStyle"/>
+
 </LinearLayout>

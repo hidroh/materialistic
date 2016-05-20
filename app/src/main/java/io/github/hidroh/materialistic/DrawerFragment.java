@@ -90,6 +90,7 @@ public class DrawerFragment extends BaseFragment {
         view.findViewById(R.id.drawer_about).setOnClickListener(v -> navigate(AboutActivity.class));
         view.findViewById(R.id.drawer_favorite).setOnClickListener(v -> navigate(FavoriteActivity.class));
         view.findViewById(R.id.drawer_submit).setOnClickListener(v -> navigate(SubmitActivity.class));
+        view.findViewById(R.id.drawer_release).setOnClickListener(v -> navigate(ReleaseNotesActivity.class));
         view.findViewById(R.id.drawer_user).setOnClickListener(v -> {
             Bundle extras = new Bundle();
             extras.putString(UserActivity.EXTRA_USERNAME, Preferences.getUsername(getActivity()));

@@ -14,6 +14,7 @@ android {
         targetSdkVersion 23
         versionCode 51
         versionName "2.7"
+        buildConfigField "int", "LATEST_RELEASE", "51"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "READABILITY_TOKEN", "\"\""
     }

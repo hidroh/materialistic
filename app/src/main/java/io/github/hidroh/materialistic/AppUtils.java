@@ -68,8 +68,9 @@ public class AppUtils {
     private static final String ABBR_HOUR = "h";
     private static final String ABBR_MINUTE = "m";
     private static final String PLAY_STORE_URL = "market://details?id=" + BuildConfig.APPLICATION_ID;
+    private static final String FORMAT_HTML_COLOR = "%06X";
 
-    public static void openWebUrlExternal(Context context, String url, CustomTabsSession session) {
+    static void openWebUrlExternal(Context context, String url, CustomTabsSession session) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
@@ -150,7 +151,7 @@ public class AppUtils {
         textView.setText(TextUtils.isEmpty(htmlText) ? null : trim(Html.fromHtml(htmlText)));
     }
 
-    public static Intent makeEmailIntent(String subject, String text) {
+    static Intent makeEmailIntent(String subject, String text) {
         final Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -158,7 +159,7 @@ public class AppUtils {
         return intent;
     }
 
-    public static void openExternal(@NonNull final Context context,
+    static void openExternal(@NonNull final Context context,
                                     @NonNull AlertDialogBuilder alertDialogBuilder,
                                     @NonNull final WebItem item,
                                     final CustomTabsSession session) {
@@ -222,7 +223,7 @@ public class AppUtils {
         return size;
     }
 
-    public static boolean isHackerNewsUrl(WebItem item) {
+    static boolean isHackerNewsUrl(WebItem item) {
         return !TextUtils.isEmpty(item.getUrl()) &&
                 item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
     }
@@ -232,7 +233,7 @@ public class AppUtils {
                         context.getResources().getDisplayMetrics().density);
     }
 
-    public static void restart(Activity activity) {
+    static void restart(Activity activity) {
         activity.finish();
         final Intent intent = activity.getIntent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
@@ -264,7 +265,7 @@ public class AppUtils {
                 activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
-    public static boolean hasConnection(Context context) {
+    static boolean hasConnection(Context context) {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService(
                 Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
@@ -304,7 +305,7 @@ public class AppUtils {
         }
     }
 
-    public static void registerAccountsUpdatedListener(final Context context) {
+    static void registerAccountsUpdatedListener(final Context context) {
         AccountManager.get(context).addOnAccountsUpdatedListener(accounts -> {
             String username = Preferences.getUsername(context);
             if (TextUtils.isEmpty(username)) {
@@ -321,7 +322,7 @@ public class AppUtils {
 
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void openPlayStore(Context context) {
+    static void openPlayStore(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                 Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -337,7 +338,7 @@ public class AppUtils {
         }
     }
 
-    public static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
+    static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
                                            Account[] accounts) {
         String username = Preferences.getUsername(context);
         final String[] items = new String[accounts.length + 1];
@@ -374,7 +375,7 @@ public class AppUtils {
                 .show();
     }
 
-    public static void toggleFab(FloatingActionButton fab, boolean visible) {
+    static void toggleFab(FloatingActionButton fab, boolean visible) {
         CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
         if (visible) {
             fab.show();
@@ -383,6 +384,11 @@ public class AppUtils {
             fab.hide();
             p.setBehavior(null);
         }
+    }
+
+    static String toHtmlColor(Context context, @AttrRes int colorAttr) {
+        return String.format(FORMAT_HTML_COLOR, 0xFFFFFF & ContextCompat.getColor(context,
+                AppUtils.getThemedResId(context, colorAttr)));
     }
 
     private static CharSequence trim(CharSequence charSequence) {

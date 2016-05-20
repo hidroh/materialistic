@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.AttrRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
@@ -47,7 +46,6 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_TEXT_SIZE = "state:textSize";
     private static final String STATE_TYPEFACE_NAME = "state:typefaceName";
-    private static final String FORMAT_HTML_COLOR = "%06X";
     private NestedScrollView mScrollView;
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -81,8 +79,8 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
             mTextSize = toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity()));
             mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
         }
-        mTextColor = toHtmlColor(android.R.attr.textColorPrimary);
-        mTextLinkColor = toHtmlColor(android.R.attr.textColorLink);
+        mTextColor = AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorPrimary);
+        mTextLinkColor = AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorLink);
     }
 
     @Override
@@ -234,11 +232,6 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
                 toHtmlPx(getResources().getDimension(R.dimen.activity_horizontal_margin)));
     }
 
-    private String toHtmlColor(@AttrRes int colorAttr) {
-        return String.format(FORMAT_HTML_COLOR, 0xFFFFFF & ContextCompat.getColor(getActivity(),
-                AppUtils.getThemedResId(getActivity(), colorAttr)));
-    }
-
     private float toHtmlPx(@StyleRes int textStyleAttr) {
         return toHtmlPx(AppUtils.getDimension(getActivity(), textStyleAttr, R.attr.contentTextSize));
     }
@@ -250,7 +243,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private static class ReadabilityCallback implements ReadabilityClient.Callback {
         private final WeakReference<ReadabilityFragment> mReadabilityFragment;
 
-        public ReadabilityCallback(ReadabilityFragment readabilityFragment) {
+        ReadabilityCallback(ReadabilityFragment readabilityFragment) {
             mReadabilityFragment = new WeakReference<>(readabilityFragment);
         }
 
