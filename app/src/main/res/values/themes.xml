@@ -138,6 +138,7 @@
         <item name="android:textColorLink">?colorAccent</item>
         <item name="colorCardBackground">@color/grey100</item>
         <item name="colorCardHighlight">@color/orange100</item>
+        <item name="backgroundDrawerHeader">@drawable/bg_drawer_light</item>
     </style>
 
     <style name="AppAlertDialog.Dark" parent="Theme.AppCompat.Dialog.Alert">
@@ -148,6 +149,7 @@
         <item name="android:textColorLink">?colorAccent</item>
         <item name="colorCardBackground">@color/cardview_dark_background</item>
         <item name="colorCardHighlight">@color/grey800</item>
+        <item name="backgroundDrawerHeader">@drawable/bg_drawer_dark</item>
     </style>
 
     <style name="AppAlertDialog.Sepia">

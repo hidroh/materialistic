@@ -26,6 +26,7 @@
     <string translatable="false" name="pref_highlight_updated_help">pref_highlight_updated_help</string>
     <string translatable="false" name="pref_item_click">pref_item_click</string> <!-- deprecated -->
     <string translatable="false" name="pref_item_search_recent">pref_item_search_recent</string> <!-- deprecated -->
+    <string translatable="false" name="pref_latest_release">pref_latest_release</string>
     <string translatable="false" name="pref_lazy_load">pref_lazy_load</string>
     <string translatable="false" name="pref_lazy_load_help">pref_lazy_load_help</string>
     <string translatable="false" name="pref_launch_screen">pref_launch_screen</string>

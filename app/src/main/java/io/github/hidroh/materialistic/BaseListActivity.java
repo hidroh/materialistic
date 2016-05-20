@@ -134,6 +134,14 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (!Preferences.isReleaseNotesSeen(this)) {
+            startActivity(new Intent(this, ReleaseNotesActivity.class));
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         mCustomTabsDelegate.bindCustomTabsService(this);

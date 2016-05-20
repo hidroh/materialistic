@@ -46,7 +46,39 @@
                 </style>
             </head>
             <body>%5$s</body>
-            </html>"
+        </html>
+        ]]>
+    </string>
+    <string name="release_notes" translatable="false">
+        <![CDATA[
+        <html>
+            <head>
+                <style type="text/css">
+                    body { color: #%1$s; }
+                    a {color: #%2$s;}
+                </style>
+            </head>
+            <body>
+                <h3>v2.8</h3>
+                <ul>
+                    <li><b>New section:</b> Best stories (<a href="https://news.ycombinator.com/best">news.ycombinator.com/best</a>)</li>
+                    <li><b>New option:</b> choose default section when app launches</li>
+                    <li><b>New option:</b> block ads for internal browser</li>
+                    <li>Improve internal browser loading speed</li>
+                    <li>Fix saved stories not accessible while offline</li>
+                </ul>
+                <h3>v2.7</h3>
+                <ul>
+                    <li><b>New option:</b> navigate stories and comments using volume keys</li>
+                    <li>Improve Chrome custom tabs speed</li>
+                </ul>
+                <h3>v2.6</h3>
+                <ul>
+                    <li><b>New option:</b> download saved stories for offline reading</li>
+                    <li>New pure black theme</li>
+                </ul>
+            </body>
+        </html>
         ]]>
     </string>
     <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.ScrollAwareFABBehavior</string>

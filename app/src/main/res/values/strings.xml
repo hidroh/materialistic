@@ -22,6 +22,7 @@
     <string name="title_activity_list">Top Stories</string>
     <string name="title_activity_best">Best Stories</string>
     <string name="title_activity_item">Comments</string>
+    <string name="title_activity_release">What\'s new</string>
     <string name="filter_title_item">Materialistic</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
@@ -268,5 +269,6 @@
     <string name="offline">Offline</string>
     <string name="offline_notice">You\'re currently offline</string>
     <string name="download_in_progress">Download in progress</string>
+    <string name="love_it">I love it!</string>
 
 </resources>
