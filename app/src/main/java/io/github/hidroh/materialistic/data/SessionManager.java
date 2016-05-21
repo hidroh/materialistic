@@ -86,12 +86,12 @@ public class SessionManager {
         private final String mItemId;
         private OperationCallbacks mCallback;
 
-        public SessionHandler(ContentResolver cr, @NonNull String itemId) {
+        SessionHandler(ContentResolver cr, @NonNull String itemId) {
             super(cr);
             mItemId = itemId;
         }
 
-        public SessionHandler(ContentResolver cr, @NonNull String itemId,
+        SessionHandler(ContentResolver cr, @NonNull String itemId,
                               @NonNull OperationCallbacks callback) {
             this(cr, itemId);
             mCallback = callback;
@@ -107,6 +107,9 @@ public class SessionManager {
             if (cookie.equals(mItemId)) {
                 mCallback.onCheckViewedComplete(cursor != null && cursor.getCount() > 0);
                 mCallback = null;
+            }
+            if (cursor != null) {
+                cursor.close();
             }
         }
     }

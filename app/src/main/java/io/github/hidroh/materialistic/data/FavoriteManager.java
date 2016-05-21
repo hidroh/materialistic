@@ -289,12 +289,12 @@ public class FavoriteManager {
     private static class FavoriteHandler extends AsyncQueryHandler {
         private FavoriteCallback mCallback;
 
-        public FavoriteHandler(ContentResolver cr, @NonNull FavoriteCallback callback) {
+        FavoriteHandler(ContentResolver cr, @NonNull FavoriteCallback callback) {
             this(cr);
             mCallback = callback;
         }
 
-        public FavoriteHandler(ContentResolver cr) {
+        FavoriteHandler(ContentResolver cr) {
             super(cr);
         }
 
@@ -319,6 +319,7 @@ public class FavoriteManager {
                 }
                 mCallback.onQueryComplete(favorites);
             }
+            cursor.close();
             mCallback = null;
         }
     }
