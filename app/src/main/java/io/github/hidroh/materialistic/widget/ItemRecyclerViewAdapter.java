@@ -105,7 +105,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         if (item.getLocalRevision() < 0) {
             clear(holder);
             load(holder.getAdapterPosition(), item);
-        } else {
+        } else if (item.getLocalRevision() > 0) {
             bind(holder, item);
         }
     }
@@ -166,6 +166,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void load(int adapterPosition, Item item) {
+        item.setLocalRevision(0);
         mItemManager.getItem(item.getId(), mCacheMode,
                 new ItemResponseListener(this, adapterPosition, item));
     }
@@ -287,7 +288,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         private final int mPosition;
         private final Item mPartialItem;
 
-        public ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
+        ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
                                     Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;
@@ -298,7 +299,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         public void onResponse(Item response) {
             if (mAdapter.get() != null && mAdapter.get().isAttached() && response != null) {
                 mPartialItem.populate(response);
-                mPartialItem.setLocalRevision(0);
                 mAdapter.get().onItemLoaded(mPosition, mPartialItem);
             }
         }

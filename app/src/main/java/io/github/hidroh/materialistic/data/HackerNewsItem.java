@@ -20,6 +20,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -70,7 +71,7 @@ class HackerNewsItem implements Item {
     private boolean favorite;
     private boolean viewed;
     private int localRevision = -1;
-    private int level = 0;
+    @VisibleForTesting int level = 0;
     private boolean collapsed;
     private boolean contentExpanded;
     int rank;
@@ -147,6 +148,7 @@ class HackerNewsItem implements Item {
         score = info.getScore();
         viewed = info.isViewed();
         favorite = info.isFavorite();
+        localRevision = 1;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -25,9 +26,9 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
-import io.github.hidroh.materialistic.test.TestItem;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -36,6 +37,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @Config(shadows = {ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@SuppressWarnings("ConstantConditions")
+@SuppressLint("WrongViewCast")
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;
@@ -63,8 +66,7 @@ public class ListFragmentViewHolderEdgeTest {
         verify(itemManager).getStories(anyString(),
                 eq(ItemManager.MODE_DEFAULT),
                 storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{new TestItem() {
-        }});
+        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1L)});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         ShadowRecyclerViewAdapter shadowAdapter = ((ShadowRecyclerViewAdapter) ShadowExtractor
                 .extract(recyclerView.getAdapter()));

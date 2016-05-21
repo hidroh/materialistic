@@ -50,6 +50,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentMultiPageTest {
@@ -70,7 +71,7 @@ public class ItemFragmentMultiPageTest {
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_multiple))
                 .putBoolean(RuntimeEnvironment.application.getString(R.string.pref_lazy_load), false)
-                .commit();
+                .apply();
     }
 
     @Test
@@ -114,28 +115,36 @@ public class ItemFragmentMultiPageTest {
 
     @Test
     public void testBindLocalKidData() {
-        Bundle args = new Bundle();
-        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+        Item story = new TestHnItem(0L);
+        story.populate(new TestItem() {
             @Override
-            public Item[] getKidItems() {
-                return new Item[]{new TestItem() {
-                    @Override
-                    public String getText() {
-                        return "text";
-                    }
-
-                    @Override
-                    public int getKidCount() {
-                        return 1;
-                    }
-                }};
+            public int getDescendants() {
+                return 1;
             }
 
             @Override
-            public int getKidCount() {
+            public long[] getKids() {
+                return new long[]{1L};
+            }
+        });
+        story.getKidItems()[0].populate(new TestItem() {
+            @Override
+            public String getText() {
+                return "text";
+            }
+
+            @Override
+            public long[] getKids() {
+                return new long[]{2L};
+            }
+
+            @Override
+            public int getDescendants() {
                 return 1;
             }
         });
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, story);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
@@ -155,7 +164,7 @@ public class ItemFragmentMultiPageTest {
     }
 
     @Test
-    public void testBindRemotelKidData() {
+    public void testBindRemoteKidData() {
         Bundle args = new Bundle();
         Item item = new TestHnItem(2L);
         item.populate(new TestHnItem(2L) {
@@ -182,7 +191,7 @@ public class ItemFragmentMultiPageTest {
                 return "title";
             }
         });
-        assertEquals(0, item.getKidItems()[0].getLocalRevision());
+        assertEquals(1, item.getKidItems()[0].getLocalRevision());
         assertEquals("title", item.getKidItems()[0].getTitle());
     }
 
@@ -226,7 +235,7 @@ public class ItemFragmentMultiPageTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_color_code), true)
-                .commit();
+                .apply();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isEnabled());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
     }
