@@ -22,8 +22,15 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-19
     # - sys-img-x86-android-17
-
-script: "./gradlew assembleDebug && ./gradlew lintDebug &&./gradlew testDebug && ./gradlew assembleRelease"
-
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+script: "./gradlew $TASK"
+env:
+    - TASK="assembleDebug assembleRelease"
+    - TASK="lintDebug testDebug"
 after_success:
-- ./gradlew jacocoTestReport coveralls
+    - if [ "$TASK" = "lintDebug testDebug" ]; then ./gradlew jacocoTestReport coveralls; fi
