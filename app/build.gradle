@@ -37,8 +37,9 @@ android {
         textReport true
         warningsAsErrors true
         abortOnError true
-        informational 'Overdraw' // http://b.android.com/169879
-        informational 'MissingTranslation'
+        ignore 'ResourceType' // TODO http://b.android.com/201882
+        informational 'Overdraw', // TODO http://b.android.com/169879
+                'MissingTranslation'
         explainIssues false
         absolutePaths false
     }
