@@ -89,7 +89,7 @@ public class StoryRecyclerViewAdapter extends
     private ArrayList<String> mPromoted = new ArrayList<>();
     private final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
     private final LongSparseArray<Integer> mUpdatedPositions = new LongSparseArray<>();
-    private int mFavoriteRevision = -1;
+    private int mFavoriteRevision = 1;
     private String mUsername;
     private boolean mHighlightUpdated = true;
     private boolean mShowAll = true;
@@ -182,6 +182,10 @@ public class StoryRecyclerViewAdapter extends
     @Override
     protected void loadItem(final int adapterPosition) {
         Item item = getItem(adapterPosition);
+        if (item.getLocalRevision() == 0) {
+            return;
+        }
+        item.setLocalRevision(0);
         mItemManager.getItem(item.getId(), getItemCacheMode(), new ItemResponseListener(this, item));
     }
 
@@ -204,7 +208,7 @@ public class StoryRecyclerViewAdapter extends
 
     @Override
     protected boolean isItemAvailable(Item item) {
-        return item != null && !TextUtils.isEmpty(item.getTitle());
+        return item != null && item.getLocalRevision() > 0;
     }
 
     @Override
@@ -378,7 +382,7 @@ public class StoryRecyclerViewAdapter extends
         private final WeakReference<StoryRecyclerViewAdapter> mAdapter;
         private final Item mPartialItem;
 
-        public ItemResponseListener(StoryRecyclerViewAdapter adapter,
+        ItemResponseListener(StoryRecyclerViewAdapter adapter,
                                     Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPartialItem = partialItem;
@@ -403,7 +407,7 @@ public class StoryRecyclerViewAdapter extends
         private final int mPosition;
         private final Item mItem;
 
-        public VoteCallback(StoryRecyclerViewAdapter adapter, int position,
+        VoteCallback(StoryRecyclerViewAdapter adapter, int position,
                             Item item) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;

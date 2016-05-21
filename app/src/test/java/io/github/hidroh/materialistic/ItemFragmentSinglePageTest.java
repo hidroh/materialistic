@@ -37,6 +37,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
@@ -59,6 +60,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
@@ -83,33 +85,30 @@ public class ItemFragmentSinglePageTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        final TestItem item2 = new TestItem() { // level 2
+        final TestHnItem item0 = new TestHnItem(1, 1);
+        item0.populate(new TestItem() { // level 0
             @Override
             public String getId() {
-                return "3";
+                return "1";
             }
 
             @Override
-            public int getKidCount() {
-                return 0;
+            public String getText() {
+                return "text";
             }
 
             @Override
-            public String getParent() {
-                return "2";
+            public int getDescendants() {
+                return 1;
             }
 
             @Override
-            public boolean isDead() {
-                return true;
+            public long[] getKids() {
+                return new long[]{2L};
             }
-
-            @Override
-            public Item[] getKidItems() {
-                return new Item[]{};
-            }
-        };
-        final TestItem item1 = new TestItem() { // level 1
+        });
+        final TestHnItem item1 = new TestHnItem(2, 2);
+        item1.populate( new TestItem() { // level 1
             @Override
             public String getId() {
                 return "2";
@@ -131,53 +130,59 @@ public class ItemFragmentSinglePageTest {
             }
 
             @Override
-            public int getKidCount() {
+            public int getDescendants() {
                 return 1;
             }
 
             @Override
-            public Item[] getKidItems() {
-                return new Item[]{item2};
+            public long[] getKids() {
+                return new long[]{3L};
             }
-        };
-        final TestItem item0 = new TestItem() { // level 0
+        });
+        item0.getKidItems()[0] = item1;
+        final TestHnItem item2 = new TestHnItem(3, 3);
+        item2.populate(new TestItem() { // level 2
             @Override
             public String getId() {
-                return "1";
+                return "3";
             }
 
             @Override
-            public int getLevel() {
-                return 1;
+            public long[] getKids() {
+                return new long[0];
             }
 
             @Override
-            public String getText() {
-                return "text";
+            public int getDescendants() {
+                return 0;
             }
 
             @Override
-            public int getKidCount() {
-                return 1;
+            public String getParent() {
+                return "2";
             }
 
             @Override
-            public Item[] getKidItems() {
-                return new Item[]{item1};
+            public boolean isDead() {
+                return true;
             }
-        };
-        Bundle args = new Bundle();
-        args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() {
+        });
+        item1.getKidItems()[0] = item2;
+        TestHnItem story = new TestHnItem(0);
+        story.populate(new TestItem() {
             @Override
-            public Item[] getKidItems() {
-                return new Item[]{item0};
+            public long[] getKids() {
+                return new long[]{1L};
             }
 
             @Override
-            public int getKidCount() {
+            public int getDescendants() {
                 return 1;
             }
         });
+        story.getKidItems()[0] = item0;
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, story);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         activity = Robolectric.buildActivity(TestItemActivity.class)
@@ -185,7 +190,7 @@ public class ItemFragmentSinglePageTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
-                .commit();
+                .apply();
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.content_frame, fragment, ItemFragment.class.getName())
@@ -285,7 +290,7 @@ public class ItemFragmentSinglePageTest {
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_collapsed))
-                .commit();
+                .apply();
         final TestItem item0 = new TestItem() { // level 0
             @Override
             public String getId() {
@@ -347,7 +352,7 @@ public class ItemFragmentSinglePageTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_max_lines), "3")
-                .commit();
+                .apply();
         adapter.onAttachedToRecyclerView(recyclerView);
         TextView textView = (TextView) viewHolder.itemView.findViewById(R.id.text);
         View more = viewHolder.itemView.findViewById(R.id.more);
