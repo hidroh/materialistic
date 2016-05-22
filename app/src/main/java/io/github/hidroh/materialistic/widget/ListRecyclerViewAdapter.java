@@ -101,8 +101,8 @@ public abstract class ListRecyclerViewAdapter
             holder.mCardView.setRadius(0);
             holder.mCardView.setUseCompatPadding(false);
         }
+        clearViewHolder(holder);
         if (!isItemAvailable(item)) {
-            clearViewHolder(holder);
             loadItem(holder.getAdapterPosition());
             return;
         }

@@ -102,8 +102,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         final Item item = getItem(position);
+        clear(holder);
         if (item.getLocalRevision() < 0) {
-            clear(holder);
             load(holder.getAdapterPosition(), item);
         } else if (item.getLocalRevision() > 0) {
             bind(holder, item);
