@@ -38,17 +38,19 @@
     <color name="cyan500">#00BCD4</color>
     <color name="teal50">#E0F2F1</color>
     <color name="teal100">#B2DFDB</color>
+    <color name="teal300">#4DB6AC</color>
+    <color name="teal400">#26A69A</color>
     <color name="teal500">#009688</color>
+    <color name="teal600">#00897B</color>
     <color name="teal900">#004D40</color>
     <color name="green500">#4CAF50</color>
     <color name="greenA700">#00C853</color>
     <color name="orange50">#FFF3E0</color>
     <color name="orange100">#FFE0B2</color>
     <color name="orange300">#FFB74D</color>
-    <color name="orange500">#FF9800</color>
-    <color name="orange700">#F57C00</color>
-    <color name="brown300">#A1887F</color>
-    <color name="brown500">#795548</color>
+    <color name="orange400">#FFA726</color>
+    <color name="brown400">#8D6E63</color>
+    <color name="brown800">#4E342E</color>
 
     <!-- http://ethanschoonover.com/solarized -->
     <color name="solarizedBase01">#586e75</color>

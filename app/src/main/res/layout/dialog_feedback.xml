@@ -50,35 +50,35 @@
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
                 android:contentDescription="@string/rate_app"
-                android:tint="@color/orange500"
+                android:tint="@color/orange400"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
                 android:contentDescription="@string/rate_app"
-                android:tint="@color/orange500"
+                android:tint="@color/orange400"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
                 android:contentDescription="@string/rate_app"
-                android:tint="@color/orange500"
+                android:tint="@color/orange400"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
                 android:contentDescription="@string/rate_app"
-                android:tint="@color/orange500"
+                android:tint="@color/orange400"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <ImageView
                 android:src="@drawable/ic_star_rate_white_18dp"
                 android:contentDescription="@string/rate_app"
-                android:tint="@color/orange500"
+                android:tint="@color/orange400"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

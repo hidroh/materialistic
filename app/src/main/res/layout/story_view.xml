@@ -32,7 +32,7 @@
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tint="@color/orange500" />
+        android:tint="@color/orange400" />
 
     <LinearLayout
         android:id="@+id/rank_container"
