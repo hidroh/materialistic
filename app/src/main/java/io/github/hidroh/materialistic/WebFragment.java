@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -31,9 +30,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -48,9 +45,9 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ItemSyncAdapter;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.widget.CacheableWebView;
 
 public class WebFragment extends LazyLoadFragment implements Scrollable {
 
@@ -112,9 +109,10 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
                         super.shouldInterceptRequest(view, url);
             }
         });
-        mWebView.setWebChromeClient(new WebChromeClient() {
+        mWebView.setWebChromeClient(new CacheableWebView.ArchiveClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
                 if (newProgress == 100) {
@@ -147,7 +145,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
             }
             return false;
         });
-        setWebViewSettings(mWebView.getSettings());
+        AppUtils.enableWebViewZoom(mWebView.getSettings());
         return view;
     }
 
@@ -195,18 +193,6 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         return view;
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setWebViewSettings(WebSettings webSettings) {
-        ItemSyncAdapter.enableCache(getActivity(), webSettings);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setBuiltInZoomControls(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webSettings.setDisplayZoomControls(false);
-        }
-    }
-
     private void onItemLoaded(Item response) {
         AppUtils.setTextWithLinks(mText, response.getText());
     }
@@ -222,7 +208,7 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     private static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<WebFragment> mWebFragment;
 
-        public ItemResponseListener(WebFragment webFragment) {
+        ItemResponseListener(WebFragment webFragment) {
             mWebFragment = new WeakReference<>(webFragment);
         }
 

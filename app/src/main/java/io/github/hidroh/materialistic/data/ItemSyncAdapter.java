@@ -17,8 +17,6 @@
 package io.github.hidroh.materialistic.data;
 
 import android.accounts.Account;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
@@ -30,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
@@ -38,9 +35,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,8 +56,8 @@ import retrofit2.Callback;
  */
 public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
 
-    public static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
+    private static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
     private static final String NOTIFICATION_GROUP_KEY = "group";
     private static final String HOST_ITEM = "item";
     private static final String EXTRA_CONNECTION_ENABLED = ItemSyncAdapter.class.getName() +
@@ -75,37 +69,8 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String EXTRA_NOTIFICATION_ENABLED = ItemSyncAdapter.class.getName() +
             ".EXTRA_NOTIFICATION_ENABLED";
 
-    /**
-     * Triggers a {@link WebView#loadUrl(String)} without actual UI
-     * to save content to app cache if available
-     * @param context    context
-     * @param url        url to load
-     */
     @UiThread
-    public static void saveWebCache(Context context, String url) {
-        if (!TextUtils.isEmpty(url) &&
-                Preferences.Offline.currentConnectionEnabled(context) &&
-                Preferences.Offline.isArticleEnabled(context)) {
-            WebView webView = new WebView(context);
-            webView.setWebViewClient(new WebViewClient());
-            enableCache(context, webView.getSettings());
-            webView.loadUrl(url);
-        }
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static void enableCache(Context context, WebSettings webSettings) {
-        webSettings.setAppCacheEnabled(true);
-        webSettings.setAllowFileAccess(true);
-        webSettings.setAppCachePath(context.getApplicationContext()
-                .getCacheDir().getAbsolutePath());
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webSettings.setJavaScriptEnabled(true);
-    }
-
-    @UiThread
-    public static void initSync(Context context, @Nullable String itemId) {
+    static void initSync(Context context, @Nullable String itemId) {
         if (!Preferences.Offline.isEnabled(context)) {
             return;
         }
@@ -137,7 +102,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     private boolean mCommentsEnabled;
     private boolean mNotificationEnabled;
 
-    public ItemSyncAdapter(Context context, RestServiceFactory factory,
+    ItemSyncAdapter(Context context, RestServiceFactory factory,
                            ReadabilityClient readabilityClient) {
         super(context, true);
         mSharedPreferences = context.getSharedPreferences(

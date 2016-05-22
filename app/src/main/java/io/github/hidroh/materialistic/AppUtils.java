@@ -52,6 +52,7 @@ import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -265,7 +266,7 @@ public class AppUtils {
                 activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
-    static boolean hasConnection(Context context) {
+    public static boolean hasConnection(Context context) {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService(
                 Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
@@ -389,6 +390,15 @@ public class AppUtils {
     static String toHtmlColor(Context context, @AttrRes int colorAttr) {
         return String.format(FORMAT_HTML_COLOR, 0xFFFFFF & ContextCompat.getColor(context,
                 AppUtils.getThemedResId(context, colorAttr)));
+    }
+
+    static void enableWebViewZoom(WebSettings webSettings) {
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ONLY);
+        webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            webSettings.setDisplayZoomControls(false);
+        }
     }
 
     private static CharSequence trim(CharSequence charSequence) {

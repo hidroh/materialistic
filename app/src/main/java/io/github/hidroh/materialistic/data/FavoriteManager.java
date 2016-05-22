@@ -32,6 +32,9 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.widget.CacheableWebView;
+
 /**
  * Data repository for {@link Favorite}
  */
@@ -99,7 +102,10 @@ public class FavoriteManager {
                 MaterialisticProvider.URI_FAVORITE, contentValues);
         cr.notifyChange(buildAdded().appendPath(story.getId()).build(), null);
         ItemSyncAdapter.initSync(context, story.getId());
-        ItemSyncAdapter.saveWebCache(context, story.getUrl());
+        if (Preferences.Offline.currentConnectionEnabled(context) &&
+                Preferences.Offline.isArticleEnabled(context)) {
+            new CacheableWebView(context).loadUrl(story.getUrl());
+        }
     }
 
     /**
