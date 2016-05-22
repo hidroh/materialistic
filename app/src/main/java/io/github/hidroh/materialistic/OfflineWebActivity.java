@@ -17,7 +17,6 @@
 package io.github.hidroh.materialistic;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -25,13 +24,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import io.github.hidroh.materialistic.data.ItemSyncAdapter;
+import io.github.hidroh.materialistic.widget.CacheableWebView;
 
 public class OfflineWebActivity extends InjectableActivity {
     public static final String EXTRA_URL = OfflineWebActivity.class.getName() + ".EXTRA_URL";
@@ -63,7 +60,7 @@ public class OfflineWebActivity extends InjectableActivity {
                 setTitle(view.getTitle());
             }
         });
-        webView.setWebChromeClient(new WebChromeClient() {
+        webView.setWebChromeClient(new CacheableWebView.ArchiveClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
@@ -76,15 +73,7 @@ public class OfflineWebActivity extends InjectableActivity {
                 }
             }
         });
-        WebSettings webSettings = webView.getSettings();
-        ItemSyncAdapter.enableCache(this, webSettings);
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ONLY);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setBuiltInZoomControls(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webSettings.setDisplayZoomControls(false);
-        }
+        AppUtils.enableWebViewZoom(webView.getSettings());
         webView.loadUrl(url);
     }
 

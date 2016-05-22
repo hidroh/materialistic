@@ -33,7 +33,6 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
@@ -89,7 +88,7 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_saved_item_sync), true)
                 .putBoolean(service.getString(R.string.pref_offline_comments), true)
-                .commit();
+                .apply();
         adapter = new ItemSyncAdapter(service, new TestRestServiceFactory(), readabilityClient);
         syncPreferences = service.getSharedPreferences(
                 service.getPackageName() +
@@ -99,7 +98,7 @@ public class ItemSyncAdapterTest {
     @Test
     public void testSyncDisabled() {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
-                .edit().clear().commit();
+                .edit().clear().apply();
         ItemSyncAdapter.initSync(service, "1");
         assertNull(ShadowContentResolver.getStatus(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
@@ -148,7 +147,7 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putString(service.getString(R.string.pref_offline_data),
                         service.getString(R.string.offline_data_default))
-                .commit();
+                .apply();
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
@@ -193,7 +192,7 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_comments), false)
-                .commit();
+                .apply();
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
@@ -234,7 +233,7 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_readability), false)
-                .commit();
+                .apply();
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
@@ -307,7 +306,8 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncWebCacheEmptyUrl() {
-        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, null);
+        new FavoriteManager().add(service, new Favorite("1", null, "title",
+                System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
@@ -316,8 +316,9 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_article), true)
-                .commit();
-        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, "http://example.com");
+                .apply();
+        new FavoriteManager().add(service, new Favorite("1", "http://example.com", "title",
+                System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://example.com");
     }
 
@@ -327,8 +328,9 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_article), true)
-                .commit();
-        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, "http://example.com");
+                .apply();
+        new FavoriteManager().add(service, new Favorite("1", "http://example.com", "title",
+                System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
@@ -337,8 +339,9 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_article), false)
-                .commit();
-        ItemSyncAdapter.saveWebCache(RuntimeEnvironment.application, "http://example.com");
+                .apply();
+        new FavoriteManager().add(service, new Favorite("1", "http://example.com", "title",
+                System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
@@ -378,7 +381,7 @@ public class ItemSyncAdapterTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_notification), true)
-                .commit();
+                .apply();
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
