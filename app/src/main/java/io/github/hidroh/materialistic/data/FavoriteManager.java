@@ -28,11 +28,13 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.webkit.WebView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 
 /**
@@ -104,7 +106,9 @@ public class FavoriteManager {
         ItemSyncAdapter.initSync(context, story.getId());
         if (Preferences.Offline.currentConnectionEnabled(context) &&
                 Preferences.Offline.isArticleEnabled(context)) {
-            new CacheableWebView(context).loadUrl(story.getUrl());
+            WebView webView = new CacheableWebView(context);
+            webView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(context)));
+            webView.loadUrl(story.getUrl());
         }
     }
 
