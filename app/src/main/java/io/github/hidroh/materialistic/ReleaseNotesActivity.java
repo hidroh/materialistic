@@ -19,7 +19,9 @@ package io.github.hidroh.materialistic;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Window;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class ReleaseNotesActivity extends InjectableActivity {
 
@@ -36,6 +38,8 @@ public class ReleaseNotesActivity extends InjectableActivity {
             finish();
         });
         WebView webView = (WebView) findViewById(R.id.web_view);
+        webView.setWebViewClient(new WebViewClient());
+        webView.setWebChromeClient(new WebChromeClient());
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.loadDataWithBaseURL(null, getString(R.string.release_notes,
                 AppUtils.toHtmlColor(this, android.R.attr.textColorPrimary),
