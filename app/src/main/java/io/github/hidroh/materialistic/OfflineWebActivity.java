@@ -25,13 +25,13 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 
 public class OfflineWebActivity extends InjectableActivity {
-    public static final String EXTRA_URL = OfflineWebActivity.class.getName() + ".EXTRA_URL";
+    static final String EXTRA_URL = OfflineWebActivity.class.getName() + ".EXTRA_URL";
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -54,7 +54,7 @@ public class OfflineWebActivity extends InjectableActivity {
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
         final WebView webView = (WebView) findViewById(R.id.web_view);
         webView.setBackgroundColor(Color.TRANSPARENT);
-        webView.setWebViewClient(new WebViewClient() {
+        webView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(this)) {
             @Override
             public void onPageFinished(WebView view, String url) {
                 setTitle(view.getTitle());

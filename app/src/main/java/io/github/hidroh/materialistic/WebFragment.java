@@ -16,12 +16,10 @@
 
 package io.github.hidroh.materialistic;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,15 +28,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,6 +41,7 @@ import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 
 public class WebFragment extends LazyLoadFragment implements Scrollable {
@@ -81,34 +76,13 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         if (mIsHackerNewsUrl) {
             return createLocalView(container, savedInstanceState);
         }
-        final boolean adBlockEnabled = Preferences.adBlockEnabled(getActivity());
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web, container, false);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
         final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
-        mWebView.setWebViewClient(new WebViewClient() {
-            private Map<String, Boolean> mLoadedUrls = new HashMap<>();
-
-            @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-            @SuppressWarnings("deprecation")
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (!adBlockEnabled) {
-                    return super.shouldInterceptRequest(view, url);
-                }
-                boolean ad;
-                if (!mLoadedUrls.containsKey(url)) {
-                    ad = AdBlocker.isAd(url);
-                    mLoadedUrls.put(url, ad);
-                } else {
-                    ad = mLoadedUrls.get(url);
-                }
-                return ad ? AdBlocker.createEmptyResource() :
-                        super.shouldInterceptRequest(view, url);
-            }
-        });
+        mWebView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(getActivity())));
         mWebView.setWebChromeClient(new CacheableWebView.ArchiveClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
