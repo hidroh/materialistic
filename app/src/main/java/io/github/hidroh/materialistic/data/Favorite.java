@@ -62,6 +62,7 @@ public class Favorite implements WebItem {
         url = source.readString();
         title = source.readString();
         favorite = source.readInt() != 0;
+        time = source.readLong();
     }
 
     @Override
@@ -136,6 +137,7 @@ public class Favorite implements WebItem {
         dest.writeString(url);
         dest.writeString(title);
         dest.writeInt(favorite ? 1 : 0);
+        dest.writeLong(time);
     }
 
     long getTime() {
