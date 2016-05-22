@@ -199,7 +199,7 @@ public class Preferences {
         return get(context, R.string.pref_launch_screen, R.string.pref_launch_screen_value_top);
     }
 
-    static boolean adBlockEnabled(Context context) {
+    public static boolean adBlockEnabled(Context context) {
         return get(context, R.string.pref_ad_block, true);
     }
 
