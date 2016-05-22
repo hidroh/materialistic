@@ -431,7 +431,7 @@ public class AppUtils {
     private static Intent createViewIntent(Context context, String url, CustomTabsSession session) {
         if (Preferences.customChromeTabEnabled(context)) {
             return new CustomTabsIntent.Builder(session)
-                    .setToolbarColor(ContextCompat.getColor(context, R.color.orange500))
+                    .setToolbarColor(ContextCompat.getColor(context, R.color.orange400))
                     .setShowTitle(true)
                     .enableUrlBarHiding()
                     .addDefaultShareMenuItem()
