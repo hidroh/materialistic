@@ -59,6 +59,10 @@
     <style name="AppNavigationDrawer">
         <item name="android:layout_width">match_parent</item>
     </style>
+    <style name="ThemeOverlay.App.Rating" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/orange400</item>
+    </style>
+
 
     <!-- =========== -->
     <!-- Text styles -->

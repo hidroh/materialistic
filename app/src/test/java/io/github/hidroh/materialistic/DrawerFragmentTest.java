@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import org.junit.After;
@@ -22,6 +23,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportDrawerLayout.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class DrawerFragmentTest {
@@ -50,10 +52,12 @@ public class DrawerFragmentTest {
                 new Object[]{R.id.drawer_favorite, FavoriteActivity.class},
                 new Object[]{R.id.drawer_popular, PopularActivity.class},
                 new Object[]{R.id.drawer_submit, SubmitActivity.class},
-                new Object[]{R.id.drawer_release, ReleaseNotesActivity.class}
+                new Object[]{R.id.drawer_release, ReleaseNotesActivity.class},
+                new Object[]{R.id.drawer_feedback, FeedbackActivity.class}
         );
     }
 
+    @SuppressLint("InlinedApi")
     @Before
     public void setUp() {
         controller = Robolectric.buildActivity(TestListActivity.class)

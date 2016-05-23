@@ -17,37 +17,23 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
-
-import javax.inject.Inject;
-
-import io.github.hidroh.materialistic.data.FeedbackClient;
 
 public abstract class DrawerActivity extends InjectableActivity {
 
-    @Inject FeedbackClient mFeedbackClient;
-    @Inject AlertDialogBuilder mAlertDialogBuilder;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
     private Class<? extends Activity> mPendingNavigation;
     private Bundle mPendingNavigationExtras;
-    private Dialog mFeedbackDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +98,7 @@ public abstract class DrawerActivity extends InjectableActivity {
     public void setContentView(int layoutResID) {
         ViewGroup drawerLayout = (ViewGroup) findViewById(R.id.drawer_layout);
         View view = getLayoutInflater().inflate(layoutResID, drawerLayout, false);
+        //noinspection ConstantConditions
         drawerLayout.addView(view, 0);
     }
 
@@ -121,79 +108,7 @@ public abstract class DrawerActivity extends InjectableActivity {
         closeDrawers();
     }
 
-    void showFeedback() {
-        showFeedbackDialog(getLayoutInflater().inflate(R.layout.dialog_feedback, mDrawerLayout, false));
-        closeDrawers();
-    }
-
     private void closeDrawers() {
         mDrawerLayout.closeDrawers();
-    }
-
-    private void showFeedbackDialog(View dialogView) {
-        AppUtils.setTextWithLinks((TextView) dialogView.findViewById(R.id.feedback_note),
-                getString(R.string.feedback_note));
-        final TextInputLayout titleLayout = (TextInputLayout)
-                dialogView.findViewById(R.id.textinput_title);
-        final TextInputLayout bodyLayout = (TextInputLayout)
-                dialogView.findViewById(R.id.textinput_body);
-        final EditText title = (EditText) dialogView.findViewById(R.id.edittext_title);
-        final EditText body = (EditText) dialogView.findViewById(R.id.edittext_body);
-        final View sendButton = dialogView.findViewById(R.id.feedback_button);
-        mFeedbackDialog = mAlertDialogBuilder
-                .init(this)
-                .setView(dialogView)
-                .create();
-        dialogView.findViewById(R.id.button_rate).setOnClickListener(v -> {
-            AppUtils.openPlayStore(DrawerActivity.this);
-            mFeedbackDialog.dismiss();
-        });
-        sendButton.setOnClickListener(v -> {
-            titleLayout.setErrorEnabled(false);
-            bodyLayout.setErrorEnabled(false);
-            if (title.length() == 0) {
-                titleLayout.setError(getString(R.string.title_required));
-            }
-            if (body.length() == 0) {
-                bodyLayout.setError(getString(R.string.comment_required));
-            }
-            if (title.length() == 0 || body.length() == 0) {
-                return;
-            }
-            sendButton.setEnabled(false);
-            mFeedbackClient.send(title.getText().toString(), body.getText().toString(),
-                    new FeedbackCallback(DrawerActivity.this));
-        });
-        mFeedbackDialog.show();
-    }
-
-    private void onFeedbackSent(boolean success) {
-        Toast.makeText(DrawerActivity.this,
-                success ? R.string.feedback_sent : R.string.feedback_failed,
-                Toast.LENGTH_SHORT)
-                .show();
-        if (mFeedbackDialog == null || !mFeedbackDialog.isShowing()) {
-            return;
-        }
-        if (success) {
-            mFeedbackDialog.dismiss();
-        } else {
-            mFeedbackDialog.findViewById(R.id.feedback_button).setEnabled(true);
-        }
-    }
-
-    private static class FeedbackCallback implements FeedbackClient.Callback {
-        private final WeakReference<DrawerActivity> mDrawerActivity;
-
-        public FeedbackCallback(DrawerActivity drawerActivity) {
-            mDrawerActivity = new WeakReference<>(drawerActivity);
-        }
-
-        @Override
-        public void onSent(boolean success) {
-            if (mDrawerActivity.get() != null && !mDrawerActivity.get().isActivityDestroyed()) {
-                mDrawerActivity.get().onFeedbackSent(success);
-            }
-        }
     }
 }

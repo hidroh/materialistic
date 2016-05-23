@@ -69,6 +69,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
                 AboutActivity.class,
                 AskActivity.class,
                 FavoriteActivity.class,
+                FeedbackActivity.class,
                 ItemActivity.class,
                 JobsActivity.class,
                 ListActivity.class,

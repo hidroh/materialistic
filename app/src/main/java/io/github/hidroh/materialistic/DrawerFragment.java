@@ -96,7 +96,7 @@ public class DrawerFragment extends BaseFragment {
             extras.putString(UserActivity.EXTRA_USERNAME, Preferences.getUsername(getActivity()));
             navigate(UserActivity.class, extras);
         });
-        view.findViewById(R.id.drawer_feedback).setOnClickListener(v -> ((DrawerActivity) getActivity()).showFeedback());
+        view.findViewById(R.id.drawer_feedback).setOnClickListener(v -> navigate(FeedbackActivity.class));
         return view;
     }
 
