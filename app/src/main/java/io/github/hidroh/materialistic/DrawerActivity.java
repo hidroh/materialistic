@@ -16,24 +16,42 @@
 
 package io.github.hidroh.materialistic;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import javax.inject.Inject;
 
 public abstract class DrawerActivity extends InjectableActivity {
 
+    @Inject AlertDialogBuilder mAlertDialogBuilder;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
     private Class<? extends Activity> mPendingNavigation;
     private Bundle mPendingNavigationExtras;
+    private TextView mDrawerAccount;
+    private View mDrawerLogout;
+    private View mDrawerUser;
+    private final SharedPreferences.OnSharedPreferenceChangeListener mLoginListener
+            = (sharedPreferences, key) -> {
+        if (TextUtils.equals(key, getString(R.string.pref_username))) {
+            setUsername();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +59,9 @@ public abstract class DrawerActivity extends InjectableActivity {
         super.setContentView(R.layout.activity_drawer);
         mDrawer = findViewById(R.id.drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerAccount = (TextView) findViewById(R.id.drawer_account);
+        mDrawerLogout = findViewById(R.id.drawer_logout);
+        mDrawerUser = findViewById(R.id.drawer_user);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer,
                 R.string.close_drawer) {
             @Override
@@ -60,6 +81,10 @@ public abstract class DrawerActivity extends InjectableActivity {
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(mLoginListener);
+        setUpDrawer();
+        setUsername();
     }
 
     @Override
@@ -92,6 +117,8 @@ public abstract class DrawerActivity extends InjectableActivity {
     protected void onDestroy() {
         super.onDestroy();
         mDrawerLayout.removeDrawerListener(mDrawerToggle);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(mLoginListener);
     }
 
     @Override
@@ -102,10 +129,71 @@ public abstract class DrawerActivity extends InjectableActivity {
         drawerLayout.addView(view, 0);
     }
 
-    void navigate(Class<? extends Activity> activityClass, @Nullable Bundle extras) {
+    @SuppressWarnings("ConstantConditions")
+    private void setUpDrawer() {
+        mDrawerAccount.setOnClickListener(v -> showLogin());
+        mDrawerLogout.setOnClickListener(v -> confirmLogout());
+        findViewById(R.id.drawer_list).setOnClickListener(v -> navigate(ListActivity.class));
+        findViewById(R.id.drawer_best).setOnClickListener(v -> navigate(BestActivity.class));
+        findViewById(R.id.drawer_popular).setOnClickListener(v -> navigate(PopularActivity.class));
+        findViewById(R.id.drawer_new).setOnClickListener(v -> navigate(NewActivity.class));
+        findViewById(R.id.drawer_show).setOnClickListener(v -> navigate(ShowActivity.class));
+        findViewById(R.id.drawer_ask).setOnClickListener(v -> navigate(AskActivity.class));
+        findViewById(R.id.drawer_job).setOnClickListener(v -> navigate(JobsActivity.class));
+        findViewById(R.id.drawer_settings).setOnClickListener(v -> navigate(SettingsActivity.class));
+        findViewById(R.id.drawer_about).setOnClickListener(v -> navigate(AboutActivity.class));
+        findViewById(R.id.drawer_favorite).setOnClickListener(v -> navigate(FavoriteActivity.class));
+        findViewById(R.id.drawer_submit).setOnClickListener(v -> navigate(SubmitActivity.class));
+        findViewById(R.id.drawer_release).setOnClickListener(v -> navigate(ReleaseNotesActivity.class));
+        findViewById(R.id.drawer_user).setOnClickListener(v -> {
+            Bundle extras = new Bundle();
+            extras.putString(UserActivity.EXTRA_USERNAME, Preferences.getUsername(this));
+            navigate(UserActivity.class, extras);
+        });
+        findViewById(R.id.drawer_feedback).setOnClickListener(v -> navigate(FeedbackActivity.class));
+
+    }
+
+    private void showLogin() {
+        Account[] accounts = AccountManager.get(this)
+                .getAccountsByType(BuildConfig.APPLICATION_ID);
+        if (accounts.length == 0) { // no accounts, ask to login or re-login
+            startActivity(new Intent(this, LoginActivity.class));
+        } else { // has accounts, show account chooser regardless of login status
+            AppUtils.showAccountChooser(this, mAlertDialogBuilder, accounts);
+        }
+    }
+
+    private void confirmLogout() {
+        mAlertDialogBuilder.init(this)
+                .setMessage(R.string.logout_confirm)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                        Preferences.setUsername(this, null))
+                .show();
+    }
+
+    private void navigate(Class<? extends Activity> activityClass) {
+        navigate(activityClass, null);
+    }
+
+    private void navigate(Class<? extends Activity> activityClass, @Nullable Bundle extras) {
         mPendingNavigation = !getClass().equals(activityClass) ? activityClass : null;
         mPendingNavigationExtras = extras;
         closeDrawers();
+    }
+
+    private void setUsername() {
+        String username = Preferences.getUsername(this);
+        if (!TextUtils.isEmpty(username)) {
+            mDrawerAccount.setText(username);
+            mDrawerLogout.setVisibility(View.VISIBLE);
+            mDrawerUser.setVisibility(View.VISIBLE);
+        } else {
+            mDrawerAccount.setText(R.string.login);
+            mDrawerLogout.setVisibility(View.GONE);
+            mDrawerUser.setVisibility(View.GONE);
+        }
     }
 
     private void closeDrawers() {

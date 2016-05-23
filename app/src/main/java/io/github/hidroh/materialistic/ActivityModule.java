@@ -88,7 +88,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
                 ItemFragment.class,
                 ListFragment.class,
                 WebFragment.class,
-                DrawerFragment.class,
                 ReadabilityFragment.class,
                 ReleaseNotesActivity.class,
                 StoryRecyclerViewAdapter.class,
