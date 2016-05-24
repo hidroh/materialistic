@@ -21,7 +21,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:clickable="true"
-    tools:context="io.github.hidroh.materialistic.DrawerFragment">
+    tools:context="io.github.hidroh.materialistic.DrawerActivity">
 
     <FrameLayout
         android:layout_width="match_parent"

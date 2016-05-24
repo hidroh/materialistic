@@ -36,53 +36,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/button_rate"
-            android:orientation="horizontal"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:gravity="center_vertical"
-            android:layout_gravity="center_horizontal"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:layout_gravity="center"
+            android:padding="@dimen/padding"
             android:layout_width="wrap_content"
-            android:layout_height="?attr/listPreferredItemHeightSmall">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:src="@drawable/ic_star_rate_white_18dp"
-                android:contentDescription="@string/rate_app"
-                android:tint="@color/orange400"
+            <android.support.v7.widget.AppCompatRatingBar
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                style="?attr/ratingBarStyleSmall"
+                android:theme="@style/ThemeOverlay.App.Rating"
+                android:isIndicator="true"
+                android:clickable="true"
+                android:numStars="5"
+                android:rating="5" />
 
-            <ImageView
-                android:src="@drawable/ic_star_rate_white_18dp"
-                android:contentDescription="@string/rate_app"
-                android:tint="@color/orange400"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <ImageView
-                android:src="@drawable/ic_star_rate_white_18dp"
-                android:contentDescription="@string/rate_app"
-                android:tint="@color/orange400"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <ImageView
-                android:src="@drawable/ic_star_rate_white_18dp"
-                android:contentDescription="@string/rate_app"
-                android:tint="@color/orange400"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <ImageView
-                android:src="@drawable/ic_star_rate_white_18dp"
-                android:contentDescription="@string/rate_app"
-                android:tint="@color/orange400"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
+        </FrameLayout>
 
         <TextView
             android:text="@string/or"

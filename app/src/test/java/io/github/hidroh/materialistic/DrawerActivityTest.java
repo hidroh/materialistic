@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import org.junit.After;
@@ -22,15 +23,16 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportDrawerLayout.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
-public class DrawerFragmentTest {
+public class DrawerActivityTest {
     private final int drawerResId;
     private final Class<? extends Activity> startedActivity;
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;
 
-    public DrawerFragmentTest(int drawerResId, Class<? extends Activity> startedActivity) {
+    public DrawerActivityTest(int drawerResId, Class<? extends Activity> startedActivity) {
         this.drawerResId = drawerResId;
         this.startedActivity = startedActivity;
     }
@@ -50,12 +52,15 @@ public class DrawerFragmentTest {
                 new Object[]{R.id.drawer_favorite, FavoriteActivity.class},
                 new Object[]{R.id.drawer_popular, PopularActivity.class},
                 new Object[]{R.id.drawer_submit, SubmitActivity.class},
-                new Object[]{R.id.drawer_release, ReleaseNotesActivity.class}
+                new Object[]{R.id.drawer_release, ReleaseNotesActivity.class},
+                new Object[]{R.id.drawer_feedback, FeedbackActivity.class}
         );
     }
 
+    @SuppressLint("InlinedApi")
     @Before
     public void setUp() {
+        Preferences.sReleaseNotesSeen = true;
         controller = Robolectric.buildActivity(TestListActivity.class)
                 .create()
                 .postCreate(null)
@@ -83,5 +88,6 @@ public class DrawerFragmentTest {
     @After
     public void tearDown() {
         controller.pause().stop().destroy();
+        Preferences.sReleaseNotesSeen = null;
     }
 }

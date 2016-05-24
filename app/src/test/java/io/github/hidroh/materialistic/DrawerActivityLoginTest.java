@@ -26,9 +26,10 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportDrawerLayout.class})
 @RunWith(RobolectricGradleTestRunner.class)
-public class DrawerFragmentLoginTest {
+public class DrawerActivityLoginTest {
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;
     private TextView drawerAccount;
@@ -37,6 +38,7 @@ public class DrawerFragmentLoginTest {
 
     @Before
     public void setUp() {
+        Preferences.sReleaseNotesSeen = true;
         controller = Robolectric.buildActivity(TestListActivity.class)
                 .create()
                 .postCreate(null)
@@ -115,5 +117,6 @@ public class DrawerFragmentLoginTest {
     @After
     public void tearDown() {
         controller.pause().stop().destroy();
+        Preferences.sReleaseNotesSeen = null;
     }
 }
