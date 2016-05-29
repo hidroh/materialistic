@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -296,7 +297,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
 
         @Override
-        public void onResponse(Item response) {
+        public void onResponse(@Nullable Item response) {
             if (mAdapter.get() != null && mAdapter.get().isAttached() && response != null) {
                 mPartialItem.populate(response);
                 mAdapter.get().onItemLoaded(mPosition, mPartialItem);

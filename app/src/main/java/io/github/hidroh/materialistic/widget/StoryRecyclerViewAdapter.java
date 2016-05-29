@@ -22,6 +22,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
@@ -389,7 +390,7 @@ public class StoryRecyclerViewAdapter extends
         }
 
         @Override
-        public void onResponse(Item response) {
+        public void onResponse(@Nullable Item response) {
             if (mAdapter.get() != null && mAdapter.get().isAttached() && response != null) {
                 mPartialItem.populate(response);
                 mAdapter.get().onItemLoaded(mPartialItem);

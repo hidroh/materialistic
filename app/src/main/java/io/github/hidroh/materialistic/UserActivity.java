@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -226,7 +227,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         }
 
         @Override
-        public void onResponse(UserManager.User response) {
+        public void onResponse(@Nullable UserManager.User response) {
             if (mUserActivity.get() != null && !mUserActivity.get().isActivityDestroyed()) {
                 mUserActivity.get().onUserLoaded(response);
             }

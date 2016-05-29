@@ -215,7 +215,7 @@ public class ListFragment extends BaseListFragment {
             mListFragment = new WeakReference<>(listFragment);
         }
         @Override
-        public void onResponse(final Item[] response) {
+        public void onResponse(@Nullable final Item[] response) {
             if (mListFragment.get() != null && mListFragment.get().isAttached()) {
                 mListFragment.get().onItemsLoaded(response);
             }

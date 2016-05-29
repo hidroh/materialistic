@@ -187,8 +187,8 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
         }
 
         @Override
-        public void onResponse(Item response) {
-            if (mWebFragment.get() != null && mWebFragment.get().isAttached()) {
+        public void onResponse(@Nullable Item response) {
+            if (mWebFragment.get() != null && mWebFragment.get().isAttached() && response != null) {
                 mWebFragment.get().onItemLoaded(response);
             }
         }
