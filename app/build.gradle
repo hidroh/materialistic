@@ -53,7 +53,7 @@ android {
 ext {
     supportVersion = '23.4.0'
     okHttpVersion = '3.3.1'
-    daggerVersion = '1.2.2'
+    daggerVersion = '1.2.5'
     leakCanaryVersion = '1.4-beta2'
     retrofitVersion = '2.0.2'
 }
