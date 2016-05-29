@@ -89,9 +89,9 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
                 super.onProgressChanged(view, newProgress);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
+                mWebView.setBackgroundColor(Color.WHITE);
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
-                    mWebView.setBackgroundColor(Color.WHITE);
                     mWebView.setVisibility(mExternalRequired ? View.GONE : View.VISIBLE);
                 }
             }
