@@ -25,7 +25,9 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ItemSyncService;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
@@ -79,6 +81,7 @@ import static org.mockito.Mockito.when;
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,
                 ThreadPreviewRecyclerViewAdapter.class,
+                ItemSyncService.class,
                 // test classes
                 AppUtilsTest.class,
                 SettingsActivityTest.class,
@@ -125,6 +128,7 @@ public class TestActivityModule {
     private final UserServices userServices = mock(UserServices.class);
     private final CustomTabsDelegate customTabsDelegate = mock(CustomTabsDelegate.class);
     private final VolumeNavigationDelegate volumeNavigationDelegate = mock(VolumeNavigationDelegate.class);
+    private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -164,6 +168,11 @@ public class TestActivityModule {
     @Provides @Singleton
     public UserManager provideUserManager() {
         return userManager;
+    }
+
+    @Provides @Singleton
+    public RestServiceFactory provideRestServiceFactory() {
+        return restServiceFactory;
     }
 
     @Provides @Singleton

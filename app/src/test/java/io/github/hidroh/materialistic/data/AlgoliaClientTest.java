@@ -1,6 +1,6 @@
 package io.github.hidroh.materialistic.data;
 
-import com.google.gson.GsonBuilder;
+import com.squareup.moshi.Moshi;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +10,8 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -72,13 +74,13 @@ public class AlgoliaClientTest {
     }
 
     @Test
-    public void testGetStoriesSuccess() {
+    public void testGetStoriesSuccess() throws IOException {
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
-        AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson(
-                "{\"hits\":[{\"objectID\":\"1\"}]}",
-                AlgoliaClient.AlgoliaHits.class);
+        AlgoliaClient.AlgoliaHits hits = new Moshi.Builder().build()
+                .adapter(AlgoliaClient.AlgoliaHits.class)
+                .fromJson("{\"hits\":[{\"objectID\":\"1\"}]}");
         getStoriesCallback.getValue().onResponse(null, Response.success(hits));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(1);
@@ -93,12 +95,13 @@ public class AlgoliaClientTest {
     }
 
     @Test
-    public void testGetStoriesEmpty() {
+    public void testGetStoriesEmpty() throws IOException {
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
         verify(call).enqueue(getStoriesCallback.capture());
-        AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson("{\"hits\":[]}",
-                AlgoliaClient.AlgoliaHits.class);
+        AlgoliaClient.AlgoliaHits hits = new Moshi.Builder().build()
+                .adapter(AlgoliaClient.AlgoliaHits.class)
+                .fromJson("{\"hits\":[]}");
         getStoriesCallback.getValue().onResponse(null, Response.success(hits));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();

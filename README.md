@@ -11,7 +11,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - Android SDK Build tools 23.0.3
 - Android SDK 23
 - Android Support Repository
-- Android Support Library 23.3.0
+- Android Support Library 23.4.0
 
 **Dependencies**
 - [Official Hacker News API][HackerNews/API], user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
