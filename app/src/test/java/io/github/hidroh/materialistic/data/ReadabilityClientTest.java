@@ -2,7 +2,7 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.ContentValues;
 
-import com.google.gson.GsonBuilder;
+import com.squareup.moshi.Moshi;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,8 +60,9 @@ public class ReadabilityClientTest {
 
     @Test
     public void testWithContent() throws IOException {
-        ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
-                .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
+        ReadabilityClient.Impl.Readable readable = new Moshi.Builder().build()
+                .adapter(ReadabilityClient.Impl.Readable.class)
+                .fromJson("{\"content\":\"<div>content</div>\"}");
         when(call.execute()).thenReturn(Response.success(readable));
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.readabilityService).parse(anyString());
@@ -71,8 +72,9 @@ public class ReadabilityClientTest {
 
     @Test
     public void testEmptyContent() throws IOException {
-        ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
-                .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
+        ReadabilityClient.Impl.Readable readable = new Moshi.Builder().build()
+                .adapter(ReadabilityClient.Impl.Readable.class)
+                .fromJson("{\"content\":\"<div></div>\"}");
         when(call.execute()).thenReturn(Response.success(readable));
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.readabilityService).parse(anyString());
