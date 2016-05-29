@@ -145,25 +145,24 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void sync(final String itemId, final String progressId) {
+    private void sync(String itemId, final String progressId) {
+        if (!mConnectionEnabled) {
+            defer(itemId);
+            return;
+        }
         HackerNewsItem cachedItem;
         if ((cachedItem = getFromCache(itemId)) != null) {
-            notifyItem(progressId, cachedItem.getId(), cachedItem);
-            syncReadability(cachedItem);
-            syncChildren(cachedItem);
-        } else if (mConnectionEnabled) {
+            sync(cachedItem, progressId);
+        } else {
             showNotification(progressId);
             // TODO defer on low battery as well?
             mHnRestService.networkItem(itemId).enqueue(new Callback<HackerNewsItem>() {
                 @Override
                 public void onResponse(Call<HackerNewsItem> call,
                                        retrofit2.Response<HackerNewsItem> response) {
-                    mSharedPreferences.edit().remove(itemId).apply();
                     HackerNewsItem item;
                     if ((item = response.body()) != null) {
-                        notifyItem(progressId, item.getId(), item);
-                        syncReadability(item);
-                        syncChildren(item);
+                        sync(item, progressId);
                     }
                 }
 
@@ -172,16 +171,28 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
                     notifyItem(progressId, itemId, null);
                 }
             });
-        } else {
-            defer(itemId);
         }
     }
 
+    private void sync(@NonNull HackerNewsItem item, String progressId) {
+        mSharedPreferences.edit().remove(item.getId()).apply();
+        notifyItem(progressId, item.getId(), item);
+        syncReadability(item);
+        syncArticle(item);
+        syncChildren(item);
+    }
+
     private void syncReadability(@NonNull HackerNewsItem item) {
-        if (mConnectionEnabled && mReadabilityEnabled && item.isStoryType()) {
+        if (mReadabilityEnabled && item.isStoryType()) {
             final String itemId = item.getId();
             mReadabilityClient.parse(itemId, item.getRawUrl());
             notifyReadability(itemId);
+        }
+    }
+
+    private void syncArticle(@NonNull HackerNewsItem item) {
+        if (item.isStoryType()) {
+            ItemSyncService.WebCacheReceiver.initSave(getContext(), item.getUrl());
         }
     }
 

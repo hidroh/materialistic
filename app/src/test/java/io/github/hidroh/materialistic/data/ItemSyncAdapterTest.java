@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,21 +33,16 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ServiceController;
 
 import java.io.IOException;
 
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.ObjectGraph;
-import dagger.Provides;
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -77,32 +73,34 @@ public class ItemSyncAdapterTest {
     private ItemSyncAdapter adapter;
     private SharedPreferences syncPreferences;
     private @Captor ArgumentCaptor<Callback<HackerNewsItem>> callbackCapture;
-    private Context context;
     private ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
+    private ServiceController<ItemSyncService> serviceController;
+    private ItemSyncService service;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         reset(TestRestServiceFactory.hnRestService);
         reset(readabilityClient);
-        context = RuntimeEnvironment.application;
+        serviceController = Robolectric.buildService(ItemSyncService.class);
+        service = serviceController.attach().create().get();
         setNetworkType(ConnectivityManager.TYPE_WIFI);
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_saved_item_sync), true)
-                .putBoolean(context.getString(R.string.pref_offline_comments), true)
+                .putBoolean(service.getString(R.string.pref_saved_item_sync), true)
+                .putBoolean(service.getString(R.string.pref_offline_comments), true)
                 .apply();
-        adapter = new ItemSyncAdapter(context, new TestRestServiceFactory(), readabilityClient);
-        syncPreferences = context.getSharedPreferences(
-                context.getPackageName() +
+        adapter = new ItemSyncAdapter(service, new TestRestServiceFactory(), readabilityClient);
+        syncPreferences = service.getSharedPreferences(
+                service.getPackageName() +
                         ItemSyncAdapter.SYNC_PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
     @Test
     public void testSyncDisabled() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit().clear().apply();
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         assertNull(ShadowContentResolver.getStatus(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
     }
@@ -114,7 +112,7 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(hnItem));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // cache hit, should not try network or defer
@@ -130,12 +128,10 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        // should try cache, then defer
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.hnRestService, never()).networkItem(anyString());
+        // should defer
         assertThat(syncPreferences.getAll()).isNotEmpty();
     }
 
@@ -146,13 +142,13 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putString(context.getString(R.string.pref_offline_data),
-                        context.getString(R.string.offline_data_default))
+                .putString(service.getString(R.string.pref_offline_data),
+                        service.getString(R.string.offline_data_default))
                 .apply();
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache, then network
@@ -168,7 +164,7 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
 
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache before network
@@ -192,11 +188,11 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_offline_comments), false)
+                .putBoolean(service.getString(R.string.pref_offline_comments), false)
                 .apply();
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should not sync children
@@ -211,7 +207,7 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
 
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
-        ItemSyncAdapter.initSync(context, null);
+        ItemSyncAdapter.initSync(service, null);
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(anyString());
     }
@@ -233,11 +229,11 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_offline_readability), false)
+                .putBoolean(service.getString(R.string.pref_offline_readability), false)
                 .apply();
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -261,7 +257,7 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -281,10 +277,9 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
         verify(readabilityClient, never()).parse(anyString(), anyString());
     }
 
@@ -300,7 +295,7 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
 
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
@@ -309,42 +304,48 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncWebCacheEmptyUrl() {
-        new FavoriteManager().add(context, new Favorite("1", null, "title",
+        new FavoriteManager().add(service, new Favorite("1", null, "title",
                 System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
     @Test
     public void testSyncWebCache() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowWebView.lastGlobalLoadedUrl = null;
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_offline_article), true)
+                .putBoolean(service.getString(R.string.pref_offline_article), true)
                 .apply();
-        new FavoriteManager().add(context, new Favorite("1", "http://example.com", "title",
-                System.currentTimeMillis()));
+        ShadowLocalBroadcastManager.getInstance(service)
+                .sendBroadcast(new Intent(ItemSyncService.WebCacheReceiver.ACTION)
+                        .putExtra(ItemSyncService.WebCacheReceiver.EXTRA_URL, "http://example.com"));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://example.com");
     }
 
     @Test
     public void testSyncWebCacheNonWifi() {
+        ShadowWebView.lastGlobalLoadedUrl = null;
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_offline_article), true)
+                .putBoolean(service.getString(R.string.pref_offline_article), true)
                 .apply();
-        new FavoriteManager().add(context, new Favorite("1", "http://example.com", "title",
-                System.currentTimeMillis()));
+        ShadowLocalBroadcastManager.getInstance(service)
+                .sendBroadcast(new Intent(ItemSyncService.WebCacheReceiver.ACTION)
+                        .putExtra(ItemSyncService.WebCacheReceiver.EXTRA_URL, "http://example.com"));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
     @Test
     public void testSyncWebCacheDisabled() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowWebView.lastGlobalLoadedUrl = null;
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_offline_article), false)
+                .putBoolean(service.getString(R.string.pref_offline_article), false)
                 .apply();
-        new FavoriteManager().add(context, new Favorite("1", "http://example.com", "title",
-                System.currentTimeMillis()));
+        ShadowLocalBroadcastManager.getInstance(service)
+                .sendBroadcast(new Intent(ItemSyncService.WebCacheReceiver.ACTION)
+                        .putExtra(ItemSyncService.WebCacheReceiver.EXTRA_URL, "http://example.com"));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 
@@ -381,14 +382,14 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(eq("3"))).thenReturn(kid2Call);
         when(TestRestServiceFactory.hnRestService.networkItem(eq("3"))).thenReturn(kid2Call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(context)
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
-                .putBoolean(context.getString(R.string.pref_offline_notification), true)
+                .putBoolean(service.getString(R.string.pref_offline_notification), true)
                 .apply();
-        ItemSyncAdapter.initSync(context, "1");
+        ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        ShadowNotificationManager notificationManager = shadowOf((NotificationManager) context
+        ShadowNotificationManager notificationManager = shadowOf((NotificationManager) service
                 .getSystemService(Context.NOTIFICATION_SERVICE));
         ShadowNotification.Progress progress = shadowOf(notificationManager.getNotification(1))
                 .getProgress();
@@ -402,34 +403,36 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testBindService() {
-        ServiceController<ItemSyncService> serviceController = Robolectric.buildService(
-                ItemSyncService.class);
-        assertNotNull(serviceController.attach().create().get().onBind(null));
-        serviceController.destroy();
+        assertNotNull(service.onBind(null));
     }
 
     @Test
     public void testWifiChange() {
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
         new ItemSyncWifiReceiver()
-                .onReceive(context, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
+                .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
         assertFalse(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
-        new ItemSyncWifiReceiver().onReceive(context, new Intent());
+        new ItemSyncWifiReceiver().onReceive(service, new Intent());
         assertFalse(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver()
-                .onReceive(context, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
+                .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
         assertTrue(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
     }
 
+    @After
+    public void tearDown() {
+        serviceController.destroy();
+    }
+
     private void setNetworkType(int type) {
-        shadowOf((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE))
+        shadowOf((ConnectivityManager) service.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null, type, 0, true, true));
     }
 

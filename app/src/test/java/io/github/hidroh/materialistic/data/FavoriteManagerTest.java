@@ -135,7 +135,6 @@ public class FavoriteManagerTest {
         assertThat(resolver.getNotifiedUris()).isNotEmpty();
         assertTrue(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
-        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://newitem.com");
     }
 
     @Test

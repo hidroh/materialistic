@@ -278,7 +278,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mItemManager.getItem(mItemId, mCacheMode, new ItemResponseListener(this));
     }
 
-    private void onItemLoaded(Item item) {
+    private void onItemLoaded(@Nullable Item item) {
         mSwipeRefreshLayout.setRefreshing(false);
         if (item != null) {
             mAdapterItems = null;
@@ -351,7 +351,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
 
         @Override
-        public void onResponse(Item response) {
+        public void onResponse(@Nullable Item response) {
             if (mItemFragment.get() != null && mItemFragment.get().isAttached()) {
                 mItemFragment.get().onItemLoaded(response);
             }

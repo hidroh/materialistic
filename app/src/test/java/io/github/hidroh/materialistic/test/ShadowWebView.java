@@ -9,7 +9,7 @@ import org.robolectric.annotation.Implements;
 @Implements(value = WebView.class, inheritImplementationMethods = true)
 public class ShadowWebView extends org.robolectric.shadows.ShadowWebView {
     private DownloadListener downloadListener;
-    private static String lastGlobalLoadedUrl;
+    public static String lastGlobalLoadedUrl;
 
     @Implementation
     public void setDownloadListener(DownloadListener listener) {

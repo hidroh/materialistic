@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -231,7 +232,7 @@ public class ItemActivity extends InjectableActivity {
                 super.onKeyLongPress(keyCode, event);
     }
 
-    private void onItemLoaded(Item response) {
+    private void onItemLoaded(@Nullable Item response) {
         mItem = response;
         supportInvalidateOptionsMenu();
         bindData(mItem);
@@ -273,7 +274,7 @@ public class ItemActivity extends InjectableActivity {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void bindData(final WebItem story) {
+    private void bindData(@Nullable final WebItem story) {
         if (story == null) {
             return;
         }
@@ -380,7 +381,7 @@ public class ItemActivity extends InjectableActivity {
         }
 
         @Override
-        public void onResponse(Item response) {
+        public void onResponse(@Nullable Item response) {
             if (mItemActivity.get() != null && !mItemActivity.get().isActivityDestroyed()) {
                 mItemActivity.get().onItemLoaded(response);
             }
