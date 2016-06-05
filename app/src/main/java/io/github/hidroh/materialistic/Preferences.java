@@ -297,10 +297,14 @@ public class Preferences {
 
     public static class Theme {
 
-        public static void apply(Context context, boolean dialogTheme) {
-            int theme = getTheme(context, dialogTheme);
-            if (dialogTheme || theme != ThemePreference.THEME_DEFAULT) {
-                context.setTheme(theme);
+        public static void apply(Context context, boolean dialogTheme, boolean isTranslucent) {
+            ThemePreference.ThemeSpec themeSpec = getTheme(context, isTranslucent);
+            context.setTheme(themeSpec.theme);
+            if (themeSpec.themeOverrides >= 0) {
+                context.getTheme().applyStyle(themeSpec.themeOverrides, true);
+            }
+            if (dialogTheme) {
+                context.setTheme(AppUtils.getThemedResId(context, R.attr.alertDialogTheme));
             }
         }
 
@@ -360,13 +364,8 @@ public class Preferences {
             return get(context, R.string.pref_text_size, String.valueOf(0));
         }
 
-        private static @StyleRes int getTheme(Context context, boolean dialogTheme) {
-            String choice = get(context, R.string.pref_theme, null);
-            if (dialogTheme) {
-                return ThemePreference.getDialogTheme(choice);
-            } else {
-                return ThemePreference.getTheme(choice);
-            }
+        private static ThemePreference.ThemeSpec getTheme(Context context, boolean isTransulcent) {
+            return ThemePreference.getTheme(get(context, R.string.pref_theme, null), isTransulcent);
         }
     }
 

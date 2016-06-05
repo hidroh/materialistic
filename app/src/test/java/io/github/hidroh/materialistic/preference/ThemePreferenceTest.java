@@ -32,8 +32,6 @@ public class ThemePreferenceTest {
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{R.id.theme_dark, R.style.AppTheme_Dark},
-                new Object[]{R.id.theme_sepia, R.style.AppTheme_Sepia},
-                new Object[]{R.id.theme_green, R.style.AppTheme_Green},
                 new Object[]{R.id.theme_light, R.style.AppTheme}
         );
     }
@@ -60,7 +58,7 @@ public class ThemePreferenceTest {
     @Test
     public void test() {
         preferenceView.findViewById(preferenceId).performClick();
-        Preferences.Theme.apply(activity, false);
+        Preferences.Theme.apply(activity, false, false);
         shadowOf(activity).recreate();
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(styleResId);
     }

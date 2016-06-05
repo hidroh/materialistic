@@ -20,21 +20,22 @@
     android:id="@+id/meta_container"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:paddingLeft="56dp"
-    android:paddingRight="56dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary">
 
     <TextView
-        android:id="@id/title"
+        android:id="@+id/title"
         android:text="@string/loading_text"
         tools:text="Username"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:textSize="?attr/titleTextSize"
         android:ellipsize="end"
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="?attr/actionBarSize" />
 
     <TextView
         android:id="@+id/user_info"

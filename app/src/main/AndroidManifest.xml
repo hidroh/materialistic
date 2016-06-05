@@ -175,7 +175,8 @@
         </activity>
         <activity
             android:name=".UserActivity"
-            android:label="@string/title_activity_user" >
+            android:label="@string/title_activity_user"
+            android:theme="@style/AppTheme.Translucent">
             <intent-filter android:label="@string/filter_title_item" >
                 <action android:name="android.intent.action.VIEW" />
 

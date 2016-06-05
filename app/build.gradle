@@ -63,6 +63,7 @@ ext {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.android.support:appcompat-v7:$supportVersion",
             "com.android.support:recyclerview-v7:$supportVersion",
             "com.android.support:cardview-v7:$supportVersion",
@@ -71,7 +72,7 @@ dependencies {
             "com.android.support:customtabs:$supportVersion",
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
-            "com.squareup.retrofit2:converter-moshi:$retrofitVersion",
+            "com.squareup.retrofit2:converter-gson:$retrofitVersion",
             "com.squareup.okhttp3:okhttp:$okHttpVersion",
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
     leakCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
