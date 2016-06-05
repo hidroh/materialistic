@@ -77,7 +77,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
             finish();
             return;
         }
-        setStatusBarDim(true);
+        AppUtils.setStatusBarDim(getWindow(), true);
         setContentView(R.layout.activity_user);
         findViewById(R.id.touch_outside).setOnClickListener(v -> finish());
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
@@ -89,11 +89,11 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                         finish();
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
-                        setStatusBarDim(false);
+                        AppUtils.setStatusBarDim(getWindow(), false);
                         mRecyclerView.setLayoutFrozen(false);
                         break;
                     default:
-                        setStatusBarDim(true);
+                        AppUtils.setStatusBarDim(getWindow(), true);
                         break;
                 }
             }
@@ -142,13 +142,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
             Snackbar.make(findViewById(R.id.content_frame),
                     R.string.offline_notice, Snackbar.LENGTH_LONG)
                     .show();
-        }
-    }
-
-    private void setStatusBarDim(boolean dim) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(dim ? Color.TRANSPARENT :
-                    ContextCompat.getColor(this, AppUtils.getThemedResId(this, R.attr.colorPrimaryDark)));
         }
     }
 

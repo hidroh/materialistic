@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -52,6 +53,7 @@ import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -398,6 +400,14 @@ public class AppUtils {
         webSettings.setBuiltInZoomControls(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             webSettings.setDisplayZoomControls(false);
+        }
+    }
+
+    static void setStatusBarDim(Window window, boolean dim) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(dim ? Color.TRANSPARENT :
+                    ContextCompat.getColor(window.getContext(),
+                            AppUtils.getThemedResId(window.getContext(), R.attr.colorPrimaryDark)));
         }
     }
 

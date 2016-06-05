@@ -48,9 +48,7 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -377,13 +375,19 @@ public class ItemFragmentSinglePageTest {
         assertThat(more).isNotVisible();
 
         // display all regardless of content size
-        clickSubMenuItem(R.id.menu_max_lines, 3); // all
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_max_lines), "-1") //all
+                .apply();
         adapter.bindViewHolder(viewHolder, 0);
         assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
         assertThat(more).isNotVisible();
 
         // content longer than max lines
-        clickSubMenuItem(R.id.menu_max_lines, 0); // 3 lines
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_max_lines), "3")
+                .apply();
         adapter.bindViewHolder(viewHolder, 0);
         assertThat(textView).hasMaxLines(3);
         assertThat(more).isVisible();
@@ -393,26 +397,29 @@ public class ItemFragmentSinglePageTest {
         assertThat(more).isVisible();
 
         // content shorter than max lines
-        clickSubMenuItem(R.id.menu_max_lines, 2); // 5 lines
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_max_lines), "5")
+                .apply();
         adapter.bindViewHolder(viewHolder, 0);
         assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
         assertThat(more).isNotVisible();
     }
 
     @Test
-    public void testToggleColorCode() {
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isEnabled());
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
-        shadowOf(activity).clickMenuItem(R.id.menu_color_code);
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
-    }
-
-    @Test
     public void testChangeThreadDisplay() {
         assertSinglePage();
-        clickSubMenuItem(R.id.menu_thread, 1); // still single
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_comment_display),
+                        activity.getString(R.string.pref_comment_display_value_single))
+                .apply(); // still single
         assertSinglePage();
-        clickSubMenuItem(R.id.menu_thread, 0); // multiple
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_comment_display),
+                        activity.getString(R.string.pref_comment_display_value_multiple))
+                .apply(); // multiple
         assertMultiplePage();
     }
 
@@ -476,21 +483,14 @@ public class ItemFragmentSinglePageTest {
     }
 
     private void assertSinglePage() {
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_thread).getSubMenu()
-                .getItem(1).isChecked());
+        assertEquals(activity.getString(R.string.pref_comment_display_value_single),
+                Preferences.getCommentDisplayOption(activity));
         assertThat(recyclerView.getAdapter()).isInstanceOf(SinglePageItemRecyclerViewAdapter.class);
     }
 
     private void assertMultiplePage() {
-        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_thread).getSubMenu()
-                .getItem(0).isChecked());
+        assertEquals(activity.getString(R.string.pref_comment_display_value_multiple),
+                Preferences.getCommentDisplayOption(activity));
         assertThat(recyclerView.getAdapter()).isInstanceOf(MultiPageItemRecyclerViewAdapter.class);
-    }
-
-    private void clickSubMenuItem(int parentId, int order) {
-        activity.getSupportFragmentManager()
-                .findFragmentByTag(ItemFragment.class.getName())
-                .onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
-                        .findItem(parentId).getSubMenu().getItem(order));
     }
 }

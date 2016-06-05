@@ -17,34 +17,11 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@id/menu_font_options"
         android:title="@string/font_options"
         android:icon="@drawable/ic_format_size_white_24dp"
-        app:showAsAction="ifRoom">
-
-        <menu>
-
-            <item
-                android:id="@id/menu_font_size"
-                android:title="@string/pref_text_size_title">
-
-                <!-- to be populated in code -->
-                <menu />
-
-            </item>
-
-            <item
-                android:id="@id/menu_font"
-                android:title="@string/pref_font_title">
-
-                <!-- to be populated in code -->
-                <menu />
-
-            </item>
-
-        </menu>
-
-    </item>
+        app:showAsAction="ifRoom" />
 
 </menu>

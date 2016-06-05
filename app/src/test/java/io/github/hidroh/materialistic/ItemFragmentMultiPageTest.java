@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
@@ -40,7 +40,6 @@ import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestItemActivity;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
@@ -220,7 +219,7 @@ public class ItemFragmentMultiPageTest {
     }
 
     @Test
-    public void testDisabledColorCode() {
+    public void testDisplayMenu() {
         WebItem webItem = mock(WebItem.class);
         when(webItem.getId()).thenReturn("1");
         Bundle args = new Bundle();
@@ -229,15 +228,9 @@ public class ItemFragmentMultiPageTest {
                 ItemFragment.class.getName(), args);
         SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
                 R.id.content_frame);
-        FragmentActivity activity = fragment.getActivity();
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isEnabled());
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putBoolean(activity.getString(R.string.pref_color_code), true)
-                .apply();
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isEnabled());
-        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_color_code).isChecked());
+        fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_comments));
+        assertThat(fragment.getFragmentManager())
+                .hasFragmentWithTag(PopupSettingsFragment.class.getName());
     }
 
     @After

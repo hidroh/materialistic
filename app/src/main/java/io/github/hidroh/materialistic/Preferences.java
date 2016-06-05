@@ -129,10 +129,6 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
-    static void setColorCodeEnabled(Context context, boolean enabled) {
-        set(context, R.string.pref_color_code, enabled);
-    }
-
     static boolean highlightUpdatedEnabled(Context context) {
         return get(context, R.string.pref_highlight_updated, true);
     }
@@ -156,10 +152,6 @@ public class Preferences {
                         R.string.pref_comment_display_value_single);
     }
 
-    static void setCommentDisplayOption(Context context, String choice) {
-        set(context, R.string.pref_comment_display, choice);
-    }
-
     static void setPopularRange(Context context, @AlgoliaPopularClient.Range @NonNull String range) {
         set(context, R.string.pref_popular_range, range);
     }
@@ -176,10 +168,6 @@ public class Preferences {
             maxLines = Integer.MAX_VALUE;
         }
         return maxLines;
-    }
-
-    static void setCommentMaxLines(Context context, String choice) {
-        set(context, R.string.pref_max_lines, choice);
     }
 
     static boolean shouldLazyLoad(Context context) {
@@ -320,10 +308,6 @@ public class Preferences {
             return typefaceName;
         }
 
-        static void savePreferredReadabilityTypeface(Context context, String typefaceName) {
-            set(context, R.string.pref_readability_font, typefaceName);
-        }
-
         public static @StyleRes int resolveTextSize(String choice) {
             switch (Integer.parseInt(choice)) {
                 case -1:
@@ -354,10 +338,6 @@ public class Preferences {
                 return getPreferredTextSize(context);
             }
             return choice;
-        }
-
-        static void savePreferredReadabilityTextSize(Context context, String choice) {
-            set(context, R.string.pref_readability_text_size, choice);
         }
 
         private static @NonNull String getPreferredTextSize(Context context) {
