@@ -59,12 +59,12 @@ public interface ReadabilityClient {
             Call<Readable> parse(@Query("url") String url);
         }
 
-        static class Readable {
+        class Readable {
             private String content;
         }
 
         @Inject
-        Impl(Context context, RestServiceFactory factory) {
+        public Impl(Context context, RestServiceFactory factory) {
             mReadabilityService = factory.create(ReadabilityService.READABILITY_API_URL,
                     ReadabilityService.class);
             mContentResolver = context.getContentResolver();
