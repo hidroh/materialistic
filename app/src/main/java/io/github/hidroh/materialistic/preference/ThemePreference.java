@@ -31,54 +31,37 @@ import io.github.hidroh.materialistic.R;
 
 public class ThemePreference extends Preference {
 
-    public static final @StyleRes int THEME_DEFAULT = R.style.AppTheme;
-    public static final @StyleRes int DIALOG_THEME_DEFAULT = R.style.AppAlertDialog;
-    private static final String VALUE_LIGHT = "light";
-    private static final String VALUE_DARK = "dark";
-    private static final String VALUE_BLACK = "black";
-    private static final String VALUE_SEPIA = "sepia";
-    private static final String VALUE_GREEN = "green";
-    private static final String VALUE_SOLARIZED = "solarized";
-    private static final String VALUE_SOLARIZED_DARK = "solarized_dark";
-    private static final ArrayMap<Integer, String> BUTTON_VALUE = new ArrayMap<>();
-    private static final ArrayMap<String, ThemeSpec> VALUE_THEME = new ArrayMap<>();
+    private static final String LIGHT = "light";
+    private static final String DARK = "dark";
+    private static final String BLACK = "black";
+    private static final String SEPIA = "sepia";
+    private static final String GREEN = "green";
+    private static final String SOLARIZED = "solarized";
+    private static final String SOLARIZED_DARK = "solarized_dark";
+    private static final ArrayMap<Integer, String> BUTTONS = new ArrayMap<>();
+    private static final ArrayMap<String, ThemeSpec> VALUES = new ArrayMap<>();
     static {
-        BUTTON_VALUE.put(R.id.theme_light, VALUE_LIGHT);
-        BUTTON_VALUE.put(R.id.theme_dark, VALUE_DARK);
-        BUTTON_VALUE.put(R.id.theme_black, VALUE_BLACK);
-        BUTTON_VALUE.put(R.id.theme_sepia, VALUE_SEPIA);
-        BUTTON_VALUE.put(R.id.theme_green, VALUE_GREEN);
-        BUTTON_VALUE.put(R.id.theme_solarized, VALUE_SOLARIZED);
-        BUTTON_VALUE.put(R.id.theme_solarized_dark, VALUE_SOLARIZED_DARK);
+        BUTTONS.put(R.id.theme_light, LIGHT);
+        BUTTONS.put(R.id.theme_dark, DARK);
+        BUTTONS.put(R.id.theme_black, BLACK);
+        BUTTONS.put(R.id.theme_sepia, SEPIA);
+        BUTTONS.put(R.id.theme_green, GREEN);
+        BUTTONS.put(R.id.theme_solarized, SOLARIZED);
+        BUTTONS.put(R.id.theme_solarized_dark, SOLARIZED_DARK);
 
-        VALUE_THEME.put(VALUE_LIGHT,
-                new ThemeSpec(R.string.theme_light, R.style.AppTheme, R.style.AppAlertDialog));
-        VALUE_THEME.put(VALUE_DARK,
-                new ThemeSpec(R.string.theme_dark, R.style.AppTheme_Dark, R.style.AppAlertDialog_Dark));
-        VALUE_THEME.put(VALUE_BLACK,
-                new ThemeSpec(R.string.theme_black, R.style.AppTheme_Dark_Black, R.style.AppAlertDialog_Dark));
-        VALUE_THEME.put(VALUE_SEPIA,
-                new ThemeSpec(R.string.theme_sepia, R.style.AppTheme_Sepia, R.style.AppAlertDialog_Sepia));
-        VALUE_THEME.put(VALUE_GREEN,
-                new ThemeSpec(R.string.theme_green, R.style.AppTheme_Green, R.style.AppAlertDialog_Green));
-        VALUE_THEME.put(VALUE_SOLARIZED,
-                new ThemeSpec(R.string.theme_solarized, R.style.AppTheme_Solarized, R.style.AppAlertDialog_Solarized));
-        VALUE_THEME.put(VALUE_SOLARIZED_DARK,
-                new ThemeSpec(R.string.theme_solarized_dark, R.style.AppTheme_Dark_Solarized, R.style.AppAlertDialog_Dark_Solarized));
+        VALUES.put(LIGHT, new LightSpec(R.string.theme_light));
+        VALUES.put(DARK, new DarkSpec(R.string.theme_dark));
+        VALUES.put(BLACK, new DarkSpec(R.string.theme_black, R.style.Black));
+        VALUES.put(SEPIA, new LightSpec(R.string.theme_sepia, R.style.Sepia));
+        VALUES.put(GREEN, new LightSpec(R.string.theme_green, R.style.Green));
+        VALUES.put(SOLARIZED, new LightSpec(R.string.theme_solarized, R.style.Solarized));
+        VALUES.put(SOLARIZED_DARK, new DarkSpec(R.string.theme_solarized_dark,
+                R.style.Solarized_Dark));
     }
 
-    public static @StyleRes int getTheme(String value) {
-        if (!VALUE_THEME.containsKey(value)) {
-            return THEME_DEFAULT;
-        }
-        return VALUE_THEME.get(value).theme;
-    }
-
-    public static @StyleRes int getDialogTheme(String value) {
-        if (!VALUE_THEME.containsKey(value)) {
-            return DIALOG_THEME_DEFAULT;
-        }
-        return VALUE_THEME.get(value).dialogTheme;
+    public static ThemeSpec getTheme(String value, boolean isTranslucent) {
+        ThemeSpec themeSpec = VALUES.get(VALUES.containsKey(value) ? value : LIGHT);
+        return isTranslucent ? themeSpec.getTranslucent() : themeSpec;
     }
 
     public ThemePreference(Context context, AttributeSet attrs) {
@@ -92,7 +75,7 @@ public class ThemePreference extends Preference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return VALUE_LIGHT;
+        return LIGHT;
     }
 
     @Override
@@ -100,36 +83,79 @@ public class ThemePreference extends Preference {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
         String value = restorePersistedValue ? getPersistedString(null): (String) defaultValue;
         if (TextUtils.isEmpty(value)) {
-            value = VALUE_LIGHT;
+            value = LIGHT;
         }
-        setSummary(VALUE_THEME.get(value).summary);
+        setSummary(VALUES.get(value).summary);
     }
 
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         holder.itemView.setClickable(false);
-        for (int i = 0; i < BUTTON_VALUE.size(); i++) {
-            final int buttonId = BUTTON_VALUE.keyAt(i);
-            final String value = BUTTON_VALUE.valueAt(i);
+        for (int i = 0; i < BUTTONS.size(); i++) {
+            final int buttonId = BUTTONS.keyAt(i);
+            final String value = BUTTONS.valueAt(i);
             View button = holder.findViewById(buttonId);
             button.setClickable(true);
             button.setOnClickListener(v -> {
-                setSummary(VALUE_THEME.get(value).summary);
+                setSummary(VALUES.get(value).summary);
                 persistString(value);
             });
         }
     }
 
-    private static class ThemeSpec {
-        public final @StringRes int summary;
+    public static class ThemeSpec {
+        final @StringRes int summary;
         public final @StyleRes int theme;
-        public final @StyleRes int dialogTheme;
+        public final @StyleRes int themeOverrides;
+        ThemeSpec translucent;
 
-        private ThemeSpec(@StringRes int summary, @StyleRes int theme, @StyleRes int dialogTheme) {
+        private ThemeSpec(@StringRes int summary, @StyleRes int theme, @StyleRes int themeOverrides) {
             this.summary = summary;
             this.theme = theme;
-            this.dialogTheme = dialogTheme;
+            this.themeOverrides = themeOverrides;
+        }
+
+        ThemeSpec getTranslucent() {
+            return this;
+        }
+    }
+
+    static class LightSpec extends ThemeSpec {
+
+        LightSpec(@StringRes int summary) {
+            this(summary, -1);
+        }
+
+        LightSpec(@StringRes int summary, @StyleRes int themeOverrides) {
+            super(summary, R.style.AppTheme, themeOverrides);
+        }
+
+        @Override
+        ThemeSpec getTranslucent() {
+            if (translucent == null) {
+                translucent = new ThemeSpec(summary, R.style.AppTheme_Translucent, themeOverrides);
+            }
+            return translucent;
+        }
+    }
+
+    static class DarkSpec extends ThemeSpec {
+
+        DarkSpec(@StringRes int summary) {
+            this(summary, -1);
+        }
+
+        DarkSpec(@StringRes int summary, @StyleRes int themeOverrides) {
+            super(summary, R.style.AppTheme_Dark, themeOverrides);
+        }
+
+        @Override
+        ThemeSpec getTranslucent() {
+            if (translucent == null) {
+                translucent = new ThemeSpec(summary, R.style.AppTheme_Dark_Translucent, themeOverrides);
+            }
+            return translucent;
         }
     }
 }

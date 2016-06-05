@@ -26,7 +26,7 @@ public abstract class ThemedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Preferences.Theme.apply(this, isDialogTheme());
+        Preferences.Theme.apply(this, isDialogTheme(), isTranslucent());
         super.onCreate(savedInstanceState);
         getTheme().applyStyle(Preferences.Theme.resolvePreferredTextSize(this), true);
         mMenuTintDelegate.onActivityCreated(this);
@@ -40,6 +40,10 @@ public abstract class ThemedActivity extends AppCompatActivity {
     }
 
     protected boolean isDialogTheme() {
+        return false;
+    }
+
+    protected boolean isTranslucent() {
         return false;
     }
 }

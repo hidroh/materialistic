@@ -16,17 +16,18 @@
 
 package io.github.hidroh.materialistic;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,9 +58,10 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private TextView mAbout;
     private RecyclerView mRecyclerView;
     private TabLayout mTabLayout;
-    private AppBarLayout mAppBar;
     private View mEmpty;
+    private BottomSheetBehavior<View> mBottomSheetBehavior;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,11 +77,32 @@ public class UserActivity extends InjectableActivity implements Scrollable {
             finish();
             return;
         }
+        setStatusBarDim(true);
         setContentView(R.layout.activity_user);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
-                ActionBar.DISPLAY_HOME_AS_UP);
-        mAppBar = (AppBarLayout) findViewById(R.id.appbar);
+        findViewById(R.id.touch_outside).setOnClickListener(v -> finish());
+        mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        finish();
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        setStatusBarDim(false);
+                        mRecyclerView.setLayoutFrozen(false);
+                        break;
+                    default:
+                        setStatusBarDim(true);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // no op
+            }
+        });
         ((TextView) findViewById(R.id.title)).setText(mUsername);
         mInfo = (TextView) findViewById(R.id.user_info);
         mAbout = (TextView) findViewById(R.id.about);
@@ -102,8 +125,9 @@ public class UserActivity extends InjectableActivity implements Scrollable {
             }
         });
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new CommentItemDecoration(this));
         mScrollableHelper = new VolumeNavigationDelegate.RecyclerViewHelper(mRecyclerView,
                 VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
         if (savedInstanceState != null) {
@@ -115,10 +139,16 @@ public class UserActivity extends InjectableActivity implements Scrollable {
             bind();
         }
         if (!AppUtils.hasConnection(this)) {
-            //noinspection ConstantConditions
             Snackbar.make(findViewById(R.id.content_frame),
                     R.string.offline_notice, Snackbar.LENGTH_LONG)
                     .show();
+        }
+    }
+
+    private void setStatusBarDim(boolean dim) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(dim ? Color.TRANSPARENT :
+                    ContextCompat.getColor(this, AppUtils.getThemedResId(this, R.attr.colorPrimaryDark)));
         }
     }
 
@@ -126,15 +156,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     protected void onStart() {
         super.onStart();
         mVolumeNavigationDelegate.attach(this);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -151,7 +172,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        mVolumeNavigationDelegate.setScrollable(this, mAppBar);
+        mVolumeNavigationDelegate.setScrollable(this, null);
         return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
                 super.onKeyDown(keyCode, event);
     }
@@ -171,7 +192,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     @Override
     public void scrollToTop() {
         mScrollableHelper.scrollToTop();
-        mAppBar.setExpanded(true, true);
     }
 
     @Override
@@ -182,6 +202,11 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     @Override
     public boolean scrollToPrevious() {
         return mScrollableHelper.scrollToPrevious();
+    }
+
+    @Override
+    protected boolean isTranslucent() {
+        return true;
     }
 
     private void load() {
@@ -216,7 +241,8 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getResources().getQuantityString(R.plurals.submissions_count, count, count)));
         mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems()));
-        mRecyclerView.addItemDecoration(new CommentItemDecoration(this));
+        mRecyclerView.setLayoutFrozen(mBottomSheetBehavior.getState() !=
+                BottomSheetBehavior.STATE_EXPANDED);
     }
 
     private static class UserResponseListener implements ResponseListener<UserManager.User> {

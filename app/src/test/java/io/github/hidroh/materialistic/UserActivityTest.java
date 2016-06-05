@@ -93,12 +93,6 @@ public class UserActivityTest {
     }
 
     @Test
-    public void testHomeClick() {
-        shadowOf(activity).clickMenuItem(android.R.id.home);
-        assertThat(activity).isFinishing();
-    }
-
-    @Test
     public void testBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);

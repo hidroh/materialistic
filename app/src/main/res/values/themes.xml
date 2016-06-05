@@ -77,10 +77,22 @@
     <style name="AppTheme" parent="BaseAppTheme">
     </style>
 
+    <style name="AppTheme.Translucent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
     <style name="AppTheme.Dark" parent="BaseAppTheme.Dark">
     </style>
 
-    <style name="AppTheme.Dark.Black">
+    <style name="AppTheme.Dark.Translucent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="Black">
         <item name="colorPrimary">@color/grey900</item>
         <item name="colorPrimaryDark">@color/blackT87</item>
         <item name="colorAccent">@color/redA100</item>
@@ -91,7 +103,7 @@
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
     </style>
 
-    <style name="AppTheme.Sepia">
+    <style name="Sepia">
         <item name="colorPrimary">@color/orange300</item>
         <item name="colorPrimaryDark">@color/orange400</item>
         <item name="colorCardBackground">@color/orange50</item>
@@ -100,7 +112,7 @@
         <item name="alertDialogTheme">@style/AppAlertDialog.Sepia</item>
     </style>
 
-    <style name="AppTheme.Green">
+    <style name="Green">
         <item name="colorPrimary">@color/teal300</item>
         <item name="colorPrimaryDark">@color/teal400</item>
         <item name="colorCardBackground">@color/teal50</item>
@@ -110,7 +122,7 @@
         <item name="alertDialogTheme">@style/AppAlertDialog.Green</item>
     </style>
 
-    <style name="AppTheme.Solarized">
+    <style name="Solarized">
         <item name="colorPrimary">@color/orange300</item>
         <item name="colorPrimaryDark">@color/orange400</item>
         <item name="colorAccent">@color/solarizedOrange</item>
@@ -121,7 +133,7 @@
         <item name="alertDialogTheme">@style/AppAlertDialog.Solarized</item>
     </style>
 
-    <style name="AppTheme.Dark.Solarized">
+    <style name="Solarized.Dark">
         <item name="colorPrimary">@color/grey900</item>
         <item name="colorPrimaryDark">@color/blackT87</item>
         <item name="colorAccent">@color/solarizedOrange</item>
