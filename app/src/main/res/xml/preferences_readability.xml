@@ -39,9 +39,9 @@
         <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
             android:key="@string/pref_readability_line_height"
             android:title="@string/pref_line_height_title"
-            android:defaultValue="1.0"
+            android:defaultValue="1.2"
             app:entries="@array/pref_line_height_options"
-            app:entryValues="@array/pref_line_height_values" />
+            app:entryValues="@array/pref_line_height_readability_values" />
 
     </android.support.v7.preference.PreferenceCategory>
 
