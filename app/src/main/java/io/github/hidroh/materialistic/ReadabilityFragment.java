@@ -47,16 +47,11 @@ import io.github.hidroh.materialistic.data.WebItem;
 public class ReadabilityFragment extends LazyLoadFragment implements Scrollable {
     public static final String EXTRA_ITEM = ReadabilityFragment.class.getName() +".EXTRA_ITEM";
     private static final String STATE_CONTENT = "state:content";
-    private static final String STATE_TEXT_SIZE = "state:textSize";
-    private static final String STATE_TYPEFACE_NAME = "state:typefaceName";
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             (sharedPreferences, key) -> {
-                if (TextUtils.equals(key, getString(R.string.pref_readability_font))) {
-                    mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
-                    render();
-                } else if (TextUtils.equals(key, getString(R.string.pref_readability_text_size))) {
-                    mTextSize = toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(
-                            getActivity()));
+                if (TextUtils.equals(key, getString(R.string.pref_readability_font)) ||
+                        TextUtils.equals(key, getString(R.string.pref_readability_line_height)) ||
+                        TextUtils.equals(key, getString(R.string.pref_readability_text_size))) {
                     render();
                 }
             };
@@ -67,11 +62,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     @Inject ReadabilityClient mReadabilityClient;
     private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
     private String mContent;
-    private float mTextSize;
-    private String mTypefaceName;
     private boolean mAttached;
-    private String mTextColor;
-    private String mTextLinkColor;
 
     @Override
     public void onAttach(Context context) {
@@ -86,15 +77,8 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
-            mTextSize = savedInstanceState.getFloat(STATE_TEXT_SIZE);
             mContent = savedInstanceState.getString(STATE_CONTENT);
-            mTypefaceName = savedInstanceState.getString(STATE_TYPEFACE_NAME);
-        } else {
-            mTextSize = toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity()));
-            mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
         }
-        mTextColor = AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorPrimary);
-        mTextLinkColor = AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorLink);
     }
 
     @Override
@@ -140,9 +124,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putFloat(STATE_TEXT_SIZE, mTextSize);
         outState.putString(STATE_CONTENT, mContent);
-        outState.putString(STATE_TYPEFACE_NAME, mTypefaceName);
     }
 
     @Override
@@ -210,13 +192,14 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
 
     private String wrap(String html) {
         return getString(R.string.readability_html,
-                mTypefaceName,
-                mTextSize,
-                mTextColor,
-                mTextLinkColor,
+                Preferences.Theme.getReadabilityTypeface(getActivity()),
+                toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity())),
+                AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorPrimary),
+                AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorLink),
                 html,
                 toHtmlPx(getResources().getDimension(R.dimen.activity_vertical_margin)),
-                toHtmlPx(getResources().getDimension(R.dimen.activity_horizontal_margin)));
+                toHtmlPx(getResources().getDimension(R.dimen.activity_horizontal_margin)),
+                Preferences.getReadabilityLineHeight(getActivity()));
     }
 
     private float toHtmlPx(@StyleRes int textStyleAttr) {

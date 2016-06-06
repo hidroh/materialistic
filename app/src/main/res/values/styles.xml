@@ -33,6 +33,7 @@
     <!-- =================== -->
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 
     <style name="Preference.PreferenceHelp" parent="Preference">

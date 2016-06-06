@@ -136,6 +136,20 @@
     <string name="pref_launch_screen_value_jobs" translatable="false">jobs</string>
     <string name="pref_launch_screen_value_saved" translatable="false">saved</string>
 
+    <!-- Line height -->
+    <string-array name="pref_line_height_options">
+        <item>@string/line_height_compact</item>
+        <item>@string/line_height_normal</item>
+        <item>@string/line_height_cozy</item>
+        <item>@string/line_height_comfortable</item>
+    </string-array>
+    <string-array name="pref_line_height_values">
+        <item>0.9</item>
+        <item>1.2</item>
+        <item>1.5</item>
+        <item>2</item>
+    </string-array>
+
     <!-- Color codes -->
     <array name="color_codes">
         <item>@color/red500</item>

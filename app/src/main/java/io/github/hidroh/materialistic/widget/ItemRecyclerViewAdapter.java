@@ -23,6 +23,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -43,6 +44,7 @@ import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.Injectable;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.Item;
@@ -67,6 +69,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private String mUsername;
     private final Set<String> mLineCounted = new HashSet<>();
     private int mCacheMode = ItemManager.MODE_DEFAULT;
+    private float mLineHeight = 1.0f;
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
@@ -116,22 +119,19 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         return getItem(position).getLongId();
     }
 
-    public void setMaxLines(int maxLines) {
-        mContentMaxLines = maxLines;
-        notifyDataSetChanged();
-    }
-
-    public void setHighlightUsername(String username) {
-        mUsername = username;
-        notifyDataSetChanged();
-    }
-
     public boolean isAttached() {
         return mContext != null;
     }
 
     public void setCacheMode(int cacheMode) {
         mCacheMode = cacheMode;
+    }
+
+    public void initDisplayOptions(Context context) {
+        mContentMaxLines = Preferences.getCommentMaxLines(context);
+        mUsername = Preferences.getUsername(context);
+        mLineHeight = Preferences.getLineHeight(context);
+        notifyDataSetChanged();
     }
 
     protected abstract Item getItem(int position);
@@ -143,6 +143,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
         highlightUserItem(holder, item);
         decorateDead(holder, item);
+        holder.mContentTextView.setLineSpacing(0f, mLineHeight);
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
         if (mLineCounted.contains(item.getId())) {
             toggleCollapsibleContent(holder, item);

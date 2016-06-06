@@ -24,6 +24,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class PopupSettingsFragment extends BottomSheetDialogFragment {
     static final String EXTRA_XML_PREFERENCES = PopupSettingsFragment.class.getName() +
@@ -53,6 +54,12 @@ public class PopupSettingsFragment extends BottomSheetDialogFragment {
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(getArguments().getInt(EXTRA_XML_PREFERENCES));
+        }
+
+        @Override
+        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            Toast.makeText(getActivity(), R.string.pull_up_hint, Toast.LENGTH_SHORT).show();
         }
     }
 }
