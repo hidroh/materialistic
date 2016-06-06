@@ -79,6 +79,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                     if (mAdapter != null) {
                         mAdapter.initDisplayOptions(getActivity());
                     }
+                } else if (TextUtils.equals(key, getString(R.string.pref_text_size))) {
+                    // swap adapter as we need new ContextThemeWrapper
+                    bindKidData();
                 }
             };
 

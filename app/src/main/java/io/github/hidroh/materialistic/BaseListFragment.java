@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,8 +44,13 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                                       String key) {
-                    mChanged = true;
-                    getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
+                    if (TextUtils.equals(key, getActivity().getString(R.string.pref_text_size))) {
+                        // swap adapter as we require new ContextThemeWrapper
+                        mRecyclerView.setAdapter(getAdapter());
+                    } else if (TextUtils.equals(key, getActivity().getString(R.string.pref_list_item_view))) {
+                        mChanged = true;
+                        getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
+                    }
                 }
             };
     private boolean mChanged;

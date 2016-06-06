@@ -129,7 +129,7 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
-    static boolean highlightUpdatedEnabled(Context context) {
+    public static boolean highlightUpdatedEnabled(Context context) {
         return get(context, R.string.pref_highlight_updated, true);
     }
 
@@ -340,7 +340,7 @@ public class Preferences {
             }
         }
 
-        static @StyleRes int resolvePreferredTextSize(Context context) {
+        public static @StyleRes int resolvePreferredTextSize(Context context) {
             return resolveTextSize(getPreferredTextSize(context));
         }
 

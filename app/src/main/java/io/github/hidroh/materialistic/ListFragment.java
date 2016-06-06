@@ -54,12 +54,9 @@ public class ListFragment extends BaseListFragment {
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    if (key.equals(getActivity().getString(R.string.pref_highlight_updated))) {
-                        mAdapter.setHighlightUpdated(sharedPreferences.getBoolean(key, true));
-                        mAdapter.notifyDataSetChanged();
-                    } else if (key.equals(getActivity().getString(R.string.pref_username))) {
-                        mAdapter.setUsername(Preferences.getUsername(getActivity()));
-                        mAdapter.notifyDataSetChanged();
+                    if (TextUtils.equals(key, getActivity().getString(R.string.pref_highlight_updated)) ||
+                            TextUtils.equals(key, getActivity().getString(R.string.pref_username))) {
+                        mAdapter.initDisplayOptions(getActivity());
                     }
                 }
             };
@@ -97,9 +94,8 @@ public class ListFragment extends BaseListFragment {
             mCacheMode = savedInstanceState.getInt(STATE_CACHE_MODE);
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
-            mAdapter.setHighlightUpdated(Preferences.highlightUpdatedEnabled(getActivity()));
-            mAdapter.setUsername(Preferences.getUsername(getActivity()));
         }
+        mAdapter.initDisplayOptions(getActivity());
         mAdapter.setCacheMode(mCacheMode);
     }
 

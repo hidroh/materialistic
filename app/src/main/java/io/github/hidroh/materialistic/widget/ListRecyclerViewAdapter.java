@@ -28,6 +28,7 @@ import android.view.View;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AlertDialogBuilder;
+import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.CustomTabsDelegate;
 import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
@@ -72,7 +73,7 @@ public abstract class ListRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mRecyclerView = recyclerView;
         mContext = recyclerView.getContext();
-        mInflater = LayoutInflater.from(mContext);
+        mInflater = AppUtils.createLayoutInflater(mContext);
         ((Injectable) mContext).inject(this);
         mMultiPaneListener = (MultiPaneListener) mContext;
         mCardElevation = mContext.getResources()
