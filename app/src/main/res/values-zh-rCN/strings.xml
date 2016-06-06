@@ -167,8 +167,6 @@
     <string name="comment_max_lines_5">最多5行</string>
     <string name="comment_max_lines_all">全部</string>
     <string name="file_not_supported">内容不支持</string>
-    <string name="card_view">卡片模式</string>
-    <string name="compact_view">紧凑模式</string>
     <string name="username_hint">用户名</string>
     <string name="password_hint">密码</string>
     <string name="login">登录</string>
@@ -228,7 +226,6 @@
     <string name="title_activity_thread_preview">主题预览</string>
     <string name="view_thread">查看关联项</string>
     <string name="view_user">查看发帖人</string>
-    <string name="toggle_list_view">切换为列表视图</string>
     <string name="more">更多</string>
     <string name="logout">退出登录</string>
 

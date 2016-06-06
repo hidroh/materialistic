@@ -20,6 +20,8 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +39,6 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     protected RecyclerView mRecyclerView;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
-    private boolean mChanged;
 
     @Override
     public void onAttach(Context context) {
@@ -92,41 +93,25 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mChanged) {
-            getAdapter().notifyDataSetChanged();
-            mChanged = false;
-        }
-    }
-
-    @Override
     protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_list, menu);
     }
 
     @Override
-    protected void prepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.menu_list_toggle);
-        if (getAdapter().isCardViewEnabled()) {
-            item.setTitle(R.string.compact_view);
-            mMenuTintDelegate.setIcon(item, R.drawable.ic_view_stream_white_24dp);
-        } else {
-            item.setTitle(R.string.card_view);
-            mMenuTintDelegate.setIcon(item, R.drawable.ic_view_agenda_white_24dp);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_list) {
+            showPreferences();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() != R.id.menu_list_toggle) {
-            return super.onOptionsItemSelected(item);
-        }
-        getAdapter().setCardViewEnabled(!getAdapter().isCardViewEnabled());
-        Preferences.setListItemCardView(getActivity(), getAdapter().isCardViewEnabled());
-        getActivity().supportInvalidateOptionsMenu();
-        getAdapter().notifyDataSetChanged();
-        return true;
+    private void showPreferences() {
+        Bundle args = new Bundle();
+        args.putInt(PopupSettingsFragment.EXTRA_XML_PREFERENCES, R.xml.preferences_list);
+        ((DialogFragment) Fragment.instantiate(getActivity(),
+                PopupSettingsFragment.class.getName(), args))
+                .show(getFragmentManager(), PopupSettingsFragment.class.getName());
     }
 
     @Override
@@ -160,7 +145,6 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         if (contextChanged) {
             mRecyclerView.setAdapter(getAdapter());
         } else if (key == R.string.pref_list_item_view) {
-            mChanged = true;
             getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
         }
     }

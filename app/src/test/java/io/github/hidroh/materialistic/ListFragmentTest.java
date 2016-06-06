@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -288,9 +289,15 @@ public class ListFragmentTest {
                 .commit();
         Rect rect = new Rect();
         assertCompactView(rect);
-        shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_list_item_view), true)
+                .apply();
         assertCardView(rect);
-        shadowOf(activity).clickMenuItem(R.id.menu_list_toggle);
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_list_item_view), false)
+                .apply();
         assertCompactView(rect);
         controller.pause().stop().destroy();
     }
@@ -312,12 +319,29 @@ public class ListFragmentTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_list_item_view), true)
-                .commit();
+                .apply();
         controller.resume().postResume();
         activity.getSupportFragmentManager().findFragmentByTag(ListFragment.class.getName())
                 .onPrepareOptionsMenu(shadowOf(activity).getOptionsMenu());
         assertCardView(rect);
         controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void testListMenu() {
+        Bundle args = new Bundle();
+        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
+        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(android.R.id.list,
+                        Fragment.instantiate(activity, ListFragment.class.getName(), args),
+                        ListFragment.class.getName())
+                .commit();
+        activity.getSupportFragmentManager().findFragmentByTag(ListFragment.class.getName())
+                .onOptionsItemSelected(new RoboMenuItem(R.id.menu_list));
+        assertThat(activity.getSupportFragmentManager())
+                .hasFragmentWithTag(PopupSettingsFragment.class.getName());
     }
 
     private void assertCardView(Rect rect) {
@@ -333,8 +357,6 @@ public class ListFragmentTest {
         assertThat(rect).hasLeft(horizontalMargin)
                 .hasRight(horizontalMargin)
                 .hasTop(verticalMargin);
-        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_list_toggle))
-                .hasTitle(activity.getString(R.string.compact_view));
     }
 
     private void assertCompactView(Rect rect) {
@@ -348,7 +370,5 @@ public class ListFragmentTest {
                 .hasLeft(0)
                 .hasRight(0)
                 .hasBottom(divider);
-        assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_list_toggle))
-                .hasTitle(activity.getString(R.string.card_view));
     }
 }

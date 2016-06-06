@@ -99,10 +99,6 @@ public class Preferences {
         return get(context, R.string.pref_list_item_view, false);
     }
 
-    static void setListItemCardView(Context context, boolean isCardView) {
-        set(context, R.string.pref_list_item_view, isCardView);
-    }
-
     public static boolean isSortByRecent(Context context) {
         return get(context, R.string.pref_search_sort, R.string.pref_search_sort_value_recent)
                 .equals(context.getString(R.string.pref_search_sort_value_recent));

@@ -127,6 +127,7 @@ public abstract class ListRecyclerViewAdapter
 
     public final void setCardViewEnabled(boolean cardViewEnabled) {
         this.mCardViewEnabled = cardViewEnabled;
+        notifyDataSetChanged();
     }
 
     public void setCustomTabsDelegate(CustomTabsDelegate customTabsDelegate) {
