@@ -33,11 +33,18 @@
     <!-- =================== -->
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
+        <item name="preferenceFragmentCompatStyle">@style/PreferenceFragment.NoDivider</item>
         <item name="android:textAppearanceLarge">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 
     <style name="Preference.PreferenceHelp" parent="Preference">
         <item name="android:layout">@layout/preference_help</item>
+    </style>
+    <style name="PreferenceFragment.NoDivider">
+        <item name="android:divider">@null</item>
+    </style>
+    <style name="Preference.Category.Hint">
+        <item name="android:layout">@layout/preference_category_hint</item>
     </style>
 
     <!-- ================== -->

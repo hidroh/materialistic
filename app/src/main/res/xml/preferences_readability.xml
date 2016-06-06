@@ -20,7 +20,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.preference.PreferenceCategory
-        android:title="@string/font_options">
+        android:title="@string/font_options"
+        style="@style/Preference.Category.Hint">
 
         <io.github.hidroh.materialistic.preference.FontSizePreference
             android:key="@string/pref_readability_text_size"
