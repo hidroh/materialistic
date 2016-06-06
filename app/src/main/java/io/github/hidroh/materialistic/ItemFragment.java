@@ -17,13 +17,11 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -68,25 +66,19 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private ItemRecyclerViewAdapter mAdapter;
     private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
-            (sharedPreferences, key) -> {
-                if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
-                    eagerLoad();
-                } else if (TextUtils.equals(key, getString(R.string.pref_max_lines)) ||
-                        TextUtils.equals(key, getString(R.string.pref_username)) ||
-                        TextUtils.equals(key, getString(R.string.pref_line_height)) ||
-                        TextUtils.equals(key, getString(R.string.pref_color_code))) {
-                    if (mAdapter != null) {
-                        mAdapter.initDisplayOptions(getActivity());
-                    }
-                }
-            };
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
+                R.string.pref_comment_display,
+                R.string.pref_max_lines,
+                R.string.pref_username,
+                R.string.pref_line_height,
+                R.string.pref_color_code,
+                R.string.pref_font,
+                R.string.pref_text_size);
     }
 
     @Override
@@ -161,8 +153,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     public void onDetach() {
         super.onDetach();
         mRecyclerView.setAdapter(null);
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.unsubscribe(getActivity());
     }
 
     @Override
@@ -228,6 +219,14 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        if (contextChanged || key == R.string.pref_comment_display) {
+            eagerLoad();
+        } else if (mAdapter != null) {
+            mAdapter.initDisplayOptions(getActivity());
+        }
     }
 
     private void showPreferences() {

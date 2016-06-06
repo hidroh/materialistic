@@ -20,7 +20,6 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,7 +30,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -70,17 +68,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
-            = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (TextUtils.equals(key, getString(R.string.pref_external))) {
-                mExternalBrowser = Preferences.externalBrowserEnabled(BaseListActivity.this);
-            } else if (TextUtils.equals(key, getString(R.string.pref_story_display))) {
-                mStoryViewMode = Preferences.getDefaultStoryView(BaseListActivity.this);
-            }
-        }
-    };
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,8 +117,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 unbindViewPager();
             }
         }
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.subscribe(this, this::onPreferenceChanged,
+                R.string.pref_external,
+                R.string.pref_story_display);
     }
 
     @Override
@@ -207,8 +196,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.unsubscribe(this);
     }
 
     @Override
@@ -371,4 +359,14 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         transaction.commit();
     }
 
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        switch (key) {
+            case R.string.pref_external:
+                mExternalBrowser = Preferences.externalBrowserEnabled(this);
+                break;
+            case R.string.pref_story_display:
+                mStoryViewMode = Preferences.getDefaultStoryView(this);
+                break;
+        }
+    }
 }

@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ComposeActivity;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.UserActivity;
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -168,16 +170,18 @@ public class StoryRecyclerViewAdapter extends
         notifyDataSetChanged();
     }
 
-    public void setUsername(String username) {
-        mUsername = username;
-    }
-
     public void setHighlightUpdated(boolean highlightUpdated) {
         mHighlightUpdated = highlightUpdated;
     }
 
     public void setShowAll(boolean showAll) {
         mShowAll = showAll;
+    }
+
+    public void initDisplayOptions(Context context) {
+        mHighlightUpdated = Preferences.highlightUpdatedEnabled(context);
+        mUsername = Preferences.getUsername(context);
+        notifyDataSetChanged();
     }
 
     @Override

@@ -57,6 +57,10 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final View mMoreButton;
     private boolean mChecked;
 
+    public StoryView(Context context) {
+        this(context, null);
+    }
+
     public StoryView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }

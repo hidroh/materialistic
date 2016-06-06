@@ -45,12 +45,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -409,6 +411,11 @@ public class AppUtils {
                     ContextCompat.getColor(window.getContext(),
                             AppUtils.getThemedResId(window.getContext(), R.attr.colorPrimaryDark)));
         }
+    }
+
+    public static LayoutInflater createLayoutInflater(Context context) {
+        return LayoutInflater.from(new ContextThemeWrapper(context,
+                Preferences.Theme.resolvePreferredTextSize(context)));
     }
 
     private static CharSequence trim(CharSequence charSequence) {

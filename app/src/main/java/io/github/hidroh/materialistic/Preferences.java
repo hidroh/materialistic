@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -30,7 +31,10 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.preference.ThemePreference;
@@ -129,7 +133,7 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
-    static boolean highlightUpdatedEnabled(Context context) {
+    public static boolean highlightUpdatedEnabled(Context context) {
         return get(context, R.string.pref_highlight_updated, true);
     }
 
@@ -340,7 +344,7 @@ public class Preferences {
             }
         }
 
-        static @StyleRes int resolvePreferredTextSize(Context context) {
+        public static @StyleRes int resolvePreferredTextSize(Context context) {
             return resolveTextSize(getPreferredTextSize(context));
         }
 
@@ -398,5 +402,57 @@ public class Preferences {
             String wifiValue = context.getString(R.string.offline_data_wifi);
             return TextUtils.equals(wifiValue, get(context, R.string.pref_offline_data, wifiValue));
         }
+    }
+
+    static class Observable {
+        private static Set<String> CONTEXT_KEYS;
+        private final Map<String, Integer> mSubscribedKeys = new HashMap<>();
+        private final SharedPreferences.OnSharedPreferenceChangeListener mListener = (sharedPreferences, key) -> {
+            if (mSubscribedKeys.containsKey(key)) {
+                notifyChanged(mSubscribedKeys.get(key), CONTEXT_KEYS.contains(key));
+            }
+        };
+        private Observer mObserver;
+
+        void subscribe(Context context, @NonNull Observer observer, @NonNull int... preferenceKeys) {
+            ensureContextKeys(context);
+            setSubscription(context, preferenceKeys);
+            mObserver = observer;
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .registerOnSharedPreferenceChangeListener(mListener);
+        }
+
+        void unsubscribe(Context context) {
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .unregisterOnSharedPreferenceChangeListener(mListener);
+        }
+
+        private void setSubscription(Context context, int[] preferenceKeys) {
+            mSubscribedKeys.clear();
+            for (int key : preferenceKeys) {
+                mSubscribedKeys.put(context.getString(key), key);
+            }
+        }
+
+        private void notifyChanged(int key, boolean contextChanged) {
+            if (mObserver != null) {
+                mObserver.onPreferenceChanged(key, contextChanged);
+            }
+        }
+
+        @SuppressLint("UseSparseArrays")
+        private void ensureContextKeys(Context context) {
+            if (CONTEXT_KEYS != null) {
+                return;
+            }
+            CONTEXT_KEYS = new HashSet<>();
+            CONTEXT_KEYS.add(context.getString(R.string.pref_theme));
+            CONTEXT_KEYS.add(context.getString(R.string.pref_text_size));
+            CONTEXT_KEYS.add(context.getString(R.string.pref_font));
+        }
+    }
+
+    interface Observer {
+        void onPreferenceChanged(@StringRes int key, boolean contextChanged);
     }
 }

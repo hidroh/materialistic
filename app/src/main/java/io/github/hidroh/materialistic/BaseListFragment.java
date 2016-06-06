@@ -17,11 +17,9 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,22 +36,16 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     protected RecyclerView mRecyclerView;
-    private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                                      String key) {
-                    mChanged = true;
-                    getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
-                }
-            };
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private boolean mChanged;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .registerOnSharedPreferenceChangeListener(mListener);
+        mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
+                R.string.pref_font,
+                R.string.pref_text_size,
+                R.string.pref_list_item_view);
     }
 
     @Override
@@ -146,8 +138,7 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Override
     public void onDetach() {
         super.onDetach();
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .unregisterOnSharedPreferenceChangeListener(mListener);
+        mPreferenceObservable.unsubscribe(getActivity());
     }
 
     @Override
@@ -163,6 +154,15 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
     @Override
     public boolean scrollToPrevious() {
         return mScrollableHelper.scrollToPrevious();
+    }
+
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        if (contextChanged) {
+            mRecyclerView.setAdapter(getAdapter());
+        } else if (key == R.string.pref_list_item_view) {
+            mChanged = true;
+            getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
+        }
     }
 
     protected abstract ListRecyclerViewAdapter getAdapter();

@@ -23,7 +23,6 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -83,7 +82,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         if (mContext instanceof Injectable) {
             ((Injectable) mContext).inject(this);
         }
-        mLayoutInflater = LayoutInflater.from(mContext);
+        mLayoutInflater = AppUtils.createLayoutInflater(mContext);
         TypedArray ta = mContext.obtainStyledAttributes(new int[]{
                 android.R.attr.textColorTertiary,
                 android.R.attr.textColorSecondary,

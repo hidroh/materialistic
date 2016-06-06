@@ -63,7 +63,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
      */
     protected abstract void load();
 
-    protected final void eagerLoad() {
+    final void eagerLoad() {
         if (!mEagerLoad) {
             return;
         }
