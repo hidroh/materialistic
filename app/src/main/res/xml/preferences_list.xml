@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016 Ha Duy Trung
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/display_options">
+
+        <io.github.hidroh.materialistic.preference.FontSizePreference
+            android:key="@string/pref_text_size"
+            android:title="@string/pref_text_size_title"
+            android:defaultValue="0"
+            app:entries="@array/text_size_options"
+            app:entryValues="@array/pref_text_size_values" />
+
+        <io.github.hidroh.materialistic.preference.FontPreference
+            android:key="@string/pref_font"
+            android:title="@string/pref_font_title"
+            android:defaultValue=""
+            app:entries="@array/font_options"
+            app:entryValues="@array/font_values" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_list_item_view"
+            android:title="@string/pref_list_item_view_title"
+            android:defaultValue="false" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_highlight_updated"
+            android:title="@string/pref_highlight_updated_title"
+            android:summary="@string/pref_highlight_updated_summary"
+            android:defaultValue="true" />
+
+        <io.github.hidroh.materialistic.preference.PreferenceHelp
+            android:key="@string/pref_highlight_updated_help"
+            android:title="@string/whats_this"
+            app:dialogTitle="@string/pref_highlight_updated_title"
+            app:dialogLayout="@layout/help_list_view" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</PreferenceScreen>

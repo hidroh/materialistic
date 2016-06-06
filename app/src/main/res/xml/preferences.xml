@@ -57,18 +57,6 @@
             android:defaultValue="@string/pref_story_display_value_article" />
 
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:key="@string/pref_highlight_updated"
-            android:title="@string/pref_highlight_updated_title"
-            android:summary="@string/pref_highlight_updated_summary"
-            android:defaultValue="true" />
-
-        <io.github.hidroh.materialistic.preference.PreferenceHelp
-            android:key="@string/pref_highlight_updated_help"
-            android:title="@string/whats_this"
-            app:dialogTitle="@string/pref_highlight_updated_title"
-            app:dialogLayout="@layout/help_list_view" />
-
-        <android.support.v7.preference.SwitchPreferenceCompat
             android:key="@string/pref_external"
             android:title="@string/pref_external_title"
             android:summary="@string/pref_external_summary"

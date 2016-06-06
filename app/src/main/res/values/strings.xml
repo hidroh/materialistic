@@ -93,6 +93,7 @@
     <string name="pref_ad_block_title">Block ads</string>
     <string name="pref_ad_block_summary">Enable simple ad blocker for internal browser</string>
     <string name="pref_line_height_title">Line spacing</string>
+    <string name="pref_list_item_view_title">Show as cards</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>
@@ -205,8 +206,6 @@
     <string name="line_height_cozy">Cozy</string>
     <string name="line_height_comfortable">Comfortable</string>
     <string name="file_not_supported">Content type not supported</string>
-    <string name="card_view">Card view</string>
-    <string name="compact_view">Compact view</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="login">Login</string>
@@ -268,7 +267,6 @@
     <string name="title_activity_thread_preview">Thread Preview</string>
     <string name="view_thread">View thread</string>
     <string name="view_user">View user</string>
-    <string name="toggle_list_view">Toggle list view</string>
     <string name="more">More</string>
     <string name="logout">Logout</string>
     <string name="offline">Offline</string>

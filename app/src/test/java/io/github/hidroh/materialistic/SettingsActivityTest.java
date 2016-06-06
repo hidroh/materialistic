@@ -98,12 +98,12 @@ public class SettingsActivityTest {
     @Test
     public void testHelp() {
         fragment.getPreferenceScreen()
-                .findPreference(activity.getString(R.string.pref_highlight_updated_help))
+                .findPreference(activity.getString(R.string.pref_volume_help))
                 .performClick();
         Dialog dialog = ShadowDialog.getLatestDialog();
         assertNotNull(dialog);
         assertThat((TextView) dialog.findViewById(R.id.alertTitle))
-                .hasText(R.string.pref_highlight_updated_title);
+                .hasText(R.string.pref_volume_title);
     }
 
     @Test
