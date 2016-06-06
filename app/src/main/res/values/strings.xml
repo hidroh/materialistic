@@ -274,6 +274,6 @@
     <string name="download_in_progress">Download in progress</string>
     <string name="love_it">I love it!</string>
     <string name="display_options">Display options</string>
-    <string name="pull_up_hint">Pull up for more options</string>
+    <string name="pull_up_hint">Pull up for more</string>
 
 </resources>

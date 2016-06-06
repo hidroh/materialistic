@@ -145,6 +145,12 @@
     </string-array>
     <string-array name="pref_line_height_values">
         <item>0.9</item>
+        <item>1.0</item>
+        <item>1.2</item>
+        <item>1.5</item>
+    </string-array>
+    <string-array name="pref_line_height_readability_values">
+        <item>0.9</item>
         <item>1.2</item>
         <item>1.5</item>
         <item>2</item>
