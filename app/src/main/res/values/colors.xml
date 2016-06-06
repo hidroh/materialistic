@@ -28,14 +28,10 @@
     <color name="red500">#F44336</color>
     <color name="redA100">#FF8A80</color>
     <color name="redA200">#FF5252</color>
-    <color name="pink500">#E91E63</color>
     <color name="purple500">#9C27B0</color>
-    <color name="deepPurple500">#673AB7</color>
     <color name="indigo500">#3F51B5</color>
-    <color name="blue500">#2196F3</color>
-    <color name="lightBlue500">#03A9F4</color>
+    <color name="lightBlue700">#0288D1</color>
     <color name="lightBlueA700">#0091EA</color>
-    <color name="cyan500">#00BCD4</color>
     <color name="teal50">#E0F2F1</color>
     <color name="teal100">#B2DFDB</color>
     <color name="teal300">#4DB6AC</color>
@@ -43,7 +39,6 @@
     <color name="teal500">#009688</color>
     <color name="teal600">#00897B</color>
     <color name="teal900">#004D40</color>
-    <color name="green500">#4CAF50</color>
     <color name="greenA700">#00C853</color>
     <color name="orange50">#FFF3E0</color>
     <color name="orange100">#FFE0B2</color>
@@ -51,6 +46,11 @@
     <color name="orange400">#FFA726</color>
     <color name="brown400">#8D6E63</color>
     <color name="brown800">#4E342E</color>
+    <color name="lightGreen700">#689F38</color>
+    <color name="yellow700">#FBC02D</color>
+    <color name="orange500">#FF9800</color>
+    <color name="brown500">#795548</color>
+    <color name="blueGrey500">#607D8B</color>
 
     <!-- http://ethanschoonover.com/solarized -->
     <color name="solarizedBase01">#586e75</color>

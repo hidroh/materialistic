@@ -67,6 +67,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
+    private CommentItemDecoration mItemDecoration;
 
     @Override
     public void onAttach(Context context) {
@@ -107,7 +108,8 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity()));
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addItemDecoration(new CommentItemDecoration(getActivity()));
+        mItemDecoration = new CommentItemDecoration(getActivity());
+        mRecyclerView.addItemDecoration(mItemDecoration);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);
@@ -225,6 +227,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (contextChanged || key == R.string.pref_comment_display) {
             eagerLoad();
         } else if (mAdapter != null) {
+            mItemDecoration.setColorCodeEnabled(Preferences.colorCodeEnabled(getActivity()));
             mAdapter.initDisplayOptions(getActivity());
         }
     }

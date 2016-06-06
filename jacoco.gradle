@@ -31,7 +31,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
                     '**/ImageGetter$URLDrawable.class',
                     '**/ScrollAwareFABBehavior.class',
                     '**/SinglePageItemRecyclerViewAdapter$SavedState*.class',
-                    '**/*Dummy*.class'
+                    '**/*Dummy*.class',
+                    '**/*ItemDecoration.class'
             ])
     sourceDirectories = files android.sourceSets.main.java.srcDirs
     executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
