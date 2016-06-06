@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.widget;
 
+import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -97,9 +99,10 @@ public class SinglePageItemRecyclerViewAdapter
         return mState.list.size();
     }
 
-    public void toggleColorCode(boolean enabled) {
-        mColorCoded = enabled;
-        notifyDataSetChanged();
+    @Override
+    public void initDisplayOptions(Context context) {
+        mColorCoded = Preferences.colorCodeEnabled(context);
+        super.initDisplayOptions(context);
     }
 
     @Override

@@ -125,7 +125,7 @@ public class Preferences {
         return get(context, R.string.pref_external, false);
     }
 
-    static boolean colorCodeEnabled(Context context) {
+    public static boolean colorCodeEnabled(Context context) {
         return get(context, R.string.pref_color_code, true);
     }
 
@@ -161,7 +161,7 @@ public class Preferences {
         return get(context, R.string.pref_popular_range, AlgoliaPopularClient.LAST_24H);
     }
 
-    static int getCommentMaxLines(Context context) {
+    public static int getCommentMaxLines(Context context) {
         String maxLinesString = get(context, R.string.pref_max_lines, null);
         int maxLines = maxLinesString == null ? -1 : Integer.parseInt(maxLinesString);
         if (maxLines < 0) {
@@ -170,11 +170,19 @@ public class Preferences {
         return maxLines;
     }
 
+    public static float getLineHeight(Context context) {
+        return getFloatFromString(context, R.string.pref_line_height, 1.0f);
+    }
+
+    static float getReadabilityLineHeight(Context context) {
+        return getFloatFromString(context, R.string.pref_readability_line_height, 1.0f);
+    }
+
     static boolean shouldLazyLoad(Context context) {
         return get(context, R.string.pref_lazy_load, true);
     }
 
-    static String getUsername(Context context) {
+    public static String getUsername(Context context) {
         return get(context, R.string.pref_username, null);
     }
 
@@ -228,6 +236,14 @@ public class Preferences {
                 .getInt(context.getString(key), defaultValue);
     }
 
+    private static float getFloatFromString(Context context, @StringRes int key, float defaultValue) {
+        String floatValue = get(context, key, null);
+        try {
+            return Float.parseFloat(floatValue);
+        } catch (NumberFormatException | NullPointerException e) {
+            return defaultValue;
+        }
+    }
     private static String get(Context context, @StringRes int key, String defaultValue) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(key), defaultValue);

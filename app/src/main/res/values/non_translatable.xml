@@ -38,6 +38,7 @@
                         font-size: %2$fpx;
                         color: #%3$s;
                         margin: %6$fpx %7$fpx %6$fpx %7$fpx;
+                        line-height: %8$f;
                     }
                     a {color: #%4$s;}
                     img {display: inline; height: auto; max-width: 100%%;}

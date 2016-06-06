@@ -36,6 +36,13 @@
             app:entries="@array/comment_max_lines_options"
             app:entryValues="@array/comment_max_lines_values" />
 
+        <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
+            android:key="@string/pref_line_height"
+            android:title="@string/pref_line_height_title"
+            android:defaultValue="1.0"
+            app:entries="@array/pref_line_height_options"
+            app:entryValues="@array/pref_line_height_values" />
+
         <android.support.v7.preference.SwitchPreferenceCompat
             android:key="@string/pref_color_code"
             android:title="@string/pref_color_code_title"

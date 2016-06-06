@@ -57,10 +57,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
     private static final String STATE_ADAPTER_ITEMS = "state:adapterItems";
-    private static final String STATE_COLOR_CODED = "state:colorCoded";
-    private static final String STATE_DISPLAY_OPTION = "state:displayOption";
-    private static final String STATE_MAX_LINES = "state:maxLines";
-    private static final String STATE_USERNAME = "state:username";
     private static final String STATE_CACHE_MODE = "state:cacheMode";
     private RecyclerView mRecyclerView;
     private View mEmptyView;
@@ -71,25 +67,18 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
     private ItemRecyclerViewAdapter mAdapter;
     private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
-    private boolean mColorCoded = true;
-    private String mDisplayOption;
-    private int mMaxLines;
-    private String mUsername;
     private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
             (sharedPreferences, key) -> {
-                if (TextUtils.equals(key, getString(R.string.pref_color_code))) {
-                    mColorCoded = Preferences.colorCodeEnabled(getActivity());
-                    toggleColorCode();
-                } else if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
-                    mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
+                if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
                     eagerLoad();
-                } else if (TextUtils.equals(key, getString(R.string.pref_max_lines))) {
-                    mMaxLines = Preferences.getCommentMaxLines(getActivity());
-                    setMaxLines();
-                } else if (TextUtils.equals(key, getString(R.string.pref_username))) {
-                    mUsername = Preferences.getUsername(getActivity());
-                    setHighlightUsername();
+                } else if (TextUtils.equals(key, getString(R.string.pref_max_lines)) ||
+                        TextUtils.equals(key, getString(R.string.pref_username)) ||
+                        TextUtils.equals(key, getString(R.string.pref_line_height)) ||
+                        TextUtils.equals(key, getString(R.string.pref_color_code))) {
+                    if (mAdapter != null) {
+                        mAdapter.initDisplayOptions(getActivity());
+                    }
                 }
             };
 
@@ -109,10 +98,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             mItem = savedInstanceState.getParcelable(STATE_ITEM);
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
             mAdapterItems = savedInstanceState.getParcelable(STATE_ADAPTER_ITEMS);
-            mColorCoded = savedInstanceState.getBoolean(STATE_COLOR_CODED);
-            mDisplayOption = savedInstanceState.getString(STATE_DISPLAY_OPTION);
-            mMaxLines = savedInstanceState.getInt(STATE_MAX_LINES, Integer.MAX_VALUE);
-            mUsername = savedInstanceState.getString(STATE_USERNAME);
         } else {
             mCacheMode = getArguments().getInt(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT);
             WebItem item = getArguments().getParcelable(EXTRA_ITEM);
@@ -120,10 +105,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                 mItem = (Item) item;
             }
             mItemId = item != null ? item.getId() : null;
-            mColorCoded = Preferences.colorCodeEnabled(getActivity());
-            mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
-            mMaxLines = Preferences.getCommentMaxLines(getActivity());
-            mUsername = Preferences.getUsername(getActivity());
         }
     }
 
@@ -173,10 +154,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         outState.putParcelable(STATE_ITEM, mItem);
         outState.putString(STATE_ITEM_ID, mItemId);
         outState.putParcelable(STATE_ADAPTER_ITEMS, mAdapterItems);
-        outState.putBoolean(STATE_COLOR_CODED, mColorCoded);
-        outState.putString(STATE_DISPLAY_OPTION, mDisplayOption);
-        outState.putInt(STATE_MAX_LINES, mMaxLines);
-        outState.putString(STATE_USERNAME, mUsername);
         outState.putInt(STATE_CACHE_MODE, mCacheMode);
     }
 
@@ -236,44 +213,21 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             return;
         }
 
-        if (Preferences.isSinglePage(getActivity(), mDisplayOption)) {
-            boolean autoExpand = Preferences.isAutoExpand(getActivity(), mDisplayOption);
+        String displayOption = Preferences.getCommentDisplayOption(getActivity());
+        if (Preferences.isSinglePage(getActivity(), displayOption)) {
+            boolean autoExpand = Preferences.isAutoExpand(getActivity(), displayOption);
             // if collapsed or no saved state then start a fresh (adapter items all collapsed)
             if (!autoExpand || mAdapterItems == null) {
                 mAdapterItems = new SinglePageItemRecyclerViewAdapter.SavedState(
                         new ArrayList<>(Arrays.asList(mItem.getKidItems())));
             }
             mAdapter = new SinglePageItemRecyclerViewAdapter(mItemManager, mAdapterItems, autoExpand);
-            ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
         } else {
-            mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems()
-            );
+            mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems());
         }
         mAdapter.setCacheMode(mCacheMode);
-        mAdapter.setMaxLines(mMaxLines);
-        mAdapter.setHighlightUsername(mUsername);
+        mAdapter.initDisplayOptions(getActivity());
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private void toggleColorCode() {
-        if (mAdapter == null || !(mAdapter instanceof SinglePageItemRecyclerViewAdapter)) {
-            return;
-        }
-        ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
-    }
-
-    private void setMaxLines() {
-        if (mAdapter == null) {
-            return;
-        }
-        mAdapter.setMaxLines(mMaxLines);
-    }
-
-    private void setHighlightUsername() {
-        if (mAdapter == null) {
-            return;
-        }
-        mAdapter.setHighlightUsername(mUsername);
     }
 
     private void showPreferences() {
