@@ -73,8 +73,8 @@
     <string name="pref_search_sort_value_default">default</string>
     <string name="pref_text_size_title">Text size</string>
     <string name="pref_font_title">Font</string>
-    <string name="pref_comment_display_title">Thread display</string>
-    <string name="pref_max_lines_title">Comment display</string>
+    <string name="pref_comment_display_title">Thread</string>
+    <string name="pref_max_lines_title">Comment</string>
     <string name="pref_lazy_load_title">Lazy load content</string>
     <string name="pref_lazy_load_summary">Load content only when you switch to its tab</string>
     <string name="pref_saved_item_sync_title">Enable offline access</string>
@@ -270,5 +270,6 @@
     <string name="offline_notice">You\'re currently offline</string>
     <string name="download_in_progress">Download in progress</string>
     <string name="love_it">I love it!</string>
+    <string name="display_options">Display options</string>
 
 </resources>

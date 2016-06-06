@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +30,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -71,30 +72,24 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private ItemRecyclerViewAdapter mAdapter;
     private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
     private boolean mColorCoded = true;
-    private String[] mDisplayOptionValues;
-    private String[] mMaxLinesOptionValues;
     private String mDisplayOption;
     private int mMaxLines;
     private String mUsername;
     private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-                                                      String key) {
-                    if (TextUtils.equals(key, getString(R.string.pref_color_code))) {
-                        mColorCoded = Preferences.colorCodeEnabled(getActivity());
-                        toggleColorCode();
-                    } else if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
-                        mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
-                        eagerLoad();
-                    } else if (TextUtils.equals(key, getString(R.string.pref_max_lines))) {
-                        mMaxLines = Preferences.getCommentMaxLines(getActivity());
-                        setMaxLines();
-                    } else if (TextUtils.equals(key, getString(R.string.pref_username))) {
-                        mUsername = Preferences.getUsername(getActivity());
-                        setHighlightUsername();
-                    }
+            (sharedPreferences, key) -> {
+                if (TextUtils.equals(key, getString(R.string.pref_color_code))) {
+                    mColorCoded = Preferences.colorCodeEnabled(getActivity());
+                    toggleColorCode();
+                } else if (TextUtils.equals(key, getString(R.string.pref_comment_display))) {
+                    mDisplayOption = Preferences.getCommentDisplayOption(getActivity());
+                    eagerLoad();
+                } else if (TextUtils.equals(key, getString(R.string.pref_max_lines))) {
+                    mMaxLines = Preferences.getCommentMaxLines(getActivity());
+                    setMaxLines();
+                } else if (TextUtils.equals(key, getString(R.string.pref_username))) {
+                    mUsername = Preferences.getUsername(getActivity());
+                    setHighlightUsername();
                 }
             };
 
@@ -164,66 +159,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     }
 
     @Override
-    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_item_view, menu);
-        mDisplayOptionValues = getResources().getStringArray(R.array.pref_comment_display_values);
-        SubMenu subMenu = menu.findItem(R.id.menu_thread).getSubMenu();
-        String[] options = getResources().getStringArray(R.array.pref_comment_display_options);
-        for (int i = 0; i < options.length; i++) {
-            subMenu.add(R.id.menu_thread_group, Menu.NONE, i, options[i]);
-        }
-        subMenu.setGroupCheckable(R.id.menu_thread_group, true, true);
-        mMaxLinesOptionValues = getResources().getStringArray(R.array.comment_max_lines_values);
-        subMenu = menu.findItem(R.id.menu_max_lines).getSubMenu();
-        options = getResources().getStringArray(R.array.comment_max_lines_options);
-        for (int i = 0; i < options.length; i++) {
-            subMenu.add(R.id.menu_max_lines_group, Menu.NONE, i, options[i]);
-        }
-        subMenu.setGroupCheckable(R.id.menu_max_lines_group, true, true);
-    }
-
-    @Override
-    protected void prepareOptionsMenu(Menu menu) {
-        MenuItem itemColorCode = menu.findItem(R.id.menu_color_code);
-        itemColorCode.setEnabled(mAdapter != null &&
-                mAdapter instanceof SinglePageItemRecyclerViewAdapter);
-        itemColorCode.setChecked(itemColorCode.isEnabled() && mColorCoded);
-        SubMenu subMenuThread = menu.findItem(R.id.menu_thread).getSubMenu();
-        for (int i = 0; i < mDisplayOptionValues.length; i++) {
-            if (TextUtils.equals(mDisplayOption, mDisplayOptionValues[i])) {
-                subMenuThread.getItem(i).setChecked(true);
-            }
-        }
-        SubMenu subMenuMaxLines = menu.findItem(R.id.menu_max_lines).getSubMenu();
-        for (int i = 0; i < mMaxLinesOptionValues.length; i++) {
-            int value = Integer.parseInt(mMaxLinesOptionValues[i]);
-            if (value == -1) {
-                value = Integer.MAX_VALUE;
-            }
-            if (mMaxLines == value) {
-                subMenuMaxLines.getItem(i).setChecked(true);
-            }
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_color_code) {
-            Preferences.setColorCodeEnabled(getActivity(), !mColorCoded);
-            return true;
-        }
-        if (item.getGroupId() == R.id.menu_thread_group) {
-            if (item.isChecked()) {
-                return true;
-            }
-            Preferences.setCommentDisplayOption(getActivity(), mDisplayOptionValues[item.getOrder()]);
-            return true;
-        }
-        if (item.getGroupId() == R.id.menu_max_lines_group) {
-            if (item.isChecked()) {
-                return true;
-            }
-            Preferences.setCommentMaxLines(getActivity(), mMaxLinesOptionValues[item.getOrder()]);
+        if (item.getItemId() == R.id.menu_comments) {
+            showPreferences();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -274,6 +212,11 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
     }
 
+    @Override
+    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_item_view, menu);
+    }
+
     private void loadKidData() {
         mItemManager.getItem(mItemId, mCacheMode, new ItemResponseListener(this));
     }
@@ -309,7 +252,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.setMaxLines(mMaxLines);
         mAdapter.setHighlightUsername(mUsername);
-        invalidateOptionsMenu();
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -317,7 +259,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (mAdapter == null || !(mAdapter instanceof SinglePageItemRecyclerViewAdapter)) {
             return;
         }
-        invalidateOptionsMenu();
         ((SinglePageItemRecyclerViewAdapter) mAdapter).toggleColorCode(mColorCoded);
     }
 
@@ -325,7 +266,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (mAdapter == null) {
             return;
         }
-        invalidateOptionsMenu();
         mAdapter.setMaxLines(mMaxLines);
     }
 
@@ -336,11 +276,12 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         mAdapter.setHighlightUsername(mUsername);
     }
 
-    private void invalidateOptionsMenu() {
-        if (!isAttached()) {
-            return;
-        }
-        getActivity().supportInvalidateOptionsMenu();
+    private void showPreferences() {
+        Bundle args = new Bundle();
+        args.putInt(PopupSettingsFragment.EXTRA_XML_PREFERENCES, R.xml.preferences_comments);
+        ((DialogFragment) Fragment.instantiate(getActivity(),
+                PopupSettingsFragment.class.getName(), args))
+                .show(getFragmentManager(), PopupSettingsFragment.class.getName());
     }
 
     private static class ItemResponseListener implements ResponseListener<Item> {

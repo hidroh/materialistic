@@ -75,20 +75,11 @@
     <item type="id" name="menu_range_month" />
     <item type="id" name="menu_range_year" />
     <item type="id" name="menu_font_options" />
-    <item type="id" name="menu_font_size" />
-    <item type="id" name="menu_font" />
-    <item type="id" name="menu_font_size_group" />
-    <item type="id" name="menu_font_group" />
     <item type="id" name="menu_sort" />
     <item type="id" name="menu_sort_group" />
     <item type="id" name="menu_sort_recent" />
     <item type="id" name="menu_sort_popular" />
     <item type="id" name="menu_list_toggle" />
-    <item type="id" name="menu_color_code" />
-    <item type="id" name="menu_thread" />
-    <item type="id" name="menu_thread_group" />
-    <item type="id" name="menu_max_lines" />
-    <item type="id" name="menu_max_lines_group" />
     <item type="id" name="menu_contextual_save" />
     <item type="id" name="menu_contextual_vote" />
     <item type="id" name="menu_contextual_comment" />
@@ -96,6 +87,7 @@
     <item type="id" name="menu_send" />
     <item type="id" name="menu_quote" />
     <item type="id" name="menu_guidelines" />
+    <item type="id" name="menu_comments" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

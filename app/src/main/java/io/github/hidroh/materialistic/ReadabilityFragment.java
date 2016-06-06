@@ -18,17 +18,20 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -46,6 +49,17 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_TEXT_SIZE = "state:textSize";
     private static final String STATE_TYPEFACE_NAME = "state:typefaceName";
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
+            (sharedPreferences, key) -> {
+                if (TextUtils.equals(key, getString(R.string.pref_readability_font))) {
+                    mTypefaceName = Preferences.Theme.getReadabilityTypeface(getActivity());
+                    render();
+                } else if (TextUtils.equals(key, getString(R.string.pref_readability_text_size))) {
+                    mTextSize = toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(
+                            getActivity()));
+                    render();
+                }
+            };
     private NestedScrollView mScrollView;
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -54,9 +68,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
     private String mContent;
     private float mTextSize;
-    private String[] mTextSizeOptionValues;
     private String mTypefaceName;
-    private String[] mFontOptionValues;
     private boolean mAttached;
     private String mTextColor;
     private String mTextLinkColor;
@@ -65,6 +77,8 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     public void onAttach(Context context) {
         super.onAttach(context);
         mAttached = true;
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
 
     @Override
@@ -86,24 +100,6 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     @Override
     protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_font_options, menu);
-        mTextSizeOptionValues = getResources().getStringArray(R.array.pref_text_size_values);
-        mFontOptionValues = getResources().getStringArray(R.array.font_values);
-        SubMenu subMenu = menu.findItem(R.id.menu_font_size).getSubMenu();
-        String[] options = getResources().getStringArray(R.array.text_size_options);
-        String initialTextSize = Preferences.Theme.getPreferredReadabilityTextSize(getActivity());
-        for (int i = 0; i < options.length; i++) {
-            MenuItem item = subMenu.add(R.id.menu_font_size_group, Menu.NONE, i, options[i]);
-            item.setChecked(TextUtils.equals(initialTextSize, mTextSizeOptionValues[i]));
-        }
-        subMenu.setGroupCheckable(R.id.menu_font_size_group, true, true);
-        subMenu = menu.findItem(R.id.menu_font).getSubMenu();
-        options = getResources().getStringArray(R.array.font_options);
-        String initialTypeface = Preferences.Theme.getReadabilityTypeface(getActivity());
-        for (int i = 0; i < options.length; i++) {
-            MenuItem item = subMenu.add(R.id.menu_font_group, Menu.NONE, i, options[i]);
-            item.setChecked(TextUtils.equals(initialTypeface, mFontOptionValues[i]));
-        }
-        subMenu.setGroupCheckable(R.id.menu_font_group, true, true);
     }
 
     @Override
@@ -113,20 +109,9 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_font_size) {
+        if (item.getItemId() == R.id.menu_font_options) {
+            showPreferences();
             return true;
-        }
-        if (item.getGroupId() == R.id.menu_font_size_group) {
-            item.setChecked(true);
-            String choice = mTextSizeOptionValues[item.getOrder()];
-            mTextSize = toHtmlPx(Preferences.Theme.resolveTextSize(choice));
-            Preferences.Theme.savePreferredReadabilityTextSize(getActivity(), choice);
-            render();
-        } else if (item.getGroupId() == R.id.menu_font_group) {
-            item.setChecked(true);
-            mTypefaceName = mFontOptionValues[item.getOrder()];
-            Preferences.Theme.savePreferredReadabilityTypeface(getActivity(), mTypefaceName);
-            render();
         }
         return true;
     }
@@ -164,6 +149,8 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     public void onDetach() {
         super.onDetach();
         mAttached = false;
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
     }
 
     @Override
@@ -238,6 +225,14 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
 
     private float toHtmlPx(float dimen) {
         return dimen / getResources().getDisplayMetrics().density;
+    }
+
+    private void showPreferences() {
+        Bundle args = new Bundle();
+        args.putInt(PopupSettingsFragment.EXTRA_XML_PREFERENCES, R.xml.preferences_readability);
+        ((DialogFragment) Fragment.instantiate(getActivity(),
+                PopupSettingsFragment.class.getName(), args))
+                .show(getFragmentManager(), PopupSettingsFragment.class.getName());
     }
 
     private static class ReadabilityCallback implements ReadabilityClient.Callback {
