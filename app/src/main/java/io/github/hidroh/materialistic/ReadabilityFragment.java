@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
@@ -26,7 +25,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,14 +45,6 @@ import io.github.hidroh.materialistic.data.WebItem;
 public class ReadabilityFragment extends LazyLoadFragment implements Scrollable {
     public static final String EXTRA_ITEM = ReadabilityFragment.class.getName() +".EXTRA_ITEM";
     private static final String STATE_CONTENT = "state:content";
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
-            (sharedPreferences, key) -> {
-                if (TextUtils.equals(key, getString(R.string.pref_readability_font)) ||
-                        TextUtils.equals(key, getString(R.string.pref_readability_line_height)) ||
-                        TextUtils.equals(key, getString(R.string.pref_readability_text_size))) {
-                    render();
-                }
-            };
     private NestedScrollView mScrollView;
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -63,13 +53,16 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
     private String mContent;
     private boolean mAttached;
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mAttached = true;
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
+                R.string.pref_readability_font,
+                R.string.pref_readability_line_height,
+                R.string.pref_readability_text_size);
     }
 
     @Override
@@ -131,8 +124,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     public void onDetach() {
         super.onDetach();
         mAttached = false;
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.unsubscribe(getActivity());
     }
 
     @Override
@@ -216,6 +208,12 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
         ((DialogFragment) Fragment.instantiate(getActivity(),
                 PopupSettingsFragment.class.getName(), args))
                 .show(getFragmentManager(), PopupSettingsFragment.class.getName());
+    }
+
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        if (!contextChanged) {
+            render();
+        }
     }
 
     private static class ReadabilityCallback implements ReadabilityClient.Callback {

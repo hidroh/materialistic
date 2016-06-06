@@ -17,11 +17,9 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -50,16 +48,7 @@ public class ListFragment extends BaseListFragment {
     public static final String EXTRA_FILTER = ListFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_CACHE_MODE = "state:cacheMode";
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    if (TextUtils.equals(key, getActivity().getString(R.string.pref_highlight_updated)) ||
-                            TextUtils.equals(key, getActivity().getString(R.string.pref_username))) {
-                        mAdapter.initDisplayOptions(getActivity());
-                    }
-                }
-            };
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private final StoryRecyclerViewAdapter mAdapter = new StoryRecyclerViewAdapter();
     private SwipeRefreshLayout mSwipeRefreshLayout;
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
@@ -82,10 +71,10 @@ public class ListFragment extends BaseListFragment {
         if (context instanceof RefreshCallback) {
             mRefreshCallback = (RefreshCallback) context;
         }
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .registerOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
+                R.string.pref_highlight_updated,
+                R.string.pref_username);
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,8 +137,7 @@ public class ListFragment extends BaseListFragment {
 
     @Override
     public void onDetach() {
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+        mPreferenceObservable.unsubscribe(getActivity());
         mRefreshCallback = null;
         mRecyclerView.setAdapter(null); // force adapter detach
         super.onDetach();
@@ -165,6 +153,12 @@ public class ListFragment extends BaseListFragment {
     @Override
     protected ListRecyclerViewAdapter getAdapter() {
         return mAdapter;
+    }
+
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        if (!contextChanged) {
+            mAdapter.initDisplayOptions(getActivity());
+        }
     }
 
     private void refresh() {

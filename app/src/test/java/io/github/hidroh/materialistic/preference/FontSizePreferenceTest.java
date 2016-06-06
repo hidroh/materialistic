@@ -15,13 +15,13 @@ import org.robolectric.util.ActivityController;
 import java.util.Arrays;
 import java.util.List;
 
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class FontSizePreferenceTest {
@@ -65,12 +65,7 @@ public class FontSizePreferenceTest {
     public void test() {
         preferenceView.performClick();
         ((Spinner) preferenceView.findViewById(R.id.spinner)).setSelection(selection);
-        shadowOf(activity).recreate();
-        float expected = activity.getTheme().obtainStyledAttributes(styleResId,
-                new int[]{R.attr.contentTextSize}).getDimension(0, 0);
-        float actual = activity.getTheme().obtainStyledAttributes(
-                new int[]{R.attr.contentTextSize}).getDimension(0, 0);
-        assertThat(actual).isEqualTo(expected);
+        assertThat(Preferences.Theme.resolvePreferredTextSize(activity)).isEqualTo(styleResId);
     }
 
     @After
