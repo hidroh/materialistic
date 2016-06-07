@@ -44,7 +44,7 @@ import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 
-public class WebFragment extends LazyLoadFragment implements Scrollable {
+public class WebFragment extends LazyLoadFragment implements Scrollable, Findable {
 
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private WebItem mItem;
@@ -148,6 +148,11 @@ public class WebFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public boolean scrollToPrevious() {
         return mScrollableHelper.scrollToPrevious();
+    }
+
+    @Override
+    public WebView getWebView() {
+        return mWebView;
     }
 
     @Override

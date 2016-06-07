@@ -42,7 +42,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
 
-public class ReadabilityFragment extends LazyLoadFragment implements Scrollable {
+public class ReadabilityFragment extends LazyLoadFragment implements Scrollable, Findable {
     public static final String EXTRA_ITEM = ReadabilityFragment.class.getName() +".EXTRA_ITEM";
     private static final String STATE_CONTENT = "state:content";
     private NestedScrollView mScrollView;
@@ -140,6 +140,11 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable 
     @Override
     public boolean scrollToPrevious() {
         return mScrollableHelper.scrollToPrevious();
+    }
+
+    @Override
+    public WebView getWebView() {
+        return mWebView;
     }
 
     @Override
