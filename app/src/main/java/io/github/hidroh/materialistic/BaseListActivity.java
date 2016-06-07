@@ -317,7 +317,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     }
 
-    private void bindViewPager(WebItem item) {
+    private void bindViewPager(@NonNull WebItem item) {
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
                 getSupportFragmentManager(), item, true, getItemCacheMode());
         mViewPager.setAdapter(adapter);

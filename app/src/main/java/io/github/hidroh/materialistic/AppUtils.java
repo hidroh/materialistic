@@ -418,6 +418,26 @@ public class AppUtils {
                 Preferences.Theme.resolvePreferredTextSize(context)));
     }
 
+    public static String wrapHtml(Context context, String html) {
+        return context.getString(R.string.html,
+                Preferences.Theme.getReadabilityTypeface(context),
+                toHtmlPx(context, Preferences.Theme.resolvePreferredReadabilityTextSize(context)),
+                AppUtils.toHtmlColor(context, android.R.attr.textColorPrimary),
+                AppUtils.toHtmlColor(context, android.R.attr.textColorLink),
+                html,
+                toHtmlPx(context, context.getResources().getDimension(R.dimen.activity_vertical_margin)),
+                toHtmlPx(context, context.getResources().getDimension(R.dimen.activity_horizontal_margin)),
+                Preferences.getReadabilityLineHeight(context));
+    }
+
+    private static float toHtmlPx(Context context, @StyleRes int textStyleAttr) {
+        return toHtmlPx(context, AppUtils.getDimension(context, textStyleAttr, R.attr.contentTextSize));
+    }
+
+    private static float toHtmlPx(Context context, float dimen) {
+        return dimen / context.getResources().getDisplayMetrics().density;
+    }
+
     private static CharSequence trim(CharSequence charSequence) {
         if (TextUtils.isEmpty(charSequence)) {
             return charSequence;
