@@ -36,6 +36,7 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">?colorPrimary</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
         <item name="popupMenuStyle">@style/Widget.AppCompat.Light.PopupMenu.Overflow</item>
         <item name="drawerArrowStyle">@style/AppDrawerArrowToggle</item>
@@ -63,6 +64,7 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">?colorPrimary</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Dark</item>
         <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
         <item name="popupMenuStyle">@style/Widget.AppCompat.PopupMenu.Overflow</item>
         <item name="drawerArrowStyle">@style/AppDrawerArrowToggle</item>
@@ -101,6 +103,7 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/whiteT70</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Dark</item>
     </style>
 
     <style name="Sepia">
@@ -110,6 +113,7 @@
         <item name="android:textColorPrimary">@color/brown800</item>
         <item name="android:textColorSecondary">@color/brown400</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Sepia</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Sepia</item>
     </style>
 
     <style name="Green">
@@ -120,6 +124,7 @@
         <item name="android:textColorPrimary">@color/teal900</item>
         <item name="android:textColorSecondary">@color/teal600</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Green</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Green</item>
     </style>
 
     <style name="Solarized">
@@ -131,6 +136,7 @@
         <item name="android:textColorPrimary">@color/solarizedBase01</item>
         <item name="android:textColorSecondary">@color/solarizedBase1</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Solarized</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Solarized</item>
     </style>
 
     <style name="Solarized.Dark">
@@ -142,6 +148,7 @@
         <item name="android:textColorPrimary">@color/solarizedBase2</item>
         <item name="android:textColorSecondary">@color/solarizedBase1</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark.Solarized</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Solarized</item>
     </style>
 
     <!-- =================== -->
@@ -199,6 +206,50 @@
         <item name="android:textColorSecondary">@color/solarizedBase1</item>
         <item name="colorCardBackground">@color/solarizedBase03</item>
         <item name="colorCardHighlight">@color/solarizedBase02</item>
+    </style>
+
+    <style name="AppBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="colorAccent">@color/redA200</item>
+        <item name="android:textColorPrimary">@color/blackT87</item>
+        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
+        <item name="android:colorBackground">@color/grey100</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Dark" parent="Theme.Design.BottomSheetDialog">
+        <item name="colorAccent">@color/redA100</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
+        <item name="android:colorBackground">@color/cardview_dark_background</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Sepia">
+        <item name="colorPrimary">@color/orange300</item>
+        <item name="android:textColorPrimary">@color/brown800</item>
+        <item name="android:textColorSecondary">@color/brown400</item>
+        <item name="android:colorBackground">@color/orange50</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Green">
+        <item name="colorPrimary">@color/teal300</item>
+        <item name="android:textColorPrimary">@color/teal900</item>
+        <item name="android:textColorSecondary">@color/teal600</item>
+        <item name="android:colorBackground">@color/teal50</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Solarized">
+        <item name="colorPrimary">@color/orange300</item>
+        <item name="android:textColorPrimary">@color/solarizedBase01</item>
+        <item name="android:textColorSecondary">@color/solarizedBase1</item>
+        <item name="android:colorBackground">@color/solarizedBase3</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Dark.Solarized">
+        <item name="colorPrimary">@color/grey900</item>
+        <item name="android:textColorPrimary">@color/solarizedBase2</item>
+        <item name="android:textColorSecondary">@color/solarizedBase1</item>
+        <item name="android:colorBackground">@color/solarizedBase03</item>
     </style>
 
 </resources>
