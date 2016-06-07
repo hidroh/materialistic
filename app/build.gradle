@@ -35,11 +35,9 @@ android {
         htmlReport false
         xmlReport false
         textReport true
+        lintConfig file("${rootProject.getRootDir()}/lint.xml")
         warningsAsErrors true
         abortOnError true
-        ignore 'ResourceType' // TODO http://b.android.com/201882
-        informational 'Overdraw', // TODO http://b.android.com/169879
-                'MissingTranslation'
         explainIssues false
         absolutePaths false
     }

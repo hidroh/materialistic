@@ -312,10 +312,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
             AppUtils.toggleFab(mReplyButton, true);
-            mReplyButton.setOnClickListener(v ->
-                    startActivity(new Intent(BaseListActivity.this, ComposeActivity.class)
-                            .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle())));
             bindViewPager(item);
             mSessionManager.view(this, item.getId());
         }
@@ -325,8 +321,16 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
                 getSupportFragmentManager(), item, true, getItemCacheMode());
         mViewPager.setAdapter(adapter);
+        mReplyButton.setOnClickListener(v -> adapter.onFabClick(mReplyButton, mViewPager.getCurrentItem()));
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                mReplyButton.setImageResource(tab.getPosition() == 0 ?
+                        R.drawable.ic_reply_white_24dp : R.drawable.ic_search_white_24dp);
+            }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Fragment fragment = adapter.getItem(mViewPager.getCurrentItem());

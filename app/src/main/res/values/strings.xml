@@ -275,5 +275,7 @@
     <string name="love_it">I love it!</string>
     <string name="display_options">Display options</string>
     <string name="pull_up_hint">Pull up for more</string>
+    <string name="find_in_page">Find in page</string>
+    <string name="no_matches">No matches found</string>
 
 </resources>

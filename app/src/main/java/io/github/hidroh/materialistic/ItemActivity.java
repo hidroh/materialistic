@@ -281,11 +281,6 @@ public class ItemActivity extends InjectableActivity {
         mCustomTabsDelegate.mayLaunchUrl(Uri.parse(story.getUrl()), null, null);
         bindFavorite();
         mSessionManager.view(this, story.getId());
-        mReplyButton.setOnClickListener(v ->
-                startActivity(new Intent(ItemActivity.this, ComposeActivity.class)
-                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
-                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
-                                story instanceof Item ? ((Item) story).getText() : null)));
         mVoteButton.setVisibility(View.VISIBLE);
         mVoteButton.setOnClickListener(v -> vote(story));
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
@@ -322,6 +317,13 @@ public class ItemActivity extends InjectableActivity {
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                mReplyButton.setImageResource(tab.getPosition() == 0 ?
+                        R.drawable.ic_reply_white_24dp : R.drawable.ic_search_white_24dp);
+            }
+
+            @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 Scrollable scrollable = getScrollable();
                 if (scrollable != null) {
@@ -347,6 +349,7 @@ public class ItemActivity extends InjectableActivity {
         } else {
             findViewById(R.id.header_card_view).setClickable(false);
         }
+        mReplyButton.setOnClickListener(v -> mAdapter.onFabClick(mReplyButton, mViewPager.getCurrentItem()));
     }
 
     private void decorateFavorite(boolean isFavorite) {
