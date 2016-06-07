@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -184,27 +183,7 @@ public class ReadabilityFragment extends LazyLoadFragment implements Scrollable,
     }
 
     private void render() {
-        mWebView.loadDataWithBaseURL(null, wrap(mContent), "text/html", "UTF-8", null);
-    }
-
-    private String wrap(String html) {
-        return getString(R.string.readability_html,
-                Preferences.Theme.getReadabilityTypeface(getActivity()),
-                toHtmlPx(Preferences.Theme.resolvePreferredReadabilityTextSize(getActivity())),
-                AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorPrimary),
-                AppUtils.toHtmlColor(getActivity(), android.R.attr.textColorLink),
-                html,
-                toHtmlPx(getResources().getDimension(R.dimen.activity_vertical_margin)),
-                toHtmlPx(getResources().getDimension(R.dimen.activity_horizontal_margin)),
-                Preferences.getReadabilityLineHeight(getActivity()));
-    }
-
-    private float toHtmlPx(@StyleRes int textStyleAttr) {
-        return toHtmlPx(AppUtils.getDimension(getActivity(), textStyleAttr, R.attr.contentTextSize));
-    }
-
-    private float toHtmlPx(float dimen) {
-        return dimen / getResources().getDisplayMetrics().density;
+        mWebView.loadDataWithBaseURL(null, AppUtils.wrapHtml(getActivity(), mContent), "text/html", "UTF-8", null);
     }
 
     private void showPreferences() {

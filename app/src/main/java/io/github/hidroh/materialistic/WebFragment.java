@@ -21,16 +21,21 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
@@ -49,33 +54,42 @@ public class WebFragment extends LazyLoadFragment implements Scrollable, Findabl
     private static final String EXTRA_ITEM = WebFragment.class.getName() + ".EXTRA_ITEM";
     private WebItem mItem;
     private WebView mWebView;
-    private TextView mText;
     private NestedScrollView mScrollView;
-    private boolean mIsHackerNewsUrl;
     private boolean mExternalRequired = false;
+    private boolean mIsHackerNewsUrl;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
 
-    public static WebFragment instantiate(Context context, WebItem item) {
-        final WebFragment fragment = (WebFragment) Fragment.instantiate(context, WebFragment.class.getName());
-        fragment.mItem = item;
-        fragment.mIsHackerNewsUrl = AppUtils.isHackerNewsUrl(item);
-        return fragment;
+    public static WebFragment instantiate(Context context, @NonNull WebItem item) {
+        Bundle args = new Bundle();
+        args.putParcelable(EXTRA_ITEM, item);
+        return (WebFragment) Fragment.instantiate(context, WebFragment.class.getName(), args);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
+                R.string.pref_readability_font,
+                R.string.pref_readability_line_height,
+                R.string.pref_readability_text_size);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            mItem = getArguments().getParcelable(EXTRA_ITEM);
+        } else {
             mItem = savedInstanceState.getParcelable(EXTRA_ITEM);
         }
+        mIsHackerNewsUrl = AppUtils.isHackerNewsUrl(mItem);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (mIsHackerNewsUrl) {
-            return createLocalView(container, savedInstanceState);
-        }
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web, container, false);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
@@ -89,7 +103,9 @@ public class WebFragment extends LazyLoadFragment implements Scrollable, Findabl
                 super.onProgressChanged(view, newProgress);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(newProgress);
-                mWebView.setBackgroundColor(Color.WHITE);
+                if (!mIsHackerNewsUrl) {
+                    mWebView.setBackgroundColor(Color.WHITE);
+                }
                 if (newProgress == 100) {
                     progressBar.setVisibility(View.GONE);
                     mWebView.setVisibility(mExternalRequired ? View.GONE : View.VISIBLE);
@@ -120,6 +136,11 @@ public class WebFragment extends LazyLoadFragment implements Scrollable, Findabl
             return false;
         });
         AppUtils.enableWebViewZoom(mWebView.getSettings());
+        if (mIsHackerNewsUrl) {
+            mWebView.getSettings().setLoadWithOverviewMode(false);
+            mWebView.getSettings().setUseWideViewPort(false);
+            mWebView.getSettings().setJavaScriptEnabled(false);
+        }
         return view;
     }
 
@@ -130,9 +151,35 @@ public class WebFragment extends LazyLoadFragment implements Scrollable, Findabl
     }
 
     @Override
+    protected void createOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_font_options, menu);
+    }
+
+    @Override
+    protected void prepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.menu_font_options).setVisible(mItem instanceof Item &&
+                !TextUtils.isEmpty(((Item) mItem).getText()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_font_options) {
+            showPreferences();
+            return true;
+        }
+        return true;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_ITEM, mItem);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mPreferenceObservable.unsubscribe(getActivity());
     }
 
     @Override
@@ -159,28 +206,37 @@ public class WebFragment extends LazyLoadFragment implements Scrollable, Findabl
     protected void load() {
         if (mIsHackerNewsUrl) {
             bindContent();
-        } else if (mItem != null) {
+        } else {
             mWebView.loadUrl(mItem.getUrl());
         }
     }
 
-    private View createLocalView(ViewGroup container, Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState)
-                .inflate(R.layout.fragment_web_hn, container, false);
-        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
-        mText = (TextView) view.findViewById(R.id.text);
-        return view;
-    }
-
-    private void onItemLoaded(Item response) {
-        AppUtils.setTextWithLinks(mText, response.getText());
+    private void onItemLoaded(@NonNull Item response) {
+        getActivity().supportInvalidateOptionsMenu();
+        mItem = response;
+        bindContent();
     }
 
     private void bindContent() {
         if (mItem instanceof Item) {
-            AppUtils.setTextWithLinks(mText, ((Item) mItem).getText());
+            mWebView.loadDataWithBaseURL(null, AppUtils.wrapHtml(getActivity(), ((Item) mItem).getText()),
+                    "text/html", "UTF-8", null);
         } else {
             mItemManager.getItem(mItem.getId(), ItemManager.MODE_DEFAULT, new ItemResponseListener(this));
+        }
+    }
+
+    private void showPreferences() {
+        Bundle args = new Bundle();
+        args.putInt(PopupSettingsFragment.EXTRA_XML_PREFERENCES, R.xml.preferences_readability);
+        ((DialogFragment) Fragment.instantiate(getActivity(),
+                PopupSettingsFragment.class.getName(), args))
+                .show(getFragmentManager(), PopupSettingsFragment.class.getName());
+    }
+
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        if (!contextChanged) {
+            bindContent();
         }
     }
 

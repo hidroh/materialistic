@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
-import android.widget.TextView;
+import android.support.v4.app.Fragment;
+import android.webkit.WebView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +18,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
@@ -32,12 +35,15 @@ import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.WebActivity;
 
-import static org.assertj.android.api.Assertions.assertThat;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentLocalTest {
@@ -56,7 +62,7 @@ public class WebFragmentLocalTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
-                .commit();
+                .apply();
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
@@ -97,7 +103,8 @@ public class WebFragmentLocalTest {
                 return "text";
             }
         });
-        assertThat((TextView) activity.findViewById(R.id.text)).hasTextString("text");
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
+                .getLastLoadDataWithBaseURL().data).contains("text");
     }
 
     @Test
@@ -127,7 +134,57 @@ public class WebFragmentLocalTest {
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume().visible();
-        assertThat((TextView) activity.findViewById(R.id.text)).hasTextString("comment");
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
+                .getLastLoadDataWithBaseURL().data).contains("comment");
+    }
+
+    @Test
+    public void testMenu() {
+        TestWebItem item = new TestWebItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public String getUrl() {
+                return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
+            }
+
+            @Override
+            public String getDisplayedTitle() {
+                return "Ask HN";
+            }
+        };
+        Intent intent = new Intent();
+        intent.putExtra(WebActivity.EXTRA_ITEM, item);
+        controller.withIntent(intent).create().start().resume().visible();
+        verify(itemManager).getItem(eq("1"), eq(ItemManager.MODE_DEFAULT), listener.capture());
+        listener.getValue().onResponse(new TestItem() {
+            @Override
+            public String getText() {
+                return "text";
+            }
+        });
+        Fragment fragment = activity.getSupportFragmentManager()
+                .findFragmentByTag(WebFragment.class.getName());
+        assertTrue(fragment.hasOptionsMenu());
+        fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_font_options));
+        assertNotNull(ShadowDialog.getLatestDialog());
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
+                .apply();
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
+                .getLastLoadDataWithBaseURL().data)
+                .contains("text")
+                .contains("DroidSans.ttf");
     }
 
     @After

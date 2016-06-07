@@ -55,7 +55,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     private FindDialog mFindDialog;
 
     public ItemPagerAdapter(Context context, FragmentManager fm,
-                            WebItem item, boolean showArticle, int cacheMode) {
+                            @NonNull WebItem item, boolean showArticle, int cacheMode) {
         super(fm);
         mContext = context;
         mItem = item;
