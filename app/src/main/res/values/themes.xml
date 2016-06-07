@@ -148,7 +148,7 @@
         <item name="android:textColorPrimary">@color/solarizedBase2</item>
         <item name="android:textColorSecondary">@color/solarizedBase1</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark.Solarized</item>
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Solarized</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Dark.Solarized</item>
     </style>
 
     <!-- =================== -->
