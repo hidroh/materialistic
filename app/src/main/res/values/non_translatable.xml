@@ -60,22 +60,31 @@
                 </style>
             </head>
             <body>
-                <h3>v2.8</h3>
+                <h3>v2.9</h3>
+                <ul>
+                    <li>
+                        Full screen reading mode for article &amp; readability:
+                        <ul>
+                            <li>Navigate back/forward</li>
+                            <li>Zoom in/out</li>
+                            <li>Find in page</li>
+                        </ul>
+                    </li>
+                    <li><b>New option:</b> adjust line spacing</li>
+                    <li><b>New settings pane</b> for stories, comments &amp; readability</li>
+                    <li>Improve offline saving</li>
+                </ul>
+                <h3>v2.6-v2.8</h3>
                 <ul>
                     <li><b>New section:</b> Best stories (<a href="https://news.ycombinator.com/best">news.ycombinator.com/best</a>)</li>
-                    <li><b>New option:</b> choose default section when app launches</li>
-                    <li><b>New option:</b> block ads for internal browser</li>
-                    <li>Improve internal browser loading speed</li>
-                    <li>Fix saved stories not accessible while offline</li>
-                </ul>
-                <h3>v2.7</h3>
-                <ul>
-                    <li><b>New option:</b> navigate stories and comments using volume keys</li>
-                    <li>Improve Chrome custom tabs speed</li>
-                </ul>
-                <h3>v2.6</h3>
-                <ul>
-                    <li><b>New option:</b> download saved stories for offline reading</li>
+                    <li><b>New options:</b>
+                        <ul>
+                            <li>Choose default section when app launches</li>
+                            <li>Block ads for internal browser</li>
+                            <li>Navigate stories and comments using volume keys</li>
+                            <li>Download saved stories for offline reading</li>
+                        </ul>
+                    </li>
                     <li>New pure black theme</li>
                 </ul>
             </body>
