@@ -47,6 +47,7 @@
     <string translatable="false" name="pref_story_display">pref_story_display</string>
     <string translatable="false" name="pref_text_size">pref_text_size</string>
     <string translatable="false" name="pref_theme">pref_theme</string>
+    <string translatable="false" name="pref_thread_indicator">pref_thread_indicator</string>
     <string translatable="false" name="pref_username">pref_username</string>
     <string translatable="false" name="pref_volume">pref_volume</string>
     <string translatable="false" name="pref_volume_help">pref_volume_help</string>

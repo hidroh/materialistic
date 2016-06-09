@@ -19,9 +19,9 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -35,16 +35,17 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
     private final TypedArray mColors;
     private final int mLevelIndicatorWidth;
     private boolean mColorCodeEnabled;
+    private boolean mThreadIndicatorEnabled;
 
     public CommentItemDecoration(Context context) {
         mPaint = new Paint();
-        mPaint.setColor(ContextCompat.getColor(context, R.color.blackT12));
         mPaint.setStrokeWidth(context.getResources().getDimensionPixelSize(R.dimen.divider));
         mHorizontalMargin = context.getResources()
                 .getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(context, R.dimen.level_indicator_width);
         mColors = context.getResources().obtainTypedArray(R.array.color_codes);
         mColorCodeEnabled = Preferences.colorCodeEnabled(context);
+        mThreadIndicatorEnabled = Preferences.threadIndicatorEnabled(context);
     }
 
     @Override
@@ -54,6 +55,9 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+        if (!mThreadIndicatorEnabled) {
+            return;
+        }
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             int level = parent.getChildViewHolder(child).getItemViewType();
@@ -62,6 +66,9 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
                 if (mColorCodeEnabled) {
                     mPaint.setColor(mColors.getColor(j % mColors.length(), 0));
                     mPaint.setAlpha(31); // 12% alpha
+                } else {
+                    mPaint.setColor(Color.GRAY);
+                    mPaint.setAlpha(Math.max(0, 31 - 4 * j));
                 }
                 c.drawLine(left, child.getTop(), left, child.getBottom(), mPaint);
             }
@@ -70,5 +77,9 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
 
     public void setColorCodeEnabled(boolean colorCodeEnabled) {
         mColorCodeEnabled = colorCodeEnabled;
+    }
+
+    public void setThreadIndicatorEnabled(boolean threadIndicatorEnabled) {
+        mThreadIndicatorEnabled = threadIndicatorEnabled;
     }
 }

@@ -78,6 +78,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                 R.string.pref_username,
                 R.string.pref_line_height,
                 R.string.pref_color_code,
+                R.string.pref_thread_indicator,
                 R.string.pref_font,
                 R.string.pref_text_size);
     }
@@ -228,6 +229,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
             eagerLoad();
         } else if (mAdapter != null) {
             mItemDecoration.setColorCodeEnabled(Preferences.colorCodeEnabled(getActivity()));
+            mItemDecoration.setThreadIndicatorEnabled(Preferences.threadIndicatorEnabled(getActivity()));
             mAdapter.initDisplayOptions(getActivity());
         }
     }

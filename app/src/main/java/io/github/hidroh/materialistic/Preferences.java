@@ -129,6 +129,10 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
+    public static boolean threadIndicatorEnabled(Context context) {
+        return get(context, R.string.pref_thread_indicator, true);
+    }
+
     public static boolean highlightUpdatedEnabled(Context context) {
         return get(context, R.string.pref_highlight_updated, true);
     }
