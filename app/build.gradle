@@ -16,11 +16,11 @@ android {
         versionName "2.8"
         buildConfigField "int", "LATEST_RELEASE", "51"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
-        buildConfigField "String", "READABILITY_TOKEN", "\"c741161b35309fa7e4dc6216fcd832c59d11f345\""
+        buildConfigField "String", "READABILITY_TOKEN", "\"\""
     }
 
     buildTypes {
-        debug {
+        release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
