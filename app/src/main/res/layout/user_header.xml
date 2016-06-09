@@ -20,6 +20,7 @@
     android:id="@+id/meta_container"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:layout_width="match_parent"
@@ -33,9 +34,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:textSize="?attr/titleTextSize"
         android:ellipsize="end"
-        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/user_info"

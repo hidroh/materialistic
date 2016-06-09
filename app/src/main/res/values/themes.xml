@@ -29,6 +29,8 @@
         <item name="colorCardHighlight">@color/orange100</item>
         <item name="android:textColorPrimary">@color/blackT87</item>
         <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="contentBackground">@color/grey50</item>
 
         <!-- default theme override -->
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
@@ -57,6 +59,8 @@
         <item name="colorCardHighlight">@color/grey800</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="contentBackground">@color/grey850</item>
 
         <!-- default theme override -->
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
@@ -81,7 +85,7 @@
 
     <style name="AppTheme.Translucent">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="contentBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
@@ -90,7 +94,7 @@
 
     <style name="AppTheme.Dark.Translucent">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="contentBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 

@@ -41,13 +41,13 @@ public class ThreadPreviewActivity extends InjectableActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         Item item = getIntent().getParcelableExtra(EXTRA_ITEM);
         if (item == null) {
             finish();
             return;
         }
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_thread_preview);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
