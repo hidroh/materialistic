@@ -19,9 +19,9 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -38,7 +38,6 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
 
     public CommentItemDecoration(Context context) {
         mPaint = new Paint();
-        mPaint.setColor(ContextCompat.getColor(context, R.color.blackT12));
         mPaint.setStrokeWidth(context.getResources().getDimensionPixelSize(R.dimen.divider));
         mHorizontalMargin = context.getResources()
                 .getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
@@ -62,6 +61,9 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
                 if (mColorCodeEnabled) {
                     mPaint.setColor(mColors.getColor(j % mColors.length(), 0));
                     mPaint.setAlpha(31); // 12% alpha
+                } else {
+                    mPaint.setColor(Color.GRAY);
+                    mPaint.setAlpha(Math.max(0, 31 - 4 * j));
                 }
                 c.drawLine(left, child.getTop(), left, child.getBottom(), mPaint);
             }
