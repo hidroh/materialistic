@@ -17,9 +17,11 @@
 package io.github.hidroh.materialistic;
 
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,7 +30,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +46,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
+import io.github.hidroh.materialistic.widget.ViewPager;
 
 /**
  * List activity that renders alternative layouts for portrait/landscape
@@ -55,6 +58,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private static final String STATE_SELECTED_ITEM = "state:selectedItem";
     private static final String STATE_STORY_VIEW_MODE = "state:storyViewMode";
     private static final String STATE_EXTERNAL_BROWSER = "state:externalBrowser";
+    private static final String STATE_FULLSCREEN = "state:fullscreen";
     private boolean mIsMultiPane;
     protected WebItem mSelectedItem;
     private Preferences.StoryViewMode mStoryViewMode;
@@ -68,7 +72,15 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
+    private boolean mFullscreen;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mFullscreen = intent.getBooleanExtra(BaseWebFragment.EXTRA_FULLSCREEN, false);
+            setFullscreen();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +100,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
         if (mIsMultiPane) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
+                    new IntentFilter(BaseWebFragment.ACTION_FULLSCREEN));
             mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
             mTabLayout.setVisibility(View.GONE);
             mViewPager = (ViewPager) findViewById(R.id.content);
@@ -111,6 +125,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                     savedInstanceState.getInt(STATE_STORY_VIEW_MODE, 0)];
             mExternalBrowser = savedInstanceState.getBoolean(STATE_EXTERNAL_BROWSER);
             mSelectedItem = savedInstanceState.getParcelable(STATE_SELECTED_ITEM);
+            mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN);
             if (mIsMultiPane) {
                 openMultiPaneItem(mSelectedItem);
             } else {
@@ -184,6 +199,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
         outState.putInt(STATE_STORY_VIEW_MODE, mStoryViewMode.ordinal());
         outState.putBoolean(STATE_EXTERNAL_BROWSER, mExternalBrowser);
+        outState.putBoolean(STATE_FULLSCREEN, mFullscreen);
     }
 
     @Override
@@ -197,6 +213,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onDestroy() {
         super.onDestroy();
         mPreferenceObservable.unsubscribe(this);
+        if (mIsMultiPane) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+        }
     }
 
     @Override
@@ -283,6 +302,17 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         return ItemManager.MODE_DEFAULT;
     }
 
+    private void setFullscreen() {
+        mTabLayout.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
+        mVolumeNavigationDelegate.setAppBarEnabled(!mFullscreen);
+        mViewPager.setSwipeEnabled(!mFullscreen);
+        if (mFullscreen) {
+            mReplyButton.hide();
+        } else {
+            mReplyButton.show();
+        }
+    }
+
     private Scrollable getScrollableList() {
         // TODO landscape behavior?
         return (Scrollable) getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
@@ -321,14 +351,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
                 getSupportFragmentManager(), item, true, getItemCacheMode());
         mViewPager.setAdapter(adapter);
-        mReplyButton.setOnClickListener(v -> adapter.onFabClick(mReplyButton, mViewPager.getCurrentItem()));
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
-                mReplyButton.setImageResource(tab.getPosition() == 0 ?
-                        R.drawable.ic_reply_white_24dp : R.drawable.ic_search_white_24dp);
+                AppUtils.toggleFabAction(mReplyButton, item, tab.getPosition() == 0);
             }
 
             @Override
@@ -346,6 +374,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             case Readability:
                 mViewPager.setCurrentItem(2);
                 break;
+        }
+        AppUtils.toggleFabAction(mReplyButton, item, mViewPager.getCurrentItem() == 0);
+        if (mFullscreen) {
+            setFullscreen();
         }
     }
 

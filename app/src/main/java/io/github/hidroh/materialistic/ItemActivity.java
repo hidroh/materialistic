@@ -16,7 +16,10 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,8 +32,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -58,6 +61,7 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
+import io.github.hidroh.materialistic.widget.ViewPager;
 
 public class ItemActivity extends InjectableActivity {
 
@@ -67,6 +71,7 @@ public class ItemActivity extends InjectableActivity {
     private static final String PARAM_ID = "id";
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
+    private static final String STATE_FULLSCREEN = "state:fullscreen";
     private WebItem mItem;
     private String mItemId = null;
     private ImageView mBookmark;
@@ -86,6 +91,7 @@ public class ItemActivity extends InjectableActivity {
     private FloatingActionButton mReplyButton;
     private ItemPagerAdapter mAdapter;
     private ViewPager mViewPager;
+    private boolean mFullscreen;
     private final ContentObserver mObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
@@ -99,6 +105,13 @@ public class ItemActivity extends InjectableActivity {
                 mItem.setFavorite(FavoriteManager.isAdded(uri));
                 bindFavorite();
             }
+        }
+    };
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mFullscreen = intent.getBooleanExtra(BaseWebFragment.EXTRA_FULLSCREEN, false);
+            setFullscreen();
         }
     };
 
@@ -126,9 +139,12 @@ public class ItemActivity extends InjectableActivity {
         final Intent intent = getIntent();
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
+                new IntentFilter(BaseWebFragment.ACTION_FULLSCREEN));
         if (savedInstanceState != null) {
             mItem = savedInstanceState.getParcelable(STATE_ITEM);
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
+            mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN);
         } else {
             if (Intent.ACTION_VIEW.equalsIgnoreCase(intent.getAction())) {
                 if (intent.getData() != null) {
@@ -198,6 +214,7 @@ public class ItemActivity extends InjectableActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_ITEM, mItem);
         outState.putString(STATE_ITEM_ID, mItemId);
+        outState.putBoolean(STATE_FULLSCREEN, mFullscreen);
     }
 
     @Override
@@ -211,6 +228,7 @@ public class ItemActivity extends InjectableActivity {
     protected void onDestroy() {
         super.onDestroy();
         getContentResolver().unregisterContentObserver(mObserver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -230,6 +248,17 @@ public class ItemActivity extends InjectableActivity {
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
                 super.onKeyLongPress(keyCode, event);
+    }
+
+    private void setFullscreen() {
+        mAppBar.setExpanded(!mFullscreen, true);
+        mVolumeNavigationDelegate.setAppBarEnabled(!mFullscreen);
+        mViewPager.setSwipeEnabled(!mFullscreen);
+        if (mFullscreen) {
+            mReplyButton.hide();
+        } else {
+            mReplyButton.show();
+        }
     }
 
     private void onItemLoaded(@Nullable Item response) {
@@ -319,8 +348,7 @@ public class ItemActivity extends InjectableActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
-                mReplyButton.setImageResource(tab.getPosition() == 0 ?
-                        R.drawable.ic_reply_white_24dp : R.drawable.ic_search_white_24dp);
+                AppUtils.toggleFabAction(mReplyButton, mItem, tab.getPosition() == 0);
             }
 
             @Override
@@ -342,6 +370,7 @@ public class ItemActivity extends InjectableActivity {
                 mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
                 break;
         }
+        AppUtils.toggleFabAction(mReplyButton, mItem, mViewPager.getCurrentItem() == 0);
         if (story.isStoryType() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,
@@ -349,7 +378,9 @@ public class ItemActivity extends InjectableActivity {
         } else {
             findViewById(R.id.header_card_view).setClickable(false);
         }
-        mReplyButton.setOnClickListener(v -> mAdapter.onFabClick(mReplyButton, mViewPager.getCurrentItem()));
+        if (mFullscreen) {
+            setFullscreen();
+        }
     }
 
     private void decorateFavorite(boolean isFavorite) {

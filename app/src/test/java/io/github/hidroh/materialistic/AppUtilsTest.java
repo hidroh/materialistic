@@ -5,6 +5,8 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -19,12 +21,14 @@ import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.TestListActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -36,6 +40,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
+import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
@@ -207,5 +212,16 @@ public class AppUtilsTest {
         assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
                 .hasComponent(RuntimeEnvironment.application, OfflineWebActivity.class)
                 .hasExtra(OfflineWebActivity.EXTRA_URL, "http://example.com");
+    }
+
+    @Test
+    public void testFullscreenButton() {
+        ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
+        TestListActivity activity = controller.create().get();
+        FloatingActionButton fab = new FloatingActionButton(activity);
+        AppUtils.toggleFabAction(fab, null, false);
+        fab.performClick();
+        assertThat(shadowOf(LocalBroadcastManager.getInstance(activity)).getSentBroadcastIntents()).isNotEmpty();
+        controller.destroy();
     }
 }

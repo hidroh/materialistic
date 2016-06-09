@@ -278,5 +278,13 @@
     <string name="pull_up_hint">Pull up for more</string>
     <string name="find_in_page">Find in page</string>
     <string name="no_matches">No matches found</string>
+    <string name="back">Back</string>
+    <string name="forward">Forward</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="refresh">Refresh</string>
+    <string name="exit_fullscreen">Exit</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
 
 </resources>

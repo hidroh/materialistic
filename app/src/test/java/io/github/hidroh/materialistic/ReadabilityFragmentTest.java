@@ -88,11 +88,10 @@ public class ReadabilityFragmentTest {
         verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
                 callback.capture());
         callback.getValue().onResponse("<div>content</div>");
-        assertThat(activity.findViewById(R.id.progress)).isNotVisible();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
                 .getLastLoadDataWithBaseURL().data).contains("content");
         shadowOf(activity).recreate();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
                 .getLastLoadDataWithBaseURL().data).contains("content");
         controller.pause().stop().destroy();
     }
@@ -105,8 +104,7 @@ public class ReadabilityFragmentTest {
                 callback.capture());
         callback.getValue().onResponse(null);
         reset(readabilityClient);
-        assertThat(activity.findViewById(R.id.progress)).isNotVisible();
-        assertThat(activity.findViewById(R.id.empty)).isVisible();
+        assertThat(activity.findViewById(R.id.empty_readability)).isVisible();
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
         controller.pause().stop().destroy();
     }
@@ -135,7 +133,7 @@ public class ReadabilityFragmentTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_text_size), "3")
                 .apply();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
                 .getLastLoadDataWithBaseURL().data).contains("20");
         assertEquals(R.style.AppTextSize_XLarge,
                 Preferences.Theme.resolvePreferredReadabilityTextSize(activity));
@@ -151,7 +149,7 @@ public class ReadabilityFragmentTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
                 .apply();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.content))
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
                 .getLastLoadDataWithBaseURL().data).contains("DroidSans.ttf");
         assertEquals("DroidSans.ttf", Preferences.Theme.getReadabilityTypeface(activity));
         controller.pause().stop().destroy();

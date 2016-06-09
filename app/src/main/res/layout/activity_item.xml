@@ -50,7 +50,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
+    <io.github.hidroh.materialistic.widget.ViewPager
         android:id="@+id/view_pager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
