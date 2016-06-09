@@ -35,6 +35,7 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
     private final TypedArray mColors;
     private final int mLevelIndicatorWidth;
     private boolean mColorCodeEnabled;
+    private boolean mThreadIndicatorEnabled;
 
     public CommentItemDecoration(Context context) {
         mPaint = new Paint();
@@ -44,6 +45,7 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(context, R.dimen.level_indicator_width);
         mColors = context.getResources().obtainTypedArray(R.array.color_codes);
         mColorCodeEnabled = Preferences.colorCodeEnabled(context);
+        mThreadIndicatorEnabled = Preferences.threadIndicatorEnabled(context);
     }
 
     @Override
@@ -53,6 +55,9 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+        if (!mThreadIndicatorEnabled) {
+            return;
+        }
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             int level = parent.getChildViewHolder(child).getItemViewType();
@@ -72,5 +77,9 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
 
     public void setColorCodeEnabled(boolean colorCodeEnabled) {
         mColorCodeEnabled = colorCodeEnabled;
+    }
+
+    public void setThreadIndicatorEnabled(boolean threadIndicatorEnabled) {
+        mThreadIndicatorEnabled = threadIndicatorEnabled;
     }
 }
