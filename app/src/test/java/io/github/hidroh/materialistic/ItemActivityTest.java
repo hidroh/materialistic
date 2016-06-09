@@ -31,6 +31,7 @@ import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.shadows.ShadowToast;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -292,7 +293,7 @@ public class ItemActivityTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_custom_tab), false)
-                .commit();
+                .apply();
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
                 RuntimeEnvironment.application.getPackageManager();
         packageManager.addResolveInfoForIntent(
@@ -325,7 +326,7 @@ public class ItemActivityTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
-                .commit();
+                .apply();
         controller.withIntent(intent).create().start().resume();
         activity.findViewById(R.id.header_card_view).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
@@ -449,7 +450,7 @@ public class ItemActivityTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
                         activity.getString(R.string.pref_story_display_value_readability))
-                .commit();
+                .apply();
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull
@@ -520,6 +521,11 @@ public class ItemActivityTest {
 
     @Test
     public void testReply() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_comments))
+                .apply();
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1L));
         controller.withIntent(intent).create().start().resume();
@@ -554,6 +560,35 @@ public class ItemActivityTest {
         activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
         verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
+    }
+
+    @Test
+    public void testFullscreen() {
+        Intent intent = new Intent();
+        WebItem webItem = new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        };
+        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
+        controller.withIntent(intent).create().start().resume().visible();
+        ShadowFloatingActionButton shadowFab = (ShadowFloatingActionButton) ShadowExtractor
+                .extract(activity.findViewById(R.id.reply_button));
+        assertTrue(shadowFab.isVisible());
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        assertFalse(shadowFab.isVisible());
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, false));
+        assertTrue(shadowFab.isVisible());
     }
 
     @After

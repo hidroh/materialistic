@@ -44,6 +44,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.Html;
@@ -64,6 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
 
 public class AppUtils {
@@ -389,6 +391,23 @@ public class AppUtils {
             fab.hide();
             p.setBehavior(null);
         }
+    }
+
+    static void toggleFabAction(FloatingActionButton fab, WebItem item, boolean commentMode) {
+        Context context = fab.getContext();
+        fab.setImageResource(commentMode ? R.drawable.ic_reply_white_24dp : R.drawable.ic_zoom_out_map_white_24dp);
+        fab.setOnClickListener(v -> {
+            if (commentMode) {
+                context.startActivity(new Intent(context, ComposeActivity.class)
+                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
+                                item instanceof Item ? ((Item) item).getText() : null));
+            } else {
+                LocalBroadcastManager.getInstance(context)
+                        .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                                .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+            }
+        });
     }
 
     static String toHtmlColor(Context context, @AttrRes int colorAttr) {

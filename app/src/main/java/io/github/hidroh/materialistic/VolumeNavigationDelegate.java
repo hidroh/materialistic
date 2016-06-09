@@ -52,6 +52,7 @@ public class VolumeNavigationDelegate {
     private boolean mEnabled;
     private Scrollable mScrollable;
     private AppBarLayout mAppBarLayout;
+    private boolean mAppBarEnabled = true;
 
     public VolumeNavigationDelegate() {
         mPreferenceListener = (sharedPreferences, key) -> {
@@ -96,6 +97,14 @@ public class VolumeNavigationDelegate {
     public void setScrollable(Scrollable scrollable, AppBarLayout appBarLayout) {
         mScrollable = scrollable;
         mAppBarLayout = appBarLayout;
+    }
+
+    /**
+     * Toggle {@link AppBarLayout} expand/collapse
+     * @param enabled true to enable, false otherwise
+     */
+    public void setAppBarEnabled(boolean enabled) {
+        mAppBarEnabled = enabled;
     }
 
     /**
@@ -164,12 +173,12 @@ public class VolumeNavigationDelegate {
         }
         switch (direction) {
             case DIRECTION_UP:
-                if (!mScrollable.scrollToPrevious() && mAppBarLayout != null) {
+                if (mAppBarEnabled && !mScrollable.scrollToPrevious() && mAppBarLayout != null) {
                     mAppBarLayout.setExpanded(true, true);
                 }
                 break;
             case DIRECTION_DOWN:
-                if (mAppBarLayout != null &&
+                if (mAppBarEnabled && mAppBarLayout != null &&
                         mAppBarLayout.getHeight() == mAppBarLayout.getBottom()) {
                     mAppBarLayout.setExpanded(false, true);
                 } else {
@@ -189,7 +198,7 @@ public class VolumeNavigationDelegate {
             default:
                 break;
             case DIRECTION_UP:
-                if (mAppBarLayout != null) {
+                if (mAppBarEnabled && mAppBarLayout != null) {
                     mAppBarLayout.setExpanded(true, true);
                 }
                 if (mScrollable != null) {

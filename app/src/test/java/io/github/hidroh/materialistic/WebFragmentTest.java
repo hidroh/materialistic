@@ -9,9 +9,12 @@ import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.ViewSwitcher;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +30,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowToast;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -43,6 +48,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -79,8 +85,8 @@ public class WebFragmentTest {
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_ad_block), true)
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
-                .commit();
-        controller.withIntent(intent).create().start().resume();
+                .apply();
+        controller.withIntent(intent).create().start().resume().visible();
     }
 
     @Test
@@ -153,6 +159,124 @@ public class WebFragmentTest {
         WebViewClient client = shadowOf(webView).getWebViewClient();
         assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
         assertNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
+    }
+
+    @Test
+    public void testFullscreen() {
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        assertThat(activity.findViewById(R.id.control_switcher)).isVisible();
+        shadowOf(activity).recreate();
+        assertThat(activity.findViewById(R.id.control_switcher)).isVisible();
+        activity.findViewById(R.id.button_exit).performClick();
+        assertThat(activity.findViewById(R.id.control_switcher)).isNotVisible();
+    }
+
+    @Test
+    public void testSearch() {
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        activity.findViewById(R.id.button_find).performClick();
+        ViewSwitcher controlSwitcher = (ViewSwitcher) activity.findViewById(R.id.control_switcher);
+        assertThat(controlSwitcher.getDisplayedChild()).isEqualTo(1);
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
+                .extract(activity.findViewById(R.id.web_view));
+
+        // no query
+        EditText editText = (EditText) activity.findViewById(R.id.edittext);
+        shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
+        assertThat(activity.findViewById(R.id.button_next)).isNotVisible();
+
+        // with results
+        shadowWebView.setFindCount(1);
+        editText.setText("abc");
+        shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
+        assertThat(activity.findViewById(R.id.button_next)).isVisible();
+        activity.findViewById(R.id.button_next).performClick();
+        assertThat(shadowWebView.getFindIndex()).isEqualTo(1);
+        activity.findViewById(R.id.button_previous).performClick();
+        assertThat(shadowWebView.getFindIndex()).isEqualTo(0);
+        activity.findViewById(R.id.button_clear).performClick();
+        assertThat(editText).isEmpty();
+        assertThat(controlSwitcher.getDisplayedChild()).isEqualTo(0);
+
+        // with no results
+        shadowWebView.setFindCount(0);
+        editText.setText("abc");
+        shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
+        assertThat(activity.findViewById(R.id.button_next)).isNotVisible();
+        assertThat(ShadowToast.getTextOfLatestToast()).contains(activity.getString(R.string.no_matches));
+    }
+
+    @Test
+    public void testRefresh() {
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        ShadowWebView.lastGlobalLoadedUrl = null;
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
+                .extract(activity.findViewById(R.id.web_view));
+
+        // should reload if fully loaded
+        shadowWebView.setProgress(100);
+        activity.findViewById(R.id.button_refresh).performClick();
+        assertNotNull(ShadowWebView.getLastGlobalLoadedUrl());
+
+        // should stop loading if not yet fully loaded
+        ShadowWebView.lastGlobalLoadedUrl = null;
+        shadowWebView.setProgress(50);
+        activity.findViewById(R.id.button_refresh).performClick();
+        assertNull(ShadowWebView.getLastGlobalLoadedUrl());
+    }
+
+    @Test
+    public void testWebControls() {
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
+                .extract(activity.findViewById(R.id.web_view));
+        activity.findViewById(R.id.button_zoom_in).performClick();
+        assertThat(shadowWebView.getZoomDegree()).isEqualTo(1);
+        activity.findViewById(R.id.button_zoom_out).performClick();
+        assertThat(shadowWebView.getZoomDegree()).isEqualTo(0);
+        activity.findViewById(R.id.button_forward).performClick();
+        assertThat(shadowWebView.getPageIndex()).isEqualTo(1);
+        activity.findViewById(R.id.button_back).performClick();
+        assertThat(shadowWebView.getPageIndex()).isEqualTo(0);
+    }
+
+    @Test
+    public void testScroll() {
+        ShadowNestedScrollView shadowScrollView = (ShadowNestedScrollView) ShadowExtractor
+                .extract(activity.findViewById(R.id.nested_scroll_view));
+        WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(WebFragment.class.getName());
+        fragment.scrollToNext();
+        assertEquals(View.FOCUS_DOWN, shadowScrollView.getLastScrollDirection());
+        fragment.scrollToPrevious();
+        assertEquals(View.FOCUS_UP, shadowScrollView.getLastScrollDirection());
+        fragment.scrollToTop();
+        assertEquals(0, shadowScrollView.getSmoothScrollY());
+    }
+
+    @Test
+    public void testFullScroll() {
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
+                .extract(activity.findViewById(R.id.web_view));
+        WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(WebFragment.class.getName());
+        fragment.scrollToTop();
+        assertEquals(0, shadowWebView.getScrollY());
+        fragment.scrollToNext();
+        assertEquals(1, shadowWebView.getScrollY());
+        fragment.scrollToPrevious();
+        assertEquals(0, shadowWebView.getScrollY());
     }
 
     @After

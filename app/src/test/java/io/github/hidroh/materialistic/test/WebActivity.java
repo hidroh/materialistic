@@ -15,13 +15,17 @@ public class WebActivity extends InjectableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        WebItem item = getIntent().getParcelableExtra(EXTRA_ITEM);
-        fragment = WebFragment.instantiate(this, item);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content,
-                        fragment,
-                        WebFragment.class.getName())
-                .commit();
+        if (savedInstanceState == null) {
+            WebItem item = getIntent().getParcelableExtra(EXTRA_ITEM);
+            fragment = WebFragment.instantiate(this, item);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(android.R.id.content,
+                            fragment,
+                            WebFragment.class.getName())
+                    .commit();
+        } else {
+            fragment = (WebFragment) getSupportFragmentManager().findFragmentByTag(WebFragment.class.getName());
+        }
     }
 }

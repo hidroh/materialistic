@@ -15,38 +15,74 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.NestedScrollView
+<ViewSwitcher
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:id="@+id/nested_scroll_view"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorCardBackground"
-    android:scrollbarStyle="insideOverlay"
-    android:scrollbars="vertical"
+    android:id="@+id/view_switcher"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/nested_scroll_view"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/scroll_view_content"
+            android:orientation="vertical"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:targetApi="honeycomb">
+
+            <include
+                layout="@layout/toolbar_web"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
+
+            <FrameLayout
+                android:id="@+id/web_view_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <io.github.hidroh.materialistic.widget.CacheableWebView
+                    android:id="@id/web_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <ViewStub
+                    android:id="@id/empty"
+                    android:inflatedId="@id/empty"
+                    android:layout="@layout/button_download"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ProgressBar
+                    android:id="@id/progress"
+                    style="@style/AppProgressBarHorizontalStyle" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
 
     <FrameLayout
+        android:id="@+id/fullscreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <io.github.hidroh.materialistic.widget.CacheableWebView
-            android:id="@id/web_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <ViewStub
-            android:id="@id/empty"
-            android:inflatedId="@id/empty"
-            android:layout="@layout/button_download"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ProgressBar
-            android:id="@id/progress"
-            style="@style/AppProgressBarHorizontalStyle" />
+        <!-- dynamically add web view here -->
 
     </FrameLayout>
 
-</android.support.v4.widget.NestedScrollView>
+</ViewSwitcher>

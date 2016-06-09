@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2015 Ha Duy Trung
+  ~ Copyright (c) 2016 Ha Duy Trung
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,12 +14,12 @@
   ~ limitations under the License.
   -->
 
-<io.github.hidroh.materialistic.widget.TintableTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:iconTop="@drawable/ic_local_hotel_white_48dp"
-    android:text="@string/readability_failed"
-    android:breakStrategy="balanced"
-    style="@style/textEmptyStyle"
-    tools:ignore="UnusedAttribute" />
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z"/>
+</vector>
