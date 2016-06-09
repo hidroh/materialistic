@@ -34,7 +34,7 @@
     <style name="AppPreferenceThemeOverlay" parent="PreferenceThemeOverlay">
         <item name="preferenceHelpStyle">@style/Preference.PreferenceHelp</item>
         <item name="preferenceFragmentCompatStyle">@style/PreferenceFragment.NoDivider</item>
-        <item name="android:textAppearanceLarge">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:textAppearanceLarge">@style/TextAppearance.App.Large</item>
     </style>
 
     <style name="Preference.PreferenceHelp" parent="Preference">

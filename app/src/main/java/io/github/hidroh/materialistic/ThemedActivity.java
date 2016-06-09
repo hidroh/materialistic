@@ -29,6 +29,8 @@ public abstract class ThemedActivity extends AppCompatActivity {
         Preferences.Theme.apply(this, isDialogTheme(), isTranslucent());
         super.onCreate(savedInstanceState);
         mMenuTintDelegate.onActivityCreated(this);
+        findViewById(android.R.id.content).setBackgroundResource(
+                AppUtils.getThemedResId(this, R.attr.contentBackground));
     }
 
     @CallSuper
