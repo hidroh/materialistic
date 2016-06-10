@@ -310,7 +310,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     private void setWebSettings(boolean isRemote) {
         mWebView.getSettings().setLoadWithOverviewMode(isRemote);
         mWebView.getSettings().setUseWideViewPort(isRemote);
-        mWebView.getSettings().setJavaScriptEnabled(isRemote);
+        mWebView.getSettings().setJavaScriptEnabled(true);
     }
 
     private void setFullscreen(boolean isFullscreen) {
