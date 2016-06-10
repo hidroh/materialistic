@@ -77,7 +77,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     };
     private ViewGroup mFullscreenView;
     private ViewGroup mScrollViewContent;
-    private ViewSwitcher mViewSwitcher;
     private ImageButton mButtonRefresh;
     private ViewSwitcher mControls;
     private EditText mEditText;
@@ -113,7 +112,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_web, container, false);
-        mViewSwitcher = (ViewSwitcher) view.findViewById(R.id.view_switcher);
         mFullscreenView = (ViewGroup) view.findViewById(R.id.fullscreen);
         mScrollViewContent = (ViewGroup) view.findViewById(R.id.scroll_view_content);
         mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
@@ -318,6 +316,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
             return;
         }
         mFullscreen = isFullscreen;
+        mControls.setVisibility(isFullscreen ? VISIBLE : View.GONE);
         if (isFullscreen) {
             mScrollView.removeView(mScrollViewContent);
             mFullscreenView.addView(mScrollViewContent);
@@ -326,8 +325,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
         }
-        mControls.setVisibility(isFullscreen ? VISIBLE : View.GONE);
-        mViewSwitcher.setDisplayedChild(isFullscreen ? 1 : 0);
     }
 
     private void showPreferences() {

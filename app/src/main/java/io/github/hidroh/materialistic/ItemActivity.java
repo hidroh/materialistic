@@ -232,6 +232,16 @@ public class ItemActivity extends InjectableActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (!mFullscreen) {
+            super.onBackPressed();
+        } else {
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(
+                    WebFragment.ACTION_FULLSCREEN).putExtra(WebFragment.EXTRA_FULLSCREEN, false));
+        }
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         mVolumeNavigationDelegate.setScrollable(getScrollable(), mAppBar);
         return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||

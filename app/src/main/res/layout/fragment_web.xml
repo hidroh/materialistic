@@ -15,12 +15,11 @@
   ~ limitations under the License.
   -->
 
-<ViewSwitcher
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorCardBackground"
-    android:id="@+id/view_switcher"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -85,4 +84,4 @@
 
     </FrameLayout>
 
-</ViewSwitcher>
+</FrameLayout>
