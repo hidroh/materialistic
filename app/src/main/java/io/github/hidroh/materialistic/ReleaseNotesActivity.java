@@ -28,9 +28,9 @@ public class ReleaseNotesActivity extends InjectableActivity {
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_up, 0);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_release);
         findViewById(R.id.button_ok).setOnClickListener(v -> finish());
         findViewById(R.id.button_rate).setOnClickListener(v -> {

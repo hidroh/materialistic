@@ -36,8 +36,8 @@ public class FeedbackActivity extends InjectableActivity {
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_feedback);
         AppUtils.setTextWithLinks((TextView) findViewById(R.id.feedback_note),
                 getString(R.string.feedback_note));
