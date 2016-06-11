@@ -31,6 +31,7 @@
         <item name="android:textColorSecondary">@color/grey500</item>
 
         <!-- default theme override -->
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
@@ -59,6 +60,7 @@
         <item name="android:textColorSecondary">@color/grey500</item>
 
         <!-- default theme override -->
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
