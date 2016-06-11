@@ -591,6 +591,31 @@ public class ItemActivityTest {
         assertTrue(shadowFab.isVisible());
     }
 
+    @Test
+    public void testFullscreenBackPressed() {
+        Intent intent = new Intent();
+        WebItem webItem = new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        };
+        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
+        controller.withIntent(intent).create().start().resume().visible();
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        activity.onBackPressed();
+        assertThat(activity).isNotFinishing();
+        activity.onBackPressed();
+        assertThat(activity).isFinishing();
+    }
+
     @After
     public void tearDown() {
         reset(hackerNewsClient);
