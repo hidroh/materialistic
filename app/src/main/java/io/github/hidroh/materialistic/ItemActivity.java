@@ -114,6 +114,7 @@ public class ItemActivity extends InjectableActivity {
             setFullscreen();
         }
     };
+    private AppUtils.SystemUiHelper mSystemUiHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +130,7 @@ public class ItemActivity extends InjectableActivity {
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
+        mSystemUiHelper = new AppUtils.SystemUiHelper(getWindow());
         mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
         mVoteButton = (ImageButton) findViewById(R.id.vote_button);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
@@ -261,6 +263,7 @@ public class ItemActivity extends InjectableActivity {
     }
 
     private void setFullscreen() {
+        mSystemUiHelper.setFullscreen(mFullscreen);
         mAppBar.setExpanded(!mFullscreen, true);
         mVolumeNavigationDelegate.setAppBarEnabled(!mFullscreen);
         mViewPager.setSwipeEnabled(!mFullscreen);
