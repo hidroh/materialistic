@@ -72,6 +72,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
+    private View mListView;
     private boolean mFullscreen;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -82,6 +83,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     };
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +92,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
-        //noinspection ConstantConditions
         findViewById(R.id.toolbar).setOnClickListener(v -> {
             Scrollable scrollable = getScrollableList();
             if (scrollable != null) {
@@ -102,6 +103,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         if (mIsMultiPane) {
             LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                     new IntentFilter(BaseWebFragment.ACTION_FULLSCREEN));
+            mListView = findViewById(android.R.id.list);
             mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
             mTabLayout.setVisibility(View.GONE);
             mViewPager = (ViewPager) findViewById(R.id.content);
@@ -312,7 +314,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void setFullscreen() {
+        mAppBar.setExpanded(!mFullscreen, true);
         mTabLayout.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
+        mListView.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
         mVolumeNavigationDelegate.setAppBarEnabled(!mFullscreen);
         mViewPager.setSwipeEnabled(!mFullscreen);
         if (mFullscreen) {

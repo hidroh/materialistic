@@ -23,7 +23,6 @@
     <attr name="subtitleTextSize" format="dimension|reference" />
     <attr name="contentTextSize" format="dimension|reference" />
     <attr name="preferenceHelpStyle" format="reference" />
-    <attr name="contentBackground" format="reference" />
     <declare-styleable name="PreferenceHelp">
         <attr name="dialogTitle" />
         <attr name="dialogLayout" />

@@ -498,4 +498,43 @@ public class AppUtils {
             return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }
     }
+
+    static class SystemUiHelper {
+        private final Window window;
+        private final int originalUiFlags;
+        private boolean enabled = true;
+
+        SystemUiHelper(Window window) {
+            this.window = window;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                this.originalUiFlags = window.getDecorView().getSystemUiVisibility();
+            } else {
+                this.originalUiFlags = 0;
+            }
+        }
+
+        @SuppressLint("InlinedApi")
+        void setFullscreen(boolean fullscreen) {
+            if (!enabled) {
+                return;
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                return;
+            }
+            if (fullscreen) {
+                window.getDecorView().setSystemUiVisibility(originalUiFlags |
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            } else {
+                window.getDecorView().setSystemUiVisibility(originalUiFlags);
+            }
+        }
+
+        void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
 }
