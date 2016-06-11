@@ -262,6 +262,12 @@ public class ItemActivity extends InjectableActivity {
                 super.onKeyLongPress(keyCode, event);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        mSystemUiHelper.setFullscreen(hasFocus && mFullscreen);
+    }
+
     private void setFullscreen() {
         mSystemUiHelper.setFullscreen(mFullscreen);
         mAppBar.setExpanded(!mFullscreen, true);

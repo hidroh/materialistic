@@ -238,7 +238,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
             mControls.showNext();
         });
         view.findViewById(R.id.button_find).setOnClickListener(v -> {
-            mSystemUiHelper.setFullscreen(false);
             mEditText.requestFocus();
             toggleSoftKeyboard(true);
             mControls.showNext();
