@@ -322,6 +322,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
             mFullscreenView.addView(mScrollViewContent);
         } else {
             reset();
+            mWebView.pageUp(true);
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
         }
