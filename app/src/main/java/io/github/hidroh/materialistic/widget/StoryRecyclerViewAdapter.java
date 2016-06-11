@@ -310,34 +310,34 @@ public class StoryRecyclerViewAdapter extends
     }
 
     private void showMoreOptions(View v, final Item story, final ItemViewHolder holder) {
-        mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY);
-        mPopupMenu.inflate(R.menu.menu_contextual_story);
-        mPopupMenu.getMenu().findItem(R.id.menu_contextual_save)
-                .setTitle(story.isFavorite() ? R.string.unsave : R.string.save);
-        mPopupMenu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.menu_contextual_save) {
-                toggleSave(story);
-                return true;
-            }
-            if (item.getItemId() == R.id.menu_contextual_vote) {
-                vote(story, holder);
-                return true;
-            }
-            if (item.getItemId() == R.id.menu_contextual_comment) {
-                mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
-                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
-                                story.getDisplayedTitle()));
-                return true;
-            }
-            if (item.getItemId() == R.id.menu_contextual_profile) {
-                mContext.startActivity(new Intent(mContext, UserActivity.class)
-                        .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
-                return true;
-            }
-            return false;
-        });
-        mPopupMenu.show();
+        mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY)
+                .inflate(R.menu.menu_contextual_story)
+                .setMenuItemTitle(R.id.menu_contextual_save,
+                        story.isFavorite() ? R.string.unsave : R.string.save)
+                .setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.menu_contextual_save) {
+                        toggleSave(story);
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.menu_contextual_vote) {
+                        vote(story, holder);
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.menu_contextual_comment) {
+                        mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                                .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
+                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
+                                        story.getDisplayedTitle()));
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.menu_contextual_profile) {
+                        mContext.startActivity(new Intent(mContext, UserActivity.class)
+                                .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
+                        return true;
+                    }
+                    return false;
+                })
+                .show();
     }
 
     private void toggleSave(final Item story) {

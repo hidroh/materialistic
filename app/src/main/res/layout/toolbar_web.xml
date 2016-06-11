@@ -44,16 +44,6 @@
             android:layout_height="wrap_content"/>
 
         <ImageButton
-            android:id="@+id/button_refresh"
-            android:src="@drawable/ic_refresh_white_24dp"
-            android:contentDescription="@string/refresh"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:tint="?android:attr/textColorPrimary"
-            android:minWidth="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageButton
             android:id="@+id/button_back"
             android:src="@drawable/ic_arrow_back_white_24dp"
             android:contentDescription="@string/back"
@@ -73,30 +63,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <ImageButton
+            android:id="@+id/button_refresh"
+            android:src="@drawable/ic_refresh_white_24dp"
+            android:contentDescription="@string/refresh"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:tint="?android:attr/textColorPrimary"
+            android:minWidth="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-
-        <ImageButton
-            android:id="@+id/button_zoom_out"
-            android:src="@drawable/ic_zoom_out_white_24dp"
-            android:contentDescription="@string/zoom_out"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:tint="?android:attr/textColorPrimary"
-            android:minWidth="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageButton
-            android:id="@+id/button_zoom_in"
-            android:src="@drawable/ic_zoom_in_white_24dp"
-            android:contentDescription="@string/zoom_in"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:tint="?android:attr/textColorPrimary"
-            android:minWidth="0dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
         <ImageButton
             android:id="@+id/button_find"
@@ -111,9 +91,7 @@
         <ImageButton
             android:id="@+id/button_more"
             android:src="@drawable/ic_more_vert_white_24dp"
-            android:contentDescription="@string/display_options"
-            android:visibility="gone"
-            tools:visibility="visible"
+            android:contentDescription="@string/more"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:tint="?android:attr/textColorPrimary"
             android:minWidth="0dp"

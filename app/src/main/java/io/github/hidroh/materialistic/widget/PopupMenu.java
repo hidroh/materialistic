@@ -17,9 +17,10 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
 import android.support.annotation.MenuRes;
+import android.support.annotation.StringRes;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -34,30 +35,42 @@ public interface PopupMenu {
      *        the anchor if there is room, or above it if there is not.
      * @param gravity The {@link Gravity} value for aligning the popup with its
      *        anchor.
+     * @return this (fluent API)
      */
-    void create(Context context, View anchor, int gravity);
+    PopupMenu create(Context context, View anchor, int gravity);
 
     /**
      * Inflate a menu resource into this PopupMenu. This is equivalent to calling
      * popupMenu.getMenuInflater().inflate(menuRes, popupMenu.getMenu()).
      *
      * @param menuRes Menu resource to inflate
+     * @return this (fluent API)
      */
-    void inflate(@MenuRes int menuRes);
+    PopupMenu inflate(@MenuRes int menuRes);
 
     /**
-     * @return the {@link Menu} associated with this popup. Populate the returned Menu with
-     * items before calling {@link #show()}.
-     * @see #show()
+     * Set menu item visibility
+     * @param itemResId item ID
+     * @param visible   true to be visible, false otherwise
+     * @return this (fluent API)
      */
-    Menu getMenu();
+    PopupMenu setMenuItemVisible(@IdRes int itemResId, boolean visible);
+
+    /**
+     * Set menu item title
+     * @param itemResId item ID
+     * @param title     item title
+     * @return this (fluent API)
+     */
+    PopupMenu setMenuItemTitle(@IdRes int itemResId, @StringRes int title);
 
     /**
      * Set a listener that will be notified when the user selects an item from the menu.
      *
      * @param listener Listener to notify
+     * @return this (fluent API)
      */
-    void setOnMenuItemClickListener(OnMenuItemClickListener listener);
+    PopupMenu setOnMenuItemClickListener(OnMenuItemClickListener listener);
 
     /**
      * Show the menu popup anchored to the view specified during construction.
@@ -83,23 +96,33 @@ public interface PopupMenu {
         private android.support.v7.widget.PopupMenu mSupportPopupMenu;
 
         @Override
-        public void create(Context context, View anchor, int gravity) {
+        public PopupMenu create(Context context, View anchor, int gravity) {
             mSupportPopupMenu = new android.support.v7.widget.PopupMenu(context, anchor, gravity);
+            return this;
         }
 
         @Override
-        public void inflate(@MenuRes int menuRes) {
+        public PopupMenu inflate(@MenuRes int menuRes) {
             mSupportPopupMenu.inflate(menuRes);
+            return this;
         }
 
         @Override
-        public Menu getMenu() {
-            return mSupportPopupMenu.getMenu();
+        public PopupMenu setMenuItemVisible(@IdRes int itemResId, boolean visible) {
+            mSupportPopupMenu.getMenu().findItem(itemResId).setVisible(visible);
+            return this;
         }
 
         @Override
-        public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
+        public PopupMenu setMenuItemTitle(@IdRes int itemResId, @StringRes int title) {
+            mSupportPopupMenu.getMenu().findItem(itemResId).setTitle(title);
+            return this;
+        }
+
+        @Override
+        public PopupMenu setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
             mSupportPopupMenu.setOnMenuItemClickListener(listener::onMenuItemClick);
+            return this;
         }
 
         @Override

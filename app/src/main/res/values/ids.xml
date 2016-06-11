@@ -88,6 +88,8 @@
     <item type="id" name="menu_quote" />
     <item type="id" name="menu_guidelines" />
     <item type="id" name="menu_comments" />
+    <item type="id" name="menu_zoom_in" />
+    <item type="id" name="menu_zoom_out" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

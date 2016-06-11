@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,6 +53,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -67,6 +69,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     private NestedScrollView mScrollView;
     private boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    @Inject PopupMenu mPopupMenu;
     private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -149,7 +152,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     protected void prepareOptionsMenu(Menu menu) {
         boolean fontOptionsVisible = !TextUtils.isEmpty(mContent);
         menu.findItem(R.id.menu_font_options).setVisible(fontOptionsVisible);
-        mButtonMore.setVisibility(fontOptionsVisible ? VISIBLE : GONE);
     }
 
     @Override
@@ -230,8 +232,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     private void setUpWebControls(View view) {
         view.findViewById(R.id.button_back).setOnClickListener(v -> mWebView.goBack());
         view.findViewById(R.id.button_forward).setOnClickListener(v -> mWebView.goForward());
-        view.findViewById(R.id.button_zoom_in).setOnClickListener(v -> mWebView.zoomIn());
-        view.findViewById(R.id.button_zoom_out).setOnClickListener(v -> mWebView.zoomOut());
         view.findViewById(R.id.button_clear).setOnClickListener(v -> {
             mSystemUiHelper.setFullscreen(true);
             reset();
@@ -257,7 +257,26 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
         });
         mButtonPrevious.setOnClickListener(v -> mWebView.findNext(false));
         mButtonNext.setOnClickListener(v -> mWebView.findNext(true));
-        mButtonMore.setOnClickListener(v -> showPreferences());
+        mButtonMore.setOnClickListener(v ->
+                mPopupMenu.create(getActivity(), mButtonMore, Gravity.NO_GRAVITY)
+                        .inflate(R.menu.menu_web)
+                        .setOnMenuItemClickListener(item -> {
+                            if (item.getItemId() == R.id.menu_font_options) {
+                                showPreferences();
+                                return true;
+                            }
+                            if (item.getItemId() == R.id.menu_zoom_in) {
+                                mWebView.zoomIn();
+                                return true;
+                            }
+                            if (item.getItemId() == R.id.menu_zoom_out) {
+                                mWebView.zoomOut();
+                                return true;
+                            }
+                            return false;
+                        })
+                        .setMenuItemVisible(R.id.menu_font_options, !TextUtils.isEmpty(mContent))
+                        .show());
         mEditText.setOnEditorActionListener((v, actionId, event) -> { findInPage(); return true; });
     }
 

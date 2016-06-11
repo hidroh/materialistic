@@ -1,6 +1,8 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowPopupMenu;
+import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -39,6 +43,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentTest {
@@ -153,6 +158,22 @@ public class ReadabilityFragmentTest {
                 .getLastLoadDataWithBaseURL().data).contains("DroidSans.ttf");
         assertEquals("DroidSans.ttf", Preferences.Theme.getReadabilityTypeface(activity));
         controller.pause().stop().destroy();
+    }
+
+    @SuppressLint("NewApi")
+    @Test
+    public void testFullscreenMenu() {
+        verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
+                callback.capture());
+        callback.getValue().onResponse("<div>content</div>");
+        ShadowLocalBroadcastManager.getInstance(activity)
+                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+        activity.findViewById(R.id.button_more).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu()).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_font_options));
+        assertThat(fragment.getFragmentManager())
+                .hasFragmentWithTag(PopupSettingsFragment.class.getName());
     }
 
     @Test

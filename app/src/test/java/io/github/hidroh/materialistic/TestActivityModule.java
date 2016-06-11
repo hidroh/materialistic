@@ -6,10 +6,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.IdRes;
 import android.support.annotation.MenuRes;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.SearchView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -265,31 +265,42 @@ public class TestActivityModule {
 
             @SuppressLint("NewApi")
             @Override
-            public void create(Context context, View anchor, int gravity) {
+            public PopupMenu create(Context context, View anchor, int gravity) {
                 popupMenu = new android.widget.PopupMenu(context, anchor, gravity);
+                return this;
             }
 
             @SuppressLint("NewApi")
             @Override
-            public void inflate(@MenuRes int menuRes) {
+            public PopupMenu inflate(@MenuRes int menuRes) {
                 popupMenu.inflate(menuRes);
+                return this;
             }
 
             @SuppressLint("NewApi")
             @Override
-            public Menu getMenu() {
-                return popupMenu.getMenu();
+            public PopupMenu setMenuItemVisible(@IdRes int itemResId, boolean visible) {
+                popupMenu.getMenu().findItem(itemResId).setVisible(visible);
+                return this;
             }
 
             @SuppressLint("NewApi")
             @Override
-            public void setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
+            public PopupMenu setMenuItemTitle(@IdRes int itemResId, @StringRes int title) {
+                popupMenu.getMenu().findItem(itemResId).setTitle(title);
+                return this;
+            }
+
+            @SuppressLint("NewApi")
+            @Override
+            public PopupMenu setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
                 popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         return listener.onMenuItemClick(item);
                     }
                 });
+                return this;
             }
 
             @SuppressLint("NewApi")

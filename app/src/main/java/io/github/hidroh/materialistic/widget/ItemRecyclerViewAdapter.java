@@ -229,22 +229,22 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
         holder.mMoreButton.setVisibility(View.VISIBLE);
         holder.mMoreButton.setOnClickListener(v -> {
-            mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY);
-            mPopupMenu.inflate(R.menu.menu_contextual_comment);
-            mPopupMenu.setOnMenuItemClickListener(menuItem -> {
-                if (menuItem.getItemId() == R.id.menu_contextual_vote) {
-                    vote(item);
-                    return true;
-                }
-                if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                    mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                            .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                            .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
-                    return true;
-                }
-                return false;
-            });
-            mPopupMenu.show();
+            mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY)
+                    .inflate(R.menu.menu_contextual_comment)
+                    .setOnMenuItemClickListener(menuItem -> {
+                        if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                            vote(item);
+                            return true;
+                        }
+                        if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                            mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                                    .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                                    .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
+                            return true;
+                        }
+                        return false;
+                    })
+                    .show();
         });
     }
 

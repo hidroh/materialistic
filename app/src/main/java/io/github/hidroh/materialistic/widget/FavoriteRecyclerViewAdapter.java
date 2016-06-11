@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.widget;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArrayMap;
@@ -257,22 +256,22 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     private void showMoreOptions(View v, final Favorite item) {
-        mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY);
-        mPopupMenu.inflate(R.menu.menu_contextual_favorite);
-        mPopupMenu.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == R.id.menu_contextual_vote) {
-                vote(item);
-                return true;
-            }
-            if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                        .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                        .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
-                return true;
-            }
-            return false;
-        });
-        mPopupMenu.show();
+        mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY)
+                .inflate(R.menu.menu_contextual_favorite)
+                .setOnMenuItemClickListener(menuItem -> {
+                    if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                        vote(item);
+                        return true;
+                    }
+                    if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                        mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                                .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
+                        return true;
+                    }
+                    return false;
+                })
+                .show();
     }
 
     private void vote(final Favorite item) {

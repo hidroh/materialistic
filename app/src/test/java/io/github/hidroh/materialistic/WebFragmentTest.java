@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -28,9 +27,11 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
@@ -152,7 +153,7 @@ public class WebFragmentTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_ad_block), false)
-                .commit();
+                .apply();
         controller = Robolectric.buildActivity(WebActivity.class);
         activity = controller.get();
         controller.withIntent(intent).create().start().resume();
@@ -232,6 +233,7 @@ public class WebFragmentTest {
         assertNull(ShadowWebView.getLastGlobalLoadedUrl());
     }
 
+    @SuppressLint("NewApi")
     @Test
     public void testWebControls() {
         ShadowLocalBroadcastManager.getInstance(activity)
@@ -239,9 +241,13 @@ public class WebFragmentTest {
                         .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
                 .extract(activity.findViewById(R.id.web_view));
-        activity.findViewById(R.id.button_zoom_in).performClick();
+        activity.findViewById(R.id.button_more).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu()).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_zoom_in));
         assertThat(shadowWebView.getZoomDegree()).isEqualTo(1);
-        activity.findViewById(R.id.button_zoom_out).performClick();
+        activity.findViewById(R.id.button_more).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu()).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_zoom_out));
         assertThat(shadowWebView.getZoomDegree()).isEqualTo(0);
         activity.findViewById(R.id.button_forward).performClick();
         assertThat(shadowWebView.getPageIndex()).isEqualTo(1);

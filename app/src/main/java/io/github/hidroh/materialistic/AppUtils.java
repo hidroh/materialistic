@@ -524,7 +524,6 @@ public class AppUtils {
             if (fullscreen) {
                 window.getDecorView().setSystemUiVisibility(originalUiFlags |
                         View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
                         View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             } else {
                 window.getDecorView().setSystemUiVisibility(originalUiFlags);
