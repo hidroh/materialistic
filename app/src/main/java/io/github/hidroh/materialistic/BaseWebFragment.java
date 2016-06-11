@@ -86,6 +86,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     private boolean mFullscreen;
     protected String mContent;
     private String mUrl;
+    private AppUtils.SystemUiHelper mSystemUiHelper;
 
     @Override
     public void onAttach(Context context) {
@@ -132,6 +133,8 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
         mScrollableHelper = new VolumeNavigationDelegate.NestedScrollViewHelper(mScrollView);
+        mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
+        mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
         if (mFullscreen) {
             setFullscreen(true);
         }
@@ -230,10 +233,12 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
         view.findViewById(R.id.button_zoom_in).setOnClickListener(v -> mWebView.zoomIn());
         view.findViewById(R.id.button_zoom_out).setOnClickListener(v -> mWebView.zoomOut());
         view.findViewById(R.id.button_clear).setOnClickListener(v -> {
+            mSystemUiHelper.setFullscreen(true);
             reset();
             mControls.showNext();
         });
         view.findViewById(R.id.button_find).setOnClickListener(v -> {
+            mSystemUiHelper.setFullscreen(false);
             mEditText.requestFocus();
             toggleSoftKeyboard(true);
             mControls.showNext();

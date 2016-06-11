@@ -502,6 +502,7 @@ public class AppUtils {
     static class SystemUiHelper {
         private final Window window;
         private final int originalUiFlags;
+        private boolean enabled = true;
 
         SystemUiHelper(Window window) {
             this.window = window;
@@ -514,6 +515,9 @@ public class AppUtils {
 
         @SuppressLint("InlinedApi")
         void setFullscreen(boolean fullscreen) {
+            if (!enabled) {
+                return;
+            }
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                 return;
             }
@@ -527,6 +531,10 @@ public class AppUtils {
             } else {
                 window.getDecorView().setSystemUiVisibility(originalUiFlags);
             }
+        }
+
+        void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }
