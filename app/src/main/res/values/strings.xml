@@ -284,7 +284,6 @@
     <string name="zoom_in">Zoom in</string>
     <string name="refresh">Refresh</string>
     <string name="exit_fullscreen">Exit</string>
-    <string name="previous">Previous</string>
     <string name="next">Next</string>
 
 </resources>
