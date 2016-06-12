@@ -30,6 +30,7 @@
     <dimen name="level_indicator_width">24dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="divider">1dp</dimen>
+    <dimen name="icon_button_width">48dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_size_small">14sp</dimen>

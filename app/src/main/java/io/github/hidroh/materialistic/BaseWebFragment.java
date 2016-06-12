@@ -84,7 +84,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     private ViewSwitcher mControls;
     private EditText mEditText;
     private View mButtonMore;
-    private View mButtonPrevious;
     private View mButtonNext;
     private boolean mFullscreen;
     protected String mContent;
@@ -123,8 +122,8 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
         mWebView = (WebView) view.findViewById(R.id.web_view);
         mButtonRefresh = (ImageButton) view.findViewById(R.id.button_refresh);
         mButtonMore = view.findViewById(R.id.button_more);
-        mButtonPrevious = view.findViewById(R.id.button_previous);
         mButtonNext = view.findViewById(R.id.button_next);
+        mButtonNext.setEnabled(false);
         mEditText = (EditText) view.findViewById(R.id.edittext);
         setUpWebControls(view);
         setUpWebView(view);
@@ -256,7 +255,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
                     new Intent(BaseWebFragment.ACTION_FULLSCREEN)
                             .putExtra(EXTRA_FULLSCREEN, false));
         });
-        mButtonPrevious.setOnClickListener(v -> mWebView.findNext(false));
         mButtonNext.setOnClickListener(v -> mWebView.findNext(true));
         mButtonMore.setOnClickListener(v ->
                 mPopupMenu.create(getActivity(), mButtonMore, Gravity.NO_GRAVITY)
@@ -368,6 +366,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
 
     private void reset() {
         mEditText.setText(null);
+        mButtonNext.setEnabled(false);
         toggleSoftKeyboard(false);
         mWebView.clearMatches();
     }
@@ -391,8 +390,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     }
 
     private void handleFindResults(int numberOfMatches) {
-        mButtonPrevious.setVisibility(numberOfMatches > 0 ? VISIBLE : GONE);
-        mButtonNext.setVisibility(numberOfMatches > 0 ? VISIBLE : GONE);
+        mButtonNext.setEnabled(numberOfMatches > 0);
         if (numberOfMatches == 0) {
             Toast.makeText(getContext(), R.string.no_matches, Toast.LENGTH_SHORT).show();
         } else {

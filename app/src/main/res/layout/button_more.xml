@@ -15,12 +15,13 @@
   ~ limitations under the License.
   -->
 
-<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+<io.github.hidroh.materialistic.widget.IconButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:src="@drawable/ic_more_vert_white_24dp"
     android:contentDescription="@string/more"
-    android:tint="?android:attr/textColorSecondary"
-    android:background="?attr/selectableItemBackgroundBorderless"
+    app:tint="?android:attr/textColorSecondary"
     android:paddingLeft="@dimen/padding"
     android:paddingRight="@dimen/padding"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"/>

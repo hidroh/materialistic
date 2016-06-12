@@ -40,4 +40,7 @@
         <attr name="iconTop" format="reference" />
         <attr name="iconBottom" format="reference" />
     </declare-styleable>
+    <declare-styleable name="IconButton">
+        <attr name="tint" format="reference" />
+    </declare-styleable>
 </resources>

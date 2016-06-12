@@ -197,17 +197,15 @@ public class WebFragmentTest {
         // no query
         EditText editText = (EditText) activity.findViewById(R.id.edittext);
         shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
-        assertThat(activity.findViewById(R.id.button_next)).isNotVisible();
+        assertThat(activity.findViewById(R.id.button_next)).isDisabled();
 
         // with results
         shadowWebView.setFindCount(1);
         editText.setText("abc");
         shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
-        assertThat(activity.findViewById(R.id.button_next)).isVisible();
+        assertThat(activity.findViewById(R.id.button_next)).isEnabled();
         activity.findViewById(R.id.button_next).performClick();
         assertThat(shadowWebView.getFindIndex()).isEqualTo(1);
-        activity.findViewById(R.id.button_previous).performClick();
-        assertThat(shadowWebView.getFindIndex()).isEqualTo(0);
         activity.findViewById(R.id.button_clear).performClick();
         assertThat(editText).isEmpty();
         assertThat(controlSwitcher.getDisplayedChild()).isEqualTo(0);
@@ -216,7 +214,7 @@ public class WebFragmentTest {
         shadowWebView.setFindCount(0);
         editText.setText("abc");
         shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
-        assertThat(activity.findViewById(R.id.button_next)).isNotVisible();
+        assertThat(activity.findViewById(R.id.button_next)).isDisabled();
         assertThat(ShadowToast.getTextOfLatestToast()).contains(activity.getString(R.string.no_matches));
     }
 
