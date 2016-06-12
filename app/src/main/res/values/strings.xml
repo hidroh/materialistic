@@ -285,5 +285,6 @@
     <string name="refresh">Refresh</string>
     <string name="exit_fullscreen">Exit</string>
     <string name="next">Next</string>
+    <string name="list_display_options">List display options</string>
 
 </resources>

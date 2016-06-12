@@ -16,16 +16,20 @@
 
 package io.github.hidroh.materialistic;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class PopupSettingsFragment extends BottomSheetDialogFragment {
+public class PopupSettingsFragment extends AppCompatDialogFragment {
     static final String EXTRA_XML_PREFERENCES = PopupSettingsFragment.class.getName() +
             ".EXTRA_XML_PREFERENCES";
 
@@ -33,6 +37,11 @@ public class PopupSettingsFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_popup_settings, container, false);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new BottomSheetDialog(getActivity(), getTheme());
     }
 
     @Override
@@ -54,10 +63,21 @@ public class PopupSettingsFragment extends BottomSheetDialogFragment {
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(getArguments().getInt(EXTRA_XML_PREFERENCES));
         }
+    }
+
+    static class BottomSheetDialog extends android.support.design.widget.BottomSheetDialog {
+        public BottomSheetDialog(@NonNull Context context, @StyleRes int theme) {
+            super(context, theme);
+        }
 
         @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            int width = getContext().getResources().getDimensionPixelSize(R.dimen.bottom_sheet_width);
+            getWindow().setLayout(
+                    width > 0 ? width : ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
         }
+
     }
 }
