@@ -230,6 +230,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     }
 
     private void setUpWebControls(View view) {
+        view.findViewById(R.id.toolbar_web).setOnClickListener(v -> scrollToTop());
         view.findViewById(R.id.button_back).setOnClickListener(v -> mWebView.goBack());
         view.findViewById(R.id.button_forward).setOnClickListener(v -> mWebView.goForward());
         view.findViewById(R.id.button_clear).setOnClickListener(v -> {

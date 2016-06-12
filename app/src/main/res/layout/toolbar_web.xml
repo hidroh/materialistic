@@ -28,6 +28,7 @@
     tools:targetApi="lollipop">
 
     <LinearLayout
+        android:id="@+id/toolbar_web"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_width="match_parent"

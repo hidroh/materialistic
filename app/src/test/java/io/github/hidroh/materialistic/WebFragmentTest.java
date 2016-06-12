@@ -133,6 +133,14 @@ public class WebFragmentTest {
 
     }
 
+    @Test
+    public void testFullscreenScrollToTop() {
+        activity.findViewById(R.id.toolbar_web).performClick();
+        assertEquals(-1, ((ShadowWebView) ShadowExtractor.extract(activity.findViewById(R.id.web_view)))
+                    .getScrollY());
+
+    }
+
     @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     @Test
