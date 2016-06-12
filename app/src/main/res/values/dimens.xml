@@ -37,4 +37,5 @@
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_empty">24sp</dimen>
     <dimen name="drawer_header_height">128dp</dimen>
+    <dimen name="bottom_sheet_width">0dp</dimen> <!-- MATCH_PARENT -->
 </resources>

@@ -20,7 +20,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.preference.PreferenceCategory
-        android:title="@string/display_options"
+        android:title="@string/list_display_options"
         android:summary="@string/pull_up_hint"
         style="@style/Preference.Category.Hint">
 
