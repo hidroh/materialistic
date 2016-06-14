@@ -173,7 +173,7 @@ public class VolumeNavigationDelegate {
         }
         switch (direction) {
             case DIRECTION_UP:
-                if (mAppBarEnabled && !mScrollable.scrollToPrevious() && mAppBarLayout != null) {
+                if (!mScrollable.scrollToPrevious() && mAppBarEnabled && mAppBarLayout != null) {
                     mAppBarLayout.setExpanded(true, true);
                 }
                 break;
