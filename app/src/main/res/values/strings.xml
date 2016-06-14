@@ -22,7 +22,7 @@
     <string name="title_activity_list">Top Stories</string>
     <string name="title_activity_best">Best Stories</string>
     <string name="title_activity_item">Comments</string>
-    <string name="title_activity_release">What\'s new</string>
+    <string name="title_activity_release">What\'s New</string>
     <string name="filter_title_item">Materialistic</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
@@ -286,5 +286,6 @@
     <string name="exit_fullscreen">Exit</string>
     <string name="next">Next</string>
     <string name="list_display_options">List display options</string>
+    <string name="last_screen">Last used screen</string>
 
 </resources>

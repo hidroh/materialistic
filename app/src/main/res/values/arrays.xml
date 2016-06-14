@@ -116,6 +116,7 @@
         <item>@string/title_activity_ask</item>
         <item>@string/title_activity_jobs</item>
         <item>@string/title_activity_favorite</item>
+        <item>@string/last_screen</item>
     </string-array>
     <string-array name="pref_launch_screen_values">
         <item>@string/pref_launch_screen_value_top</item>
@@ -126,6 +127,7 @@
         <item>@string/pref_launch_screen_value_ask</item>
         <item>@string/pref_launch_screen_value_jobs</item>
         <item>@string/pref_launch_screen_value_saved</item>
+        <item>@string/pref_launch_screen_value_last</item>
     </string-array>
     <string name="pref_launch_screen_value_top" translatable="false">top</string>
     <string name="pref_launch_screen_value_best" translatable="false">best</string>
@@ -135,6 +137,7 @@
     <string name="pref_launch_screen_value_ask" translatable="false">ask</string>
     <string name="pref_launch_screen_value_jobs" translatable="false">jobs</string>
     <string name="pref_launch_screen_value_saved" translatable="false">saved</string>
+    <string name="pref_launch_screen_value_last" translatable="false">last</string>
 
     <!-- Line height -->
     <string-array name="pref_line_height_options">

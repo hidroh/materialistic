@@ -108,6 +108,8 @@ public abstract class DrawerActivity extends InjectableActivity {
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(mDrawer)) {
             closeDrawers();
+        } else if (isTaskRoot() && Preferences.isLaunchScreenLast(this)) {
+            moveTaskToBack(true);
         } else {
             super.onBackPressed();
         }

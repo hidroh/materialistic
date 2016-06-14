@@ -223,6 +223,24 @@ public class BaseListActivityTest {
                 .getSmoothScrollToPosition());
     }
 
+    @Test
+    public void testBackPressed() {
+        ShadowSupportPreferenceManager
+                .getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_launch_screen),
+                        activity.getString(R.string.pref_launch_screen_value_last))
+                .apply();
+        activity.onBackPressed();
+        assertThat(activity).isNotFinishing();
+    }
+
+    @Test
+    public void testBackPressedFinish() {
+        activity.onBackPressed();
+        assertThat(activity).isFinishing();
+    }
+
     @After
     public void tearDown() {
         controller.pause().stop().destroy();

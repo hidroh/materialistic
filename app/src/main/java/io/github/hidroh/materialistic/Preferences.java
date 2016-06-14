@@ -199,6 +199,11 @@ public class Preferences {
         return get(context, R.string.pref_launch_screen, R.string.pref_launch_screen_value_top);
     }
 
+    static boolean isLaunchScreenLast(Context context) {
+        return TextUtils.equals(context.getString(R.string.pref_launch_screen_value_last),
+                getLaunchScreen(context));
+    }
+
     public static boolean adBlockEnabled(Context context) {
         return get(context, R.string.pref_ad_block, true);
     }
