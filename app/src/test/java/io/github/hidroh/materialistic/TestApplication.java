@@ -17,6 +17,7 @@ public class TestApplication extends Application implements TestLifecycleApplica
 
     @Override
     public void beforeTest(Method method) {
+        Preferences.sReleaseNotesSeen = true;
         ShadowApplication.getInstance().declareActionUnbindable("com.google.android.gms.analytics.service.START");
     }
 
