@@ -34,6 +34,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.accounts.UserServicesClient;
+import io.github.hidroh.materialistic.appwidget.WidgetConfigActivity;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -45,6 +46,7 @@ import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.UserManager;
+import io.github.hidroh.materialistic.appwidget.WidgetService;
 import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
@@ -84,6 +86,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
                 UserActivity.class,
                 ThreadPreviewActivity.class,
                 OfflineWebActivity.class,
+                WidgetConfigActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -96,7 +99,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
                 MultiPageItemRecyclerViewAdapter.class,
                 SubmissionRecyclerViewAdapter.class,
                 ThreadPreviewRecyclerViewAdapter.class,
-                ItemSyncService.class
+                ItemSyncService.class,
+                WidgetService.class
         },
         library = true
 )

@@ -80,6 +80,16 @@ public class AlgoliaClient implements ItemManager {
         mHackerNewsClient.getItem(itemId, cacheMode, listener);
     }
 
+    @Override
+    public Item[] getStories(String filter, @CacheMode int cacheMode) {
+        return new Item[0]; // not applicable
+    }
+
+    @Override
+    public Item getItem(String itemId, @CacheMode int cacheMode) {
+        return null; // not applicable
+    }
+
     protected void search(String filter, Callback<AlgoliaHits> callback) {
         // TODO add ETag header
         Call<AlgoliaHits> call;

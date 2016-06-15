@@ -22,6 +22,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.appwidget.WidgetConfigActivity;
+import io.github.hidroh.materialistic.appwidget.WidgetConfigActivityTest;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -69,6 +71,7 @@ import static org.mockito.Mockito.when;
                 SubmitActivity.class,
                 UserActivity.class,
                 ThreadPreviewActivity.class,
+                WidgetConfigActivity.class,
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
@@ -110,7 +113,8 @@ import static org.mockito.Mockito.when;
                 ComposeActivityTest.class,
                 SubmitActivityTest.class,
                 UserActivityTest.class,
-                ThreadPreviewActivityTest.class
+                ThreadPreviewActivityTest.class,
+                WidgetConfigActivityTest.class
         },
         library = true,
         overrides = true

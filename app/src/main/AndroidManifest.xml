@@ -216,6 +216,13 @@
             android:label="@string/title_activity_thread_preview"
             android:theme="@style/AppAlertDialog">
         </activity>
+        <activity
+            android:name=".appwidget.WidgetConfigActivity"
+            android:theme="@style/AppAlertDialog">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
         <service android:name=".accounts.AuthenticatorService"
             android:permission="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS">
             <intent-filter>
@@ -243,6 +250,9 @@
             <meta-data android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
+        <service
+            android:name=".appwidget.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"
             android:name=".data.MaterialisticProvider"
@@ -255,6 +265,17 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
+        </receiver>
+        <receiver android:name=".appwidget.WidgetProvider"
+                  tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="io.github.hidroh.materialistic.ACTION_REFRESH_WIDGET" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/appwidget_info" />
         </receiver>
     </application>
 

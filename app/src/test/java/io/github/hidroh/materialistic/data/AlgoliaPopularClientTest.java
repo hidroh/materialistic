@@ -79,4 +79,5 @@ public class AlgoliaPopularClientTest {
         public RestServiceFactory provideRestServiceFactory() {
             return new TestRestServiceFactory();
         }
-    }}
+    }
+}
