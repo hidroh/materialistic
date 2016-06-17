@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Font size -->
     <string-array name="text_size_options">
         <item>@string/text_size_extra_small</item>
@@ -157,6 +157,48 @@
         <item>1.2</item>
         <item>1.5</item>
         <item>2</item>
+    </string-array>
+
+    <!-- Widget section -->
+    <string-array name="pref_widget_section_options">
+        <item>@string/title_activity_list</item>
+        <item>@string/title_activity_best</item>
+        <item>@string/title_activity_new</item>
+    </string-array>
+    <string-array name="pref_widget_section_values">
+        <item>@string/pref_widget_section_value_top</item>
+        <item>@string/pref_widget_section_value_best</item>
+        <item>@string/pref_widget_section_value_new</item>
+    </string-array>
+    <string name="pref_widget_section_value_top" translatable="false">top</string>
+    <string name="pref_widget_section_value_best" translatable="false">best</string>
+    <string name="pref_widget_section_value_new" translatable="false">new</string>
+
+    <!-- Widget theme -->
+    <string-array name="pref_widget_theme_options" tools:ignore="InconsistentArrays">
+        <item>@string/theme_transparent</item>
+        <item>@string/theme_dark</item>
+    </string-array>
+    <string-array name="pref_widget_theme_values" tools:ignore="InconsistentArrays">
+        <item>@string/pref_widget_theme_value_transparent</item>
+        <item>@string/pref_widget_theme_value_dark</item>
+    </string-array>
+    <string name="pref_widget_theme_value_transparent" translatable="false">transparent</string>
+    <string name="pref_widget_theme_value_dark" translatable="false">dark</string>
+    <string name="pref_widget_theme_value_light" translatable="false">light</string>
+
+    <!-- Widget frequency -->
+    <string-array name="pref_widget_frequency_options">
+        <item>@string/frequency_3_hours</item>
+        <item>@string/frequency_6_hours</item>
+        <item>@string/frequency_12_hours</item>
+        <item>@string/frequency_1_day</item>
+    </string-array>
+    <string-array name="pref_widget_frequency_values">
+        <item>3</item>
+        <item>6</item>
+        <item>12</item>
+        <item>24</item>
     </string-array>
 
     <!-- Color codes -->

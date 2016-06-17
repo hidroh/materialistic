@@ -31,11 +31,14 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="divider">1dp</dimen>
     <dimen name="icon_button_width">48dp</dimen>
+    <dimen name="padding_widget">8dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_empty">24sp</dimen>
     <dimen name="drawer_header_height">128dp</dimen>
-    <dimen name="bottom_sheet_width">0dp</dimen> <!-- MATCH_PARENT -->
+    <!-- MATCH_PARENT -->
+    <dimen name="bottom_sheet_width">0dp</dimen>
+    <dimen name="bg_widget_radius">4dp</dimen>
 </resources>

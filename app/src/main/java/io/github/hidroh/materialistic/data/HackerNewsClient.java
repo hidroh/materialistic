@@ -61,34 +61,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-        Call<int[]> call;
-        switch (filter) {
-            case NEW_FETCH_MODE:
-                call = cacheMode == MODE_NETWORK ?
-                        mRestService.networkNewStories() : mRestService.newStories();
-                break;
-            case SHOW_FETCH_MODE:
-                call = cacheMode == MODE_NETWORK ?
-                        mRestService.networkShowStories() : mRestService.showStories();
-                break;
-            case ASK_FETCH_MODE:
-                call = cacheMode == MODE_NETWORK ?
-                        mRestService.networkAskStories() : mRestService.askStories();
-                break;
-            case JOBS_FETCH_MODE:
-                call = cacheMode == MODE_NETWORK ?
-                        mRestService.networkJobStories() : mRestService.jobStories();
-                break;
-            case BEST_FETCH_MODE:
-                call = cacheMode == MODE_NETWORK ?
-                        mRestService.networkBestStories() : mRestService.bestStories();
-                break;
-            default:
-                call = cacheMode == MODE_NETWORK ?
-                        mRestService.networkTopStories() : mRestService.topStories();
-                break;
-        }
-        call.enqueue(new Callback<int[]>() {
+        getStoriesCall(filter, cacheMode).enqueue(new Callback<int[]>() {
             @Override
             public void onResponse(Call<int[]> call, Response<int[]> response) {
                 listener.onResponse(toItems(response.body()));
@@ -108,8 +81,12 @@ public class HackerNewsClient implements ItemManager, UserManager {
             return;
         }
         final ItemCallbackWrapper wrapper = new ItemCallbackWrapper(listener);
-        mSessionManager.isViewed(mContentResolver, itemId, wrapper);
-        mFavoriteManager.check(mContentResolver, itemId, wrapper);
+        if (mSessionManager != null) {
+            mSessionManager.isViewed(mContentResolver, itemId, wrapper);
+        }
+        if (mFavoriteManager != null) {
+            mFavoriteManager.check(mContentResolver, itemId, wrapper);
+        }
         switch (cacheMode) {
             case MODE_DEFAULT:
             default:
@@ -144,6 +121,35 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     @Override
+    public Item[] getStories(String filter, @CacheMode int cacheMode) {
+        try {
+            return toItems(getStoriesCall(filter, cacheMode).execute().body());
+        } catch (IOException e) {
+            return new Item[0];
+        }
+    }
+
+    @Override
+    public Item getItem(String itemId, @CacheMode int cacheMode) {
+        Call<HackerNewsItem> call;
+        switch (cacheMode) {
+            case MODE_DEFAULT:
+            case MODE_CACHE:
+            default:
+                call = mRestService.item(itemId);
+                break;
+            case MODE_NETWORK:
+                call = mRestService.networkItem(itemId);
+                break;
+        }
+        try {
+            return call.execute().body();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Override
     public void getUser(String username, final ResponseListener<User> listener) {
         if (listener == null) {
             return;
@@ -166,6 +172,38 @@ public class HackerNewsClient implements ItemManager, UserManager {
                         listener.onError(t != null ? t.getMessage() : "");
                     }
                 });
+    }
+
+    @NonNull
+    private Call<int[]> getStoriesCall(@FetchMode String filter, @CacheMode int cacheMode) {
+        Call<int[]> call;
+        switch (filter) {
+            case NEW_FETCH_MODE:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkNewStories() : mRestService.newStories();
+                break;
+            case SHOW_FETCH_MODE:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkShowStories() : mRestService.showStories();
+                break;
+            case ASK_FETCH_MODE:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkAskStories() : mRestService.askStories();
+                break;
+            case JOBS_FETCH_MODE:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkJobStories() : mRestService.jobStories();
+                break;
+            case BEST_FETCH_MODE:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkBestStories() : mRestService.bestStories();
+                break;
+            default:
+                call = cacheMode == MODE_NETWORK ?
+                        mRestService.networkTopStories() : mRestService.topStories();
+                break;
+        }
+        return call;
     }
 
     private HackerNewsItem[] toItems(int[] ids) {
