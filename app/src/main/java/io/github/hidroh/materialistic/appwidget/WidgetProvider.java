@@ -52,7 +52,6 @@ public class WidgetProvider extends AppWidgetProvider {
             AppWidgetManager.getInstance(context)
                     .notifyAppWidgetViewDataChanged(appWidgetId, android.R.id.list);
             updateAppWidget(context, AppWidgetManager.getInstance(context), appWidgetId);
-            Toast.makeText(context, R.string.refreshing, Toast.LENGTH_SHORT).show();
         } else {
             super.onReceive(context, intent);
         }
