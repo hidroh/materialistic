@@ -20,7 +20,6 @@ import android.app.AlarmManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -58,8 +57,18 @@ public class WidgetProviderTest {
 
     @Test
     public void testDelete() {
-        alarmManager.setInexactRepeating(AlarmManager.RTC, 0, DateUtils.MINUTE_IN_MILLIS,
-                        WidgetProvider.createRefreshPendingIntent(RuntimeEnvironment.application, appWidgetId));
+        new WidgetHelper(RuntimeEnvironment.application).configure(appWidgetId);
+        assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNotNull();
+        widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
+        assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNull();
+    }
+
+    @Test
+    public void testAlarmAfterReboot() {
+        // rebooting should update widget again via update broadcast
+        widgetProvider.onReceive(RuntimeEnvironment.application,
+                new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId}));
         assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNotNull();
         widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
         assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNull();

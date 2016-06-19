@@ -16,26 +16,17 @@
 
 package io.github.hidroh.materialistic.appwidget;
 
-import android.app.AlarmManager;
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.Window;
-
-import java.util.Locale;
 
 import io.github.hidroh.materialistic.InjectableActivity;
 import io.github.hidroh.materialistic.R;
 
 public class WidgetConfigActivity extends InjectableActivity {
-    private static final String SP_NAME = "WidgetConfiguration_%1$d";
-    private static final int DEFAULT_FREQUENCY_HOUR = 6;
     private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
@@ -70,33 +61,9 @@ public class WidgetConfigActivity extends InjectableActivity {
     }
 
     private void configure() {
-        String frequency = getConfig(this, mAppWidgetId, R.string.pref_widget_frequency);
-        int frequencyHour = TextUtils.isEmpty(frequency) ?
-                DEFAULT_FREQUENCY_HOUR : Integer.valueOf(frequency);
-        ((AlarmManager) getSystemService(ALARM_SERVICE))
-                .setInexactRepeating(AlarmManager.RTC,
-                        System.currentTimeMillis(),
-                        DateUtils.HOUR_IN_MILLIS * frequencyHour,
-                        WidgetProvider.createRefreshPendingIntent(this, mAppWidgetId));
-        WidgetProvider.updateAppWidget(this, AppWidgetManager.getInstance(this), mAppWidgetId);
+        new WidgetHelper(this).configure(mAppWidgetId);
         setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));
         finish();
-    }
-
-    public static String getConfig(Context context, int appWidgetId, @StringRes int key) {
-        return context.getSharedPreferences(getConfigName(appWidgetId), MODE_PRIVATE)
-                .getString(context.getString(key), null);
-    }
-
-    public static void clearConfig(Context context, int appWidgetId) {
-        context.getSharedPreferences(getConfigName(appWidgetId), MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
-    }
-
-    private static String getConfigName(int appWidgetId) {
-        return String.format(Locale.US, SP_NAME, appWidgetId);
     }
 
     public static class WidgetConfigurationFragment extends PreferenceFragmentCompat {
@@ -104,7 +71,7 @@ public class WidgetConfigActivity extends InjectableActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            getPreferenceManager().setSharedPreferencesName(getConfigName(
+            getPreferenceManager().setSharedPreferencesName(WidgetHelper.getConfigName(
                     getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)));
         }
 
