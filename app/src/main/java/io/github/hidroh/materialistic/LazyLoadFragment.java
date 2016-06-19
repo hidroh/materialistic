@@ -57,6 +57,12 @@ public abstract class LazyLoadFragment extends BaseFragment {
         outState.putBoolean(STATE_EAGER_LOAD, mEagerLoad);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivityCreated = false;
+    }
+
     /**
      * Load data after fragment becomes visible or if WIFI is enabled
      */
