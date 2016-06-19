@@ -5,14 +5,15 @@ android:
   components:
     # Uncomment the lines below if you want to
     # use the latest revision of Android SDK Tools
-    - platform-tools
     - tools
+    - tools # TODO force travis to fetch latest tools
+    - platform-tools
 
     # The BuildTools version used by your project
-    - build-tools-23.0.3
+    - build-tools-24.0.0
 
     # The SDK version used to compile your project
-    - android-23
+    - android-24
 
     # Additional components
     - extra-android-m2repository
