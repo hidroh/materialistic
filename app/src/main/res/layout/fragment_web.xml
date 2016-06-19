@@ -54,6 +54,8 @@
 
                 <io.github.hidroh.materialistic.widget.CacheableWebView
                     android:id="@id/web_view"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

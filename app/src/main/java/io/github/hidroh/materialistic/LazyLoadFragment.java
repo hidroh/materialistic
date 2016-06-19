@@ -23,8 +23,7 @@ import android.os.Bundle;
  */
 public abstract class LazyLoadFragment extends BaseFragment {
     private static final String STATE_EAGER_LOAD = "state:eagerLoad";
-    private boolean mEagerLoad;
-    private boolean mActivityCreated;
+    private boolean mEagerLoad, mVisible, mActivityCreated;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +38,8 @@ public abstract class LazyLoadFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && !mEagerLoad) {
-            mEagerLoad = true;
+        if (isVisibleToUser && !mVisible) {
+            mVisible = true;
             eagerLoad();
         }
     }
@@ -64,12 +63,8 @@ public abstract class LazyLoadFragment extends BaseFragment {
     protected abstract void load();
 
     final void eagerLoad() {
-        if (!mEagerLoad) {
-            return;
+        if (mActivityCreated && (mEagerLoad || mVisible)) {
+            load();
         }
-        if (!mActivityCreated) {
-            return;
-        }
-        load();
     }
 }
