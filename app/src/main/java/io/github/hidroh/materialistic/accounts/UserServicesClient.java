@@ -51,9 +51,8 @@ public class UserServicesClient implements UserServices {
     private static final String LOGIN_PARAM_PW = "pw";
     private static final String LOGIN_PARAM_CREATING = "creating";
     private static final String LOGIN_PARAM_GOTO = "goto";
-    private static final String VOTE_PARAM_FOR = "for";
-    private static final String VOTE_PARAM_WHENCE = "whence";
-    private static final String VOTE_PARAM_DIR = "dir";
+    private static final String VOTE_PARAM_ID = "id";
+    private static final String VOTE_PARAM_HOW = "how";
     private static final String COMMENT_PARAM_PARENT = "parent";
     private static final String COMMENT_PARAM_TEXT = "text";
     private static final String SUBMIT_PARAM_TITLE = "title";
@@ -113,9 +112,8 @@ public class UserServicesClient implements UserServices {
                 .post(new FormBody.Builder()
                         .add(LOGIN_PARAM_ACCT, credentials.first)
                         .add(LOGIN_PARAM_PW, credentials.second)
-                        .add(VOTE_PARAM_FOR, itemId)
-                        .add(VOTE_PARAM_DIR, VOTE_DIR_UP)
-                        .add(VOTE_PARAM_WHENCE, DEFAULT_REDIRECT)
+                        .add(VOTE_PARAM_ID, itemId)
+                        .add(VOTE_PARAM_HOW, VOTE_DIR_UP)
                         .build())
                 .build())
                 .enqueue(wrap(callback));
