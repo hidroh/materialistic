@@ -469,7 +469,7 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
-        voteCallback.getValue().onError();
+        voteCallback.getValue().onError(0, null);
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

@@ -429,7 +429,7 @@ public class StoryRecyclerViewAdapter extends
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(mPosition, null);
             }

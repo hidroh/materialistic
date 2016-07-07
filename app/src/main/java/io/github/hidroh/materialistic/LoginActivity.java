@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
@@ -150,7 +151,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mLoginActivity.get() != null && !mLoginActivity.get().isActivityDestroyed()) {
                 mLoginActivity.get().onLoggedIn(null);
             }

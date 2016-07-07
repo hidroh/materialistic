@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.view.ActionMode;
@@ -303,7 +304,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(null);
             }

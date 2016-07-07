@@ -20,6 +20,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
@@ -325,7 +326,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(null);
             }

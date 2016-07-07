@@ -21,7 +21,6 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +34,7 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.accounts.UserServicesClient;
 import io.github.hidroh.materialistic.appwidget.WidgetConfigActivity;
+import io.github.hidroh.materialistic.appwidget.WidgetService;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -46,7 +46,6 @@ import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.UserManager;
-import io.github.hidroh.materialistic.appwidget.WidgetService;
 import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
@@ -277,8 +276,7 @@ public class ActivityModule {
     }
 
     static class CookieJar implements okhttp3.CookieJar {
-
-        private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+        private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
 
         @Override
         public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
@@ -289,16 +287,16 @@ public class ActivityModule {
             ArrayList<Cookie> originalCookies = new ArrayList<>();
             //noinspection Convert2streamapi
             for (Cookie cookie : cookies) {
-                if (HttpCookie.domainMatches(cookie.domain(), url.host())) {
+                if (url.host().endsWith(cookie.domain())) {
                     originalCookies.add(cookie);
                 }
             }
-            cookieStore.put(url, originalCookies);
+            cookieStore.put(url.host(), originalCookies);
         }
 
         @Override
         public List<Cookie> loadForRequest(HttpUrl url) {
-            List<Cookie> cookies = cookieStore.get(url);
+            List<Cookie> cookies = cookieStore.get(url.host());
             return cookies != null ? cookies : new ArrayList<>();
         }
     }

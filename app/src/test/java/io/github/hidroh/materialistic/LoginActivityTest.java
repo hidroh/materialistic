@@ -96,7 +96,7 @@ public class LoginActivityTest {
         ((EditText) activity.findViewById(R.id.edittext_password)).setText("password");
         activity.findViewById(R.id.login_button).performClick();
         verify(userServices).login(eq("username"), eq("password"), eq(false), callback.capture());
-        callback.getValue().onError();
+        callback.getValue().onError(0, null);
         assertThat(activity).isNotFinishing();
         assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
     }

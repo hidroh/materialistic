@@ -515,7 +515,7 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume();
         activity.findViewById(R.id.vote_button).performClick();
         verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
-        userServicesCallback.getValue().onError();
+        userServicesCallback.getValue().onError(0, null);
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

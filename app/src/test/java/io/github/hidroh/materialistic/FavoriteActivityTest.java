@@ -371,7 +371,7 @@ public class FavoriteActivityTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
-        userServicesCallback.getValue().onError();
+        userServicesCallback.getValue().onError(0, null);
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

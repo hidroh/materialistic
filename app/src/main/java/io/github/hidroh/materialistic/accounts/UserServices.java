@@ -17,11 +17,13 @@
 package io.github.hidroh.materialistic.accounts;
 
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.StringRes;
 
 public interface UserServices {
     abstract class Callback {
         public void onDone(boolean successful) {}
-        public void onError() {}
+        public void onError(@StringRes int message, Uri data) {}
     }
 
     void login(String username, String password, boolean createAccount, Callback callback);

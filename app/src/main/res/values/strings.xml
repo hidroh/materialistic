@@ -296,5 +296,6 @@
     <string name="last_screen">Last used screen</string>
     <string name="widget_options">Widget options</string>
     <string name="not_supported">Device not supported</string>
+    <string name="item_exist">Similar story has been submitted</string>
 
 </resources>
