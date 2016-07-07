@@ -461,7 +461,7 @@ public class ItemActivity extends InjectableActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mItemActivity.get() != null && !mItemActivity.get().isActivityDestroyed()) {
                 mItemActivity.get().onVoted(null);
             }

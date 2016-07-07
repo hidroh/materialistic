@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic.accounts;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.WorkerThread;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -46,11 +48,13 @@ public class UserServicesClient implements UserServices {
     private static final String VOTE_PATH = "vote";
     private static final String COMMENT_PATH = "comment";
     private static final String SUBMIT_PATH = "submit";
+    private static final String ITEM_PATH = "item";
     private static final String SUBMIT_POST_PATH = "r";
     private static final String LOGIN_PARAM_ACCT = "acct";
     private static final String LOGIN_PARAM_PW = "pw";
     private static final String LOGIN_PARAM_CREATING = "creating";
     private static final String LOGIN_PARAM_GOTO = "goto";
+    private static final String ITEM_PARAM_ID = "id";
     private static final String VOTE_PARAM_ID = "id";
     private static final String VOTE_PARAM_HOW = "how";
     private static final String COMMENT_PARAM_PARENT = "parent";
@@ -68,6 +72,7 @@ public class UserServicesClient implements UserServices {
     private static final String REGEX_INPUT = "<\\s*input[^>]*>";
     private static final String REGEX_VALUE = "value[^\"]*\"([^\"]*)\"";
     private static final String HEADER_LOCATION = "location";
+    private static final String HOST_ITEM = "item";
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
     private final Call.Factory mCallFactory;
 
@@ -226,10 +231,20 @@ public class UserServicesClient implements UserServices {
                             postError(callback);
                             return;
                         }
-                        String location = response.header(HEADER_LOCATION);
-                        switch (location) {
+                        Uri location = Uri.parse(response.header(HEADER_LOCATION));
+                        switch (location.getPath()) {
                             case DEFAULT_SUBMIT_REDIRECT:
                                 postResult(callback, true);
+                                break;
+                            case ITEM_PATH:
+                                String itemId = location.getQueryParameter(ITEM_PARAM_ID);
+                                if (!TextUtils.isEmpty(itemId)) {
+                                    postError(callback, R.string.item_exist, new Uri.Builder()
+                                            .scheme(BuildConfig.APPLICATION_ID)
+                                            .authority(HOST_ITEM)
+                                            .path(itemId)
+                                            .build());
+                                }
                                 break;
                             default:
                                 postError(callback);
@@ -258,8 +273,12 @@ public class UserServicesClient implements UserServices {
         mUiHandler.post(() -> callback.onDone(successful));
     }
 
-    private void postError(final Callback callback) {
-        mUiHandler.post(callback::onError);
+    private void postError(Callback callback) {
+        postError(callback, 0, null);
+    }
+
+    private void postError(final Callback callback, int message, Uri data) {
+        mUiHandler.post(() -> callback.onError(message, data));
     }
 
     private String getInputValue(String html, String name) {

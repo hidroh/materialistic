@@ -154,7 +154,7 @@ public class ComposeActivityTest {
         doSend();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_send).isEnabled());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
-        replyCallback.getValue().onError();
+        replyCallback.getValue().onError(0, null);
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_send).isEnabled());
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
         assertThat(activity).isNotFinishing();
@@ -190,7 +190,7 @@ public class ComposeActivityTest {
         shadowOf(activity).clickMenuItem(android.R.id.home);
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
-        replyCallback.getValue().onError();
+        replyCallback.getValue().onError(0, null);
         assertEquals(activity.getString(R.string.comment_failed), ShadowToast.getTextOfLatestToast());
     }
 

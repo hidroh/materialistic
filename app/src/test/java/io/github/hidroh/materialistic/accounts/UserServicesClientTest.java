@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic.accounts;
 
 import android.accounts.Account;
+import android.net.Uri;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import java.net.HttpURLConnection;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.R;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -80,7 +82,7 @@ public class UserServicesClientTest {
         userServices.login("username", "password", false, callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -109,7 +111,7 @@ public class UserServicesClientTest {
         userServices.voteUp(RuntimeEnvironment.application, "1", callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -189,9 +191,9 @@ public class UserServicesClientTest {
         verify(call, times(2)).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .code(HttpURLConnection.HTTP_MOVED_TEMP)
-                .header("location", "x")
+                .header("location", "item?id=1234")
                 .build());
-        verify(callback).onError();
+        verify(callback).onError(eq(R.string.item_exist), any(Uri.class));
     }
 
     @Test
@@ -207,7 +209,7 @@ public class UserServicesClientTest {
         callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .code(HttpURLConnection.HTTP_OK)
                 .build());
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -221,7 +223,7 @@ public class UserServicesClientTest {
                 .code(HttpURLConnection.HTTP_OK).build());
         verify(call, times(2)).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -232,7 +234,7 @@ public class UserServicesClientTest {
         callbackCaptor.getValue().onResponse(null, createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"), ""))
                 .code(HttpURLConnection.HTTP_OK).build());
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -244,7 +246,7 @@ public class UserServicesClientTest {
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"hiddenfield\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -256,7 +258,7 @@ public class UserServicesClientTest {
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     @Test
@@ -275,7 +277,7 @@ public class UserServicesClientTest {
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(call).enqueue(callbackCaptor.capture());
         callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError();
+        verify(callback).onError(0, null);
     }
 
     private Response.Builder createResponseBuilder() {

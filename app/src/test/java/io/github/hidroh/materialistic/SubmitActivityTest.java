@@ -3,6 +3,8 @@ package io.github.hidroh.materialistic;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.widget.EditText;
 
 import org.junit.After;
@@ -109,8 +111,12 @@ public class SubmitActivityTest {
                 .performClick();
         verify(userServices).submit(any(Context.class), eq("title"), eq("http://example.com"),
                 eq(true), submitCallback.capture());
-        submitCallback.getValue().onError();
-        assertEquals(activity.getString(R.string.submit_failed), ShadowToast.getTextOfLatestToast());
+        Uri redirect = Uri.parse(BuildConfig.APPLICATION_ID + "://item?id=1234");
+        submitCallback.getValue().onError(R.string.item_exist, redirect);
+        assertEquals(activity.getString(R.string.item_exist), ShadowToast.getTextOfLatestToast());
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasAction(Intent.ACTION_VIEW)
+                .hasData(redirect);
     }
 
     @Test
@@ -154,7 +160,7 @@ public class SubmitActivityTest {
         shadowOf(activity).clickMenuItem(android.R.id.home);
         ShadowAlertDialog.getLatestAlertDialog().getButton(DialogInterface.BUTTON_POSITIVE)
                 .performClick();
-        submitCallback.getValue().onError();
+        submitCallback.getValue().onError(0, null);
         assertEquals(activity.getString(R.string.submit_failed), ShadowToast.getTextOfLatestToast());
     }
 

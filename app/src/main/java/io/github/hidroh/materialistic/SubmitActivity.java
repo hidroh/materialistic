@@ -16,8 +16,8 @@
 
 package io.github.hidroh.materialistic;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
@@ -154,6 +154,13 @@ public class SubmitActivity extends InjectableActivity {
         }
     }
 
+    private void onError(int message, Uri data) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        if (data != null) {
+            startActivity(new Intent(Intent.ACTION_VIEW).setData(data));
+        }
+    }
+
     private boolean isUrl() {
         try {
             new URL(mContentEditText.getText().toString()); // try parsing
@@ -188,9 +195,13 @@ public class SubmitActivity extends InjectableActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mSubmitActivity.get() != null && !mSubmitActivity.get().isActivityDestroyed()) {
-                mSubmitActivity.get().onSubmitted(null);
+                if (message != 0) {
+                    mSubmitActivity.get().onError(message, data);
+                } else {
+                    mSubmitActivity.get().onSubmitted(null);
+                }
             }
         }
     }

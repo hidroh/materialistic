@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -209,7 +210,7 @@ public class ComposeActivity extends InjectableActivity {
         }
 
         @Override
-        public void onError() {
+        public void onError(int message, Uri data) {
             if (mComposeActivity.get() != null && !mComposeActivity.get().isActivityDestroyed()) {
                 mComposeActivity.get().onSent(null);
             }
