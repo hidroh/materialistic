@@ -25,8 +25,10 @@ import java.util.concurrent.Executor;
 import javax.inject.Inject;
 
 import okhttp3.Call;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.schedulers.Schedulers;
 
 public interface RestServiceFactory {
     String CACHE_CONTROL_FORCE_CACHE = "Cache-Control: only-if-cached, max-stale=" + Integer.MAX_VALUE;
@@ -34,16 +36,25 @@ public interface RestServiceFactory {
     String CACHE_CONTROL_MAX_AGE_30M = "Cache-Control: max-age=" + (30 * 60);
     String CACHE_CONTROL_MAX_AGE_24H = "Cache-Control: max-age=" + (24 * 60 * 60);
 
+    RestServiceFactory rxEnabled(boolean enabled);
+
     <T> T create(String baseUrl, Class<T> clazz);
 
     <T> T create(String baseUrl, Class<T> clazz, Executor callbackExecutor);
 
     class Impl implements RestServiceFactory {
         private final Call.Factory mCallFactory;
+        private boolean mRxEnabled;
 
         @Inject
         public Impl(Call.Factory callFactory) {
             this.mCallFactory = callFactory;
+        }
+
+        @Override
+        public RestServiceFactory rxEnabled(boolean enabled) {
+            mRxEnabled = enabled;
+            return this;
         }
 
         @Override
@@ -53,11 +64,15 @@ public interface RestServiceFactory {
 
         @Override
         public <T> T create(String baseUrl, Class<T> clazz, Executor callbackExecutor) {
-            return new Retrofit.Builder()
-                    .callFactory(mCallFactory)
+            Retrofit.Builder builder = new Retrofit.Builder();
+            if (mRxEnabled) {
+                builder.addCallAdapterFactory(RxJavaCallAdapterFactory
+                        .createWithScheduler(Schedulers.io()));
+            }
+            builder.callFactory(mCallFactory)
                     .callbackExecutor(callbackExecutor != null ?
-                            callbackExecutor : new MainThreadExecutor())
-                    .baseUrl(baseUrl)
+                            callbackExecutor : new MainThreadExecutor());
+            return builder.baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(clazz);

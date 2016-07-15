@@ -20,6 +20,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [Retrolambda] & [Retrolambda Gradle plugin]
+- [RxJava] & [RxAndroid]
 - [Robolectric]
 
 **Build**
@@ -92,6 +93,8 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [LeakCanary]: https://github.com/square/leakcanary
 [Retrolambda]: https://github.com/orfjackal/retrolambda
 [Retrolambda Gradle plugin]: https://github.com/evant/gradle-retrolambda
+[RxJava]: https://github.com/ReactiveX/RxJava
+[RxAndroid]: https://github.com/ReactiveX/RxAndroid
 [Robolectric]: https://github.com/robolectric/robolectric
 [readability]: https://www.readability.com/developers/api/parser
 [article-theme1]: http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/

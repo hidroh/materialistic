@@ -11,12 +11,9 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowAsyncQueryHandler.class})
@@ -24,11 +21,9 @@ import static org.robolectric.Shadows.shadowOf;
 public class SessionManagerTest {
     private ShadowContentResolver resolver;
     private SessionManager manager;
-    private SessionManager.OperationCallbacks callbacks;
 
     @Before
     public void setUp() {
-        callbacks = mock(SessionManager.OperationCallbacks.class);
         resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
@@ -40,21 +35,21 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void testIsViewNull() {
-        manager.isViewed(RuntimeEnvironment.application.getContentResolver(), null, callbacks);
-        verify(callbacks, never()).onCheckViewedComplete(anyBoolean());
+    public void testIsViewedNull() {
+        assertFalse(manager.isViewed(RuntimeEnvironment.application.getContentResolver(), null)
+                .toBlocking().single());
     }
 
     @Test
-    public void testIsViewTrue() {
-        manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "1", callbacks);
-        verify(callbacks).onCheckViewedComplete(eq(true));
+    public void testIsViewedTrue() {
+        assertTrue(manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "1")
+                .toBlocking().single());
     }
 
     @Test
-    public void testIsViewFalse() {
-        manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "-1", callbacks);
-        verify(callbacks).onCheckViewedComplete(eq(false));
+    public void testIsViewedFalse() {
+        assertFalse(manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "-1")
+                .toBlocking().single());
     }
 
     @Test

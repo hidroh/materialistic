@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
@@ -26,11 +25,11 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Client to retrieve Hacker News content asynchronously
@@ -49,7 +48,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
     public HackerNewsClient(Context context, RestServiceFactory factory,
                             SessionManager sessionManager,
                             FavoriteManager favoriteManager) {
-        mRestService = factory.create(BASE_API_URL, RestService.class);
+        mRestService = factory.rxEnabled(true).create(BASE_API_URL, RestService.class);
         mSessionManager = sessionManager;
         mFavoriteManager = favoriteManager;
         mContentResolver = context.getApplicationContext().getContentResolver();
@@ -61,18 +60,10 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-        getStoriesCall(filter, cacheMode).enqueue(new Callback<int[]>() {
-            @Override
-            public void onResponse(Call<int[]> call, Response<int[]> response) {
-                listener.onResponse(toItems(response.body()));
-            }
-
-            @Override
-            public void onFailure(Call<int[]> call, Throwable t) {
-                listener.onError(t != null ? t.getMessage() : "");
-
-            }
-        });
+        getStoriesObservable(filter, cacheMode)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(listener::onResponse,
+                        t -> listener.onError(t != null ? t.getMessage() : ""));
     }
 
     @Override
@@ -80,44 +71,35 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-        final ItemCallbackWrapper wrapper = new ItemCallbackWrapper(listener);
-        if (mSessionManager != null) {
-            mSessionManager.isViewed(mContentResolver, itemId, wrapper);
-        }
-        if (mFavoriteManager != null) {
-            mFavoriteManager.check(mContentResolver, itemId, wrapper);
-        }
+        Observable<HackerNewsItem> itemObservable;
         switch (cacheMode) {
             case MODE_DEFAULT:
             default:
-                mRestService.item(itemId).enqueue(wrapper);
+                itemObservable = mRestService.itemRx(itemId);
                 break;
             case MODE_NETWORK:
-                mRestService.networkItem(itemId).enqueue(wrapper);
+                itemObservable = mRestService.networkItemRx(itemId);
                 break;
             case MODE_CACHE:
-                // try fetching from cache first, fallback to default fetching if no results
-                new AsyncTask<String, Void, Response<HackerNewsItem>>() {
-                    @Override
-                    protected Response<HackerNewsItem> doInBackground(String... params) {
-                        try {
-                            return mRestService.cachedItem(params[0]).execute();
-                        } catch (IOException e) {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(Response<HackerNewsItem> response) {
-                        if (response != null) {
-                            wrapper.onResponse(null, response);
-                        } else {
-                            mRestService.item(itemId).enqueue(wrapper);
-                        }
-                    }
-                }.execute(itemId);
+                itemObservable = mRestService.cachedItemRx(itemId)
+                        .onErrorResumeNext(mRestService.itemRx(itemId));
                 break;
         }
+        Observable.zip(
+                mSessionManager.isViewed(mContentResolver, itemId),
+                mFavoriteManager.check(mContentResolver, itemId),
+                itemObservable,
+                (isViewed, favorite, hackerNewsItem) -> {
+                    if (hackerNewsItem != null) {
+                        hackerNewsItem.setIsViewed(isViewed);
+                        hackerNewsItem.setFavorite(favorite);
+                    }
+                    return hackerNewsItem;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(listener::onResponse,
+                        t -> listener.onError(t != null ? t.getMessage() : ""));
+
     }
 
     @Override
@@ -154,24 +136,48 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-        mRestService.user(username)
-                .enqueue(new Callback<UserItem>() {
-                    @Override
-                    public void onResponse(Call<UserItem> call, Response<UserItem> response) {
-                        UserItem user = response.body();
-                        if (user == null) {
-                            listener.onResponse(null);
-                            return;
-                        }
-                        user.setSubmittedItems(toItems(user.getSubmitted()));
-                        listener.onResponse(user);
+        mRestService.userRx(username)
+                .map(userItem -> {
+                    if (userItem != null) {
+                        userItem.setSubmittedItems(toItems(userItem.getSubmitted()));
                     }
+                    return userItem;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(listener::onResponse,
+                        t -> listener.onError(t != null ? t.getMessage() : ""));
+    }
 
-                    @Override
-                    public void onFailure(Call<UserItem> call, Throwable t) {
-                        listener.onError(t != null ? t.getMessage() : "");
-                    }
-                });
+    @NonNull
+    private Observable<Item[]> getStoriesObservable(@FetchMode String filter, @CacheMode int cacheMode) {
+        Observable<int[]> observable;
+        switch (filter) {
+            case NEW_FETCH_MODE:
+                observable = cacheMode == MODE_NETWORK ?
+                        mRestService.networkNewStoriesRx() : mRestService.newStoriesRx();
+                break;
+            case SHOW_FETCH_MODE:
+                observable = cacheMode == MODE_NETWORK ?
+                        mRestService.networkShowStoriesRx() : mRestService.showStoriesRx();
+                break;
+            case ASK_FETCH_MODE:
+                observable = cacheMode == MODE_NETWORK ?
+                        mRestService.networkAskStoriesRx() : mRestService.askStoriesRx();
+                break;
+            case JOBS_FETCH_MODE:
+                observable = cacheMode == MODE_NETWORK ?
+                        mRestService.networkJobStoriesRx() : mRestService.jobStoriesRx();
+                break;
+            case BEST_FETCH_MODE:
+                observable = cacheMode == MODE_NETWORK ?
+                        mRestService.networkBestStoriesRx() : mRestService.bestStoriesRx();
+                break;
+            default:
+                observable = cacheMode == MODE_NETWORK ?
+                        mRestService.networkTopStoriesRx() : mRestService.topStoriesRx();
+                break;
+        }
+        return observable.map(this::toItems);
     }
 
     @NonNull
@@ -220,6 +226,69 @@ public class HackerNewsClient implements ItemManager, UserManager {
     }
 
     interface RestService {
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("topstories.json")
+        Observable<int[]> topStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("newstories.json")
+        Observable<int[]> newStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("showstories.json")
+        Observable<int[]> showStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("askstories.json")
+        Observable<int[]> askStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("jobstories.json")
+        Observable<int[]> jobStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("beststories.json")
+        Observable<int[]> bestStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("topstories.json")
+        Observable<int[]> networkTopStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("newstories.json")
+        Observable<int[]> networkNewStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("showstories.json")
+        Observable<int[]> networkShowStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("askstories.json")
+        Observable<int[]> networkAskStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("jobstories.json")
+        Observable<int[]> networkJobStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("beststories.json")
+        Observable<int[]> networkBestStoriesRx();
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
+        @GET("item/{itemId}.json")
+        Observable<HackerNewsItem> itemRx(@Path("itemId") String itemId);
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_NETWORK)
+        @GET("item/{itemId}.json")
+        Observable<HackerNewsItem> networkItemRx(@Path("itemId") String itemId);
+
+        @Headers(RestServiceFactory.CACHE_CONTROL_FORCE_CACHE)
+        @GET("item/{itemId}.json")
+        Observable<HackerNewsItem> cachedItemRx(@Path("itemId") String itemId);
+
+        @GET("user/{userId}.json")
+        Observable<UserItem> userRx(@Path("userId") String userId);
+
         @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_30M)
         @GET("topstories.json")
         Call<int[]> topStories();
@@ -282,67 +351,5 @@ public class HackerNewsClient implements ItemManager, UserManager {
 
         @GET("user/{userId}.json")
         Call<UserItem> user(@Path("userId") String userId);
-    }
-
-    private static class ItemCallbackWrapper implements SessionManager.OperationCallbacks,
-            FavoriteManager.OperationCallbacks, Callback<HackerNewsItem> {
-        private final ResponseListener<Item> responseListener;
-        private Boolean isViewed;
-        private Boolean isFavorite;
-        private Item item;
-        private String errorMessage;
-        private boolean hasError;
-        private boolean hasResponse;
-
-        private ItemCallbackWrapper(@NonNull ResponseListener<Item> responseListener) {
-            this.responseListener = responseListener;
-        }
-
-        @Override
-        public void onCheckViewedComplete(boolean isViewed) {
-            this.isViewed = isViewed;
-            done();
-        }
-
-        @Override
-        public void onCheckComplete(boolean isFavorite) {
-            this.isFavorite = isFavorite;
-            done();
-        }
-
-        @Override
-        public void onResponse(Call<HackerNewsItem> call, Response<HackerNewsItem> response) {
-            this.item = response.body();
-            this.hasResponse = true;
-            done();
-        }
-
-        @Override
-        public void onFailure(Call<HackerNewsItem> call, Throwable t) {
-            this.errorMessage = t != null ? t.getMessage() : "";
-            this.hasError = true;
-            done();
-        }
-
-        private void done() {
-            if (isViewed == null) {
-                return;
-            }
-            if (isFavorite == null) {
-                return;
-            }
-            if (!(hasResponse || hasError)) {
-                return;
-            }
-            if (hasResponse) {
-                if (item != null) {
-                    item.setFavorite(isFavorite);
-                    item.setIsViewed(isViewed);
-                }
-                responseListener.onResponse(item);
-            } else {
-                responseListener.onError(errorMessage);
-            }
-        }
     }
 }

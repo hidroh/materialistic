@@ -28,15 +28,12 @@ import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
@@ -46,11 +43,9 @@ import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
     private FavoriteManager manager;
-    private FavoriteManager.OperationCallbacks callbacks;
 
     @Before
     public void setUp() {
-        callbacks = mock(FavoriteManager.OperationCallbacks.class);
         resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
         ContentValues cv = new ContentValues();
         cv.put("itemid", "1");
@@ -87,20 +82,20 @@ public class FavoriteManagerTest {
 
     @Test
     public void testCheckNoId() {
-        manager.check(RuntimeEnvironment.application.getContentResolver(), null, callbacks);
-        verify(callbacks, never()).onCheckComplete(anyBoolean());
+        assertFalse(manager.check(RuntimeEnvironment.application.getContentResolver(), null)
+                .toBlocking().single());
     }
 
     @Test
     public void testCheckTrue() {
-        manager.check(RuntimeEnvironment.application.getContentResolver(), "1", callbacks);
-        verify(callbacks).onCheckComplete(eq(true));
+        assertTrue(manager.check(RuntimeEnvironment.application.getContentResolver(), "1")
+                .toBlocking().single());
     }
 
     @Test
     public void testCheckFalse() {
-        manager.check(RuntimeEnvironment.application.getContentResolver(), "-1", callbacks);
-        verify(callbacks).onCheckComplete(eq(false));
+        assertFalse(manager.check(RuntimeEnvironment.application.getContentResolver(), "-1")
+                .toBlocking().single());
     }
 
     @Test

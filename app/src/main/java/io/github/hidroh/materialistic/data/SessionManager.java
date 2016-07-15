@@ -22,31 +22,31 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
+
+import rx.Observable;
 
 /**
  * Data repository for session state
  */
 public class SessionManager {
 
-    /**
-     * Checks if an item has been viewed previously
-     * @param contentResolver   an instance of {@link ContentResolver}
-     * @param itemId            item ID to check
-     * @param callbacks         listener to be informed upon checking completed
-     */
-    void isViewed(ContentResolver contentResolver, final String itemId,
-                  final OperationCallbacks callbacks) {
+    @WorkerThread
+    @NonNull
+    Observable<Boolean> isViewed(ContentResolver contentResolver, String itemId) {
         if (TextUtils.isEmpty(itemId)) {
-            return;
+            return Observable.just(false);
         }
-        if (callbacks == null) {
-            return;
-        }
-        new SessionHandler(contentResolver, itemId, callbacks).startQuery(0, itemId,
-                MaterialisticProvider.URI_VIEWED, null,
+        Cursor cursor = contentResolver.query(MaterialisticProvider.URI_VIEWED, null,
                 MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID + " = ?",
                 new String[]{itemId}, null);
+        boolean result = false;
+        if (cursor != null) {
+            result = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return Observable.just(result);
     }
 
     /**
