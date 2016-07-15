@@ -19,9 +19,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import rx.Observable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -40,9 +38,7 @@ public class HackerNewsClientTest {
     @Inject SessionManager sessionManager;
     @Inject FavoriteManager favoriteManager;
     private HackerNewsClient client;
-    private Call call;
     @Captor ArgumentCaptor<Item[]> getStoriesResponse;
-    @Captor ArgumentCaptor<Callback> callbackCaptor;
     private ResponseListener<Item> itemListener;
     private ResponseListener<UserManager.User> userListener;
     private ResponseListener<Item[]> storiesListener;
@@ -61,219 +57,198 @@ public class HackerNewsClientTest {
         itemListener = mock(ResponseListener.class);
         storiesListener = mock(ResponseListener.class);
         userListener = mock(ResponseListener.class);
-        call = mock(Call.class);
-        when(TestRestServiceFactory.hnRestService.item(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.askStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.topStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.jobStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.newStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.showStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkAskStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkTopStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkJobStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkNewStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkShowStories()).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.user(anyString())).thenReturn(call);
     }
 
     @Test
     public void testGetItemNoListener() {
         client.getItem("1", ItemManager.MODE_DEFAULT, null);
-        verify(TestRestServiceFactory.hnRestService, never()).item(anyString());
+        verify(TestRestServiceFactory.hnRestService, never()).itemRx(anyString());
     }
 
     @Test
     public void testGetItemSuccess() {
-        client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
-        verify(call).enqueue(callbackCaptor.capture());
         HackerNewsItem hnItem = mock(HackerNewsItem.class);
-        callbackCaptor.getValue().onResponse(null, Response.success(hnItem));
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
-                sessionCallback.capture());
-        sessionCallback.getValue().onCheckViewedComplete(false);
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
-                favoriteCallback.capture());
-        favoriteCallback.getValue().onCheckComplete(false);
+        when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
+                .thenReturn(Observable.just(hnItem));
+        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(false));
+        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(false));
+        client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
+        verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
         verify(itemListener).onResponse(eq(hnItem));
     }
 
     @Test
     public void testGetItemForceNetwork() {
         client.getItem("1", ItemManager.MODE_NETWORK, itemListener);
-        verify(TestRestServiceFactory.hnRestService).networkItem(eq("1"));
+        verify(TestRestServiceFactory.hnRestService).networkItemRx(eq("1"));
     }
 
     @Test
-    public void testGetItemForceCache() throws IOException {
+    public void testGetItemForceCache() {
         HackerNewsItem hnItem = mock(HackerNewsItem.class);
-        when(call.execute()).thenReturn(Response.success(hnItem));
+        when(TestRestServiceFactory.hnRestService.cachedItemRx(eq("1")))
+                .thenReturn(Observable.just(hnItem));
+        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(false));
+        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(false));
         client.getItem("1", ItemManager.MODE_CACHE, itemListener);
-        verify(TestRestServiceFactory.hnRestService).cachedItem(eq("1"));
-        verify(call).execute();
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
-                sessionCallback.capture());
-        sessionCallback.getValue().onCheckViewedComplete(false);
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
-                favoriteCallback.capture());
-        favoriteCallback.getValue().onCheckComplete(false);
+        verify(TestRestServiceFactory.hnRestService).cachedItemRx(eq("1"));
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
         verify(itemListener).onResponse(eq(hnItem));
     }
 
     @Test
-    public void testGetItemForceCacheUnsatisfiable() throws IOException {
-        when(call.execute()).thenThrow(IOException.class);
+    public void testGetItemForceCacheUnsatisfiable() {
+        when(TestRestServiceFactory.hnRestService.cachedItemRx(eq("1")))
+                .thenReturn(Observable.error(new IOException()));
+        when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
+                .thenReturn(Observable.just(mock(HackerNewsItem.class)));
         client.getItem("1", ItemManager.MODE_CACHE, itemListener);
-        verify(TestRestServiceFactory.hnRestService).cachedItem(eq("1"));
-        verify(call).execute();
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
+        verify(TestRestServiceFactory.hnRestService).cachedItemRx(eq("1"));
+        verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
     }
 
     @Test
     public void testGetItemFailure() {
+        when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
+                .thenReturn(Observable.error(new Throwable("message")));
+        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(true));
+        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(true));
         client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
-                favoriteCallback.capture());
-        favoriteCallback.getValue().onCheckComplete(true);
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
-                sessionCallback.capture());
-        sessionCallback.getValue().onCheckViewedComplete(true);
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, new Throwable("message"));
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
+        verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
         verify(itemListener).onError(eq("message"));
     }
 
     @Test
     public void testGetItemFailureNoMessage() {
+        when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
+                .thenReturn(Observable.error(new Throwable("")));
+        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(true));
+        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+                .thenReturn(Observable.just(true));
         client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"),
-                sessionCallback.capture());
-        sessionCallback.getValue().onCheckViewedComplete(true);
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"),
-                favoriteCallback.capture());
-        favoriteCallback.getValue().onCheckComplete(true);
-        verify(TestRestServiceFactory.hnRestService).item(eq("1"));
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
+        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
+        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
+        verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
         verify(itemListener).onError(eq(""));
     }
 
     @Test
     public void testGetStoriesNoListener() {
         client.getStories(ItemManager.TOP_FETCH_MODE, ItemManager.MODE_DEFAULT, null);
-        verify(TestRestServiceFactory.hnRestService, never()).topStories();
+        verify(TestRestServiceFactory.hnRestService, never()).topStoriesRx();
     }
 
     @Test
     public void testGetTopStoriesSuccess() {
+        when(TestRestServiceFactory.hnRestService.topStoriesRx())
+                .thenReturn(Observable.just(new int[]{1, 2}));
         client.getStories(ItemManager.TOP_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).topStories();
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, Response.success(new int[]{1, 2}));
+        verify(TestRestServiceFactory.hnRestService).topStoriesRx();
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(2);
     }
 
     @Test
     public void testGetNewStoriesNull() {
+        when(TestRestServiceFactory.hnRestService.newStoriesRx())
+                .thenReturn(Observable.just(null));
         client.getStories(ItemManager.NEW_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).newStories();
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, Response.success(null));
+        verify(TestRestServiceFactory.hnRestService).newStoriesRx();
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isNullOrEmpty();
     }
 
     @Test
     public void testGetAskEmpty() {
+        when(TestRestServiceFactory.hnRestService.askStoriesRx())
+                .thenReturn(Observable.just(new int[0]));
         client.getStories(ItemManager.ASK_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).askStories();
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, Response.success(new int[]{}));
+        verify(TestRestServiceFactory.hnRestService).askStoriesRx();
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
 
     @Test
     public void testGetShowFailure() {
+        when(TestRestServiceFactory.hnRestService.showStoriesRx())
+                .thenReturn(Observable.error(new Throwable("message")));
         client.getStories(ItemManager.SHOW_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).showStories();
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, new Throwable("message"));
+        verify(TestRestServiceFactory.hnRestService).showStoriesRx();
         verify(storiesListener).onError(eq("message"));
     }
 
     @Test
-    public void testGetJobsFailureNoMessage() {
-        client.getStories(ItemManager.JOBS_FETCH_MODE, ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).jobStories();
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
-        verify(storiesListener).onError(eq(""));
-    }
-
-    @Test
     public void testGetStoriesForceNetwork() {
+        when(TestRestServiceFactory.hnRestService.networkTopStoriesRx())
+                .thenReturn(Observable.just(null));
         client.getStories(ItemManager.TOP_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).networkTopStories();
+        verify(TestRestServiceFactory.hnRestService).networkTopStoriesRx();
 
+        when(TestRestServiceFactory.hnRestService.networkNewStoriesRx())
+                .thenReturn(Observable.just(null));
         client.getStories(ItemManager.NEW_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).networkNewStories();
+        verify(TestRestServiceFactory.hnRestService).networkNewStoriesRx();
 
+        when(TestRestServiceFactory.hnRestService.networkAskStoriesRx())
+                .thenReturn(Observable.just(null));
         client.getStories(ItemManager.ASK_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).networkAskStories();
+        verify(TestRestServiceFactory.hnRestService).networkAskStoriesRx();
 
+        when(TestRestServiceFactory.hnRestService.networkJobStoriesRx())
+                .thenReturn(Observable.just(null));
         client.getStories(ItemManager.JOBS_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).networkJobStories();
+        verify(TestRestServiceFactory.hnRestService).networkJobStoriesRx();
 
+        when(TestRestServiceFactory.hnRestService.networkShowStoriesRx())
+                .thenReturn(Observable.just(null));
         client.getStories(ItemManager.SHOW_FETCH_MODE, ItemManager.MODE_NETWORK, storiesListener);
-        verify(TestRestServiceFactory.hnRestService).networkShowStories();
+        verify(TestRestServiceFactory.hnRestService).networkShowStoriesRx();
     }
 
     @Test
     public void testGetUserNoListener() {
         client.getUser("username", null);
-        verify(TestRestServiceFactory.hnRestService, never()).user(anyString());
+        verify(TestRestServiceFactory.hnRestService, never()).userRx(anyString());
     }
 
     @Test
     public void testGetUserSuccess() {
-        client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
-        verify(call).enqueue(callbackCaptor.capture());
         UserItem hnUser = mock(UserItem.class);
-        callbackCaptor.getValue().onResponse(null, Response.success(hnUser));
+        when(TestRestServiceFactory.hnRestService.userRx(eq("username")))
+                .thenReturn(Observable.just(hnUser));
+        client.getUser("username", userListener);
+        verify(TestRestServiceFactory.hnRestService).userRx(eq("username"));
         verify(userListener).onResponse(eq(hnUser));
     }
 
     @Test
     public void testGetUserNull() {
+        when(TestRestServiceFactory.hnRestService.userRx(eq("username")))
+                .thenReturn(Observable.just(null));
         client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, Response.success(null));
+        verify(TestRestServiceFactory.hnRestService).userRx(eq("username"));
         verify(userListener).onResponse((UserManager.User) isNull());
     }
 
     @Test
     public void testGetUserFailure() {
+        when(TestRestServiceFactory.hnRestService.userRx(eq("username")))
+                .thenReturn(Observable.error(new Throwable("message")));
         client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, new Throwable("message"));
+        verify(TestRestServiceFactory.hnRestService).userRx(eq("username"));
         verify(userListener).onError(eq("message"));
-    }
-
-    @Test
-    public void testGetUserFailureNoMessage() {
-        client.getUser("username", userListener);
-        verify(TestRestServiceFactory.hnRestService).user(eq("username"));
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
-        verify(userListener).onError(eq(""));
     }
 
     @Module(

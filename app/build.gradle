@@ -26,7 +26,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro',
                     'proguard-square.pro',
-                    'proguard-support.pro'
+                    'proguard-support.pro',
+                    'proguard-rx.pro'
         }
         leak.initWith(buildTypes.debug)
     }
@@ -57,7 +58,7 @@ ext {
     okHttpVersion = '3.3.1'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.4-beta2'
-    retrofitVersion = '2.0.2'
+    retrofitVersion = '2.1.0'
 }
 
 dependencies {
@@ -71,8 +72,11 @@ dependencies {
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
             "com.squareup.retrofit2:converter-gson:$retrofitVersion",
+            "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion",
             "com.squareup.okhttp3:okhttp:$okHttpVersion",
-            "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+            "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
+            "io.reactivex:rxandroid:1.2.1",
+            "io.reactivex:rxjava:1.1.7"
     leakCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     debugCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"

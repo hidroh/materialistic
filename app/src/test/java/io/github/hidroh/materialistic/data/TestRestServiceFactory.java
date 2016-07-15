@@ -15,6 +15,11 @@ public class TestRestServiceFactory implements RestServiceFactory {
             mock(ReadabilityClient.Impl.ReadabilityService.class);
 
     @Override
+    public RestServiceFactory rxEnabled(boolean enabled) {
+        return this;
+    }
+
+    @Override
     public <T> T create(String baseUrl, Class<T> clazz) {
         return create(baseUrl, clazz, null);
     }

@@ -26,11 +26,14 @@ import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import rx.Observable;
 
 /**
  * Data repository for {@link Favorite}
@@ -124,30 +127,6 @@ public class FavoriteManager {
     }
 
     /**
-     * Checks if a story with given ID is a favorite
-     * @param contentResolver   an instance of {@link ContentResolver}
-     * @param itemId            story ID to check
-     * @param callbacks         listener to be informed upon checking completed
-     */
-    void check(ContentResolver contentResolver, final String itemId,
-                      final OperationCallbacks callbacks) {
-        if (itemId == null) {
-            return;
-        }
-        if (callbacks == null) {
-            return;
-        }
-        new FavoriteHandler(contentResolver, new FavoriteCallback() {
-            @Override
-            void onCheckComplete(boolean isFavorite) {
-                callbacks.onCheckComplete(isFavorite);
-            }
-        }).startQuery(0, itemId, MaterialisticProvider.URI_FAVORITE, null,
-                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId}, null);
-    }
-
-    /**
      * Removes story with given ID from favorites
      * upon completion
      * @param context   an instance of {@link android.content.Context}
@@ -191,6 +170,23 @@ public class FavoriteManager {
         for (String itemId : itemIds) {
             contentResolver.notifyChange(buildRemoved().appendPath(itemId).build(), null);
         }
+    }
+
+    @WorkerThread
+    @NonNull
+    Observable<Boolean> check(ContentResolver contentResolver, String itemId) {
+        if (TextUtils.isEmpty(itemId)) {
+            return Observable.just(false);
+        }
+        android.database.Cursor cursor = contentResolver.query(MaterialisticProvider.URI_FAVORITE, null,
+                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                new String[]{itemId}, null);
+        boolean result = false;
+        if (cursor != null) {
+            result = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return Observable.just(result);
     }
 
     /**
