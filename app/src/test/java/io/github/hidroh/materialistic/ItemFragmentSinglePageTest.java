@@ -30,6 +30,8 @@ import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -459,7 +461,7 @@ public class ItemFragmentSinglePageTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
-        voteCallback.getValue().onError(0, null);
+        voteCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

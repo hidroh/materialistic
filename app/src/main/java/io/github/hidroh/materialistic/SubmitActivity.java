@@ -195,10 +195,11 @@ public class SubmitActivity extends InjectableActivity {
         }
 
         @Override
-        public void onError(int message, Uri data) {
+        public void onError(Throwable throwable) {
             if (mSubmitActivity.get() != null && !mSubmitActivity.get().isActivityDestroyed()) {
-                if (message != 0) {
-                    mSubmitActivity.get().onError(message, data);
+                if (throwable instanceof UserServices.Exception) {
+                    UserServices.Exception e = (UserServices.Exception) throwable;
+                    mSubmitActivity.get().onError(e.message, e.data);
                 } else {
                     mSubmitActivity.get().onSubmitted(null);
                 }

@@ -1,13 +1,10 @@
 package io.github.hidroh.materialistic.accounts;
 
 import android.accounts.Account;
-import android.net.Uri;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -18,7 +15,6 @@ import java.net.HttpURLConnection;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.Preferences;
-import io.github.hidroh.materialistic.R;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -26,9 +22,11 @@ import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import rx.schedulers.Schedulers;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -38,7 +36,6 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricGradleTestRunner.class)
 public class UserServicesClientTest {
     private UserServices userServices;
-    @Captor ArgumentCaptor<Callback> callbackCaptor;
     private Call call;
     private Response.Builder responseBuilder = createResponseBuilder();
     private Account account;
@@ -49,7 +46,7 @@ public class UserServicesClientTest {
         call = mock(Call.class);
         Call.Factory callFactory = mock(Call.Factory.class);
         when(callFactory.newCall(any(Request.class))).thenReturn(call);
-        userServices = new UserServicesClient(callFactory);
+        userServices = new UserServicesClient(callFactory, Schedulers.immediate());
         Preferences.setUsername(RuntimeEnvironment.application, "username");
         account = new Account("username", BuildConfig.APPLICATION_ID);
         ShadowAccountManager.get(RuntimeEnvironment.application)
@@ -58,60 +55,54 @@ public class UserServicesClientTest {
 
     @Test
     public void testLoginSuccess() throws IOException {
+        when(call.execute()).thenReturn(responseBuilder
+                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", false, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, responseBuilder
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(eq(true));
     }
 
     @Test
     public void testRegisterFailed() throws IOException {
+        when(call.execute()).thenReturn(responseBuilder
+                .code(HttpURLConnection.HTTP_OK).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, responseBuilder
-                .code(HttpURLConnection.HTTP_OK).build());
         verify(callback).onDone(eq(false));
     }
 
     @Test
     public void testLoginError() throws IOException {
+        when(call.execute()).thenThrow(new IOException());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", false, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError(0, null);
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testVoteSuccess() throws IOException {
+        when(call.execute()).thenReturn(responseBuilder
+                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.voteUp(RuntimeEnvironment.application, "1", callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, responseBuilder
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(eq(true));
     }
 
     @Test
     public void testVoteFailed() throws IOException {
+        when(call.execute()).thenReturn(responseBuilder
+                .code(HttpURLConnection.HTTP_OK).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.voteUp(RuntimeEnvironment.application, "1", callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, responseBuilder
-                .code(HttpURLConnection.HTTP_OK).build());
         verify(callback).onDone(eq(false));
     }
 
     @Test
     public void testVoteError() throws IOException {
+        when(call.execute()).thenThrow(new IOException());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.voteUp(RuntimeEnvironment.application, "1", callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError(0, null);
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
@@ -125,11 +116,10 @@ public class UserServicesClientTest {
 
     @Test
     public void testCommentSuccess() throws IOException {
+        when(call.execute()).thenReturn(responseBuilder
+                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.reply(RuntimeEnvironment.application, "1", "reply", callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, responseBuilder
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         verify(callback).onDone(eq(true));
     }
 
@@ -164,120 +154,115 @@ public class UserServicesClientTest {
 
     @Test
     public void testSubmitSuccess() throws IOException {
+        when(call.execute())
+                .thenReturn(createResponseBuilder()
+                        .body(ResponseBody.create(MediaType.parse("text/html"),
+                                "<input \"name\"=\"fnid\" value=\"unique\">"))
+                        .code(HttpURLConnection.HTTP_OK).build())
+                .thenReturn(createResponseBuilder()
+                        .code(HttpURLConnection.HTTP_MOVED_TEMP)
+                        .header("location", "newest")
+                        .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "content", false, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .body(ResponseBody.create(MediaType.parse("text/html"),
-                        "<input \"name\"=\"fnid\" value=\"unique\">"))
-                .code(HttpURLConnection.HTTP_OK).build());
-        verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .code(HttpURLConnection.HTTP_MOVED_TEMP)
-                .header("location", "newest")
-                .build());
+        verify(call, times(2)).execute();
         verify(callback).onDone(eq(true));
     }
 
     @Test
     public void testSubmitDuplicate() throws IOException {
+        when(call.execute())
+                .thenReturn(createResponseBuilder()
+                        .body(ResponseBody.create(MediaType.parse("text/html"),
+                                "<input \"name\"=\"fnid\" value=\"unique\">"))
+                        .code(HttpURLConnection.HTTP_OK).build())
+                .thenReturn(createResponseBuilder()
+                        .code(HttpURLConnection.HTTP_MOVED_TEMP)
+                        .header("location", "item?id=1234")
+                        .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .body(ResponseBody.create(MediaType.parse("text/html"),
-                        "<input \"name\"=\"fnid\" value=\"unique\">"))
-                .code(HttpURLConnection.HTTP_OK).build());
-        verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .code(HttpURLConnection.HTTP_MOVED_TEMP)
-                .header("location", "item?id=1234")
-                .build());
-        verify(callback).onError(eq(R.string.item_exist), any(Uri.class));
+        verify(call, times(2)).execute();
+        verify(callback).onError(isA(UserServices.Exception.class));
     }
 
     @Test
     public void testSubmitError() throws IOException {
+        when(call.execute())
+                .thenReturn(createResponseBuilder()
+                        .body(ResponseBody.create(MediaType.parse("text/html"),
+                                "<input \"name\"=\"fnid\" value=\"unique\">"))
+                        .code(HttpURLConnection.HTTP_OK).build())
+                .thenReturn(createResponseBuilder()
+                        .code(HttpURLConnection.HTTP_OK)
+                        .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .body(ResponseBody.create(MediaType.parse("text/html"),
-                        "<input \"name\"=\"fnid\" value=\"unique\">"))
-                .code(HttpURLConnection.HTTP_OK).build());
-        verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .code(HttpURLConnection.HTTP_OK)
-                .build());
-        verify(callback).onError(0, null);
+        verify(call, times(2)).execute();
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testSubmitNetworkError() throws IOException {
+        when(call.execute())
+                .thenReturn(createResponseBuilder()
+                        .body(ResponseBody.create(MediaType.parse("text/html"),
+                                "<input \"name\"=\"fnid\" value=\"unique\">"))
+                        .code(HttpURLConnection.HTTP_OK).build())
+                .thenThrow(new IOException());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .body(ResponseBody.create(MediaType.parse("text/html"),
-                        "<input \"name\"=\"fnid\" value=\"unique\">"))
-                .code(HttpURLConnection.HTTP_OK).build());
-        verify(call, times(2)).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError(0, null);
+        verify(call, times(2)).execute();
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testSubmitParsingNoInput() throws IOException {
-        UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
+        when(call.execute()).thenReturn(createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"), ""))
                 .code(HttpURLConnection.HTTP_OK).build());
-        verify(callback).onError(0, null);
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testSubmitParsingNoFnid() throws IOException {
-        UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
+        when(call.execute()).thenReturn(createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"hiddenfield\" value=\"unique\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
-        verify(callback).onError(0, null);
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testSubmitParsingNoFnidValue() throws IOException {
-        UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
+        when(call.execute()).thenReturn(createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\">"))
                 .code(HttpURLConnection.HTTP_OK).build());
-        verify(callback).onError(0, null);
+        UserServices.Callback callback = mock(UserServices.Callback.class);
+        userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testSubmitLoginFailed() throws IOException {
+        when(call.execute()).thenReturn(createResponseBuilder()
+                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onResponse(null, createResponseBuilder()
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
-        verify(callback).onDone(false);
+        verify(callback).onError(any(Throwable.class));
     }
 
     @Test
     public void testSubmitLoginError() throws IOException {
+        when(call.execute()).thenThrow(new IOException());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
-        verify(call).enqueue(callbackCaptor.capture());
-        callbackCaptor.getValue().onFailure(null, null);
-        verify(callback).onError(0, null);
+        verify(callback).onError(any(Throwable.class));
     }
 
     private Response.Builder createResponseBuilder() {

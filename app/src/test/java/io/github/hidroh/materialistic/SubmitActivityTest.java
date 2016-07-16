@@ -20,6 +20,8 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -112,7 +114,9 @@ public class SubmitActivityTest {
         verify(userServices).submit(any(Context.class), eq("title"), eq("http://example.com"),
                 eq(true), submitCallback.capture());
         Uri redirect = Uri.parse(BuildConfig.APPLICATION_ID + "://item?id=1234");
-        submitCallback.getValue().onError(R.string.item_exist, redirect);
+        UserServices.Exception exception = new UserServices.Exception(R.string.item_exist);
+        exception.data = redirect;
+        submitCallback.getValue().onError(exception);
         assertEquals(activity.getString(R.string.item_exist), ShadowToast.getTextOfLatestToast());
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasAction(Intent.ACTION_VIEW)
@@ -160,7 +164,7 @@ public class SubmitActivityTest {
         shadowOf(activity).clickMenuItem(android.R.id.home);
         ShadowAlertDialog.getLatestAlertDialog().getButton(DialogInterface.BUTTON_POSITIVE)
                 .performClick();
-        submitCallback.getValue().onError(0, null);
+        submitCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.submit_failed), ShadowToast.getTextOfLatestToast());
     }
 

@@ -21,6 +21,8 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -154,7 +156,7 @@ public class ComposeActivityTest {
         doSend();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_send).isEnabled());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
-        replyCallback.getValue().onError(0, null);
+        replyCallback.getValue().onError(new IOException());
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_send).isEnabled());
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
         assertThat(activity).isNotFinishing();
@@ -190,7 +192,7 @@ public class ComposeActivityTest {
         shadowOf(activity).clickMenuItem(android.R.id.home);
         ShadowAlertDialog.getLatestAlertDialog()
                 .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
-        replyCallback.getValue().onError(0, null);
+        replyCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.comment_failed), ShadowToast.getTextOfLatestToast());
     }
 
