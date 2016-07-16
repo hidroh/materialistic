@@ -68,7 +68,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
-    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
+    @Inject KeyDelegate mKeyDelegate;
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
@@ -151,7 +151,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onStart() {
         super.onStart();
         mCustomTabsDelegate.bindCustomTabsService(this);
-        mVolumeNavigationDelegate.attach(this);
+        mKeyDelegate.attach(this);
     }
 
     @Override
@@ -208,7 +208,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onStop() {
         super.onStop();
         mCustomTabsDelegate.unbindCustomTabsService(this);
-        mVolumeNavigationDelegate.detach(this);
+        mKeyDelegate.detach(this);
     }
 
     @Override
@@ -231,20 +231,21 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        mVolumeNavigationDelegate.setScrollable(getScrollableList(), mAppBar);
-        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+        mKeyDelegate.setScrollable(getScrollableList(), mAppBar);
+        mKeyDelegate.setBackInterceptor(getBackInterceptor());
+        return mKeyDelegate.onKeyDown(keyCode, event) ||
                 super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+        return mKeyDelegate.onKeyUp(keyCode, event) ||
                 super.onKeyUp(keyCode, event);
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+        return mKeyDelegate.onKeyLongPress(keyCode, event) ||
                 super.onKeyLongPress(keyCode, event);
     }
 
@@ -317,7 +318,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mAppBar.setExpanded(!mFullscreen, true);
         mTabLayout.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
         mListView.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
-        mVolumeNavigationDelegate.setAppBarEnabled(!mFullscreen);
+        mKeyDelegate.setAppBarEnabled(!mFullscreen);
         mViewPager.setSwipeEnabled(!mFullscreen);
         if (mFullscreen) {
             mReplyButton.hide();
@@ -329,6 +330,21 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private Scrollable getScrollableList() {
         // TODO landscape behavior?
         return (Scrollable) getSupportFragmentManager().findFragmentByTag(LIST_FRAGMENT_TAG);
+    }
+
+    private KeyDelegate.BackInterceptor getBackInterceptor() {
+        if (mViewPager == null ||
+                mViewPager.getAdapter() == null ||
+                mViewPager.getCurrentItem() < 0) {
+            return null;
+        }
+        Fragment item = ((ItemPagerAdapter) mViewPager.getAdapter())
+                .getItem(mViewPager.getCurrentItem());
+        if (item instanceof KeyDelegate.BackInterceptor) {
+            return (KeyDelegate.BackInterceptor) item;
+        } else {
+            return null;
+        }
     }
 
     private void openSinglePaneItem(WebItem item) {

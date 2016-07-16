@@ -34,7 +34,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Helper that intercepts key events and interprets them into navigation actions
  */
-public class VolumeNavigationDelegate {
+public class KeyDelegate {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -53,8 +53,9 @@ public class VolumeNavigationDelegate {
     private Scrollable mScrollable;
     private AppBarLayout mAppBarLayout;
     private boolean mAppBarEnabled = true;
+    private BackInterceptor mBackInterceptor;
 
-    public VolumeNavigationDelegate() {
+    public KeyDelegate() {
         mPreferenceListener = (sharedPreferences, key) -> {
             if (TextUtils.equals(key, mPreferenceKey)) {
                 mEnabled = sharedPreferences.getBoolean(key, false);
@@ -108,12 +109,23 @@ public class VolumeNavigationDelegate {
     }
 
     /**
+     * Intercepts back pressed
+     * @param backInterceptor listener to back pressed event
+     */
+    public void setBackInterceptor(BackInterceptor backInterceptor) {
+        mBackInterceptor = backInterceptor;
+    }
+
+    /**
      * Calls from {@link Activity#onKeyDown(int, KeyEvent)} to delegate
      * @param keyCode    event key code
      * @param event      key event
      * @return  true if is intercepted as navigation, false otherwise
      */
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            return mBackInterceptor != null && mBackInterceptor.onBackPressed();
+        }
         if (!mEnabled) {
             return false;
         }
@@ -306,5 +318,16 @@ public class VolumeNavigationDelegate {
         public boolean scrollToPrevious() {
             return mScrollView.pageScroll(View.FOCUS_UP);
         }
+    }
+
+    /**
+     * Callback interface for back pressed events
+     */
+    interface BackInterceptor {
+        /**
+         * Fired upon back pressed
+         * @return  true if handled, false otherwise
+         */
+        boolean onBackPressed();
     }
 }

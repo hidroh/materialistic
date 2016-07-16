@@ -20,8 +20,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -47,8 +45,10 @@ import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.WebActivity;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -289,6 +289,15 @@ public class WebFragmentTest {
         assertEquals(1, shadowWebView.getScrollY());
         fragment.scrollToPrevious();
         assertEquals(0, shadowWebView.getScrollY());
+    }
+
+    @Test
+    public void testBackPressed() {
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).setCanGoBack(true);
+        assertTrue(activity.fragment.onBackPressed());
+        shadowOf(webView).setCanGoBack(false);
+        assertFalse(activity.fragment.onBackPressed());
     }
 
     @After

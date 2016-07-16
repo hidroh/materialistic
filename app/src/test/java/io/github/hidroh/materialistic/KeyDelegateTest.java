@@ -43,8 +43,8 @@ import static org.mockito.Mockito.when;
 
 @Config(shadows = ShadowSupportPreferenceManager.class)
 @RunWith(RobolectricGradleTestRunner.class)
-public class VolumeNavigationDelegateTest {
-    private VolumeNavigationDelegate delegate;
+public class KeyDelegateTest {
+    private KeyDelegate delegate;
     private ActivityController<Activity> controller;
     private Activity activity;
     private Scrollable scrollable = mock(Scrollable.class);
@@ -58,10 +58,22 @@ public class VolumeNavigationDelegateTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), true)
-                .commit();
-        delegate = new VolumeNavigationDelegate();
+                .apply();
+        delegate = new KeyDelegate();
         delegate.attach(activity);
         delegate.setScrollable(scrollable, appBar);
+    }
+
+    @Test
+    public void testInterceptBack() {
+        assertFalse(delegate.onKeyDown(KeyEvent.KEYCODE_BACK,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK)));
+        delegate.setBackInterceptor(() -> true);
+        assertTrue(delegate.onKeyDown(KeyEvent.KEYCODE_BACK,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK)));
+        delegate.setBackInterceptor(() -> false);
+        assertFalse(delegate.onKeyDown(KeyEvent.KEYCODE_BACK,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK)));
     }
 
     @Test
@@ -143,7 +155,7 @@ public class VolumeNavigationDelegateTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), false)
-                .commit();
+                .apply();
         assertFalse(delegate.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP)));
     }
@@ -153,7 +165,7 @@ public class VolumeNavigationDelegateTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), false)
-                .commit();
+                .apply();
         assertFalse(delegate.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP)));
     }
@@ -163,7 +175,7 @@ public class VolumeNavigationDelegateTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), false)
-                .commit();
+                .apply();
         assertFalse(delegate.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP)));
     }

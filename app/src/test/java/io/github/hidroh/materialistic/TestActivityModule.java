@@ -114,7 +114,8 @@ import static org.mockito.Mockito.when;
                 SubmitActivityTest.class,
                 UserActivityTest.class,
                 ThreadPreviewActivityTest.class,
-                WidgetConfigActivityTest.class
+                WidgetConfigActivityTest.class,
+                BaseListActivityLandTest.class
         },
         library = true,
         overrides = true
@@ -131,7 +132,7 @@ public class TestActivityModule {
     private final ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
     private final UserServices userServices = mock(UserServices.class);
     private final CustomTabsDelegate customTabsDelegate = mock(CustomTabsDelegate.class);
-    private final VolumeNavigationDelegate volumeNavigationDelegate = mock(VolumeNavigationDelegate.class);
+    private final KeyDelegate keyDelegate = mock(KeyDelegate.class);
     private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
 
     @Provides @Singleton @Named(ActivityModule.HN)
@@ -258,8 +259,8 @@ public class TestActivityModule {
     }
 
     @Provides @Singleton
-    public VolumeNavigationDelegate provideVolumeNavigationDelegate() {
-        return volumeNavigationDelegate;
+    public KeyDelegate provideVolumeNavigationDelegate() {
+        return keyDelegate;
     }
 
     @Provides

@@ -76,7 +76,7 @@ public class ItemActivityTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
-    @Inject VolumeNavigationDelegate volumeNavigationDelegate;
+    @Inject KeyDelegate keyDelegate;
     @Captor ArgumentCaptor<ResponseListener<Item>> listener;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
 
@@ -87,7 +87,7 @@ public class ItemActivityTest {
         reset(hackerNewsClient);
         reset(favoriteManager);
         reset(userServices);
-        reset(volumeNavigationDelegate);
+        reset(keyDelegate);
         controller = Robolectric.buildActivity(ItemActivity.class);
         activity = controller.get();
     }
@@ -553,14 +553,36 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume().visible();
         activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(volumeNavigationDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
-        verify(volumeNavigationDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
+        verify(keyDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
         activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(volumeNavigationDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
+        verify(keyDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
         activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
+        verify(keyDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
+    }
+
+    @Test
+    public void testBackPressed() {
+        Intent intent = new Intent();
+        WebItem webItem = new TestWebItem() {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        };
+        intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
+        controller.withIntent(intent).create().start().resume().visible();
+        activity.onKeyDown(KeyEvent.KEYCODE_BACK,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+        verify(keyDelegate).setBackInterceptor(any(KeyDelegate.BackInterceptor.class));
+        verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
     }
 
     @Test

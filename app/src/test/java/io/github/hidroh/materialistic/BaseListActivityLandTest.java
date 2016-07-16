@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,6 +23,8 @@ import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.util.ActivityController;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
@@ -35,6 +38,9 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(qualifiers = "w820dp-land", shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
@@ -42,9 +48,11 @@ import static org.robolectric.Shadows.shadowOf;
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;
+    @Inject KeyDelegate keyDelegate;
 
     @Before
     public void setUp() {
+        TestApplication.applicationGraph.inject(this);
         controller = Robolectric.buildActivity(TestListActivity.class);
         activity = controller.create().postCreate(null).start().resume().get();
         // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
@@ -255,6 +263,21 @@ public class BaseListActivityLandTest {
         tabLayout.getTabAt(0).select();
         assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(itemRecyclerView))
                 .getSmoothScrollToPosition());
+    }
+
+    @Test
+    public void testBackPressed() {
+        activity.onItemSelected(new TestHnItem(1L) {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+        });
+        activity.onKeyDown(KeyEvent.KEYCODE_BACK,
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+        verify(keyDelegate).setBackInterceptor(any(KeyDelegate.BackInterceptor.class));
+        verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
     }
 
     private void assertCommentMode() {

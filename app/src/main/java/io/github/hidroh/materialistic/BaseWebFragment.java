@@ -32,7 +32,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,7 +57,8 @@ import io.github.hidroh.materialistic.widget.PopupMenu;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
+abstract class BaseWebFragment extends LazyLoadFragment
+        implements Scrollable, KeyDelegate.BackInterceptor {
 
     static final String ACTION_FULLSCREEN = BaseWebFragment.class.getName() + ".ACTION_FULLSCREEN";
     static final String EXTRA_FULLSCREEN = BaseWebFragment.class.getName() + ".EXTRA_FULLSCREEN";
@@ -70,7 +70,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     private boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject PopupMenu mPopupMenu;
-    private VolumeNavigationDelegate.NestedScrollViewHelper mScrollableHelper;
+    private KeyDelegate.NestedScrollViewHelper mScrollableHelper;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -134,7 +134,7 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        mScrollableHelper = new VolumeNavigationDelegate.NestedScrollViewHelper(mScrollView);
+        mScrollableHelper = new KeyDelegate.NestedScrollViewHelper(mScrollView);
         mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
         mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
         if (mFullscreen) {
@@ -204,6 +204,15 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
         } else {
             return mScrollableHelper.scrollToPrevious();
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+            return true;
+        }
+        return false;
     }
 
     void showEmptyView() {
@@ -312,16 +321,6 @@ abstract class BaseWebFragment extends LazyLoadFragment implements Scrollable {
             mWebView.setVisibility(GONE);
             view.findViewById(R.id.empty).setVisibility(VISIBLE);
             view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
-        });
-        mWebView.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                    keyCode == KeyEvent.KEYCODE_BACK) {
-                if (mWebView.canGoBack()) {
-                    mWebView.goBack();
-                    return true;
-                }
-            }
-            return false;
         });
         AppUtils.enableWebViewZoom(mWebView.getSettings());
     }

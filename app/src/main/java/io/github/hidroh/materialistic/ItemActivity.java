@@ -31,6 +31,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -83,7 +84,7 @@ public class ItemActivity extends InjectableActivity {
     @Inject UserServices mUserServices;
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
-    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
+    @Inject KeyDelegate mKeyDelegate;
     private TabLayout mTabLayout;
     private AppBarLayout mAppBar;
     private CoordinatorLayout mCoordinatorLayout;
@@ -178,7 +179,7 @@ public class ItemActivity extends InjectableActivity {
     protected void onStart() {
         super.onStart();
         mCustomTabsDelegate.bindCustomTabsService(this);
-        mVolumeNavigationDelegate.attach(this);
+        mKeyDelegate.attach(this);
     }
 
     @Override
@@ -223,7 +224,7 @@ public class ItemActivity extends InjectableActivity {
     protected void onStop() {
         super.onStop();
         mCustomTabsDelegate.unbindCustomTabsService(this);
-        mVolumeNavigationDelegate.detach(this);
+        mKeyDelegate.detach(this);
     }
 
     @Override
@@ -245,20 +246,21 @@ public class ItemActivity extends InjectableActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        mVolumeNavigationDelegate.setScrollable(getScrollable(), mAppBar);
-        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+        mKeyDelegate.setScrollable(getCurrent(Scrollable.class), mAppBar);
+        mKeyDelegate.setBackInterceptor(getCurrent(KeyDelegate.BackInterceptor.class));
+        return mKeyDelegate.onKeyDown(keyCode, event) ||
                 super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+        return mKeyDelegate.onKeyUp(keyCode, event) ||
                 super.onKeyUp(keyCode, event);
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+        return mKeyDelegate.onKeyLongPress(keyCode, event) ||
                 super.onKeyLongPress(keyCode, event);
     }
 
@@ -271,7 +273,7 @@ public class ItemActivity extends InjectableActivity {
     private void setFullscreen() {
         mSystemUiHelper.setFullscreen(mFullscreen);
         mAppBar.setExpanded(!mFullscreen, true);
-        mVolumeNavigationDelegate.setAppBarEnabled(!mFullscreen);
+        mKeyDelegate.setAppBarEnabled(!mFullscreen);
         mViewPager.setSwipeEnabled(!mFullscreen);
         if (mFullscreen) {
             mReplyButton.hide();
@@ -372,7 +374,7 @@ public class ItemActivity extends InjectableActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Scrollable scrollable = getScrollable();
+                Scrollable scrollable = getCurrent(Scrollable.class);
                 if (scrollable != null) {
                     scrollable.scrollToTop();
                 }
@@ -407,9 +409,19 @@ public class ItemActivity extends InjectableActivity {
                 R.drawable.ic_bookmark_white_24dp : R.drawable.ic_bookmark_border_white_24dp);
     }
 
-    private Scrollable getScrollable() {
-        return mAdapter != null ? (Scrollable) mAdapter.getItem(mViewPager.getCurrentItem()) : null;
+    private <T> T getCurrent(Class<T> clazz) {
+        if (mAdapter == null) {
+            return null;
+        }
+        Fragment currentItem = mAdapter.getItem(mViewPager.getCurrentItem());
+        if (clazz.isInstance(currentItem)) {
+            //noinspection unchecked
+            return (T) currentItem;
+        } else {
+            return null;
+        }
     }
+
     private void vote(final WebItem story) {
         mUserServices.voteUp(ItemActivity.this, story.getId(), new VoteCallback(this));
     }

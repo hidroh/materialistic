@@ -31,12 +31,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricGradleTestRunner.class)
 public class NestedScrollViewScrollHelperTest {
     private NestedScrollView scrollView;
-    private VolumeNavigationDelegate.NestedScrollViewHelper helper;
+    private KeyDelegate.NestedScrollViewHelper helper;
 
     @Before
     public void setUp() {
         scrollView = mock(NestedScrollView.class);
-        helper = new VolumeNavigationDelegate.NestedScrollViewHelper(scrollView);
+        helper = new KeyDelegate.NestedScrollViewHelper(scrollView);
     }
 
     @Test
