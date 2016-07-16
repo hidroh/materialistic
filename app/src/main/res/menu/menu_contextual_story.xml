@@ -28,4 +28,7 @@
     <item
         android:id="@id/menu_contextual_profile"
         android:title="@string/view_user" />
+    <item
+        android:id="@id/menu_contextual_share"
+        android:title="@string/share" />
 </menu>

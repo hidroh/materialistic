@@ -17,7 +17,6 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.view.ActionMode;
@@ -268,6 +267,12 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
                         mContext.startActivity(new Intent(mContext, ComposeActivity.class)
                                 .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
                                 .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
+                        return true;
+                    }
+                    if (menuItem.getItemId() == R.id.menu_contextual_share) {
+                        mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
+                                item.getDisplayedTitle(),
+                                item.getUrl()));
                         return true;
                     }
                     return false;

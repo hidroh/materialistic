@@ -476,7 +476,7 @@ public class AppUtils {
         return intent;
     }
 
-    private static Intent makeChooserShareIntent(Context context, String subject, String text) {
+    public static Intent makeChooserShareIntent(Context context, String subject, String text) {
         Intent shareIntent = AppUtils.makeShareIntent(subject, text);
         Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
         chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
