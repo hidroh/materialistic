@@ -60,7 +60,7 @@ public class ThreadPreviewActivityTest {
     private ActivityController<ThreadPreviewActivity> controller;
     private ThreadPreviewActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Inject VolumeNavigationDelegate volumeNavigationDelegate;
+    @Inject KeyDelegate keyDelegate;
     @Captor ArgumentCaptor<ResponseListener<Item>> itemCaptor;
 
     @Before
@@ -68,7 +68,7 @@ public class ThreadPreviewActivityTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(itemManager);
-        reset(volumeNavigationDelegate);
+        reset(keyDelegate);
         controller = Robolectric.buildActivity(ThreadPreviewActivity.class);
         activity = controller
                 .withIntent(new Intent().putExtra(ThreadPreviewActivity.EXTRA_ITEM,
@@ -158,14 +158,14 @@ public class ThreadPreviewActivityTest {
     public void testVolumeNavigation() {
         activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(volumeNavigationDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
-        verify(volumeNavigationDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
+        verify(keyDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
         activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(volumeNavigationDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
+        verify(keyDelegate).onKeyUp(anyInt(), any(KeyEvent.class));
         activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(volumeNavigationDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
+        verify(keyDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
     }
 
     @After

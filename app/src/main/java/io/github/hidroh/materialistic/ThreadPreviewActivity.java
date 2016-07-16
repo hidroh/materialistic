@@ -37,7 +37,7 @@ public class ThreadPreviewActivity extends InjectableActivity {
     public static final String EXTRA_ITEM = ThreadPreviewActivity.class.getName() + ".EXTRA_ITEM";
 
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
-    @Inject VolumeNavigationDelegate mVolumeNavigationDelegate;
+    @Inject KeyDelegate mKeyDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +57,15 @@ public class ThreadPreviewActivity extends InjectableActivity {
         recyclerView.setLayoutManager(new SnappyLinearLayoutManager(this));
         recyclerView.addItemDecoration(new CommentItemDecoration(this));
         recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(mItemManager, item));
-        mVolumeNavigationDelegate.setScrollable(
-                new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
-                        VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM), null);
+        mKeyDelegate.setScrollable(
+                new KeyDelegate.RecyclerViewHelper(recyclerView,
+                        KeyDelegate.RecyclerViewHelper.SCROLL_ITEM), null);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mVolumeNavigationDelegate.attach(this);
+        mKeyDelegate.attach(this);
     }
 
     @Override
@@ -80,24 +80,24 @@ public class ThreadPreviewActivity extends InjectableActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mVolumeNavigationDelegate.detach(this);
+        mKeyDelegate.detach(this);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyDown(keyCode, event) ||
+        return mKeyDelegate.onKeyDown(keyCode, event) ||
                 super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyUp(keyCode, event) ||
+        return mKeyDelegate.onKeyUp(keyCode, event) ||
                 super.onKeyUp(keyCode, event);
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        return mVolumeNavigationDelegate.onKeyLongPress(keyCode, event) ||
+        return mKeyDelegate.onKeyLongPress(keyCode, event) ||
                 super.onKeyLongPress(keyCode, event);
     }
 

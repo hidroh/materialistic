@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 public class RecyclerViewScrollHelperTest {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
-    private VolumeNavigationDelegate.RecyclerViewHelper helper;
+    private KeyDelegate.RecyclerViewHelper helper;
     private RecyclerView.Adapter adapter;
 
     @Before
@@ -51,8 +51,8 @@ public class RecyclerViewScrollHelperTest {
 
     @Test
     public void testScrollToTop() {
-        helper = new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
+        helper = new KeyDelegate.RecyclerViewHelper(recyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
         helper.scrollToTop();
         verify(recyclerView).smoothScrollToPosition(eq(0));
     }
@@ -61,8 +61,8 @@ public class RecyclerViewScrollHelperTest {
     public void testScrollToNextItem() {
         when(adapter.getItemCount()).thenReturn(10);
         when(layoutManager.findFirstVisibleItemPosition()).thenReturn(0);
-        helper = new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
+        helper = new KeyDelegate.RecyclerViewHelper(recyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
         assertTrue(helper.scrollToNext());
         verify(recyclerView).smoothScrollToPosition(eq(1));
 
@@ -74,8 +74,8 @@ public class RecyclerViewScrollHelperTest {
     public void testScrollToNextPage() {
         when(adapter.getItemCount()).thenReturn(10);
         when(layoutManager.findLastCompletelyVisibleItemPosition()).thenReturn(8);
-        helper = new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_PAGE);
+        helper = new KeyDelegate.RecyclerViewHelper(recyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
         assertTrue(helper.scrollToNext());
         verify(recyclerView).smoothScrollToPosition(eq(9));
 
@@ -87,8 +87,8 @@ public class RecyclerViewScrollHelperTest {
     public void testScrollToPreviousItem() {
         when(adapter.getItemCount()).thenReturn(10);
         when(layoutManager.findFirstVisibleItemPosition()).thenReturn(5);
-        helper = new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
+        helper = new KeyDelegate.RecyclerViewHelper(recyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
         assertTrue(helper.scrollToPrevious());
         verify(recyclerView).smoothScrollToPosition(eq(4));
 
@@ -102,8 +102,8 @@ public class RecyclerViewScrollHelperTest {
     @Test
     public void testScrollToPreviousPage() {
         when(layoutManager.findFirstVisibleItemPosition()).thenReturn(5);
-        helper = new VolumeNavigationDelegate.RecyclerViewHelper(recyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_PAGE);
+        helper = new KeyDelegate.RecyclerViewHelper(recyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
         assertTrue(helper.scrollToPrevious());
         verify(recyclerView).smoothScrollBy(anyInt(), anyInt());
 

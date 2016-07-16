@@ -36,7 +36,7 @@ import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 public abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_ADAPTER = "state:adapter";
     @Inject CustomTabsDelegate mCustomTabsDelegate;
-    private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
+    private KeyDelegate.RecyclerViewHelper mScrollableHelper;
     protected RecyclerView mRecyclerView;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
 
@@ -88,8 +88,8 @@ public abstract class BaseListFragment extends BaseFragment implements Scrollabl
         super.onActivityCreated(savedInstanceState);
         getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
         mRecyclerView.setAdapter(getAdapter());
-        mScrollableHelper = new VolumeNavigationDelegate.RecyclerViewHelper(mRecyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_PAGE);
+        mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
     }
 
     @Override

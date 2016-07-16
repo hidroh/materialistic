@@ -216,8 +216,8 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public VolumeNavigationDelegate provideVolumeNavigationDelegate() {
-        return new VolumeNavigationDelegate();
+    public KeyDelegate provideKeyDelegate() {
+        return new KeyDelegate();
     }
 
     static class ConnectionAwareInterceptor implements Interceptor {

@@ -64,7 +64,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SinglePageItemRecyclerViewAdapter.SavedState mAdapterItems;
     private ItemRecyclerViewAdapter mAdapter;
-    private VolumeNavigationDelegate.RecyclerViewHelper mScrollableHelper;
+    private KeyDelegate.RecyclerViewHelper mScrollableHelper;
     private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private CommentItemDecoration mItemDecoration;
@@ -130,8 +130,8 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mScrollableHelper = new VolumeNavigationDelegate.RecyclerViewHelper(mRecyclerView,
-                VolumeNavigationDelegate.RecyclerViewHelper.SCROLL_ITEM);
+        mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
     }
 
     @Override
