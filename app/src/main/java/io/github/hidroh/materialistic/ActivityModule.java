@@ -154,13 +154,13 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public FavoriteManager provideFavoriteManager() {
-        return new FavoriteManager();
+    public FavoriteManager provideFavoriteManager(Scheduler ioScheduler) {
+        return new FavoriteManager(ioScheduler);
     }
 
     @Provides @Singleton
-    public SessionManager provideSessionManager() {
-        return new SessionManager();
+    public SessionManager provideSessionManager(Scheduler ioScheduler) {
+        return new SessionManager(ioScheduler);
     }
 
     @Provides @Singleton

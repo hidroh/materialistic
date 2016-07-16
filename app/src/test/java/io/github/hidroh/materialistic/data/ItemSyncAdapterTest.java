@@ -50,6 +50,7 @@ import io.github.hidroh.materialistic.test.ShadowWebView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.schedulers.Schedulers;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -304,8 +305,8 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncWebCacheEmptyUrl() {
-        new FavoriteManager().add(service, new Favorite("1", null, "title",
-                System.currentTimeMillis()));
+        new FavoriteManager(Schedulers.immediate())
+                .add(service, new Favorite("1", null, "title", System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
 

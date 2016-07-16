@@ -64,7 +64,6 @@ public class WebFragmentTest {
     private ActivityController<WebActivity> controller;
     private WebItem item;
     @Inject FavoriteManager favoriteManager;
-    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
     private Intent intent;
 
     @Before

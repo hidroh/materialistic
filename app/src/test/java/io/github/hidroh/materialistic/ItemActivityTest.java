@@ -78,7 +78,6 @@ public class ItemActivityTest {
     @Inject UserServices userServices;
     @Inject VolumeNavigationDelegate volumeNavigationDelegate;
     @Captor ArgumentCaptor<ResponseListener<Item>> listener;
-    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> callbacks;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
 
     @Before

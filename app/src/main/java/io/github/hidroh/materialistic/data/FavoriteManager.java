@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,7 +23,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.CursorWrapper;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
@@ -33,7 +31,11 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.inject.Inject;
+
 import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Data repository for {@link Favorite}
@@ -53,6 +55,12 @@ public class FavoriteManager {
     private static final String URI_PATH_ADD = "add";
     private static final String URI_PATH_REMOVE = "remove";
     private static final String URI_PATH_CLEAR = "clear";
+    private final Scheduler mIoScheduler;
+
+    @Inject
+    public FavoriteManager(Scheduler ioScheduler) {
+        mIoScheduler = ioScheduler;
+    }
 
     /**
      * Gets all favorites matched given query, a {@link #ACTION_GET} broadcast will be sent upon
@@ -62,25 +70,23 @@ public class FavoriteManager {
      * @see #makeGetIntentFilter()
      */
     public void get(Context context, String query) {
-        final String selection;
-        final String[] selectionArgs;
-        if (TextUtils.isEmpty(query)) {
-            selection = null;
-            selectionArgs = null;
-
-        } else {
-            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
-            selectionArgs = new String[]{"%" + query + "%"};
-        }
-
-        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        new FavoriteHandler(context.getContentResolver(), new FavoriteCallback() {
-            @Override
-            void onQueryComplete(ArrayList<Favorite> favorites) {
-                broadcastManager.sendBroadcast(makeGetBroadcastIntent(favorites));
-            }
-        }).startQuery(0, null, MaterialisticProvider.URI_FAVORITE,
-                null, selection, selectionArgs, null);
+        Observable.defer(() -> Observable.just(query))
+                .map(filter -> query(context, filter))
+                .filter(cursor -> cursor != null && cursor.moveToFirst())
+                .map(cursor -> {
+                    ArrayList<Favorite> favorites = new ArrayList<>(cursor.getCount());
+                    Cursor favoriteCursor = new Cursor(cursor);
+                    do {
+                        favorites.add(favoriteCursor.getFavorite());
+                    } while (favoriteCursor.moveToNext());
+                    favoriteCursor.close();
+                    return favorites;
+                })
+                .defaultIfEmpty(new ArrayList<>())
+                .map(FavoriteManager::makeGetBroadcastIntent)
+                .subscribeOn(mIoScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(LocalBroadcastManager.getInstance(context)::sendBroadcast);
     }
 
     /**
@@ -89,18 +95,15 @@ public class FavoriteManager {
      * @param story     story to be added as favorite
      */
     public void add(Context context, WebItem story) {
-        final ContentValues contentValues = new ContentValues();
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
-        contentValues.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME,
-                story instanceof Favorite ?
-                        String.valueOf(((Favorite) story).getTime()) :
-                        String.valueOf(System.currentTimeMillis()));
-        ContentResolver cr = context.getContentResolver();
-        new FavoriteHandler(cr).startInsert(0, story.getId(),
-                MaterialisticProvider.URI_FAVORITE, contentValues);
-        cr.notifyChange(buildAdded().appendPath(story.getId()).build(), null);
+        Observable.defer(() -> Observable.just(story))
+                .map(item -> {
+                    insert(context, item);
+                    return item.getId();
+                })
+                .map(itemId -> buildAdded().appendPath(story.getId()).build())
+                .subscribeOn(mIoScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
         ItemSyncAdapter.initSync(context, story.getId());
     }
 
@@ -111,19 +114,12 @@ public class FavoriteManager {
      * @param query     query to filter stories to be cleared
      */
     public void clear(Context context, String query) {
-        final String selection;
-        final String[] selectionArgs;
-        if (TextUtils.isEmpty(query)) {
-            selection = null;
-            selectionArgs = null;
-        } else {
-            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
-            selectionArgs = new String[]{"%" + query + "%"};
-        }
-        ContentResolver cr = context.getContentResolver();
-        new FavoriteHandler(cr).startDelete(0, null, MaterialisticProvider.URI_FAVORITE,
-                selection, selectionArgs);
-        cr.notifyChange(buildCleared().build(), null);
+        Observable.defer(() -> Observable.just(query))
+                .map(filter -> deleteMultiple(context, filter))
+                .subscribeOn(mIoScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(count -> context.getContentResolver()
+                        .notifyChange(buildCleared().build(), null));
     }
 
     /**
@@ -136,12 +132,15 @@ public class FavoriteManager {
         if (itemId == null) {
             return;
         }
-        ContentResolver cr = context.getContentResolver();
-        new FavoriteHandler(cr).startDelete(0, itemId,
-                MaterialisticProvider.URI_FAVORITE,
-                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId});
-        cr.notifyChange(buildRemoved().appendPath(itemId).build(), null);
+        Observable.defer(() -> Observable.just(itemId))
+                .map(id -> {
+                    delete(context, id);
+                    return id;
+                })
+                .map(id -> buildRemoved().appendPath(itemId).build())
+                .subscribeOn(mIoScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
     }
 
     /**
@@ -154,22 +153,15 @@ public class FavoriteManager {
         if (itemIds == null || itemIds.isEmpty()) {
             return;
         }
-        final ContentResolver contentResolver = context.getContentResolver();
-        new AsyncTask<String, Integer, Void>() {
-            @Override
-            protected Void doInBackground(String... params) {
-                for (String param : params) {
-                    contentResolver.delete(MaterialisticProvider.URI_FAVORITE,
-                            MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                            new String[]{param});
-                }
-
-                return null;
-            }
-        }.execute(itemIds.toArray(new String[itemIds.size()]));
-        for (String itemId : itemIds) {
-            contentResolver.notifyChange(buildRemoved().appendPath(itemId).build(), null);
-        }
+        Observable.defer(() -> Observable.from(itemIds))
+                .subscribeOn(mIoScheduler)
+                .map(itemId -> {
+                    delete(context, itemId);
+                    return itemId;
+                })
+                .map(itemId -> buildRemoved().appendPath(itemId).build())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
     }
 
     @WorkerThread
@@ -178,15 +170,75 @@ public class FavoriteManager {
         if (TextUtils.isEmpty(itemId)) {
             return Observable.just(false);
         }
-        android.database.Cursor cursor = contentResolver.query(MaterialisticProvider.URI_FAVORITE, null,
-                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId}, null);
+        android.database.Cursor cursor = contentResolver
+                .query(MaterialisticProvider.URI_FAVORITE,
+                        null,
+                        MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                        new String[]{itemId},
+                        null);
         boolean result = false;
         if (cursor != null) {
             result = cursor.getCount() > 0;
             cursor.close();
         }
         return Observable.just(result);
+    }
+
+    @WorkerThread
+    private android.database.Cursor query(Context context, String filter) {
+        String selection;
+        String[] selectionArgs;
+        if (TextUtils.isEmpty(filter)) {
+            selection = null;
+            selectionArgs = null;
+
+        } else {
+            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
+            selectionArgs = new String[]{"%" + filter + "%"};
+        }
+        return context.getContentResolver()
+                .query(MaterialisticProvider.URI_FAVORITE,
+                        null,
+                        selection,
+                        selectionArgs,
+                        null);
+    }
+
+    @WorkerThread
+    private Uri insert(Context context, WebItem story) {
+        ContentValues cv = new ContentValues();
+        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
+        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
+        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
+        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME,
+                story instanceof Favorite ?
+                        String.valueOf(((Favorite) story).getTime()) :
+                        String.valueOf(System.currentTimeMillis()));
+        return context.getContentResolver().
+                insert(MaterialisticProvider.URI_FAVORITE, cv);
+    }
+
+    @WorkerThread
+    private int delete(Context context, String itemId) {
+        return context.getContentResolver()
+                .delete(MaterialisticProvider.URI_FAVORITE,
+                        MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                        new String[]{itemId});
+    }
+
+    @WorkerThread
+    private int deleteMultiple(Context context, String query) {
+        String selection;
+        String[] selectionArgs;
+        if (TextUtils.isEmpty(query)) {
+            selection = null;
+            selectionArgs = null;
+        } else {
+            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
+            selectionArgs = new String[]{"%" + query + "%"};
+        }
+        return context.getContentResolver()
+                .delete(MaterialisticProvider.URI_FAVORITE, selection, selectionArgs);
     }
 
     /**
@@ -268,59 +320,5 @@ public class FavoriteManager {
                     MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?",
                     new String[]{"%" + query + "%"}, null);
         }
-    }
-
-    /**
-     * Callback interface for asynchronous favorite CRUD operations
-     */
-    public interface OperationCallbacks {
-        /**
-         * Fired when checking of favorite status is completed
-         * @param isFavorite    true if is favorite, false otherwise
-         */
-        void onCheckComplete(boolean isFavorite);
-    }
-
-    private static class FavoriteHandler extends AsyncQueryHandler {
-        private FavoriteCallback mCallback;
-
-        FavoriteHandler(ContentResolver cr, @NonNull FavoriteCallback callback) {
-            this(cr);
-            mCallback = callback;
-        }
-
-        FavoriteHandler(ContentResolver cr) {
-            super(cr);
-        }
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, android.database.Cursor cursor) {
-            if (cursor == null) {
-                mCallback = null;
-                return;
-            }
-            // cookie represents itemId
-            if (cookie != null) {
-                mCallback.onCheckComplete(cursor.getCount() > 0);
-            } else {
-                ArrayList<Favorite> favorites = new ArrayList<>(cursor.getCount());
-                Cursor favoriteCursor = new Cursor(cursor);
-                boolean any = favoriteCursor.moveToFirst();
-                if (any) {
-                    do {
-                        favorites.add(favoriteCursor.getFavorite());
-                    } while (favoriteCursor.moveToNext());
-
-                }
-                mCallback.onQueryComplete(favorites);
-            }
-            cursor.close();
-            mCallback = null;
-        }
-    }
-
-    private static abstract class FavoriteCallback {
-        void onQueryComplete(ArrayList<Favorite> favorites) {}
-        void onCheckComplete(boolean isFavorite) {}
     }
 }
