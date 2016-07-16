@@ -82,7 +82,6 @@ public class ListFragmentViewHolderTest {
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<FavoriteManager.OperationCallbacks> favoriteCallbacks;
     @Captor ArgumentCaptor<ResponseListener<Item[]>> storiesListener;
     @Captor ArgumentCaptor<ResponseListener<Item>> itemListener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;

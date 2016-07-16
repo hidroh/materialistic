@@ -154,8 +154,8 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public FavoriteManager provideFavoriteManager() {
-        return new FavoriteManager();
+    public FavoriteManager provideFavoriteManager(Scheduler ioScheduler) {
+        return new FavoriteManager(ioScheduler);
     }
 
     @Provides @Singleton
