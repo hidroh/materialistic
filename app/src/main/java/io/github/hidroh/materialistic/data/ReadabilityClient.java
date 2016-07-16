@@ -20,19 +20,20 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
-
-import java.io.IOException;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
+import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public interface ReadabilityClient {
     String HOST = "readability.com";
@@ -44,19 +45,20 @@ public interface ReadabilityClient {
     void parse(String itemId, String url, Callback callback);
 
     @WorkerThread
-    String parse(String itemId, String url);
+    void parse(String itemId, String url);
 
     class Impl implements ReadabilityClient {
         private static final CharSequence EMPTY_CONTENT = "<div></div>";
         private final ReadabilityService mReadabilityService;
         private final ContentResolver mContentResolver;
+        private final Scheduler mIoScheduler;
 
         interface ReadabilityService {
             String READABILITY_API_URL = "https://" + HOST + "/api/content/v1/";
 
             @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_24H)
             @GET("parser?token=" + BuildConfig.READABILITY_TOKEN)
-            Call<Readable> parse(@Query("url") String url);
+            Observable<Readable> parse(@Query("url") String url);
         }
 
         class Readable {
@@ -64,63 +66,58 @@ public interface ReadabilityClient {
         }
 
         @Inject
-        public Impl(Context context, RestServiceFactory factory) {
-            mReadabilityService = factory.create(ReadabilityService.READABILITY_API_URL,
-                    ReadabilityService.class);
+        public Impl(Context context, RestServiceFactory factory, Scheduler ioScheduler) {
+            mReadabilityService = factory.rxEnabled(true)
+                    .create(ReadabilityService.READABILITY_API_URL,
+                            ReadabilityService.class);
             mContentResolver = context.getContentResolver();
+            mIoScheduler = ioScheduler;
         }
 
         @Override
-        public void parse(final String itemId, final String url, final Callback callback) {
-            new AsyncTask<Void, Void, String>() {
-
-                @Override
-                protected String doInBackground(Void... params) {
-                    return parse(itemId, url);
-                }
-
-                @Override
-                protected void onPostExecute(String content) {
-                    callback.onResponse(content);
-                }
-            }.execute();
+        public void parse(String itemId, String url, Callback callback) {
+            fromCache(itemId)
+                    .subscribeOn(mIoScheduler)
+                    .flatMap(content -> content != null ?
+                            Observable.just(content) : fromNetwork(itemId, url))
+                    .map(content -> TextUtils.equals(EMPTY_CONTENT, content) ? null : content)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(callback::onResponse);
         }
 
         @WorkerThread
         @Override
-        public String parse(String itemId, String url) {
+        public void parse(String itemId, String url) {
+            fromCache(itemId)
+                    .subscribeOn(Schedulers.immediate())
+                    .switchIfEmpty(fromNetwork(itemId, url))
+                    .map(content -> TextUtils.equals(EMPTY_CONTENT, content) ? null : content)
+                    .observeOn(Schedulers.immediate())
+                    .subscribe();
+        }
+
+        @NonNull
+        private Observable<String> fromNetwork(String itemId, String url) {
+            return mReadabilityService.parse(url)
+                    .onErrorReturn(throwable -> null)
+                    .map(readable -> readable == null ? null : readable.content)
+                    .doOnNext(content -> cache(itemId, content));
+        }
+
+        private Observable<String> fromCache(String itemId) {
             Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_READABILITY,
                     new String[]{MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT},
                     MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_ITEM_ID + " = ?",
                     new String[]{itemId}, null);
-            String content;
-            if (cursor == null || !cursor.moveToFirst()) {
-                content = readabilityParse(itemId, url);
-            } else {
-                content = cursor.getString(cursor.getColumnIndexOrThrow(
-                        MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT));
-                content = TextUtils.equals(EMPTY_CONTENT, content) ? null : content;
-            }
+            String content = null;
             if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    content = cursor.getString(cursor.getColumnIndexOrThrow(
+                            MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT));
+                }
                 cursor.close();
             }
-            return content;
-        }
-
-        @WorkerThread
-        private String readabilityParse(String itemId, String url) {
-            try {
-                Readable readable;
-                if ((readable = mReadabilityService.parse(url).execute().body()) != null) {
-                    cache(itemId, readable.content);
-                    if (!TextUtils.equals(EMPTY_CONTENT, readable.content)) {
-                        return readable.content;
-                    }
-                }
-            } catch (IOException e) {
-                // no op
-            }
-            return null;
+            return Observable.just(content);
         }
 
         @WorkerThread

@@ -63,6 +63,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 
 @Module(
         injects = {
@@ -164,6 +166,11 @@ public class ActivityModule {
     @Provides @Singleton
     public RestServiceFactory provideRestServiceFactory(Call.Factory callFactory) {
         return new RestServiceFactory.Impl(callFactory);
+    }
+
+    @Provides @Singleton
+    public Scheduler provideIoScheduler() {
+        return Schedulers.io();
     }
 
     @Provides @Singleton
