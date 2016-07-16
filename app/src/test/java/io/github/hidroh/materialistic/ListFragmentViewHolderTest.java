@@ -489,6 +489,20 @@ public class ListFragmentViewHolderTest {
                 .hasExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testShare() {
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasAction(Intent.ACTION_CHOOSER);
+    }
+
     @After
     public void tearDown() {
         controller.pause().stop().destroy();

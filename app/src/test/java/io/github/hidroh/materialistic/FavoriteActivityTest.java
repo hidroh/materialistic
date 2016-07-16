@@ -391,6 +391,21 @@ public class FavoriteActivityTest {
                 .hasComponent(activity, ComposeActivity.class);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testShare() {
+        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
+                .extract(adapter);
+        shadowAdapter.makeItemVisible(0);
+        shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        Assert.assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasAction(Intent.ACTION_CHOOSER);
+    }
+
     @Test
     public void testRemoveClearSelection() {
         ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())

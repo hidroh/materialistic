@@ -26,6 +26,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
@@ -241,6 +242,15 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                             mContext.startActivity(new Intent(mContext, ComposeActivity.class)
                                     .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
                                     .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
+                            return true;
+                        }
+                        if (menuItem.getItemId() == R.id.menu_contextual_share) {
+                            mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
+                                    item.isStoryType() ? item.getDisplayedTitle() : null,
+                                    item.isStoryType() ? item.getUrl() :
+                                            (item.getText() != null ?
+                                                    Html.fromHtml(item.getText()).toString() :
+                                                    null)));
                             return true;
                         }
                         return false;

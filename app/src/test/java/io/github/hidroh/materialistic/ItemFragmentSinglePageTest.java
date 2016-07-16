@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -476,6 +477,18 @@ public class ItemFragmentSinglePageTest {
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class)
                 .hasExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testShare() {
+        viewHolder.itemView.findViewById(R.id.button_more).performClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasAction(Intent.ACTION_CHOOSER);
     }
 
     @After

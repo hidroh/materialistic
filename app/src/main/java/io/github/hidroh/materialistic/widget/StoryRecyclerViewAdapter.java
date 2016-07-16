@@ -335,6 +335,12 @@ public class StoryRecyclerViewAdapter extends
                                 .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
                         return true;
                     }
+                    if (item.getItemId() == R.id.menu_contextual_share) {
+                        mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
+                                story.getDisplayedTitle(),
+                                story.getUrl()));
+                        return true;
+                    }
                     return false;
                 })
                 .show();
