@@ -36,6 +36,8 @@ import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -469,7 +471,7 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
-        voteCallback.getValue().onError(0, null);
+        voteCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

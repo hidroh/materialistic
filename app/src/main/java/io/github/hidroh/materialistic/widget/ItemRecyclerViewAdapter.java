@@ -326,7 +326,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
 
         @Override
-        public void onError(int message, Uri data) {
+        public void onError(Throwable throwable) {
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(null);
             }

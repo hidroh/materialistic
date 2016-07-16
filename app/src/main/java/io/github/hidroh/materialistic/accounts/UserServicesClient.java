@@ -18,9 +18,6 @@ package io.github.hidroh.materialistic.accounts;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.WorkerThread;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -40,7 +37,9 @@ import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class UserServicesClient implements UserServices {
     private static final String BASE_WEB_URL = "https://news.ycombinator.com";
@@ -73,55 +72,35 @@ public class UserServicesClient implements UserServices {
     private static final String REGEX_VALUE = "value[^\"]*\"([^\"]*)\"";
     private static final String HEADER_LOCATION = "location";
     private static final String HOST_ITEM = "item";
-    private final Handler mUiHandler = new Handler(Looper.getMainLooper());
     private final Call.Factory mCallFactory;
+    private final Scheduler mIoScheduler;
 
     @Inject
-    public UserServicesClient(Call.Factory callFactory) {
+    public UserServicesClient(Call.Factory callFactory, Scheduler ioScheduler) {
         mCallFactory = callFactory;
+        mIoScheduler = ioScheduler;
     }
 
     @Override
-    public void login(final String username, final String password, boolean createAccount,
-                      final Callback callback) {
-        FormBody.Builder formBuilder = new FormBody.Builder()
-                .add(LOGIN_PARAM_ACCT, username)
-                .add(LOGIN_PARAM_PW, password)
-                .add(LOGIN_PARAM_GOTO, DEFAULT_REDIRECT);
-        if (createAccount) {
-            formBuilder.add(LOGIN_PARAM_CREATING, CREATING_TRUE);
-        }
-        mCallFactory.newCall(new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
-                        .newBuilder()
-                        .addPathSegment(LOGIN_PATH)
-                        .build())
-                .post(formBuilder.build())
-                .build())
-                .enqueue(wrap(callback));
+    public void login(String username, String password, boolean createAccount, Callback callback) {
+        execute(postLogin(username, password, createAccount))
+                .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback::onDone, callback::onError);
     }
 
     @Override
-    public void voteUp(Context context, String itemId, final Callback callback) {
+    public void voteUp(Context context, String itemId, Callback callback) {
         Pair<String, String> credentials = AppUtils.getCredentials(context);
         if (credentials == null) {
             callback.onDone(false);
             return;
         }
         Toast.makeText(context, R.string.sending, Toast.LENGTH_SHORT).show();
-        mCallFactory.newCall(new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
-                        .newBuilder()
-                        .addPathSegment(VOTE_PATH)
-                        .build())
-                .post(new FormBody.Builder()
-                        .add(LOGIN_PARAM_ACCT, credentials.first)
-                        .add(LOGIN_PARAM_PW, credentials.second)
-                        .add(VOTE_PARAM_ID, itemId)
-                        .add(VOTE_PARAM_HOW, VOTE_DIR_UP)
-                        .build())
-                .build())
-                .enqueue(wrap(callback));
+        execute(postVote(credentials.first, credentials.second, itemId))
+                .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback::onDone, callback::onError);
     }
 
     @Override
@@ -131,24 +110,14 @@ public class UserServicesClient implements UserServices {
             callback.onDone(false);
             return;
         }
-        mCallFactory.newCall(new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
-                        .newBuilder()
-                        .addPathSegment(COMMENT_PATH)
-                        .build())
-                .post(new FormBody.Builder()
-                        .add(LOGIN_PARAM_ACCT, credentials.first)
-                        .add(LOGIN_PARAM_PW, credentials.second)
-                        .add(COMMENT_PARAM_PARENT, parentId)
-                        .add(COMMENT_PARAM_TEXT, text)
-                        .build())
-                .build())
-                .enqueue(wrap(callback));
+        execute(postReply(parentId, text, credentials.first, credentials.second))
+                .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback::onDone, callback::onError);
     }
 
     @Override
-    public void submit(Context context, final String title, final String content, final boolean isUrl,
-                       final Callback callback) {
+    public void submit(Context context, String title, String content, boolean isUrl, Callback callback) {
         Pair<String, String> credentials = AppUtils.getCredentials(context);
         if (credentials == null) {
             callback.onDone(false);
@@ -164,49 +133,96 @@ public class UserServicesClient implements UserServices {
          *  if 200 or anything else, considered error
          */
         // fetch submit page with given credentials
-        mCallFactory.newCall(new Request.Builder()
+        execute(postSubmitForm(credentials.first, credentials.second))
+                .flatMap(response -> response.code() != HttpURLConnection.HTTP_MOVED_TEMP ?
+                        Observable.just(response) :
+                        Observable.error(new IOException()))
+                .flatMap(response -> {
+                    try {
+                        return Observable.just(response.body().string());
+                    } catch (IOException e) {
+                        return Observable.error(e);
+                    } finally {
+                        response.close();
+                    }
+                })
+                .map(html -> getInputValue(html, SUBMIT_PARAM_FNID))
+                .flatMap(fnid -> !TextUtils.isEmpty(fnid) ?
+                        Observable.just(fnid) :
+                        Observable.error(new IOException()))
+                .flatMap(fnid -> execute(postSubmit(title, content, isUrl, fnid)))
+                .flatMap(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP ?
+                        Observable.just(Uri.parse(response.header(HEADER_LOCATION))) :
+                        Observable.error(new IOException()))
+                .flatMap(uri -> TextUtils.equals(uri.getPath(), DEFAULT_SUBMIT_REDIRECT) ?
+                        Observable.just(true) :
+                        Observable.error(buildException(uri)))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback::onDone, callback::onError);
+    }
+
+    private Request postLogin(String username, String password, boolean createAccount) {
+        FormBody.Builder formBuilder = new FormBody.Builder()
+                .add(LOGIN_PARAM_ACCT, username)
+                .add(LOGIN_PARAM_PW, password)
+                .add(LOGIN_PARAM_GOTO, DEFAULT_REDIRECT);
+        if (createAccount) {
+            formBuilder.add(LOGIN_PARAM_CREATING, CREATING_TRUE);
+        }
+        return new Request.Builder()
+                .url(HttpUrl.parse(BASE_WEB_URL)
+                        .newBuilder()
+                        .addPathSegment(LOGIN_PATH)
+                        .build())
+                .post(formBuilder.build())
+                .build();
+    }
+
+    private Request postVote(String username, String password, String itemId) {
+        return new Request.Builder()
+                .url(HttpUrl.parse(BASE_WEB_URL)
+                        .newBuilder()
+                        .addPathSegment(VOTE_PATH)
+                        .build())
+                .post(new FormBody.Builder()
+                        .add(LOGIN_PARAM_ACCT, username)
+                        .add(LOGIN_PARAM_PW, password)
+                        .add(VOTE_PARAM_ID, itemId)
+                        .add(VOTE_PARAM_HOW, VOTE_DIR_UP)
+                        .build())
+                .build();
+    }
+
+    private Request postReply(String parentId, String text, String username, String password) {
+        return new Request.Builder()
+                .url(HttpUrl.parse(BASE_WEB_URL)
+                        .newBuilder()
+                        .addPathSegment(COMMENT_PATH)
+                        .build())
+                .post(new FormBody.Builder()
+                        .add(LOGIN_PARAM_ACCT, username)
+                        .add(LOGIN_PARAM_PW, password)
+                        .add(COMMENT_PARAM_PARENT, parentId)
+                        .add(COMMENT_PARAM_TEXT, text)
+                        .build())
+                .build();
+    }
+
+    private Request postSubmitForm(String username, String password) {
+        return new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(SUBMIT_PATH)
                         .build())
                 .post(new FormBody.Builder()
-                        .add(LOGIN_PARAM_ACCT, credentials.first)
-                        .add(LOGIN_PARAM_PW, credentials.second)
+                        .add(LOGIN_PARAM_ACCT, username)
+                        .add(LOGIN_PARAM_PW, password)
                         .build())
-                .build())
-                .enqueue(new okhttp3.Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        postError(callback);
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        final boolean redirect = response.code() == HttpURLConnection.HTTP_MOVED_TEMP;
-                        if (redirect) {
-                            // redirect = failed login
-                            postResult(callback, false);
-                        } else {
-                            // grab fnid from HTML and submit
-                            ResponseBody body = response.body();
-                            doSubmit(title,
-                                    content,
-                                    getInputValue(body.string(), SUBMIT_PARAM_FNID),
-                                    isUrl,
-                                    callback);
-                            body.close();
-                        }
-                    }
-                });
+                .build();
     }
 
-    @WorkerThread
-    private void doSubmit(String title, String content, String fnid, boolean isUrl, final Callback callback) {
-        if (TextUtils.isEmpty(fnid)) {
-            postError(callback);
-            return;
-        }
-        mCallFactory.newCall(new Request.Builder()
+    private Request postSubmit(String title, String content, boolean isUrl, String fnid) {
+        return new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(SUBMIT_POST_PATH)
@@ -217,68 +233,35 @@ public class UserServicesClient implements UserServices {
                         .add(SUBMIT_PARAM_TITLE, title)
                         .add(isUrl ? SUBMIT_PARAM_URL : SUBMIT_PARAM_TEXT, content)
                         .build())
-                .build())
-                .enqueue(new okhttp3.Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        postError(callback);
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        boolean redirect = response.code() == HttpURLConnection.HTTP_MOVED_TEMP;
-                        if (!redirect) {
-                            postError(callback);
-                            return;
-                        }
-                        Uri location = Uri.parse(response.header(HEADER_LOCATION));
-                        switch (location.getPath()) {
-                            case DEFAULT_SUBMIT_REDIRECT:
-                                postResult(callback, true);
-                                break;
-                            case ITEM_PATH:
-                                String itemId = location.getQueryParameter(ITEM_PARAM_ID);
-                                if (!TextUtils.isEmpty(itemId)) {
-                                    postError(callback, R.string.item_exist, new Uri.Builder()
-                                            .scheme(BuildConfig.APPLICATION_ID)
-                                            .authority(HOST_ITEM)
-                                            .path(itemId)
-                                            .build());
-                                }
-                                break;
-                            default:
-                                postError(callback);
-                                break;
-                        }
-                    }
-                });
+                .build();
     }
 
-    private okhttp3.Callback wrap(final Callback callback) {
-        return new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                UserServicesClient.this.postError(callback);
+    private Observable<Response> execute(Request request) {
+        return Observable.defer(() -> {
+            try {
+                return Observable.just(mCallFactory.newCall(request).execute());
+            } catch (IOException e) {
+                return Observable.error(e);
             }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                // redirect = successful submit
-                postResult(callback, response.code() == HttpURLConnection.HTTP_MOVED_TEMP);
-            }
-        };
+        }).subscribeOn(mIoScheduler);
     }
 
-    private void postResult(final Callback callback, final boolean successful) {
-        mUiHandler.post(() -> callback.onDone(successful));
-    }
-
-    private void postError(Callback callback) {
-        postError(callback, 0, null);
-    }
-
-    private void postError(final Callback callback, int message, Uri data) {
-        mUiHandler.post(() -> callback.onError(message, data));
+    private Throwable buildException(Uri uri) {
+        switch (uri.getPath()) {
+            case ITEM_PATH:
+                UserServices.Exception exception = new UserServices.Exception(R.string.item_exist);
+                String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
+                if (!TextUtils.isEmpty(itemId)) {
+                    exception.data = new Uri.Builder()
+                            .scheme(BuildConfig.APPLICATION_ID)
+                            .authority(HOST_ITEM)
+                            .path(itemId)
+                            .build();
+                }
+                return exception;
+            default:
+                return new IOException();
+        }
     }
 
     private String getInputValue(String html, String name) {

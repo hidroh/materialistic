@@ -20,10 +20,21 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.StringRes;
 
+import java.io.IOException;
+
 public interface UserServices {
     abstract class Callback {
         public void onDone(boolean successful) {}
-        public void onError(@StringRes int message, Uri data) {}
+        public void onError(Throwable throwable) {}
+    }
+
+    class Exception extends IOException {
+        public final @StringRes int message;
+        public Uri data;
+
+        public Exception(int message) {
+            this.message = message;
+        }
     }
 
     void login(String username, String password, boolean createAccount, Callback callback);

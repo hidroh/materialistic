@@ -52,6 +52,7 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Set;
@@ -371,7 +372,7 @@ public class FavoriteActivityTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
-        userServicesCallback.getValue().onError(0, null);
+        userServicesCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

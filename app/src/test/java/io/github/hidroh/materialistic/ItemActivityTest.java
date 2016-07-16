@@ -34,6 +34,8 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -515,7 +517,7 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume();
         activity.findViewById(R.id.vote_button).performClick();
         verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
-        userServicesCallback.getValue().onError(0, null);
+        userServicesCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }
 

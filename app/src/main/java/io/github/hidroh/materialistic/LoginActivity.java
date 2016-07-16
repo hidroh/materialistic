@@ -151,7 +151,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         }
 
         @Override
-        public void onError(int message, Uri data) {
+        public void onError(Throwable throwable) {
             if (mLoginActivity.get() != null && !mLoginActivity.get().isActivityDestroyed()) {
                 mLoginActivity.get().onLoggedIn(null);
             }

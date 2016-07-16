@@ -19,6 +19,8 @@ import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -96,7 +98,7 @@ public class LoginActivityTest {
         ((EditText) activity.findViewById(R.id.edittext_password)).setText("password");
         activity.findViewById(R.id.login_button).performClick();
         verify(userServices).login(eq("username"), eq("password"), eq(false), callback.capture());
-        callback.getValue().onError(0, null);
+        callback.getValue().onError(new IOException());
         assertThat(activity).isNotFinishing();
         assertEquals(activity.getString(R.string.login_failed), ShadowToast.getTextOfLatestToast());
     }

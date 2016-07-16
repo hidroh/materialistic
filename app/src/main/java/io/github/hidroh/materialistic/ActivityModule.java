@@ -184,8 +184,8 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public UserServices provideUserServices(Call.Factory callFactory) {
-        return new UserServicesClient(callFactory);
+    public UserServices provideUserServices(Call.Factory callFactory, Scheduler ioScheduler) {
+        return new UserServicesClient(callFactory, ioScheduler);
     }
 
     @Provides @Singleton
