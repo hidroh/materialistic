@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,12 +24,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
+import javax.inject.Inject;
+
 import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Data repository for session state
  */
 public class SessionManager {
+
+    private final Scheduler mIoScheduler;
+
+    @Inject
+    public SessionManager(Scheduler ioScheduler) {
+        mIoScheduler = ioScheduler;
+    }
 
     @WorkerThread
     @NonNull
@@ -58,59 +68,22 @@ public class SessionManager {
         if (TextUtils.isEmpty(itemId)) {
             return;
         }
+        ContentResolver cr = context.getContentResolver();
+        Observable.defer(() -> Observable.just(itemId))
+                .map(id -> {
+                    insert(cr, itemId);
+                    return id;
+                })
+                .map(id -> MaterialisticProvider.URI_VIEWED.buildUpon().appendPath(itemId).build())
+                .subscribeOn(mIoScheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> cr.notifyChange(uri, null));
+    }
+
+    @WorkerThread
+    private void insert(ContentResolver cr, String itemId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID, itemId);
-        ContentResolver cr = context.getContentResolver();
-        new SessionHandler(cr, itemId).startInsert(0, itemId,
-                MaterialisticProvider.URI_VIEWED, contentValues);
-        // optimistically assume insert ok
-        cr.notifyChange(MaterialisticProvider.URI_VIEWED
-                        .buildUpon()
-                        .appendPath(itemId)
-                        .build(),
-                null);
-    }
-
-    /**
-     * Callback interface for asynchronous session operations
-     */
-    interface OperationCallbacks {
-        /**
-         * Fired when checking of view status is completed
-         * @param isViewed  true if is viewed, false otherwise
-         */
-        void onCheckViewedComplete(boolean isViewed);
-    }
-
-    private static class SessionHandler extends AsyncQueryHandler {
-        private final String mItemId;
-        private OperationCallbacks mCallback;
-
-        SessionHandler(ContentResolver cr, @NonNull String itemId) {
-            super(cr);
-            mItemId = itemId;
-        }
-
-        SessionHandler(ContentResolver cr, @NonNull String itemId,
-                              @NonNull OperationCallbacks callback) {
-            this(cr, itemId);
-            mCallback = callback;
-        }
-
-        @Override
-        protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-            super.onQueryComplete(token, cookie, cursor);
-            if (cookie == null) {
-                mCallback = null;
-                return;
-            }
-            if (cookie.equals(mItemId)) {
-                mCallback.onCheckViewedComplete(cursor != null && cursor.getCount() > 0);
-                mCallback = null;
-            }
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
+        cr.insert(MaterialisticProvider.URI_VIEWED, contentValues);
     }
 }

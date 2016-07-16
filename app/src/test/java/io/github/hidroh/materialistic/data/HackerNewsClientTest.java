@@ -42,7 +42,6 @@ public class HackerNewsClientTest {
     private ResponseListener<Item> itemListener;
     private ResponseListener<UserManager.User> userListener;
     private ResponseListener<Item[]> storiesListener;
-    @Captor ArgumentCaptor<SessionManager.OperationCallbacks> sessionCallback;
 
     @Before
     public void setUp() {

@@ -159,8 +159,8 @@ public class ActivityModule {
     }
 
     @Provides @Singleton
-    public SessionManager provideSessionManager() {
-        return new SessionManager();
+    public SessionManager provideSessionManager(Scheduler ioScheduler) {
+        return new SessionManager(ioScheduler);
     }
 
     @Provides @Singleton
