@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Inject;
 
-import retrofit2.Callback;
+import rx.Observable;
 
 public class AlgoliaPopularClient extends AlgoliaClient {
 
@@ -50,7 +50,7 @@ public class AlgoliaPopularClient extends AlgoliaClient {
     public static final String PAST_YEAR = "past_year";
 
     @Override
-    protected void search(@Range String filter, Callback<AlgoliaHits> callback) {
+    protected Observable<AlgoliaHits> search(@Range String filter) {
         long timestamp = System.currentTimeMillis();
         switch (filter) {
             case LAST_24H:
@@ -67,7 +67,6 @@ public class AlgoliaPopularClient extends AlgoliaClient {
                 timestamp -= DateUtils.YEAR_IN_MILLIS;
                 break;
         }
-        mRestService.searchByMinTimestamp(MIN_CREATED_AT + timestamp / 1000)
-                .enqueue(callback);
+        return mRestService.searchByMinTimestamp(MIN_CREATED_AT + timestamp / 1000);
     }
 }

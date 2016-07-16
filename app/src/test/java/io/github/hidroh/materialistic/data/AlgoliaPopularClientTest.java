@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,10 +17,8 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
-import retrofit2.Call;
-import retrofit2.Callback;
+import rx.Observable;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
@@ -33,7 +32,6 @@ public class AlgoliaPopularClientTest {
     @Inject RestServiceFactory factory;
     private ItemManager hackerNewsClient = mock(ItemManager.class);
     private AlgoliaPopularClient client;
-    private Call call;
 
     public AlgoliaPopularClientTest(String range) {
         this.range = range;
@@ -56,17 +54,15 @@ public class AlgoliaPopularClientTest {
         reset(TestRestServiceFactory.algoliaRestService);
         client = new AlgoliaPopularClient(RuntimeEnvironment.application, factory);
         client.mHackerNewsClient = hackerNewsClient;
-        call = mock(Call.class);
-        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestamp(anyString()))
-                .thenReturn(call);
     }
 
     @Test
     public void testGetStories() {
+        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestamp(anyString()))
+                .thenReturn(Observable.error(new IOException()));
         client.getStories(range, ItemManager.MODE_DEFAULT, mock(ResponseListener.class));
         verify(TestRestServiceFactory.algoliaRestService)
                 .searchByMinTimestamp(contains("created_at_i>"));
-        verify(call).enqueue(any(Callback.class));
     }
 
     @Module(

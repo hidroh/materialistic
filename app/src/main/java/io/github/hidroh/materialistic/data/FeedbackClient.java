@@ -21,11 +21,11 @@ import android.os.Build;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public interface FeedbackClient {
     interface Callback {
@@ -39,7 +39,8 @@ public interface FeedbackClient {
 
         @Inject
         public Impl(RestServiceFactory factory) {
-            mFeedbackService = factory.create(FeedbackService.GITHUB_API_URL, FeedbackService.class);
+            mFeedbackService = factory.rxEnabled(true)
+                    .create(FeedbackService.GITHUB_API_URL, FeedbackService.class);
         }
 
         @Override
@@ -51,17 +52,10 @@ public interface FeedbackClient {
                     Build.VERSION.SDK_INT,
                     BuildConfig.VERSION_CODE);
             mFeedbackService.createGithubIssue(new Issue(title, body))
-                    .enqueue(new retrofit2.Callback<Object>() {
-                        @Override
-                        public void onResponse(Call<Object> call, Response<Object> response) {
-                            callback.onSent(true);
-                        }
-
-                        @Override
-                        public void onFailure(Call<Object> call, Throwable t) {
-                            callback.onSent(false);
-                        }
-                    });
+                    .map(response -> true)
+                    .onErrorReturn(throwable -> false)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(callback::onSent);
         }
 
         interface FeedbackService {
@@ -69,7 +63,7 @@ public interface FeedbackClient {
 
             @POST("repos/hidroh/materialistic/issues")
             @Headers("Authorization: token " + BuildConfig.GITHUB_TOKEN)
-            Call<Object> createGithubIssue(@Body Issue issue);
+            Observable<Object> createGithubIssue(@Body Issue issue);
         }
 
         static class Issue {
