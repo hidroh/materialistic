@@ -271,7 +271,8 @@ public class TestActivityModule {
             @SuppressLint("NewApi")
             @Override
             public PopupMenu create(Context context, View anchor, int gravity) {
-                popupMenu = new android.widget.PopupMenu(context, anchor, gravity);
+                popupMenu = new android.widget.PopupMenu(context,
+                        anchor == null ? new View(context) : anchor, gravity);
                 return this;
             }
 

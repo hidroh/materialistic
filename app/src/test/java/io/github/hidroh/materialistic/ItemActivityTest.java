@@ -1,7 +1,7 @@
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -23,12 +23,13 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
-import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
@@ -177,6 +178,7 @@ public class ItemActivityTest {
                         .getCompoundDrawables()[0]).getCreatedFromResId());
     }
 
+    @SuppressLint("NewApi")
     @Test
     public void testOptionExternal() {
         RobolectricPackageManager packageManager = (RobolectricPackageManager)
@@ -221,19 +223,22 @@ public class ItemActivityTest {
 
         // open article
         shadowOf(activity).clickMenuItem(R.id.menu_external);
-        ShadowAlertDialog.getLatestAlertDialog()
-                .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu())
+                .getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_article));
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
 
         // open item
         shadowOf(activity).clickMenuItem(R.id.menu_external);
-        ShadowAlertDialog.getLatestAlertDialog()
-                .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu())
+                .getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_comments));
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
+    @SuppressLint("NewApi")
     @Test
     public void testShare() {
         Intent intent = new Intent();
@@ -268,8 +273,9 @@ public class ItemActivityTest {
 
         // share article
         shadowOf(activity).clickMenuItem(R.id.menu_share);
-        ShadowAlertDialog.getLatestAlertDialog()
-                .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu())
+                .getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_article));
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual)
@@ -279,8 +285,9 @@ public class ItemActivityTest {
 
         // share item
         shadowOf(activity).clickMenuItem(R.id.menu_share);
-        ShadowAlertDialog.getLatestAlertDialog()
-                .getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        shadowOf(ShadowPopupMenu.getLatestPopupMenu())
+                .getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_comments));
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual)

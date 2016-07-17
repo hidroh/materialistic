@@ -46,6 +46,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.ViewPager;
 
 /**
@@ -65,7 +66,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private boolean mExternalBrowser;
     private ViewPager mViewPager;
     @Inject ActionViewResolver mActionViewResolver;
-    @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject PopupMenu mPopupMenu;
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     @Inject KeyDelegate mKeyDelegate;
@@ -184,12 +185,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_share) {
-            AppUtils.share(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem);
+            AppUtils.share(this, mPopupMenu, findViewById(R.id.menu_share), mSelectedItem);
             return true;
         }
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openExternal(BaseListActivity.this, mAlertDialogBuilder, mSelectedItem,
-                    mCustomTabsDelegate.getSession());
+            AppUtils.openExternal(this, mPopupMenu, findViewById(R.id.menu_external),
+                    mSelectedItem, mCustomTabsDelegate.getSession());
             return true;
         }
         return super.onOptionsItemSelected(item);

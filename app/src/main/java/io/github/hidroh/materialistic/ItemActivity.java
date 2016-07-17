@@ -62,6 +62,7 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.ViewPager;
 
 public class ItemActivity extends InjectableActivity {
@@ -81,6 +82,7 @@ public class ItemActivity extends InjectableActivity {
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject FavoriteManager mFavoriteManager;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
+    @Inject PopupMenu mPopupMenu;
     @Inject UserServices mUserServices;
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
@@ -201,12 +203,12 @@ public class ItemActivity extends InjectableActivity {
             return true;
         }
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openExternal(ItemActivity.this, mAlertDialogBuilder, mItem,
+            AppUtils.openExternal(this, mPopupMenu, findViewById(R.id.menu_external), mItem,
                     mCustomTabsDelegate.getSession());
             return true;
         }
         if (item.getItemId() == R.id.menu_share) {
-            AppUtils.share(ItemActivity.this, mAlertDialogBuilder, mItem);
+            AppUtils.share(this, mPopupMenu, findViewById(R.id.menu_share), mItem);
             return true;
         }
         return super.onOptionsItemSelected(item);

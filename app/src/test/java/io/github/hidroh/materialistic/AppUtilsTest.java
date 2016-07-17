@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import org.junit.Test;
@@ -29,6 +30,7 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -138,11 +140,11 @@ public class AppUtilsTest {
 
     @Test
     public void testShareComment() {
-        AppUtils.share(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
-                new TestHnItem(1));
+        AppUtils.share(RuntimeEnvironment.application, mock(PopupMenu.class),
+                new View(RuntimeEnvironment.application), new TestHnItem(1));
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
-        AppUtils.share(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
-                new TestHnItem(1) {
+        AppUtils.share(RuntimeEnvironment.application, mock(PopupMenu.class),
+                new View(RuntimeEnvironment.application), new TestHnItem(1) {
                     @Override
                     public String getUrl() {
                         return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
@@ -153,11 +155,11 @@ public class AppUtilsTest {
 
     @Test
     public void testOpenExternalComment() {
-        AppUtils.openExternal(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
-                new TestHnItem(1), null);
+        AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
+                new View(RuntimeEnvironment.application), new TestHnItem(1), null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
-        AppUtils.openExternal(RuntimeEnvironment.application, mock(AlertDialogBuilder.class),
-                new TestHnItem(1) {
+        AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
+                new View(RuntimeEnvironment.application), new TestHnItem(1) {
                     @Override
                     public String getUrl() {
                         return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
