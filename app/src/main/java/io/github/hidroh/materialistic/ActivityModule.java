@@ -21,9 +21,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -56,8 +54,6 @@ import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
-import okhttp3.Cookie;
-import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -196,7 +192,6 @@ public class ActivityModule {
                 .addInterceptor(new ConnectionAwareInterceptor(context))
                 .addInterceptor(new LoggingInterceptor())
                 .followRedirects(false)
-                .cookieJar(new CookieJar())
                 .build();
     }
 
@@ -279,32 +274,6 @@ public class ActivityModule {
         @Override
         public Response intercept(Chain chain) throws IOException {
             return debugInterceptor.intercept(chain);
-        }
-    }
-
-    static class CookieJar implements okhttp3.CookieJar {
-        private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
-
-        @Override
-        public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-            if (cookies == null) {
-                return;
-            }
-            // accept original server
-            ArrayList<Cookie> originalCookies = new ArrayList<>();
-            //noinspection Convert2streamapi
-            for (Cookie cookie : cookies) {
-                if (url.host().endsWith(cookie.domain())) {
-                    originalCookies.add(cookie);
-                }
-            }
-            cookieStore.put(url.host(), originalCookies);
-        }
-
-        @Override
-        public List<Cookie> loadForRequest(HttpUrl url) {
-            List<Cookie> cookies = cookieStore.get(url.host());
-            return cookies != null ? cookies : new ArrayList<>();
         }
     }
 }

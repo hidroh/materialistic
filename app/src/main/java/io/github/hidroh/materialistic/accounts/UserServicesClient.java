@@ -71,6 +71,8 @@ public class UserServicesClient implements UserServices {
     private static final String REGEX_INPUT = "<\\s*input[^>]*>";
     private static final String REGEX_VALUE = "value[^\"]*\"([^\"]*)\"";
     private static final String HEADER_LOCATION = "location";
+    private static final String HEADER_COOKIE = "cookie";
+    private static final String HEADER_SET_COOKIE = "set-cookie";
     private static final String HOST_ITEM = "item";
     private final Call.Factory mCallFactory;
     private final Scheduler mIoScheduler;
@@ -139,18 +141,24 @@ public class UserServicesClient implements UserServices {
                         Observable.error(new IOException()))
                 .flatMap(response -> {
                     try {
-                        return Observable.just(response.body().string());
+                        return Observable.just(new String[]{
+                                response.header(HEADER_SET_COOKIE),
+                                response.body().string()
+                        });
                     } catch (IOException e) {
                         return Observable.error(e);
                     } finally {
                         response.close();
                     }
                 })
-                .map(html -> getInputValue(html, SUBMIT_PARAM_FNID))
-                .flatMap(fnid -> !TextUtils.isEmpty(fnid) ?
-                        Observable.just(fnid) :
+                .map(array -> {
+                    array[1] = getInputValue(array[1], SUBMIT_PARAM_FNID);
+                    return array;
+                })
+                .flatMap(array -> !TextUtils.isEmpty(array[1]) ?
+                        Observable.just(array) :
                         Observable.error(new IOException()))
-                .flatMap(fnid -> execute(postSubmit(title, content, isUrl, fnid)))
+                .flatMap(array -> execute(postSubmit(title, content, isUrl, array[0], array[1])))
                 .flatMap(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP ?
                         Observable.just(Uri.parse(response.header(HEADER_LOCATION))) :
                         Observable.error(new IOException()))
@@ -221,8 +229,8 @@ public class UserServicesClient implements UserServices {
                 .build();
     }
 
-    private Request postSubmit(String title, String content, boolean isUrl, String fnid) {
-        return new Request.Builder()
+    private Request postSubmit(String title, String content, boolean isUrl, String cookie, String fnid) {
+        Request.Builder builder = new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
                         .addPathSegment(SUBMIT_POST_PATH)
@@ -232,8 +240,11 @@ public class UserServicesClient implements UserServices {
                         .add(SUBMIT_PARAM_FNOP, DEFAULT_FNOP)
                         .add(SUBMIT_PARAM_TITLE, title)
                         .add(isUrl ? SUBMIT_PARAM_URL : SUBMIT_PARAM_TEXT, content)
-                        .build())
-                .build();
+                        .build());
+        if (!TextUtils.isEmpty(cookie)) {
+            builder.addHeader(HEADER_COOKIE, cookie);
+        }
+        return builder.build();
     }
 
     private Observable<Response> execute(Request request) {
