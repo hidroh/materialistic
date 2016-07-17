@@ -22,6 +22,7 @@ import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.text.style.ReplacementSpan;
 
+import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
 public class AsteriskSpan extends ReplacementSpan {
@@ -31,22 +32,22 @@ public class AsteriskSpan extends ReplacementSpan {
 
     public AsteriskSpan(Context context) {
         super();
-        mBackgroundColor = ContextCompat.getColor(context, R.color.redA200);
-        mTextColor = ContextCompat.getColor(context, R.color.white);
+        mBackgroundColor = ContextCompat.getColor(context,
+                AppUtils.getThemedResId(context, R.attr.colorAccent));
+        mTextColor = ContextCompat.getColor(context, android.R.color.transparent);
         mPadding = context.getResources().getDimension(R.dimen.padding_asterisk);
     }
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        return Math.round(paint.measureText(text, start, end) + mPadding * 4);
+        return Math.round(mPadding * 4); // padding let + radius * 2 + padding right
     }
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-        float textSize = paint.measureText(text, start, end);
-        float radius = textSize / 2 + mPadding;
+        float radius = mPadding;
         float centerX = x + radius + mPadding;
-        float centerY = y / 2;
+        float centerY = top + radius + mPadding;
         paint.setColor(mBackgroundColor);
         canvas.drawCircle(centerX, centerY, radius, paint);
         paint.setColor(mTextColor);
