@@ -46,6 +46,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.Html;
 import android.text.Layout;
@@ -67,6 +68,7 @@ import java.util.List;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.widget.PopupMenu;
 
 public class AppUtils {
     private static final String ABBR_YEAR = "y";
@@ -167,9 +169,10 @@ public class AppUtils {
     }
 
     static void openExternal(@NonNull final Context context,
-                                    @NonNull AlertDialogBuilder alertDialogBuilder,
-                                    @NonNull final WebItem item,
-                                    final CustomTabsSession session) {
+                             @NonNull PopupMenu popupMenu,
+                             @NonNull View anchor,
+                             @NonNull final WebItem item,
+                             final CustomTabsSession session) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
@@ -177,22 +180,20 @@ public class AppUtils {
                     session);
             return;
         }
-        alertDialogBuilder
-                .init(context)
-                .setMessage(R.string.view_in_browser)
-                .setPositiveButton(R.string.article, (dialog, which) ->
-                        openWebUrlExternal(context, item.getUrl(), session))
-                .setNegativeButton(R.string.comments, (dialog, which) ->
-                        openWebUrlExternal(context,
-                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()),
-                                session))
-                .create()
+        popupMenu.create(context, anchor, GravityCompat.END)
+                .inflate(R.menu.menu_share)
+                .setOnMenuItemClickListener(menuItem -> {
+                    openWebUrlExternal(context, menuItem.getItemId() == R.id.menu_article ?
+                            item.getUrl() :
+                            String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()), session);
+                    return true;
+                })
                 .show();
-
     }
 
     public static void share(@NonNull final Context context,
-                             @NonNull AlertDialogBuilder alertDialogBuilder,
+                             @NonNull PopupMenu popupMenu,
+                             @NonNull View anchor,
                              @NonNull final WebItem item) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
@@ -201,18 +202,16 @@ public class AppUtils {
                     String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
             return;
         }
-        alertDialogBuilder
-                .init(context)
-                .setMessage(R.string.share)
-                .setPositiveButton(R.string.article, (dialog, which) ->
-                        context.startActivity(makeChooserShareIntent(context,
-                                item.getDisplayedTitle(),
-                                item.getUrl())))
-                .setNegativeButton(R.string.comments, (dialog, which) ->
-                        context.startActivity(makeChooserShareIntent(context,
-                                item.getDisplayedTitle(),
-                                String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()))))
-                .create()
+        popupMenu.create(context, anchor, GravityCompat.END)
+                .inflate(R.menu.menu_share)
+                .setOnMenuItemClickListener(menuItem -> {
+                    context.startActivity(makeChooserShareIntent(context,
+                            item.getDisplayedTitle(),
+                            menuItem.getItemId() == R.id.menu_article ?
+                                    item.getUrl() :
+                                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
+                    return true;
+                })
                 .show();
     }
 

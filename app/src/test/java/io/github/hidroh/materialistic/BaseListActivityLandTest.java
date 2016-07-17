@@ -1,13 +1,14 @@
 package io.github.hidroh.materialistic;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
+import android.widget.PopupMenu;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,9 +19,9 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -104,6 +105,7 @@ public class BaseListActivityLandTest {
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testSelectItemOpenStory() {
         assertThat(activity.findViewById(R.id.empty_selection)).isVisible();
@@ -122,13 +124,11 @@ public class BaseListActivityLandTest {
         assertThat(activity.findViewById(R.id.empty_selection)).isNotVisible();
         assertStoryMode();
         shadowOf(activity).clickMenuItem(R.id.menu_share);
-        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-        assertNotNull(alertDialog);
-        assertEquals(activity.getString(R.string.share), shadowOf(alertDialog).getMessage());
-        assertThat(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)).hasText(R.string.article);
-        assertThat(alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)).hasText(R.string.comments);
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        assertThat(popupMenu.getMenu()).hasItem(R.id.menu_article).hasItem(R.id.menu_comments);
         shadowOf(activity).clickMenuItem(R.id.menu_external);
-        assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
+        assertNotNull(ShadowPopupMenu.getLatestPopupMenu());
     }
 
     @Test
