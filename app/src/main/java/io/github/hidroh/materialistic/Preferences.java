@@ -217,8 +217,11 @@ public class Preferences {
                 // no op
             }
             // considered seen if first time install or last seen release is up to date
-            sReleaseNotesSeen = info != null && info.firstInstallTime == info.lastUpdateTime ||
-                    getInt(context, R.string.pref_latest_release, 0) >= BuildConfig.LATEST_RELEASE;
+            if (info != null && info.firstInstallTime == info.lastUpdateTime) {
+                setReleaseNotesSeen(context);
+            } else {
+                sReleaseNotesSeen = getInt(context, R.string.pref_latest_release, 0) >= BuildConfig.LATEST_RELEASE;
+            }
         }
         return sReleaseNotesSeen;
     }
