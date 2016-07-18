@@ -646,6 +646,45 @@ public class ItemActivityTest {
         assertThat(activity).isFinishing();
     }
 
+    @Test
+    public void testItemChanged() {
+        Intent intent = new Intent();
+        intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
+            @NonNull
+            @Override
+            public String getType() {
+                return STORY_TYPE;
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        });
+        controller.withIntent(intent).create().start().resume().visible();
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 0, 0),
+                tabLayout.getTabAt(0).getText());
+        activity.onItemChanged(new TestHnItem(1L) {
+            @Override
+            public int getKidCount() {
+                return 10;
+            }
+        });
+        assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 10, 10),
+                tabLayout.getTabAt(0).getText());
+    }
+
     @After
     public void tearDown() {
         reset(hackerNewsClient);

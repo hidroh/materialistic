@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -197,6 +198,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         if (item != null) {
             mAdapterItems = null;
             mItem = item;
+            notifyItemLoaded(item);
             bindKidData();
         }
     }
@@ -242,6 +244,12 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                 .show(getFragmentManager(), PopupSettingsFragment.class.getName());
     }
 
+    private void notifyItemLoaded(@NonNull Item item) {
+        if (getActivity() instanceof ItemChangedListener) {
+            ((ItemChangedListener) getActivity()).onItemChanged(item);
+        }
+    }
+
     private static class ItemResponseListener implements ResponseListener<Item> {
         private WeakReference<ItemFragment> mItemFragment;
 
@@ -262,5 +270,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
                 mItemFragment.get().onItemLoaded(null);
             }
         }
+    }
+
+    interface ItemChangedListener {
+        void onItemChanged(@NonNull Item item);
     }
 }

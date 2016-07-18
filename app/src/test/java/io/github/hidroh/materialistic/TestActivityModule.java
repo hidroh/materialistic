@@ -33,7 +33,6 @@ import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
-import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.WebActivity;
@@ -92,7 +91,7 @@ import static org.mockito.Mockito.when;
                 ItemActivityTest.class,
                 ItemFragmentMultiPageTest.class,
                 ItemFragmentSinglePageTest.class,
-                TestItemActivity.class,
+                ItemFragmentMultiPageTest.TestItemActivity.class,
                 TestReadabilityActivity.class,
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,

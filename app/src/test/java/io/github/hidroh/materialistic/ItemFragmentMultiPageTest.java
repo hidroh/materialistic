@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -37,11 +39,11 @@ import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
-import io.github.hidroh.materialistic.test.TestItemActivity;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -213,6 +215,32 @@ public class ItemFragmentMultiPageTest {
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_NETWORK),
                 listener.capture());
+        listener.getAllValues().get(1).onResponse(new TestHnItem(1L));
+        assertThat((SwipeRefreshLayout) fragment.getView().findViewById(R.id.swipe_layout))
+                .isNotRefreshing();
+        verify(((TestItemActivity) fragment.getActivity()).itemChangedListener)
+                .onItemChanged(any(Item.class));
+    }
+
+    @Test
+    public void testRefreshFailed() {
+        WebItem webItem = mock(WebItem.class);
+        when(webItem.getId()).thenReturn("1");
+        Bundle args = new Bundle();
+        args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
+        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+                ItemFragment.class.getName(), args);
+        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
+                R.id.content_frame);
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
+                ShadowExtractor.extract(fragment.getView().findViewById(R.id.swipe_layout));
+        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_DEFAULT),
+                listener.capture());
+        verify(hackerNewsClient).getItem(eq("1"),
+                eq(ItemManager.MODE_NETWORK),
+                listener.capture());
         listener.getAllValues().get(1).onError(null);
         assertThat((SwipeRefreshLayout) fragment.getView().findViewById(R.id.swipe_layout))
                 .isNotRefreshing();
@@ -236,5 +264,21 @@ public class ItemFragmentMultiPageTest {
     @After
     public void tearDown() {
         reset(hackerNewsClient);
+    }
+
+    public static class TestItemActivity extends InjectableActivity
+            implements ItemFragment.ItemChangedListener {
+        ItemFragment.ItemChangedListener itemChangedListener = mock(ItemFragment.ItemChangedListener.class);
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_item);
+            setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        }
+
+        @Override
+        public void onItemChanged(@NonNull Item item) {
+            itemChangedListener.onItemChanged(item);
+        }
     }
 }
