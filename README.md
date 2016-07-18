@@ -49,7 +49,7 @@ Run all/selective tests:
 - [Supporting multiple themes in your Android app (Part 2)][article-theme2] [![][Android Weekly 144 Badge]][Android Weekly 144]
 - [Building custom preferences with preference-v7][article-preference]
 - [Hacking up an ad blocker for Android][article-adblocker]
-- [Bottom sheet everything][article-bottom-sheet]
+- [Bottom sheet everything][article-bottom-sheet] [![][AndroidDev Digest 99 Badge]][AndroidDev Digest 99]
 
 ### Screenshots
 <img src="assets/screenshot-1.png" width="200px" />
@@ -104,3 +104,5 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [article-bottom-sheet]: http://www.hidroh.com/2016/06/17/bottom-sheet-everything/
 [Android Weekly 144 Badge]: https://img.shields.io/badge/android--weekly-144-blue.svg
 [Android Weekly 144]: http://androidweekly.net/issues/issue-144
+[AndroidDev Digest 99 Badge]: https://img.shields.io/badge/androiddev--digest-99-blue.svg
+[AndroidDev Digest 99]: https://www.androiddevdigest.com/digest-99/
