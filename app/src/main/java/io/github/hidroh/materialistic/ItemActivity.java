@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -65,7 +66,7 @@ import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.ViewPager;
 
-public class ItemActivity extends InjectableActivity {
+public class ItemActivity extends InjectableActivity implements ItemFragment.ItemChangedListener {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_CACHE_MODE = ItemActivity.class.getName() + ".EXTRA_CACHE_MODE";
@@ -270,6 +271,16 @@ public class ItemActivity extends InjectableActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         mSystemUiHelper.setFullscreen(hasFocus && mFullscreen);
+    }
+
+    @Override
+    public void onItemChanged(@NonNull Item item) {
+        mItem = item;
+        if (mTabLayout.getTabCount() > 0) {
+            //noinspection ConstantConditions
+            mTabLayout.getTabAt(0).setText(getResources()
+                    .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));
+        }
     }
 
     private void setFullscreen() {

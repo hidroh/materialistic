@@ -45,7 +45,6 @@ import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestItem;
-import io.github.hidroh.materialistic.test.TestItemActivity;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
@@ -74,7 +73,7 @@ public class ItemFragmentSinglePageTest {
     private ToggleItemViewHolder viewHolder;
     private ToggleItemViewHolder viewHolder1;
     private ToggleItemViewHolder viewHolder2;
-    private TestItemActivity activity;
+    private ItemFragmentMultiPageTest.TestItemActivity activity;
 
     @Before
     public void setUp() {
@@ -186,7 +185,7 @@ public class ItemFragmentSinglePageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, story);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        activity = Robolectric.buildActivity(TestItemActivity.class)
+        activity = Robolectric.buildActivity(ItemFragmentMultiPageTest.TestItemActivity.class)
                 .create().start().resume().visible().get();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
@@ -238,7 +237,7 @@ public class ItemFragmentSinglePageTest {
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
+        SupportFragmentTestUtil.startVisibleFragment(fragment, ItemFragmentMultiPageTest.TestItemActivity.class,
                 R.id.content_frame);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
@@ -327,7 +326,7 @@ public class ItemFragmentSinglePageTest {
         });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
+        SupportFragmentTestUtil.startVisibleFragment(fragment, ItemFragmentMultiPageTest.TestItemActivity.class,
                 R.id.content_frame);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
