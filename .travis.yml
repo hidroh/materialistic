@@ -10,7 +10,7 @@ android:
     - platform-tools
 
     # The BuildTools version used by your project
-    - build-tools-24.0.0
+    - build-tools-24.0.1
 
     # The SDK version used to compile your project
     - android-24
@@ -35,3 +35,4 @@ env:
     - TASK="lintDebug testDebug"
 after_success:
     - if [ "$TASK" = "lintDebug testDebug" ]; then ./gradlew jacocoTestReport coveralls; fi
+

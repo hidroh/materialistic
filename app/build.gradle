@@ -6,7 +6,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
@@ -54,8 +54,8 @@ android {
 }
 
 ext {
-    supportVersion = '24.0.0'
-    okHttpVersion = '3.3.1'
+    supportVersion = '24.1.0'
+    okHttpVersion = '3.4.1'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.4-beta2'
     retrofitVersion = '2.1.0'
