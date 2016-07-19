@@ -6,9 +6,6 @@ android.testOptions.unitTests.all {
     // configure max heap size of the test JVM
     maxHeapSize = '2048m'
 
-    // configure the test JVM arguments
-    jvmArgs '-XX:MaxPermSize=512m', '-XX:-UseSplitVerifier'
-
     // Specify max number of processes (default is 1)
     maxParallelForks = 1
 
