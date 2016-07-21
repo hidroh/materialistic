@@ -20,13 +20,19 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -35,6 +41,7 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -104,6 +111,31 @@ public class StoryRecyclerViewAdapter extends
         ContentResolver cr = recyclerView.getContext().getContentResolver();
         cr.registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
         cr.registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
+        new ItemTouchHelper(new ItemTouchHelperCallback(recyclerView.getContext()) {
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                Item item = getItem(viewHolder.getAdapterPosition());
+                int swipeDirs = 0;
+                if (!item.isFavorite()) {
+                    swipeDirs |= ItemTouchHelper.LEFT;
+                }
+                if (!item.isVoted() && !item.isPendingVoted()) {
+                    swipeDirs |= ItemTouchHelper.RIGHT;
+                }
+                return swipeDirs;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                Item item = getItem(viewHolder.getAdapterPosition());
+                if (direction == ItemTouchHelper.LEFT) {
+                    toggleSave(item);
+                } else {
+                    notifyItemChanged(viewHolder.getAdapterPosition());
+                    vote(item, viewHolder);
+                }
+            }
+        }).attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -360,7 +392,7 @@ public class StoryRecyclerViewAdapter extends
                 .show();
     }
 
-    private void vote(final Item story, final ItemViewHolder holder) {
+    private void vote(final Item story, final RecyclerView.ViewHolder holder) {
         mUserServices.voteUp(mContext, story.getId(),
                 new VoteCallback(this, holder.getAdapterPosition(), story));
     }
@@ -439,6 +471,62 @@ public class StoryRecyclerViewAdapter extends
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(mPosition, null);
             }
+        }
+    }
+
+    static abstract class ItemTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
+        private static final float SWIPE_THRESHOLD = 0.25f;
+        private final Paint mPaint = new Paint();
+        private final String mSaveText;
+        private final String mVoteText;
+
+        ItemTouchHelperCallback(Context context) {
+            super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+            mPaint.setColor(ContextCompat.getColor(context,
+                    AppUtils.getThemedResId(context, android.R.attr.textColorPrimary)));
+            mPaint.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.text_size_small));
+            mPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+            mSaveText = context.getString(R.string.save);
+            mVoteText = context.getString(R.string.vote_up);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                              RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            dX = drawPeekingText(c, viewHolder, dX);
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+
+        private float drawPeekingText(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX) {
+            View itemView = viewHolder.itemView;
+            String text = dX > 0 ? mVoteText : mSaveText;
+            Rect rect = new Rect();
+            mPaint.getTextBounds(text, 0, text.length(), rect);
+            float textWidth = rect.right - rect.left,
+                    textHeight = rect.bottom - rect.top,
+                    width = itemView.getWidth() * SWIPE_THRESHOLD,
+                    paddingX = (width - textWidth) / 2,
+                    paddingY = (itemView.getHeight() - textHeight) / 2;
+            dX = Math.max(dX, -width);
+            dX = Math.min(dX, width);
+            mPaint.setAlpha((int) (255 * Math.abs(dX / width)));
+            canvas.drawText(text.toUpperCase(Locale.getDefault()),
+                    dX > 0 ? itemView.getLeft() + paddingX :
+                            itemView.getRight() - width + paddingX,
+                    itemView.getBottom() - paddingY,
+                    mPaint);
+            return dX;
+        }
+
+        @Override
+        public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+            return SWIPE_THRESHOLD;
         }
     }
 }

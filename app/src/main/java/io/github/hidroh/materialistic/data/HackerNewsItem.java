@@ -79,6 +79,7 @@ class HackerNewsItem implements Item {
     private boolean hasNewDescendants = false;
     private HackerNewsItem parentItem;
     private boolean voted;
+    private boolean pendingVoted;
 
     public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
         @Override
@@ -128,6 +129,7 @@ class HackerNewsItem implements Item {
         parent = source.readLong();
         parentItem = source.readParcelable(HackerNewsItem.class.getClassLoader());
         voted = source.readInt() == 1;
+        pendingVoted = source.readInt() == 1;
     }
 
     @Override
@@ -209,6 +211,7 @@ class HackerNewsItem implements Item {
         dest.writeLong(parent);
         dest.writeParcelable(parentItem, flags);
         dest.writeInt(voted ? 1 : 0);
+        dest.writeInt(pendingVoted ? 1 : 0);
     }
 
     @Override
@@ -435,6 +438,7 @@ class HackerNewsItem implements Item {
     public void incrementScore() {
         score++;
         voted = true;
+        pendingVoted = true;
     }
 
     @Override
@@ -443,8 +447,13 @@ class HackerNewsItem implements Item {
     }
 
     @Override
-    public void clearVoted() {
-        voted = false;
+    public boolean isPendingVoted() {
+        return pendingVoted;
+    }
+
+    @Override
+    public void clearPendingVoted() {
+        pendingVoted = false;
     }
 
     @Override

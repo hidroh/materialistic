@@ -5,12 +5,15 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -53,6 +56,8 @@ import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowAnimation;
+import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
@@ -61,17 +66,27 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowAnimation.class, ShadowContentResolverCompatJellybean.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class,
+        ShadowSupportPreferenceManager.class,
+        ShadowRecyclerView.class,
+        ShadowItemTouchHelper.class,
+        ShadowRecyclerViewAdapter.class,
+        ShadowRecyclerViewAdapter.ShadowViewHolder.class,
+        ShadowAnimation.class,
+        ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
@@ -85,6 +100,8 @@ public class ListFragmentViewHolderTest {
     @Captor ArgumentCaptor<ResponseListener<Item[]>> storiesListener;
     @Captor ArgumentCaptor<ResponseListener<Item>> itemListener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
+    private RecyclerView recyclerView;
+    private ItemTouchHelper.SimpleCallback swipeCallback;
 
     @Before
     public void setUp() {
@@ -120,7 +137,10 @@ public class ListFragmentViewHolderTest {
                 eq(ItemManager.MODE_DEFAULT),
                 storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{item});
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        swipeCallback = (ItemTouchHelper.SimpleCallback)
+                ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
+                        .getItemTouchHelperCallback();
         adapter = (ShadowRecyclerViewAdapter) ShadowExtractor.extract(recyclerView.getAdapter());
         adapter.makeItemVisible(0);
         item.populate(new PopulatedStory(1));
@@ -239,7 +259,7 @@ public class ListFragmentViewHolderTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_highlight_updated), false)
-                .commit();
+                .apply();
         holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
     }
@@ -407,6 +427,31 @@ public class ListFragmentViewHolderTest {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
+    public void testSwipeToSaveItem() {
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
+        assertThat(swipeCallback.onMove(recyclerView, holder, holder)).isFalse();
+        assertThat(swipeCallback.getSwipeThreshold(holder)).isGreaterThan(0f);
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
+                .isEqualTo(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+
+        Canvas canvas = mock(Canvas.class);
+        swipeCallback.onChildDraw(canvas, recyclerView, holder, -1f, 0f,
+                ItemTouchHelper.ACTION_STATE_SWIPE, true);
+        verify(canvas).drawText(eq(activity.getString(R.string.save).toUpperCase()),
+                anyInt(), anyInt(), any(Paint.class));
+
+        swipeCallback.onSwiped(holder, ItemTouchHelper.LEFT);
+        verify(favoriteManager).add(any(Context.class), eq(item));
+
+        item.setFavorite(true);
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
+                .isEqualTo(ItemTouchHelper.RIGHT);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
     public void testViewUser() {
         verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
@@ -441,6 +486,33 @@ public class ListFragmentViewHolderTest {
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
         assertThat((TextView) adapter.getViewHolder(0).itemView.findViewById(R.id.score))
                 .hasTextString(activity.getResources().getQuantityString(R.plurals.score, 1, 1));
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testSwipeToVoteItem() {
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
+                .isEqualTo(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+
+        Canvas canvas = mock(Canvas.class);
+        swipeCallback.onChildDraw(canvas, recyclerView, holder, 1f, 0f,
+                ItemTouchHelper.ACTION_STATE_SWIPE, true);
+        verify(canvas).drawText(eq(activity.getString(R.string.vote_up).toUpperCase()),
+                anyInt(), anyInt(), any(Paint.class));
+
+        swipeCallback.onSwiped(holder, ItemTouchHelper.RIGHT);
+        verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
+
+        item.incrementScore();
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
+                .isEqualTo(ItemTouchHelper.LEFT);
+
+        item.clearPendingVoted();
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
+                .isEqualTo(ItemTouchHelper.LEFT);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
