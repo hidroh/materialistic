@@ -19,11 +19,14 @@ package io.github.hidroh.materialistic;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +34,8 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -38,6 +43,10 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 
 public class SubmitActivity extends InjectableActivity {
     private static final String HN_GUIDELINES_URL = "https://news.ycombinator.com/newsguidelines.html";
+    private static final String STATE_SUBJECT = "state:subject";
+    private static final String STATE_TEXT = "state:text";
+    // matching title url without any trailing text
+    private static final String REGEX_FUZZY_URL = "(.*)((http|https)://[^\\s]*)$";
     @Inject UserServices mUserServices;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private TextView mTitleEditText;
@@ -57,8 +66,32 @@ public class SubmitActivity extends InjectableActivity {
         mContentLayout = (TextInputLayout) findViewById(R.id.textinput_content);
         mTitleEditText = (TextView) findViewById(R.id.edittext_title);
         mContentEditText = (TextView) findViewById(R.id.edittext_content);
-        mTitleEditText.setText(getIntent().getStringExtra(Intent.EXTRA_SUBJECT));
-        mContentEditText.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+        String text, subject;
+        if (savedInstanceState == null) {
+            subject = getIntent().getStringExtra(Intent.EXTRA_SUBJECT);
+            text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        } else {
+            subject = savedInstanceState.getString(STATE_SUBJECT);
+            text = savedInstanceState.getString(STATE_TEXT);
+        }
+        mTitleEditText.setText(subject);
+        mContentEditText.setText(text);
+        if (TextUtils.isEmpty(subject)) {
+            if (isUrl(text)) {
+                WebView webView = new WebView(this);
+                webView.setWebChromeClient(new WebChromeClient() {
+                    @Override
+                    public void onReceivedTitle(WebView view, String title) {
+                        if (mTitleEditText.length() == 0) {
+                            mTitleEditText.setText(title);
+                        }
+                    }
+                });
+                webView.loadUrl(text);
+            } else if (!TextUtils.isEmpty(text)) {
+                extractUrl(text);
+            }
+        }
     }
 
     @Override
@@ -83,7 +116,7 @@ public class SubmitActivity extends InjectableActivity {
             if (!validate()) {
                 return true;
             }
-            final boolean isUrl = isUrl();
+            final boolean isUrl = isUrl(mContentEditText.getText().toString());
             mAlertDialogBuilder
                     .init(SubmitActivity.this)
                     .setMessage(isUrl ? R.string.confirm_submit_url :
@@ -105,6 +138,13 @@ public class SubmitActivity extends InjectableActivity {
                     .show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_SUBJECT, mTitleEditText.getText().toString());
+        outState.putString(STATE_TEXT, mContentEditText.getText().toString());
     }
 
     @Override
@@ -161,13 +201,35 @@ public class SubmitActivity extends InjectableActivity {
         }
     }
 
-    private boolean isUrl() {
+    private boolean isUrl(String text) {
         try {
-            new URL(mContentEditText.getText().toString()); // try parsing
+            new URL(text); // try parsing
         } catch (MalformedURLException e) {
             return false;
         }
         return true;
+    }
+
+    private void extractUrl(String text) {
+        Matcher matcher = Pattern.compile(REGEX_FUZZY_URL).matcher(text);
+        if (matcher.find() && matcher.groupCount() >= 3) { // group 1: title, group 2: url, group 3: scheme
+            mTitleEditText.setText(trimTitle(matcher.group(1).trim()));
+            mContentEditText.setText(matcher.group(2));
+        }
+    }
+
+    @NonNull
+    private String trimTitle(String title) {
+        int lastIndex = title.length() - 1;
+        while (lastIndex >= 0) {
+            char c = title.charAt(lastIndex);
+            if (c == ' ' || c == ':' || c == '-') {
+                lastIndex--;
+            } else {
+                break;
+            }
+        }
+        return lastIndex >= 0 ? title.substring(0, lastIndex + 1) : "";
     }
 
     private void toggleControls(boolean sending) {
