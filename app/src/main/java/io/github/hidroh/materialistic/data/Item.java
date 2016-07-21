@@ -192,17 +192,24 @@ public interface Item extends WebItem {
 
     /**
      * Checks if item has been voted via a user action
-     * @return true if voted at least once, false otherwise
+     * @return true if voted, false otherwise
      * @see #incrementScore()
      */
     boolean isVoted();
 
     /**
-     * Clears voted status
-     * @see #isVoted()
+     * Checks if item has pending vote via a user action
+     * @return true if pending voted, false otherwise
      * @see #incrementScore()
      */
-    void clearVoted();
+    boolean isPendingVoted();
+
+    /**
+     * Clears pending voted status
+     * @see #isPendingVoted()
+     * @see #incrementScore()
+     */
+    void clearPendingVoted();
 
     /**
      * Checks if item is collapsed

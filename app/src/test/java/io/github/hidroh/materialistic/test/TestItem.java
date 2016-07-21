@@ -206,7 +206,12 @@ public abstract class TestItem implements Item {
     }
 
     @Override
-    public void clearVoted() {
+    public boolean isPendingVoted() {
+        return false;
+    }
+
+    @Override
+    public void clearPendingVoted() {
 
     }
 

@@ -118,8 +118,8 @@ public class StoryView extends RelativeLayout implements Checkable {
     public void setStory(@NonNull WebItem story) {
         if (!mIsLocal && story instanceof Item) {
             Item item = (Item) story;
-            if (item.isVoted()) {
-                item.clearVoted();
+            if (item.isPendingVoted()) {
+                item.clearPendingVoted();
                 animateVote(item.getScore());
             } else {
                 mRankTextView.setText(String.valueOf(item.getRank()));
