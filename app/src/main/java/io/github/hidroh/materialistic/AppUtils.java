@@ -471,7 +471,8 @@ public class AppUtils {
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.putExtra(Intent.EXTRA_TEXT, !TextUtils.isEmpty(subject) ?
+                TextUtils.join(" - ", new String[]{subject, text}) : text);
         return intent;
     }
 
