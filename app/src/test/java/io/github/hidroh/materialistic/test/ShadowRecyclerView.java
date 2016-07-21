@@ -15,6 +15,8 @@ public class ShadowRecyclerView extends ShadowViewGroup {
     private int smoothScrollPosition = -1;
     private List<RecyclerView.ItemDecoration> itemDecorations = new ArrayList<>();
     private ItemTouchHelper.Callback itemTouchHelperCallback;
+    private RecyclerView.OnScrollListener scrollListener;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Implementation
     public void smoothScrollToPosition(int position) {
@@ -24,6 +26,16 @@ public class ShadowRecyclerView extends ShadowViewGroup {
     @Implementation
     public void addItemDecoration(RecyclerView.ItemDecoration decor) {
         itemDecorations.add(decor);
+    }
+
+    @Implementation
+    public void addOnScrollListener(RecyclerView.OnScrollListener scrollListener) {
+        this.scrollListener = scrollListener;
+    }
+
+    @Implementation
+    public void removeOnScrollListener(RecyclerView.OnScrollListener scrollListener) {
+        this.scrollListener = null;
     }
 
     public List<RecyclerView.ItemDecoration> getItemDecorations() {
@@ -44,5 +56,9 @@ public class ShadowRecyclerView extends ShadowViewGroup {
 
     public ItemTouchHelper.Callback getItemTouchHelperCallback() {
         return itemTouchHelperCallback;
+    }
+
+    public RecyclerView.OnScrollListener getScrollListener() {
+        return scrollListener;
     }
 }

@@ -31,6 +31,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LongSparseArray;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
@@ -58,6 +59,7 @@ import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.SessionManager;
 
 public class StoryRecyclerViewAdapter extends
         ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, Item> {
@@ -93,7 +95,17 @@ public class StoryRecyclerViewAdapter extends
             notifyItemChanged(position);
         }
     };
+    private final RecyclerView.OnScrollListener mAutoViewScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy > 0) { // scrolling down
+                markAsViewed(((LinearLayoutManager) recyclerView.getLayoutManager())
+                        .findFirstVisibleItemPosition() - 1);
+            }
+        }
+    };
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    @Inject SessionManager mSessionManager;
     private ArrayList<Item> mItems;
     private ArrayList<Item> mUpdated = new ArrayList<>();
     private ArrayList<String> mPromoted = new ArrayList<>();
@@ -136,6 +148,7 @@ public class StoryRecyclerViewAdapter extends
                 }
             }
         }).attachToRecyclerView(recyclerView);
+        toggleAutoMarkAsViewed(recyclerView.getContext());
     }
 
     @Override
@@ -213,7 +226,10 @@ public class StoryRecyclerViewAdapter extends
     public void initDisplayOptions(Context context) {
         mHighlightUpdated = Preferences.highlightUpdatedEnabled(context);
         mUsername = Preferences.getUsername(context);
-        notifyDataSetChanged();
+        if (isAttached()) {
+            toggleAutoMarkAsViewed(context);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -419,6 +435,26 @@ public class StoryRecyclerViewAdapter extends
 
     public void setCacheMode(int cacheMode) {
         mCacheMode = cacheMode;
+    }
+
+    private void markAsViewed(int position) {
+        if (position < 0) {
+            return;
+        }
+        Item item = mItems != null && position < mItems.size() ?
+                mItems.get(position) : null;
+        if (item == null || !isItemAvailable(item) || item.isViewed()) {
+            return;
+        }
+        mSessionManager.view(mContext, item.getId());
+    }
+
+    private void toggleAutoMarkAsViewed(Context context) {
+        if (Preferences.autoMarkAsViewed(context)) {
+            mRecyclerView.addOnScrollListener(mAutoViewScrollListener);
+        } else {
+            mRecyclerView.removeOnScrollListener(mAutoViewScrollListener);
+        }
     }
 
     private static class ItemResponseListener implements ResponseListener<Item> {

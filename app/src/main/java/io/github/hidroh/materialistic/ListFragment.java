@@ -73,7 +73,8 @@ public class ListFragment extends BaseListFragment {
         }
         mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
                 R.string.pref_highlight_updated,
-                R.string.pref_username);
+                R.string.pref_username,
+                R.string.pref_auto_viewed);
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

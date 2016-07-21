@@ -137,6 +137,10 @@ public class Preferences {
         return get(context, R.string.pref_highlight_updated, true);
     }
 
+    public static boolean autoMarkAsViewed(Context context) {
+        return get(context, R.string.pref_auto_viewed, true);
+    }
+
     static boolean customChromeTabEnabled(Context context) {
         return get(context, R.string.pref_custom_tab, true);
     }
