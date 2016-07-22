@@ -20,7 +20,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
@@ -193,21 +192,19 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     }
 
     private void toggleCollapsibleContent(final VH holder, final Item item) {
-        final int lineCount = holder.mContentTextView.getLineCount();
-        if (item.isContentExpanded() || lineCount <= mContentMaxLines) {
+        final int lineCount;
+        if (item.isContentExpanded() ||
+                (lineCount = holder.mContentTextView.getLineCount()) <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
-            setTextIsSelectable(holder.mContentTextView, true);
             holder.mReadMoreTextView.setVisibility(View.GONE);
             return;
         }
         holder.mContentTextView.setMaxLines(mContentMaxLines);
-        setTextIsSelectable(holder.mContentTextView, false);
         holder.mReadMoreTextView.setVisibility(View.VISIBLE);
         holder.mReadMoreTextView.setText(mContext.getString(R.string.read_more, lineCount));
         holder.mReadMoreTextView.setOnClickListener(v -> {
             item.setContentExpanded(true);
             v.setVisibility(View.GONE);
-            setTextIsSelectable(holder.mContentTextView, true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
                         .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)
@@ -216,12 +213,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                 holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
             }
         });
-    }
-
-    private void setTextIsSelectable(TextView textView, boolean isSelectable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            textView.setTextIsSelectable(isSelectable);
-        }
     }
 
     private void bindActions(final VH holder, final Item item) {

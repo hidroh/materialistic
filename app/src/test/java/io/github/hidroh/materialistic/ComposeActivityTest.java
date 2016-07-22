@@ -132,7 +132,7 @@ public class ComposeActivityTest {
         controller = Robolectric.buildActivity(ComposeActivity.class)
                 .withIntent(intent).create().start().resume().visible();
         activity = controller.get();
-        assertThat(activity.findViewById(R.id.toggle)).isNotVisible();
+        assertThat(activity.findViewById(R.id.quote)).isNotVisible();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
     }
 

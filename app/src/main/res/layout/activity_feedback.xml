@@ -82,7 +82,7 @@
                 android:id="@+id/edittext_title"
                 android:hint="@string/title_hint"
                 android:inputType="textCapSentences"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -97,8 +97,7 @@
                 android:id="@+id/edittext_body"
                 android:hint="@string/comment_hint"
                 android:gravity="top"
-                android:inputType="textCapSentences"
-                android:singleLine="false"
+                android:inputType="textCapSentences|textMultiLine"
                 android:minLines="3"
                 android:maxLines="10"
                 android:layout_width="match_parent"
