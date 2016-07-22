@@ -131,7 +131,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         mContentMaxLines = Preferences.getCommentMaxLines(context);
         mUsername = Preferences.getUsername(context);
         mLineHeight = Preferences.getLineHeight(context);
-        notifyDataSetChanged();
+        if (isAttached()) {
+            notifyDataSetChanged();
+        }
     }
 
     protected abstract Item getItem(int position);
