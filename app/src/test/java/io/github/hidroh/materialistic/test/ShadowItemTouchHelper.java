@@ -31,6 +31,9 @@ public class ShadowItemTouchHelper {
     }
 
     public void attachToRecyclerView(RecyclerView recyclerView) {
+        if (recyclerView == null) {
+            return;
+        }
         ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
                 .setItemTouchHelperCallback(this.callback);
     }
