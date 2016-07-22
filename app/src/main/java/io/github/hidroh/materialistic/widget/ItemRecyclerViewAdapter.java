@@ -35,8 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -67,7 +67,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     private int mCardHighlightColorResId;
     private int mContentMaxLines = Integer.MAX_VALUE;
     private String mUsername;
-    private final Set<String> mLineCounted = new HashSet<>();
+    private final Map<String, Integer> mLineCounted = new HashMap<>();
     private int mCacheMode = ItemManager.MODE_DEFAULT;
     private float mLineHeight = 1.0f;
 
@@ -147,16 +147,18 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         decorateDead(holder, item);
         holder.mContentTextView.setLineSpacing(0f, mLineHeight);
         AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
-        if (mLineCounted.contains(item.getId())) {
-            toggleCollapsibleContent(holder, item);
+        Integer lineCount = mLineCounted.get(item.getId());
+        if (lineCount != null && lineCount > 0) {
+            toggleCollapsibleContent(holder, item, lineCount);
         } else {
-        holder.mContentTextView.post(() -> {
-            if (mContext == null) {
-                return;
-            }
-            toggleCollapsibleContent(holder, item);
-            mLineCounted.add(item.getId());
-        });
+            holder.mContentTextView.post(() -> {
+                if (mContext == null) {
+                    return;
+                }
+                int count = holder.mContentTextView.getLineCount();
+                mLineCounted.put(item.getId(), count);
+                toggleCollapsibleContent(holder, item, count);
+            });
         }
         bindActions(holder, item);
     }
@@ -193,10 +195,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                 mSecondaryTextColorResId : mTertiaryTextColorResId);
     }
 
-    private void toggleCollapsibleContent(final VH holder, final Item item) {
-        final int lineCount;
-        if (item.isContentExpanded() ||
-                (lineCount = holder.mContentTextView.getLineCount()) <= mContentMaxLines) {
+    private void toggleCollapsibleContent(final VH holder, final Item item, int lineCount) {
+        if (item.isContentExpanded() || lineCount <= mContentMaxLines) {
             holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
             holder.mReadMoreTextView.setVisibility(View.GONE);
             return;
