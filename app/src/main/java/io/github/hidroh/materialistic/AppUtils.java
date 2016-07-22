@@ -415,7 +415,6 @@ public class AppUtils {
     }
 
     static void enableWebViewZoom(WebSettings webSettings) {
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ONLY);
         webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
