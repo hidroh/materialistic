@@ -161,7 +161,7 @@
     <string name="search_sort_popularity">人气</string>
     <string name="story_display_readability">帖子预览</string>
     <string name="font_options">字体选项</string>
-    <string name="read_more">阅读所有共 %1$s 行评论</string>
+    <string name="read_more" tools:ignore="PluralsCandidate">阅读所有共 %1$d 行评论</string>
     <string name="comment_max_lines_3">最多3行</string>
     <string name="comment_max_lines_4">最多4行</string>
     <string name="comment_max_lines_5">最多5行</string>

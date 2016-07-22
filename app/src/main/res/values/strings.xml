@@ -202,7 +202,7 @@
     <string name="search_sort_popularity">Popularity</string>
     <string name="story_display_readability">Readability</string>
     <string name="font_options">Font options</string>
-    <string name="read_more">Read all %1$s lines</string>
+    <string name="read_more" tools:ignore="PluralsCandidate">Read all %1$d lines</string>
     <string name="comment_max_lines_3">Max 3 lines</string>
     <string name="comment_max_lines_4">Max 4 lines</string>
     <string name="comment_max_lines_5">Max 5 lines</string>
