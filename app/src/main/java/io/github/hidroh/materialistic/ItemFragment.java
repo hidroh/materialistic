@@ -223,7 +223,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
         }
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.swapAdapter(mAdapter, true);
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
