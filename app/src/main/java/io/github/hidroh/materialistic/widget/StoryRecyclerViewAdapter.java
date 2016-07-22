@@ -116,6 +116,7 @@ public class StoryRecyclerViewAdapter extends
     private boolean mHighlightUpdated = true;
     private boolean mShowAll = true;
     private int mCacheMode = ItemManager.MODE_DEFAULT;
+    private ItemTouchHelper mItemTouchHelper;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -123,7 +124,7 @@ public class StoryRecyclerViewAdapter extends
         ContentResolver cr = recyclerView.getContext().getContentResolver();
         cr.registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
         cr.registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
-        new ItemTouchHelper(new ItemTouchHelperCallback(recyclerView.getContext()) {
+        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(recyclerView.getContext()) {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 Item item = getItem(viewHolder.getAdapterPosition());
@@ -147,7 +148,8 @@ public class StoryRecyclerViewAdapter extends
                     vote(item, viewHolder);
                 }
             }
-        }).attachToRecyclerView(recyclerView);
+        });
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
         toggleAutoMarkAsViewed(recyclerView.getContext());
     }
 
@@ -155,6 +157,7 @@ public class StoryRecyclerViewAdapter extends
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         recyclerView.getContext().getContentResolver().unregisterContentObserver(mObserver);
+        mItemTouchHelper.attachToRecyclerView(null);
     }
 
     @Override
