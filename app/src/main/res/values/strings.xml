@@ -97,6 +97,8 @@
     <string name="pref_thread_indicator_title">Thread indicator</string>
     <string name="pref_widget_section_title">Section</string>
     <string name="pref_widget_frequency_title">Update frequency</string>
+    <string name="pref_auto_viewed_title">Auto mark as viewed</string>
+    <string name="pref_auto_viewed_summary">Mark stories as viewed as you swipe up</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>

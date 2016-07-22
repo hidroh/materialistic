@@ -17,6 +17,7 @@
 
 <resources>
     <string translatable="false" name="pref_ad_block">pref_ad_block</string>
+    <string translatable="false" name="pref_auto_viewed">pref_auto_viewed</string>
     <string translatable="false" name="pref_color_code">pref_color_code</string>
     <string translatable="false" name="pref_comment_display">pref_comment_display</string>
     <string translatable="false" name="pref_custom_tab">pref_custom_tab</string>

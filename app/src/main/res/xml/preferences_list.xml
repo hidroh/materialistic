@@ -55,6 +55,12 @@
             app:dialogTitle="@string/pref_highlight_updated_title"
             app:dialogLayout="@layout/help_list_view" />
 
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_auto_viewed"
+            android:title="@string/pref_auto_viewed_title"
+            android:summary="@string/pref_auto_viewed_summary"
+            android:defaultValue="false" />
+
     </android.support.v7.preference.PreferenceCategory>
 
 </PreferenceScreen>

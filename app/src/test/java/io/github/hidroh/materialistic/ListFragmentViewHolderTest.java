@@ -57,6 +57,7 @@ import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.ShadowAnimation;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.ShadowLinearLayoutManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -64,6 +65,7 @@ import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,6 +84,7 @@ import static org.robolectric.Shadows.shadowOf;
 @Config(shadows = {ShadowSwipeRefreshLayout.class,
         ShadowSupportPreferenceManager.class,
         ShadowRecyclerView.class,
+        ShadowLinearLayoutManager.class,
         ShadowItemTouchHelper.class,
         ShadowRecyclerViewAdapter.class,
         ShadowRecyclerViewAdapter.ShadowViewHolder.class,
@@ -573,6 +576,42 @@ public class ListFragmentViewHolderTest {
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasAction(Intent.ACTION_CHOOSER);
+    }
+
+    @Test
+    public void testAutoMarkAsViewed() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_auto_viewed), true)
+                .apply();
+
+        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
+        ShadowLinearLayoutManager shadowLayout = (ShadowLinearLayoutManager)
+                ShadowExtractor.extract(recyclerView.getLayoutManager());
+        shadowLayout.setFirstVisibleItemPosition(0);
+        shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
+        verify(sessionManager, never()).view(any(Context.class), anyString());
+
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        shadowLayout.setFirstVisibleItemPosition(0);
+        shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
+        verify(sessionManager, never()).view(any(Context.class), anyString());
+
+        shadowLayout.setFirstVisibleItemPosition(1);
+        shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
+        verify(sessionManager).view(any(Context.class), anyString());
+
+        item.setIsViewed(true);
+        shadowLayout.setFirstVisibleItemPosition(1);
+        shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
+        verify(sessionManager).view(any(Context.class), anyString()); // should not trigger again
+
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_auto_viewed), false)
+                .apply();
+        assertNull(shadowRecyclerView.getScrollListener());
     }
 
     @After
