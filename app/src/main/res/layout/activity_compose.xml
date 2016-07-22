@@ -93,7 +93,6 @@
                 android:hint="@string/comment_hint"
                 android:inputType="textCapSentences|textMultiLine"
                 android:gravity="top"
-                android:singleLine="false"
                 android:background="@null"
                 android:paddingTop="@dimen/padding"
                 android:paddingBottom="@dimen/padding"
