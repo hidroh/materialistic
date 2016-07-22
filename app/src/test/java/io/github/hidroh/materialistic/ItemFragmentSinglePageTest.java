@@ -3,12 +3,14 @@ package io.github.hidroh.materialistic;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -41,7 +43,9 @@ import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.ShadowTextView;
 import io.github.hidroh.materialistic.test.TestItem;
@@ -56,12 +60,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowTextView.class})
+@Config(shadows = {ShadowRecyclerView.class,
+        ShadowItemTouchHelper.class,
+        ShadowRecyclerViewAdapter.class,
+        ShadowRecyclerViewAdapter.ShadowViewHolder.class,
+        ShadowSupportPreferenceManager.class,
+        ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
@@ -258,6 +268,23 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder1, 1);
         adapter.bindViewHolder(viewHolder2, 2);
         assertEquals(3, adapter.getItemCount());
+    }
+
+    @Test
+    public void testSwipeToToggle() {
+        ItemTouchHelper.SimpleCallback callback = (ItemTouchHelper.SimpleCallback)
+                ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
+                        .getItemTouchHelperCallback();
+        assertThat(callback.getSwipeThreshold(viewHolder)).isGreaterThan(0f);
+        assertThat(callback.onMove(recyclerView, viewHolder, viewHolder)).isFalse();
+        assertThat(callback.getSwipeDirs(recyclerView, viewHolder))
+                .isEqualTo(ItemTouchHelper.RIGHT);
+        callback.onChildDraw(mock(Canvas.class), recyclerView, viewHolder, 1f, 0f,
+                ItemTouchHelper.ACTION_STATE_SWIPE, true);
+        // collapse all
+        callback.onSwiped(viewHolder, ItemTouchHelper.RIGHT);
+        adapter.bindViewHolder(viewHolder, 0);
+        assertEquals(1, adapter.getItemCount());
     }
 
     @Test

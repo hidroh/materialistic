@@ -18,11 +18,13 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,6 +45,7 @@ public class SinglePageItemRecyclerViewAdapter
     private TypedArray mColors;
     private RecyclerView mRecyclerView;
     private final @NonNull SavedState mState;
+    private ItemTouchHelper mItemTouchHelper;
 
     public SinglePageItemRecyclerViewAdapter(ItemManager itemManager,
                                              @NonNull SavedState state,
@@ -58,12 +61,49 @@ public class SinglePageItemRecyclerViewAdapter
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
         mColors = mContext.getResources().obtainTypedArray(R.array.color_codes);
         mRecyclerView = recyclerView;
+        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (getItem(viewHolder.getAdapterPosition()).getKidCount() == 0) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                notifyItemChanged(position);
+                toggleKids(getItem(position));
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                float swipeWidth = viewHolder.itemView.getWidth() * getSwipeThreshold(viewHolder);
+                dX = Math.max(dX, -swipeWidth);
+                dX = Math.min(dX, swipeWidth);
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+            @Override
+            public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+                return 0.1f;
+            }
+        });
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        mRecyclerView = null;
         super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView = null;
+        mItemTouchHelper.attachToRecyclerView(null);
     }
 
     @Override
@@ -133,7 +173,7 @@ public class SinglePageItemRecyclerViewAdapter
         }
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, true));
         bindNavigation(holder, item);
-        toggleKids(holder, item);
+        bindKidsToggle(holder, item);
     }
 
     private void bindNavigation(ToggleItemViewHolder holder, final Item item) {
@@ -149,7 +189,7 @@ public class SinglePageItemRecyclerViewAdapter
         });
     }
 
-    private void toggleKids(final ToggleItemViewHolder holder, final Item item) {
+    private void bindKidsToggle(final ToggleItemViewHolder holder, final Item item) {
         holder.mToggle.setVisibility(item.getKidCount() > 0 ? View.VISIBLE : View.GONE);
         if (item.getKidCount() == 0) {
             return;
@@ -159,15 +199,19 @@ public class SinglePageItemRecyclerViewAdapter
         }
         bindToggle(holder, item, isExpanded(item));
         holder.mToggle.setOnClickListener(v -> {
-            boolean expanded = isExpanded(item);
-            bindToggle(holder, item, !expanded);
-            item.setCollapsed(!item.isCollapsed());
-            if (expanded) {
-                collapse(item);
-            } else {
-                expand(item);
-            }
+            bindToggle(holder, item, !isExpanded(item));
+            toggleKids(item);
         });
+    }
+
+    private void toggleKids(Item item) {
+        boolean expanded = isExpanded(item);
+        item.setCollapsed(!item.isCollapsed());
+        if (expanded) {
+            collapse(item);
+        } else {
+            expand(item);
+        }
     }
 
     private void bindToggle(ToggleItemViewHolder holder, Item item, boolean expanded) {
