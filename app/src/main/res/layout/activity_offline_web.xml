@@ -37,6 +37,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/fragment_web" />
+    <include
+        layout="@layout/fragment_web"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </android.support.design.widget.CoordinatorLayout>
