@@ -92,17 +92,17 @@ public class UserServicesClient implements UserServices {
     }
 
     @Override
-    public void voteUp(Context context, String itemId, Callback callback) {
+    public boolean voteUp(Context context, String itemId, Callback callback) {
         Pair<String, String> credentials = AppUtils.getCredentials(context);
         if (credentials == null) {
-            callback.onDone(false);
-            return;
+            return false;
         }
         Toast.makeText(context, R.string.sending, Toast.LENGTH_SHORT).show();
         execute(postVote(credentials.first, credentials.second, itemId))
                 .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(callback::onDone, callback::onError);
+        return true;
     }
 
     @Override

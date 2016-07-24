@@ -24,6 +24,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import rx.schedulers.Schedulers;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
@@ -84,7 +86,7 @@ public class UserServicesClientTest {
         when(call.execute()).thenReturn(responseBuilder
                 .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        assertTrue(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(callback).onDone(eq(true));
     }
 
@@ -93,7 +95,7 @@ public class UserServicesClientTest {
         when(call.execute()).thenReturn(responseBuilder
                 .code(HttpURLConnection.HTTP_OK).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        assertTrue(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(callback).onDone(eq(false));
     }
 
@@ -101,7 +103,7 @@ public class UserServicesClientTest {
     public void testVoteError() throws IOException {
         when(call.execute()).thenThrow(new IOException());
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        assertTrue(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(callback).onError(any(Throwable.class));
     }
 
@@ -109,9 +111,8 @@ public class UserServicesClientTest {
     public void testVoteNoMatchingAccount() throws IOException {
         Preferences.setUsername(RuntimeEnvironment.application, "another");
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        assertFalse(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(call, never()).enqueue(any(Callback.class));
-        verify(callback).onDone(eq(false));
     }
 
     @Test
@@ -137,9 +138,8 @@ public class UserServicesClientTest {
         ShadowAccountManager.get(RuntimeEnvironment.application)
                 .removeAccount(account, null, null);
         UserServices.Callback callback = mock(UserServices.Callback.class);
-        userServices.voteUp(RuntimeEnvironment.application, "1", callback);
+        assertFalse(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(call, never()).enqueue(any(Callback.class));
-        verify(callback).onDone(eq(false));
     }
 
     @Test
