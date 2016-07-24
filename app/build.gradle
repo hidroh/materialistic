@@ -11,7 +11,8 @@ android {
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
-        targetSdkVersion 24
+        //noinspection OldTargetApi
+        targetSdkVersion 23 // TODO http://b.android.com/212316
         versionCode 56
         versionName "2.9"
         buildConfigField "int", "LATEST_RELEASE", "53"
@@ -54,7 +55,7 @@ android {
 }
 
 ext {
-    supportVersion = '24.1.0'
+    supportVersion = '24.1.1'
     okHttpVersion = '3.4.1'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.4-beta2'
