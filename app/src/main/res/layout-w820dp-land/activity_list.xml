@@ -93,4 +93,15 @@
         app:layout_anchor="@id/content"
         app:layout_anchorGravity="bottom|right" />
 
+    <include
+        layout="@layout/button_navigation"
+        android:id="@+id/navigation_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/fab_scrolling_view_behavior"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/content"
+        app:layout_anchorGravity="bottom|center_horizontal"
+        tools:ignore="RtlHardcoded"/>
+
 </android.support.design.widget.CoordinatorLayout>

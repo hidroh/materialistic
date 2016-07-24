@@ -46,6 +46,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
+import io.github.hidroh.materialistic.widget.NavFloatingActionButton;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.ViewPager;
 
@@ -73,6 +74,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
+    private NavFloatingActionButton mNavButton;
     private View mListView;
     private boolean mFullscreen;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
@@ -112,7 +114,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mViewPager.setPageMarginDrawable(R.color.blackT12);
             mViewPager.setVisibility(View.GONE);
             mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
+            mNavButton = (NavFloatingActionButton) findViewById(R.id.navigation_button);
+            mNavButton.setNavigable(direction ->
+                    // if callback is fired navigable should not be null
+                    ((Navigable) ((ItemPagerAdapter) mViewPager.getAdapter()).getItem(0))
+                            .onNavigate(direction));
             AppUtils.toggleFab(mReplyButton, false);
+            AppUtils.toggleFab(mNavButton, false);
         }
         if (savedInstanceState == null) {
             mStoryViewMode = Preferences.getDefaultStoryView(this);
@@ -136,6 +144,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             }
         }
         mPreferenceObservable.subscribe(this, this::onPreferenceChanged,
+                R.string.pref_navigation,
                 R.string.pref_external,
                 R.string.pref_story_display);
     }
@@ -366,12 +375,14 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mViewPager.setVisibility(View.GONE);
             mViewPager.setAdapter(null);
             AppUtils.toggleFab(mReplyButton, false);
+            AppUtils.toggleFab(mNavButton, false);
         } else {
             setTitle(item.getDisplayedTitle());
             findViewById(R.id.empty_selection).setVisibility(View.GONE);
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
             AppUtils.toggleFab(mReplyButton, true);
+            AppUtils.toggleFab(mNavButton, navigationVisible());
             bindViewPager(item);
             mSessionManager.view(this, item.getId());
         }
@@ -387,6 +398,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 AppUtils.toggleFabAction(mReplyButton, item, tab.getPosition() == 0);
+                AppUtils.toggleFab(mNavButton, tab.getPosition() == 0 && navigationEnabled());
             }
 
             @Override
@@ -406,6 +418,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 break;
         }
         AppUtils.toggleFabAction(mReplyButton, item, mViewPager.getCurrentItem() == 0);
+        AppUtils.toggleFab(mNavButton, navigationVisible());
         if (mFullscreen) {
             setFullscreen();
         }
@@ -433,6 +446,17 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             case R.string.pref_story_display:
                 mStoryViewMode = Preferences.getDefaultStoryView(this);
                 break;
+            case R.string.pref_navigation:
+                AppUtils.toggleFab(mNavButton, navigationEnabled());
+                break;
         }
+    }
+
+    private boolean navigationVisible() {
+        return mViewPager.getCurrentItem() == 0 && navigationEnabled();
+    }
+
+    private boolean navigationEnabled() {
+        return Preferences.navigationEnabled(this);
     }
 }

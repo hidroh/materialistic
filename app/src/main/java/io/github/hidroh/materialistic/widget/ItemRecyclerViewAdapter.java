@@ -44,6 +44,7 @@ import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.Injectable;
+import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
@@ -63,13 +64,17 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     protected Context mContext;
     private int mTertiaryTextColorResId;
     private int mSecondaryTextColorResId;
-    private int mCardBackgroundColorResId;
-    private int mCardHighlightColorResId;
+    protected int mCardBackgroundColorResId;
+    protected int mCardHighlightColorResId;
     private int mContentMaxLines = Integer.MAX_VALUE;
     private String mUsername;
     private final Map<String, Integer> mLineCounted = new HashMap<>();
     private int mCacheMode = ItemManager.MODE_DEFAULT;
     private float mLineHeight = 1.0f;
+
+    public interface PositionCallback {
+        void onPosition(int position);
+    }
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
@@ -119,10 +124,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         return getItem(position).getLongId();
     }
 
-    public boolean isAttached() {
-        return mContext != null;
-    }
-
     public void setCacheMode(int cacheMode) {
         mCacheMode = cacheMode;
     }
@@ -135,6 +136,19 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             notifyDataSetChanged();
         }
     }
+
+    public void getNextPosition(int position, int direction, PositionCallback callback) {
+        switch (direction) {
+            case Navigable.DIRECTION_UP:
+                callback.onPosition(position - 1);
+                break;
+            case Navigable.DIRECTION_DOWN:
+                callback.onPosition(position + 1);
+                break;
+        }
+    }
+
+    public void lockBinding(int[] lock) { }
 
     protected abstract Item getItem(int position);
 
@@ -169,6 +183,10 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mPostedTextView.setText(R.string.loading_text);
         holder.mContentTextView.setText(R.string.loading_text);
         holder.mReadMoreTextView.setVisibility(View.GONE);
+    }
+
+    private boolean isAttached() {
+        return mContext != null;
     }
 
     private void load(int adapterPosition, Item item) {

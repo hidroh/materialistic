@@ -241,6 +241,11 @@ public abstract class TestItem implements Item {
     }
 
     @Override
+    public long getNeighbour(int direction) {
+        return 0;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o != null && getId() != null && getId().equalsIgnoreCase(((TestItem) o).getId());
     }

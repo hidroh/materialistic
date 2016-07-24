@@ -44,6 +44,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.ShadowLinearLayoutManager;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -68,6 +69,7 @@ import static org.robolectric.Shadows.shadowOf;
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowRecyclerView.class,
         ShadowItemTouchHelper.class,
+        ShadowLinearLayoutManager.class,
         ShadowRecyclerViewAdapter.class,
         ShadowRecyclerViewAdapter.ShadowViewHolder.class,
         ShadowSupportPreferenceManager.class,
@@ -83,7 +85,9 @@ public class ItemFragmentSinglePageTest {
     private ToggleItemViewHolder viewHolder;
     private ToggleItemViewHolder viewHolder1;
     private ToggleItemViewHolder viewHolder2;
+    private ToggleItemViewHolder viewHolder3;
     private ItemFragmentMultiPageTest.TestItemActivity activity;
+    private ItemFragment fragment;
 
     @Before
     public void setUp() {
@@ -95,7 +99,15 @@ public class ItemFragmentSinglePageTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        final TestHnItem item0 = new TestHnItem(1, 1);
+        final TestHnItem item0 = new TestHnItem(1, 1) {
+            @Override
+            public long getNeighbour(int direction) {
+                if (direction == Navigable.DIRECTION_DOWN) {
+                    return 4L;
+                }
+                return super.getNeighbour(direction);
+            }
+        };
         item0.populate(new TestItem() { // level 0
             @Override
             public String getId() {
@@ -178,22 +190,53 @@ public class ItemFragmentSinglePageTest {
             }
         });
         item1.getKidItems()[0] = item2;
-        TestHnItem story = new TestHnItem(0);
-        story.populate(new TestItem() {
+        TestHnItem item3 = new TestHnItem(4, 4) {
             @Override
-            public long[] getKids() {
-                return new long[]{1L};
+            public long getNeighbour(int direction) {
+                if (direction == Navigable.DIRECTION_UP) {
+                    return 1L;
+                }
+                return super.getNeighbour(direction);
+            }
+        };
+        item3.populate(new TestItem() { // level 0
+            @Override
+            public String getId() {
+                return "4";
+            }
+
+            @Override
+            public String getText() {
+                return "text";
             }
 
             @Override
             public int getDescendants() {
-                return 1;
+                return 0;
+            }
+
+            @Override
+            public long[] getKids() {
+                return new long[0];
+            }
+        });
+        TestHnItem story = new TestHnItem(0);
+        story.populate(new TestItem() {
+            @Override
+            public long[] getKids() {
+                return new long[]{1L, 4L};
+            }
+
+            @Override
+            public int getDescendants() {
+                return 4;
             }
         });
         story.getKidItems()[0] = item0;
+        story.getKidItems()[1] = item3;
         Bundle args = new Bundle();
         args.putParcelable(ItemFragment.EXTRA_ITEM, story);
-        Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
+        fragment = (ItemFragment) Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         activity = Robolectric.buildActivity(ItemFragmentMultiPageTest.TestItemActivity.class)
                 .create().start().resume().visible().get();
@@ -214,11 +257,13 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder1, 1);
         viewHolder2 = adapter.createViewHolder(recyclerView, 2);
         adapter.bindViewHolder(viewHolder2, 2);
+        viewHolder3 = adapter.createViewHolder(recyclerView, 3);
+        adapter.bindViewHolder(viewHolder3, 3);
     }
 
     @Test
     public void testExpand() {
-        assertEquals(3, adapter.getItemCount());
+        assertEquals(4, adapter.getItemCount());
     }
 
     @Test
@@ -260,14 +305,15 @@ public class ItemFragmentSinglePageTest {
         // collapse all
         viewHolder.itemView.findViewById(R.id.toggle).performClick();
         adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(1, adapter.getItemCount());
+        assertEquals(2, adapter.getItemCount());
 
         // expand again, should add item when binding
         viewHolder.itemView.findViewById(R.id.toggle).performClick();
         adapter.bindViewHolder(viewHolder, 0);
         adapter.bindViewHolder(viewHolder1, 1);
         adapter.bindViewHolder(viewHolder2, 2);
-        assertEquals(3, adapter.getItemCount());
+        adapter.bindViewHolder(viewHolder3, 3);
+        assertEquals(4, adapter.getItemCount());
     }
 
     @Test
@@ -284,7 +330,7 @@ public class ItemFragmentSinglePageTest {
         // collapse all
         callback.onSwiped(viewHolder, ItemTouchHelper.RIGHT);
         adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(1, adapter.getItemCount());
+        assertEquals(2, adapter.getItemCount());
     }
 
     @Test
@@ -366,7 +412,7 @@ public class ItemFragmentSinglePageTest {
     @Test
     public void testSavedState() {
         shadowOf(activity).recreate();
-        assertEquals(3, adapter.getItemCount());
+        assertEquals(4, adapter.getItemCount());
     }
 
     @Test
@@ -515,6 +561,33 @@ public class ItemFragmentSinglePageTest {
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasAction(Intent.ACTION_CHOOSER);
+    }
+
+    @Test
+    public void testNavigate() {
+        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
+        ShadowLinearLayoutManager shadowLayout = (ShadowLinearLayoutManager) ShadowExtractor.extract(
+                recyclerView.getLayoutManager());
+        fragment.onNavigate(Navigable.DIRECTION_DOWN);
+        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(3);
+        shadowRecyclerView.getScrollListener()
+                .onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
+
+        shadowLayout.setFirstVisibleItemPosition(3);
+        fragment.onNavigate(Navigable.DIRECTION_UP);
+        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(0);
+
+        shadowLayout.setFirstVisibleItemPosition(0);
+        fragment.onNavigate(Navigable.DIRECTION_RIGHT);
+        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(1);
+        shadowRecyclerView.getScrollListener()
+                .onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
+
+        shadowLayout.setFirstVisibleItemPosition(1);
+        fragment.onNavigate(Navigable.DIRECTION_LEFT);
+        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(0);
+        shadowRecyclerView.getScrollListener()
+                .onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
     }
 
     @After

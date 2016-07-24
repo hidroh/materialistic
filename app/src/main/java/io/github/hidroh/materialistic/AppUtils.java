@@ -40,6 +40,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsSession;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -328,7 +329,7 @@ public class AppUtils {
 
     @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    static void openPlayStore(Context context) {
+    public static void openPlayStore(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                 Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -427,6 +428,22 @@ public class AppUtils {
             window.setStatusBarColor(dim ? Color.TRANSPARENT :
                     ContextCompat.getColor(window.getContext(),
                             AppUtils.getThemedResId(window.getContext(), R.attr.colorPrimaryDark)));
+        }
+    }
+
+    static void navigate(int direction, AppBarLayout appBarLayout, Navigable navigable) {
+        switch (direction) {
+            case Navigable.DIRECTION_DOWN:
+            case Navigable.DIRECTION_RIGHT:
+                if (appBarLayout.getBottom() == 0) {
+                    navigable.onNavigate(direction);
+                } else {
+                    appBarLayout.setExpanded(false, true);
+                }
+                break;
+            default:
+                navigable.onNavigate(direction);
+                break;
         }
     }
 

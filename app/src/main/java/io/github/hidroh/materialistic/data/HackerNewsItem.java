@@ -32,6 +32,7 @@ import android.text.style.StrikethroughSpan;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
 
 class HackerNewsItem implements Item {
@@ -80,6 +81,7 @@ class HackerNewsItem implements Item {
     private HackerNewsItem parentItem;
     private boolean voted;
     private boolean pendingVoted;
+    private long next, previous;
 
     public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
         @Override
@@ -130,6 +132,8 @@ class HackerNewsItem implements Item {
         parentItem = source.readParcelable(HackerNewsItem.class.getClassLoader());
         voted = source.readInt() == 1;
         pendingVoted = source.readInt() == 1;
+        next = source.readLong();
+        previous = source.readLong();
     }
 
     @Override
@@ -212,6 +216,8 @@ class HackerNewsItem implements Item {
         dest.writeParcelable(parentItem, flags);
         dest.writeInt(voted ? 1 : 0);
         dest.writeInt(pendingVoted ? 1 : 0);
+        dest.writeLong(next);
+        dest.writeLong(previous);
     }
 
     @Override
@@ -338,6 +344,12 @@ class HackerNewsItem implements Item {
             for (int i = 0; i < kids.length; i++) {
                 HackerNewsItem item = new HackerNewsItem(kids[i], level + 1);
                 item.rank = i + 1;
+                if (i > 0) {
+                    item.previous = kids[i - 1];
+                }
+                if (i < kids.length - 1) {
+                    item.next = kids[i + 1];
+                }
                 kidItems[i] = item;
             }
         }
@@ -482,7 +494,28 @@ class HackerNewsItem implements Item {
     }
 
     @Override
+    public long getNeighbour(int direction) {
+        switch (direction) {
+            case Navigable.DIRECTION_UP:
+                return previous;
+            case Navigable.DIRECTION_DOWN:
+                return next;
+            case Navigable.DIRECTION_LEFT:
+                return level > 1 ? parent : 0L;
+            case Navigable.DIRECTION_RIGHT:
+                return kids != null && kids.length > 0 ? kids[0] : 0L;
+            default:
+                return 0L;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) id;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        return o != null && o instanceof HackerNewsItem && id == ((HackerNewsItem) o).id;
+        return o instanceof HackerNewsItem && id == ((HackerNewsItem) o).id;
     }
 }

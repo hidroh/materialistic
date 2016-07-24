@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -30,8 +31,10 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
@@ -39,6 +42,14 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SinglePageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ToggleItemViewHolder> {
+    private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                unlockBinding();
+            }
+        }
+    };
     private int mLevelIndicatorWidth = 0;
     private final boolean mAutoExpand;
     private boolean mColorCoded = true;
@@ -46,6 +57,7 @@ public class SinglePageItemRecyclerViewAdapter
     private RecyclerView mRecyclerView;
     private final @NonNull SavedState mState;
     private ItemTouchHelper mItemTouchHelper;
+    private int[] mLock;
 
     public SinglePageItemRecyclerViewAdapter(ItemManager itemManager,
                                              @NonNull SavedState state,
@@ -97,11 +109,13 @@ public class SinglePageItemRecyclerViewAdapter
             }
         });
         mItemTouchHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addOnScrollListener(mScrollListener);
     }
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+        recyclerView.removeOnScrollListener(mScrollListener);
         mRecyclerView = null;
         mItemTouchHelper.attachToRecyclerView(null);
     }
@@ -119,6 +133,10 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(ToggleItemViewHolder holder, int position) {
+        if (mLock != null && mLock[0] <= position && position <= mLock[1]) {
+            clear(holder);
+            return;
+        }
         if (mColorCoded && mColors != null && mColors.length() > 0) {
             holder.mLevel.setVisibility(View.VISIBLE);
             holder.mLevel.setBackgroundColor(mColors.getColor(
@@ -127,6 +145,7 @@ public class SinglePageItemRecyclerViewAdapter
             holder.mLevel.setVisibility(View.GONE);
         }
         super.onBindViewHolder(holder, position);
+        // TODO decorate selected item
     }
 
     @Override
@@ -136,7 +155,7 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return mState.list.size();
+        return mState.size();
     }
 
     @Override
@@ -146,14 +165,53 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
+    public void getNextPosition(int position, int direction, PositionCallback callback) {
+        Item item = getItem(position);
+        if (item == null) {
+            return;
+        }
+        long id = item.getNeighbour(direction);
+        switch (direction) {
+            case Navigable.DIRECTION_UP:
+                if (id == 0) { // no more previous sibling, try previous list item
+                    setSelectedPosition(position - 1, callback);
+                } else {
+                    setSelectedPosition(mState.indexOf(id), callback);
+                }
+                break;
+            case Navigable.DIRECTION_DOWN:
+                if (id == 0) { // no more next sibling, try next list item
+                    setSelectedPosition(position + 1, callback);
+                } else {
+                    setSelectedPosition(mState.indexOf(id), callback);
+                }
+                break;
+            case Navigable.DIRECTION_LEFT:
+                if (id != 0) {
+                    setSelectedPosition(mState.indexOf(id), callback);
+                }
+                break;
+            case Navigable.DIRECTION_RIGHT:
+                if (id == 0) { // no kids, try next list item
+                    setSelectedPosition(position + 1, callback);
+                } else if (mState.isExpanded(item)) {
+                    setSelectedPosition(mState.indexOf(id), callback);
+                } else {
+                    expand(item, callback);
+                }
+                break;
+        }
+    }
+
+    @Override
     protected Item getItem(int position) {
-        return mState.list.get(position);
+        return mState.get(position);
     }
 
     @Override
     protected void onItemLoaded(int position, Item item) {
         // item position may already be shifted due to expansion, need to get new position
-        int index = mState.list.indexOf(item);
+        int index = mState.indexOf(item);
         if (index >= 0 && index < getItemCount()) {
             notifyItemChanged(index);
         }
@@ -176,17 +234,26 @@ public class SinglePageItemRecyclerViewAdapter
         bindKidsToggle(holder, item);
     }
 
+    @Override
+    public void lockBinding(int[] lock) {
+        mLock = lock;
+    }
+
+    private void unlockBinding() {
+        if (mLock != null) {
+            notifyItemRangeChanged(mLock[0], mLock[1] - mLock[0] + 1);
+            mLock = null;
+        }
+    }
+
     private void bindNavigation(ToggleItemViewHolder holder, final Item item) {
-        if (!mState.expanded.containsKey(item.getParent())) {
+        if (!mState.isExpanded(item.getParent())) {
             holder.mParent.setVisibility(View.INVISIBLE);
             return;
         }
         holder.mParent.setVisibility(View.VISIBLE);
-        holder.mParent.setOnClickListener(v -> {
-            Item parent = mState.expanded.getParcelable(item.getParent());
-            int position = mState.list.indexOf(parent);
-            mRecyclerView.smoothScrollToPosition(position);
-        });
+        holder.mParent.setOnClickListener(v -> mRecyclerView.smoothScrollToPosition(
+                mState.indexOf(mState.getExpandedItem(item.getParent()))));
     }
 
     private void bindKidsToggle(final ToggleItemViewHolder holder, final Item item) {
@@ -197,15 +264,15 @@ public class SinglePageItemRecyclerViewAdapter
         if (!item.isCollapsed() && mAutoExpand) {
             expand(item);
         }
-        bindToggle(holder, item, isExpanded(item));
+        bindToggle(holder, item, mState.isExpanded(item));
         holder.mToggle.setOnClickListener(v -> {
-            bindToggle(holder, item, !isExpanded(item));
+            bindToggle(holder, item, !mState.isExpanded(item));
             toggleKids(item);
         });
     }
 
     private void toggleKids(Item item) {
-        boolean expanded = isExpanded(item);
+        boolean expanded = mState.isExpanded(item);
         item.setCollapsed(!item.isCollapsed());
         if (expanded) {
             collapse(item);
@@ -228,40 +295,30 @@ public class SinglePageItemRecyclerViewAdapter
         }
     }
 
-    private void expand(final Item item) {
-        if (isExpanded(item)) {
+    private void expand(Item item) {
+        expand(item, null);
+    }
+
+    private void expand(final Item item, PositionCallback callback) {
+        if (mState.isExpanded(item)) {
             return;
         }
-        mState.expanded.putParcelable(item.getId(), item);
         mRecyclerView.post(() -> {
-            int index = mState.list.indexOf(item) + 1;
-            mState.list.addAll(index, Arrays.asList(item.getKidItems())); // recursive
+            int index = mState.expand(item);
             notifyItemRangeInserted(index, item.getKidCount());
+            mRecyclerView.getItemAnimator().isRunning(() -> setSelectedPosition(index, callback));
         });
     }
 
-    private void collapse(final Item item) {
-        int index = mState.list.indexOf(item) + 1;
-        int count = recursiveRemove(item);
-        notifyItemRangeRemoved(index, count);
+    private void collapse(Item item) {
+        int[] collapsedState = mState.collapse(item);
+        notifyItemRangeRemoved(collapsedState[0], collapsedState[1]);
     }
 
-    private int recursiveRemove(Item item) {
-        if (!isExpanded(item)) {
-            return 0;
+    private void setSelectedPosition(int position, PositionCallback callback) {
+        if (callback != null) {
+            callback.onPosition(position);
         }
-        // if item is already expanded, its kids must be added, so we need to remove them
-        int count = item.getKidCount();
-        mState.expanded.remove(item.getId());
-        for (Item kid : item.getKidItems()) {
-            count += recursiveRemove(kid);
-            mState.list.remove(kid);
-        }
-        return count;
-    }
-
-    private boolean isExpanded(Item item) {
-        return mState.expanded.containsKey(item.getId());
     }
 
     public static class SavedState implements Parcelable {
@@ -277,17 +334,19 @@ public class SinglePageItemRecyclerViewAdapter
             }
         };
 
-        private ArrayList<Item> list;
+        private final ArrayList<Item> list = new ArrayList<>();
+        private final LongSparseArray<Item> map = new LongSparseArray<>();
         private Bundle expanded;
 
         public SavedState(ArrayList<Item> list) {
-            this.list = list;
+            addAll(0, list);
             expanded = new Bundle();
         }
 
         @SuppressWarnings("unchecked")
         private SavedState(Parcel source) {
-            list = source.readArrayList(Item.class.getClassLoader());
+            ArrayList<Item> savedList = source.readArrayList(Item.class.getClassLoader());
+            addAll(0, savedList);
             expanded = source.readBundle(list.isEmpty() ? null :
                     list.get(0).getClass().getClassLoader());
         }
@@ -301,6 +360,73 @@ public class SinglePageItemRecyclerViewAdapter
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeList(list);
             dest.writeBundle(expanded);
+        }
+
+        int size() {
+            return list.size();
+        }
+
+        Item get(int position) {
+            return list.get(position);
+        }
+
+        int indexOf(long itemId) {
+            return indexOf(map.get(itemId));
+        }
+
+        int indexOf(Item item) {
+            return list.indexOf(item);
+        }
+
+        boolean isExpanded(Item item) {
+            return isExpanded(item.getId());
+        }
+
+        boolean isExpanded(String itemId) {
+            return expanded.containsKey(itemId);
+        }
+
+        Item getExpandedItem(String itemId) {
+            return expanded.getParcelable(itemId);
+        }
+
+        int expand(Item item) {
+            expanded.putParcelable(item.getId(), item);
+            int index = indexOf(item) + 1;
+            addAll(index, Arrays.asList(item.getKidItems())); // recursive
+            return index;
+        }
+
+        int[] collapse(Item item) {
+            int index = indexOf(item) + 1;
+            int count = recursiveRemove(item);
+            return new int[]{index, count};
+        }
+
+        private void addAll(int index, List<Item> items) {
+            list.addAll(index, items);
+            for (Item item : items) {
+                map.put(item.getLongId(), item);
+            }
+        }
+
+        private int recursiveRemove(Item item) {
+            if (!isExpanded(item.getId())) {
+                return 0;
+            }
+            // if item is already expanded, its kids must be added, so we need to remove them
+            int count = item.getKidCount();
+            expanded.remove(item.getId());
+            for (Item kid : item.getKidItems()) {
+                count += recursiveRemove(kid);
+                remove(kid);
+            }
+            return count;
+        }
+
+        private void remove(Item item) {
+            list.remove(item);
+            map.remove(item.getLongId());
         }
     }
 }

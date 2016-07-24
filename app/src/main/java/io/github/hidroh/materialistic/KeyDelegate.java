@@ -223,7 +223,7 @@ public class KeyDelegate {
     /**
      * Helper class to navigate vertical RecyclerView
      */
-    public static class RecyclerViewHelper implements Scrollable {
+    static class RecyclerViewHelper implements Scrollable {
 
         @Retention(RetentionPolicy.SOURCE)
         @IntDef({
@@ -231,14 +231,14 @@ public class KeyDelegate {
                 SCROLL_PAGE
         })
         @interface ScrollMode {}
-        public static final int SCROLL_ITEM = 0;
-        public static final int SCROLL_PAGE = 1;
+        static final int SCROLL_ITEM = 0;
+        static final int SCROLL_PAGE = 1;
 
         private final RecyclerView mRecyclerView;
         private final LinearLayoutManager mLayoutManager;
         private final @ScrollMode int mScrollMode;
 
-        public RecyclerViewHelper(RecyclerView recyclerView, @ScrollMode int scrollMode) {
+        RecyclerViewHelper(RecyclerView recyclerView, @ScrollMode int scrollMode) {
             mRecyclerView = recyclerView;
             if (!(mRecyclerView.getLayoutManager() instanceof LinearLayoutManager)) {
                 throw new IllegalArgumentException("Only LinearLayoutManager supported");
@@ -291,16 +291,39 @@ public class KeyDelegate {
                     }
             }
         }
+
+        int getCurrentPosition() {
+            // TODO handle last page item
+            return mLayoutManager.findFirstVisibleItemPosition();
+        }
+
+        int[] scrollToPosition(int position) {
+            if (position >= 0 && position < mRecyclerView.getAdapter().getItemCount()) {
+                int first = mLayoutManager.findFirstVisibleItemPosition();
+                int[] lock = null;
+                if (Math.abs(position - first) > 1) { // lock nothing if scroll to adjacent
+                    if (position < first) { // scroll up, lock lower part
+                        lock = new int[]{position, first - 1};
+                    } else if (position > first) { // scroll down, lock upper part
+                        lock = new int[]{first, position - 1};
+                    }
+                }
+                mRecyclerView.smoothScrollToPosition(position);
+                return lock;
+            } else {
+                return null;
+            }
+        }
     }
 
     /**
      * Helper class to navigate vertical NestedScrollView
      */
-    public static class NestedScrollViewHelper implements Scrollable {
+    static class NestedScrollViewHelper implements Scrollable {
 
         private final NestedScrollView mScrollView;
 
-        public NestedScrollViewHelper(NestedScrollView nestedScrollView) {
+        NestedScrollViewHelper(NestedScrollView nestedScrollView) {
             mScrollView = nestedScrollView;
         }
 
