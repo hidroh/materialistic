@@ -412,8 +412,10 @@ public class StoryRecyclerViewAdapter extends
     }
 
     private void vote(final Item story, final RecyclerView.ViewHolder holder) {
-        mUserServices.voteUp(mContext, story.getId(),
-                new VoteCallback(this, holder.getAdapterPosition(), story));
+        if (!mUserServices.voteUp(mContext, story.getId(),
+                new VoteCallback(this, holder.getAdapterPosition(), story))) {
+            AppUtils.showLogin(mContext, mAlertDialogBuilder);
+        }
     }
 
     private void onVoted(int position, Boolean successful) {
@@ -424,8 +426,6 @@ public class StoryRecyclerViewAdapter extends
             if (position < getItemCount()) {
                 notifyItemChanged(position);
             }
-        } else {
-            AppUtils.showLogin(mContext, mAlertDialogBuilder);
         }
     }
 
