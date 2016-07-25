@@ -19,10 +19,7 @@ package io.github.hidroh.materialistic;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
@@ -33,11 +30,29 @@ import io.github.hidroh.materialistic.data.WebItem;
 
 public class ReadabilityFragment extends BaseWebFragment implements Scrollable {
     public static final String EXTRA_ITEM = ReadabilityFragment.class.getName() +".EXTRA_ITEM";
+    private static final String STATE_EMPTY = "state:empty";
     @Inject ReadabilityClient mReadabilityClient;
+    private boolean mEmpty;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mEmpty = savedInstanceState.getBoolean(STATE_EMPTY, false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_EMPTY, mEmpty);
+    }
 
     @Override
     protected void load() {
-        if (TextUtils.isEmpty(mContent)) {
+        if (mEmpty) {
+            loadAlternateContent();
+        } else if (TextUtils.isEmpty(mContent)) {
             parse();
         } else {
             loadContent(mContent);
@@ -45,20 +60,10 @@ public class ReadabilityFragment extends BaseWebFragment implements Scrollable {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        ViewStub emptyStub = new ViewStub(getActivity(), R.layout.empty_readability);
-        emptyStub.setId(R.id.empty_readability);
-        emptyStub.setInflatedId(R.id.empty_readability);
-        //noinspection ConstantConditions
-        ((ViewGroup) view.findViewById(R.id.web_view_container)).addView(emptyStub);
-        return view;
-    }
-
-    @Override
     void showEmptyView() {
-        //noinspection ConstantConditions
-        getView().findViewById(R.id.empty_readability).setVisibility(View.VISIBLE);
+        mEmpty = true;
+        Toast.makeText(getActivity(), R.string.readability_failed, Toast.LENGTH_SHORT).show();
+        loadAlternateContent();
     }
 
     private void parse() {
@@ -73,6 +78,14 @@ public class ReadabilityFragment extends BaseWebFragment implements Scrollable {
         if (isAttached()) {
             loadContent(content);
         }
+    }
+
+    private void loadAlternateContent() {
+        WebItem item = getArguments().getParcelable(EXTRA_ITEM);
+        if (item == null) {
+            return;
+        }
+        loadUrl(item.getUrl());
     }
 
     private static class ReadabilityCallback implements ReadabilityClient.Callback {
