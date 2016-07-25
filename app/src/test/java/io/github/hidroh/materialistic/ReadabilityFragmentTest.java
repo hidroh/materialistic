@@ -22,6 +22,7 @@ import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowPopupMenu;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
@@ -31,6 +32,7 @@ import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.ShadowWebView;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 
@@ -44,7 +46,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class, ShadowWebView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
@@ -109,7 +111,10 @@ public class ReadabilityFragmentTest {
                 callback.capture());
         callback.getValue().onResponse(null);
         reset(readabilityClient);
-        assertThat(activity.findViewById(R.id.empty_readability)).isVisible();
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .contains(activity.getString(R.string.readability_failed));
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl())
+                .contains("http://example.com/article.html");
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
         controller.pause().stop().destroy();
     }
