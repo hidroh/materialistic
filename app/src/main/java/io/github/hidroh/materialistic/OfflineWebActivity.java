@@ -73,7 +73,7 @@ public class OfflineWebActivity extends InjectableActivity {
                 }
             }
         });
-        AppUtils.enableWebViewZoom(webView.getSettings());
+        AppUtils.toggleWebViewZoom(webView.getSettings(), true);
         webView.loadUrl(url);
     }
 

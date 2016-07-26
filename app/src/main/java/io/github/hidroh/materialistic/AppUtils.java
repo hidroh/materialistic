@@ -414,7 +414,7 @@ public class AppUtils {
                 AppUtils.getThemedResId(context, colorAttr)));
     }
 
-    static void enableWebViewZoom(WebSettings webSettings) {
+    static void toggleWebViewZoom(WebSettings webSettings, boolean enabled) {
         webSettings.setSupportZoom(true);
         webSettings.setBuiltInZoomControls(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
