@@ -322,7 +322,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
             view.findViewById(R.id.empty).setVisibility(VISIBLE);
             view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
         });
-        AppUtils.enableWebViewZoom(mWebView.getSettings());
+        AppUtils.toggleWebViewZoom(mWebView.getSettings(), false);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -338,6 +338,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
         }
         mFullscreen = isFullscreen;
         mControls.setVisibility(isFullscreen ? VISIBLE : View.GONE);
+        AppUtils.toggleWebViewZoom(mWebView.getSettings(), isFullscreen);
         if (isFullscreen) {
             mScrollView.removeView(mScrollViewContent);
             mFullscreenView.addView(mScrollViewContent);
