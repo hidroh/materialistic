@@ -9,7 +9,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -28,6 +31,7 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowContentObserver;
+import org.robolectric.shadows.ShadowGestureDetector;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowResolveInfo;
@@ -59,13 +63,16 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
@@ -648,6 +655,58 @@ public class ItemActivityTest {
 
     @Test
     public void testItemChanged() {
+        startWithIntent();
+        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 0, 0),
+                tabLayout.getTabAt(0).getText());
+        activity.onItemChanged(new TestHnItem(1L) {
+            @Override
+            public int getKidCount() {
+                return 10;
+            }
+        });
+        assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 10, 10),
+                tabLayout.getTabAt(0).getText());
+    }
+
+    @Test
+    public void testNavButtonHint() {
+        startWithIntent();
+        View navButton = activity.findViewById(R.id.navigation_button);
+        assertThat(navButton).isVisible();
+        ((GestureDetector.SimpleOnGestureListener) getDetector(navButton).getListener())
+                .onSingleTapConfirmed(mock(MotionEvent.class));
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .contains(activity.getString(R.string.hint_nav_short));
+    }
+
+    @Test
+    public void testNavButtonDrag() {
+        startWithIntent();
+        View navButton = activity.findViewById(R.id.navigation_button);
+        assertThat(navButton).isVisible();
+        getDetector(navButton).getListener().onLongPress(mock(MotionEvent.class));
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .contains(activity.getString(R.string.hint_drag));
+        MotionEvent motionEvent = mock(MotionEvent.class);
+        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_MOVE);
+        when(motionEvent.getRawX()).thenReturn(1f);
+        when(motionEvent.getRawY()).thenReturn(1f);
+        shadowOf(navButton).getOnTouchListener().onTouch(navButton, motionEvent);
+        motionEvent = mock(MotionEvent.class);
+        when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
+        shadowOf(navButton).getOnTouchListener().onTouch(navButton, motionEvent);
+        assertThat(navButton).hasX(1f).hasY(1f);
+    }
+
+    @After
+    public void tearDown() {
+        reset(hackerNewsClient);
+        reset(favoriteManager);
+        controller.pause().stop().destroy();
+    }
+
+    private void startWithIntent() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull
@@ -672,23 +731,12 @@ public class ItemActivityTest {
             }
         });
         controller.withIntent(intent).create().start().resume().visible();
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 0, 0),
-                tabLayout.getTabAt(0).getText());
-        activity.onItemChanged(new TestHnItem(1L) {
-            @Override
-            public int getKidCount() {
-                return 10;
-            }
-        });
-        assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 10, 10),
-                tabLayout.getTabAt(0).getText());
     }
 
-    @After
-    public void tearDown() {
-        reset(hackerNewsClient);
-        reset(favoriteManager);
-        controller.pause().stop().destroy();
+    private ShadowGestureDetector getDetector(View view) {
+        shadowOf(view).getOnTouchListener()
+                .onTouch(view, MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0));
+        return shadowOf(ShadowGestureDetector.getLastActiveDetector());
+
     }
 }

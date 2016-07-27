@@ -49,7 +49,7 @@ import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 
-public class ItemFragment extends LazyLoadFragment implements Scrollable {
+public class ItemFragment extends LazyLoadFragment implements Scrollable, Navigable {
 
     public static final String EXTRA_ITEM = ItemFragment.class.getName() + ".EXTRA_ITEM";
     public static final String EXTRA_CACHE_MODE = ItemFragment.class.getName() + ".EXTRA_CACHE_MODE";
@@ -173,6 +173,13 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public boolean scrollToPrevious() {
         return mScrollableHelper.scrollToPrevious();
+    }
+
+    @Override
+    public void onNavigate(int direction) {
+        mAdapter.getNextPosition(mScrollableHelper.getCurrentPosition(),
+                direction,
+                position -> mAdapter.lockBinding(mScrollableHelper.scrollToPosition(position)));
     }
 
     @Override

@@ -240,4 +240,6 @@ public interface Item extends WebItem {
      * @param expanded true to expand, false otherwise
      */
     void setContentExpanded(boolean expanded);
+
+    long getNeighbour(int direction);
 }

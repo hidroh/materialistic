@@ -40,6 +40,8 @@
     <string translatable="false" name="pref_line_height">pref_line_height</string>
     <string translatable="false" name="pref_list_item_view">pref_list_item_view</string>
     <string translatable="false" name="pref_max_lines">pref_max_lines</string>
+    <string translatable="false" name="pref_navigation">pref_navigation</string>
+    <string translatable="false" name="pref_navigation_help">pref_navigation_help</string>
     <string translatable="false" name="pref_popular_range">pref_popular_range</string>
     <string translatable="false" name="pref_readability_font">pref_readability_font</string>
     <string translatable="false" name="pref_readability_line_height">pref_readability_line_height</string>

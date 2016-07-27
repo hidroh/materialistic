@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
@@ -39,7 +40,12 @@ import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
@@ -225,5 +231,28 @@ public class AppUtilsTest {
         fab.performClick();
         assertThat(shadowOf(LocalBroadcastManager.getInstance(activity)).getSentBroadcastIntents()).isNotEmpty();
         controller.destroy();
+    }
+
+    @Test
+    public void testNavigate() {
+        AppBarLayout appBar = mock(AppBarLayout.class);
+        when(appBar.getBottom()).thenReturn(1);
+        Navigable navigable = mock(Navigable.class);
+        AppUtils.navigate(Navigable.DIRECTION_DOWN, appBar, navigable);
+        verify(appBar).setExpanded(eq(false), anyBoolean());
+        verify(navigable, never()).onNavigate(anyInt());
+
+        when(appBar.getBottom()).thenReturn(0);
+        AppUtils.navigate(Navigable.DIRECTION_DOWN, appBar, navigable);
+        verify(navigable).onNavigate(eq(Navigable.DIRECTION_DOWN));
+
+        AppUtils.navigate(Navigable.DIRECTION_RIGHT, appBar, navigable);
+        verify(navigable).onNavigate(eq(Navigable.DIRECTION_RIGHT));
+
+        AppUtils.navigate(Navigable.DIRECTION_UP, appBar, navigable);
+        verify(navigable).onNavigate(eq(Navigable.DIRECTION_UP));
+
+        AppUtils.navigate(Navigable.DIRECTION_LEFT, appBar, navigable);
+        verify(navigable).onNavigate(eq(Navigable.DIRECTION_LEFT));
     }
 }

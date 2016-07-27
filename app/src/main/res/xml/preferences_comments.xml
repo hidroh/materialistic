@@ -69,6 +69,17 @@
             android:title="@string/pref_thread_indicator_title"
             android:defaultValue="true" />
 
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_navigation"
+            android:title="@string/pref_navigation_title"
+            android:defaultValue="false" />
+
+        <io.github.hidroh.materialistic.preference.PreferenceHelp
+            android:key="@string/pref_navigation_help"
+            android:title="@string/whats_this"
+            app:dialogTitle="@string/pref_navigation_title"
+            app:dialogLayout="@layout/help_navigation" />
+
     </android.support.v7.preference.PreferenceCategory>
 
 </PreferenceScreen>

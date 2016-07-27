@@ -141,6 +141,10 @@ public class Preferences {
         return get(context, R.string.pref_auto_viewed, true);
     }
 
+    static boolean navigationEnabled(Context context) {
+        return get(context, R.string.pref_navigation, true);
+    }
+
     static boolean customChromeTabEnabled(Context context) {
         return get(context, R.string.pref_custom_tab, true);
     }

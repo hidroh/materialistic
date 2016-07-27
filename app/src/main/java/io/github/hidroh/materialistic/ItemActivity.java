@@ -63,6 +63,7 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.ItemPagerAdapter;
+import io.github.hidroh.materialistic.widget.NavFloatingActionButton;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.ViewPager;
 
@@ -93,6 +94,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     private CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
     private FloatingActionButton mReplyButton;
+    private NavFloatingActionButton mNavButton;
     private ItemPagerAdapter mAdapter;
     private ViewPager mViewPager;
     private boolean mFullscreen;
@@ -118,6 +120,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             setFullscreen();
         }
     };
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private AppUtils.SystemUiHelper mSystemUiHelper;
 
     @Override
@@ -136,6 +139,10 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 ActionBar.DISPLAY_HOME_AS_UP);
         mSystemUiHelper = new AppUtils.SystemUiHelper(getWindow());
         mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
+        mNavButton = (NavFloatingActionButton) findViewById(R.id.navigation_button);
+        mNavButton.setNavigable(direction ->
+                // if callback is fired navigable should not be null
+                AppUtils.navigate(direction, mAppBar, (Navigable) mAdapter.getItem(0)));
         mVoteButton = (ImageButton) findViewById(R.id.vote_button);
         mBookmark = (ImageView) findViewById(R.id.bookmarked);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
@@ -147,6 +154,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 true, mObserver);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                 new IntentFilter(BaseWebFragment.ACTION_FULLSCREEN));
+        mPreferenceObservable.subscribe(this, this::onPreferenceChanged,
+                R.string.pref_navigation);
         if (savedInstanceState != null) {
             mItem = savedInstanceState.getParcelable(STATE_ITEM);
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
@@ -235,6 +244,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         super.onDestroy();
         getContentResolver().unregisterContentObserver(mObserver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+        mPreferenceObservable.unsubscribe(this);
     }
 
     @Override
@@ -382,6 +392,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
+                AppUtils.toggleFab(mNavButton, tab.getPosition() == 0);
                 AppUtils.toggleFabAction(mReplyButton, mItem, tab.getPosition() == 0);
             }
 
@@ -405,6 +416,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 break;
         }
         AppUtils.toggleFabAction(mReplyButton, mItem, mViewPager.getCurrentItem() == 0);
+        AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 && navigationEnabled());
         if (story.isStoryType() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,
@@ -449,6 +461,14 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         } else {
             AppUtils.showLogin(this, mAlertDialogBuilder);
         }
+    }
+
+    private void onPreferenceChanged(int key, boolean contextChanged) {
+        AppUtils.toggleFab(mNavButton, navigationEnabled());
+    }
+
+    private boolean navigationEnabled() {
+        return Preferences.navigationEnabled(this);
     }
 
     private static class ItemResponseListener implements ResponseListener<Item> {

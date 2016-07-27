@@ -75,6 +75,7 @@
     <string name="pref_font_title">Font</string>
     <string name="pref_comment_display_title">Thread</string>
     <string name="pref_max_lines_title">Comment</string>
+    <string name="pref_navigation_title">On-screen navigation</string>
     <string name="pref_lazy_load_title">Lazy load content</string>
     <string name="pref_lazy_load_summary">Load content only when you switch to its tab</string>
     <string name="pref_saved_item_sync_title">Enable offline access</string>
@@ -178,6 +179,12 @@
     <string name="help_volume_up">Press volume up to scroll up</string>
     <string name="help_long_volume_up">Long press volume up to quick scroll to top</string>
     <string name="help_volume_down">Press volume down to scroll down</string>
+    <string name="help_navigate">Display a floating navigation button that responds to swipe gestures to navigate nested comment threads.</string>
+    <string name="help_navigate_up">Swipe \u2191: go to previous comment</string>
+    <string name="help_navigate_down">Swipe \u2193: go to next comment</string>
+    <string name="help_navigate_right">Swipe \u2192: expand &amp; go to 1st reply</string>
+    <string name="help_navigate_left">Swipe \u2190: go back to parent</string>
+    <string name="help_navigate_move">Long press to drag navigation button to new position</string>
     <string name="readability">Readability</string>
     <string name="text_size_extra_small">Extra small</string>
     <string name="text_size_small">Small</string>
@@ -301,5 +308,8 @@
     <string name="item_exist">Similar story has been submitted</string>
     <string name="hn_link">Hacker News link</string>
     <string name="article_link">Article link</string>
+    <string name="hint_drag">Drag to reposition</string>
+    <string name="hint_nav_short">Swipe \u2191 \u2193 \u2192 \u2190 to navigate\nLong press to reposition</string>
+    <string name="konami">You got the Konami code! Give me 5 stars?</string>
 
 </resources>

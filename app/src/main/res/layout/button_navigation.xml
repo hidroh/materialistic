@@ -15,12 +15,14 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.FloatingActionButton
+<io.github.hidroh.materialistic.widget.NavFloatingActionButton
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:src="@drawable/ic_reply_white_24dp"
-    app:fabSize="mini"
+    android:src="@drawable/ic_gamepad_white_24dp"
+    app:backgroundTint="@android:color/white"
+    app:fabSize="normal"
+    android:tint="?attr/colorAccent"
     tools:showIn="@layout/activity_item"/>
