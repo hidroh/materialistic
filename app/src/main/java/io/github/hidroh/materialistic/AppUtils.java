@@ -416,8 +416,8 @@ public class AppUtils {
     }
 
     static void toggleWebViewZoom(WebSettings webSettings, boolean enabled) {
-        webSettings.setSupportZoom(true);
-        webSettings.setBuiltInZoomControls(true);
+        webSettings.setSupportZoom(enabled);
+        webSettings.setBuiltInZoomControls(enabled);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             webSettings.setDisplayZoomControls(false);
         }
