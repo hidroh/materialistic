@@ -447,7 +447,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 mStoryViewMode = Preferences.getDefaultStoryView(this);
                 break;
             case R.string.pref_navigation:
-                AppUtils.toggleFab(mNavButton, navigationEnabled());
+                if (mNavButton != null) {
+                    AppUtils.toggleFab(mNavButton, navigationEnabled());
+                }
                 break;
         }
     }
