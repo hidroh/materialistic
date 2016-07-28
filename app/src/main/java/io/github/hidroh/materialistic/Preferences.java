@@ -138,11 +138,11 @@ public class Preferences {
     }
 
     public static boolean autoMarkAsViewed(Context context) {
-        return get(context, R.string.pref_auto_viewed, true);
+        return get(context, R.string.pref_auto_viewed, false);
     }
 
     static boolean navigationEnabled(Context context) {
-        return get(context, R.string.pref_navigation, true);
+        return get(context, R.string.pref_navigation, false);
     }
 
     static boolean customChromeTabEnabled(Context context) {
