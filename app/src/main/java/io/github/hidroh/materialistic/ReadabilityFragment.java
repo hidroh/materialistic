@@ -71,11 +71,13 @@ public class ReadabilityFragment extends BaseWebFragment implements Scrollable {
         if (item == null) {
             return;
         }
+        mProgressBar.setIndeterminate(true);
         mReadabilityClient.parse(item.getId(), item.getUrl(), new ReadabilityCallback(this));
     }
 
     private void onParsed(String content) {
         if (isAttached()) {
+            mProgressBar.setIndeterminate(false);
             loadContent(content);
         }
     }

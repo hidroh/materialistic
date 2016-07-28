@@ -85,6 +85,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
     private EditText mEditText;
     private View mButtonMore;
     private View mButtonNext;
+    protected ProgressBar mProgressBar;
     private boolean mFullscreen;
     protected String mContent;
     private String mUrl;
@@ -289,20 +290,20 @@ abstract class BaseWebFragment extends LazyLoadFragment
     }
 
     private void setUpWebView(View view) {
-        final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(getActivity())));
         mWebView.setWebChromeClient(new CacheableWebView.ArchiveClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                progressBar.setVisibility(VISIBLE);
-                progressBar.setProgress(newProgress);
+                mProgressBar.setVisibility(VISIBLE);
+                mProgressBar.setProgress(newProgress);
                 if (!TextUtils.isEmpty(mUrl)) {
                     mWebView.setBackgroundColor(Color.WHITE);
                 }
                 if (newProgress == 100) {
-                    progressBar.setVisibility(GONE);
+                    mProgressBar.setVisibility(GONE);
                     mWebView.setVisibility(mExternalRequired ? GONE : VISIBLE);
                 }
                 mButtonRefresh.setImageResource(newProgress == 100 ?

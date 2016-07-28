@@ -67,7 +67,9 @@
 
                 <ProgressBar
                     android:id="@id/progress"
-                    style="@style/AppProgressBarHorizontalStyle" />
+                    android:indeterminateTint="@color/lightBlueA700"
+                    style="@style/AppProgressBarHorizontalStyle"
+                    tools:targetApi="lollipop"/>
 
             </FrameLayout>
 
