@@ -29,8 +29,6 @@ import rx.Observable;
 
 public class AlgoliaPopularClient extends AlgoliaClient {
 
-    private static final String MIN_CREATED_AT = "created_at_i>";
-
     @Inject
     public AlgoliaPopularClient(Context context, RestServiceFactory factory) {
         super(context, factory);

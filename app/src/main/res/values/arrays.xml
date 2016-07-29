@@ -168,11 +168,9 @@
     <string-array name="pref_widget_section_values">
         <item>@string/pref_widget_section_value_top</item>
         <item>@string/pref_widget_section_value_best</item>
-        <item>@string/pref_widget_section_value_new</item>
     </string-array>
     <string name="pref_widget_section_value_top" translatable="false">top</string>
     <string name="pref_widget_section_value_best" translatable="false">best</string>
-    <string name="pref_widget_section_value_new" translatable="false">new</string>
 
     <!-- Widget theme -->
     <string-array name="pref_widget_theme_options" tools:ignore="InconsistentArrays">

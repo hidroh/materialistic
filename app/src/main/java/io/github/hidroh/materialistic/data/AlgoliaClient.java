@@ -18,12 +18,16 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.format.DateUtils;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.Preferences;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -34,7 +38,8 @@ public class AlgoliaClient implements ItemManager {
     public static boolean sSortByTime = true;
     public static final String HOST = "hn.algolia.com";
     private static final String BASE_API_URL = "https://" + HOST + "/api/v1/";
-    protected RestService mRestService;
+    static final String MIN_CREATED_AT = "created_at_i>";
+    RestService mRestService;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
 
     @Inject
@@ -63,12 +68,19 @@ public class AlgoliaClient implements ItemManager {
 
     @Override
     public Item[] getStories(String filter, @CacheMode int cacheMode) {
-        return new Item[0]; // not applicable
+        long timestamp = System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS; // since yesterday
+        try {
+            return toItems(mRestService.search(filter, MIN_CREATED_AT + timestamp / 1000)
+                    .execute()
+                    .body());
+        } catch (IOException e) {
+            return new Item[0];
+        }
     }
 
     @Override
     public Item getItem(String itemId, @CacheMode int cacheMode) {
-        return null; // not applicable
+        return mHackerNewsClient.getItem(itemId, cacheMode);
     }
 
     protected Observable<AlgoliaHits> search(String filter) {
@@ -101,9 +113,12 @@ public class AlgoliaClient implements ItemManager {
 
         @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
         Observable<AlgoliaHits> searchByMinTimestamp(@Query("numericFilters") String timestampSeconds);
+
+        @GET("search?hitsPerPage=10&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> search(@Query("query") String query, @Query("numericFilters") String timestampSeconds);
     }
 
-    protected static class AlgoliaHits {
+    static class AlgoliaHits {
         Hit[] hits;
     }
 

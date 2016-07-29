@@ -30,6 +30,10 @@
             app:entries="@array/pref_widget_section_options"
             app:entryValues="@array/pref_widget_section_values" />
 
+        <android.support.v7.preference.EditTextPreference
+            android:key="@string/pref_widget_query"
+            android:title="@string/pref_widget_query_title" />
+
         <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
             android:key="@string/pref_widget_theme"
             android:title="@string/pref_theme_title"

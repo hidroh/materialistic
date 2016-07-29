@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -36,8 +37,8 @@ import java.util.Locale;
 
 import io.github.hidroh.materialistic.BestActivity;
 import io.github.hidroh.materialistic.ListActivity;
-import io.github.hidroh.materialistic.NewActivity;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.SearchActivity;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
@@ -67,7 +68,8 @@ class WidgetHelper {
     void update(int appWidgetId) {
         WidgetConfig config = WidgetConfig.createWidgetConfig(mContext,
                 getConfig(appWidgetId, R.string.pref_widget_theme),
-                getConfig(appWidgetId, R.string.pref_widget_section));
+                getConfig(appWidgetId, R.string.pref_widget_section),
+                getConfig(appWidgetId, R.string.pref_widget_query));
         RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), config.widgetLayout);
         updateTitle(remoteViews, config);
         updateCollection(appWidgetId, remoteViews, config);
@@ -114,7 +116,10 @@ class WidgetHelper {
     private void updateTitle(RemoteViews remoteViews, WidgetConfig config) {
         remoteViews.setTextViewText(R.id.title, config.title);
         remoteViews.setOnClickPendingIntent(R.id.title,
-                PendingIntent.getActivity(mContext, 0, new Intent(mContext, config.destination), 0));
+                PendingIntent.getActivity(mContext, 0, config.customQuery ?
+                        new Intent(mContext, config.destination)
+                                .putExtra(SearchManager.QUERY, config.title) :
+                        new Intent(mContext, config.destination), 0));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -126,6 +131,7 @@ class WidgetHelper {
                 createRefreshPendingIntent(appWidgetId));
         Intent intent = new Intent(mContext, WidgetService.class)
                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                .putExtra(WidgetService.EXTRA_CUSTOM_QUERY, config.customQuery)
                 .putExtra(WidgetService.EXTRA_SECTION, config.section)
                 .putExtra(WidgetService.EXTRA_LIGHT_THEME, config.isLightTheme);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -148,15 +154,15 @@ class WidgetHelper {
     }
 
     static class WidgetConfig {
-        Class<? extends Activity> destination;
-        String title;
-        boolean isLightTheme;
-        @LayoutRes
-        int widgetLayout;
-        String section;
+        final boolean customQuery;
+        final Class<? extends Activity> destination;
+        final String title;
+        final boolean isLightTheme;
+        final @LayoutRes int widgetLayout;
+        final String section;
 
         @NonNull
-        static WidgetConfig createWidgetConfig(Context context, String theme, String section) {
+        static WidgetConfig createWidgetConfig(Context context, String theme, String section, String query) {
             int widgetLayout;
             boolean isLightTheme = false;
             if (TextUtils.equals(theme, context.getString(R.string.pref_widget_theme_value_dark))) {
@@ -169,12 +175,13 @@ class WidgetHelper {
             }
             String title;
             Class<? extends Activity> destination;
-            if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
+            if (!TextUtils.isEmpty(query)) {
+                title = query;
+                section = query;
+                destination = SearchActivity.class;
+            } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
                 title = context.getString(R.string.title_activity_best);
                 destination = BestActivity.class;
-            } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_new))) {
-                title = context.getString(R.string.title_activity_new);
-                destination = NewActivity.class;
             } else {
                 title = context.getString(R.string.title_activity_list);
                 destination = ListActivity.class;
@@ -189,6 +196,7 @@ class WidgetHelper {
             this.section = section;
             this.isLightTheme = isLightTheme;
             this.widgetLayout = widgetLayout;
+            this.customQuery = destination == SearchActivity.class;
         }
     }
 }
