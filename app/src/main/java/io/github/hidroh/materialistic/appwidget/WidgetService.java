@@ -46,8 +46,9 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class WidgetService extends RemoteViewsService {
     static final String EXTRA_SECTION = "extra:section";
     static final String EXTRA_LIGHT_THEME = "extra:lightTheme";
-    @Inject @Named(ActivityModule.HN)
-    ItemManager mItemManager;
+    static final String EXTRA_CUSTOM_QUERY = "extra:customQuery";
+    @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
+    @Inject @Named(ActivityModule.ALGOLIA) ItemManager mSearchManager;
 
     @Override
     public void onCreate() {
@@ -60,7 +61,8 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new ListRemoteViewsFactory(getApplicationContext(), mItemManager,
+        return new ListRemoteViewsFactory(getApplicationContext(),
+                intent.getBooleanExtra(EXTRA_CUSTOM_QUERY, false) ? mSearchManager : mItemManager,
                 intent.getStringExtra(EXTRA_SECTION),
                 intent.getBooleanExtra(EXTRA_LIGHT_THEME, false));
     }
@@ -74,7 +76,7 @@ public class WidgetService extends RemoteViewsService {
         private static final int MAX_ITEMS = 10;
         private final Context mContext;
         private final ItemManager mItemManager;
-        private final String mFetchMode;
+        private final String mFilter;
         private final boolean mLightTheme;
         private Item[] mItems;
 
@@ -84,12 +86,12 @@ public class WidgetService extends RemoteViewsService {
             mLightTheme = lightTheme;
             if (TextUtils.equals(section,
                     context.getString(R.string.pref_widget_section_value_best))) {
-                mFetchMode = ItemManager.BEST_FETCH_MODE;
+                mFilter = ItemManager.BEST_FETCH_MODE;
             } else if (TextUtils.equals(section,
-                    context.getString(R.string.pref_widget_section_value_new))) {
-                mFetchMode = ItemManager.NEW_FETCH_MODE;
+                    context.getString(R.string.pref_widget_section_value_top))) {
+                mFilter = ItemManager.TOP_FETCH_MODE;
             } else {
-                mFetchMode = ItemManager.TOP_FETCH_MODE;
+                mFilter = section;
             }
         }
 
@@ -100,7 +102,7 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            mItems = mItemManager.getStories(mFetchMode, ItemManager.MODE_NETWORK);
+            mItems = mItemManager.getStories(mFilter, ItemManager.MODE_NETWORK);
         }
 
         @Override

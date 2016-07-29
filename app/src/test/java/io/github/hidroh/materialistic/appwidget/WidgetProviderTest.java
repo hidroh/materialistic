@@ -94,20 +94,19 @@ public class WidgetProviderTest {
     }
 
     @Test
-    public void testRefreshNew() {
+    public void testRefreshQuery() {
         RuntimeEnvironment.application.getSharedPreferences("WidgetConfiguration_" + appWidgetId, MODE_PRIVATE)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_widget_theme),
                         RuntimeEnvironment.application.getString(R.string.pref_widget_theme_value_light))
-                .putString(RuntimeEnvironment.application.getString(R.string.pref_widget_section),
-                        RuntimeEnvironment.application.getString(R.string.pref_widget_section_value_new))
+                .putString(RuntimeEnvironment.application.getString(R.string.pref_widget_query), "Google")
                 .apply();
         widgetProvider.onReceive(RuntimeEnvironment.application,
                 new Intent(BuildConfig.APPLICATION_ID + ".ACTION_REFRESH_WIDGET")
                         .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId));
         View view = shadowOf(widgetManager).getViewFor(appWidgetId);
         assertThat((TextView) view.findViewById(R.id.title))
-                .containsText(R.string.title_activity_new);
+                .containsText("Google");
         assertThat((TextView) view.findViewById(R.id.subtitle))
                 .doesNotContainText(R.string.loading_text);
     }

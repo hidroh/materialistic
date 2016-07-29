@@ -52,6 +52,7 @@
     <string translatable="false" name="pref_theme">pref_theme</string>
     <string translatable="false" name="pref_widget_theme">pref_widget_theme</string>
     <string translatable="false" name="pref_widget_section">pref_widget_section</string>
+    <string translatable="false" name="pref_widget_query">pref_widget_query</string>
     <string translatable="false" name="pref_widget_frequency">pref_widget_frequency</string>
     <string translatable="false" name="pref_thread_indicator">pref_thread_indicator</string>
     <string translatable="false" name="pref_username">pref_username</string>

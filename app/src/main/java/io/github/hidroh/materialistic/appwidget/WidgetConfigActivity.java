@@ -18,9 +18,11 @@ package io.github.hidroh.materialistic.appwidget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.text.TextUtils;
 import android.view.Window;
 
 import io.github.hidroh.materialistic.InjectableActivity;
@@ -68,16 +70,40 @@ public class WidgetConfigActivity extends InjectableActivity {
 
     public static class WidgetConfigurationFragment extends PreferenceFragmentCompat {
 
+        private SharedPreferences.OnSharedPreferenceChangeListener mListener =
+                (sharedPreferences, key) -> {
+                    if (TextUtils.equals(key, getString(R.string.pref_widget_query))) {
+                        setFilterQuery();
+                    }
+                };
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(WidgetHelper.getConfigName(
                     getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)));
+            getPreferenceManager().getSharedPreferences()
+                    .registerOnSharedPreferenceChangeListener(mListener);
+            setFilterQuery();
         }
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.preferences_widget);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            getPreferenceManager().getSharedPreferences()
+                    .unregisterOnSharedPreferenceChangeListener(mListener);
+        }
+
+        private void setFilterQuery() {
+            String key = getString(R.string.pref_widget_query);
+            getPreferenceManager().findPreference(key)
+                    .setSummary(getPreferenceManager().getSharedPreferences()
+                            .getString(key, null));
         }
     }
 }
