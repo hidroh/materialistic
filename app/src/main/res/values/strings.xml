@@ -97,7 +97,7 @@
     <string name="pref_list_item_view_title">Show as cards</string>
     <string name="pref_thread_indicator_title">Thread indicator</string>
     <string name="pref_widget_section_title">Section</string>
-    <string name="pref_widget_query_title">Filter by query</string>
+    <string name="pref_widget_query_title">Filter by query (optional)</string>
     <string name="pref_widget_frequency_title">Update frequency</string>
     <string name="pref_auto_viewed_title">Auto mark as viewed</string>
     <string name="pref_auto_viewed_summary">Mark stories as viewed as you swipe up</string>
