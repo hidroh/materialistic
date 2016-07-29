@@ -163,7 +163,6 @@
     <string-array name="pref_widget_section_options">
         <item>@string/title_activity_list</item>
         <item>@string/title_activity_best</item>
-        <item>@string/title_activity_new</item>
     </string-array>
     <string-array name="pref_widget_section_values">
         <item>@string/pref_widget_section_value_top</item>
