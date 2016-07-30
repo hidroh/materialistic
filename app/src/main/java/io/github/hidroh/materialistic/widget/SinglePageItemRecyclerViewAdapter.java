@@ -304,6 +304,9 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
         mRecyclerView.post(() -> {
+            if (mRecyclerView == null) {
+                return; // adapter detached
+            }
             int index = mState.expand(item);
             notifyItemRangeInserted(index, item.getKidCount());
             mRecyclerView.getItemAnimator().isRunning(() -> setSelectedPosition(index, callback));
