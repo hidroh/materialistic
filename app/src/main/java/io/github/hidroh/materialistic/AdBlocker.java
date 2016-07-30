@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
@@ -34,23 +33,25 @@ import java.util.Set;
 import okhttp3.HttpUrl;
 import okio.BufferedSource;
 import okio.Okio;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class AdBlocker {
     private static final String AD_HOSTS_FILE = "pgl.yoyo.org.txt";
     private static final Set<String> AD_HOSTS = new HashSet<>();
 
     public static void init(Context context) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    loadFromAssets(context);
-                } catch (IOException e) {
-                    Log.e(AdBlocker.class.getSimpleName(), e.toString());
-                }
-                return null;
-            }
-        }.execute();
+        Observable.just(null)
+                .subscribeOn(Schedulers.io())
+                .map(aVoid -> {
+                    try {
+                        loadFromAssets(context);
+                    } catch (IOException e) {
+                        Log.e(AdBlocker.class.getSimpleName(), e.toString());
+                    }
+                    return null;
+                })
+                .subscribe();
     }
 
     public static boolean isAd(String url) {
