@@ -20,7 +20,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
                     '**/*$ModuleAdapter.class',
                     '**/*$ViewInjector*.class',
                     '**/RestServiceFactory*.class',
-                    '**/ActivityModule*.class',
+                    '**/*Module*.class',
                     '**/AlertDialogBuilder.class',
                     '**/AlertDialogBuilder$Impl.class',
                     '**/PopupMenu*.class',

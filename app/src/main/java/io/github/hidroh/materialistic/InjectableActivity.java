@@ -28,7 +28,7 @@ public abstract class InjectableActivity extends ThemedActivity implements Injec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityGraph = ((Application) getApplication()).getApplicationGraph()
-                .plus(new ActivityModule(this));
+                .plus(new ActivityModule(this), new UiModule());
         mActivityGraph.inject(this);
     }
 
