@@ -149,8 +149,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        AppUtils.toggleFab(mNavButton, false);
-        AppUtils.toggleFab(mReplyButton, false);
+        toggleFab(false);
         final Intent intent = getIntent();
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
@@ -394,8 +393,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
-                AppUtils.toggleFab(mNavButton, navigationVisible());
-                AppUtils.toggleFabAction(mReplyButton, mItem, tab.getPosition() == 0);
+                toggleFab(true);
             }
 
             @Override
@@ -417,9 +415,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
                 break;
         }
-        AppUtils.toggleFab(mNavButton, navigationVisible());
-        AppUtils.toggleFab(mReplyButton, true);
-        AppUtils.toggleFabAction(mReplyButton, mItem, mViewPager.getCurrentItem() == 0);
+        toggleFab(true);
         if (story.isStoryType() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,
@@ -429,6 +425,17 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         }
         if (mFullscreen) {
             setFullscreen();
+        }
+    }
+
+    private void toggleFab(boolean on) {
+        if (on) {
+            AppUtils.toggleFab(mNavButton, navigationVisible());
+            AppUtils.toggleFab(mReplyButton, true);
+            AppUtils.toggleFabAction(mReplyButton, mItem, mViewPager.getCurrentItem() == 0);
+        } else {
+            AppUtils.toggleFab(mNavButton, false);
+            AppUtils.toggleFab(mReplyButton, false);
         }
     }
 

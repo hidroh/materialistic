@@ -177,6 +177,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
 
     @Override
     public void onNavigate(int direction) {
+        if (mAdapter == null) { // no kids
+            return;
+        }
         mAdapter.getNextPosition(mScrollableHelper.getCurrentPosition(),
                 direction,
                 position -> mAdapter.lockBinding(mScrollableHelper.scrollToPosition(position)));
