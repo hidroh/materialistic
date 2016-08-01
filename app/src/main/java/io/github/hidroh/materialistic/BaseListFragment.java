@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 
-public abstract class BaseListFragment extends BaseFragment implements Scrollable {
+abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_ADAPTER = "state:adapter";
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     private KeyDelegate.RecyclerViewHelper mScrollableHelper;

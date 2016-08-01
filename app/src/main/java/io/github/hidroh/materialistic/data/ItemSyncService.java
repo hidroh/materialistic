@@ -49,7 +49,7 @@ public class ItemSyncService extends Service {
         super.onCreate();
         ((Application) getApplication())
                 .getApplicationGraph()
-                .plus(new ActivityModule(this)) // TODO split to network module
+                .plus(new ActivityModule(this))
                 .inject(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                 new IntentFilter(WebCacheReceiver.ACTION));
