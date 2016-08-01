@@ -119,8 +119,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                     // if callback is fired navigable should not be null
                     ((Navigable) ((ItemPagerAdapter) mViewPager.getAdapter()).getItem(0))
                             .onNavigate(direction));
-            AppUtils.toggleFab(mReplyButton, false);
-            AppUtils.toggleFab(mNavButton, false);
+            toggleFab(false);
         }
         if (savedInstanceState == null) {
             mStoryViewMode = Preferences.getDefaultStoryView(this);
@@ -138,7 +137,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mSelectedItem = savedInstanceState.getParcelable(STATE_SELECTED_ITEM);
             mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN);
             if (mIsMultiPane) {
-                openMultiPaneItem(mSelectedItem);
+                openMultiPaneItem();
             } else {
                 unbindViewPager();
             }
@@ -268,8 +267,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     @Override
     public void onItemSelected(@Nullable WebItem item) {
+        WebItem previousItem = mSelectedItem;
+        mSelectedItem = item;
         if (mIsMultiPane) {
-            WebItem previousItem = mSelectedItem;
             if (previousItem != null && item != null &&
                     TextUtils.equals(item.getId(), previousItem.getId())) {
                 return;
@@ -278,11 +278,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                     previousItem != null && item == null) {
                 supportInvalidateOptionsMenu();
             }
-            openMultiPaneItem(item);
+            openMultiPaneItem();
         } else if (item != null) {
-            openSinglePaneItem(item);
+            openSinglePaneItem();
         }
-        mSelectedItem = item;
     }
 
     @Override
@@ -357,48 +356,44 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     }
 
-    private void openSinglePaneItem(WebItem item) {
+    private void openSinglePaneItem() {
         if (mExternalBrowser) {
-            AppUtils.openWebUrlExternal(this, item.getUrl(), mCustomTabsDelegate.getSession());
+            AppUtils.openWebUrlExternal(this, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
         } else {
             startActivity(new Intent(this, ItemActivity.class)
                     .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
-                    .putExtra(ItemActivity.EXTRA_ITEM, item));
+                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem));
         }
     }
 
-    private void openMultiPaneItem(final WebItem item) {
-        if (item == null) {
+    private void openMultiPaneItem() {
+        if (mSelectedItem == null) {
             setTitle(getDefaultTitle());
             findViewById(R.id.empty_selection).setVisibility(View.VISIBLE);
             mTabLayout.setVisibility(View.GONE);
             mViewPager.setVisibility(View.GONE);
             mViewPager.setAdapter(null);
-            AppUtils.toggleFab(mReplyButton, false);
-            AppUtils.toggleFab(mNavButton, false);
+            toggleFab(false);
         } else {
-            setTitle(item.getDisplayedTitle());
+            setTitle(mSelectedItem.getDisplayedTitle());
             findViewById(R.id.empty_selection).setVisibility(View.GONE);
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
-            AppUtils.toggleFab(mReplyButton, true);
-            AppUtils.toggleFab(mNavButton, navigationVisible());
-            bindViewPager(item);
-            mSessionManager.view(this, item.getId());
+            bindViewPager();
+            mSessionManager.view(this, mSelectedItem.getId());
         }
     }
 
-    private void bindViewPager(@NonNull WebItem item) {
+    private void bindViewPager() {
         final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
-                getSupportFragmentManager(), item, true, getItemCacheMode());
+                getSupportFragmentManager(), mSelectedItem, true, getItemCacheMode());
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
-                AppUtils.toggleFabAction(mReplyButton, item, tab.getPosition() == 0);
-                AppUtils.toggleFab(mNavButton, tab.getPosition() == 0 && navigationEnabled());
+                toggleFab(true);
             }
 
             @Override
@@ -417,10 +412,20 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 mViewPager.setCurrentItem(2);
                 break;
         }
-        AppUtils.toggleFabAction(mReplyButton, item, mViewPager.getCurrentItem() == 0);
-        AppUtils.toggleFab(mNavButton, navigationVisible());
+        toggleFab(true);
         if (mFullscreen) {
             setFullscreen();
+        }
+    }
+
+    private void toggleFab(boolean on) {
+        if (on) {
+            AppUtils.toggleFab(mNavButton, navigationVisible());
+            AppUtils.toggleFab(mReplyButton, true);
+            AppUtils.toggleFabAction(mReplyButton, mSelectedItem, mViewPager.getCurrentItem() == 0);
+        } else {
+            AppUtils.toggleFab(mNavButton, false);
+            AppUtils.toggleFab(mReplyButton, false);
         }
     }
 
@@ -448,17 +453,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 break;
             case R.string.pref_navigation:
                 if (mNavButton != null) {
-                    AppUtils.toggleFab(mNavButton, navigationEnabled());
+                    AppUtils.toggleFab(mNavButton, navigationVisible());
                 }
                 break;
         }
     }
 
     private boolean navigationVisible() {
-        return mViewPager.getCurrentItem() == 0 && navigationEnabled();
-    }
-
-    private boolean navigationEnabled() {
-        return Preferences.navigationEnabled(this);
+        return mViewPager.getCurrentItem() == 0 && Preferences.navigationEnabled(this);
     }
 }
