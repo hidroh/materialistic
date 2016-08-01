@@ -21,7 +21,6 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 import java.io.ByteArrayInputStream;
@@ -41,16 +40,9 @@ public class AdBlocker {
     private static final Set<String> AD_HOSTS = new HashSet<>();
 
     public static void init(Context context) {
-        Observable.just(null)
+        Observable.fromCallable(() -> loadFromAssets(context))
+                .onErrorReturn(throwable -> null)
                 .subscribeOn(Schedulers.io())
-                .map(aVoid -> {
-                    try {
-                        loadFromAssets(context);
-                    } catch (IOException e) {
-                        Log.e(AdBlocker.class.getSimpleName(), e.toString());
-                    }
-                    return null;
-                })
                 .subscribe();
     }
 
@@ -65,7 +57,7 @@ public class AdBlocker {
     }
 
     @WorkerThread
-    private static void loadFromAssets(Context context) throws IOException {
+    private static Void loadFromAssets(Context context) throws IOException {
         InputStream stream = context.getAssets().open(AD_HOSTS_FILE);
         BufferedSource buffer = Okio.buffer(Okio.source(stream));
         String line;
@@ -74,6 +66,7 @@ public class AdBlocker {
         }
         buffer.close();
         stream.close();
+        return null;
     }
 
     /**
