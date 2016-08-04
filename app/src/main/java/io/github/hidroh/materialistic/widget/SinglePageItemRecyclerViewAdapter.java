@@ -144,7 +144,7 @@ public class SinglePageItemRecyclerViewAdapter
         }
         if (mColorCoded && mColors != null && mColors.length() > 0) {
             holder.mLevel.setVisibility(View.VISIBLE);
-            holder.mLevel.setBackgroundColor(getThreadColor(position));
+            holder.mLevel.setBackgroundColor(getThreadColor(getItemViewType(position)));
         } else {
             holder.mLevel.setVisibility(View.GONE);
         }
@@ -238,7 +238,7 @@ public class SinglePageItemRecyclerViewAdapter
         }
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
         holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, true,
-                getThreadColor(holder.getAdapterPosition())));
+                getThreadColor(getItemViewType(holder.getAdapterPosition()))));
         bindNavigation(holder, item);
         bindKidsToggle(holder, item);
     }
@@ -255,8 +255,8 @@ public class SinglePageItemRecyclerViewAdapter
         }
     }
 
-    private int getThreadColor(int position) {
-        return mColorCoded ? mColors.getColor(getItemViewType(position) % mColors.length(), 0) : 0;
+    private int getThreadColor(int itemViewType) {
+        return mColorCoded ? mColors.getColor(itemViewType % mColors.length(), 0) : 0;
     }
 
     private void bindNavigation(ToggleItemViewHolder holder, final Item item) {
@@ -265,6 +265,11 @@ public class SinglePageItemRecyclerViewAdapter
             return;
         }
         holder.mParent.setVisibility(View.VISIBLE);
+        if (mColorCoded) {
+            holder.mParent.tint(getThreadColor(getItemViewType(holder.getAdapterPosition()) - 1));
+        } else {
+            holder.mParent.clearTint();
+        }
         holder.mParent.setOnClickListener(v -> mRecyclerView.smoothScrollToPosition(
                 mState.indexOf(mState.getExpandedItem(item.getParent()))));
     }
