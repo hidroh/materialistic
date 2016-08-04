@@ -86,12 +86,6 @@
     <string name="title_activity_search">搜索</string>
     <string name="clear_search_history">清空搜索历史</string>
     <string name="clear_search_history_confirm">确定清空搜索历史吗？</string>
-    <plurals name="hide_comments">
-        <item quantity="other">隐藏 %1$s 条评论</item>
-    </plurals>
-    <plurals name="show_comments">
-        <item quantity="other">展示 %1$s 条评论</item>
-    </plurals>
     <string name="parent"><![CDATA[<a href="#">查看引用评论</a>]]></string>
     <string name="undo">取消</string>
     <plurals name="score">

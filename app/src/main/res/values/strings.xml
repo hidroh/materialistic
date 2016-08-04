@@ -113,16 +113,6 @@
     <string name="title_activity_search">Search HN</string>
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
-    <plurals name="hide_comments">
-        <item quantity="zero">Hide %1$s comment</item>
-        <item quantity="one">Hide %1$s comment</item>
-        <item quantity="other">Hide %1$s comments</item>
-    </plurals>
-    <plurals name="show_comments">
-        <item quantity="zero">Show %1$s comment</item>
-        <item quantity="one">Show %1$s comment</item>
-        <item quantity="other">Show %1$s comments</item>
-    </plurals>
     <string name="parent"><![CDATA[<a href="#">parent</a>]]></string>
     <string name="undo">Undo</string>
     <plurals name="score">

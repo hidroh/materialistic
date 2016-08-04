@@ -19,19 +19,19 @@ package io.github.hidroh.materialistic.widget;
 import android.view.View;
 import android.widget.TextView;
 
-import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
 public class ToggleItemViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
-    public final TextView mToggle;
-    public final View mLevel;
-    public final TextView mParent;
+    final View mToggleButton;
+    final TextView mToggle;
+    final View mLevel;
+    final IconButton mParent;
 
-    public ToggleItemViewHolder(View itemView) {
+    ToggleItemViewHolder(View itemView) {
         super(itemView);
+        mToggleButton = itemView.findViewById(R.id.button_toggle);
         mToggle = (TextView) itemView.findViewById(R.id.toggle);
         mLevel = itemView.findViewById(R.id.level);
-        mParent = (TextView) itemView.findViewById(R.id.parent);
-        AppUtils.setHtmlText(mParent, mParent.getResources().getString(R.string.parent));
+        mParent = (IconButton) itemView.findViewById(R.id.parent);
     }
 }

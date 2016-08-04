@@ -63,17 +63,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical" />
 
-                <io.github.hidroh.materialistic.widget.TintableTextView
+                <io.github.hidroh.materialistic.widget.IconButton
                     android:id="@id/parent"
                     android:visibility="invisible"
                     tools:visibility="visible"
-                    tools:text="parent"
-                    android:text="@string/parent"
-                    style="@style/textSubtitleStyle"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical" />
+                    android:src="@drawable/ic_arrow_upward_white_24dp"
+                    android:contentDescription="@string/parent"
+                    app:tint="?android:attr/textColorSecondary"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp" />
 
                 <include layout="@layout/button_more"
                     android:id="@+id/button_more"
@@ -108,16 +108,25 @@
                 android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical" />
 
-            <io.github.hidroh.materialistic.widget.TintableTextView
-                android:id="@+id/toggle"
-                tools:text="Hide comments"
-                app:iconEnd="@drawable/ic_expand_less_white_24dp"
+            <FrameLayout
+                android:id="@+id/button_toggle"
+                android:foreground="?attr/selectableItemBackground"
                 tools:visibility="visible"
                 android:visibility="gone"
-                style="@style/textSubtitleStyle"
-                android:layout_height="?attr/listPreferredItemHeightSmall"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical|center" />
+                android:layout_width="match_parent"
+                android:layout_height="?attr/listPreferredItemHeightSmall">
+
+                <io.github.hidroh.materialistic.widget.TintableTextView
+                    android:id="@+id/toggle"
+                    tools:text="Hide comments"
+                    app:iconEnd="@drawable/ic_expand_less_white_24dp"
+                    android:drawablePadding="@dimen/padding"
+                    style="@style/textSubtitleStyle"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical|center" />
+
+            </FrameLayout>
 
             <include layout="@layout/button_comment"
                 android:id="@id/comment"
