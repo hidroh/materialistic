@@ -45,6 +45,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SinglePageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ToggleItemViewHolder> {
+    private final Object TOGGLE = new Object();
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -137,6 +138,16 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
+    public void onBindViewHolder(ToggleItemViewHolder holder, int position, List<Object> payloads) {
+        if (payloads.contains(TOGGLE)) {
+            Item item = getItem(position);
+            bindToggle(holder, item, mState.isExpanded(item));
+        } else {
+            super.onBindViewHolder(holder, position, payloads);
+        }
+    }
+
+    @Override
     public void onBindViewHolder(ToggleItemViewHolder holder, int position) {
         if (mLock != null && mLock[0] <= position && position <= mLock[1]) {
             clear(holder);
@@ -149,7 +160,6 @@ public class SinglePageItemRecyclerViewAdapter
             holder.mLevel.setVisibility(View.GONE);
         }
         super.onBindViewHolder(holder, position);
-        // TODO decorate selected item
     }
 
     @Override
@@ -227,7 +237,7 @@ public class SinglePageItemRecyclerViewAdapter
     @Override
     protected void clear(ToggleItemViewHolder holder) {
         super.clear(holder);
-        holder.mToggle.setVisibility(View.GONE);
+        holder.mToggleButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -240,7 +250,7 @@ public class SinglePageItemRecyclerViewAdapter
         holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, true,
                 getThreadColor(getItemViewType(holder.getAdapterPosition()))));
         bindNavigation(holder, item);
-        bindKidsToggle(holder, item);
+        bindKids(holder, item);
     }
 
     @Override
@@ -274,8 +284,8 @@ public class SinglePageItemRecyclerViewAdapter
                 mState.indexOf(mState.getExpandedItem(item.getParent()))));
     }
 
-    private void bindKidsToggle(final ToggleItemViewHolder holder, final Item item) {
-        holder.mToggle.setVisibility(item.getKidCount() > 0 ? View.VISIBLE : View.GONE);
+    private void bindKids(final ToggleItemViewHolder holder, final Item item) {
+        holder.mToggleButton.setVisibility(View.GONE);
         if (item.getKidCount() == 0) {
             return;
         }
@@ -283,10 +293,6 @@ public class SinglePageItemRecyclerViewAdapter
             expand(item);
         }
         bindToggle(holder, item, mState.isExpanded(item));
-        holder.mToggle.setOnClickListener(v -> {
-            bindToggle(holder, item, !mState.isExpanded(item));
-            toggleKids(item);
-        });
     }
 
     private void toggleKids(Item item) {
@@ -300,17 +306,19 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     private void bindToggle(ToggleItemViewHolder holder, Item item, boolean expanded) {
-        if(expanded) {
-            holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ic_expand_less_white_24dp, 0);
-            holder.mToggle.setText(mContext.getResources()
-                    .getQuantityString(R.plurals.hide_comments, item.getKidCount(), item.getKidCount()));
-        } else {
-            holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
-                    R.drawable.ic_expand_more_white_24dp, 0);
-            holder.mToggle.setText(mContext.getResources()
-                    .getQuantityString(R.plurals.show_comments, item.getKidCount(), item.getKidCount()));
-        }
+        changeToggleState(holder, item, expanded);
+        holder.mToggleButton.setVisibility(View.VISIBLE);
+        holder.mToggleButton.setOnClickListener(v -> {
+            changeToggleState(holder, item, !mState.isExpanded(item));
+            toggleKids(item);
+        });
+    }
+
+    private void changeToggleState(ToggleItemViewHolder holder, Item item, boolean expanded) {
+        holder.mToggle.setText(mContext.getResources()
+                .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));
+        holder.mToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0, expanded ?
+                R.drawable.ic_expand_less_white_24dp : R.drawable.ic_expand_more_white_24dp, 0);
     }
 
     private void expand(Item item) {
@@ -326,6 +334,7 @@ public class SinglePageItemRecyclerViewAdapter
                 return; // adapter detached
             }
             int index = mState.expand(item);
+            notifyItemChanged(index - 1, TOGGLE);
             notifyItemRangeInserted(index, item.getKidCount());
             mRecyclerView.getItemAnimator().isRunning(() -> setSelectedPosition(index, callback));
         });

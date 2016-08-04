@@ -303,12 +303,12 @@ public class ItemFragmentSinglePageTest {
     @Test
     public void testToggle() {
         // collapse all
-        viewHolder.itemView.findViewById(R.id.toggle).performClick();
+        viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
         adapter.bindViewHolder(viewHolder, 0);
         assertEquals(2, adapter.getItemCount());
 
         // expand again, should add item when binding
-        viewHolder.itemView.findViewById(R.id.toggle).performClick();
+        viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
         adapter.bindViewHolder(viewHolder, 0);
         adapter.bindViewHolder(viewHolder1, 1);
         adapter.bindViewHolder(viewHolder2, 2);
