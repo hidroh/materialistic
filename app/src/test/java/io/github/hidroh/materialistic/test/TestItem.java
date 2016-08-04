@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
+import android.text.SpannableString;
 
 import io.github.hidroh.materialistic.data.Item;
 
@@ -76,8 +77,13 @@ public abstract class TestItem implements Item {
     }
 
     @Override
-    public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
-        return null;
+    public Spannable getDisplayedAuthor(Context context, boolean linkify, int color) {
+        return new SpannableString("");
+    }
+
+    @Override
+    public Spannable getDisplayedTime(Context context) {
+        return new SpannableString("");
     }
 
     @Override

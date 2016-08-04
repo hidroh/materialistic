@@ -82,13 +82,20 @@ public interface WebItem extends Parcelable {
     String getSource();
 
     /**
-     * Gets formatted posted time for display
+     * Gets formatted author for display
      * @param context       an instance of {@link Context}
-     * @param abbreviate    true to abbreviate time span, false otherwise
-     * @param authorLink    true to display author as a hyperlink, false otherwise
+     * @param linkify       true to display author as a hyperlink, false otherwise
+     * @param color         optional decorator color for author, or 0
+     * @return  displayed author
+     */
+    Spannable getDisplayedAuthor(Context context, boolean linkify, int color);
+
+    /**
+     * Gets formatted posted time for display
+     * @param context    resources provider
      * @return  displayed time
      */
-    Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink);
+    Spannable getDisplayedTime(Context context);
 
     /**
      * Gets item type

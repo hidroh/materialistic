@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.support.annotation.IdRes;
 import android.support.annotation.MenuRes;
 import android.support.annotation.StringRes;
@@ -45,6 +46,7 @@ import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -133,6 +135,13 @@ public class TestActivityModule {
     private final CustomTabsDelegate customTabsDelegate = mock(CustomTabsDelegate.class);
     private final KeyDelegate keyDelegate = mock(KeyDelegate.class);
     private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
+    private final ResourcesProvider resourcesProvider = mock(ResourcesProvider.class);
+    {
+        TypedArray typedArray = mock(TypedArray.class);
+        when(typedArray.length()).thenReturn(1);
+        when(typedArray.getColor(anyInt(), anyInt())).thenReturn(0);
+        when(resourcesProvider.obtainTypedArray(anyInt())).thenReturn(typedArray);
+    }
 
     @Provides @Singleton @Named(ActivityModule.HN)
     public ItemManager provideHackerNewsClient() {
@@ -319,5 +328,10 @@ public class TestActivityModule {
     @Provides @Singleton
     public CustomTabsDelegate provideCustomTabsDelegate() {
         return customTabsDelegate;
+    }
+
+    @Provides @Singleton
+    public ResourcesProvider provideResourcesProvider() {
+        return resourcesProvider;
     }
 }

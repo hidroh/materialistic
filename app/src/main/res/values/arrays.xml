@@ -201,8 +201,8 @@
     <!-- Color codes -->
     <array name="color_codes">
         <item>@color/red500</item>
-        <item>@color/purple500</item>
-        <item>@color/indigo500</item>
+        <item>@color/purpleA400</item>
+        <item>@color/indigoA700</item>
         <item>@color/lightBlue700</item>
         <item>@color/teal500</item>
         <item>@color/lightGreen700</item>

@@ -51,7 +51,8 @@ public class MultiPageItemRecyclerViewAdapter
         if (item == null) {
             return;
         }
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, true));
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+        holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, true, 0));
         if (item.getKidCount() > 0) {
             holder.mCommentButton.setText(mContext.getResources()
                     .getQuantityString(R.plurals.comments_count, item.getKidCount(), item.getKidCount()));

@@ -58,7 +58,8 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
             return;
         }
         final boolean isComment = TextUtils.equals(item.getType(), Item.COMMENT_TYPE);
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, false));
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+        holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, false, 0));
         if (isComment) {
             holder.mTitleTextView.setText(null);
             holder.mCommentButton.setText(R.string.view_thread);

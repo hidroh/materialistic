@@ -370,7 +370,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         }
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);
-        postedTextView.setText(story.getDisplayedTime(this, false, true));
+        postedTextView.setText(story.getDisplayedTime(this));
+        postedTextView.append(story.getDisplayedAuthor(this, true, 0));
         postedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
             case Item.JOB_TYPE:
@@ -389,6 +390,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT));
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
+        // TODO replace deprecated method
         mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

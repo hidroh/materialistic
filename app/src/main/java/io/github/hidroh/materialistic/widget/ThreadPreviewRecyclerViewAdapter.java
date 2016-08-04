@@ -75,8 +75,9 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     @Override
     protected void bind(SubmissionViewHolder holder, final Item item) {
         super.bind(holder, item);
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false,
-                !TextUtils.equals(item.getBy(), mUsername)));
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+        holder.mPostedTextView.append(item.getDisplayedAuthor(mContext,
+                !TextUtils.equals(item.getBy(), mUsername), 0));
         holder.mMoreButton.setVisibility(View.GONE);
         if (TextUtils.equals(item.getType(), Item.COMMENT_TYPE)) {
             holder.mTitleTextView.setText(null);

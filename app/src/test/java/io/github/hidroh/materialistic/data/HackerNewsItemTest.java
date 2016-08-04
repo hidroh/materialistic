@@ -133,8 +133,10 @@ public class HackerNewsItemTest {
         assertEquals(5, item.getScore());
         assertTrue(item.isDead());
         assertTrue(item.isDeleted());
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, true, true))
-                .doesNotContain("by");
+        assertThat(item.getDisplayedAuthor(RuntimeEnvironment.application, true, 0))
+                .contains(" - by");
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application))
+                .isNotEmpty();
         assertThat(item.getKids()).hasSize(1);
         assertEquals(1, item.getKidItems()[0].getLevel());
     }
@@ -217,10 +219,10 @@ public class HackerNewsItemTest {
                 return "author";
             }
         });
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, true))
-                .contains("author");
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, false))
-                .contains("author");
+        assertThat(item.getDisplayedAuthor(RuntimeEnvironment.application, true, 0))
+                .contains(" - author");
+        assertThat(item.getDisplayedAuthor(RuntimeEnvironment.application, false, 0))
+                .contains(" - author");
         item.populate(new TestItem() {
             @Override
             public String getBy() {
@@ -232,7 +234,7 @@ public class HackerNewsItemTest {
                 return true;
             }
         });
-        assertThat(item.getDisplayedTime(RuntimeEnvironment.application, false, true))
+        assertThat(item.getDisplayedTime(RuntimeEnvironment.application))
                 .contains(RuntimeEnvironment.application.getString(R.string.dead_prefix));
     }
 
