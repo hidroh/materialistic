@@ -70,7 +70,7 @@
                 android:id="@id/posted"
                 tools:text="2 days ago"
                 android:text="@string/loading_text"
-                style="@style/textSubtitleStyle.Italic"
+                style="@style/textSubtitleStyle"
                 android:paddingRight="0dp"
                 android:layout_gravity="center_vertical"
                 android:layout_width="0dp"
