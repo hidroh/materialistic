@@ -28,8 +28,8 @@
     <color name="red500">#F44336</color>
     <color name="redA100">#FF8A80</color>
     <color name="redA200">#FF5252</color>
-    <color name="purple500">#9C27B0</color>
-    <color name="indigo500">#3F51B5</color>
+    <color name="purpleA400">#D500F9</color>
+    <color name="indigoA700">#304FFE</color>
     <color name="lightBlue700">#0288D1</color>
     <color name="lightBlueA700">#0091EA</color>
     <color name="teal50">#E0F2F1</color>

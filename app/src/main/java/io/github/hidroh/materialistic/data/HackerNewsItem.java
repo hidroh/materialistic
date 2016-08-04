@@ -17,18 +17,24 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
-import android.text.Html;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.view.View;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
@@ -36,7 +42,8 @@ import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
 
 class HackerNewsItem implements Item {
-    private static final String FORMAT_LINK_USER = "<a href=\"%1$s://user/%2$s\">%2$s</a>";
+    private static final String HOST_USER = "user";
+    private static final String AUTHOR_SEPARATOR = " - ";
 
     // The item's unique id. Required.
     private long id;
@@ -82,6 +89,9 @@ class HackerNewsItem implements Item {
     private boolean voted;
     private boolean pendingVoted;
     private long next, previous;
+    private Spannable displayedTime;
+    private Spannable displayedAuthor;
+    private int defaultColor;
 
     public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
         @Override
@@ -255,37 +265,40 @@ class HackerNewsItem implements Item {
     }
 
     @Override
-    public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
-        CharSequence relativeTime = "";
-        if (abbreviate) {
-            relativeTime = AppUtils.getAbbreviatedTimeSpan(time * 1000);
-        } else {
-            try {
-                relativeTime = DateUtils.getRelativeTimeSpanString(time * 1000,
-                        System.currentTimeMillis(),
-                        DateUtils.MINUTE_IN_MILLIS,
-                        DateUtils.FORMAT_ABBREV_ALL);
-            } catch (NullPointerException e) {
-                // TODO should properly prevent this
+    public Spannable getDisplayedAuthor(Context context, boolean linkify, int color) {
+        if (displayedAuthor == null) {
+            if (TextUtils.isEmpty(by)) {
+                displayedAuthor = new SpannableString("");
+            } else {
+                defaultColor = ContextCompat.getColor(context, AppUtils.getThemedResId(context,
+                        linkify ? android.R.attr.textColorLink : android.R.attr.textColorSecondary));
+                displayedAuthor = createAuthorSpannable(linkify);
             }
         }
-        if (deleted) {
-            Spannable spannable = new SpannableString(relativeTime);
-            spannable.setSpan(new StrikethroughSpan(), 0, relativeTime.length(),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            return spannable;
+        if (displayedAuthor.length() == 0) {
+            return displayedAuthor;
         }
-        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder();
-        if (dead) {
-            spannableBuilder.append(context.getString(R.string.dead_prefix)).append(" ");
+        displayedAuthor.setSpan(new ForegroundColorSpan(color != 0 ? color : defaultColor),
+                AUTHOR_SEPARATOR.length(), displayedAuthor.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        return displayedAuthor;
+    }
+
+    @Override
+    public Spannable getDisplayedTime(Context context) {
+        if (displayedTime == null) {
+            SpannableStringBuilder builder = new SpannableStringBuilder(dead ?
+                    context.getString(R.string.dead_prefix) + " " : "");
+            SpannableString timeSpannable = new SpannableString(
+                    AppUtils.getAbbreviatedTimeSpan(time * 1000));
+            if (deleted) {
+                timeSpannable.setSpan(new StrikethroughSpan(), 0, timeSpannable.length(),
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            builder.append(timeSpannable);
+            displayedTime = builder;
         }
-        spannableBuilder.append(relativeTime);
-        if (!TextUtils.isEmpty(by)) {
-            spannableBuilder.append(" - ")
-                    .append(authorLink ? Html.fromHtml(String.format(FORMAT_LINK_USER,
-                            BuildConfig.APPLICATION_ID, by)) : by);
-        }
-        return spannableBuilder;
+        return displayedTime;
     }
 
     @Override
@@ -322,6 +335,38 @@ class HackerNewsItem implements Item {
             default:
                 return TextUtils.isEmpty(url) ? getItemUrl(getId()) : url;
         }
+    }
+
+    @NonNull
+    private SpannableString createAuthorSpannable(boolean authorLink) {
+        SpannableString bySpannable = new SpannableString(AUTHOR_SEPARATOR + by);
+        if (!authorLink) {
+            return bySpannable;
+        }
+        bySpannable.setSpan(new StyleSpan(Typeface.BOLD),
+                AUTHOR_SEPARATOR.length(), bySpannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View view) {
+                view.getContext().startActivity(new Intent(Intent.ACTION_VIEW)
+                        .setData(new Uri.Builder()
+                                .scheme(BuildConfig.APPLICATION_ID)
+                                .authority(HOST_USER)
+                                .path(by)
+                                .build()));
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        bySpannable.setSpan(clickableSpan,
+                AUTHOR_SEPARATOR.length(), bySpannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        return bySpannable;
     }
 
     private String getItemUrl(String itemId) {

@@ -33,10 +33,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.ResourcesProvider;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -50,6 +53,7 @@ public class SinglePageItemRecyclerViewAdapter
             }
         }
     };
+    @Inject ResourcesProvider mResourcesProvider;
     private int mLevelIndicatorWidth = 0;
     private final boolean mAutoExpand;
     private boolean mColorCoded = true;
@@ -71,7 +75,7 @@ public class SinglePageItemRecyclerViewAdapter
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
-        mColors = mContext.getResources().obtainTypedArray(R.array.color_codes);
+        mColors = mResourcesProvider.obtainTypedArray(R.array.color_codes);
         mRecyclerView = recyclerView;
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.RIGHT) {
@@ -116,6 +120,7 @@ public class SinglePageItemRecyclerViewAdapter
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         recyclerView.removeOnScrollListener(mScrollListener);
+        mColors.recycle();
         mRecyclerView = null;
         mItemTouchHelper.attachToRecyclerView(null);
     }
@@ -139,8 +144,7 @@ public class SinglePageItemRecyclerViewAdapter
         }
         if (mColorCoded && mColors != null && mColors.length() > 0) {
             holder.mLevel.setVisibility(View.VISIBLE);
-            holder.mLevel.setBackgroundColor(mColors.getColor(
-                    getItemViewType(position) % mColors.length(), 0));
+            holder.mLevel.setBackgroundColor(getThreadColor(position));
         } else {
             holder.mLevel.setVisibility(View.GONE);
         }
@@ -166,6 +170,9 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public void getNextPosition(int position, int direction, PositionCallback callback) {
+        if (position < 0) {
+            return;
+        }
         Item item = getItem(position);
         if (item == null) {
             return;
@@ -229,7 +236,9 @@ public class SinglePageItemRecyclerViewAdapter
         if (item == null) {
             return;
         }
-        holder.mPostedTextView.setText(item.getDisplayedTime(mContext, false, true));
+        holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
+        holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, true,
+                getThreadColor(holder.getAdapterPosition())));
         bindNavigation(holder, item);
         bindKidsToggle(holder, item);
     }
@@ -244,6 +253,10 @@ public class SinglePageItemRecyclerViewAdapter
             notifyItemRangeChanged(mLock[0], mLock[1] - mLock[0] + 1);
             mLock = null;
         }
+    }
+
+    private int getThreadColor(int position) {
+        return mColorCoded ? mColors.getColor(getItemViewType(position) % mColors.length(), 0) : 0;
     }
 
     private void bindNavigation(ToggleItemViewHolder holder, final Item item) {

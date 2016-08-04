@@ -16,6 +16,8 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -91,5 +93,10 @@ class UiModule {
     @Provides
     public AlertDialogBuilder provideAlertDialogBuilder() {
         return new AlertDialogBuilder.Impl();
+    }
+
+    @Provides @Singleton
+    public ResourcesProvider provideResourcesProvider(Context context) {
+        return resId -> context.getResources().obtainTypedArray(resId);
     }
 }

@@ -137,7 +137,8 @@ public class StoryView extends RelativeLayout implements Checkable {
         mCommentButton.setVisibility(View.VISIBLE);
         mTitleTextView.setText(getContext().getString(R.string.loading_text));
         mTitleTextView.setText(story.getDisplayedTitle());
-        mPostedTextView.setText(story.getDisplayedTime(getContext(), true, false));
+        mPostedTextView.setText(story.getDisplayedTime(getContext()));
+        mPostedTextView.append(story.getDisplayedAuthor(getContext(), false, 0));
         switch (story.getType()) {
             case Item.JOB_TYPE:
                 mSourceTextView.setText(null);

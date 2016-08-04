@@ -45,6 +45,7 @@
             android:paddingLeft="@dimen/flat_card_horizontal_margin"
             android:paddingRight="@dimen/flat_card_horizontal_margin"
             style="@style/FlatCardView">
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_gravity="center_vertical"
@@ -54,7 +55,7 @@
                     android:id="@id/posted"
                     tools:text="2 days ago"
                     android:text="@string/loading_text"
-                    style="@style/textSubtitleStyle.Italic"
+                    style="@style/textSubtitleStyle"
                     android:paddingRight="0dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="0dp"
@@ -68,7 +69,7 @@
                     tools:visibility="visible"
                     tools:text="parent"
                     android:text="@string/parent"
-                    style="@style/textSubtitleStyle.Italic"
+                    style="@style/textSubtitleStyle"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -80,28 +81,33 @@
                     android:layout_height="36dp" />
 
             </LinearLayout>
+
             <io.github.hidroh.materialistic.widget.TextView
                 android:id="@id/text"
-                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n"
                 android:text="@string/loading_text"
                 android:paddingLeft="@dimen/padding"
                 android:paddingRight="@dimen/padding"
-                android:paddingTop="@dimen/padding_text"
-                android:paddingBottom="@dimen/padding_text"
                 style="@style/textContentStyle"
                 android:textIsSelectable="true"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
             <TextView
                 android:id="@+id/more"
                 android:text="@string/read_more"
                 android:visibility="gone"
+                tools:visibility="visible"
                 style="@style/textSubtitleStyle"
                 android:paddingLeft="@dimen/padding"
-                android:paddingTop="@dimen/padding_text"
-                android:paddingBottom="@dimen/padding_text"
+                android:paddingRight="@dimen/padding"
+                android:paddingTop="@dimen/padding"
+                android:paddingBottom="@dimen/padding"
                 android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical" />
+
             <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@+id/toggle"
                 tools:text="Hide comments"
@@ -109,10 +115,10 @@
                 tools:visibility="visible"
                 android:visibility="gone"
                 style="@style/textSubtitleStyle"
-                android:paddingTop="@dimen/padding"
-                android:paddingBottom="@dimen/padding"
+                android:layout_height="?attr/listPreferredItemHeightSmall"
                 android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical|center" />
+
             <include layout="@layout/button_comment"
                 android:id="@id/comment"
                 android:layout_width="wrap_content"
@@ -120,6 +126,7 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_marginRight="@dimen/margin"
                 android:layout_gravity="end" />
+
         </LinearLayout>
 
     </LinearLayout>

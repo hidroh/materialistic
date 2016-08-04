@@ -132,9 +132,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         mContentMaxLines = Preferences.getCommentMaxLines(context);
         mUsername = Preferences.getUsername(context);
         mLineHeight = Preferences.getLineHeight(context);
-        if (isAttached()) {
-            notifyDataSetChanged();
-        }
     }
 
     public void getNextPosition(int position, int direction, PositionCallback callback) {
@@ -237,7 +234,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     private void bindActions(final VH holder, final Item item) {
         if (item.isDead() || item.isDeleted()) {
-            holder.mMoreButton.setVisibility(View.GONE);
+            holder.mMoreButton.setVisibility(View.INVISIBLE);
             return;
         }
         holder.mMoreButton.setVisibility(View.VISIBLE);

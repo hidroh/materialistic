@@ -36,6 +36,8 @@ public class Favorite implements WebItem {
     private String title;
     private long time;
     private boolean favorite;
+    private Spannable displayedTime;
+    private final Spannable displayedAuthor = new SpannableString("");
 
     public static final Creator<Favorite> CREATOR = new Creator<Favorite>() {
         @Override
@@ -91,12 +93,20 @@ public class Favorite implements WebItem {
     }
 
     @Override
-    public Spannable getDisplayedTime(Context context, boolean abbreviate, boolean authorLink) {
-        return new SpannableString(context.getString(R.string.saved,
-                DateUtils.getRelativeDateTimeString(context, time,
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.YEAR_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_MONTH)));
+    public Spannable getDisplayedAuthor(Context context, boolean linkify, int color) {
+        return displayedAuthor;
+    }
+
+    @Override
+    public Spannable getDisplayedTime(Context context) {
+        if (displayedTime == null) {
+            displayedTime = new SpannableString(context.getString(R.string.saved,
+                    DateUtils.getRelativeDateTimeString(context, time,
+                            DateUtils.MINUTE_IN_MILLIS,
+                            DateUtils.YEAR_IN_MILLIS,
+                            DateUtils.FORMAT_ABBREV_MONTH)));
+        }
+        return displayedTime;
     }
 
     @Override

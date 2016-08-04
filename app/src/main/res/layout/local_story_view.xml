@@ -22,7 +22,7 @@
         android:gravity="center_vertical"
         android:layout_alignParentTop="true"
         android:paddingTop="@dimen/padding"
-        style="@style/textSubtitleStyle.Italic" />
+        style="@style/textSubtitleStyle" />
 
     <io.github.hidroh.materialistic.widget.TextView
         android:id="@id/title"

@@ -54,14 +54,14 @@ public interface Item extends WebItem {
     /**
      * Gets author name
      * @return author name or null
-     * @see WebItem#getDisplayedTime(Context, boolean, boolean)
+     * @see WebItem#getDisplayedAuthor(Context, boolean, int)
      */
     String getBy();
 
     /**
      * Gets posted time
      * @return posted time as Unix timestamp in seconds
-     * @see WebItem#getDisplayedTime(Context, boolean, boolean)
+     * @see WebItem#getDisplayedAuthor(Context, boolean, int)
      */
     long getTime();
 

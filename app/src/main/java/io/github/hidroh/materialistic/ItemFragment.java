@@ -220,6 +220,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
 
         String displayOption = Preferences.getCommentDisplayOption(getActivity());
+        ItemRecyclerViewAdapter oldAdapter = mAdapter;
         if (Preferences.isSinglePage(getActivity(), displayOption)) {
             boolean autoExpand = Preferences.isAutoExpand(getActivity(), displayOption);
             // if collapsed or no saved state then start a fresh (adapter items all collapsed)
@@ -233,7 +234,11 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());
-        mRecyclerView.swapAdapter(mAdapter, true);
+        if (oldAdapter != null && oldAdapter.getClass().equals(mAdapter.getClass())) {
+            mRecyclerView.swapAdapter(mAdapter, true);
+        } else {
+            mRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
@@ -243,6 +248,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
             mItemDecoration.setColorCodeEnabled(Preferences.colorCodeEnabled(getActivity()));
             mItemDecoration.setThreadIndicatorEnabled(Preferences.threadIndicatorEnabled(getActivity()));
             mAdapter.initDisplayOptions(getActivity());
+            mAdapter.notifyDataSetChanged();
         }
     }
 
