@@ -22,13 +22,13 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
-public class TintableTextView extends TextView {
+public class TintableTextView extends AppCompatTextView {
 
     private final int mTextColor;
 

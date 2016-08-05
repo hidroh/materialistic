@@ -72,7 +72,7 @@
             android:id="@id/score"
             android:text="128 pts"
             style="@style/textSubtitleStyle"
-            android:singleLine="false"
+            android:maxLines="1"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -105,7 +105,7 @@
             android:id="@id/posted"
             android:text="@string/loading_text"
             style="@style/textSubtitleStyle"
-            android:singleLine="false" />
+            android:maxLines="1" />
     </LinearLayout>
 
     <include layout="@layout/button_comment"

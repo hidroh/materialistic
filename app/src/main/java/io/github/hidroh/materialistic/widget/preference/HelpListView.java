@@ -24,7 +24,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -44,8 +43,8 @@ public class HelpListView extends ScrollView {
                 .append(makeAsteriskSpan());
         ((TextView) findViewById(R.id.item_promoted).findViewById(R.id.rank))
                 .setTextColor(ContextCompat.getColor(getContext(), R.color.greenA700));
-        Button comments = (Button) findViewById(R.id.item_new_comments).findViewById(R.id.comment);
-        SpannableStringBuilder sb = new SpannableStringBuilder(comments.getText());
+        TextView comments = (TextView) findViewById(R.id.item_new_comments).findViewById(R.id.comment);
+        SpannableStringBuilder sb = new SpannableStringBuilder("46");
         sb.append(makeAsteriskSpan());
         comments.setText(sb);
     }

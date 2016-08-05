@@ -22,7 +22,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatButton;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -51,7 +50,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final TextView mPostedTextView;
     private final TextView mTitleTextView;
     private final TextView mSourceTextView;
-    private final AppCompatButton mCommentButton;
+    private final TextView mCommentButton;
     private final boolean mIsLocal;
     private final ViewSwitcher mVoteSwitcher;
     private final View mMoreButton;
@@ -89,8 +88,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mPostedTextView = (TextView) findViewById(R.id.posted);
         mTitleTextView = (TextView) findViewById(R.id.title);
         mSourceTextView = (TextView) findViewById(R.id.source);
-        mCommentButton = (AppCompatButton) findViewById(R.id.comment);
-        mCommentButton.setSupportAllCaps(false);
+        mCommentButton = (TextView) findViewById(R.id.comment);
         mMoreButton = findViewById(R.id.button_more);
         ta.recycle();
         a.recycle();
@@ -127,11 +125,9 @@ public class StoryView extends RelativeLayout implements Checkable {
                         .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             }
             if (item.getKidCount() > 0) {
-                mCommentButton.setText(getContext().getResources()
-                        .getQuantityString(R.plurals.comments_count,
-                                item.getKidCount(), item.getKidCount()));
+                mCommentButton.setText(String.valueOf(item.getKidCount()));
             } else {
-                mCommentButton.setText(R.string.comments);
+                mCommentButton.setText(null);
             }
         }
         mCommentButton.setVisibility(View.VISIBLE);
@@ -203,9 +199,7 @@ public class StoryView extends RelativeLayout implements Checkable {
                 String.valueOf(story.getRank()), updated));
         setPromoted(promoted);
         if (story.getKidCount() > 0) {
-            mCommentButton.setText(decorateUpdated(getContext().getResources()
-                    .getQuantityString(R.plurals.comments_count,
-                            story.getKidCount(), story.getKidCount()),
+            mCommentButton.setText(decorateUpdated(String.valueOf(story.getKidCount()),
                     story.hasNewKids()));
         }
     }
