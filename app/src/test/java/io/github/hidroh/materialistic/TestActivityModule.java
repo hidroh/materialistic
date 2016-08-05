@@ -116,7 +116,8 @@ import static org.mockito.Mockito.when;
                 UserActivityTest.class,
                 ThreadPreviewActivityTest.class,
                 WidgetConfigActivityTest.class,
-                BaseListActivityLandTest.class
+                BaseListActivityLandTest.class,
+                PreferencesActivityTest.class
         },
         library = true,
         overrides = true

@@ -50,7 +50,7 @@ public abstract class ThemedActivity extends AppCompatActivity {
         super.onResume();
         mResumed = true;
         if (mPendingThemeChanged) {
-            AppUtils.restart(this);
+            AppUtils.restart(this, false);
         }
     }
 
@@ -76,7 +76,7 @@ public abstract class ThemedActivity extends AppCompatActivity {
 
     private void onThemeChanged() {
         if (mResumed) {
-            AppUtils.restart(this);
+            AppUtils.restart(this, true);
         } else {
             mPendingThemeChanged = true;
         }

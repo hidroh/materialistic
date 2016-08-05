@@ -143,10 +143,8 @@ public abstract class DrawerActivity extends InjectableActivity {
         findViewById(R.id.drawer_ask).setOnClickListener(v -> navigate(AskActivity.class));
         findViewById(R.id.drawer_job).setOnClickListener(v -> navigate(JobsActivity.class));
         findViewById(R.id.drawer_settings).setOnClickListener(v -> navigate(SettingsActivity.class));
-        findViewById(R.id.drawer_about).setOnClickListener(v -> navigate(AboutActivity.class));
         findViewById(R.id.drawer_favorite).setOnClickListener(v -> navigate(FavoriteActivity.class));
         findViewById(R.id.drawer_submit).setOnClickListener(v -> navigate(SubmitActivity.class));
-        findViewById(R.id.drawer_release).setOnClickListener(v -> navigate(ReleaseNotesActivity.class));
         findViewById(R.id.drawer_user).setOnClickListener(v -> {
             Bundle extras = new Bundle();
             extras.putString(UserActivity.EXTRA_USERNAME, Preferences.getUsername(this));

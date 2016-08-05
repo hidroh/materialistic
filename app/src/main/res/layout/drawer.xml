@@ -57,7 +57,7 @@
     <View
         android:background="@color/blackT12"
         android:layout_width="match_parent"
-        android:layout_height="2dp" />
+        android:layout_height="@dimen/divider" />
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_list"
@@ -104,7 +104,7 @@
     <View
         android:background="@color/blackT12"
         android:layout_width="match_parent"
-        android:layout_height="2dp" />
+        android:layout_height="@dimen/divider" />
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_favorite"
@@ -127,13 +127,7 @@
     <View
         android:background="@color/blackT12"
         android:layout_width="match_parent"
-        android:layout_height="2dp" />
-
-    <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_settings"
-        android:text="@string/action_settings"
-        app:iconStart="@drawable/ic_settings_white_24dp"
-        style="@style/DrawerTextStyle"/>
+        android:layout_height="@dimen/divider" />
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_feedback"
@@ -142,15 +136,9 @@
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_about"
-        android:text="@string/title_activity_about"
-        app:iconStart="@drawable/ic_info_white_24dp"
-        style="@style/DrawerTextStyle"/>
-
-    <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_release"
-        android:text="@string/title_activity_release"
-        app:iconStart="@drawable/ic_new_releases_white_24dp"
+        android:id="@id/drawer_settings"
+        android:text="@string/action_settings"
+        app:iconStart="@drawable/ic_settings_white_24dp"
         style="@style/DrawerTextStyle"/>
 
 </LinearLayout>

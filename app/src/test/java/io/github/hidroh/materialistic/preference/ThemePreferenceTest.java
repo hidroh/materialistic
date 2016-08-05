@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.preference;
 
+import android.content.Intent;
 import android.support.v7.preference.PreferenceGroupAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,13 +10,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.PreferencesActivity;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowSupportPreference;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -28,7 +30,8 @@ import static org.robolectric.Shadows.shadowOf;
 public class ThemePreferenceTest {
     private final int preferenceId;
     private final int styleResId;
-    private SettingsActivity activity;
+    private ActivityController<PreferencesActivity> controller;
+    private PreferencesActivity activity;
     private View preferenceView;
 
     @ParameterizedRobolectricGradleTestRunner.Parameters
@@ -46,7 +49,10 @@ public class ThemePreferenceTest {
 
     @Before
     public void setUp() {
-        activity = Robolectric.buildActivity(SettingsActivity.class)
+        controller = Robolectric.buildActivity(PreferencesActivity.class);
+        activity = controller.withIntent(new Intent()
+                .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
+                .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
                 .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
@@ -64,5 +70,9 @@ public class ThemePreferenceTest {
         Preferences.Theme.apply(activity, false, false);
         shadowOf(activity).recreate();
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(styleResId);
+    }
+
+    public void tearDown() {
+        controller.pause().stop().destroy();
     }
 }

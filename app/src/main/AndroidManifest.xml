@@ -147,6 +147,10 @@
             android:label="@string/action_settings" >
         </activity>
         <activity
+            android:name=".PreferencesActivity"
+            android:label="@string/action_settings" >
+        </activity>
+        <activity
             android:name=".OfflineWebActivity" />
         <activity
             android:name=".ReleaseNotesActivity"

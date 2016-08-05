@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBar;
@@ -37,6 +38,18 @@ public class SettingsActivity extends DrawerActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        findViewById(R.id.drawer_display).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display)));
+        findViewById(R.id.drawer_offline).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.offline)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_offline)));
+        findViewById(R.id.drawer_about).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, AboutActivity.class)));
+        findViewById(R.id.drawer_release).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, ReleaseNotesActivity.class)));
     }
 
     @Override
@@ -68,7 +81,7 @@ public class SettingsActivity extends DrawerActivity {
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         Preferences.reset(SettingsActivity.this);
-                        AppUtils.restart(SettingsActivity.this);
+                        AppUtils.restart(SettingsActivity.this, false);
                     })
                     .create()
                     .show();

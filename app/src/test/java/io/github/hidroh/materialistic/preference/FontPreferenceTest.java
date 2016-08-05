@@ -1,22 +1,25 @@
 package io.github.hidroh.materialistic.preference;
 
+import android.content.Intent;
 import android.support.v7.preference.PreferenceGroupAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Spinner;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.PreferencesActivity;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowSupportPreference;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -28,7 +31,8 @@ import static junit.framework.Assert.assertNull;
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class FontPreferenceTest {
     private final int selection;
-    private SettingsActivity activity;
+    private PreferencesActivity activity;
+    private ActivityController<PreferencesActivity> controller;
     private View preferenceView;
 
     @ParameterizedRobolectricGradleTestRunner.Parameters
@@ -47,7 +51,10 @@ public class FontPreferenceTest {
 
     @Before
     public void setUp() {
-        activity = Robolectric.buildActivity(SettingsActivity.class)
+        controller = Robolectric.buildActivity(PreferencesActivity.class);
+        activity = controller.withIntent(new Intent()
+                .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
+                .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
                 .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
@@ -67,5 +74,10 @@ public class FontPreferenceTest {
         preferenceView.performClick();
         ((Spinner) preferenceView.findViewById(R.id.spinner)).setSelection(0);
         assertNull(Application.TYPE_FACE);
+    }
+
+    @After
+    public void tearDown() {
+        controller.pause().stop().destroy();
     }
 }
