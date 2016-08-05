@@ -6,16 +6,20 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.ShadowContentResolverCompatJellybean;
+import android.support.v7.app.AppCompatActivity;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
+import org.robolectric.util.ActivityController;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,11 +38,12 @@ import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowWebView.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowContentResolverCompatJellybean.class, ShadowWebView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
@@ -60,6 +65,21 @@ public class FavoriteManagerTest {
         cv.put("time", String.valueOf(System.currentTimeMillis()));
         resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
         manager = new FavoriteManager(Schedulers.immediate());
+    }
+
+    @Test
+    public void testLocalItemManager() {
+        ActivityController<AppCompatActivity> controller = Robolectric.buildActivity(AppCompatActivity.class);
+        AppCompatActivity activity = controller.create().start().resume().get();
+        LocalItemManager.Observer observer = mock(LocalItemManager.Observer.class);
+        manager.attach(RuntimeEnvironment.application, activity.getSupportLoaderManager(),
+                observer, null);
+        verify(observer).onChanged();
+        assertThat(manager.getSize()).isEqualTo(2);
+        assertThat(manager.getItem(0).getDisplayedTitle()).contains("ask HN");
+        assertThat(manager.getItem(1).getDisplayedTitle()).contains("title");
+        manager.detach();
+        controller.pause().stop().destroy();
     }
 
     @Test
