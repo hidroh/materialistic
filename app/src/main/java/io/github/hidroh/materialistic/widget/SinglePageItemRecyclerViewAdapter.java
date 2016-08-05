@@ -249,7 +249,6 @@ public class SinglePageItemRecyclerViewAdapter
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
         holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, true,
                 getThreadColor(getItemViewType(holder.getAdapterPosition()))));
-        bindNavigation(holder, item);
         bindKids(holder, item);
     }
 
@@ -267,21 +266,6 @@ public class SinglePageItemRecyclerViewAdapter
 
     private int getThreadColor(int itemViewType) {
         return mColorCoded ? mColors.getColor(itemViewType % mColors.length(), 0) : 0;
-    }
-
-    private void bindNavigation(ToggleItemViewHolder holder, final Item item) {
-        if (!mState.isExpanded(item.getParent())) {
-            holder.mParent.setVisibility(View.INVISIBLE);
-            return;
-        }
-        holder.mParent.setVisibility(View.VISIBLE);
-        if (mColorCoded) {
-            holder.mParent.tint(getThreadColor(getItemViewType(holder.getAdapterPosition()) - 1));
-        } else {
-            holder.mParent.clearTint();
-        }
-        holder.mParent.setOnClickListener(v -> mRecyclerView.smoothScrollToPosition(
-                mState.indexOf(mState.getExpandedItem(item.getParent()))));
     }
 
     private void bindKids(final ToggleItemViewHolder holder, final Item item) {
@@ -414,10 +398,6 @@ public class SinglePageItemRecyclerViewAdapter
 
         boolean isExpanded(String itemId) {
             return expanded.containsKey(itemId);
-        }
-
-        Item getExpandedItem(String itemId) {
-            return expanded.getParcelable(itemId);
         }
 
         int expand(Item item) {
