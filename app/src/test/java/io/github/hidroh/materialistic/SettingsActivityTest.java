@@ -33,15 +33,12 @@ import static org.robolectric.Shadows.shadowOf;
 public class SettingsActivityTest {
     private SettingsActivity activity;
     private ActivityController<SettingsActivity> controller;
-    private SettingsFragment fragment;
 
     @Before
     public void setUp() {
         TestApplication.applicationGraph.inject(this);
         controller = Robolectric.buildActivity(SettingsActivity.class);
         activity = controller.create().postCreate(null).start().resume().visible().get();
-        fragment = (SettingsFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag(SettingsFragment.class.getName());
     }
 
     @Test
@@ -60,7 +57,7 @@ public class SettingsActivityTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_color_code), false)
-                .commit();
+                .apply();
         assertFalse(Preferences.colorCodeEnabled(activity));
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_reset));
         shadowOf(activity).clickMenuItem(R.id.menu_reset);
@@ -84,28 +81,28 @@ public class SettingsActivityTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(key, "dark")
-                .commit();
-        fragment.mListener.onSharedPreferenceChanged(
-                ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity), key);
+                .apply();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
     @Test
     public void testPrefFont() {
+        controller.pause();
         String key = activity.getString(R.string.pref_text_size);
         // trigger listener
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(key, "1")
-                .commit();
-        fragment.mListener.onSharedPreferenceChanged(
-                ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity), key);
+                .apply();
+        controller.resume();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
     @Test
     public void testHelp() {
-        fragment.getPreferenceScreen()
+        ((SettingsFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(SettingsFragment.class.getName()))
+                .getPreferenceScreen()
                 .findPreference(activity.getString(R.string.pref_volume_help))
                 .performClick();
         Dialog dialog = ShadowDialog.getLatestDialog();
@@ -116,7 +113,9 @@ public class SettingsActivityTest {
 
     @Test
     public void testLazyLoadHelp() {
-        fragment.getPreferenceScreen()
+        ((SettingsFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(SettingsFragment.class.getName()))
+                .getPreferenceScreen()
                 .findPreference(activity.getString(R.string.pref_lazy_load_help))
                 .performClick();
         Dialog dialog = ShadowDialog.getLatestDialog();

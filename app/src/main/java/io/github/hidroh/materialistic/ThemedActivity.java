@@ -23,12 +23,19 @@ import android.view.Menu;
 
 public abstract class ThemedActivity extends AppCompatActivity {
     private final MenuTintDelegate mMenuTintDelegate = new MenuTintDelegate();
+    private final Preferences.Observable mThemeObservable = new Preferences.Observable();
+    private boolean mResumed = true;
+    private boolean mPendingThemeChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Preferences.Theme.apply(this, isDialogTheme(), isTranslucent());
         super.onCreate(savedInstanceState);
         mMenuTintDelegate.onActivityCreated(this);
+        mThemeObservable.subscribe(this, (key, contextChanged) ->  onThemeChanged(),
+                R.string.pref_theme,
+                R.string.pref_font,
+                R.string.pref_text_size);
     }
 
     @CallSuper
@@ -38,11 +45,40 @@ public abstract class ThemedActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mResumed = true;
+        if (mPendingThemeChanged) {
+            AppUtils.restart(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mResumed = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mThemeObservable.unsubscribe(this);
+    }
+
     protected boolean isDialogTheme() {
         return false;
     }
 
     protected boolean isTranslucent() {
         return false;
+    }
+
+    private void onThemeChanged() {
+        if (mResumed) {
+            AppUtils.restart(this);
+        } else {
+            mPendingThemeChanged = true;
+        }
     }
 }

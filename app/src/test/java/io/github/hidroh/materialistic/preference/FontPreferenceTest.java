@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,11 +18,13 @@ import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ShadowSupportPreference;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportPreference.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class FontPreferenceTest {
     private final int selection;
