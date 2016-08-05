@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,8 +15,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -45,7 +44,6 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowContentObserver;
-import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
@@ -54,7 +52,6 @@ import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -62,7 +59,9 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.LocalItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
@@ -85,11 +84,13 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowContentResolverCompatJellybean.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowRecyclerView.class, ShadowItemTouchHelper.class})
+@Config(shadows = {ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowRecyclerView.class, ShadowItemTouchHelper.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityTest {
     private ActivityController<TestFavoriteActivity> controller;
@@ -105,7 +106,7 @@ public class FavoriteActivityTest {
     @Captor ArgumentCaptor<View.OnClickListener> searchViewClickListener;
     @Captor ArgumentCaptor<SearchView.OnCloseListener> searchViewCloseListener;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
-    private ShadowContentResolver resolver;
+    @Captor ArgumentCaptor<LocalItemManager.Observer> observerCaptor;
 
     @Before
     public void setUp() {
@@ -116,28 +117,23 @@ public class FavoriteActivityTest {
         reset(keyDelegate);
         reset(actionViewResolver.getActionView(mock(MenuItem.class)));
         controller = Robolectric.buildActivity(TestFavoriteActivity.class);
-        resolver = shadowOf(controller.get().getContentResolver());
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        cv.put("title", "title");
-        cv.put("url", "http://example.com");
-        cv.put("time", String.valueOf(System.currentTimeMillis()));
-        resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        cv = new ContentValues();
-        cv.put("itemid", "2");
-        cv.put("title", "ask HN");
-        cv.put("url", "http://example.com");
-        cv.put("time", String.valueOf(System.currentTimeMillis()));
-        resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
+        when(favoriteManager.getSize()).thenReturn(2);
+        when(favoriteManager.getItem(eq(0))).thenReturn(new TestFavorite(
+                "1", "http://example.com", "title", System.currentTimeMillis()));
+        when(favoriteManager.getItem(eq(1))).thenReturn(new TestFavorite(
+                "2", "http://example.com", "ask HN", System.currentTimeMillis()));
         activity = controller.create().postCreate(null).start().resume().visible().get(); // skip menu due to search view
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
         verify(keyDelegate).attach(any(Activity.class));
+        verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
+                observerCaptor.capture(), anyString());
     }
 
     @Test
     public void testNewIntent() {
+        when(favoriteManager.getSize()).thenReturn(1);
         controller.newIntent(new Intent().putExtra(SearchManager.QUERY, "title"));
         assertEquals(1, adapter.getItemCount());
         controller.newIntent(new Intent()); // should not clear filter
@@ -156,8 +152,8 @@ public class FavoriteActivityTest {
         dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         verify(favoriteManager).clear(any(Context.class), anyString());
-        resolver.delete(MaterialisticProvider.URI_FAVORITE, null, null);
-        notifyChange(MaterialisticProvider.URI_FAVORITE);
+        when(favoriteManager.getSize()).thenReturn(0);
+        observerCaptor.getValue().onChanged();
         assertEquals(0, adapter.getItemCount());
     }
 
@@ -175,12 +171,16 @@ public class FavoriteActivityTest {
         closeListener.onClose();
         assertEquals(2, adapter.getItemCount());
         ((FavoriteFragment) fragment).filter("ask");
+        verify(favoriteManager, times(2)).attach(any(Context.class), any(LoaderManager.class),
+                observerCaptor.capture(), anyString());
+        when(favoriteManager.getSize()).thenReturn(1);
+        when(favoriteManager.getItem(eq(0))).thenReturn(new TestFavorite(
+                "2", "http://example.com", "ask HN", System.currentTimeMillis()));
+        observerCaptor.getValue().onChanged();
         assertEquals(1, adapter.getItemCount());
         reset(searchView);
         closeListener.onClose();
         verify(searchView).setQuery(eq(FavoriteActivity.EMPTY_QUERY), eq(true));
-        controller.newIntent(new Intent().putExtra(SearchManager.QUERY, FavoriteActivity.EMPTY_QUERY));
-        assertEquals(2, adapter.getItemCount());
     }
 
     @Test
@@ -235,11 +235,11 @@ public class FavoriteActivityTest {
         dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         verify(favoriteManager).remove(any(Context.class), selection.capture());
-        assertThat(selection.getValue()).contains("2"); // sort by date desc
+        assertThat(selection.getValue()).contains("1");
         verify(actionMode).finish();
 
-        resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        notifyChange(MaterialisticProvider.URI_FAVORITE);
+        when(favoriteManager.getSize()).thenReturn(1);
+        observerCaptor.getValue().onChanged();
         assertEquals(1, adapter.getItemCount());
     }
 
@@ -252,21 +252,16 @@ public class FavoriteActivityTest {
         ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView)).getItemTouchHelperCallback()
                 .onSwiped(holder, ItemTouchHelper.LEFT);
         verify(favoriteManager).remove(any(Context.class), anyCollection());
-        resolver.delete(MaterialisticProvider.URI_FAVORITE, "itemid=?", new String[]{"2"});
-        notifyChange(MaterialisticProvider.URI_FAVORITE);
+        when(favoriteManager.getSize()).thenReturn(1);
+        observerCaptor.getValue().onChanged();
         assertEquals(1, adapter.getItemCount());
         assertThat((TextView) activity.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).add(any(Context.class), any(WebItem.class));
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "2");
-        cv.put("title", "ask HN");
-        cv.put("url", "http://example.com");
-        cv.put("time", String.valueOf(System.currentTimeMillis()));
-        resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        notifyChange(MaterialisticProvider.URI_FAVORITE);
+        when(favoriteManager.getSize()).thenReturn(2);
+        observerCaptor.getValue().onChanged();
         assertEquals(2, adapter.getItemCount());
     }
 
@@ -301,19 +296,19 @@ public class FavoriteActivityTest {
         Intent intent = new Intent();
         intent.putExtra(SearchManager.QUERY, "blah");
         controller.newIntent(intent);
-        assertEquals(0, adapter.getItemCount());
+        verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
+                any(LocalItemManager.Observer.class), eq("blah"));
         intent = new Intent();
         intent.putExtra(SearchManager.QUERY, "ask");
         controller.newIntent(intent);
-        assertEquals(1, adapter.getItemCount());
+        verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
+                any(LocalItemManager.Observer.class), eq("ask"));
     }
 
     @Test
     public void testSaveState() {
-        Intent intent = new Intent();
-        intent.putExtra(SearchManager.QUERY, "ask");
         Bundle outState = new Bundle();
-        controller.newIntent(intent).saveInstanceState(outState);
+        controller.saveInstanceState(outState);
         ActivityController<TestFavoriteActivity> controller = Robolectric
                 .buildActivity(TestFavoriteActivity.class)
                 .create(outState)
@@ -321,7 +316,7 @@ public class FavoriteActivityTest {
                 .start()
                 .resume()
                 .visible();
-        assertEquals(1, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
+        assertEquals(2, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
                 .getAdapter().getItemCount());
         controller.pause().stop().destroy();
         reset(keyDelegate);
@@ -459,14 +454,6 @@ public class FavoriteActivityTest {
         activity.onKeyLongPress(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
         verify(keyDelegate).onKeyLongPress(anyInt(), any(KeyEvent.class));
-    }
-
-    private void notifyChange(Uri uri) {
-        try {
-            resolver.notifyChange(uri, null);
-        } catch (ConcurrentModificationException e) {
-            // TODO not sure why
-        }
     }
 
     @After

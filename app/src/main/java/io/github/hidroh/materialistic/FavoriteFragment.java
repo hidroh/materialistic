@@ -21,11 +21,8 @@ import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -45,13 +42,12 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.LocalItemManager;
 import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class FavoriteFragment extends BaseListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>,
-        FavoriteRecyclerViewAdapter.ActionModeDelegate {
+        implements FavoriteRecyclerViewAdapter.ActionModeDelegate, LocalItemManager.Observer {
     public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_SEARCH_VIEW_EXPANDED = "state:searchViewExpanded";
@@ -115,7 +111,7 @@ public class FavoriteFragment extends BaseListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
+        mFavoriteManager.attach(getActivity(), getLoaderManager(), this, mFilter);
     }
 
     @Override
@@ -162,28 +158,11 @@ public class FavoriteFragment extends BaseListFragment
     public void onDetach() {
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
+        mFavoriteManager.detach();
         mRecyclerView.setAdapter(null); // detach adapter
         if (mActionMode != null) {
             mActionMode.finish();
         }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (!TextUtils.isEmpty(mFilter)) {
-            return new FavoriteManager.CursorLoader(getActivity(), mFilter);
-        }
-        return new FavoriteManager.CursorLoader(getActivity());
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        swapCursor(data == null ? null : new FavoriteManager.Cursor(data));
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        swapCursor(null);
     }
 
     /**
@@ -193,7 +172,7 @@ public class FavoriteFragment extends BaseListFragment
     public void filter(String query) {
         mSearchViewExpanded = false;
         mFilter = query;
-        getLoaderManager().restartLoader(FavoriteManager.LOADER, null, this);
+        mFavoriteManager.attach(getActivity(), getLoaderManager(), this, mFilter);
     }
 
     @Override
@@ -222,12 +201,9 @@ public class FavoriteFragment extends BaseListFragment
         mActionMode = null;
     }
 
-    private void swapCursor(FavoriteManager.Cursor cursor) {
-        if (cursor != null) {
-            cursor.setNotificationUri(getContext().getContentResolver(),
-                    MaterialisticProvider.URI_FAVORITE);
-        }
-        mAdapter.setCursor(cursor);
+    @Override
+    public void onChanged() {
+        mAdapter.notifyChanged();
         if (!isDetached()) {
             toggleEmptyView(mAdapter.getItemCount() == 0, mFilter);
             getActivity().supportInvalidateOptionsMenu();

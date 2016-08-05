@@ -23,8 +23,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.CursorWrapper;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
@@ -40,7 +43,7 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Data repository for {@link Favorite}
  */
-public class FavoriteManager {
+public class FavoriteManager implements LocalItemManager<Favorite> {
 
     public static final int LOADER = 0;
     /**
@@ -56,6 +59,58 @@ public class FavoriteManager {
     private static final String URI_PATH_REMOVE = "remove";
     private static final String URI_PATH_CLEAR = "clear";
     private final Scheduler mIoScheduler;
+    private Cursor mCursor;
+
+    @Override
+    public int getSize() {
+        return mCursor != null ? mCursor.getCount() : 0;
+    }
+
+    @Override
+    public Favorite getItem(int position) {
+        return mCursor.moveToPosition(position) ? mCursor.getFavorite() : null;
+    }
+
+    @Override
+    public void attach(@NonNull Context context, @NonNull LoaderManager loaderManager,
+                       @NonNull Observer observer, String filter) {
+        loaderManager.restartLoader(FavoriteManager.LOADER, null,
+                new LoaderManager.LoaderCallbacks<android.database.Cursor>() {
+                    @Override
+                    public Loader<android.database.Cursor> onCreateLoader(int id, Bundle args) {
+                        if (!TextUtils.isEmpty(filter)) {
+                            return new FavoriteManager.CursorLoader(context, filter);
+                        }
+                        return new FavoriteManager.CursorLoader(context);
+                    }
+
+                    @Override
+                    public void onLoadFinished(Loader<android.database.Cursor> loader,
+                                               android.database.Cursor data) {
+                        if (data != null) {
+                            data.setNotificationUri(context.getContentResolver(),
+                                    MaterialisticProvider.URI_FAVORITE);
+                            mCursor = new Cursor(data);
+                        } else {
+                            mCursor = null;
+                        }
+                        observer.onChanged();
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<android.database.Cursor> loader) {
+                        mCursor = null;
+                        observer.onChanged();
+                    }
+                });
+    }
+
+    @Override
+    public void detach() {
+        if (mCursor != null) {
+            mCursor.close();
+        }
+    }
 
     @Inject
     public FavoriteManager(Scheduler ioScheduler) {
@@ -283,12 +338,12 @@ public class FavoriteManager {
     /**
      * A cursor wrapper to retrieve associated {@link Favorite}
      */
-    public static class Cursor extends CursorWrapper {
-        public Cursor(android.database.Cursor cursor) {
+    static class Cursor extends CursorWrapper {
+        Cursor(android.database.Cursor cursor) {
             super(cursor);
         }
 
-        public Favorite getFavorite() {
+        Favorite getFavorite() {
             final String itemId = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID));
             final String url = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL));
             final String title = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE));
@@ -300,12 +355,12 @@ public class FavoriteManager {
     /**
      * A {@link android.support.v4.content.CursorLoader} to query {@link Favorite}
      */
-    public static class CursorLoader extends android.support.v4.content.CursorLoader {
+    static class CursorLoader extends android.support.v4.content.CursorLoader {
         /**
          * Constructs a cursor loader to query all {@link Favorite}
          * @param context    an instance of {@link android.content.Context}
          */
-        public CursorLoader(Context context) {
+        CursorLoader(Context context) {
             super(context, MaterialisticProvider.URI_FAVORITE, null, null, null, null);
         }
 
@@ -315,7 +370,7 @@ public class FavoriteManager {
          * @param context   an instance of {@link android.content.Context}
          * @param query     query to filter
          */
-        public CursorLoader(Context context, String query) {
+        CursorLoader(Context context, String query) {
             super(context, MaterialisticProvider.URI_FAVORITE, null,
                     MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?",
                     new String[]{"%" + query + "%"}, null);

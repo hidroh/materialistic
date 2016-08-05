@@ -40,7 +40,6 @@ import io.github.hidroh.materialistic.MenuTintDelegate;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.Favorite;
-import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
 
 public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
@@ -104,7 +103,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     };
     private ActionModeDelegate mActionModeDelegate;
     private MenuTintDelegate mMenuTintDelegate;
-    private FavoriteManager.Cursor mCursor;
     private ArrayMap<Integer, String> mSelected = new ArrayMap<>();
     private int mPendingAdd = -1;
 
@@ -147,10 +145,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mActionModeDelegate = null;
-        if (mCursor != null) {
-            mCursor.close();
-            mCursor = null;
-        }
     }
 
     @Override
@@ -160,7 +154,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return mCursor == null ? 0 : mCursor.getCount();
+        return mFavoriteManager.getSize();
     }
 
     @Override
@@ -193,10 +187,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
     @Override
     protected Favorite getItem(int position) {
-        if (mCursor == null || !mCursor.moveToPosition(position)) {
-            return null;
-        }
-        return mCursor.getFavorite();
+        return mFavoriteManager.getItem(position);
     }
 
     @Override
@@ -209,9 +200,8 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         return ItemManager.MODE_CACHE;
     }
 
-    public void setCursor(FavoriteManager.Cursor cursor) {
-        mCursor = cursor;
-        if (cursor == null) {
+    public void notifyChanged() {
+        if (getItemCount() == 0) {
             notifyDataSetChanged();
             return;
         }
