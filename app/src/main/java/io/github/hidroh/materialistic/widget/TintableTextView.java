@@ -22,15 +22,15 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
-public class TintableTextView extends TextView {
+public class TintableTextView extends AppCompatTextView {
 
-    private final int mTextColor;
+    private int mTextColor;
 
     public TintableTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -52,6 +52,14 @@ public class TintableTextView extends TextView {
     @Override
     public void setCompoundDrawablesWithIntrinsicBounds(Drawable left, Drawable top, Drawable right, Drawable bottom) {
         super.setCompoundDrawablesWithIntrinsicBounds(tint(left), tint(top), tint(right), tint(bottom));
+    }
+
+    @Override
+    public void setTextColor(int color) {
+        mTextColor = color;
+        super.setTextColor(color);
+        Drawable[] drawables = getCompoundDrawables();
+        setCompoundDrawablesWithIntrinsicBounds(drawables[0], drawables[1], drawables[2], drawables[3]);
     }
 
     private int getTextColor(Context context, AttributeSet attrs) {

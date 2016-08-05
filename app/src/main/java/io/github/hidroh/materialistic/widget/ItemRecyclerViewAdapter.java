@@ -23,7 +23,6 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -291,7 +290,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         TextView mPostedTextView;
         TextView mContentTextView;
         TextView mReadMoreTextView;
-        AppCompatButton mCommentButton;
+        TextView mCommentButton;
         View mMoreButton;
         View mContentView;
 
@@ -301,9 +300,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
             mContentTextView = (TextView) itemView.findViewById(R.id.text);
             mReadMoreTextView = (TextView) itemView.findViewById(R.id.more);
-            mCommentButton = (AppCompatButton) itemView.findViewById(R.id.comment);
+            mCommentButton = (TextView) itemView.findViewById(R.id.comment);
+            mCommentButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             mCommentButton.setVisibility(View.GONE);
-            mCommentButton.setSupportAllCaps(false);
             mMoreButton = itemView.findViewById(R.id.button_more);
             mContentView = itemView.findViewById(R.id.content);
         }

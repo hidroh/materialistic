@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
         android:id="@id/posted"
         android:text="@string/loading_text"
@@ -41,8 +42,15 @@
         android:layout_alignBottom="@id/comment"
         style="@style/textSubtitleStyle.Italic" />
 
-    <include layout="@layout/button_comment"
+    <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/comment"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        app:iconStart="@drawable/ic_comment_white_24dp"
+        app:textAllCaps="false"
+        android:drawablePadding="@dimen/padding_text"
+        android:gravity="start|center_vertical"
+        android:minWidth="@null"
+        android:minHeight="@null"
         android:layout_toLeftOf="@+id/button_more"
         android:layout_below="@id/title"
         android:layout_alignWithParentIfMissing="true"

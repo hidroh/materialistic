@@ -79,6 +79,10 @@ public class AppUtils {
     private static final String ABBR_MINUTE = "m";
     private static final String PLAY_STORE_URL = "market://details?id=" + BuildConfig.APPLICATION_ID;
     private static final String FORMAT_HTML_COLOR = "%06X";
+    public static final int HOT_THRESHOLD_HIGH = 300;
+    public static final int HOT_THRESHOLD_NORMAL = 100;
+    static final int HOT_THRESHOLD_LOW = 10;
+    public static final int HOT_FACTOR = 3;
 
     static void openWebUrlExternal(Context context, String url, CustomTabsSession session) {
         if (!hasConnection(context)) {

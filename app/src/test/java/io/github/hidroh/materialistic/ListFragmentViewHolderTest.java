@@ -16,7 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -164,7 +163,7 @@ public class ListFragmentViewHolderTest {
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat((TextView) holder.itemView.findViewById(R.id.comment))
                 .isVisible()
-                .hasTextString(R.string.comments);
+                .isEmpty();
         assertViewed();
     }
 
@@ -237,7 +236,7 @@ public class ListFragmentViewHolderTest {
             }
         });
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat((Button) holder.itemView.findViewById(R.id.comment)).hasTextString("2 Comments*");
+        assertThat((TextView) holder.itemView.findViewById(R.id.comment)).hasTextString("2*");
     }
 
     @Test
