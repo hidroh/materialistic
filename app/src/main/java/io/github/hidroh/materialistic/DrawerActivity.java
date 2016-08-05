@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.preference.PreferenceManager;
@@ -135,6 +136,25 @@ public abstract class DrawerActivity extends InjectableActivity {
     private void setUpDrawer() {
         mDrawerAccount.setOnClickListener(v -> showLogin());
         mDrawerLogout.setOnClickListener(v -> confirmLogout());
+        View moreContainer = findViewById(R.id.drawer_more_container);
+        TextView moreToggle = (TextView) findViewById(R.id.drawer_more);
+        moreToggle.setOnClickListener(v -> {
+            if (moreContainer.getVisibility() == View.VISIBLE) {
+                moreToggle.setTextColor(ContextCompat.getColor(DrawerActivity.this,
+                        AppUtils.getThemedResId(DrawerActivity.this,
+                                android.R.attr.textColorTertiary)));
+                moreToggle.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_expand_more_white_24dp, 0, 0, 0);
+                moreContainer.setVisibility(View.GONE);
+            } else {
+                moreToggle.setTextColor(ContextCompat.getColor(DrawerActivity.this,
+                        AppUtils.getThemedResId(DrawerActivity.this,
+                                android.R.attr.textColorSecondary)));
+                moreToggle.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_expand_less_white_24dp, 0, 0, 0);
+                moreContainer.setVisibility(View.VISIBLE);
+            }
+        });
         findViewById(R.id.drawer_list).setOnClickListener(v -> navigate(ListActivity.class));
         findViewById(R.id.drawer_best).setOnClickListener(v -> navigate(BestActivity.class));
         findViewById(R.id.drawer_popular).setOnClickListener(v -> navigate(PopularActivity.class));

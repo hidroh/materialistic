@@ -14,14 +14,17 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:clickable="true"
-    tools:context="io.github.hidroh.materialistic.DrawerActivity">
+    tools:context="io.github.hidroh.materialistic.DrawerActivity"
+    tools:targetApi="honeycomb">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -78,28 +81,44 @@
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_new"
-        android:text="@string/title_activity_new"
-        app:iconStart="@drawable/ic_new_releases_white_24dp"
+        android:id="@id/drawer_more"
+        android:text="@string/more_sections"
+        app:iconStart="@drawable/ic_expand_more_white_24dp"
         style="@style/DrawerTextStyle"/>
 
-    <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_show"
-        android:text="@string/title_activity_show"
-        app:iconStart="@drawable/ic_done_white_24dp"
-        style="@style/DrawerTextStyle"/>
+    <LinearLayout
+        android:id="@+id/drawer_more_container"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_ask"
-        android:text="@string/title_activity_ask"
-        app:iconStart="@drawable/ic_live_help_white_24dp"
-        style="@style/DrawerTextStyle"/>
+        <io.github.hidroh.materialistic.widget.TintableTextView
+            android:id="@id/drawer_new"
+            android:text="@string/title_activity_new"
+            app:iconStart="@drawable/ic_new_releases_white_24dp"
+            style="@style/DrawerTextStyle"/>
 
-    <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_job"
-        android:text="@string/title_activity_jobs"
-        app:iconStart="@drawable/ic_work_white_24dp"
-        style="@style/DrawerTextStyle"/>
+        <io.github.hidroh.materialistic.widget.TintableTextView
+            android:id="@id/drawer_show"
+            android:text="@string/title_activity_show"
+            app:iconStart="@drawable/ic_done_white_24dp"
+            style="@style/DrawerTextStyle"/>
+
+        <io.github.hidroh.materialistic.widget.TintableTextView
+            android:id="@id/drawer_ask"
+            android:text="@string/title_activity_ask"
+            app:iconStart="@drawable/ic_live_help_white_24dp"
+            style="@style/DrawerTextStyle"/>
+
+        <io.github.hidroh.materialistic.widget.TintableTextView
+            android:id="@id/drawer_job"
+            android:text="@string/title_activity_jobs"
+            app:iconStart="@drawable/ic_work_white_24dp"
+            style="@style/DrawerTextStyle"/>
+
+    </LinearLayout>
 
     <View
         android:background="@color/blackT12"
