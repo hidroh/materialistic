@@ -52,6 +52,7 @@
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/edittext_title"
                 android:hint="@string/title_hint"
+                android:freezesText="true"
                 android:inputType="textCapSentences"
                 android:maxLines="1"
                 android:layout_width="match_parent"
@@ -70,6 +71,7 @@
                 android:scrollbarStyle="outsideOverlay"
                 android:hint="@string/submit_content_hint"
                 android:inputType="textCapSentences|textMultiLine"
+                android:freezesText="true"
                 android:gravity="top"
                 android:minLines="3"
                 android:layout_width="match_parent"

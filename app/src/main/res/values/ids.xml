@@ -92,6 +92,9 @@
     <item type="id" name="menu_article" />
     <item type="id" name="menu_zoom_in" />
     <item type="id" name="menu_zoom_out" />
+    <item type="id" name="menu_save_draft" />
+    <item type="id" name="menu_discard_draft" />
+    <item type="id" name="menu_clear_drafts" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />

@@ -33,6 +33,7 @@ import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +41,8 @@ import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.preference.ThemePreference;
 
 public class Preferences {
+    private static final String DRAFT_PREFIX = "draft_%1$s";
+    private static final String PREFERENCES_DRAFT = "_drafts";
     @VisibleForTesting static Boolean sReleaseNotesSeen = null;
 
     public enum StoryViewMode {
@@ -216,6 +219,33 @@ public class Preferences {
         return get(context, R.string.pref_ad_block, true);
     }
 
+    static void saveDraft(Context context, String parentId, String draft) {
+        context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
+                .edit()
+                .putString(String.format(Locale.US, DRAFT_PREFIX, parentId), draft)
+                .apply();
+    }
+
+    static String getDraft(Context context, String parentId) {
+        return context
+                .getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
+                .getString(String.format(Locale.US, DRAFT_PREFIX, parentId), null);
+    }
+
+    static void deleteDraft(Context context, String parentId) {
+        context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
+                .edit()
+                .remove(String.format(Locale.US, DRAFT_PREFIX, parentId))
+                .apply();
+    }
+
+    static void clearDrafts(Context context) {
+        context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
+                .edit()
+                .clear()
+                .apply();
+    }
+
     static boolean isReleaseNotesSeen(Context context) {
         if (sReleaseNotesSeen == null) {
             PackageInfo info = null;
@@ -264,9 +294,9 @@ public class Preferences {
             return defaultValue;
         }
     }
+
     private static String get(Context context, @StringRes int key, String defaultValue) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(key), defaultValue);
+        return get(context, context.getString(key), defaultValue);
     }
 
     private static String get(Context context, @StringRes int key, @StringRes int defaultValue) {
@@ -274,11 +304,9 @@ public class Preferences {
                 .getString(context.getString(key), context.getString(defaultValue));
     }
 
-    private static void set(Context context, @StringRes int key, boolean value) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putBoolean(context.getString(key), value)
-                .apply();
+    private static String get(Context context, String key, String defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(key, defaultValue);
     }
 
     private static void setInt(Context context, @StringRes int key, int value) {
@@ -289,9 +317,13 @@ public class Preferences {
     }
 
     private static void set(Context context, @StringRes int key, String value) {
+        set(context, context.getString(key), value);
+    }
+
+    private static void set(Context context, String key, String value) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putString(context.getString(key), value)
+                .putString(key, value)
                 .apply();
     }
 
