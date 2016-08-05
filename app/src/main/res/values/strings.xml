@@ -115,8 +115,7 @@
     <string name="clear_search_history_confirm">Clear search history?</string>
     <string name="undo">Undo</string>
     <plurals name="score">
-        <item quantity="one">%1$s pt</item>
-        <item quantity="other">%1$s pts</item>
+        <item quantity="other">%1$sp</item>
     </plurals>
     <string name="comments">Comments</string>
     <plurals name="comments_count">

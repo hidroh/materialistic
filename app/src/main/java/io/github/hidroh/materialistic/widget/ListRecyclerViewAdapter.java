@@ -63,6 +63,7 @@ public abstract class ListRecyclerViewAdapter
     private int mCardElevation;
     private int mCardRadius;
     private boolean mCardViewEnabled = true;
+    private int mHotThreshold = Integer.MAX_VALUE;
 
     public ListRecyclerViewAdapter() {
         setHasStableIds(true);
@@ -109,7 +110,7 @@ public abstract class ListRecyclerViewAdapter
         }
         // TODO naive launch priority for now
         mCustomTabsDelegate.mayLaunchUrl(Uri.parse(item.getUrl()), null, null);
-        holder.mStoryView.setStory(item);
+        holder.mStoryView.setStory(item, mHotThreshold);
         holder.mStoryView.setChecked(isSelected(item.getId()));
         holder.itemView.setOnClickListener(v -> handleItemClick(item, holder));
         holder.mStoryView.setOnCommentClickListener(v -> openItem(item));
@@ -134,6 +135,10 @@ public abstract class ListRecyclerViewAdapter
         mCustomTabsDelegate = customTabsDelegate;
     }
 
+    public void setHotThresHold(int hotThresHold) {
+        mHotThreshold = hotThresHold;
+    }
+
     public Bundle saveState() {
         Bundle savedState = new Bundle();
         savedState.putInt(STATE_LAST_SELECTION_POSITION, mLastSelectedPosition);
@@ -149,7 +154,7 @@ public abstract class ListRecyclerViewAdapter
         mLastSelectedPosition = savedState.getInt(STATE_LAST_SELECTION_POSITION);
     }
 
-    public final boolean isAttached() {
+    final boolean isAttached() {
         return mContext != null;
     }
 

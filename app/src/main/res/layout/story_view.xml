@@ -68,7 +68,7 @@
 
         </ViewSwitcher>
 
-        <TextView
+        <io.github.hidroh.materialistic.widget.TintableTextView
             android:id="@id/score"
             android:text="128 pts"
             style="@style/textSubtitleStyle"

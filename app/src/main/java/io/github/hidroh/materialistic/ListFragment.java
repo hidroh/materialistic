@@ -122,6 +122,19 @@ public class ListFragment extends BaseListFragment {
         } else {
             mItemManager = mHnItemManager;
         }
+        mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_NORMAL);
+        if (mItemManager == mHnItemManager && mFilter != null) {
+            switch (mFilter) {
+                case ItemManager.BEST_FETCH_MODE:
+                    mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
+                    break;
+                case ItemManager.NEW_FETCH_MODE:
+                    mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_LOW);
+                    break;
+            }
+        } else if (mItemManager == mPopularItemManager) {
+            mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
+        }
         if (mAdapter.getItems() != null) {
             mAdapter.notifyDataSetChanged();
         } else {

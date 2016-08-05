@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
+import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
@@ -78,6 +79,7 @@ public class WidgetService extends RemoteViewsService {
         private final ItemManager mItemManager;
         private final String mFilter;
         private final boolean mLightTheme;
+        private final int mHotThreshold;
         private Item[] mItems;
 
         ListRemoteViewsFactory(Context context, ItemManager itemManager, String section, boolean lightTheme) {
@@ -87,11 +89,14 @@ public class WidgetService extends RemoteViewsService {
             if (TextUtils.equals(section,
                     context.getString(R.string.pref_widget_section_value_best))) {
                 mFilter = ItemManager.BEST_FETCH_MODE;
+                mHotThreshold = AppUtils.HOT_THRESHOLD_HIGH;
             } else if (TextUtils.equals(section,
                     context.getString(R.string.pref_widget_section_value_top))) {
                 mFilter = ItemManager.TOP_FETCH_MODE;
+                mHotThreshold = AppUtils.HOT_THRESHOLD_NORMAL;
             } else {
                 mFilter = section;
+                mHotThreshold = AppUtils.HOT_THRESHOLD_NORMAL;
             }
         }
 
@@ -133,9 +138,9 @@ public class WidgetService extends RemoteViewsService {
             }
             remoteViews.setTextViewText(R.id.title, item.getDisplayedTitle());
             remoteViews.setTextViewText(R.id.score, new SpannableStringBuilder()
-                    .append(getSpan(item.getScore(), SCORE))
+                    .append(getSpan(item.getScore(), SCORE, mHotThreshold * AppUtils.HOT_FACTOR))
                     .append(SUBTITLE_SEPARATOR)
-                    .append(getSpan(item.getKidCount(), COMMENT)));
+                    .append(getSpan(item.getKidCount(), COMMENT, mHotThreshold)));
             remoteViews.setOnClickFillInIntent(R.id.item_view, new Intent().setData(
                     new Uri.Builder()
                             .scheme(BuildConfig.APPLICATION_ID)
@@ -174,10 +179,10 @@ public class WidgetService extends RemoteViewsService {
             return item != null && item.getLocalRevision() > 0;
         }
 
-        private SpannableString getSpan(int value, String format) {
+        private SpannableString getSpan(int value, String format, int hotThreshold) {
             String text = String.format(Locale.US, format, value);
             SpannableString spannable = new SpannableString(text);
-            if (value >= 100) {
+            if (value >= hotThreshold) {
                 spannable.setSpan(new ForegroundColorSpan(
                                 ContextCompat.getColor(mContext, R.color.orange500)),
                         0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
