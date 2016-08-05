@@ -86,7 +86,6 @@
     <string name="title_activity_search">搜索</string>
     <string name="clear_search_history">清空搜索历史</string>
     <string name="clear_search_history_confirm">确定清空搜索历史吗？</string>
-    <string name="parent"><![CDATA[<a href="#">查看引用评论</a>]]></string>
     <string name="undo">取消</string>
     <plurals name="score">
         <item quantity="other">%1$s 人气</item>

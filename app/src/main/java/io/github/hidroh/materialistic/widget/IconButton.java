@@ -34,8 +34,6 @@ public class IconButton extends ImageButton {
             new int[]{-android.R.attr.state_enabled}
     };
     private ColorStateList mColorStateList;
-    private final int mColorEnabled;
-    private final int mColorDisabled;
     private final boolean mTinted;
 
     public IconButton(Context context) {
@@ -50,12 +48,12 @@ public class IconButton extends ImageButton {
         super(context, attrs, defStyleAttr);
         setBackgroundResource(AppUtils.getThemedResId(context, R.attr.selectableItemBackgroundBorderless));
         TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.IconButton, 0, 0);
-        mColorDisabled = ContextCompat.getColor(context,
+        int colorDisabled = ContextCompat.getColor(context,
                 AppUtils.getThemedResId(context, android.R.attr.textColorSecondary));
         int colorDefault = ContextCompat.getColor(context,
                 AppUtils.getThemedResId(context, android.R.attr.textColorPrimary));
-        mColorEnabled = ta.getColor(R.styleable.IconButton_tint, colorDefault);
-        mColorStateList = new ColorStateList(STATES, new int[]{mColorEnabled, mColorDisabled});
+        int colorEnabled = ta.getColor(R.styleable.IconButton_tint, colorDefault);
+        mColorStateList = new ColorStateList(STATES, new int[]{colorEnabled, colorDisabled});
         mTinted = ta.hasValue(R.styleable.IconButton_tint);
         if (getSuggestedMinimumWidth() == 0) {
             setMinimumWidth(context.getResources().getDimensionPixelSize(R.dimen.icon_button_width));
@@ -73,16 +71,6 @@ public class IconButton extends ImageButton {
     @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(tint(drawable));
-    }
-
-    public void tint(int color) {
-        mColorStateList = new ColorStateList(STATES, new int[]{color, mColorDisabled});
-        setImageDrawable(getDrawable());
-    }
-
-    public void clearTint() {
-        mColorStateList = new ColorStateList(STATES, new int[]{mColorEnabled, mColorDisabled});
-        setImageDrawable(getDrawable());
     }
 
     private Drawable tint(Drawable drawable) {

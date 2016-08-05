@@ -63,18 +63,6 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical" />
 
-                <io.github.hidroh.materialistic.widget.IconButton
-                    android:id="@id/parent"
-                    android:visibility="invisible"
-                    tools:visibility="visible"
-                    android:src="@drawable/ic_arrow_upward_white_24dp"
-                    android:contentDescription="@string/parent"
-                    app:tint="?android:attr/textColorSecondary"
-                    android:paddingLeft="@dimen/padding"
-                    android:paddingRight="@dimen/padding"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp" />
-
                 <include layout="@layout/button_more"
                     android:id="@+id/button_more"
                     android:layout_width="36dp"

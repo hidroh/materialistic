@@ -126,7 +126,6 @@ public class HackerNewsItemTest {
         assertEquals("rawType", item.getRawType());
         assertEquals("rawUrl", item.getRawUrl());
         assertEquals("by", item.getBy());
-        assertEquals("1", item.getParent());
         assertEquals(1234l, item.getTime());
         assertEquals(1, item.getDescendants());
         assertEquals(1, item.getLastKidCount());

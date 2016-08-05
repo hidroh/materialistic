@@ -22,16 +22,18 @@ import android.widget.TextView;
 import io.github.hidroh.materialistic.R;
 
 public class ToggleItemViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
-    final View mToggleButton;
-    final TextView mToggle;
-    final View mLevel;
-    final IconButton mParent;
+    View mToggleButton;
+    TextView mToggle;
+    View mLevel;
 
     ToggleItemViewHolder(View itemView) {
         super(itemView);
         mToggleButton = itemView.findViewById(R.id.button_toggle);
         mToggle = (TextView) itemView.findViewById(R.id.toggle);
         mLevel = itemView.findViewById(R.id.level);
-        mParent = (IconButton) itemView.findViewById(R.id.parent);
+    }
+
+    ToggleItemViewHolder(View itemView, Object payload) {
+        super(itemView, payload);
     }
 }

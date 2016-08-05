@@ -113,7 +113,6 @@
     <string name="title_activity_search">Search HN</string>
     <string name="clear_search_history">Clear search history</string>
     <string name="clear_search_history_confirm">Clear search history?</string>
-    <string name="parent"><![CDATA[<a href="#">parent</a>]]></string>
     <string name="undo">Undo</string>
     <plurals name="score">
         <item quantity="one">%1$s pt</item>
@@ -302,5 +301,6 @@
     <string name="hint_drag">Drag to reposition</string>
     <string name="hint_nav_short">Swipe \u2191 \u2193 \u2192 \u2190 to navigate\nLong press to reposition</string>
     <string name="konami">You got the Konami code! Give me 5 stars?</string>
+    <string name="end_of_thread">End of thread</string>
 
 </resources>
