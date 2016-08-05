@@ -241,7 +241,7 @@
             <a href="#">Hacker News formatting guidelines</a>
         ]]>
     </string>
-    <string name="confirm_discard">Discard draft?</string>
+    <string name="confirm_save_draft">Save draft?</string>
     <string name="create_account">Create account</string>
     <string name="comment_failed">Failed to send comment</string>
     <string name="comment_successful">Comment added. Please refresh to see.</string>
@@ -301,5 +301,8 @@
     <string name="hint_nav_short">Swipe \u2191 \u2193 \u2192 \u2190 to navigate\nLong press to reposition</string>
     <string name="konami">You got the Konami code! Give me 5 stars?</string>
     <string name="end_of_thread">End of thread</string>
+    <string name="save_draft">Save draft</string>
+    <string name="discard_draft">Discard draft</string>
+    <string name="clear_drafts">Clear all drafts</string>
 
 </resources>

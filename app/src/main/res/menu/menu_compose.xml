@@ -30,4 +30,15 @@
         android:icon="@drawable/ic_send_white_24dp"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
+
+    <item
+        android:id="@id/menu_save_draft"
+        android:title="@string/save_draft"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@id/menu_discard_draft"
+        android:title="@string/discard_draft"
+        app:showAsAction="never" />
+
 </menu>

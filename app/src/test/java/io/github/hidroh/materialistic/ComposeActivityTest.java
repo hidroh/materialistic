@@ -32,6 +32,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -86,13 +87,25 @@ public class ComposeActivityTest {
     }
 
     @Test
-    public void testConfirmExit() {
+    public void testExitSaveDraft() {
         ((EditText) activity.findViewById(R.id.edittext_body)).setText("Reply");
         shadowOf(activity).clickMenuItem(android.R.id.home);
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull(alertDialog);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertThat(activity).isFinishing();
+        assertThat(Preferences.getDraft(activity, "1")).contains("Reply");
+    }
+
+    @Test
+    public void testExitDiscardDraft() {
+        ((EditText) activity.findViewById(R.id.edittext_body)).setText("Reply");
+        shadowOf(activity).clickMenuItem(android.R.id.home);
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
+        assertThat(activity).isFinishing();
+        assertThat(Preferences.getDraft(activity, "1")).isNullOrEmpty();
     }
 
     @Test
@@ -110,6 +123,14 @@ public class ComposeActivityTest {
                 .hasTextString("> Paragraph 1\n\n> Paragraph 2\n\nReply");
     }
 
+    @Test
+    public void testSaveDiscardDraft() {
+        ((EditText) activity.findViewById(R.id.edittext_body)).setText("Reply");
+        shadowOf(activity).clickMenuItem(R.id.menu_save_draft);
+        assertThat(Preferences.getDraft(activity, "1")).contains("Reply");
+        shadowOf(activity).clickMenuItem(R.id.menu_discard_draft);
+        assertThat(Preferences.getDraft(activity, "1")).isNullOrEmpty();
+    }
     @Test
     public void testClickEmptyFocusEditText() {
         View editText = activity.findViewById(R.id.edittext_body);
@@ -147,8 +168,10 @@ public class ComposeActivityTest {
     @Test
     public void testSendSuccessful() {
         doSend();
+        assertThat(Preferences.getDraft(activity, "1")).isNotEmpty();
         replyCallback.getValue().onDone(true);
         assertThat(activity).isFinishing();
+        assertThat(Preferences.getDraft(activity, "1")).isNullOrEmpty();
     }
 
     @Test
@@ -156,9 +179,13 @@ public class ComposeActivityTest {
         doSend();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_send).isEnabled());
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_save_draft).isEnabled());
+        assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_discard_draft).isEnabled());
         replyCallback.getValue().onError(new IOException());
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_send).isEnabled());
         assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_save_draft).isEnabled());
+        assertTrue(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_discard_draft).isEnabled());
         assertThat(activity).isNotFinishing();
         assertEquals(activity.getString(R.string.comment_failed), ShadowToast.getTextOfLatestToast());
     }
@@ -167,10 +194,6 @@ public class ComposeActivityTest {
     public void testDelayedSuccessfulResponse() {
         doSend();
         shadowOf(activity).clickMenuItem(android.R.id.home);
-        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-        assertNotNull(alertDialog);
-        assertEquals(activity.getString(R.string.confirm_no_waiting), shadowOf(alertDialog).getMessage());
-        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertThat(activity).isFinishing();
         replyCallback.getValue().onDone(true);
         assertEquals(activity.getString(R.string.comment_successful), ShadowToast.getTextOfLatestToast());
@@ -180,8 +203,6 @@ public class ComposeActivityTest {
     public void testDelayedFailedResponse() {
         doSend();
         shadowOf(activity).clickMenuItem(android.R.id.home);
-        ShadowAlertDialog.getLatestAlertDialog()
-                .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         replyCallback.getValue().onDone(false);
         assertNull(shadowOf(activity).getNextStartedActivity());
     }
@@ -190,8 +211,6 @@ public class ComposeActivityTest {
     public void testDelayedError() {
         doSend();
         shadowOf(activity).clickMenuItem(android.R.id.home);
-        ShadowAlertDialog.getLatestAlertDialog()
-                .getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         replyCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.comment_failed), ShadowToast.getTextOfLatestToast());
     }

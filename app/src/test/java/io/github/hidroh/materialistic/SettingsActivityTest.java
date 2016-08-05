@@ -25,6 +25,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSearchRecentSuggestions.class, ShadowSupportPreferenceManager.class})
@@ -67,6 +68,13 @@ public class SettingsActivityTest {
         assertNotNull(alertDialog);
         alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertTrue(Preferences.colorCodeEnabled(activity));
+    }
+
+    @Test
+    public void testClearDrafts() {
+        Preferences.saveDraft(activity, "1", "draft");
+        shadowOf(activity).clickMenuItem(R.id.menu_clear_drafts);
+        assertThat(Preferences.getDraft(activity, "1")).isNullOrEmpty();
     }
 
     @Test

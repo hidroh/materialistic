@@ -102,6 +102,7 @@
                 android:id="@+id/edittext_body"
                 android:hint="@string/comment_hint"
                 android:inputType="textCapSentences|textMultiLine"
+                android:freezesText="true"
                 android:gravity="top"
                 android:background="@null"
                 android:paddingTop="@dimen/padding"

@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -63,6 +64,9 @@ public class ComposeActivity extends InjectableActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
         mEditText = (EditText) findViewById(R.id.edittext_body);
+        if (savedInstanceState == null) {
+            mEditText.setText(Preferences.getDraft(this, mParentId));
+        }
         findViewById(R.id.empty).setOnClickListener(v -> mEditText.requestFocus());
         findViewById(R.id.empty).setOnLongClickListener(v -> {
             mEditText.requestFocus();
@@ -110,6 +114,8 @@ public class ComposeActivity extends InjectableActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.menu_quote).setVisible(!mSending && !TextUtils.isEmpty(mParentText));
         menu.findItem(R.id.menu_send).setEnabled(!mSending);
+        menu.findItem(R.id.menu_save_draft).setEnabled(!mSending);
+        menu.findItem(R.id.menu_discard_draft).setEnabled(!mSending);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -131,29 +137,42 @@ public class ComposeActivity extends InjectableActivity {
             onBackPressed();
             return true;
         }
+        if (item.getItemId() == R.id.menu_save_draft) {
+            Preferences.saveDraft(this, mParentId, mEditText.getText().toString());
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_discard_draft) {
+            Preferences.deleteDraft(this, mParentId);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        if (mEditText.length() == 0) {
+        if (mEditText.length() == 0 || mSending ||
+                TextUtils.equals(Preferences.getDraft(this, mParentId), mEditText.getText().toString())) {
             super.onBackPressed();
             return;
         }
         mAlertDialogBuilder
                 .init(this)
-                .setMessage(mSending ? R.string.confirm_no_waiting : R.string.confirm_discard)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                .setMessage(R.string.confirm_save_draft)
+                .setNegativeButton(android.R.string.no, (dialog, which) ->
                         ComposeActivity.super.onBackPressed())
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        Preferences.saveDraft(this, mParentId, mEditText.getText().toString());
+                        ComposeActivity.super.onBackPressed();
+                })
                 .show();
     }
 
     private void send() {
+        String content = mEditText.getText().toString();
+        Preferences.saveDraft(this, mParentId, content);
         toggleControls(true);
         Toast.makeText(this, R.string.sending, Toast.LENGTH_SHORT).show();
-        mUserServices.reply(this, mParentId, mEditText.getText().toString(),
-                new ComposeCallback(this));
+        mUserServices.reply(this, mParentId, content, new ComposeCallback(this, mParentId));
     }
 
     private void onSent(Boolean successful) {
@@ -193,15 +212,20 @@ public class ComposeActivity extends InjectableActivity {
         supportInvalidateOptionsMenu();
     }
 
-    private static class ComposeCallback extends UserServices.Callback {
+    static class ComposeCallback extends UserServices.Callback {
         private final WeakReference<ComposeActivity> mComposeActivity;
+        private final Context mAppContext;
+        private final String mParentId;
 
-        public ComposeCallback(ComposeActivity composeActivity) {
+        ComposeCallback(ComposeActivity composeActivity, String parentId) {
             mComposeActivity = new WeakReference<>(composeActivity);
+            mAppContext = composeActivity.getApplicationContext();
+            mParentId = parentId;
         }
 
         @Override
         public void onDone(boolean successful) {
+            Preferences.deleteDraft(mAppContext, mParentId);
             if (mComposeActivity.get() != null && !mComposeActivity.get().isActivityDestroyed()) {
                 mComposeActivity.get().onSent(successful);
             }

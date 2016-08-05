@@ -61,7 +61,6 @@ public class SettingsActivity extends DrawerActivity {
                     .show();
             return true;
         }
-
         if (item.getItemId() == R.id.menu_reset) {
             mAlertDialogBuilder
                     .init(this)
@@ -74,7 +73,10 @@ public class SettingsActivity extends DrawerActivity {
                     .create()
                     .show();
         }
-
+        if (item.getItemId() == R.id.menu_clear_drafts) {
+            Preferences.clearDrafts(this);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

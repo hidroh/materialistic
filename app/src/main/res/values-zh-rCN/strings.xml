@@ -189,7 +189,6 @@
             <a href="#">Hacker News 排版格式指南</a>
         ]]>
     </string>
-    <string name="confirm_discard">放弃保存草稿？</string>
     <string name="create_account">创建账户</string>
     <string name="comment_failed">发送评论失败</string>
     <string name="comment_successful">评论已添加，请刷新后查看</string>
