@@ -263,7 +263,7 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testExpand() {
-        assertEquals(4, adapter.getItemCount());
+        assertEquals(5, adapter.getItemCount()); // 4 items + footer
     }
 
     @Test
@@ -305,7 +305,7 @@ public class ItemFragmentSinglePageTest {
         // collapse all
         viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
         adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(2, adapter.getItemCount());
+        assertEquals(3, adapter.getItemCount()); // 2 items + footer
 
         // expand again, should add item when binding
         viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
@@ -313,7 +313,7 @@ public class ItemFragmentSinglePageTest {
         adapter.bindViewHolder(viewHolder1, 1);
         adapter.bindViewHolder(viewHolder2, 2);
         adapter.bindViewHolder(viewHolder3, 3);
-        assertEquals(4, adapter.getItemCount());
+        assertEquals(5, adapter.getItemCount()); // 4 items + footer
     }
 
     @Test
@@ -330,7 +330,7 @@ public class ItemFragmentSinglePageTest {
         // collapse all
         callback.onSwiped(viewHolder, ItemTouchHelper.RIGHT);
         adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(2, adapter.getItemCount());
+        assertEquals(3, adapter.getItemCount()); // 2 items + footer
     }
 
     @Test
@@ -393,16 +393,16 @@ public class ItemFragmentSinglePageTest {
                 R.id.content_frame);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
-        assertEquals(1, adapter.getItemCount());
+        assertEquals(2, adapter.getItemCount()); // item + footer
         ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
         adapter.bindViewHolder(viewHolder, 0);
-        assertEquals(1, adapter.getItemCount()); // should not add kid to adapter
+        assertEquals(2, adapter.getItemCount()); // should not add kid to adapter
     }
 
     @Test
     public void testSavedState() {
         shadowOf(activity).recreate();
-        assertEquals(4, adapter.getItemCount());
+        assertEquals(5, adapter.getItemCount());
     }
 
     @Test

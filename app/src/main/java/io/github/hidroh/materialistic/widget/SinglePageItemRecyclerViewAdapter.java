@@ -45,6 +45,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 public class SinglePageItemRecyclerViewAdapter
         extends ItemRecyclerViewAdapter<ToggleItemViewHolder> {
+    private static final int VIEW_TYPE_FOOTER = -1;
     private final Object TOGGLE = new Object();
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -87,7 +88,8 @@ public class SinglePageItemRecyclerViewAdapter
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                if (getItem(viewHolder.getAdapterPosition()).getKidCount() == 0) {
+                Item item = getItem(viewHolder.getAdapterPosition());
+                if (item == null || item.getKidCount() == 0) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
@@ -97,7 +99,10 @@ public class SinglePageItemRecyclerViewAdapter
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 notifyItemChanged(position);
-                toggleKids(getItem(position));
+                Item item = getItem(position);
+                if (item != null) {
+                    toggleKids(item);
+                }
             }
 
             @Override
@@ -128,6 +133,9 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public ToggleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_FOOTER) {
+            return new ToggleItemViewHolder(mLayoutInflater.inflate(R.layout.item_footer, parent, false), null);
+        }
         final ToggleItemViewHolder holder =
                 new ToggleItemViewHolder(mLayoutInflater.inflate(R.layout.item_comment, parent, false));
         final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)
@@ -141,7 +149,9 @@ public class SinglePageItemRecyclerViewAdapter
     public void onBindViewHolder(ToggleItemViewHolder holder, int position, List<Object> payloads) {
         if (payloads.contains(TOGGLE)) {
             Item item = getItem(position);
-            bindToggle(holder, item, mState.isExpanded(item));
+            if (item != null) {
+                bindToggle(holder, item, mState.isExpanded(item));
+            }
         } else {
             super.onBindViewHolder(holder, position, payloads);
         }
@@ -149,6 +159,9 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(ToggleItemViewHolder holder, int position) {
+        if (holder.isFooter()) {
+            return;
+        }
         if (mLock != null && mLock[0] <= position && position <= mLock[1]) {
             clear(holder);
             return;
@@ -164,7 +177,11 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).getLevel() - 1;
+        Item item = getItem(position);
+        if (item == null) { // footer
+            return VIEW_TYPE_FOOTER;
+        }
+        return item.getLevel() - 1;
     }
 
     @Override
@@ -353,6 +370,7 @@ public class SinglePageItemRecyclerViewAdapter
         private Bundle expanded;
 
         public SavedState(ArrayList<Item> list) {
+            list.add(null); // footer
             addAll(0, list);
             expanded = new Bundle();
         }
@@ -416,7 +434,9 @@ public class SinglePageItemRecyclerViewAdapter
         private void addAll(int index, List<Item> items) {
             list.addAll(index, items);
             for (Item item : items) {
-                map.put(item.getLongId(), item);
+                if (item != null) {
+                    map.put(item.getLongId(), item);
+                }
             }
         }
 

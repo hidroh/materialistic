@@ -111,6 +111,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final VH holder, int position) {
         final Item item = getItem(position);
+        if (item == null) {
+            return;
+        }
         clear(holder);
         if (item.getLocalRevision() < 0) {
             load(holder.getAdapterPosition(), item);
@@ -121,7 +124,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).getLongId();
+        Item item = getItem(position);
+        return item != null ? item.getLongId() : RecyclerView.NO_ID;
     }
 
     public void setCacheMode(int cacheMode) {
@@ -147,6 +151,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     public void lockBinding(int[] lock) { }
 
+    @Nullable
     protected abstract Item getItem(int position);
 
     @CallSuper
@@ -281,15 +286,16 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        final TextView mPostedTextView;
-        final TextView mContentTextView;
-        final TextView mReadMoreTextView;
-        final AppCompatButton mCommentButton;
-        final View mMoreButton;
-        final View mContentView;
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
+        boolean mIsFooter;
+        TextView mPostedTextView;
+        TextView mContentTextView;
+        TextView mReadMoreTextView;
+        AppCompatButton mCommentButton;
+        View mMoreButton;
+        View mContentView;
 
-        public ItemViewHolder(View itemView) {
+        ItemViewHolder(View itemView) {
             super(itemView);
             mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
             mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -300,6 +306,15 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mCommentButton.setSupportAllCaps(false);
             mMoreButton = itemView.findViewById(R.id.button_more);
             mContentView = itemView.findViewById(R.id.content);
+        }
+
+        ItemViewHolder(View itemView, Object payload) {
+            super(itemView);
+            mIsFooter = true;
+        }
+
+        boolean isFooter() {
+            return mIsFooter;
         }
     }
 
