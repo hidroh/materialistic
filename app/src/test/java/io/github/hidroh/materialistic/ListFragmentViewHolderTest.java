@@ -209,8 +209,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
         itemListener.getValue().onResponse(new PopulatedStory(1));
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat((TextView) holder.itemView.findViewById(R.id.rank))
-                .hasCurrentTextColor(ContextCompat.getColor(activity, R.color.greenA700));
+        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).containsText("+1");
     }
 
     @Test

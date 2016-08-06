@@ -23,8 +23,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.SuperscriptSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
@@ -33,6 +37,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import java.util.Locale;
+
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
@@ -40,6 +46,7 @@ import io.github.hidroh.materialistic.data.WebItem;
 
 public class StoryView extends RelativeLayout implements Checkable {
     private static final int VOTE_DELAY_MILLIS = 500;
+    private static final String PROMOTED = "+%1$d";
     private final int mBackgroundColor;
     private final int mHighlightColor;
     private final int mTertiaryTextColorResId;
@@ -191,11 +198,20 @@ public class StoryView extends RelativeLayout implements Checkable {
         mTitleTextView.setTextColor(isViewed ? mSecondaryTextColorResId : mTertiaryTextColorResId);
     }
 
-    public void setPromoted(boolean isPromoted) {
+    public void setPromoted(int change) {
         if (mIsLocal) {
             return; // local item cannot change rank
         }
-        mRankTextView.setTextColor(isPromoted ? mPromotedColorResId : mTertiaryTextColorResId);
+        if (change > 0) {
+            SpannableString spannable = new SpannableString(String.format(Locale.US, PROMOTED, change));
+            spannable.setSpan(new SuperscriptSpan(), 0, spannable.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(new RelativeSizeSpan(0.6f), 0, spannable.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(new ForegroundColorSpan(mPromotedColorResId), 0, spannable.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            mRankTextView.append(spannable);
+        }
     }
 
     public void setFavorite(boolean isFavorite) {
@@ -209,12 +225,12 @@ public class StoryView extends RelativeLayout implements Checkable {
         mCommentButton.setOnClickListener(listener);
     }
 
-    public void setUpdated(@NonNull Item story, boolean updated, boolean promoted) {
+    public void setUpdated(@NonNull Item story, boolean updated, int change) {
         if (mIsLocal) {
             return; // local items do not change
         }
         mRankTextView.append(decorateUpdated(updated));
-        setPromoted(promoted);
+        setPromoted(change);
         if (story.getKidCount() > 0) {
             mCommentButton.append(decorateUpdated(story.hasNewKids()));
         }
