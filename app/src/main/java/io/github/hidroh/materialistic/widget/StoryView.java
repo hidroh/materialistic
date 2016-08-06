@@ -145,7 +145,7 @@ public class StoryView extends RelativeLayout implements Checkable {
                 boolean hot = item.getKidCount() >= hotThreshold;
                 mCommentButton.setTextColor(hot ? mHotColorResId : mAccentColorResId);
                 mCommentButton.setCompoundDrawablesWithIntrinsicBounds(hot ?
-                        R.drawable.ic_whatshot_orange500_24p : R.drawable.ic_comment_white_24dp, 0, 0, 0);
+                        R.drawable.ic_whatshot_white_24dp : R.drawable.ic_comment_white_24dp, 0, 0, 0);
                 mCommentButton.setText(String.valueOf(item.getKidCount()));
             } else {
                 mCommentButton.setTextColor(mAccentColorResId);
