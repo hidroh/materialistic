@@ -127,20 +127,21 @@ public class StoryView extends RelativeLayout implements Checkable {
                 animateVote(item.getScore());
             } else {
                 boolean hot = item.getScore() >= hotThreshold * AppUtils.HOT_FACTOR;
+                mScoreTextView.setTextColor(hot ? mHotColorResId : mSecondaryTextColorResId);
                 mRankTextView.setText(String.valueOf(item.getRank()));
                 mScoreTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, hot ?
                         R.drawable.ic_whatshot_white_18dp : 0);
-                mScoreTextView.setTextColor(hot ? mHotColorResId : mSecondaryTextColorResId);
                 mScoreTextView.setText(getContext().getResources()
                         .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             }
             if (item.getKidCount() > 0) {
                 boolean hot = item.getKidCount() >= hotThreshold;
+                mCommentButton.setTextColor(hot ? mHotColorResId : mAccentColorResId);
                 mCommentButton.setCompoundDrawablesWithIntrinsicBounds(hot ?
                         R.drawable.ic_whatshot_orange500_24p : R.drawable.ic_comment_white_24dp, 0, 0, 0);
-                mCommentButton.setTextColor(hot ? mHotColorResId : mAccentColorResId);
                 mCommentButton.setText(String.valueOf(item.getKidCount()));
             } else {
+                mCommentButton.setTextColor(mAccentColorResId);
                 mCommentButton.setText(null);
                 mCommentButton.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_comment_white_24dp, 0, 0, 0);
