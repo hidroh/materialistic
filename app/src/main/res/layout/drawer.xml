@@ -77,7 +77,7 @@
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_popular"
         android:text="@string/title_activity_popular"
-        app:iconStart="@drawable/ic_whatshot_white_24dp"
+        app:iconStart="@drawable/ic_history_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
