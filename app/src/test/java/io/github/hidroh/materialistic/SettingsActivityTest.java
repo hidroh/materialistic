@@ -1,9 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +11,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
@@ -75,53 +72,31 @@ public class SettingsActivityTest {
     }
 
     @Test
-    public void testPrefTheme() {
-        String key = activity.getString(R.string.pref_theme);
-        // trigger listener
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(key, "dark")
-                .apply();
-        assertNotNull(shadowOf(activity).getNextStartedActivity());
+    public void testAbout() {
+        activity.findViewById(R.id.drawer_about).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, AboutActivity.class);
     }
 
     @Test
-    public void testPrefFont() {
-        controller.pause();
-        String key = activity.getString(R.string.pref_text_size);
-        // trigger listener
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(key, "1")
-                .apply();
-        controller.resume();
-        assertNotNull(shadowOf(activity).getNextStartedActivity());
+    public void testReleaseNotes() {
+        activity.findViewById(R.id.drawer_release).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, ReleaseNotesActivity.class);
     }
 
     @Test
-    public void testHelp() {
-        ((SettingsFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag(SettingsFragment.class.getName()))
-                .getPreferenceScreen()
-                .findPreference(activity.getString(R.string.pref_volume_help))
-                .performClick();
-        Dialog dialog = ShadowDialog.getLatestDialog();
-        assertNotNull(dialog);
-        assertThat((TextView) dialog.findViewById(R.id.alertTitle))
-                .hasText(R.string.pref_volume_title);
+    public void testDisplay() {
+        activity.findViewById(R.id.drawer_display).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, PreferencesActivity.class);
     }
 
     @Test
-    public void testLazyLoadHelp() {
-        ((SettingsFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag(SettingsFragment.class.getName()))
-                .getPreferenceScreen()
-                .findPreference(activity.getString(R.string.pref_lazy_load_help))
-                .performClick();
-        Dialog dialog = ShadowDialog.getLatestDialog();
-        assertNotNull(dialog);
-        assertThat((TextView) dialog.findViewById(R.id.alertTitle))
-                .hasText(R.string.pref_lazy_load_title);
+    public void testOffline() {
+        activity.findViewById(R.id.drawer_offline).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, PreferencesActivity.class);
     }
 
     @After

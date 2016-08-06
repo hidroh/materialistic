@@ -114,6 +114,14 @@ public class DrawerActivityLoginTest {
                 .hasComponent(activity, LoginActivity.class);
     }
 
+    @Test
+    public void testMoreToggle() {
+        activity.findViewById(R.id.drawer_more).performClick();
+        assertThat(activity.findViewById(R.id.drawer_more_container)).isVisible();
+        activity.findViewById(R.id.drawer_more).performClick();
+        assertThat(activity.findViewById(R.id.drawer_more_container)).isNotVisible();
+    }
+
     @After
     public void tearDown() {
         controller.pause().stop().destroy();

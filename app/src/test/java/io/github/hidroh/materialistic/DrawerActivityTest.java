@@ -48,11 +48,9 @@ public class DrawerActivityTest {
                 new Object[]{R.id.drawer_ask, AskActivity.class},
                 new Object[]{R.id.drawer_job, JobsActivity.class},
                 new Object[]{R.id.drawer_settings, SettingsActivity.class},
-                new Object[]{R.id.drawer_about, AboutActivity.class},
                 new Object[]{R.id.drawer_favorite, FavoriteActivity.class},
                 new Object[]{R.id.drawer_popular, PopularActivity.class},
                 new Object[]{R.id.drawer_submit, SubmitActivity.class},
-                new Object[]{R.id.drawer_release, ReleaseNotesActivity.class},
                 new Object[]{R.id.drawer_feedback, FeedbackActivity.class}
         );
     }
@@ -60,7 +58,6 @@ public class DrawerActivityTest {
     @SuppressLint("InlinedApi")
     @Before
     public void setUp() {
-        Preferences.sReleaseNotesSeen = true;
         controller = Robolectric.buildActivity(TestListActivity.class)
                 .create()
                 .postCreate(null)
@@ -88,6 +85,5 @@ public class DrawerActivityTest {
     @After
     public void tearDown() {
         controller.pause().stop().destroy();
-        Preferences.sReleaseNotesSeen = null;
     }
 }

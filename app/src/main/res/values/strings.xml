@@ -304,5 +304,6 @@
     <string name="save_draft">Save draft</string>
     <string name="discard_draft">Discard draft</string>
     <string name="clear_drafts">Clear all drafts</string>
+    <string name="more_sections">More sections</string>
 
 </resources>

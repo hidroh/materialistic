@@ -60,6 +60,9 @@
     <item type="id" name="drawer_submit" />
     <item type="id" name="drawer_user" />
     <item type="id" name="drawer_release" />
+    <item type="id" name="drawer_display" />
+    <item type="id" name="drawer_offline" />
+    <item type="id" name="drawer_more" />
 
     <!-- menu -->
     <item type="id" name="menu_share" />

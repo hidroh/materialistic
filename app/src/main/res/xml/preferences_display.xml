@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015 Ha Duy Trung
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <io.github.hidroh.materialistic.preference.ThemePreference
+        android:key="@string/pref_theme"
+        android:title="@string/pref_theme_title"
+        android:defaultValue="light" />
+
+    <io.github.hidroh.materialistic.preference.FontSizePreference
+        android:key="@string/pref_text_size"
+        android:title="@string/pref_text_size_title"
+        android:defaultValue="0"
+        app:entries="@array/text_size_options"
+        app:entryValues="@array/pref_text_size_values" />
+
+    <io.github.hidroh.materialistic.preference.FontPreference
+        android:key="@string/pref_font"
+        android:title="@string/pref_font_title"
+        android:defaultValue=""
+        app:entries="@array/font_options"
+        app:entryValues="@array/font_values" />
+
+    <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
+        android:key="@string/pref_launch_screen"
+        android:title="@string/pref_launch_screen_title"
+        android:defaultValue="top"
+        app:entries="@array/pref_launch_screen_options"
+        app:entryValues="@array/pref_launch_screen_values" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_external"
+        android:title="@string/pref_external_title"
+        android:summary="@string/pref_external_summary"
+        android:disableDependentsState="true"
+        android:defaultValue="false" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:dependency="@string/pref_external"
+        android:key="@string/pref_ad_block"
+        android:title="@string/pref_ad_block_title"
+        android:summary="@string/pref_ad_block_summary"
+        android:defaultValue="true" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_custom_tab"
+        android:title="@string/pref_custom_tab_title"
+        android:summary="@string/pref_custom_tab_summary"
+        android:defaultValue="true" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_lazy_load"
+        android:title="@string/pref_lazy_load_title"
+        android:summary="@string/pref_lazy_load_summary"
+        android:defaultValue="true" />
+
+    <io.github.hidroh.materialistic.preference.PreferenceHelp
+        android:key="@string/pref_lazy_load_help"
+        android:title="@string/whats_this"
+        app:dialogTitle="@string/pref_lazy_load_title"
+        app:dialogLayout="@layout/help_lazy_load" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_volume"
+        android:title="@string/pref_volume_title"
+        android:summary="@string/pref_volume_summary"
+        android:defaultValue="false" />
+
+    <io.github.hidroh.materialistic.preference.PreferenceHelp
+        android:key="@string/pref_volume_help"
+        android:title="@string/whats_this"
+        app:dialogTitle="@string/pref_volume_title"
+        app:dialogLayout="@layout/help_volume" />
+
+</android.support.v7.preference.PreferenceScreen>

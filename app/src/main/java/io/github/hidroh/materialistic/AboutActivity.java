@@ -21,9 +21,10 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.TextView;
 
-public class AboutActivity extends DrawerActivity {
+public class AboutActivity extends InjectableActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,5 +48,14 @@ public class AboutActivity extends DrawerActivity {
 
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {
         AppUtils.setTextWithLinks((TextView) findViewById(textViewResId), htmlText);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

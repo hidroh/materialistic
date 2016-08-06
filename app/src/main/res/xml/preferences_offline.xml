@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015 Ha Duy Trung
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_saved_item_sync"
+        android:title="@string/pref_saved_item_sync_title"
+        android:summary="@string/pref_saved_item_sync_summary"
+        android:defaultValue="false" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_offline_notification"
+        android:title="@string/pref_offline_notification_title"
+        android:summary="@string/pref_offline_notification_summary"
+        android:dependency="@string/pref_saved_item_sync"
+        android:defaultValue="false" />
+
+    <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
+        android:key="@string/pref_offline_data"
+        android:title="@string/pref_offline_data_title"
+        android:dependency="@string/pref_saved_item_sync"
+        android:defaultValue="wifi"
+        app:entries="@array/offline_data_options"
+        app:entryValues="@array/offline_data_values" />
+
+    <android.support.v7.preference.CheckBoxPreference
+        android:key="@string/pref_offline_comments"
+        android:title="@string/pref_offline_comments_title"
+        android:dependency="@string/pref_saved_item_sync"
+        android:defaultValue="true" />
+
+    <android.support.v7.preference.CheckBoxPreference
+        android:key="@string/pref_offline_article"
+        android:title="@string/pref_offline_article_title"
+        android:dependency="@string/pref_saved_item_sync"
+        android:defaultValue="true" />
+
+    <android.support.v7.preference.CheckBoxPreference
+        android:key="@string/pref_offline_readability"
+        android:title="@string/pref_offline_readability_title"
+        android:dependency="@string/pref_saved_item_sync"
+        android:defaultValue="true" />
+
+</android.support.v7.preference.PreferenceScreen>

@@ -243,9 +243,11 @@ public class AppUtils {
                         context.getResources().getDisplayMetrics().density);
     }
 
-    static void restart(Activity activity) {
+    static void restart(Activity activity, boolean transition) {
         activity.finish();
-        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (transition) {
+            activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
         activity.startActivity(activity.getIntent());
     }
 

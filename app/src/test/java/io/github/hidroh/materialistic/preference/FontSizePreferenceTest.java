@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.preference;
 
+import android.content.Intent;
 import android.support.v7.preference.PreferenceGroupAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -17,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.PreferencesActivity;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.SettingsActivity;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowSupportPreference;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -30,8 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FontSizePreferenceTest {
     private final int selection;
     private final int styleResId;
-    private ActivityController<SettingsActivity> controller;
-    private SettingsActivity activity;
+    private ActivityController<PreferencesActivity> controller;
+    private PreferencesActivity activity;
     private View preferenceView;
 
     @ParameterizedRobolectricGradleTestRunner.Parameters
@@ -52,8 +53,11 @@ public class FontSizePreferenceTest {
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(SettingsActivity.class);
-        activity = controller.create().postCreate(null).start().resume().visible().get();
+        controller = Robolectric.buildActivity(PreferencesActivity.class);
+        activity = controller.withIntent(new Intent()
+                .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
+                .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
+                .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         RecyclerView.Adapter adapter = list.getAdapter();
         int position = ShadowSupportPreferenceManager
