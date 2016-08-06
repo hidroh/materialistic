@@ -42,7 +42,9 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -65,7 +67,8 @@ public class StoryRecyclerViewAdapter extends
         ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, Item> {
     private static final String STATE_ITEMS = "state:items";
     private static final String STATE_UPDATED = "state:updated";
-    private static final String STATE_PROMOTED = "state:promoted";
+    private static final String STATE_PROMOTED_KEY = "state:promotedKey";
+    private static final String STATE_PROMOTED_VALUE = "state:promotedValue";
     private static final String STATE_SHOW_ALL = "state:showAll";
     private static final String STATE_HIGHLIGHT_UPDATED = "state:highlightUpdated";
     private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
@@ -108,7 +111,7 @@ public class StoryRecyclerViewAdapter extends
     @Inject SessionManager mSessionManager;
     private ArrayList<Item> mItems;
     private ArrayList<Item> mUpdated = new ArrayList<>();
-    private ArrayList<String> mPromoted = new ArrayList<>();
+    private Map<String, Integer> mPromoted = new HashMap<>();
     private final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
     private final LongSparseArray<Integer> mUpdatedPositions = new LongSparseArray<>();
     private int mFavoriteRevision = 1;
@@ -179,7 +182,14 @@ public class StoryRecyclerViewAdapter extends
         Bundle savedState = super.saveState();
         savedState.putParcelableArrayList(STATE_ITEMS, mItems);
         savedState.putParcelableArrayList(STATE_UPDATED, mUpdated);
-        savedState.putStringArrayList(STATE_PROMOTED, mPromoted);
+        ArrayList<String> promotedKey = new ArrayList<>(mPromoted.size());
+        ArrayList<Integer> promotedValue = new ArrayList<>(mPromoted.size());
+        for (Map.Entry<String, Integer> entry : mPromoted.entrySet()) {
+            promotedKey.add(entry.getKey());
+            promotedValue.add(entry.getValue());
+        }
+        savedState.putStringArrayList(STATE_PROMOTED_KEY, promotedKey);
+        savedState.putIntegerArrayList(STATE_PROMOTED_VALUE, promotedValue);
         savedState.putBoolean(STATE_SHOW_ALL, mShowAll);
         savedState.putBoolean(STATE_HIGHLIGHT_UPDATED, mHighlightUpdated);
         savedState.putInt(STATE_FAVORITE_REVISION, mFavoriteRevision);
@@ -201,7 +211,14 @@ public class StoryRecyclerViewAdapter extends
                 mUpdatedPositions.put(mUpdated.get(i).getLongId(), i);
             }
         }
-        mPromoted = savedState.getStringArrayList(STATE_PROMOTED);
+        ArrayList<String> promotedKey = savedState.getStringArrayList(STATE_PROMOTED_KEY);
+        ArrayList<Integer> promotedValue = savedState.getIntegerArrayList(STATE_PROMOTED_VALUE);
+        mPromoted.clear();
+        //noinspection ConstantConditions
+        for (int i = 0; i < promotedKey.size(); i++) {
+            //noinspection ConstantConditions
+            mPromoted.put(promotedKey.get(i), promotedValue.get(i));
+        }
         mShowAll = savedState.getBoolean(STATE_SHOW_ALL, true);
         mHighlightUpdated = savedState.getBoolean(STATE_HIGHLIGHT_UPDATED, true);
         mFavoriteRevision = savedState.getInt(STATE_FAVORITE_REVISION);
@@ -308,7 +325,7 @@ public class StoryRecyclerViewAdapter extends
                 item.setLastKidCount(currentRevision.getLastKidCount());
                 int lastRank = currentRevision.getRank();
                 if (lastRank > item.getRank()) {
-                    mPromoted.add(item.getId());
+                    mPromoted.put(item.getId(), lastRank - item.getRank());
                 }
             }
         }
@@ -356,7 +373,7 @@ public class StoryRecyclerViewAdapter extends
         if (mHighlightUpdated) {
             holder.mStoryView.setUpdated(story,
                     mUpdatedPositions.indexOfKey(story.getLongId()) >= 0,
-                    mPromoted.contains(story.getId()));
+                    mPromoted.containsKey(story.getId()) ? mPromoted.get(story.getId()) : 0);
         }
     }
 

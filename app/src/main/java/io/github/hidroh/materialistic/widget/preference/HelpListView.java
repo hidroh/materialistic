@@ -22,6 +22,9 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.SuperscriptSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ScrollView;
@@ -41,8 +44,15 @@ public class HelpListView extends ScrollView {
         super.onFinishInflate();
         ((TextView) findViewById(R.id.item_new).findViewById(R.id.rank))
                 .append(makeAsteriskSpan());
-        ((TextView) findViewById(R.id.item_promoted).findViewById(R.id.rank))
-                .setTextColor(ContextCompat.getColor(getContext(), R.color.greenA700));
+        SpannableString spannable = new SpannableString("+5");
+        spannable.setSpan(new SuperscriptSpan(), 0, spannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new RelativeSizeSpan(0.6f), 0, spannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new ForegroundColorSpan(
+                ContextCompat.getColor(getContext(), R.color.greenA700)), 0, spannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        ((TextView) findViewById(R.id.item_promoted).findViewById(R.id.rank)).append(spannable);
         TextView comments = (TextView) findViewById(R.id.item_new_comments).findViewById(R.id.comment);
         SpannableStringBuilder sb = new SpannableStringBuilder("46");
         sb.append(makeAsteriskSpan());
