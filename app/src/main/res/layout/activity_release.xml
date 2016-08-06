@@ -52,8 +52,8 @@
         android:id="@id/web_view"
         android:layout_below="@id/title"
         android:layout_above="@+id/divider"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/margin"
+        android:layout_marginRight="@dimen/margin"
         android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -57,35 +57,30 @@
                 <style type="text/css">
                     body { color: #%1$s; }
                     a {color: #%2$s;}
+                    sup {color: #%2$s; padding-left: 2px; padding-right: 2px;}
+                    ul { padding-left: 1.2em; }
                 </style>
             </head>
             <body>
-                <h3>v2.9</h3>
+                <h3>v3.0</h3>
                 <ul>
-                    <li>
-                        Full screen reading mode for article &amp; readability:
-                        <ul>
-                            <li>Navigate back/forward</li>
-                            <li>Zoom in/out</li>
-                            <li>Find in page</li>
-                        </ul>
+                    <li><b>Home screen widget</b><sup>new!</sup>: quick glance at top articles from your home screen</li>
+                    <li><b>On-screen D-pad</b><sup>new!</sup>: swipe it to quickly navigate nested comment threads
+                        <br/>
+                        <small>Enable in Comments display options</small>
+                        <br/>
+                        <small>Psst, it supports Konami code!</small>
                     </li>
-                    <li><b>New option:</b> adjust line spacing</li>
-                    <li><b>New settings pane</b> for stories, comments &amp; readability</li>
-                    <li>Improve offline saving</li>
+                    <li><b>New list option</b>: Auto mark as viewed</li>
+                    <li><b>New app option</b>: Remember last launched screen</li>
+                    <li><b>New swipe gestures</b>: vote/save stories, expand/collapse comments</li>
                 </ul>
-                <h3>v2.6-v2.8</h3>
+                If you encounter issues, please send me details via feedback dialog.
+                <h3>v2.8-2.9</h3>
                 <ul>
-                    <li><b>New section:</b> Best stories (<a href="https://news.ycombinator.com/best">news.ycombinator.com/best</a>)</li>
-                    <li><b>New options:</b>
-                        <ul>
-                            <li>Choose default section when app launches</li>
-                            <li>Block ads for internal browser</li>
-                            <li>Navigate stories and comments using volume keys</li>
-                            <li>Download saved stories for offline reading</li>
-                        </ul>
-                    </li>
-                    <li>New pure black theme</li>
+                    <li>Full screen reading mode for article &amp; readability</li>
+                    <li><b>New section</b>: <a href="https://news.ycombinator.com/best">Best stories</a></li>
+                    <li><b>New option</b>: block ads for internal browser</li>
                 </ul>
             </body>
         </html>

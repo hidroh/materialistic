@@ -15,7 +15,7 @@ android {
         targetSdkVersion 23 // TODO http://b.android.com/212316
         versionCode 58
         versionName "2.9"
-        buildConfigField "int", "LATEST_RELEASE", "53"
+        buildConfigField "int", "LATEST_RELEASE", "59"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "READABILITY_TOKEN", "\"\""
     }
