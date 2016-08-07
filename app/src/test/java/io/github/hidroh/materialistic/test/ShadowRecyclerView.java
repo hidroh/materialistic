@@ -24,6 +24,11 @@ public class ShadowRecyclerView extends ShadowViewGroup {
     }
 
     @Implementation
+    public void scrollToPosition(int position) {
+        smoothScrollToPosition(position);
+    }
+
+    @Implementation
     public void addItemDecoration(RecyclerView.ItemDecoration decor) {
         itemDecorations.add(decor);
     }

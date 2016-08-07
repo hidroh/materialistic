@@ -249,7 +249,7 @@ public class KeyDelegate {
 
         @Override
         public void scrollToTop() {
-            mRecyclerView.smoothScrollToPosition(0);
+            mRecyclerView.scrollToPosition(0);
         }
 
         @Override
