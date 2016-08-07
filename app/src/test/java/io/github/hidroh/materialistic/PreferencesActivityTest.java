@@ -33,19 +33,19 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = ShadowSupportPreferenceManager.class)
 @RunWith(RobolectricGradleTestRunner.class)
 public class PreferencesActivityTest {
-    private PreferencesActivity activity;
-    private ActivityController<PreferencesActivity> controller;
+    private TestPreferencesActivity activity;
+    private ActivityController<TestPreferencesActivity> controller;
 
     @Before
     public void setUp() {
         TestApplication.applicationGraph.inject(this);
-        controller = Robolectric.buildActivity(PreferencesActivity.class);
+        controller = Robolectric.buildActivity(TestPreferencesActivity.class);
         activity = controller.withIntent(new Intent()
                 .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
                 .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
@@ -60,7 +60,7 @@ public class PreferencesActivityTest {
                 .edit()
                 .putString(key, "dark")
                 .apply();
-        assertNotNull(shadowOf(activity).getNextStartedActivity());
+        assertTrue(activity.recreated);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PreferencesActivityTest {
                 .putString(key, "1")
                 .apply();
         controller.resume();
-        assertNotNull(shadowOf(activity).getNextStartedActivity());
+        assertTrue(activity.recreated);
     }
 
     @Test
@@ -105,5 +105,14 @@ public class PreferencesActivityTest {
     public void tearDown() {
         AlgoliaClient.sSortByTime = true;
         controller.pause().stop().destroy();
+    }
+
+    static class TestPreferencesActivity extends PreferencesActivity {
+        boolean recreated;
+
+        @Override
+        public void recreate() {
+            recreated = true;
+        }
     }
 }
