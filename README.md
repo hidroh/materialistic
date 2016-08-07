@@ -17,7 +17,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - [Official Hacker News API][HackerNews/API], user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
 - [Algolia Hacker News Search API]
 - [Readability Parser API]
-- [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
+- [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs / percent
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [Retrolambda] & [Retrolambda Gradle plugin]
 - [RxJava] & [RxAndroid]

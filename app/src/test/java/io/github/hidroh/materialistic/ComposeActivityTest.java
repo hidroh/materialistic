@@ -142,7 +142,7 @@ public class ComposeActivityTest {
 
     @Test
     public void testGuidelines() {
-        activity.findViewById(R.id.guidelines).performClick();
+        shadowOf(activity).clickMenuItem(R.id.menu_guidelines);
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 

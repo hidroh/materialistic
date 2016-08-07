@@ -236,11 +236,7 @@
     <string name="send">Send</string>
     <string name="original_content">Original content</string>
     <string name="quote">Quote</string>
-    <string name="formatting_guidelines">
-        <![CDATA[
-            <a href="#">Hacker News formatting guidelines</a>
-        ]]>
-    </string>
+    <string name="formatting_guidelines">HN formatting guidelines</string>
     <string name="confirm_save_draft">Save draft?</string>
     <string name="create_account">Create account</string>
     <string name="comment_failed">Failed to send comment</string>

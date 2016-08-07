@@ -18,9 +18,9 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,10 +59,11 @@ public class ComposeActivity extends InjectableActivity {
             finish();
             return;
         }
+        AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_compose);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
-                ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
+                ActionBar.DISPLAY_HOME_AS_UP);
         mEditText = (EditText) findViewById(R.id.edittext_body);
         if (savedInstanceState == null) {
             mEditText.setText(Preferences.getDraft(this, mParentId));
@@ -71,17 +72,6 @@ public class ComposeActivity extends InjectableActivity {
         findViewById(R.id.empty).setOnLongClickListener(v -> {
             mEditText.requestFocus();
             return mEditText.performLongClick();
-        });
-        TextView guidelines = (TextView) findViewById(R.id.guidelines);
-        guidelines.setText(AppUtils.fromHtml(getString(R.string.formatting_guidelines)));
-        guidelines.setOnClickListener(v -> {
-            WebView webView = new WebView(ComposeActivity.this);
-            webView.loadUrl(HN_FORMAT_DOC_URL);
-            mAlertDialogBuilder
-                    .init(ComposeActivity.this)
-                    .setView(webView)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
         });
         mParentText = getIntent().getStringExtra(EXTRA_PARENT_TEXT);
         if (!TextUtils.isEmpty(mParentText)) {
@@ -143,6 +133,16 @@ public class ComposeActivity extends InjectableActivity {
         }
         if (item.getItemId() == R.id.menu_discard_draft) {
             Preferences.deleteDraft(this, mParentId);
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_guidelines) {
+            WebView webView = new WebView(ComposeActivity.this);
+            webView.loadUrl(HN_FORMAT_DOC_URL);
+            mAlertDialogBuilder
+                    .init(ComposeActivity.this)
+                    .setView(webView)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
             return true;
         }
         return super.onOptionsItemSelected(item);

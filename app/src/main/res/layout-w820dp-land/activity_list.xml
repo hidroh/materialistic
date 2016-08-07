@@ -40,7 +40,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <android.support.percent.PercentRelativeLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
@@ -51,14 +51,14 @@
             android:id="@android:id/list"
             app:cardCornerRadius="0dp"
             app:cardBackgroundColor="?android:attr/colorBackground"
-            android:layout_width="@dimen/list_width"
-            android:layout_height="match_parent" />
+            app:layout_widthPercent="40%"
+            app:layout_heightPercent="100%" />
 
         <TextView
             android:id="@id/empty_selection"
             android:layout_toRightOf="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            app:layout_widthPercent="60%"
+            app:layout_heightPercent="100%"
             android:gravity="center|center_vertical"
             android:background="?attr/colorCardHighlight"
             android:text="@string/select_story"
@@ -72,17 +72,17 @@
             app:tabGravity="fill"
             android:background="?attr/colorPrimary"
             android:layout_toRightOf="@android:id/list"
-            android:layout_width="match_parent"
+            app:layout_widthPercent="60%"
             android:layout_height="wrap_content" />
 
         <io.github.hidroh.materialistic.widget.ViewPager
             android:id="@id/content"
             android:layout_below="@id/tab_layout"
             android:layout_toRightOf="@android:id/list"
-            android:layout_width="match_parent"
+            app:layout_widthPercent="60%"
             android:layout_height="match_parent" />
 
-    </RelativeLayout>
+    </android.support.percent.PercentRelativeLayout>
 
     <include layout="@layout/button_reply"
         android:id="@+id/reply_button"
