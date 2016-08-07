@@ -76,7 +76,7 @@ public interface ReadabilityClient {
 
         @Override
         public void parse(String itemId, String url, Callback callback) {
-            fromCache(itemId)
+            Observable.defer(() -> fromCache(itemId))
                     .subscribeOn(mIoScheduler)
                     .flatMap(content -> content != null ?
                             Observable.just(content) : fromNetwork(itemId, url))
@@ -88,7 +88,7 @@ public interface ReadabilityClient {
         @WorkerThread
         @Override
         public void parse(String itemId, String url) {
-            fromCache(itemId)
+            Observable.defer(() -> fromCache(itemId))
                     .subscribeOn(Schedulers.immediate())
                     .switchIfEmpty(fromNetwork(itemId, url))
                     .map(content -> TextUtils.equals(EMPTY_CONTENT, content) ? null : content)

@@ -20,6 +20,7 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -51,7 +52,7 @@ public class HackerNewsClientTest {
         reset(sessionManager);
         reset(favoriteManager);
         client = new HackerNewsClient(RuntimeEnvironment.application, factory, sessionManager,
-                favoriteManager);
+                favoriteManager, Schedulers.immediate());
         itemListener = mock(ResponseListener.class);
         storiesListener = mock(ResponseListener.class);
         userListener = mock(ResponseListener.class);
