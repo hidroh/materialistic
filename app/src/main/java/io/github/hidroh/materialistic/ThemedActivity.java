@@ -33,9 +33,7 @@ public abstract class ThemedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mMenuTintDelegate.onActivityCreated(this);
         mThemeObservable.subscribe(this, (key, contextChanged) ->  onThemeChanged(),
-                R.string.pref_theme,
-                R.string.pref_font,
-                R.string.pref_text_size);
+                R.string.pref_theme);
     }
 
     @CallSuper

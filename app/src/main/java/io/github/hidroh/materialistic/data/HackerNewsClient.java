@@ -29,6 +29,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -43,15 +44,18 @@ public class HackerNewsClient implements ItemManager, UserManager {
     private final SessionManager mSessionManager;
     private final FavoriteManager mFavoriteManager;
     private final ContentResolver mContentResolver;
+    private Scheduler mIoScheduler;
 
     @Inject
     public HackerNewsClient(Context context, RestServiceFactory factory,
                             SessionManager sessionManager,
-                            FavoriteManager favoriteManager) {
+                            FavoriteManager favoriteManager,
+                            Scheduler ioScheduler) {
         mRestService = factory.rxEnabled(true).create(BASE_API_URL, RestService.class);
         mSessionManager = sessionManager;
         mFavoriteManager = favoriteManager;
         mContentResolver = context.getApplicationContext().getContentResolver();
+        mIoScheduler = ioScheduler;
     }
 
     @Override
@@ -60,7 +64,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
         if (listener == null) {
             return;
         }
-        getStoriesObservable(filter, cacheMode)
+        Observable.defer(() -> getStoriesObservable(filter, cacheMode))
+                .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
@@ -85,7 +90,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
                         .onErrorResumeNext(mRestService.itemRx(itemId));
                 break;
         }
-        Observable.zip(
+        Observable.defer(() -> Observable.zip(
                 mSessionManager.isViewed(mContentResolver, itemId),
                 mFavoriteManager.check(mContentResolver, itemId),
                 itemObservable,
@@ -96,7 +101,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
                         hackerNewsItem.setFavorite(favorite);
                     }
                     return hackerNewsItem;
-                })
+                }))
+                .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
@@ -144,6 +150,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
                     }
                     return userItem;
                 })
+                .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
