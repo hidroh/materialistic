@@ -123,7 +123,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         });
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this, true));
         mRecyclerView.addItemDecoration(new CommentItemDecoration(this));
         mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
                 KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);

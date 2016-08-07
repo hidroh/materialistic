@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -95,6 +96,10 @@ public class ItemFragmentSinglePageTest {
         TestApplication.applicationGraph.inject(this);
         reset(hackerNewsClient);
         reset(userServices);
+        shadowOf(((WindowManager) RuntimeEnvironment.application
+                .getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay())
+                .setHeight(0); // no preload
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,

@@ -29,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -54,10 +55,12 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -452,6 +455,19 @@ public class AppUtils {
             default:
                 navigable.onNavigate(direction);
                 break;
+        }
+    }
+
+    public static int getDisplayHeight(Context context) {
+        Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point point = new Point();
+            display.getSize(point);
+            return point.y;
+        } else {
+            //noinspection deprecation
+            return display.getHeight();
         }
     }
 
