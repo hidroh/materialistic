@@ -22,14 +22,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 
+import io.github.hidroh.materialistic.AppUtils;
+
 /**
  * Light extension to {@link LinearLayoutManager} that overrides smooth scroller to
  * always snap to start
  */
 public class SnappyLinearLayoutManager extends LinearLayoutManager {
 
-    public SnappyLinearLayoutManager(Context context) {
+    private final int mExtraSpace;
+
+    public SnappyLinearLayoutManager(Context context, boolean preload) {
         super(context);
+        mExtraSpace = preload ? AppUtils.getDisplayHeight(context) : 0;
     }
 
     @Override
@@ -51,6 +56,11 @@ public class SnappyLinearLayoutManager extends LinearLayoutManager {
                 };
         smoothScroller.setTargetPosition(position);
         startSmoothScroll(smoothScroller);
+    }
+
+    @Override
+    protected int getExtraLayoutSpace(RecyclerView.State state) {
+        return mExtraSpace == 0 ? super.getExtraLayoutSpace(state) : mExtraSpace;
     }
 }
 

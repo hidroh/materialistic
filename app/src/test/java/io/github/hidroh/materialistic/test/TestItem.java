@@ -252,6 +252,11 @@ public abstract class TestItem implements Item {
     }
 
     @Override
+    public CharSequence getDisplayedText() {
+        return null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o != null && getId() != null && getId().equalsIgnoreCase(((TestItem) o).getId());
     }

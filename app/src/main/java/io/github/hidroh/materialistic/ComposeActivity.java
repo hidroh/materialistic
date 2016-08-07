@@ -73,7 +73,7 @@ public class ComposeActivity extends InjectableActivity {
             return mEditText.performLongClick();
         });
         TextView guidelines = (TextView) findViewById(R.id.guidelines);
-        guidelines.setText(Html.fromHtml(getString(R.string.formatting_guidelines)));
+        guidelines.setText(AppUtils.fromHtml(getString(R.string.formatting_guidelines)));
         guidelines.setOnClickListener(v -> {
             WebView webView = new WebView(ComposeActivity.this);
             webView.loadUrl(HN_FORMAT_DOC_URL);
@@ -88,7 +88,7 @@ public class ComposeActivity extends InjectableActivity {
             findViewById(R.id.quote).setVisibility(View.VISIBLE);
             final TextView toggle = (TextView) findViewById(R.id.toggle);
             final TextView textView = (TextView) findViewById(R.id.text);
-            AppUtils.setTextWithLinks(textView, mParentText);
+            AppUtils.setTextWithLinks(textView, AppUtils.fromHtml(mParentText));
             toggle.setOnClickListener(v -> {
                 if (textView.getVisibility() == View.VISIBLE) {
                     toggle.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -195,7 +195,7 @@ public class ComposeActivity extends InjectableActivity {
 
     private String createQuote() {
         if (mQuoteText == null) {
-            mQuoteText = String.format(FORMAT_QUOTE, Html.fromHtml(mParentText)
+            mQuoteText = String.format(FORMAT_QUOTE, AppUtils.fromHtml(mParentText)
                     .toString()
                     .trim()
                     .replaceAll(PARAGRAPH_BREAK_REGEX, PARAGRAPH_QUOTE));

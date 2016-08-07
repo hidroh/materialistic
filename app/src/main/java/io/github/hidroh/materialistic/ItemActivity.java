@@ -366,7 +366,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 sourceTextView.setVisibility(View.VISIBLE);
             }
         } else {
-            AppUtils.setHtmlText(titleTextView, story.getDisplayedTitle());
+            titleTextView.setText(AppUtils.fromHtml(story.getDisplayedTitle()));
         }
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);

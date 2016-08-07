@@ -24,7 +24,6 @@ import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
@@ -161,7 +160,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         highlightUserItem(holder, item);
         decorateDead(holder, item);
         holder.mContentTextView.setLineSpacing(0f, mLineHeight);
-        AppUtils.setTextWithLinks(holder.mContentTextView, item.getText());
+        AppUtils.setTextWithLinks(holder.mContentTextView, item.getDisplayedText());
         Integer lineCount = mLineCounted.get(item.getId());
         if (lineCount != null && lineCount > 0) {
             toggleCollapsibleContent(holder, item, lineCount);
@@ -260,9 +259,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                             mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
                                     item.isStoryType() ? item.getDisplayedTitle() : null,
                                     item.isStoryType() ? item.getUrl() :
-                                            (item.getText() != null ?
-                                                    Html.fromHtml(item.getText()).toString() :
-                                                    null)));
+                                            item.getDisplayedText() == null ?
+                                                    null : item.getDisplayedText().toString()));
                             return true;
                         }
                         return false;

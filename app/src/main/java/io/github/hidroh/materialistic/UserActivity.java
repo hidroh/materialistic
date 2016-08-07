@@ -123,7 +123,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         });
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this, true));
         mRecyclerView.addItemDecoration(new CommentItemDecoration(this));
         mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
                 KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
@@ -225,7 +225,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         if (TextUtils.isEmpty(mUser.getAbout())) {
             mAbout.setVisibility(View.GONE);
         } else {
-            AppUtils.setTextWithLinks(mAbout, mUser.getAbout());
+            AppUtils.setTextWithLinks(mAbout, AppUtils.fromHtml(mUser.getAbout()));
         }
         int count = mUser.getItems().length;
         mTabLayout.addTab(mTabLayout.newTab()

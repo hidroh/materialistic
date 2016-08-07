@@ -108,7 +108,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
         mEmptyView = view.findViewById(R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), true));
         mRecyclerView.setHasFixedSize(true);
         mItemDecoration = new CommentItemDecoration(getActivity());
         mRecyclerView.addItemDecoration(mItemDecoration);

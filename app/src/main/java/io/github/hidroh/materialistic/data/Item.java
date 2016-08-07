@@ -242,4 +242,6 @@ public interface Item extends WebItem {
     void setContentExpanded(boolean expanded);
 
     long getNeighbour(int direction);
+
+    CharSequence getDisplayedText();
 }

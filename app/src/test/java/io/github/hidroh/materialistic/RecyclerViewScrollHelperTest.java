@@ -54,7 +54,7 @@ public class RecyclerViewScrollHelperTest {
         helper = new KeyDelegate.RecyclerViewHelper(recyclerView,
                 KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
         helper.scrollToTop();
-        verify(recyclerView).smoothScrollToPosition(eq(0));
+        verify(recyclerView).scrollToPosition(eq(0));
     }
 
     @Test

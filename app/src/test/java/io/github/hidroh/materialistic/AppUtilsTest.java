@@ -58,7 +58,7 @@ public class AppUtilsTest {
     @Test
     public void testSetTextWithLinks() {
         TextView textView = new TextView(RuntimeEnvironment.application);
-        AppUtils.setTextWithLinks(textView, "<a href=\\\"http://www.justin.tv/problems/bml\\\" rel=\\\"nofollow\\\">http://www.justin.tv/problems/bml</a>");
+        AppUtils.setTextWithLinks(textView, AppUtils.fromHtml("<a href=\\\"http://www.justin.tv/problems/bml\\\" rel=\\\"nofollow\\\">http://www.justin.tv/problems/bml</a>"));
         MotionEvent event = mock(MotionEvent.class);
         when(event.getAction()).thenReturn(MotionEvent.ACTION_DOWN);
         when(event.getX()).thenReturn(0f);
@@ -203,11 +203,11 @@ public class AppUtilsTest {
     @Test
     public void testTrimHtmlWhitespaces() {
         TextView textView = new TextView(RuntimeEnvironment.application);
-        AppUtils.setHtmlText(textView, "<p>paragraph</p><p><br/><br/><br/></p>");
+        textView.setText(AppUtils.fromHtml("<p>paragraph</p><p><br/><br/><br/></p>"));
         assertThat(textView).hasTextString("paragraph");
-        AppUtils.setHtmlText(textView, "");
+        textView.setText(AppUtils.fromHtml(""));
         assertThat(textView).hasTextString("");
-        AppUtils.setHtmlText(textView, "paragraph");
+        textView.setText(AppUtils.fromHtml("paragraph"));
         assertThat(textView).hasTextString("paragraph");
     }
 

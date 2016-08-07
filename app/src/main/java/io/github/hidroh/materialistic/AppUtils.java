@@ -29,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -54,10 +55,12 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -119,8 +122,8 @@ public class AppUtils {
         }
     }
 
-    public static void setTextWithLinks(TextView textView, String htmlText) {
-        setHtmlText(textView, htmlText);
+    public static void setTextWithLinks(TextView textView, CharSequence html) {
+        textView.setText(html);
         // TODO https://code.google.com/p/android/issues/detail?id=191430
         //noinspection Convert2Lambda
         textView.setOnTouchListener(new View.OnTouchListener() {
@@ -160,8 +163,19 @@ public class AppUtils {
         });
     }
 
-    public static void setHtmlText(TextView textView, String htmlText) {
-        textView.setText(TextUtils.isEmpty(htmlText) ? null : trim(Html.fromHtml(htmlText)));
+    public static CharSequence fromHtml(String htmlText) {
+        if (TextUtils.isEmpty(htmlText)) {
+            return null;
+        }
+        CharSequence spanned;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //noinspection InlinedApi
+            spanned = Html.fromHtml(htmlText, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            //noinspection deprecation
+            spanned = Html.fromHtml(htmlText);
+        }
+        return trim(spanned);
     }
 
     static Intent makeEmailIntent(String subject, String text) {
@@ -452,6 +466,19 @@ public class AppUtils {
             default:
                 navigable.onNavigate(direction);
                 break;
+        }
+    }
+
+    public static int getDisplayHeight(Context context) {
+        Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point point = new Point();
+            display.getSize(point);
+            return point.y;
+        } else {
+            //noinspection deprecation
+            return display.getHeight();
         }
     }
 
