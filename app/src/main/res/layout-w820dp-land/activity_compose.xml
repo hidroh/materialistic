@@ -26,12 +26,11 @@
         android:theme="@style/AppToolbarTheme"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary" />
+        android:background="?android:attr/colorBackground" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_below="@id/toolbar"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
@@ -49,24 +48,15 @@
             android:background="?attr/colorCardBackground"
             android:fillViewport="true"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:layout_height="match_parent"
             tools:ignore="RtlHardcoded,UnusedAttribute">
 
             <LinearLayout
                 android:id="@id/content_frame"
                 android:orientation="vertical"
-                android:animateLayoutChanges="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="UnusedAttribute">
-
-                <TextView
-                    android:id="@+id/guidelines"
-                    android:text="@string/formatting_guidelines"
-                    android:gravity="center_vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/listPreferredItemHeightSmall" />
+                android:layout_height="wrap_content">
 
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/edittext_body"
@@ -74,8 +64,6 @@
                     android:inputType="textCapSentences|textMultiLine"
                     android:gravity="top"
                     android:background="@null"
-                    android:paddingTop="@dimen/padding"
-                    android:paddingBottom="@dimen/padding"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -84,6 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1" />
+
             </LinearLayout>
 
         </ScrollView>
@@ -93,8 +82,9 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:orientation="vertical"
-            android:layout_width="@dimen/list_width"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="2"
             android:elevation="1dp"
             android:background="?attr/colorCardBackground"
             android:visibility="gone"
@@ -104,7 +94,7 @@
 
             <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@+id/toggle"
-                style="@style/TextAppearance.AppCompat.Medium"
+                style="@style/textTitleStyle"
                 android:enabled="false"
                 android:gravity="center_vertical"
                 android:hint="@string/original_content"
@@ -116,13 +106,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@color/blackT12" />
-
             <ScrollView
                 android:fillViewport="true"
                 android:paddingTop="@dimen/activity_vertical_margin"
@@ -133,14 +116,11 @@
                 android:scrollbars="vertical"
                 android:scrollbarStyle="outsideInset"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@id/text"
                     tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:textIsSelectable="true"
                     android:layout_width="match_parent"

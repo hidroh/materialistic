@@ -41,4 +41,9 @@
         android:title="@string/discard_draft"
         app:showAsAction="never" />
 
+    <item
+        android:id="@id/menu_guidelines"
+        android:title="@string/formatting_guidelines"
+        app:showAsAction="never" />
+
 </menu>

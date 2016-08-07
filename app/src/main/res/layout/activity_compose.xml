@@ -27,10 +27,9 @@
         android:theme="@style/AppToolbarTheme"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary" />
+        android:background="?android:attr/colorBackground" />
 
     <ScrollView
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
@@ -91,13 +90,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/guidelines"
-                android:text="@string/formatting_guidelines"
-                android:gravity="center_vertical"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/listPreferredItemHeightSmall" />
-
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/edittext_body"
                 android:hint="@string/comment_hint"
@@ -115,6 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+
         </LinearLayout>
 
     </ScrollView>

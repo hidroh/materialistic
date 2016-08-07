@@ -446,10 +446,14 @@ public class AppUtils {
     }
 
     static void setStatusBarDim(Window window, boolean dim) {
+        setStatusBarColor(window, dim ? Color.TRANSPARENT :
+                ContextCompat.getColor(window.getContext(),
+                        AppUtils.getThemedResId(window.getContext(), R.attr.colorPrimaryDark)));
+    }
+
+    static void setStatusBarColor(Window window, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(dim ? Color.TRANSPARENT :
-                    ContextCompat.getColor(window.getContext(),
-                            AppUtils.getThemedResId(window.getContext(), R.attr.colorPrimaryDark)));
+            window.setStatusBarColor(color);
         }
     }
 

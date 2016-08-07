@@ -184,11 +184,7 @@
     <string name="send">发表</string>
     <string name="original_content">引用内容</string>
     <string name="quote">引用</string>
-    <string name="formatting_guidelines">
-        <![CDATA[
-            <a href="#">Hacker News 排版格式指南</a>
-        ]]>
-    </string>
+    <string name="formatting_guidelines">HN 排版格式指南</string>
     <string name="create_account">创建账户</string>
     <string name="comment_failed">发送评论失败</string>
     <string name="comment_successful">评论已添加，请刷新后查看</string>
