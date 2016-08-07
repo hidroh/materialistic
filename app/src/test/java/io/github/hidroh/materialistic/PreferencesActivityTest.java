@@ -64,19 +64,6 @@ public class PreferencesActivityTest {
     }
 
     @Test
-    public void testPrefFont() {
-        controller.pause();
-        String key = activity.getString(R.string.pref_text_size);
-        // trigger listener
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(key, "1")
-                .apply();
-        controller.resume();
-        assertTrue(activity.recreated);
-    }
-
-    @Test
     public void testHelp() {
         ((PreferencesActivity.SettingsFragment) activity.getSupportFragmentManager()
                 .findFragmentByTag(PreferencesActivity.SettingsFragment.class.getName()))
