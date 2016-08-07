@@ -225,7 +225,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         if (TextUtils.isEmpty(mUser.getAbout())) {
             mAbout.setVisibility(View.GONE);
         } else {
-            AppUtils.setTextWithLinks(mAbout, mUser.getAbout());
+            AppUtils.setTextWithLinks(mAbout, AppUtils.fromHtml(mUser.getAbout()));
         }
         int count = mUser.getItems().length;
         mTabLayout.addTab(mTabLayout.newTab()

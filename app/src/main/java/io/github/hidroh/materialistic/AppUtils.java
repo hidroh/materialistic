@@ -122,8 +122,8 @@ public class AppUtils {
         }
     }
 
-    public static void setTextWithLinks(TextView textView, String htmlText) {
-        setHtmlText(textView, htmlText);
+    public static void setTextWithLinks(TextView textView, CharSequence html) {
+        textView.setText(html);
         // TODO https://code.google.com/p/android/issues/detail?id=191430
         //noinspection Convert2Lambda
         textView.setOnTouchListener(new View.OnTouchListener() {
@@ -163,8 +163,19 @@ public class AppUtils {
         });
     }
 
-    public static void setHtmlText(TextView textView, String htmlText) {
-        textView.setText(TextUtils.isEmpty(htmlText) ? null : trim(Html.fromHtml(htmlText)));
+    public static CharSequence fromHtml(String htmlText) {
+        if (TextUtils.isEmpty(htmlText)) {
+            return null;
+        }
+        CharSequence spanned;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //noinspection InlinedApi
+            spanned = Html.fromHtml(htmlText, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            //noinspection deprecation
+            spanned = Html.fromHtml(htmlText);
+        }
+        return trim(spanned);
     }
 
     static Intent makeEmailIntent(String subject, String text) {

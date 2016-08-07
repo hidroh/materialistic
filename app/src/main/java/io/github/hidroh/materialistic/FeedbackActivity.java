@@ -40,7 +40,7 @@ public class FeedbackActivity extends InjectableActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_feedback);
         AppUtils.setTextWithLinks((TextView) findViewById(R.id.feedback_note),
-                getString(R.string.feedback_note));
+                AppUtils.fromHtml(getString(R.string.feedback_note)));
         final TextInputLayout titleLayout = (TextInputLayout)
                 findViewById(R.id.textinput_title);
         final TextInputLayout bodyLayout = (TextInputLayout)

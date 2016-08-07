@@ -92,6 +92,7 @@ class HackerNewsItem implements Item {
     private Spannable displayedTime;
     private Spannable displayedAuthor;
     private int defaultColor;
+    private CharSequence displayedText;
 
     public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
         @Override
@@ -154,6 +155,7 @@ class HackerNewsItem implements Item {
         kids = info.getKids();
         url = info.getRawUrl();
         text = info.getText();
+        displayedText = info.getDisplayedText(); // pre-load, but not part of Parcelable
         type = info.getRawType();
         descendants = info.getDescendants();
         hasNewDescendants = lastKidCount >= 0 && descendants > lastKidCount;
@@ -405,6 +407,14 @@ class HackerNewsItem implements Item {
     @Override
     public String getText() {
         return text;
+    }
+
+    @Override
+    public CharSequence getDisplayedText() {
+        if (displayedText == null) {
+            displayedText = AppUtils.fromHtml(text);
+        }
+        return displayedText;
     }
 
     @Override

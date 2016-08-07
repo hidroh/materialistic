@@ -47,7 +47,7 @@ public class AboutActivity extends InjectableActivity {
     }
 
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {
-        AppUtils.setTextWithLinks((TextView) findViewById(textViewResId), htmlText);
+        AppUtils.setTextWithLinks((TextView) findViewById(textViewResId), AppUtils.fromHtml(htmlText));
     }
 
     @Override
