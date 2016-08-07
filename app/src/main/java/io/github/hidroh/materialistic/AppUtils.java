@@ -244,11 +244,15 @@ public class AppUtils {
     }
 
     static void restart(Activity activity, boolean transition) {
-        activity.finish();
-        if (transition) {
-            activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            activity.recreate();
+        } else {
+            activity.finish();
+            if (transition) {
+                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+            activity.startActivity(activity.getIntent());
         }
-        activity.startActivity(activity.getIntent());
     }
 
     public static String getAbbreviatedTimeSpan(long timeMillis) {
