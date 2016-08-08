@@ -51,6 +51,30 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         boolean isInActionMode();
         void stopActionMode();
     }
+
+    private final ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView,
+                              RecyclerView.ViewHolder viewHolder,
+                              RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public int getSwipeDirs(RecyclerView recyclerView,
+                                RecyclerView.ViewHolder viewHolder) {
+            if (mActionModeDelegate.isInActionMode()) {
+                return 0;
+            }
+            return super.getSwipeDirs(recyclerView, viewHolder);
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            dismiss(viewHolder.getAdapterPosition());
+        }
+    });
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         private boolean mPendingClear;
 
@@ -116,34 +140,13 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mMenuTintDelegate = new MenuTintDelegate();
         mMenuTintDelegate.onActivityCreated(mContext);
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView,
-                                  RecyclerView.ViewHolder viewHolder,
-                                  RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public int getSwipeDirs(RecyclerView recyclerView,
-                                    RecyclerView.ViewHolder viewHolder) {
-                if (mActionModeDelegate.isInActionMode()) {
-                    return 0;
-                }
-                return super.getSwipeDirs(recyclerView, viewHolder);
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                dismiss(viewHolder.getAdapterPosition());
-            }
-        }).attachToRecyclerView(recyclerView);
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+        mItemTouchHelper.attachToRecyclerView(null);
         mActionModeDelegate = null;
     }
 

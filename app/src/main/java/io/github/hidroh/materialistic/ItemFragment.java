@@ -109,7 +109,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         mEmptyView = view.findViewById(R.id.empty);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), true));
-        mRecyclerView.setHasFixedSize(true);
         mItemDecoration = new CommentItemDecoration(getActivity());
         mRecyclerView.addItemDecoration(mItemDecoration);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
@@ -220,7 +219,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
 
         String displayOption = Preferences.getCommentDisplayOption(getActivity());
-        ItemRecyclerViewAdapter oldAdapter = mAdapter;
         if (Preferences.isSinglePage(getActivity(), displayOption)) {
             boolean autoExpand = Preferences.isAutoExpand(getActivity(), displayOption);
             // if collapsed or no saved state then start a fresh (adapter items all collapsed)
@@ -234,11 +232,8 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());
-        if (oldAdapter != null && oldAdapter.getClass().equals(mAdapter.getClass())) {
-            mRecyclerView.swapAdapter(mAdapter, true);
-        } else {
-            mRecyclerView.setAdapter(mAdapter);
-        }
+        mRecyclerView.scrollToPosition(0);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {

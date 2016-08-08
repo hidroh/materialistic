@@ -159,7 +159,6 @@ public class FavoriteFragment extends BaseListFragment
         super.onDetach();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mFavoriteManager.detach();
-        mRecyclerView.setAdapter(null); // detach adapter
         if (mActionMode != null) {
             mActionMode.finish();
         }

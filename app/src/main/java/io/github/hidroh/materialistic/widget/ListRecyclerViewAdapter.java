@@ -65,10 +65,6 @@ public abstract class ListRecyclerViewAdapter
     private boolean mCardViewEnabled = true;
     private int mHotThreshold = Integer.MAX_VALUE;
 
-    public ListRecyclerViewAdapter() {
-        setHasStableIds(true);
-    }
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
