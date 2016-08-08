@@ -18,10 +18,12 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -64,6 +66,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final boolean mIsLocal;
     private final ViewSwitcher mVoteSwitcher;
     private final View mMoreButton;
+    private final Drawable mCommentDrawable;
     private boolean mChecked;
 
     public StoryView(Context context) {
@@ -92,6 +95,9 @@ public class StoryView extends RelativeLayout implements Checkable {
         mHotColorResId = ContextCompat.getColor(context, R.color.orange500);
         mAccentColorResId = ContextCompat.getColor(getContext(),
                 AppUtils.getThemedResId(getContext(), R.attr.colorAccent));
+        mCommentDrawable = DrawableCompat.wrap(ContextCompat.getDrawable(context,
+                R.drawable.ic_comment_white_24dp).mutate());
+        DrawableCompat.setTint(mCommentDrawable, mAccentColorResId);
         inflate(context, mIsLocal ? R.layout.local_story_view : R.layout.story_view, this);
         setBackgroundColor(mBackgroundColor);
         mVoteSwitcher = (ViewSwitcher) findViewById(R.id.vote_switcher);
@@ -102,6 +108,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mTitleTextView = (TextView) findViewById(R.id.title);
         mSourceTextView = (TextView) findViewById(R.id.source);
         mCommentButton = (TextView) findViewById(R.id.comment);
+        mCommentButton.setCompoundDrawablesWithIntrinsicBounds(mCommentDrawable, null, null, null);
         mMoreButton = findViewById(R.id.button_more);
         ta.recycle();
         a.recycle();
@@ -137,21 +144,26 @@ public class StoryView extends RelativeLayout implements Checkable {
                 mScoreTextView.setTextColor(hot ? mHotColorResId : mSecondaryTextColorResId);
                 mRankTextView.setText(String.valueOf(item.getRank()));
                 mScoreTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, hot ?
-                        R.drawable.ic_whatshot_white_18dp : 0);
+                        R.drawable.ic_whatshot_orange500_18dp : 0);
                 mScoreTextView.setText(getContext().getResources()
                         .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             }
             if (item.getKidCount() > 0) {
                 boolean hot = item.getKidCount() >= hotThreshold;
                 mCommentButton.setTextColor(hot ? mHotColorResId : mAccentColorResId);
-                mCommentButton.setCompoundDrawablesWithIntrinsicBounds(hot ?
-                        R.drawable.ic_whatshot_white_24dp : R.drawable.ic_comment_white_24dp, 0, 0, 0);
+                if (hot) {
+                    mCommentButton.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_whatshot_orange500_24dp, 0, 0, 0);
+                } else {
+                    mCommentButton.setCompoundDrawablesWithIntrinsicBounds(
+                            mCommentDrawable, null, null, null);
+                }
                 mCommentButton.setText(String.valueOf(item.getKidCount()));
             } else {
                 mCommentButton.setTextColor(mAccentColorResId);
                 mCommentButton.setText(null);
                 mCommentButton.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_comment_white_24dp, 0, 0, 0);
+                        mCommentDrawable, null, null, null);
             }
         }
         mCommentButton.setVisibility(View.VISIBLE);
