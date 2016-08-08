@@ -75,7 +75,6 @@ class HackerNewsItem implements Item {
     private int descendants = -1;
 
     // view state
-    private HackerNewsItem[] kidItems;
     private boolean favorite;
     private boolean viewed;
     private int localRevision = -1;
@@ -85,14 +84,17 @@ class HackerNewsItem implements Item {
     int rank;
     private int lastKidCount = -1;
     private boolean hasNewDescendants = false;
-    private HackerNewsItem parentItem;
     private boolean voted;
     private boolean pendingVoted;
     private long next, previous;
+
+    // non parcelable fields
+    private HackerNewsItem[] kidItems;
+    private HackerNewsItem parentItem;
     private Spannable displayedTime;
     private Spannable displayedAuthor;
-    private int defaultColor;
     private CharSequence displayedText;
+    private int defaultColor;
 
     public static final Creator<HackerNewsItem> CREATOR = new Creator<HackerNewsItem>() {
         @Override
@@ -127,7 +129,6 @@ class HackerNewsItem implements Item {
         favorite = source.readInt() != 0;
         descendants = source.readInt();
         score = source.readInt();
-        kidItems = source.createTypedArray(HackerNewsItem.CREATOR);
         favorite = source.readInt() == 1;
         viewed = source.readInt() == 1;
         localRevision = source.readInt();
@@ -140,7 +141,6 @@ class HackerNewsItem implements Item {
         lastKidCount = source.readInt();
         hasNewDescendants = source.readInt() == 1;
         parent = source.readLong();
-        parentItem = source.readParcelable(HackerNewsItem.class.getClassLoader());
         voted = source.readInt() == 1;
         pendingVoted = source.readInt() == 1;
         next = source.readLong();
@@ -212,7 +212,6 @@ class HackerNewsItem implements Item {
         dest.writeInt(favorite ? 1 : 0);
         dest.writeInt(descendants);
         dest.writeInt(score);
-        dest.writeTypedArray(kidItems, 0);
         dest.writeInt(favorite ? 1 : 0);
         dest.writeInt(viewed ? 1 : 0);
         dest.writeInt(localRevision);
@@ -225,7 +224,6 @@ class HackerNewsItem implements Item {
         dest.writeInt(lastKidCount);
         dest.writeInt(hasNewDescendants ? 1 : 0);
         dest.writeLong(parent);
-        dest.writeParcelable(parentItem, flags);
         dest.writeInt(voted ? 1 : 0);
         dest.writeInt(pendingVoted ? 1 : 0);
         dest.writeLong(next);
@@ -572,5 +570,10 @@ class HackerNewsItem implements Item {
     @Override
     public boolean equals(Object o) {
         return o instanceof HackerNewsItem && id == ((HackerNewsItem) o).id;
+    }
+
+    void preload() {
+        getDisplayedText(); // pre-load HTML
+        getKidItems(); // pre-construct kids
     }
 }
