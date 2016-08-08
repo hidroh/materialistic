@@ -15,13 +15,12 @@
   ~ limitations under the License.
   -->
 
-<io.github.hidroh.materialistic.widget.TintableTextView
+<android.support.v7.widget.AppCompatTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:text="46"
     style="@style/Widget.AppCompat.Button.Borderless.Colored"
-    app:iconStart="@drawable/ic_comment_white_24dp"
     app:textAllCaps="false"
     android:drawablePadding="@dimen/padding_text"
     android:gravity="start|center_vertical"
