@@ -40,7 +40,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.percent.PercentRelativeLayout
+    <LinearLayout
+        android:orientation="horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
@@ -51,38 +52,43 @@
             android:id="@android:id/list"
             app:cardCornerRadius="0dp"
             app:cardBackgroundColor="?android:attr/colorBackground"
-            app:layout_widthPercent="40%"
-            app:layout_heightPercent="100%" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
 
-        <TextView
-            android:id="@id/empty_selection"
-            android:layout_toRightOf="@android:id/list"
-            app:layout_widthPercent="60%"
-            app:layout_heightPercent="100%"
-            android:gravity="center|center_vertical"
-            android:background="?attr/colorCardHighlight"
-            android:text="@string/select_story"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="@dimen/text_size_empty" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
-            app:tabTextColor="?android:attr/textColorPrimary"
-            app:tabMode="fixed"
-            app:tabGravity="fill"
-            android:background="?attr/colorPrimary"
-            android:layout_toRightOf="@android:id/list"
-            app:layout_widthPercent="60%"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:id="@id/empty_selection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|center_vertical"
+                android:background="?attr/colorCardHighlight"
+                android:text="@string/select_story"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="@dimen/text_size_empty" />
 
-        <io.github.hidroh.materialistic.widget.ViewPager
-            android:id="@id/content"
-            android:layout_below="@id/tab_layout"
-            android:layout_toRightOf="@android:id/list"
-            app:layout_widthPercent="60%"
-            android:layout_height="match_parent" />
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                app:tabTextColor="?android:attr/textColorPrimary"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                android:background="?attr/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    </android.support.percent.PercentRelativeLayout>
+            <io.github.hidroh.materialistic.widget.ViewPager
+                android:id="@id/content"
+                android:layout_below="@id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
     <include layout="@layout/button_reply"
         android:id="@+id/reply_button"

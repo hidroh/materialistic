@@ -70,7 +70,6 @@ dependencies {
             "com.android.support:design:$supportVersion",
             "com.android.support:preference-v7:$supportVersion",
             "com.android.support:customtabs:$supportVersion",
-            "com.android.support:percent:$supportVersion",
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
             "com.squareup.retrofit2:converter-gson:$retrofitVersion",
