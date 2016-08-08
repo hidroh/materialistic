@@ -153,7 +153,6 @@ public class ListFragment extends BaseListFragment {
     public void onDetach() {
         mPreferenceObservable.unsubscribe(getActivity());
         mRefreshCallback = null;
-        mRecyclerView.setAdapter(null); // force adapter detach
         super.onDetach();
     }
 
@@ -203,6 +202,7 @@ public class ListFragment extends BaseListFragment {
             } else {
                 mEmptyView.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
+                mRecyclerView.scrollToPosition(0);
             }
             mErrorView.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);

@@ -76,7 +76,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
     public ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
-        setHasStableIds(true);
     }
 
     @Override

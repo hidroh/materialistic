@@ -64,7 +64,6 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), false));
-        mRecyclerView.setHasFixedSize(true);
         final int verticalMargin = getResources()
                 .getDimensionPixelSize(R.dimen.cardview_vertical_margin);
         final int horizontalMargin = getResources()
@@ -124,6 +123,7 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     public void onDetach() {
         super.onDetach();
         mPreferenceObservable.unsubscribe(getActivity());
+        mRecyclerView.setAdapter(null); // force adapter detach
     }
 
     @Override
