@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -31,7 +30,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -367,20 +368,18 @@ public class SinglePageItemRecyclerViewAdapter
 
         private final ArrayList<Item> list = new ArrayList<>();
         private final LongSparseArray<Item> map = new LongSparseArray<>();
-        private Bundle expanded;
+        private final Set<String> expanded = new HashSet<>();
 
         public SavedState(ArrayList<Item> list) {
             list.add(null); // footer
             addAll(0, list);
-            expanded = new Bundle();
         }
 
         @SuppressWarnings("unchecked")
         private SavedState(Parcel source) {
             ArrayList<Item> savedList = source.readArrayList(Item.class.getClassLoader());
             addAll(0, savedList);
-            expanded = source.readBundle(list.isEmpty() ? null :
-                    list.get(0).getClass().getClassLoader());
+            expanded.addAll(source.createStringArrayList());
         }
 
         @Override
@@ -391,7 +390,7 @@ public class SinglePageItemRecyclerViewAdapter
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeList(list);
-            dest.writeBundle(expanded);
+            dest.writeStringList(new ArrayList<>(expanded));
         }
 
         int size() {
@@ -415,11 +414,11 @@ public class SinglePageItemRecyclerViewAdapter
         }
 
         boolean isExpanded(String itemId) {
-            return expanded.containsKey(itemId);
+            return expanded.contains(itemId);
         }
 
         int expand(Item item) {
-            expanded.putParcelable(item.getId(), item);
+            expanded.add(item.getId());
             int index = indexOf(item) + 1;
             addAll(index, Arrays.asList(item.getKidItems())); // recursive
             return index;
