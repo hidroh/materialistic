@@ -202,7 +202,6 @@ public class ListFragment extends BaseListFragment {
             } else {
                 mEmptyView.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                mRecyclerView.scrollToPosition(0);
             }
             mErrorView.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);

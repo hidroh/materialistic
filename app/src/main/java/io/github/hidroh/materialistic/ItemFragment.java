@@ -232,7 +232,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());
-        mRecyclerView.scrollToPosition(0);
         mRecyclerView.setAdapter(mAdapter);
     }
 
