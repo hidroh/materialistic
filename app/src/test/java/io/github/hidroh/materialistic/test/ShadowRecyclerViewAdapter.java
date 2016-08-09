@@ -8,6 +8,8 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
 import org.robolectric.internal.ShadowExtractor;
 
+import java.util.ArrayList;
+
 @Implements(value = RecyclerView.Adapter.class, inheritImplementationMethods = true)
 public class ShadowRecyclerViewAdapter {
     private RecyclerView recyclerView;
@@ -29,6 +31,18 @@ public class ShadowRecyclerViewAdapter {
     @Implementation
     public void notifyItemChanged(int position) {
         makeItemVisible(position);
+    }
+
+    @Implementation
+    public void notifyItemChanged(int position, Object payload) {
+        RecyclerView.ViewHolder holder = getViewHolder(position);
+        if (holder == null) {
+            holder = realObject
+                    .createViewHolder(recyclerView, realObject.getItemViewType(position));
+            ((ShadowViewHolder) ShadowExtractor.extract(holder)).setAdapterPosition(position);
+            holders.put(position, holder);
+        }
+        realObject.onBindViewHolder(holder, position, new ArrayList<Object>(){{add(payload);}});
     }
 
     @Implementation

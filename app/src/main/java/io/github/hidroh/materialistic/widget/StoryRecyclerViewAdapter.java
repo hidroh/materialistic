@@ -39,6 +39,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -68,6 +69,7 @@ public class StoryRecyclerViewAdapter extends
     private static final String STATE_HIGHLIGHT_UPDATED = "state:highlightUpdated";
     private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
     private static final String STATE_USERNAME = "state:username";
+    private final Object VOTED = new Object();
     private final ContentObserver mObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
@@ -159,6 +161,15 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ItemViewHolder(mInflater.inflate(R.layout.item_story, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(ItemViewHolder holder, int position, List<Object> payloads) {
+        if (payloads.contains(VOTED)) {
+            holder.mStoryView.animateVote(getItem(position).getScore());
+        } else {
+            super.onBindViewHolder(holder, position, payloads);
+        }
     }
 
     @Override
@@ -434,7 +445,7 @@ public class StoryRecyclerViewAdapter extends
         } else if (successful) {
             Toast.makeText(mContext, R.string.voted, Toast.LENGTH_SHORT).show();
             if (position < getItemCount()) {
-                notifyItemChanged(position);
+                notifyItemChanged(position, VOTED);
             }
         }
     }
@@ -510,6 +521,7 @@ public class StoryRecyclerViewAdapter extends
         public void onDone(boolean successful) {
             // TODO update locally only, as API does not update instantly
             mItem.incrementScore();
+            mItem.clearPendingVoted();
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(mPosition, successful);
             }
