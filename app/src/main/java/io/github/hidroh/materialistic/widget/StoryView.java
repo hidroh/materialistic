@@ -136,20 +136,15 @@ public class StoryView extends RelativeLayout implements Checkable {
     public void setStory(@NonNull WebItem story, int hotThreshold) {
         if (!mIsLocal && story instanceof Item) {
             Item item = (Item) story;
-            if (item.isPendingVoted()) {
-                item.clearPendingVoted();
-                animateVote(item.getScore());
-            } else {
-                boolean hot = item.getScore() >= hotThreshold * AppUtils.HOT_FACTOR;
-                mScoreTextView.setTextColor(hot ? mHotColorResId : mSecondaryTextColorResId);
-                mRankTextView.setText(String.valueOf(item.getRank()));
-                mScoreTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, hot ?
-                        R.drawable.ic_whatshot_orange500_18dp : 0);
-                mScoreTextView.setText(getContext().getResources()
-                        .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
-            }
+            boolean hot = item.getScore() >= hotThreshold * AppUtils.HOT_FACTOR;
+            mScoreTextView.setTextColor(hot ? mHotColorResId : mSecondaryTextColorResId);
+            mRankTextView.setText(String.valueOf(item.getRank()));
+            mScoreTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, hot ?
+                    R.drawable.ic_whatshot_orange500_18dp : 0);
+            mScoreTextView.setText(getContext().getResources()
+                    .getQuantityString(R.plurals.score, item.getScore(), item.getScore()));
             if (item.getKidCount() > 0) {
-                boolean hot = item.getKidCount() >= hotThreshold;
+                hot = item.getKidCount() >= hotThreshold;
                 mCommentButton.setTextColor(hot ? mHotColorResId : mAccentColorResId);
                 if (hot) {
                     mCommentButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -248,7 +243,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         }
     }
 
-    private void animateVote(final int newScore) {
+    void animateVote(final int newScore) {
         if (mIsLocal) {
             return;
         }
