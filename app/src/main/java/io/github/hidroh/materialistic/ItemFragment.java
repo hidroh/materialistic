@@ -249,6 +249,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     private void showPreferences() {
         Bundle args = new Bundle();
         args.putInt(PopupSettingsFragment.EXTRA_TITLE, R.string.font_options);
+        args.putInt(PopupSettingsFragment.EXTRA_SUMMARY, R.string.pull_up_hint);
         args.putIntArray(PopupSettingsFragment.EXTRA_XML_PREFERENCES, new int[]{
                 R.xml.preferences_font,
                 R.xml.preferences_comments});
