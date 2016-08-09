@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -526,6 +527,8 @@ public class StoryRecyclerViewAdapter extends
         private final String mSaveText;
         private final String mUnsaveText;
         private final String mVoteText;
+        private final int mSaveColor;
+        private final int mVoteColor;
         boolean mSaved;
 
         ItemTouchHelperCallback(Context context) {
@@ -533,6 +536,8 @@ public class StoryRecyclerViewAdapter extends
             mSaveText = context.getString(R.string.save);
             mUnsaveText = context.getString(R.string.unsave);
             mVoteText = context.getString(R.string.vote_up);
+            mSaveColor = ContextCompat.getColor(context, R.color.orange500);
+            mVoteColor = ContextCompat.getColor(context, R.color.greenA700);
         }
 
         @Override
@@ -543,6 +548,16 @@ public class StoryRecyclerViewAdapter extends
         @Override
         protected String getRightText() {
             return mSaved ? mUnsaveText : mSaveText;
+        }
+
+        @Override
+        protected int getLeftTextColor() {
+            return mVoteColor;
+        }
+
+        @Override
+        protected int getRightTextColor() {
+            return mSaveColor;
         }
     }
 }
