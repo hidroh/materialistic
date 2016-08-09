@@ -164,13 +164,18 @@ public class AppUtils {
     }
 
     public static CharSequence fromHtml(String htmlText) {
+        return fromHtml(htmlText, false);
+    }
+
+    static CharSequence fromHtml(String htmlText, boolean compact) {
         if (TextUtils.isEmpty(htmlText)) {
             return null;
         }
         CharSequence spanned;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             //noinspection InlinedApi
-            spanned = Html.fromHtml(htmlText, Html.FROM_HTML_MODE_LEGACY);
+            spanned = Html.fromHtml(htmlText, compact ?
+                    Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY);
         } else {
             //noinspection deprecation
             spanned = Html.fromHtml(htmlText);

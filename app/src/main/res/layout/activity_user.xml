@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/bottom_sheet"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
         android:background="?android:attr/colorBackground"
@@ -37,31 +37,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            layout="@layout/user_header"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@id/header_card_view" />
+            android:layout_height="wrap_content">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
-            app:tabTextColor="?android:attr/textColorPrimary"
-            app:tabBackground="?attr/colorPrimary"
-            android:background="?attr/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <include
+                layout="@layout/user_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="0dp"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+                android:id="@id/header_card_view" />
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                app:tabTextColor="?android:attr/textColorPrimary"
+                app:tabBackground="?attr/colorPrimary"
+                android:background="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|snap|enterAlways"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </android.support.design.widget.AppBarLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@id/recycler_view"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <include
             layout="@layout/empty_item"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </android.support.design.widget.CoordinatorLayout>
