@@ -34,6 +34,19 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/listPreferredItemHeightSmall" />
 
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <include
+                layout="@layout/button_navigation"
+                android:layout_margin="@dimen/margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </FrameLayout>
+
         <io.github.hidroh.materialistic.widget.TintableTextView
             android:text="@string/help_navigate_up"
             android:gravity="center_vertical"

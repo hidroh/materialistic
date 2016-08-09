@@ -107,7 +107,11 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
 
     private void showPreferences() {
         Bundle args = new Bundle();
-        args.putInt(PopupSettingsFragment.EXTRA_XML_PREFERENCES, R.xml.preferences_list);
+        args.putInt(PopupSettingsFragment.EXTRA_TITLE, R.string.list_display_options);
+        args.putInt(PopupSettingsFragment.EXTRA_SUMMARY, R.string.pull_up_hint);
+        args.putIntArray(PopupSettingsFragment.EXTRA_XML_PREFERENCES, new int[]{
+                R.xml.preferences_font,
+                R.xml.preferences_list});
         ((DialogFragment) Fragment.instantiate(getActivity(),
                 PopupSettingsFragment.class.getName(), args))
                 .show(getFragmentManager(), PopupSettingsFragment.class.getName());

@@ -74,7 +74,7 @@
     <string name="pref_text_size_title">Text size</string>
     <string name="pref_font_title">Font</string>
     <string name="pref_comment_display_title">Thread</string>
-    <string name="pref_max_lines_title">Comment</string>
+    <string name="pref_max_lines_title">Long comment</string>
     <string name="pref_navigation_title">On-screen navigation</string>
     <string name="pref_lazy_load_title">Lazy load content</string>
     <string name="pref_lazy_load_summary">Load content only when you switch to its tab</string>
@@ -202,7 +202,7 @@
     <string name="comment_max_lines_3">Max 3 lines</string>
     <string name="comment_max_lines_4">Max 4 lines</string>
     <string name="comment_max_lines_5">Max 5 lines</string>
-    <string name="comment_max_lines_all">All</string>
+    <string name="comment_max_lines_all">Full content</string>
     <string name="line_height_compact">Compact</string>
     <string name="line_height_normal">Normal</string>
     <string name="line_height_cozy">Cozy</string>
@@ -301,5 +301,6 @@
     <string name="discard_draft">Discard draft</string>
     <string name="clear_drafts">Clear all drafts</string>
     <string name="more_sections">More sections</string>
+    <string name="list">List</string>
 
 </resources>

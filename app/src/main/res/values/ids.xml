@@ -98,6 +98,7 @@
     <item type="id" name="menu_save_draft" />
     <item type="id" name="menu_discard_draft" />
     <item type="id" name="menu_clear_drafts" />
+    <item type="id" name="menu_readability" />
 
     <!-- others -->
     <item type="id" name="text_developer_info" />
