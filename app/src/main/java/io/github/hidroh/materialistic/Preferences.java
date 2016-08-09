@@ -132,6 +132,10 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
+    static boolean smoothScrollEnabled(Context context) {
+        return get(context, R.string.pref_smooth_scroll, true);
+    }
+
     public static boolean threadIndicatorEnabled(Context context) {
         return get(context, R.string.pref_thread_indicator, true);
     }
