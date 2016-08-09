@@ -46,6 +46,18 @@ public class SettingsActivity extends DrawerActivity {
                 startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.offline)
                         .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_offline)));
+        findViewById(R.id.menu_list).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.list_display_options)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_list)));
+        findViewById(R.id.menu_comments).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.comments)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_comments)));
+        findViewById(R.id.menu_readability).setOnClickListener(v ->
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.readability)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_readability)));
         findViewById(R.id.drawer_about).setOnClickListener(v ->
                 startActivity(new Intent(SettingsActivity.this, AboutActivity.class)));
         findViewById(R.id.drawer_release).setOnClickListener(v ->

@@ -63,7 +63,11 @@ public class NavFloatingActionButton extends FloatingActionButton {
     public NavFloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         bindNavigationPad();
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (!isInEditMode()) {
+            mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        } else {
+            mVibrator = null;
+        }
     }
 
     @Override
@@ -80,7 +84,7 @@ public class NavFloatingActionButton extends FloatingActionButton {
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onDown(MotionEvent e) {
-                        return true;
+                        return mNavigable != null;
                     }
 
                     @Override
@@ -99,9 +103,6 @@ public class NavFloatingActionButton extends FloatingActionButton {
                     @Override
                     public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1,
                                            float velocityX, float velocityY) {
-                        if (mNavigable == null) {
-                            return false;
-                        }
                         int direction;
                         if (Math.abs(velocityX) > Math.abs(velocityY)) {
                             direction = velocityX < 0 ?
@@ -118,6 +119,9 @@ public class NavFloatingActionButton extends FloatingActionButton {
 
                     @Override
                     public void onLongPress(MotionEvent e) {
+                        if (mNavigable == null) {
+                            return;
+                        }
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
                             Toast.makeText(getContext(), R.string.not_supported, Toast.LENGTH_SHORT).show();
                         } else {

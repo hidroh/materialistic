@@ -99,6 +99,27 @@ public class SettingsActivityTest {
                 .hasComponent(activity, PreferencesActivity.class);
     }
 
+    @Test
+    public void testList() {
+        activity.findViewById(R.id.menu_list).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, PreferencesActivity.class);
+    }
+
+    @Test
+    public void testComments() {
+        activity.findViewById(R.id.menu_comments).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, PreferencesActivity.class);
+    }
+
+    @Test
+    public void testReadability() {
+        activity.findViewById(R.id.menu_readability).performClick();
+        assertThat(shadowOf(activity).getNextStartedActivity())
+                .hasComponent(activity, PreferencesActivity.class);
+    }
+
     @After
     public void tearDown() {
         AlgoliaClient.sSortByTime = true;
