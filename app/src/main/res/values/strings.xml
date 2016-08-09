@@ -257,7 +257,7 @@
     <string name="confirm_submit_question">Submit as question?</string>
     <string name="submission_guidelines">Submission guidelines</string>
     <string name="title_activity_user">My Profile</string>
-    <string name="user_info">Created: %1$s - karma: %2$s</string>
+    <string name="user_info">Created: %1$s</string>
     <plurals name="submissions_count">
         <item quantity="zero">%1$s submission</item>
         <item quantity="one">%1$s submission</item>

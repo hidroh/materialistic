@@ -23,13 +23,18 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -45,12 +50,14 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     public static final String EXTRA_USERNAME = UserActivity.class.getName() + ".EXTRA_USERNAME";
     private static final String STATE_USER = "state:user";
     private static final String PARAM_ID = "id";
+    private static final String KARMA = " (%1$s)";
     @Inject UserManager mUserManager;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManger;
     @Inject KeyDelegate mKeyDelegate;
     private KeyDelegate.RecyclerViewHelper mScrollableHelper;
     private String mUsername;
     private UserManager.User mUser;
+    private TextView mTitle;
     private TextView mInfo;
     private TextView mAbout;
     private RecyclerView mRecyclerView;
@@ -100,7 +107,8 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                 // no op
             }
         });
-        ((TextView) findViewById(R.id.title)).setText(mUsername);
+        mTitle = (TextView) findViewById(R.id.title);
+        mTitle.setText(mUsername);
         mInfo = (TextView) findViewById(R.id.user_info);
         mAbout = (TextView) findViewById(R.id.about);
         mEmpty = findViewById(R.id.empty);
@@ -220,11 +228,15 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     }
 
     private void bind() {
-        mInfo.setText(getString(R.string.user_info, mUser.getCreated(this), mUser.getKarma()));
+        SpannableString karma = new SpannableString(String.format(Locale.US, KARMA,
+                NumberFormat.getInstance(Locale.getDefault()).format(mUser.getKarma())));
+        karma.setSpan(new RelativeSizeSpan(0.8f), 0, karma.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        mTitle.append(karma);
+        mInfo.setText(getString(R.string.user_info, mUser.getCreated(this)));
         if (TextUtils.isEmpty(mUser.getAbout())) {
             mAbout.setVisibility(View.GONE);
         } else {
-            AppUtils.setTextWithLinks(mAbout, AppUtils.fromHtml(mUser.getAbout()));
+            AppUtils.setTextWithLinks(mAbout, AppUtils.fromHtml(mUser.getAbout(), true));
         }
         int count = mUser.getItems().length;
         mTabLayout.addTab(mTabLayout.newTab()

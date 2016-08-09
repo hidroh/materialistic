@@ -96,15 +96,14 @@ public class UserActivityTest {
     public void testBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username");
-        assertThat((TextView) activity.findViewById(R.id.user_info)).containsText("karma: 2016");
+        assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username (2,016)");
         assertThat((TextView) activity.findViewById(R.id.about)).hasTextString("about");
         assertEquals(activity.getResources().getQuantityString(R.plurals.submissions_count, 2, 2),
                 ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
         assertEquals(2, (((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter())
                 .getItemCount());
         shadowOf(activity).recreate();
-        assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username");
+        assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username (2,016)");
     }
 
     @Test

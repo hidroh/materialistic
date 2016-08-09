@@ -204,7 +204,7 @@
     <string name="confirm_submit_question">确定提交该问题？</string>
     <string name="submission_guidelines">提交指南</string>
     <string name="title_activity_user">个人中心</string>
-    <string name="user_info">创建于: %1$s - karma: %2$s</string>
+    <string name="user_info">创建于: %1$s</string>
     <plurals name="submissions_count">
         <item quantity="other">%1$s 处足迹</item>
     </plurals>

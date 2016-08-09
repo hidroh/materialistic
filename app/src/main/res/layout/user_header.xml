@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/meta_container"
     android:orientation="vertical"
@@ -23,6 +24,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary">
@@ -38,20 +40,8 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/user_info"
-        android:text="@string/loading_text"
-        tools:text="Created: 01/01/2015 - Karma: 2016"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="?attr/subtitleTextSize"
-        android:textStyle="italic" />
-
-    <TextView
         android:id="@+id/about"
         android:text="@string/loading_text"
-        android:singleLine="false"
         android:maxLines="5"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         android:paddingTop="@dimen/padding"
@@ -63,5 +53,16 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="?attr/contentTextSize" />
+
+    <TextView
+        android:id="@+id/user_info"
+        android:text="@string/loading_text"
+        tools:text="Created: 01/01/2015 - Karma: 2016"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="?attr/subtitleTextSize"
+        android:textStyle="italic" />
 
 </LinearLayout>
