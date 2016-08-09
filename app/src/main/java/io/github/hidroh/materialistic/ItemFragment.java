@@ -81,7 +81,8 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
                 R.string.pref_color_code,
                 R.string.pref_thread_indicator,
                 R.string.pref_font,
-                R.string.pref_text_size);
+                R.string.pref_text_size,
+                R.string.pref_smooth_scroll);
     }
 
     @Override
@@ -132,6 +133,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         super.onViewCreated(view, savedInstanceState);
         mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
                 KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
+        mScrollableHelper.smoothScrollEnabled(Preferences.smoothScrollEnabled(getActivity()));
     }
 
     @Override
@@ -239,6 +241,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         if (contextChanged || key == R.string.pref_comment_display) {
             eagerLoad();
         } else if (mAdapter != null) {
+            mScrollableHelper.smoothScrollEnabled(Preferences.smoothScrollEnabled(getActivity()));
             mItemDecoration.setColorCodeEnabled(Preferences.colorCodeEnabled(getActivity()));
             mItemDecoration.setThreadIndicatorEnabled(Preferences.threadIndicatorEnabled(getActivity()));
             mAdapter.initDisplayOptions(getActivity());
@@ -249,6 +252,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     private void showPreferences() {
         Bundle args = new Bundle();
         args.putInt(PopupSettingsFragment.EXTRA_TITLE, R.string.font_options);
+        args.putInt(PopupSettingsFragment.EXTRA_SUMMARY, R.string.pull_up_hint);
         args.putIntArray(PopupSettingsFragment.EXTRA_XML_PREFERENCES, new int[]{
                 R.xml.preferences_font,
                 R.xml.preferences_comments});

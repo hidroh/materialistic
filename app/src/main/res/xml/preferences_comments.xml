@@ -61,4 +61,11 @@
         app:dialogTitle="@string/pref_navigation_title"
         app:dialogLayout="@layout/help_navigation" />
 
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="@string/pref_smooth_scroll"
+        android:title="@string/pref_smooth_scroll_title"
+        android:summary="@string/pref_smooth_scroll_summary"
+        android:dependency="@string/pref_navigation"
+        android:defaultValue="true" />
+
 </android.support.v7.preference.PreferenceScreen>

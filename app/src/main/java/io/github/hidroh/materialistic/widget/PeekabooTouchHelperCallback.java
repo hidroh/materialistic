@@ -34,11 +34,12 @@ import io.github.hidroh.materialistic.R;
 abstract class PeekabooTouchHelperCallback extends ItemTouchHelper.SimpleCallback {
     private final Paint mPaint = new Paint();
     private final int mPadding;
+    private final int mDefaultTextColor;
 
     PeekabooTouchHelperCallback(Context context) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        mPaint.setColor(ContextCompat.getColor(context,
-                AppUtils.getThemedResId(context, android.R.attr.textColorPrimary)));
+        mDefaultTextColor = ContextCompat.getColor(context,
+                AppUtils.getThemedResId(context, android.R.attr.textColorPrimary));
         mPaint.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.text_size_small));
         mPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         mPadding = context.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
@@ -59,16 +60,18 @@ abstract class PeekabooTouchHelperCallback extends ItemTouchHelper.SimpleCallbac
 
     private void drawPeekingText(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX) {
         View itemView = viewHolder.itemView;
-        String text = dX > 0 ? getLeftText() : getRightText();
+        boolean showLeft = dX > 0;
+        String text = showLeft ? getLeftText() : getRightText();
         Rect rect = new Rect();
         mPaint.getTextBounds(text, 0, text.length(), rect);
         float textWidth = rect.right - rect.left,
                 textHeight = rect.bottom - rect.top,
                 width = itemView.getWidth(),
                 paddingY = (itemView.getHeight() - textHeight) / 2;
+        mPaint.setColor(showLeft ? getLeftTextColor() : getRightTextColor());
         mPaint.setAlpha(Math.min(255, (int) (255 / getSwipeThreshold(viewHolder) * Math.abs(dX) / width)));
         canvas.drawText(text.toUpperCase(Locale.getDefault()),
-                dX > 0 ? itemView.getLeft() + mPadding :
+                showLeft ? itemView.getLeft() + mPadding :
                         itemView.getRight() - mPadding - textWidth,
                 itemView.getBottom() - paddingY,
                 mPaint);
@@ -87,4 +90,12 @@ abstract class PeekabooTouchHelperCallback extends ItemTouchHelper.SimpleCallbac
     protected abstract String getLeftText();
 
     protected abstract String getRightText();
+
+    protected int getLeftTextColor() {
+        return mDefaultTextColor;
+    }
+
+    protected int getRightTextColor() {
+        return mDefaultTextColor;
+    }
 }

@@ -19,18 +19,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <io.github.hidroh.materialistic.preference.FontSizePreference
+        android:key="@string/pref_text_size"
+        android:title="@string/pref_text_size_title"
+        android:defaultValue="0"
+        app:entries="@array/text_size_options"
+        app:entryValues="@array/pref_text_size_values" />
+
     <io.github.hidroh.materialistic.preference.FontPreference
         android:key="@string/pref_font"
         android:title="@string/pref_font_title"
         android:defaultValue=""
         app:entries="@array/font_options"
         app:entryValues="@array/font_values" />
-
-    <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
-        android:key="@string/pref_line_height"
-        android:title="@string/pref_line_height_title"
-        android:defaultValue="1.0"
-        app:entries="@array/pref_line_height_options"
-        app:entryValues="@array/pref_line_height_values" />
 
 </android.support.v7.preference.PreferenceScreen>

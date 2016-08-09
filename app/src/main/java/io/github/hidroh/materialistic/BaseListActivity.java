@@ -358,7 +358,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     private void openSinglePaneItem() {
         if (mExternalBrowser) {
-            AppUtils.openWebUrlExternal(this, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
+            AppUtils.openWebUrlExternal(this, mSelectedItem, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
         } else {
             startActivity(new Intent(this, ItemActivity.class)
                     .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())

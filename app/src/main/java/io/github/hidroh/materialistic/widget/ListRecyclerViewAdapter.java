@@ -91,11 +91,12 @@ public abstract class ListRecyclerViewAdapter
     public final void onBindViewHolder(final VH holder, int position) {
         final T item = getItem(position);
         if (mCardViewEnabled) {
-            holder.mCardView.setCardElevation(mCardElevation);
+            holder.mCardView.setCardElevation(isSelected(item.getId()) ?
+                    mCardElevation * 2 : mCardElevation);
             holder.mCardView.setRadius(mCardRadius);
             holder.mCardView.setUseCompatPadding(true);
         } else {
-            holder.mCardView.setCardElevation(0);
+            holder.mCardView.setCardElevation(isSelected(item.getId()) ? mCardElevation * 2 : 0);
             holder.mCardView.setRadius(0);
             holder.mCardView.setUseCompatPadding(false);
         }

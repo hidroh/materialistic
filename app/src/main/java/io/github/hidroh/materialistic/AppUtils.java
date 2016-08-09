@@ -21,6 +21,7 @@ import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -86,13 +87,13 @@ public class AppUtils {
     static final int HOT_THRESHOLD_LOW = 10;
     public static final int HOT_FACTOR = 3;
 
-    static void openWebUrlExternal(Context context, String url, CustomTabsSession session) {
+    static void openWebUrlExternal(Context context, WebItem item, String url, CustomTabsSession session) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
             return;
         }
-        Intent intent = createViewIntent(context, url, session);
+        Intent intent = createViewIntent(context, item, session);
         if (!HackerNewsClient.BASE_WEB_URL.contains(Uri.parse(url).getHost())) {
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
@@ -106,7 +107,7 @@ public class AppUtils {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, url, session)
+            intents.add(createViewIntent(context, item, session)
                     .setPackage(info.activityInfo.packageName));
         }
         if (intents.isEmpty()) {
@@ -199,14 +200,14 @@ public class AppUtils {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
-                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()),
+                    item, String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()),
                     session);
             return;
         }
         popupMenu.create(context, anchor, GravityCompat.END)
                 .inflate(R.menu.menu_share)
                 .setOnMenuItemClickListener(menuItem -> {
-                    openWebUrlExternal(context, menuItem.getItemId() == R.id.menu_article ?
+                    openWebUrlExternal(context, item, menuItem.getItemId() == R.id.menu_article ?
                             item.getUrl() :
                             String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()), session);
                     return true;
@@ -544,18 +545,25 @@ public class AppUtils {
     }
 
     @NonNull
-    private static Intent createViewIntent(Context context, String url, CustomTabsSession session) {
+    private static Intent createViewIntent(Context context, WebItem item, CustomTabsSession session) {
         if (Preferences.customChromeTabEnabled(context)) {
             return new CustomTabsIntent.Builder(session)
-                    .setToolbarColor(ContextCompat.getColor(context, R.color.orange400))
+                    .setToolbarColor(ContextCompat.getColor(context,
+                            AppUtils.getThemedResId(context, R.attr.colorPrimary)))
                     .setShowTitle(true)
                     .enableUrlBarHiding()
                     .addDefaultShareMenuItem()
+                    .addMenuItem(context.getString(R.string.comments),
+                            PendingIntent.getActivity(context, 0,
+                                    new Intent(context, ItemActivity.class)
+                                            .putExtra(ItemActivity.EXTRA_ITEM, item)
+                                            .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true),
+                                    PendingIntent.FLAG_ONE_SHOT))
                     .build()
                     .intent
-                    .setData(Uri.parse(url));
+                    .setData(Uri.parse(item.getUrl()));
         } else {
-            return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            return new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
         }
     }
 

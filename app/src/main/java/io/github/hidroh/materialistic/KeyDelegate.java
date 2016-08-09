@@ -237,6 +237,7 @@ public class KeyDelegate {
         private final RecyclerView mRecyclerView;
         private final LinearLayoutManager mLayoutManager;
         private final @ScrollMode int mScrollMode;
+        private boolean mSmoothScroll = true;
 
         RecyclerViewHelper(RecyclerView recyclerView, @ScrollMode int scrollMode) {
             mRecyclerView = recyclerView;
@@ -292,6 +293,10 @@ public class KeyDelegate {
             }
         }
 
+        void smoothScrollEnabled(boolean enabled) {
+            mSmoothScroll = enabled;
+        }
+
         int getCurrentPosition() {
             // TODO handle last page item
             return mLayoutManager.findFirstVisibleItemPosition();
@@ -299,6 +304,10 @@ public class KeyDelegate {
 
         int[] scrollToPosition(int position) {
             if (position >= 0 && position < mRecyclerView.getAdapter().getItemCount()) {
+                if (!mSmoothScroll) {
+                    mLayoutManager.scrollToPositionWithOffset(position, 0);
+                    return null;
+                }
                 int first = mLayoutManager.findFirstVisibleItemPosition();
                 int[] lock = null;
                 if (Math.abs(position - first) > 1) { // lock nothing if scroll to adjacent

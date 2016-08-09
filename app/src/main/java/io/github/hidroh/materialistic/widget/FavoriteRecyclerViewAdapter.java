@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
@@ -180,7 +181,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         if (!mActionModeDelegate.isInActionMode()) {
             super.handleItemClick(item, holder);
         } else {
-            toggle(item.getId(), holder.getLayoutPosition());
+            toggle(item.getId(), holder.getAdapterPosition());
         }
     }
 
@@ -308,10 +309,12 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     static abstract class ItemTouchHelperCallback extends PeekabooTouchHelperCallback {
 
         private final String mText;
+        private final int mColor;
 
         ItemTouchHelperCallback(Context context) {
             super(context);
             mText = context.getString(R.string.delete);
+            mColor = ContextCompat.getColor(context, R.color.red500);
         }
 
         @Override
@@ -331,6 +334,16 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         @Override
         protected String getRightText() {
             return mText;
+        }
+
+        @Override
+        protected int getLeftTextColor() {
+            return mColor;
+        }
+
+        @Override
+        protected int getRightTextColor() {
+            return mColor;
         }
     }
 }

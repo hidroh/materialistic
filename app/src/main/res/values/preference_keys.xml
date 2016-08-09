@@ -48,6 +48,7 @@
     <string translatable="false" name="pref_readability_line_height">pref_readability_line_height</string>
     <string translatable="false" name="pref_readability_text_size">pref_readability_text_size</string>
     <string translatable="false" name="pref_search_sort">pref_search_sort</string>
+    <string translatable="false" name="pref_smooth_scroll">pref_smooth_scroll</string>
     <string translatable="false" name="pref_story_display">pref_story_display</string>
     <string translatable="false" name="pref_text_size">pref_text_size</string>
     <string translatable="false" name="pref_theme">pref_theme</string>

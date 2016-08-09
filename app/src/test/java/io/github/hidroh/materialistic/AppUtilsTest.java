@@ -161,8 +161,10 @@ public class AppUtilsTest {
 
     @Test
     public void testOpenExternalComment() {
+        ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
+        TestListActivity activity = controller.create().get();
         AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
-                new View(RuntimeEnvironment.application), new TestHnItem(1), null);
+                new View(activity), new TestHnItem(1), null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
         AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
                 new View(RuntimeEnvironment.application), new TestHnItem(1) {
@@ -172,6 +174,7 @@ public class AppUtilsTest {
                     }
                 }, null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
+        controller.destroy();
     }
 
     @Test
@@ -216,7 +219,12 @@ public class AppUtilsTest {
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(null);
-        AppUtils.openWebUrlExternal(RuntimeEnvironment.application, "http://example.com", null);
+        AppUtils.openWebUrlExternal(RuntimeEnvironment.application, new TestHnItem(1L) {
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+        }, "http://example.com", null);
         assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
                 .hasComponent(RuntimeEnvironment.application, OfflineWebActivity.class)
                 .hasExtra(OfflineWebActivity.EXTRA_URL, "http://example.com");

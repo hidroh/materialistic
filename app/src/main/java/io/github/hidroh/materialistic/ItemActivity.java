@@ -421,7 +421,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         if (story.isStoryType() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,
-                            story.getUrl(), mCustomTabsDelegate.getSession()));
+                            story, story.getUrl(), mCustomTabsDelegate.getSession()));
         } else {
             findViewById(R.id.header_card_view).setClickable(false);
         }
