@@ -180,7 +180,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         if (!mActionModeDelegate.isInActionMode()) {
             super.handleItemClick(item, holder);
         } else {
-            toggle(item.getId(), holder.getLayoutPosition());
+            toggle(item.getId(), holder.getAdapterPosition());
         }
     }
 
