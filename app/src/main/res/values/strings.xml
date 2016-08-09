@@ -302,5 +302,6 @@
     <string name="clear_drafts">Clear all drafts</string>
     <string name="more_sections">More sections</string>
     <string name="list">List</string>
+    <string name="delete">Delete</string>
 
 </resources>
