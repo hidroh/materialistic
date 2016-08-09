@@ -448,7 +448,7 @@ public class ListFragmentViewHolderTest {
 
         item.setFavorite(true);
         assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
-                .isEqualTo(ItemTouchHelper.RIGHT);
+                .isEqualTo(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

@@ -16,7 +16,10 @@
 
 package io.github.hidroh.materialistic.widget;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.view.ActionMode;
@@ -52,29 +55,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         void stopActionMode();
     }
 
-    private final ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-        @Override
-        public boolean onMove(RecyclerView recyclerView,
-                              RecyclerView.ViewHolder viewHolder,
-                              RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public int getSwipeDirs(RecyclerView recyclerView,
-                                RecyclerView.ViewHolder viewHolder) {
-            if (mActionModeDelegate.isInActionMode()) {
-                return 0;
-            }
-            return super.getSwipeDirs(recyclerView, viewHolder);
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            dismiss(viewHolder.getAdapterPosition());
-        }
-    });
+    private ItemTouchHelper mItemTouchHelper;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         private boolean mPendingClear;
 
@@ -140,6 +121,21 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         super.onAttachedToRecyclerView(recyclerView);
         mMenuTintDelegate = new MenuTintDelegate();
         mMenuTintDelegate.onActivityCreated(mContext);
+        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mContext) {
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView,
+                                    RecyclerView.ViewHolder viewHolder) {
+                if (mActionModeDelegate.isInActionMode()) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                dismiss(viewHolder.getAdapterPosition());
+            }
+        });
         mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
@@ -306,6 +302,35 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             if (mAdapter.get() != null && mAdapter.get().isAttached()) {
                 mAdapter.get().onVoted(null);
             }
+        }
+    }
+
+    static abstract class ItemTouchHelperCallback extends PeekabooTouchHelperCallback {
+
+        private final String mText;
+
+        ItemTouchHelperCallback(Context context) {
+            super(context);
+            mText = context.getString(R.string.delete);
+        }
+
+        @Override
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                float alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
+                viewHolder.itemView.setAlpha(alpha);
+            }
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+
+        @Override
+        protected String getLeftText() {
+            return mText;
+        }
+
+        @Override
+        protected String getRightText() {
+            return mText;
         }
     }
 }
