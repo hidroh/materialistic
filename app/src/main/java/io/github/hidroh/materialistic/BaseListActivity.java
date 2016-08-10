@@ -193,11 +193,15 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_share) {
-            AppUtils.share(this, mPopupMenu, findViewById(R.id.menu_share), mSelectedItem);
+            View anchor = findViewById(R.id.menu_share);
+            AppUtils.share(this, mPopupMenu, anchor == null ?
+                    findViewById(R.id.toolbar) : anchor, mSelectedItem);
             return true;
         }
         if (item.getItemId() == R.id.menu_external) {
-            AppUtils.openExternal(this, mPopupMenu, findViewById(R.id.menu_external),
+            View anchor = findViewById(R.id.menu_external);
+            AppUtils.openExternal(this, mPopupMenu, anchor == null ?
+                    findViewById(R.id.toolbar) : anchor,
                     mSelectedItem, mCustomTabsDelegate.getSession());
             return true;
         }
