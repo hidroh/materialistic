@@ -148,7 +148,7 @@ public class Preferences {
         return get(context, R.string.pref_auto_viewed, false);
     }
 
-    static boolean navigationEnabled(Context context) {
+    public static boolean navigationEnabled(Context context) {
         return get(context, R.string.pref_navigation, false);
     }
 

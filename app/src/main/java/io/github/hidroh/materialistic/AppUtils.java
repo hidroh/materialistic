@@ -410,7 +410,7 @@ public class AppUtils {
                 .show();
     }
 
-    static void toggleFab(FloatingActionButton fab, boolean visible) {
+    public static void toggleFab(FloatingActionButton fab, boolean visible) {
         CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
         if (visible) {
             fab.show();
@@ -421,7 +421,7 @@ public class AppUtils {
         }
     }
 
-    static void toggleFabAction(FloatingActionButton fab, WebItem item, boolean commentMode) {
+    public static void toggleFabAction(FloatingActionButton fab, WebItem item, boolean commentMode) {
         Context context = fab.getContext();
         fab.setImageResource(commentMode ? R.drawable.ic_reply_white_24dp : R.drawable.ic_zoom_out_map_white_24dp);
         fab.setOnClickListener(v -> {

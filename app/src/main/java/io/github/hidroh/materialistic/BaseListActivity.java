@@ -85,6 +85,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             setFullscreen();
         }
     };
+    private ItemPagerAdapter mAdapter;
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -110,8 +111,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
             mTabLayout.setVisibility(View.GONE);
             mViewPager = (ViewPager) findViewById(R.id.content);
-            mViewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
-            mViewPager.setPageMarginDrawable(R.color.blackT12);
             mViewPager.setVisibility(View.GONE);
             mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
             mNavButton = (NavFloatingActionButton) findViewById(R.id.navigation_button);
@@ -119,7 +118,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                     // if callback is fired navigable should not be null
                     ((Navigable) ((ItemPagerAdapter) mViewPager.getAdapter()).getItem(0))
                             .onNavigate(direction));
-            toggleFab(false);
+            AppUtils.toggleFab(mNavButton, false);
+            AppUtils.toggleFab(mReplyButton, false);
         }
         if (savedInstanceState == null) {
             mStoryViewMode = Preferences.getDefaultStoryView(this);
@@ -333,11 +333,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mListView.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
         mKeyDelegate.setAppBarEnabled(!mFullscreen);
         mViewPager.setSwipeEnabled(!mFullscreen);
-        if (mFullscreen) {
-            mReplyButton.hide();
-        } else {
-            mReplyButton.show();
-        }
+        AppUtils.toggleFab(mReplyButton, !mFullscreen);
     }
 
     private Scrollable getScrollableList() {
@@ -377,7 +373,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mTabLayout.setVisibility(View.GONE);
             mViewPager.setVisibility(View.GONE);
             mViewPager.setAdapter(null);
-            toggleFab(false);
+            AppUtils.toggleFab(mNavButton, false);
+            AppUtils.toggleFab(mReplyButton, false);
         } else {
             setTitle(mSelectedItem.getDisplayedTitle());
             findViewById(R.id.empty_selection).setVisibility(View.GONE);
@@ -389,47 +386,17 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void bindViewPager() {
-        final ItemPagerAdapter adapter = new ItemPagerAdapter(this,
-                getSupportFragmentManager(), mSelectedItem, true, getItemCacheMode());
-        mViewPager.setAdapter(adapter);
-        mTabLayout.setupWithViewPager(mViewPager);
-        mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                toggleFab(true);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                Fragment fragment = adapter.getItem(mViewPager.getCurrentItem());
-                if (fragment != null) {
-                    ((Scrollable) fragment).scrollToTop();
-                }
-            }
-        });
-        switch (mStoryViewMode) {
-            case Article:
-                mViewPager.setCurrentItem(1);
-                break;
-            case Readability:
-                mViewPager.setCurrentItem(2);
-                break;
+        if (mAdapter != null) {
+            mAdapter.unbind(mTabLayout);
         }
-        toggleFab(true);
+        mAdapter = new ItemPagerAdapter(this, getSupportFragmentManager(), new ItemPagerAdapter.Builder()
+                .setItem(mSelectedItem)
+                .setShowArticle(true)
+                .setCacheMode(getItemCacheMode())
+                .setDefaultViewMode(mStoryViewMode));
+        mAdapter.bind(mViewPager, mTabLayout, mNavButton, mReplyButton);
         if (mFullscreen) {
             setFullscreen();
-        }
-    }
-
-    private void toggleFab(boolean on) {
-        if (on) {
-            AppUtils.toggleFab(mNavButton, navigationVisible());
-            AppUtils.toggleFab(mReplyButton, true);
-            AppUtils.toggleFabAction(mReplyButton, mSelectedItem, mViewPager.getCurrentItem() == 0);
-        } else {
-            AppUtils.toggleFab(mNavButton, false);
-            AppUtils.toggleFab(mReplyButton, false);
         }
     }
 
@@ -457,13 +424,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 break;
             case R.string.pref_navigation:
                 if (mNavButton != null) {
-                    AppUtils.toggleFab(mNavButton, navigationVisible());
+                    AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 &&
+                            Preferences.navigationEnabled(this));
                 }
                 break;
         }
-    }
-
-    private boolean navigationVisible() {
-        return mViewPager.getCurrentItem() == 0 && Preferences.navigationEnabled(this);
     }
 }

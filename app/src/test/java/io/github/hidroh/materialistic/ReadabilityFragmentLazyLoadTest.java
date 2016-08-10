@@ -25,7 +25,6 @@ import io.github.hidroh.materialistic.test.TestWebItem;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -37,7 +36,7 @@ public class ReadabilityFragmentLazyLoadTest {
     private TestReadabilityActivity activity;
     private ActivityController<TestReadabilityActivity> controller;
     @Inject ReadabilityClient readabilityClient;
-    private Fragment fragment;
+    private ReadabilityFragment fragment;
 
     @Before
     public void setUp() {
@@ -58,7 +57,7 @@ public class ReadabilityFragmentLazyLoadTest {
             }
         };
         args.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
-        fragment = Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
+        fragment = (ReadabilityFragment) Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
         shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(null);
     }
@@ -72,8 +71,7 @@ public class ReadabilityFragmentLazyLoadTest {
         verify(readabilityClient, never()).parse(anyString(), anyString(),
                 any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
-        fragment.setUserVisibleHint(true);
-        fragment.setUserVisibleHint(false);
+        fragment.loadNow();
         verify(readabilityClient).parse(anyString(), anyString(),
                 any(ReadabilityClient.Callback.class));
     }
@@ -91,8 +89,7 @@ public class ReadabilityFragmentLazyLoadTest {
         verify(readabilityClient, never()).parse(anyString(), anyString(),
                 any(ReadabilityClient.Callback.class));
         reset(readabilityClient);
-        fragment.setUserVisibleHint(true);
-        fragment.setUserVisibleHint(false);
+        fragment.loadNow();
         verify(readabilityClient).parse(anyString(), anyString(),
                 any(ReadabilityClient.Callback.class));
     }

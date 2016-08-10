@@ -164,6 +164,24 @@ abstract class BaseWebFragment extends LazyLoadFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mWebView.onResume();
+        }
+        mWebView.resumeTimers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mWebView.onPause();
+        }
+        mWebView.pauseTimers();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_FULLSCREEN, mFullscreen);
@@ -176,6 +194,12 @@ abstract class BaseWebFragment extends LazyLoadFragment
         super.onDetach();
         mPreferenceObservable.unsubscribe(getActivity());
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mWebView.destroy();
     }
 
     @Override

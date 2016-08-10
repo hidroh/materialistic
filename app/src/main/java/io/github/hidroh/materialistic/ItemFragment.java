@@ -239,7 +239,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
         if (contextChanged || key == R.string.pref_comment_display) {
-            eagerLoad();
+            load();
         } else if (mAdapter != null) {
             mScrollableHelper.smoothScrollEnabled(Preferences.smoothScrollEnabled(getActivity()));
             mItemDecoration.setColorCodeEnabled(Preferences.colorCodeEnabled(getActivity()));

@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic.test;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import io.github.hidroh.materialistic.InjectableActivity;
 import io.github.hidroh.materialistic.R;
@@ -17,7 +18,9 @@ public class WebActivity extends InjectableActivity {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
             WebItem item = getIntent().getParcelableExtra(EXTRA_ITEM);
-            fragment = WebFragment.instantiate(this, item);
+            Bundle args = new Bundle();
+            args.putParcelable(WebFragment.EXTRA_ITEM, item);
+            fragment = (WebFragment) Fragment.instantiate(this, WebFragment.class.getName(), args);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content,

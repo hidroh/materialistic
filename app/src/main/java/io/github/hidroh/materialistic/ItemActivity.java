@@ -149,7 +149,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         mAppBar = (AppBarLayout) findViewById(R.id.appbar);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        toggleFab(false);
+        AppUtils.toggleFab(mNavButton, false);
+        AppUtils.toggleFab(mReplyButton, false);
         final Intent intent = getIntent();
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
@@ -303,11 +304,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         mAppBar.setExpanded(!mFullscreen, true);
         mKeyDelegate.setAppBarEnabled(!mFullscreen);
         mViewPager.setSwipeEnabled(!mFullscreen);
-        if (mFullscreen) {
-            mReplyButton.hide();
-        } else {
-            mReplyButton.show();
-        }
+        AppUtils.toggleFab(mReplyButton, !mFullscreen);
     }
 
     private void onItemLoaded(@Nullable Item response) {
@@ -387,41 +384,19 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                         R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;
         }
-        mViewPager.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.divider));
-        mViewPager.setPageMarginDrawable(R.color.blackT12);
         mAdapter = new ItemPagerAdapter(this, getSupportFragmentManager(),
-                story, !mExternalBrowser,
-                getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT));
-        mViewPager.setAdapter(mAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
-        // TODO replace deprecated method
-        mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-                toggleFab(true);
-            }
-
+                new ItemPagerAdapter.Builder()
+                        .setItem(story)
+                        .setShowArticle(!mExternalBrowser)
+                        .setCacheMode(getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT))
+                        .setDefaultViewMode(mStoryViewMode));
+        mAdapter.bind(mViewPager, mTabLayout, mNavButton, mReplyButton);
+        mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                Scrollable scrollable = getCurrent(Scrollable.class);
-                if (scrollable != null) {
-                    scrollable.scrollToTop();
-                }
                 mAppBar.setExpanded(true, true);
             }
         });
-        switch (mStoryViewMode) {
-            case Article:
-                if (mViewPager.getAdapter().getCount() == 3) {
-                    mViewPager.setCurrentItem(1);
-                }
-                break;
-            case Readability:
-                mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
-                break;
-        }
-        toggleFab(true);
         if (story.isStoryType() && mExternalBrowser) {
             findViewById(R.id.header_card_view).setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,
@@ -431,17 +406,6 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         }
         if (mFullscreen) {
             setFullscreen();
-        }
-    }
-
-    private void toggleFab(boolean on) {
-        if (on) {
-            AppUtils.toggleFab(mNavButton, navigationVisible());
-            AppUtils.toggleFab(mReplyButton, true);
-            AppUtils.toggleFabAction(mReplyButton, mItem, mViewPager.getCurrentItem() == 0);
-        } else {
-            AppUtils.toggleFab(mNavButton, false);
-            AppUtils.toggleFab(mReplyButton, false);
         }
     }
 
