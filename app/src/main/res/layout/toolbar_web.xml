@@ -22,7 +22,7 @@
     android:id="@+id/control_switcher"
     android:inAnimation="@anim/slide_in_up"
     android:outAnimation="@anim/slide_out_down"
-    android:background="?attr/colorCardHighlight"
+    android:background="?attr/colorPrimary"
     android:elevation="@dimen/cardview_default_elevation"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
