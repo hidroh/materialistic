@@ -16,11 +16,9 @@
 
 package io.github.hidroh.materialistic;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 
 import java.lang.ref.WeakReference;
 
@@ -30,15 +28,9 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.WebItem;
 
 public class WebFragment extends BaseWebFragment {
-    private static final String EXTRA_ITEM = BaseWebFragment.class.getName() + ".EXTRA_ITEM";
+    public static final String EXTRA_ITEM = BaseWebFragment.class.getName() + ".EXTRA_ITEM";
     private WebItem mItem;
     private boolean mIsHackerNewsUrl;
-
-    public static WebFragment instantiate(Context context, @NonNull WebItem item) {
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_ITEM, item);
-        return (WebFragment) Fragment.instantiate(context, WebFragment.class.getName(), args);
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

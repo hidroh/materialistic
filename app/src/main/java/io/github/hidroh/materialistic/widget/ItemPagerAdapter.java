@@ -19,14 +19,21 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
 
+import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ItemFragment;
+import io.github.hidroh.materialistic.LazyLoadFragment;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ReadabilityFragment;
+import io.github.hidroh.materialistic.Scrollable;
 import io.github.hidroh.materialistic.WebFragment;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
@@ -37,14 +44,25 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     private final WebItem mItem;
     private final boolean mShowArticle;
     private final int mCacheMode;
+    private final int mDefaultItem;
+    private TabLayout.OnTabSelectedListener mTabListener;
 
-    public ItemPagerAdapter(Context context, FragmentManager fm,
-                            @NonNull WebItem item, boolean showArticle, int cacheMode) {
+    public ItemPagerAdapter(Context context, FragmentManager fm, @NonNull Builder builder) {
         super(fm);
         mContext = context;
-        mItem = item;
-        mShowArticle = showArticle;
-        mCacheMode = cacheMode;
+        mItem = builder.item;
+        mShowArticle = builder.showArticle;
+        mCacheMode = builder.cacheMode;
+        switch (builder.defaultViewMode) {
+            case Article:
+                mDefaultItem = 1;
+                break;
+            case Readability:
+                mDefaultItem = mShowArticle ? 2 : 1;
+                break;
+            default:
+                mDefaultItem = 0;
+        }
     }
 
     @Override
@@ -52,20 +70,21 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         if (mFragments[position] != null) {
             return mFragments[position];
         }
+        String fragmentName;
+        Bundle args = new Bundle();
+        args.putBoolean(LazyLoadFragment.EXTRA_EAGER_LOAD, mDefaultItem == position);
         if (position == 0) {
-            Bundle args = new Bundle();
             args.putParcelable(ItemFragment.EXTRA_ITEM, mItem);
             args.putInt(ItemFragment.EXTRA_CACHE_MODE, mCacheMode);
-            return Fragment.instantiate(mContext,
-                    ItemFragment.class.getName(), args);
+            fragmentName = ItemFragment.class.getName();
+        } else if (position == getCount() - 1) {
+            args.putParcelable(ReadabilityFragment.EXTRA_ITEM, mItem);
+            fragmentName = ReadabilityFragment.class.getName();
+        } else {
+            args.putParcelable(WebFragment.EXTRA_ITEM, mItem);
+            fragmentName = WebFragment.class.getName();
         }
-        if (position == getCount() - 1) {
-            Bundle readabilityArgs = new Bundle();
-            readabilityArgs.putParcelable(ReadabilityFragment.EXTRA_ITEM, mItem);
-            return Fragment.instantiate(mContext,
-                    ReadabilityFragment.class.getName(), readabilityArgs);
-        }
-        return WebFragment.instantiate(mContext, mItem);
+        return Fragment.instantiate(mContext, fragmentName, args);
     }
 
     @Override
@@ -97,5 +116,79 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
             return mContext.getString(R.string.readability);
         }
         return mContext.getString(R.string.article);
+    }
+
+    public void bind(ViewPager viewPager, TabLayout tabLayout,
+                     FloatingActionButton navigationFab, FloatingActionButton genericFab) {
+        viewPager.setPageMargin(viewPager.getResources().getDimensionPixelOffset(R.dimen.divider));
+        viewPager.setPageMarginDrawable(R.color.blackT12);
+        viewPager.setOffscreenPageLimit(2);
+        viewPager.setAdapter(this);
+        tabLayout.setupWithViewPager(viewPager);
+        mTabListener = new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                toggleFabs(viewPager.getCurrentItem() == 0, navigationFab, genericFab);
+                Fragment fragment = getItem(viewPager.getCurrentItem());
+                if (fragment != null) {
+                    ((LazyLoadFragment) fragment).loadNow();
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                Fragment fragment = getItem(viewPager.getCurrentItem());
+                if (fragment != null) {
+                    ((Scrollable) fragment).scrollToTop();
+                }
+            }
+        };
+        tabLayout.addOnTabSelectedListener(mTabListener);
+        viewPager.setCurrentItem(mDefaultItem);
+        toggleFabs(mDefaultItem == 0, navigationFab, genericFab);
+
+    }
+
+    private void toggleFabs(boolean isComments,
+                            FloatingActionButton navigationFab,
+                            FloatingActionButton genericFab) {
+        AppUtils.toggleFab(navigationFab, isComments &&
+                Preferences.navigationEnabled(navigationFab.getContext()));
+        AppUtils.toggleFab(genericFab, true);
+        AppUtils.toggleFabAction(genericFab, mItem, isComments);
+    }
+
+    public void unbind(TabLayout tabLayout) {
+        if (mTabListener != null) {
+            tabLayout.removeOnTabSelectedListener(mTabListener);
+        }
+    }
+
+    public static class Builder {
+        WebItem item;
+        boolean showArticle;
+        int cacheMode;
+        Preferences.StoryViewMode defaultViewMode;
+
+        public Builder setItem(@NonNull WebItem item) {
+            this.item = item;
+            return this;
+        }
+
+        public Builder setShowArticle(boolean showArticle) {
+            this.showArticle = showArticle;
+            return this;
+        }
+
+        public Builder setCacheMode(int cacheMode) {
+            this.cacheMode = cacheMode;
+            return this;
+        }
+
+        public Builder setDefaultViewMode(Preferences.StoryViewMode viewMode) {
+            this.defaultViewMode = viewMode;
+            return this;
+        }
     }
 }

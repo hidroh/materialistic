@@ -191,6 +191,11 @@ public class HackerNewsClient implements ItemManager, UserManager {
     @NonNull
     private Call<int[]> getStoriesCall(@FetchMode String filter, @CacheMode int cacheMode) {
         Call<int[]> call;
+        if (filter == null) {
+            // for legacy 'new stories' widgets
+            return cacheMode == MODE_NETWORK ?
+                    mRestService.networkNewStories() : mRestService.newStories();
+        }
         switch (filter) {
             case NEW_FETCH_MODE:
                 call = cacheMode == MODE_NETWORK ?

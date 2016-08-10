@@ -22,25 +22,20 @@ import android.os.Bundle;
  * Base fragment that controls load timing depends on WIFI and visibility
  */
 public abstract class LazyLoadFragment extends BaseFragment {
+    public static final String EXTRA_EAGER_LOAD = LazyLoadFragment.class.getName() + ".EXTRA_EAGER_LOAD";
     private static final String STATE_EAGER_LOAD = "state:eagerLoad";
-    private boolean mEagerLoad, mVisible, mActivityCreated;
+    private static final String STATE_LOADED = "state:loaded";
+    private boolean mEagerLoad, mLoaded, mActivityCreated;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
+            mLoaded = savedInstanceState.getBoolean(STATE_LOADED);
         } else {
-            mEagerLoad = !Preferences.shouldLazyLoad(getActivity()) && AppUtils.isOnWiFi(getContext());
-        }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && !mVisible) {
-            mVisible = true;
-            eagerLoad();
+            mEagerLoad = getArguments() != null && getArguments().getBoolean(EXTRA_EAGER_LOAD) ||
+                    !Preferences.shouldLazyLoad(getActivity()) && AppUtils.isOnWiFi(getContext());
         }
     }
 
@@ -55,6 +50,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EAGER_LOAD, mEagerLoad);
+        outState.putBoolean(STATE_LOADED, false); // allow re-loading on state restoration
     }
 
     @Override
@@ -63,13 +59,21 @@ public abstract class LazyLoadFragment extends BaseFragment {
         mActivityCreated = false;
     }
 
+    public void loadNow() {
+        if (mActivityCreated) {
+            mEagerLoad = true;
+            eagerLoad();
+        }
+    }
+
     /**
      * Load data after fragment becomes visible or if WIFI is enabled
      */
     protected abstract void load();
 
     final void eagerLoad() {
-        if (mActivityCreated && (mEagerLoad || mVisible)) {
+        if (mEagerLoad && !mLoaded) {
+            mLoaded = true;
             load();
         }
     }
