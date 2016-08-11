@@ -13,7 +13,7 @@ android {
         minSdkVersion 9
         //noinspection OldTargetApi
         targetSdkVersion 23 // TODO http://b.android.com/212316
-        versionCode 60
+        versionCode 61
         versionName "3.0"
         buildConfigField "int", "LATEST_RELEASE", "59"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
