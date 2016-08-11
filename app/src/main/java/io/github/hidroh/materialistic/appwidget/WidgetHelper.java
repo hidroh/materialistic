@@ -37,6 +37,7 @@ import java.util.Locale;
 
 import io.github.hidroh.materialistic.BestActivity;
 import io.github.hidroh.materialistic.ListActivity;
+import io.github.hidroh.materialistic.NewActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SearchActivity;
 
@@ -182,9 +183,13 @@ class WidgetHelper {
             } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
                 title = context.getString(R.string.title_activity_best);
                 destination = BestActivity.class;
-            } else {
+            } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
                 title = context.getString(R.string.title_activity_list);
                 destination = ListActivity.class;
+            } else {
+                // legacy "new stories" widget
+                title = context.getString(R.string.title_activity_new);
+                destination = NewActivity.class;
             }
             return new WidgetConfig(destination, title, section, isLightTheme, widgetLayout);
         }
