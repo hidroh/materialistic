@@ -67,6 +67,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final ViewSwitcher mVoteSwitcher;
     private final View mMoreButton;
     private final Drawable mCommentDrawable;
+    private final View mBackground;
     private boolean mChecked;
 
     public StoryView(Context context) {
@@ -99,7 +100,8 @@ public class StoryView extends RelativeLayout implements Checkable {
                 R.drawable.ic_comment_white_24dp).mutate());
         DrawableCompat.setTint(mCommentDrawable, mAccentColorResId);
         inflate(context, mIsLocal ? R.layout.local_story_view : R.layout.story_view, this);
-        setBackgroundColor(mBackgroundColor);
+        mBackground = findViewById(R.id.background);
+        mBackground.setBackgroundColor(mBackgroundColor);
         mVoteSwitcher = (ViewSwitcher) findViewById(R.id.vote_switcher);
         mRankTextView = (TextView) findViewById(R.id.rank);
         mScoreTextView = (TextView) findViewById(R.id.score);
@@ -110,6 +112,10 @@ public class StoryView extends RelativeLayout implements Checkable {
         mCommentButton = (TextView) findViewById(R.id.comment);
         mCommentButton.setCompoundDrawablesWithIntrinsicBounds(mCommentDrawable, null, null, null);
         mMoreButton = findViewById(R.id.button_more);
+        // replace with bounded ripple as unbounded ripple requires container bg
+        // http://b.android.com/155880
+        mMoreButton.setBackgroundResource(AppUtils.getThemedResId(context,
+                R.attr.selectableItemBackground));
         ta.recycle();
         a.recycle();
     }
@@ -120,7 +126,7 @@ public class StoryView extends RelativeLayout implements Checkable {
             return;
         }
         mChecked = checked;
-        setBackgroundColor(mChecked ? mHighlightColor : mBackgroundColor);
+        mBackground.setBackgroundColor(mChecked ? mHighlightColor : mBackgroundColor);
     }
 
     @Override
@@ -195,7 +201,7 @@ public class StoryView extends RelativeLayout implements Checkable {
         mPostedTextView.setText(R.string.loading_text);
         mSourceTextView.setText(R.string.loading_text);
         mSourceTextView.setCompoundDrawables(null, null, null, null);
-        mCommentButton.setVisibility(View.GONE);
+        mCommentButton.setVisibility(View.INVISIBLE);
     }
 
     public void setViewed(boolean isViewed) {
@@ -206,19 +212,14 @@ public class StoryView extends RelativeLayout implements Checkable {
     }
 
     public void setPromoted(int change) {
-        if (mIsLocal) {
-            return; // local item cannot change rank
-        }
-        if (change > 0) {
-            SpannableString spannable = new SpannableString(String.format(Locale.US, PROMOTED, change));
-            spannable.setSpan(new SuperscriptSpan(), 0, spannable.length(),
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            spannable.setSpan(new RelativeSizeSpan(0.6f), 0, spannable.length(),
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            spannable.setSpan(new ForegroundColorSpan(mPromotedColorResId), 0, spannable.length(),
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-            mRankTextView.append(spannable);
-        }
+        SpannableString spannable = new SpannableString(String.format(Locale.US, PROMOTED, change));
+        spannable.setSpan(new SuperscriptSpan(), 0, spannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new RelativeSizeSpan(0.6f), 0, spannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new ForegroundColorSpan(mPromotedColorResId), 0, spannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        mRankTextView.append(spannable);
     }
 
     public void setFavorite(boolean isFavorite) {
@@ -236,10 +237,13 @@ public class StoryView extends RelativeLayout implements Checkable {
         if (mIsLocal) {
             return; // local items do not change
         }
-        mRankTextView.append(decorateUpdated(updated));
-        setPromoted(change);
-        if (story.getKidCount() > 0) {
-            mCommentButton.append(decorateUpdated(story.hasNewKids()));
+        if (updated) {
+            mRankTextView.append(decorateUpdated());
+        } else if (change > 0) {
+            setPromoted(change);
+        }
+        if (story.getKidCount() > 0 && story.hasNewKids()) {
+            mCommentButton.append(decorateUpdated());
         }
     }
 
@@ -273,13 +277,10 @@ public class StoryView extends RelativeLayout implements Checkable {
         return mMoreButton;
     }
 
-    private Spannable decorateUpdated(boolean updated) {
-        SpannableStringBuilder sb = new SpannableStringBuilder("");
-        if (updated) {
-            sb.append("*");
-            sb.setSpan(new AsteriskSpan(getContext()), sb.length() - 1, sb.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
+    private Spannable decorateUpdated() {
+        SpannableStringBuilder sb = new SpannableStringBuilder("*");
+        sb.setSpan(new AsteriskSpan(getContext()), sb.length() - 1, sb.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
     }
 }
