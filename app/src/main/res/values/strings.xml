@@ -42,7 +42,7 @@
     </string>
     <string name="libraries_title">Libraries &amp; Resources</string>
     <string name="title_activity_favorite">Saved Stories</string>
-    <string name="saved">Saved %1$s</string>
+    <string name="saved">Saved %1$s ago</string>
     <string name="toast_saved">Story saved</string>
     <string name="clear_all">Clear all</string>
     <string name="toast_removed">Story unsaved</string>

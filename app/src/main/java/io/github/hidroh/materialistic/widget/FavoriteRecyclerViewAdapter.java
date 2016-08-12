@@ -148,7 +148,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    protected ItemViewHolder create(ViewGroup parent, int viewType) {
         return new ItemViewHolder(mInflater.inflate(R.layout.item_favorite, parent, false));
     }
 

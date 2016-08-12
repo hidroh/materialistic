@@ -21,10 +21,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:text="46"
     style="@style/Widget.AppCompat.Button.Borderless.Colored"
+    android:background="?attr/selectableItemBackground"
     app:textAllCaps="false"
     android:drawablePadding="@dimen/padding_text"
+    android:paddingLeft="@dimen/padding_text"
+    android:paddingRight="@dimen/padding_text"
     android:gravity="start|center_vertical"
     android:minWidth="72dp"
-    android:minHeight="@null"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"/>

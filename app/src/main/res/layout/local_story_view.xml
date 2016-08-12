@@ -19,20 +19,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@id/posted"
-        android:text="@string/loading_text"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:paddingTop="@dimen/padding"
-        style="@style/textSubtitleStyle" />
+    <View
+        android:id="@+id/background"
+        android:layout_alignLeft="@id/title"
+        android:layout_alignStart="@id/title"
+        android:layout_alignRight="@id/title"
+        android:layout_alignEnd="@id/title"
+        android:layout_alignTop="@id/title"
+        android:layout_alignBottom="@id/comment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <io.github.hidroh.materialistic.widget.TextView
         android:id="@id/title"
         android:text="@string/loading_text"
         style="@style/textTitleStyle"
         android:lines="@null"
-        android:layout_below="@id/posted"
+        android:paddingTop="@dimen/padding"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -40,29 +44,41 @@
         android:id="@id/source"
         android:text="@string/loading_text"
         android:layout_below="@id/title"
-        android:layout_alignTop="@id/comment"
-        android:layout_alignBottom="@id/comment"
+        android:layout_toLeftOf="@+id/button_comment"
+        android:layout_toStartOf="@+id/button_comment"
         style="@style/textSubtitleStyle.Italic" />
+
+    <TextView
+        android:id="@id/posted"
+        android:text="@string/loading_text"
+        android:paddingBottom="@dimen/padding"
+        android:layout_below="@id/source"
+        android:layout_toLeftOf="@+id/button_comment"
+        android:layout_toStartOf="@+id/button_comment"
+        style="@style/textSubtitleStyle" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@id/comment"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:background="?attr/selectableItemBackground"
         app:textAllCaps="false"
         android:minWidth="@null"
-        android:minHeight="@null"
+        android:paddingLeft="@dimen/padding_text"
+        android:paddingRight="@dimen/padding_text"
         android:layout_toLeftOf="@+id/button_more"
+        android:layout_toStartOf="@+id/button_more"
         android:layout_below="@id/title"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <include layout="@layout/button_more"
+    <include
+        layout="@layout/button_more"
         android:id="@id/button_more"
         android:layout_below="@id/title"
         android:layout_alignTop="@id/comment"
         android:layout_alignBottom="@id/comment"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

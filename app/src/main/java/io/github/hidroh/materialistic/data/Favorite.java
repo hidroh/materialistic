@@ -25,6 +25,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 
+import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
 /**
@@ -101,10 +102,7 @@ public class Favorite implements WebItem {
     public Spannable getDisplayedTime(Context context) {
         if (displayedTime == null) {
             displayedTime = new SpannableString(context.getString(R.string.saved,
-                    DateUtils.getRelativeDateTimeString(context, time,
-                            DateUtils.MINUTE_IN_MILLIS,
-                            DateUtils.YEAR_IN_MILLIS,
-                            DateUtils.FORMAT_ABBREV_MONTH)));
+                    AppUtils.getAbbreviatedTimeSpan(time)));
         }
         return displayedTime;
     }

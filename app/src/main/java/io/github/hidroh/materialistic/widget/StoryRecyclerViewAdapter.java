@@ -159,7 +159,7 @@ public class StoryRecyclerViewAdapter extends
     }
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    protected ItemViewHolder create(ViewGroup parent, int viewType) {
         return new ItemViewHolder(mInflater.inflate(R.layout.item_story, parent, false));
     }
 
