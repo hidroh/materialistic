@@ -20,10 +20,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
@@ -50,6 +50,8 @@ public abstract class ListRecyclerViewAdapter
 
     private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";
     private static final String STATE_CARD_VIEW_ENABLED = "state:cardViewEnabled";
+    private static final int VIEW_TYPE_CARD = 0;
+    private static final int VIEW_TYPE_FLAT = 1;
     private CustomTabsDelegate mCustomTabsDelegate;
     protected Context mContext;
     private MultiPaneListener mMultiPaneListener;
@@ -61,7 +63,6 @@ public abstract class ListRecyclerViewAdapter
     @Inject FavoriteManager mFavoriteManager;
     private int mLastSelectedPosition = -1;
     private int mCardElevation;
-    private int mCardRadius;
     private boolean mCardViewEnabled = true;
     private int mHotThreshold = Integer.MAX_VALUE;
 
@@ -75,8 +76,6 @@ public abstract class ListRecyclerViewAdapter
         mMultiPaneListener = (MultiPaneListener) mContext;
         mCardElevation = mContext.getResources()
                 .getDimensionPixelSize(R.dimen.cardview_default_elevation);
-        mCardRadius = mContext.getResources()
-                .getDimensionPixelSize(R.dimen.cardview_default_radius);
     }
 
     @Override
@@ -88,18 +87,19 @@ public abstract class ListRecyclerViewAdapter
     }
 
     @Override
+    public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
+        VH holder = create(parent, viewType);
+        if (viewType == VIEW_TYPE_FLAT) {
+            holder.mCardView.flatten();
+        }
+        return holder;
+    }
+
+    @Override
     public final void onBindViewHolder(final VH holder, int position) {
         final T item = getItem(position);
-        if (mCardViewEnabled) {
-            holder.mCardView.setCardElevation(isSelected(item.getId()) ?
-                    mCardElevation * 2 : mCardElevation);
-            holder.mCardView.setRadius(mCardRadius);
-            holder.mCardView.setUseCompatPadding(true);
-        } else {
-            holder.mCardView.setCardElevation(isSelected(item.getId()) ? mCardElevation * 2 : 0);
-            holder.mCardView.setRadius(0);
-            holder.mCardView.setUseCompatPadding(false);
-        }
+        holder.mCardView.setCardElevation(isSelected(item.getId()) ? mCardElevation * 2 :
+                (mCardViewEnabled ? mCardElevation : 0));
         clearViewHolder(holder);
         if (!isItemAvailable(item)) {
             loadItem(holder.getAdapterPosition());
@@ -112,6 +112,11 @@ public abstract class ListRecyclerViewAdapter
         holder.itemView.setOnClickListener(v -> handleItemClick(item, holder));
         holder.mStoryView.setOnCommentClickListener(v -> openItem(item));
         bindItem(holder);
+    }
+
+    @Override
+    public final int getItemViewType(int position) {
+        return mCardViewEnabled ? VIEW_TYPE_CARD : VIEW_TYPE_FLAT;
     }
 
     @Override
@@ -154,6 +159,8 @@ public abstract class ListRecyclerViewAdapter
     final boolean isAttached() {
         return mContext != null;
     }
+
+    protected abstract VH create(ViewGroup parent, int viewType);
 
     protected void loadItem(int adapterPosition) {
         // override to load item if needed
@@ -226,11 +233,11 @@ public abstract class ListRecyclerViewAdapter
      */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         public final StoryView mStoryView;
-        public final CardView mCardView;
+        public final FlatCardView mCardView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            mCardView = (CardView) itemView;
+            mCardView = (FlatCardView) itemView;
             mStoryView = (StoryView) itemView.findViewById(R.id.story_view);
         }
     }
