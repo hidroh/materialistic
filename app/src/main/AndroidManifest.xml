@@ -144,7 +144,12 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings" >
+            android:label="@string/action_settings"
+            android:permission="android.permission.WRITE_SECURE_SETTINGS">
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".PreferencesActivity"
