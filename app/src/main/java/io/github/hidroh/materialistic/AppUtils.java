@@ -306,6 +306,7 @@ public class AppUtils {
         return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
+    @SuppressLint("MissingPermission")
     public static Pair<String, String> getCredentials(Context context) {
         String username = Preferences.getUsername(context);
         if (TextUtils.isEmpty(username)) {
@@ -329,6 +330,7 @@ public class AppUtils {
      * @param context activity context
      * @param alertDialogBuilder dialog builder
      */
+    @SuppressLint("MissingPermission")
     public static void showLogin(Context context, AlertDialogBuilder alertDialogBuilder) {
         Account[] accounts = AccountManager.get(context).getAccountsByType(BuildConfig.APPLICATION_ID);
         if (accounts.length == 0) { // no accounts, ask to login or re-login
@@ -340,6 +342,7 @@ public class AppUtils {
         }
     }
 
+    @SuppressLint("MissingPermission")
     static void registerAccountsUpdatedListener(final Context context) {
         AccountManager.get(context).addOnAccountsUpdatedListener(accounts -> {
             String username = Preferences.getUsername(context);

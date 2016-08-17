@@ -36,7 +36,7 @@
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/edittext_username"
                 android:hint="@string/username_hint"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -50,7 +50,7 @@
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/edittext_password"
                 android:hint="@string/password_hint"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

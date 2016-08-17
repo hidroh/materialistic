@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -174,6 +175,7 @@ public abstract class DrawerActivity extends InjectableActivity {
 
     }
 
+    @SuppressLint("MissingPermission")
     private void showLogin() {
         Account[] accounts = AccountManager.get(this)
                 .getAccountsByType(BuildConfig.APPLICATION_ID);
