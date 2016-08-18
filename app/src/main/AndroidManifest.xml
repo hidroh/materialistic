@@ -19,7 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.github.hidroh.materialistic">
 
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -144,7 +144,12 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings" >
+            android:label="@string/action_settings"
+            android:permission="android.permission.WRITE_SECURE_SETTINGS">
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".PreferencesActivity"
@@ -268,7 +273,9 @@
             android:exported="false" />
         <receiver android:name=".data.ItemSyncWifiReceiver">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action
+                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".appwidget.WidgetProvider"
