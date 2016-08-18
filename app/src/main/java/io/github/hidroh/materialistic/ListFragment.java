@@ -101,7 +101,7 @@ public class ListFragment extends BaseListFragment {
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
                 AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
         if (savedInstanceState == null) {
-            mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
+            mSwipeRefreshLayout.setRefreshing(true);
         }
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mCacheMode = ItemManager.MODE_NETWORK;
