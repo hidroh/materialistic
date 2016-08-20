@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -58,6 +59,7 @@ public class SubmitActivity extends InjectableActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_submit);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
