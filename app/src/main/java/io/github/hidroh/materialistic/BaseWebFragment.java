@@ -358,21 +358,25 @@ abstract class BaseWebFragment extends LazyLoadFragment
     }
 
     private void setFullscreen(boolean isFullscreen) {
-        if (!getUserVisibleHint()) {
+        if (getView() == null) {
             return;
         }
         mFullscreen = isFullscreen;
         mControls.setVisibility(isFullscreen ? VISIBLE : View.GONE);
         AppUtils.toggleWebViewZoom(mWebView.getSettings(), isFullscreen);
+        ViewGroup.LayoutParams params = mWebView.getLayoutParams();
         if (isFullscreen) {
             mScrollView.removeView(mScrollViewContent);
             mFullscreenView.addView(mScrollViewContent);
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
             mWebView.pageUp(true);
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
+        mWebView.setLayoutParams(params);
     }
 
     private void showPreferences() {
