@@ -80,11 +80,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <io.github.hidroh.materialistic.widget.ViewPager
-                android:id="@id/content"
+            <!-- TODO http://b.android.com/220250 -->
+            <android.support.design.widget.CoordinatorLayout
                 android:layout_below="@id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+
+                <io.github.hidroh.materialistic.widget.ViewPager
+                    android:id="@id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </android.support.design.widget.CoordinatorLayout>
 
         </RelativeLayout>
 
