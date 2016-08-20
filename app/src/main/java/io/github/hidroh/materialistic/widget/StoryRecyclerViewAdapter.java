@@ -128,6 +128,9 @@ public class StoryRecyclerViewAdapter extends
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 Item item = getItem(viewHolder.getAdapterPosition());
+                if (item == null) {
+                    return 0;
+                }
                 mSaved = item.isFavorite();
                 int swipeDirs = ItemTouchHelper.LEFT;
                 if (!item.isVoted() && !item.isPendingVoted()) {
@@ -139,6 +142,9 @@ public class StoryRecyclerViewAdapter extends
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 Item item = getItem(viewHolder.getAdapterPosition());
+                if (item == null) {
+                    return;
+                }
                 if (direction == ItemTouchHelper.LEFT) {
                     toggleSave(item);
                 } else {

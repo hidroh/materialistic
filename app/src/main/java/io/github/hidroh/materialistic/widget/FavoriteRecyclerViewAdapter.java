@@ -126,7 +126,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             @Override
             public int getSwipeDirs(RecyclerView recyclerView,
                                     RecyclerView.ViewHolder viewHolder) {
-                if (mActionModeDelegate.isInActionMode()) {
+                if (mActionModeDelegate != null && mActionModeDelegate.isInActionMode()) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
