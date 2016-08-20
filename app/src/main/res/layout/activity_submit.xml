@@ -26,11 +26,11 @@
         android:theme="@style/AppToolbarTheme"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary" />
+        android:background="?android:attr/colorBackground" />
 
     <LinearLayout
         android:orientation="vertical"
-        android:background="?attr/colorCardHighlight"
+        android:background="?attr/colorCardBackground"
         android:elevation="@dimen/cardview_default_elevation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
