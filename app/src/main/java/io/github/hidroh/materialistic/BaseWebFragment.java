@@ -173,12 +173,9 @@ abstract class BaseWebFragment extends LazyLoadFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            mWebView.onPause();
-        }
-        mWebView.pauseTimers();
+    public void onStop() {
+        super.onStop();
+        pauseWebView();
     }
 
     @Override
@@ -260,6 +257,13 @@ abstract class BaseWebFragment extends LazyLoadFragment
         } else {
             showEmptyView();
         }
+    }
+
+    private void pauseWebView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mWebView.onPause();
+        }
+        mWebView.pauseTimers();
     }
 
     private void setUpWebControls(View view) {

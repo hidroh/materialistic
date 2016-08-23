@@ -273,6 +273,11 @@ public class Preferences {
         setInt(context, R.string.pref_latest_release, BuildConfig.LATEST_RELEASE);
     }
 
+    public static boolean multiWindowEnabled(Context context) {
+        return !TextUtils.equals(context.getString(R.string.pref_multi_window_value_none),
+                get(context, R.string.pref_multi_window, R.string.pref_multi_window_value_none));
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
@@ -456,7 +461,7 @@ public class Preferences {
         }
     }
 
-    static class Observable {
+    public static class Observable {
         private static Set<String> CONTEXT_KEYS;
         private final Map<String, Integer> mSubscribedKeys = new HashMap<>();
         private final SharedPreferences.OnSharedPreferenceChangeListener mListener = (sharedPreferences, key) -> {
@@ -466,7 +471,7 @@ public class Preferences {
         };
         private Observer mObserver;
 
-        void subscribe(Context context, @NonNull Observer observer, @NonNull int... preferenceKeys) {
+        public void subscribe(Context context, @NonNull Observer observer, @NonNull int... preferenceKeys) {
             ensureContextKeys(context);
             setSubscription(context, preferenceKeys);
             mObserver = observer;
@@ -474,7 +479,7 @@ public class Preferences {
                     .registerOnSharedPreferenceChangeListener(mListener);
         }
 
-        void unsubscribe(Context context) {
+        public void unsubscribe(Context context) {
             PreferenceManager.getDefaultSharedPreferences(context)
                     .unregisterOnSharedPreferenceChangeListener(mListener);
         }
@@ -504,7 +509,7 @@ public class Preferences {
         }
     }
 
-    interface Observer {
+    public interface Observer {
         void onPreferenceChanged(@StringRes int key, boolean contextChanged);
     }
 }

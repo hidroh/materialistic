@@ -37,12 +37,10 @@ import android.text.style.StyleSpan;
 import android.view.View;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
 
 class HackerNewsItem implements Item {
-    private static final String HOST_USER = "user";
     private static final String AUTHOR_SEPARATOR = " - ";
 
     // The item's unique id. Required.
@@ -350,11 +348,7 @@ class HackerNewsItem implements Item {
             @Override
             public void onClick(View view) {
                 view.getContext().startActivity(new Intent(Intent.ACTION_VIEW)
-                        .setData(new Uri.Builder()
-                                .scheme(BuildConfig.APPLICATION_ID)
-                                .authority(HOST_USER)
-                                .path(by)
-                                .build()));
+                        .setData(AppUtils.createUserUri(by)));
             }
 
             @Override

@@ -86,6 +86,8 @@ public class AppUtils {
     public static final int HOT_THRESHOLD_NORMAL = 100;
     static final int HOT_THRESHOLD_LOW = 10;
     public static final int HOT_FACTOR = 3;
+    private static final String HOST_ITEM = "item";
+    private static final String HOST_USER = "user";
 
     static void openWebUrlExternal(Context context, WebItem item, String url, CustomTabsSession session) {
         if (!hasConnection(context)) {
@@ -547,6 +549,33 @@ public class AppUtils {
         return chooserIntent;
     }
 
+    public static Uri createItemUri(@NonNull String itemId) {
+        return new Uri.Builder()
+                .scheme(BuildConfig.APPLICATION_ID)
+                .authority(HOST_ITEM)
+                .path(itemId)
+                .build();
+    }
+
+    public static Uri createUserUri(@NonNull String userId) {
+        return new Uri.Builder()
+                .scheme(BuildConfig.APPLICATION_ID)
+                .authority(HOST_USER)
+                .path(userId)
+                .build();
+    }
+
+    static String getDataUriId(@NonNull Intent intent, String altParamId) {
+        if (intent.getData() == null) {
+            return null;
+        }
+        if (TextUtils.equals(intent.getData().getScheme(), BuildConfig.APPLICATION_ID)) {
+            return intent.getData().getLastPathSegment();
+        } else { // web URI
+            return intent.getData().getQueryParameter(altParamId);
+        }
+    }
+
     @NonNull
     private static Intent createViewIntent(Context context, WebItem item, CustomTabsSession session) {
         if (Preferences.customChromeTabEnabled(context)) {
@@ -568,6 +597,16 @@ public class AppUtils {
         } else {
             return new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
         }
+    }
+
+    @SuppressLint("InlinedApi")
+    public static Intent multiWindowIntent(Activity activity, Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode()) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT |
+                    Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        }
+        return intent;
     }
 
     static class SystemUiHelper {

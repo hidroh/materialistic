@@ -61,6 +61,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private static final String STATE_STORY_VIEW_MODE = "state:storyViewMode";
     private static final String STATE_EXTERNAL_BROWSER = "state:externalBrowser";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
+    private static final String STATE_MULTI_WINDOW_ENABLED = "state:multiWindowEnabled";
     private boolean mIsMultiPane;
     protected WebItem mSelectedItem;
     private Preferences.StoryViewMode mStoryViewMode;
@@ -77,6 +78,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private NavFloatingActionButton mNavButton;
     private View mListView;
     private boolean mFullscreen;
+    private boolean mMultiWindowEnabled;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -122,6 +124,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             AppUtils.toggleFab(mReplyButton, false);
         }
         if (savedInstanceState == null) {
+            mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
             mStoryViewMode = Preferences.getDefaultStoryView(this);
             mExternalBrowser = Preferences.externalBrowserEnabled(this);
             getSupportFragmentManager()
@@ -131,6 +134,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                             LIST_FRAGMENT_TAG)
                     .commit();
         } else {
+            mMultiWindowEnabled = savedInstanceState.getBoolean(STATE_MULTI_WINDOW_ENABLED);
             mStoryViewMode = Preferences.StoryViewMode.values()[
                     savedInstanceState.getInt(STATE_STORY_VIEW_MODE, 0)];
             mExternalBrowser = savedInstanceState.getBoolean(STATE_EXTERNAL_BROWSER);
@@ -145,7 +149,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mPreferenceObservable.subscribe(this, this::onPreferenceChanged,
                 R.string.pref_navigation,
                 R.string.pref_external,
-                R.string.pref_story_display);
+                R.string.pref_story_display,
+                R.string.pref_multi_window);
     }
 
     @Override
@@ -215,6 +220,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         outState.putInt(STATE_STORY_VIEW_MODE, mStoryViewMode.ordinal());
         outState.putBoolean(STATE_EXTERNAL_BROWSER, mExternalBrowser);
         outState.putBoolean(STATE_FULLSCREEN, mFullscreen);
+        outState.putBoolean(STATE_MULTI_WINDOW_ENABLED, mMultiWindowEnabled);
     }
 
     @Override
@@ -360,9 +366,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         if (mExternalBrowser) {
             AppUtils.openWebUrlExternal(this, mSelectedItem, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
         } else {
-            startActivity(new Intent(this, ItemActivity.class)
+            Intent intent = new Intent(this, ItemActivity.class)
                     .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
-                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem));
+                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem);
+            startActivity(mMultiWindowEnabled ? AppUtils.multiWindowIntent(this, intent) : intent);
         }
     }
 
@@ -427,6 +434,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                     AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 &&
                             Preferences.navigationEnabled(this));
                 }
+                break;
+            case R.string.pref_multi_window:
+                mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
                 break;
         }
     }
