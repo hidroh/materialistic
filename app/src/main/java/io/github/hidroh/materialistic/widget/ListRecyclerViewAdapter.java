@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import io.github.hidroh.materialistic.CustomTabsDelegate;
 import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.MultiPaneListener;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
@@ -65,6 +67,8 @@ public abstract class ListRecyclerViewAdapter
     private int mCardElevation;
     private boolean mCardViewEnabled = true;
     private int mHotThreshold = Integer.MAX_VALUE;
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
+    private boolean mMultiWindowEnabled;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -76,11 +80,16 @@ public abstract class ListRecyclerViewAdapter
         mMultiPaneListener = (MultiPaneListener) mContext;
         mCardElevation = mContext.getResources()
                 .getDimensionPixelSize(R.dimen.cardview_default_elevation);
+        mMultiWindowEnabled = Preferences.multiWindowEnabled(mContext);
+        mPreferenceObservable.subscribe(mContext, (key, contextChanged) ->
+                mMultiWindowEnabled = Preferences.multiWindowEnabled(mContext),
+                R.string.pref_multi_window);
     }
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
+        mPreferenceObservable.unsubscribe(mContext);
         mContext = null;
         mMultiPaneListener = null;
         mRecyclerView = null;
@@ -216,16 +225,19 @@ public abstract class ListRecyclerViewAdapter
 
     /**
      * Gets cache mode for {@link ItemManager}
-     * @return  cache mode
+     *
+     * @return cache mode
      */
     @ItemManager.CacheMode
     protected abstract int getItemCacheMode();
 
     private void openItem(T item) {
-        mContext.startActivity(new Intent(mContext, ItemActivity.class)
+        Intent intent = new Intent(mContext, ItemActivity.class)
                 .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
                 .putExtra(ItemActivity.EXTRA_ITEM, item)
-                .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true));
+                .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
+        mContext.startActivity(mMultiWindowEnabled ?
+                AppUtils.multiWindowIntent((Activity) mContext, intent) : intent);
     }
 
     /**

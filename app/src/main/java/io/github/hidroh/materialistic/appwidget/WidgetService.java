@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic.appwidget;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
@@ -38,7 +37,6 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Application;
-import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -142,11 +140,7 @@ public class WidgetService extends RemoteViewsService {
                     .append(SUBTITLE_SEPARATOR)
                     .append(getSpan(item.getKidCount(), COMMENT, mHotThreshold)));
             remoteViews.setOnClickFillInIntent(R.id.item_view, new Intent().setData(
-                    new Uri.Builder()
-                            .scheme(BuildConfig.APPLICATION_ID)
-                            .authority(HOST_ITEM)
-                            .path(item.getId())
-                            .build()));
+                    AppUtils.createItemUri(item.getId())));
             return remoteViews;
         }
 

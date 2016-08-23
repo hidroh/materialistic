@@ -60,7 +60,7 @@
         </activity>
         <activity
             android:name=".ItemActivity"
-            android:label="@string/title_activity_item" >
+            android:label="@string/title_activity_item">
             <intent-filter android:label="@string/filter_title_item" >
                 <action android:name="android.intent.action.VIEW" />
 

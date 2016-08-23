@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
@@ -42,8 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Application;
-import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
@@ -59,7 +58,6 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
     private static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
     private static final String NOTIFICATION_GROUP_KEY = "group";
-    private static final String HOST_ITEM = "item";
     private static final String EXTRA_CONNECTION_ENABLED = ItemSyncAdapter.class.getName() +
             ".EXTRA_CONNECTION_ENABLED";
     private static final String EXTRA_READABILITY_ENABLED = ItemSyncAdapter.class.getName() +
@@ -260,11 +258,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     private PendingIntent getItemActivity(String itemId) {
         return PendingIntent.getActivity(getContext(), 0,
                 new Intent(Intent.ACTION_VIEW)
-                        .setData(new Uri.Builder()
-                                .scheme(BuildConfig.APPLICATION_ID)
-                                .authority(HOST_ITEM)
-                                .path(itemId)
-                                .build())
+                        .setData(AppUtils.createItemUri(itemId))
                         .putExtra(ItemActivity.EXTRA_CACHE_MODE, ItemManager.MODE_CACHE)
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 PendingIntent.FLAG_ONE_SHOT);

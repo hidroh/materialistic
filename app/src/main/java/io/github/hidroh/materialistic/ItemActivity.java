@@ -164,13 +164,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN);
         } else {
             if (Intent.ACTION_VIEW.equalsIgnoreCase(intent.getAction())) {
-                if (intent.getData() != null) {
-                    if (TextUtils.equals(intent.getData().getScheme(), BuildConfig.APPLICATION_ID)) {
-                        mItemId = intent.getData().getLastPathSegment();
-                    } else {
-                        mItemId = intent.getData().getQueryParameter(PARAM_ID);
-                    }
-                }
+                mItemId = AppUtils.getDataUriId(intent, PARAM_ID);
             } else if (intent.hasExtra(EXTRA_ITEM)) {
                 mItem = intent.getParcelableExtra(EXTRA_ITEM);
                 mItemId = mItem.getId();
@@ -361,13 +355,16 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
         if (story.isStoryType()) {
             titleTextView.setText(story.getDisplayedTitle());
+            setTaskTitle(story.getDisplayedTitle());
             if (!TextUtils.isEmpty(story.getSource())) {
                 TextView sourceTextView = (TextView) findViewById(R.id.source);
                 sourceTextView.setText(story.getSource());
                 sourceTextView.setVisibility(View.VISIBLE);
             }
         } else {
-            titleTextView.setText(AppUtils.fromHtml(story.getDisplayedTitle()));
+            CharSequence title = AppUtils.fromHtml(story.getDisplayedTitle());
+            titleTextView.setText(title);
+            setTaskTitle(title);
         }
 
         final TextView postedTextView = (TextView) findViewById(R.id.posted);

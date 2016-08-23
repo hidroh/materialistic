@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -73,7 +72,6 @@ public class UserServicesClient implements UserServices {
     private static final String HEADER_LOCATION = "location";
     private static final String HEADER_COOKIE = "cookie";
     private static final String HEADER_SET_COOKIE = "set-cookie";
-    private static final String HOST_ITEM = "item";
     private final Call.Factory mCallFactory;
     private final Scheduler mIoScheduler;
 
@@ -263,11 +261,7 @@ public class UserServicesClient implements UserServices {
                 UserServices.Exception exception = new UserServices.Exception(R.string.item_exist);
                 String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
                 if (!TextUtils.isEmpty(itemId)) {
-                    exception.data = new Uri.Builder()
-                            .scheme(BuildConfig.APPLICATION_ID)
-                            .authority(HOST_ITEM)
-                            .path(itemId)
-                            .build();
+                    exception.data = AppUtils.createItemUri(itemId);
                 }
                 return exception;
             default:

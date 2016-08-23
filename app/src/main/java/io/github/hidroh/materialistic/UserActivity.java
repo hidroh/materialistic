@@ -70,17 +70,14 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUsername = getIntent().getStringExtra(EXTRA_USERNAME);
-        if (TextUtils.isEmpty(mUsername) && getIntent().getData() != null) {
-            if (TextUtils.equals(getIntent().getData().getScheme(), BuildConfig.APPLICATION_ID)) {
-                mUsername = getIntent().getData().getLastPathSegment();
-            } else {
-                mUsername = getIntent().getData().getQueryParameter(PARAM_ID);
-            }
+        if (TextUtils.isEmpty(mUsername)) {
+            mUsername = AppUtils.getDataUriId(getIntent(), PARAM_ID);
         }
         if (TextUtils.isEmpty(mUsername)) {
             finish();
             return;
         }
+        setTaskTitle(mUsername);
         AppUtils.setStatusBarDim(getWindow(), true);
         setContentView(R.layout.activity_user);
         findViewById(R.id.touch_outside).setOnClickListener(v -> finish());

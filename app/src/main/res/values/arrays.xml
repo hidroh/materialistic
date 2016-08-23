@@ -159,6 +159,19 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="pref_multi_window_options">
+        <item>@string/pref_multi_window_none</item>
+        <item>@string/pref_multi_window_one</item>
+    </string-array>
+
+    <string-array name="pref_multi_window_values">
+        <item>@string/pref_multi_window_value_none</item>
+        <item>@string/pref_multi_window_value_one</item>
+    </string-array>
+
+    <string name="pref_multi_window_value_none" translatable="false">none</string>
+    <string name="pref_multi_window_value_one" translatable="false">one</string>
+
     <!-- Widget section -->
     <string-array name="pref_widget_section_options">
         <item>@string/title_activity_list</item>
