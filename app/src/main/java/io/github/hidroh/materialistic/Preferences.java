@@ -37,9 +37,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
+import io.github.hidroh.materialistic.annotation.PublicApi;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.preference.ThemePreference;
 
+@SuppressWarnings("WeakerAccess")
+@PublicApi
 public class Preferences {
     private static final String DRAFT_PREFIX = "draft_%1$s";
     private static final String PREFERENCES_DRAFT = "_drafts";
@@ -58,14 +62,14 @@ public class Preferences {
                     R.string.pref_search_sort, R.string.pref_search_sort_value_default)
     };
 
-    static void sync(PreferenceManager preferenceManager) {
+    public static void sync(PreferenceManager preferenceManager) {
         Map<String, ?> map = preferenceManager.getSharedPreferences().getAll();
         for (String key : map.keySet()) {
             sync(preferenceManager, key);
         }
     }
 
-    static void sync(PreferenceManager preferenceManager, String key) {
+    private static void sync(PreferenceManager preferenceManager, String key) {
         Preference pref = preferenceManager.findPreference(key);
         if (pref instanceof ListPreference) {
             ListPreference listPref = (ListPreference) pref;
@@ -82,7 +86,7 @@ public class Preferences {
      * @param context   application context
      * TODO remove once all users migrated
      */
-    static void migrate(Context context) {
+    public static void migrate(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
         for (BoolToStringPref pref : PREF_MIGRATION) {
@@ -98,7 +102,7 @@ public class Preferences {
         editor.apply();
     }
 
-    static boolean isListItemCardView(Context context) {
+    public static boolean isListItemCardView(Context context) {
         return get(context, R.string.pref_list_item_view, false);
     }
 
@@ -124,7 +128,7 @@ public class Preferences {
         return StoryViewMode.Article;
     }
 
-    static boolean externalBrowserEnabled(Context context) {
+    public static boolean externalBrowserEnabled(Context context) {
         return get(context, R.string.pref_external, false);
     }
 
@@ -132,7 +136,7 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
-    static boolean smoothScrollEnabled(Context context) {
+    public static boolean smoothScrollEnabled(Context context) {
         return get(context, R.string.pref_smooth_scroll, true);
     }
 
@@ -152,31 +156,31 @@ public class Preferences {
         return get(context, R.string.pref_navigation, false);
     }
 
-    static boolean customChromeTabEnabled(Context context) {
+    public static boolean customChromeTabEnabled(Context context) {
         return get(context, R.string.pref_custom_tab, true);
     }
 
-    static boolean isSinglePage(Context context, String displayOption) {
+    public static boolean isSinglePage(Context context, String displayOption) {
         return !TextUtils.equals(displayOption,
                 context.getString(R.string.pref_comment_display_value_multiple));
     }
 
-    static boolean isAutoExpand(Context context, String displayOption) {
+    public static boolean isAutoExpand(Context context, String displayOption) {
         return TextUtils.equals(displayOption,
                 context.getString(R.string.pref_comment_display_value_single));
     }
 
-    static String getCommentDisplayOption(Context context) {
+    public static String getCommentDisplayOption(Context context) {
         return get(context, R.string.pref_comment_display,
                         R.string.pref_comment_display_value_single);
     }
 
-    static void setPopularRange(Context context, @AlgoliaPopularClient.Range @NonNull String range) {
+    public static void setPopularRange(Context context, @AlgoliaPopularClient.Range @NonNull String range) {
         set(context, R.string.pref_popular_range, range);
     }
 
     @NonNull
-    static String getPopularRange(Context context) {
+    public static String getPopularRange(Context context) {
         return get(context, R.string.pref_popular_range, AlgoliaPopularClient.LAST_24H);
     }
 
@@ -193,11 +197,11 @@ public class Preferences {
         return getFloatFromString(context, R.string.pref_line_height, 1.0f);
     }
 
-    static float getReadabilityLineHeight(Context context) {
+    public static float getReadabilityLineHeight(Context context) {
         return getFloatFromString(context, R.string.pref_readability_line_height, 1.0f);
     }
 
-    static boolean shouldLazyLoad(Context context) {
+    public static boolean shouldLazyLoad(Context context) {
         return get(context, R.string.pref_lazy_load, true);
     }
 
@@ -210,11 +214,11 @@ public class Preferences {
     }
 
     @NonNull
-    static String getLaunchScreen(Context context) {
+    public static String getLaunchScreen(Context context) {
         return get(context, R.string.pref_launch_screen, R.string.pref_launch_screen_value_top);
     }
 
-    static boolean isLaunchScreenLast(Context context) {
+    public static boolean isLaunchScreenLast(Context context) {
         return TextUtils.equals(context.getString(R.string.pref_launch_screen_value_last),
                 getLaunchScreen(context));
     }
@@ -223,34 +227,34 @@ public class Preferences {
         return get(context, R.string.pref_ad_block, true);
     }
 
-    static void saveDraft(Context context, String parentId, String draft) {
+    public static void saveDraft(Context context, String parentId, String draft) {
         context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
                 .edit()
                 .putString(String.format(Locale.US, DRAFT_PREFIX, parentId), draft)
                 .apply();
     }
 
-    static String getDraft(Context context, String parentId) {
+    public static String getDraft(Context context, String parentId) {
         return context
                 .getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
                 .getString(String.format(Locale.US, DRAFT_PREFIX, parentId), null);
     }
 
-    static void deleteDraft(Context context, String parentId) {
+    public static void deleteDraft(Context context, String parentId) {
         context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
                 .edit()
                 .remove(String.format(Locale.US, DRAFT_PREFIX, parentId))
                 .apply();
     }
 
-    static void clearDrafts(Context context) {
+    public static void clearDrafts(Context context) {
         context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
                 .edit()
                 .clear()
                 .apply();
     }
 
-    static boolean isReleaseNotesSeen(Context context) {
+    public static boolean isReleaseNotesSeen(Context context) {
         if (sReleaseNotesSeen == null) {
             PackageInfo info = null;
             try {
@@ -268,7 +272,7 @@ public class Preferences {
         return sReleaseNotesSeen;
     }
 
-    static void setReleaseNotesSeen(Context context) {
+    public static void setReleaseNotesSeen(Context context) {
         sReleaseNotesSeen = true;
         setInt(context, R.string.pref_latest_release, BuildConfig.LATEST_RELEASE);
     }
@@ -285,7 +289,8 @@ public class Preferences {
                 .apply();
     }
 
-    private static boolean get(Context context, @StringRes int key, boolean defaultValue) {
+    @Synthetic
+    static boolean get(Context context, @StringRes int key, boolean defaultValue) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(key), defaultValue);
     }
@@ -304,7 +309,8 @@ public class Preferences {
         }
     }
 
-    private static String get(Context context, @StringRes int key, String defaultValue) {
+    @Synthetic
+    static String get(Context context, @StringRes int key, String defaultValue) {
         return get(context, context.getString(key), defaultValue);
     }
 
@@ -336,30 +342,34 @@ public class Preferences {
                 .apply();
     }
 
-    private static class BoolToStringPref {
-        private final int oldKey;
+    public static class BoolToStringPref {
+        @Synthetic final int oldKey;
         private final boolean oldDefault;
-        private final int newKey;
-        private final int newValue;
+        @Synthetic final int newKey;
+        @Synthetic final int newValue;
 
-        private BoolToStringPref(@StringRes int oldKey, boolean oldDefault,
-                                 @StringRes int newKey, @StringRes int newValue) {
+        @Synthetic
+        BoolToStringPref(@StringRes int oldKey, boolean oldDefault,
+                         @StringRes int newKey, @StringRes int newValue) {
             this.oldKey = oldKey;
             this.oldDefault = oldDefault;
             this.newKey = newKey;
             this.newValue = newValue;
         }
 
-        private boolean isChanged(Context context, SharedPreferences sp) {
+        @Synthetic
+        boolean isChanged(Context context, SharedPreferences sp) {
             return hasOldValue(context, sp) &&
                     sp.getBoolean(context.getString(oldKey), oldDefault) != oldDefault;
         }
 
-        private boolean hasOldValue(Context context, SharedPreferences sp) {
+        @Synthetic
+        boolean hasOldValue(Context context, SharedPreferences sp) {
             return sp.contains(context.getString(oldKey));
         }
     }
 
+    @PublicApi
     public static class Theme {
 
         public static void apply(Context context, boolean dialogTheme, boolean isTranslucent) {
@@ -409,7 +419,7 @@ public class Preferences {
             return resolveTextSize(getPreferredReadabilityTextSize(context));
         }
 
-        static @NonNull String getPreferredReadabilityTextSize(Context context) {
+        private static @NonNull String getPreferredReadabilityTextSize(Context context) {
             String choice = get(context, R.string.pref_readability_text_size, null);
             if (TextUtils.isEmpty(choice)) {
                 return getPreferredTextSize(context);
@@ -426,6 +436,7 @@ public class Preferences {
         }
     }
 
+    @PublicApi
     public static class Offline {
 
         public static boolean isEnabled(Context context) {

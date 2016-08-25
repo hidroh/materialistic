@@ -35,6 +35,7 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 public class ComposeActivity extends InjectableActivity {
     public static final String EXTRA_PARENT_ID = ComposeActivity.class.getName() + ".EXTRA_PARENT_ID";
@@ -62,6 +63,7 @@ public class ComposeActivity extends InjectableActivity {
         AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_compose);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mEditText = (EditText) findViewById(R.id.edittext_body);
@@ -175,7 +177,8 @@ public class ComposeActivity extends InjectableActivity {
         mUserServices.reply(this, mParentId, content, new ComposeCallback(this, mParentId));
     }
 
-    private void onSent(Boolean successful) {
+    @Synthetic
+    void onSent(Boolean successful) {
         if (successful == null) {
             Toast.makeText(this, R.string.comment_failed, Toast.LENGTH_SHORT).show();
             toggleControls(false);
@@ -217,6 +220,7 @@ public class ComposeActivity extends InjectableActivity {
         private final Context mAppContext;
         private final String mParentId;
 
+        @Synthetic
         ComposeCallback(ComposeActivity composeActivity, String parentId) {
             mComposeActivity = new WeakReference<>(composeActivity);
             mAppContext = composeActivity.getApplicationContext();

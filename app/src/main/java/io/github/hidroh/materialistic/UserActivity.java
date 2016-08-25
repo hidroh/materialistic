@@ -39,6 +39,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.UserManager;
@@ -60,7 +61,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private TextView mTitle;
     private TextView mInfo;
     private TextView mAbout;
-    private RecyclerView mRecyclerView;
+    @Synthetic RecyclerView mRecyclerView;
     private TabLayout mTabLayout;
     private View mEmpty;
     private BottomSheetBehavior<View> mBottomSheetBehavior;
@@ -110,7 +111,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mAbout = (TextView) findViewById(R.id.about);
         mEmpty = findViewById(R.id.empty);
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 // no op
@@ -207,7 +208,8 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         mUserManager.getUser(mUsername, new UserResponseListener(this));
     }
 
-    private void onUserLoaded(UserManager.User response) {
+    @Synthetic
+    void onUserLoaded(UserManager.User response) {
         if (response != null) {
             mUser = response;
             bind();
@@ -243,10 +245,11 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                 BottomSheetBehavior.STATE_EXPANDED);
     }
 
-    private static class UserResponseListener implements ResponseListener<UserManager.User> {
+    static class UserResponseListener implements ResponseListener<UserManager.User> {
         private final WeakReference<UserActivity> mUserActivity;
 
-        public UserResponseListener(UserActivity userActivity) {
+        @Synthetic
+        UserResponseListener(UserActivity userActivity) {
             mUserActivity = new WeakReference<>(userActivity);
         }
 

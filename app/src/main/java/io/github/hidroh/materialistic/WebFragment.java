@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
@@ -66,15 +67,17 @@ public class WebFragment extends BaseWebFragment {
         }
     }
 
-    private void onItemLoaded(@NonNull Item response) {
+    @Synthetic
+    void onItemLoaded(@NonNull Item response) {
         getActivity().supportInvalidateOptionsMenu();
         mItem = response;
         bindContent();
     }
 
-    private static class ItemResponseListener implements ResponseListener<Item> {
+    static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<WebFragment> mWebFragment;
 
+        @Synthetic
         ItemResponseListener(WebFragment webFragment) {
             mWebFragment = new WeakReference<>(webFragment);
         }

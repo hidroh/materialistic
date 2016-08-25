@@ -55,6 +55,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -76,9 +77,9 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     private static final String STATE_ITEM = "state:item";
     private static final String STATE_ITEM_ID = "state:itemId";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
-    private WebItem mItem;
-    private String mItemId = null;
-    private ImageView mBookmark;
+    @Synthetic WebItem mItem;
+    @Synthetic String mItemId = null;
+    @Synthetic ImageView mBookmark;
     private boolean mExternalBrowser;
     private Preferences.StoryViewMode mStoryViewMode;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
@@ -90,14 +91,14 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     @Inject KeyDelegate mKeyDelegate;
     private TabLayout mTabLayout;
-    private AppBarLayout mAppBar;
-    private CoordinatorLayout mCoordinatorLayout;
+    @Synthetic AppBarLayout mAppBar;
+    @Synthetic CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
     private FloatingActionButton mReplyButton;
     private NavFloatingActionButton mNavButton;
     private ItemPagerAdapter mAdapter;
     private ViewPager mViewPager;
-    private boolean mFullscreen;
+    @Synthetic boolean mFullscreen;
     private final ContentObserver mObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
@@ -293,7 +294,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         }
     }
 
-    private void setFullscreen() {
+    @Synthetic
+    void setFullscreen() {
         mSystemUiHelper.setFullscreen(mFullscreen);
         mAppBar.setExpanded(!mFullscreen, true);
         mKeyDelegate.setAppBarEnabled(!mFullscreen);
@@ -301,13 +303,15 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         AppUtils.toggleFab(mReplyButton, !mFullscreen);
     }
 
-    private void onItemLoaded(@Nullable Item response) {
+    @Synthetic
+    void onItemLoaded(@Nullable Item response) {
         mItem = response;
         supportInvalidateOptionsMenu();
         bindData(mItem);
     }
 
-    private void bindFavorite() {
+    @Synthetic
+    void bindFavorite() {
         if (mItem == null) {
             return;
         }
@@ -428,7 +432,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         mUserServices.voteUp(ItemActivity.this, story.getId(), new VoteCallback(this));
     }
 
-    private void onVoted(Boolean successful) {
+    @Synthetic
+    void onVoted(Boolean successful) {
         if (successful == null) {
             Toast.makeText(this, R.string.vote_failed, Toast.LENGTH_SHORT).show();
         } else if (successful) {
@@ -448,10 +453,11 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         return mViewPager.getCurrentItem() == 0 && Preferences.navigationEnabled(this);
     }
 
-    private static class ItemResponseListener implements ResponseListener<Item> {
+    static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<ItemActivity> mItemActivity;
 
-        public ItemResponseListener(ItemActivity itemActivity) {
+        @Synthetic
+        ItemResponseListener(ItemActivity itemActivity) {
             mItemActivity = new WeakReference<>(itemActivity);
         }
 
@@ -468,10 +474,11 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         }
     }
 
-    private static class VoteCallback extends UserServices.Callback {
+    static class VoteCallback extends UserServices.Callback {
         private final WeakReference<ItemActivity> mItemActivity;
 
-        public VoteCallback(ItemActivity itemActivity) {
+        @Synthetic
+        VoteCallback(ItemActivity itemActivity) {
             mItemActivity = new WeakReference<>(itemActivity);
         }
 

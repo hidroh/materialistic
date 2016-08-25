@@ -49,6 +49,7 @@ import android.widget.ViewSwitcher;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
@@ -65,9 +66,9 @@ abstract class BaseWebFragment extends LazyLoadFragment
     private static final String STATE_FULLSCREEN = "state:fullscreen";
     private static final String STATE_CONTENT = "state:content";
     private static final String STATE_URL = "state:url";
-    private WebView mWebView;
+    @Synthetic WebView mWebView;
     private NestedScrollView mScrollView;
-    private boolean mExternalRequired = false;
+    @Synthetic boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject PopupMenu mPopupMenu;
     private KeyDelegate.NestedScrollViewHelper mScrollableHelper;
@@ -80,7 +81,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
     };
     private ViewGroup mFullscreenView;
     private ViewGroup mScrollViewContent;
-    private ImageButton mButtonRefresh;
+    @Synthetic ImageButton mButtonRefresh;
     private ViewSwitcher mControls;
     private EditText mEditText;
     private View mButtonMore;
@@ -88,7 +89,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
     protected ProgressBar mProgressBar;
     private boolean mFullscreen;
     protected String mContent;
-    private String mUrl;
+    @Synthetic String mUrl;
     private AppUtils.SystemUiHelper mSystemUiHelper;
 
     @Override
@@ -288,11 +289,10 @@ abstract class BaseWebFragment extends LazyLoadFragment
                 mWebView.stopLoading();
             }
         });
-        view.findViewById(R.id.button_exit).setOnClickListener(v -> {
-            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
-                    new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                            .putExtra(EXTRA_FULLSCREEN, false));
-        });
+        view.findViewById(R.id.button_exit).setOnClickListener(v ->
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
+                        new Intent(BaseWebFragment.ACTION_FULLSCREEN)
+                                .putExtra(EXTRA_FULLSCREEN, false)));
         mButtonNext.setOnClickListener(v -> mWebView.findNext(true));
         mButtonMore.setOnClickListener(v ->
                 mPopupMenu.create(getActivity(), mButtonMore, Gravity.NO_GRAVITY)
@@ -361,7 +361,8 @@ abstract class BaseWebFragment extends LazyLoadFragment
         mWebView.getSettings().setJavaScriptEnabled(true);
     }
 
-    private void setFullscreen(boolean isFullscreen) {
+    @Synthetic
+    void setFullscreen(boolean isFullscreen) {
         if (getView() == null) {
             return;
         }

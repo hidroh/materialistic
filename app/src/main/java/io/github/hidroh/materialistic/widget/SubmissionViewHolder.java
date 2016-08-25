@@ -21,10 +21,10 @@ import android.widget.TextView;
 
 import io.github.hidroh.materialistic.R;
 
-public class SubmissionViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
+class SubmissionViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
     final TextView mTitleTextView;
 
-    public SubmissionViewHolder(View itemView) {
+    SubmissionViewHolder(View itemView) {
         super(itemView);
         mTitleTextView = (android.widget.TextView) itemView.findViewById(R.id.title);
         mCommentButton.setText(R.string.view_story);

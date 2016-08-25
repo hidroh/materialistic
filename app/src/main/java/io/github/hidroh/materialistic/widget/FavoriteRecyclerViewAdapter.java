@@ -43,6 +43,7 @@ import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.MenuTintDelegate;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -107,9 +108,9 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             notifyDataSetChanged();
         }
     };
-    private ActionModeDelegate mActionModeDelegate;
-    private MenuTintDelegate mMenuTintDelegate;
-    private ArrayMap<Integer, String> mSelected = new ArrayMap<>();
+    @Synthetic ActionModeDelegate mActionModeDelegate;
+    @Synthetic MenuTintDelegate mMenuTintDelegate;
+    @Synthetic ArrayMap<Integer, String> mSelected = new ArrayMap<>();
     private int mPendingAdd = -1;
 
     public FavoriteRecyclerViewAdapter(ActionModeDelegate actionModeDelegate) {
@@ -220,11 +221,13 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         }
     }
 
-    private void removeSelection() {
+    @Synthetic
+    void removeSelection() {
         mFavoriteManager.remove(mContext, mSelected.values());
     }
 
-    private void dismiss(final int position) {
+    @Synthetic
+    void dismiss(final int position) {
         final Favorite item = getItem(position);
         mSelected.put(position, item.getId());
         mFavoriteManager.remove(mContext, mSelected.values());
@@ -274,7 +277,8 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         mUserServices.voteUp(mContext, item.getId(), new VoteCallback(this));
     }
 
-    private void onVoted(Boolean successful) {
+    @Synthetic
+    void onVoted(Boolean successful) {
         if (successful == null) {
             Toast.makeText(mContext, R.string.vote_failed, Toast.LENGTH_SHORT).show();
         } else if (successful) {
@@ -284,10 +288,11 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         }
     }
 
-    private static class VoteCallback extends UserServices.Callback {
+    static class VoteCallback extends UserServices.Callback {
         private final WeakReference<FavoriteRecyclerViewAdapter> mAdapter;
 
-        public VoteCallback(FavoriteRecyclerViewAdapter adapter) {
+        @Synthetic
+        VoteCallback(FavoriteRecyclerViewAdapter adapter) {
             mAdapter = new WeakReference<>(adapter);
         }
 

@@ -33,6 +33,7 @@ import android.widget.Toast;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 public class NavFloatingActionButton extends FloatingActionButton {
     private static final long VIBRATE_DURATION_MS = 15;
@@ -48,8 +49,8 @@ public class NavFloatingActionButton extends FloatingActionButton {
             Navigable.DIRECTION_RIGHT,
             DOUBLE_TAP
     };
-    private final Vibrator mVibrator;
-    private Navigable mNavigable;
+    @Synthetic final Vibrator mVibrator;
+    @Synthetic Navigable mNavigable;
     private int mNextKonamiCode = 0;
 
     public NavFloatingActionButton(Context context) {
@@ -79,7 +80,8 @@ public class NavFloatingActionButton extends FloatingActionButton {
         mNavigable = navigable;
     }
 
-    private void bindNavigationPad() {
+    @Synthetic
+    void bindNavigationPad() {
         GestureDetectorCompat detectorCompat = new GestureDetectorCompat(getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
@@ -139,7 +141,8 @@ public class NavFloatingActionButton extends FloatingActionButton {
         });
     }
 
-    private void startDrag(float startX, float startY) {
+    @Synthetic
+    void startDrag(float startX, float startY) {
         mVibrator.vibrate(VIBRATE_DURATION_MS * 2);
         Toast.makeText(getContext(), R.string.hint_drag, Toast.LENGTH_SHORT).show();
         //noinspection Convert2Lambda
@@ -165,7 +168,8 @@ public class NavFloatingActionButton extends FloatingActionButton {
         });
     }
 
-    private boolean trackKonami(int direction) {
+    @Synthetic
+    boolean trackKonami(int direction) {
         if (KONAMI_CODE[mNextKonamiCode] != direction) {
             mNextKonamiCode = direction == KONAMI_CODE[0] ? 1 : 0;
             return false;

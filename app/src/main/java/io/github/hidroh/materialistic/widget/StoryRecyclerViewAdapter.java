@@ -52,6 +52,7 @@ import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.UserActivity;
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -106,12 +107,12 @@ public class StoryRecyclerViewAdapter extends
     };
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject SessionManager mSessionManager;
-    private ArrayList<Item> mItems;
+    @Synthetic ArrayList<Item> mItems;
     private ArrayList<Item> mUpdated = new ArrayList<>();
     private Map<String, Integer> mPromoted = new HashMap<>();
-    private final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
+    @Synthetic final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
     private final LongSparseArray<Integer> mUpdatedPositions = new LongSparseArray<>();
-    private int mFavoriteRevision = 1;
+    @Synthetic int mFavoriteRevision = 1;
     private String mUsername;
     private boolean mHighlightUpdated = true;
     private boolean mShowAll = true;
@@ -370,7 +371,8 @@ public class StoryRecyclerViewAdapter extends
         }
     }
 
-    private void onItemLoaded(Item item) {
+    @Synthetic
+    void onItemLoaded(Item item) {
         Integer position = mShowAll ? mItemPositions.get(item.getLongId()) :
                 mUpdatedPositions.get(item.getLongId());
         // ignore changes if item was invalidated by refresh / filter
@@ -424,7 +426,8 @@ public class StoryRecyclerViewAdapter extends
                 .show();
     }
 
-    private void toggleSave(final Item story) {
+    @Synthetic
+    void toggleSave(final Item story) {
         final int toastMessageResId;
         if (!story.isFavorite()) {
             mFavoriteManager.add(mContext, story);
@@ -438,14 +441,16 @@ public class StoryRecyclerViewAdapter extends
                 .show();
     }
 
-    private void vote(final Item story, final RecyclerView.ViewHolder holder) {
+    @Synthetic
+    void vote(final Item story, final RecyclerView.ViewHolder holder) {
         if (!mUserServices.voteUp(mContext, story.getId(),
                 new VoteCallback(this, holder.getAdapterPosition(), story))) {
             AppUtils.showLogin(mContext, mAlertDialogBuilder);
         }
     }
 
-    private void onVoted(int position, Boolean successful) {
+    @Synthetic
+    void onVoted(int position, Boolean successful) {
         if (successful == null) {
             Toast.makeText(mContext, R.string.vote_failed, Toast.LENGTH_SHORT).show();
         } else if (successful) {
@@ -467,7 +472,8 @@ public class StoryRecyclerViewAdapter extends
         mCacheMode = cacheMode;
     }
 
-    private void markAsViewed(int position) {
+    @Synthetic
+    void markAsViewed(int position) {
         if (position < 0) {
             return;
         }
@@ -487,10 +493,11 @@ public class StoryRecyclerViewAdapter extends
         }
     }
 
-    private static class ItemResponseListener implements ResponseListener<Item> {
+    static class ItemResponseListener implements ResponseListener<Item> {
         private final WeakReference<StoryRecyclerViewAdapter> mAdapter;
         private final Item mPartialItem;
 
+        @Synthetic
         ItemResponseListener(StoryRecyclerViewAdapter adapter,
                                     Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
@@ -511,11 +518,12 @@ public class StoryRecyclerViewAdapter extends
         }
     }
 
-    private static class VoteCallback extends UserServices.Callback {
+    static class VoteCallback extends UserServices.Callback {
         private final WeakReference<StoryRecyclerViewAdapter> mAdapter;
         private final int mPosition;
         private final Item mItem;
 
+        @Synthetic
         VoteCallback(StoryRecyclerViewAdapter adapter, int position,
                             Item item) {
             mAdapter = new WeakReference<>(adapter);

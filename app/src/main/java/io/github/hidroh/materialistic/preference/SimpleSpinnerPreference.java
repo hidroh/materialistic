@@ -29,6 +29,7 @@ public class SimpleSpinnerPreference extends SpinnerPreference {
 
     private final LayoutInflater mLayoutInflater;
 
+    @SuppressWarnings("unused")
     public SimpleSpinnerPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }

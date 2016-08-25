@@ -28,6 +28,7 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 
 public class FeedbackActivity extends InjectableActivity {
@@ -75,7 +76,8 @@ public class FeedbackActivity extends InjectableActivity {
         return true;
     }
 
-    private void onFeedbackSent(boolean success) {
+    @Synthetic
+    void onFeedbackSent(boolean success) {
         Toast.makeText(this,
                 success ? R.string.feedback_sent : R.string.feedback_failed,
                 Toast.LENGTH_SHORT)
@@ -88,9 +90,10 @@ public class FeedbackActivity extends InjectableActivity {
         }
     }
 
-    private static class FeedbackCallback implements FeedbackClient.Callback {
+    static class FeedbackCallback implements FeedbackClient.Callback {
         private final WeakReference<FeedbackActivity> mFeedbackActivity;
 
+        @Synthetic
         FeedbackCallback(FeedbackActivity drawerActivity) {
             mFeedbackActivity = new WeakReference<>(drawerActivity);
         }

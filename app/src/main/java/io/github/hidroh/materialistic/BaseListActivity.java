@@ -42,6 +42,7 @@ import android.view.View;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
@@ -77,7 +78,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private FloatingActionButton mReplyButton;
     private NavFloatingActionButton mNavButton;
     private View mListView;
-    private boolean mFullscreen;
+    @Synthetic boolean mFullscreen;
     private boolean mMultiWindowEnabled;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -333,7 +334,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         return ItemManager.MODE_DEFAULT;
     }
 
-    private void setFullscreen() {
+    @Synthetic
+    void setFullscreen() {
         mAppBar.setExpanded(!mFullscreen, true);
         mTabLayout.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);
         mListView.setVisibility(mFullscreen ? View.GONE : View.VISIBLE);

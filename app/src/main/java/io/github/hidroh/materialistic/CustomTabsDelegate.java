@@ -33,6 +33,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
+
 public class CustomTabsDelegate {
     private static final String STABLE_PACKAGE = "com.android.chrome";
     private static final String BETA_PACKAGE = "com.chrome.beta";
@@ -49,7 +51,7 @@ public class CustomTabsDelegate {
      * Binds the Activity to the Custom Tabs Service.
      * @param activity the activity to be binded to the service.
      */
-    public void bindCustomTabsService(Activity activity) {
+    void bindCustomTabsService(Activity activity) {
         if (mClient != null) {
             return;
         }
@@ -64,7 +66,7 @@ public class CustomTabsDelegate {
      * Unbinds the Activity from the Custom Tabs Service.
      * @param activity the activity that is connected to the service.
      */
-    public void unbindCustomTabsService(Activity activity) {
+    void unbindCustomTabsService(Activity activity) {
         if (mConnection == null) {
             return;
         }
@@ -91,7 +93,7 @@ public class CustomTabsDelegate {
      *
      * @return a CustomTabsSession.
      */
-    public CustomTabsSession getSession() {
+    CustomTabsSession getSession() {
         if (mClient == null) {
             mCustomTabsSession = null;
         } else if (mCustomTabsSession == null) {
@@ -100,11 +102,13 @@ public class CustomTabsDelegate {
         return mCustomTabsSession;
     }
 
+    @Synthetic
     void onServiceConnected(CustomTabsClient client) {
         mClient = client;
         mClient.warmup(0L);
     }
 
+    @Synthetic
     void onServiceDisconnected() {
         mClient = null;
         mCustomTabsSession = null;
@@ -140,10 +144,12 @@ public class CustomTabsDelegate {
         return sPackageNameToUse;
     }
 
+    @Synthetic
     static class ServiceConnection extends CustomTabsServiceConnection {
         private WeakReference<CustomTabsDelegate> mDelegate;
 
-        public ServiceConnection(CustomTabsDelegate delegate) {
+        @Synthetic
+        ServiceConnection(CustomTabsDelegate delegate) {
             mDelegate = new WeakReference<>(delegate);
         }
 

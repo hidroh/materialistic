@@ -43,6 +43,7 @@ import java.util.Locale;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
 
@@ -57,14 +58,14 @@ public class StoryView extends RelativeLayout implements Checkable {
     private final int mHotColorResId;
     private final int mAccentColorResId;
     private final TextView mRankTextView;
-    private final TextView mScoreTextView;
+    @Synthetic final TextView mScoreTextView;
     private final View mBookmarked;
     private final TextView mPostedTextView;
     private final TextView mTitleTextView;
     private final TextView mSourceTextView;
     private final TextView mCommentButton;
     private final boolean mIsLocal;
-    private final ViewSwitcher mVoteSwitcher;
+    @Synthetic final ViewSwitcher mVoteSwitcher;
     private final View mMoreButton;
     private final Drawable mCommentDrawable;
     private final View mBackground;

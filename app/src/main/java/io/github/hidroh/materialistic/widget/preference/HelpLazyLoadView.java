@@ -52,6 +52,7 @@ public class HelpLazyLoadView extends ScrollView {
                 defaultTab = 2;
                 break;
         }
+        //noinspection ConstantConditions
         tabLayout.getTabAt(defaultTab).select();
     }
 }

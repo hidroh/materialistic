@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 
@@ -27,6 +28,7 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -96,6 +98,7 @@ public class AlgoliaClient implements ItemManager {
         Hit[] hits = algoliaHits.hits;
         Item[] stories = new Item[hits == null ? 0 : hits.length];
         for (int i = 0; i < stories.length; i++) {
+            //noinspection ConstantConditions
             HackerNewsItem item = new HackerNewsItem(
                     Long.parseLong(hits[i].objectID));
             item.rank = i + 1;
@@ -119,10 +122,12 @@ public class AlgoliaClient implements ItemManager {
     }
 
     static class AlgoliaHits {
+        @Keep @Synthetic
         Hit[] hits;
     }
 
-    private static class Hit {
+    static class Hit {
+        @Keep @Synthetic
         String objectID;
     }
 }

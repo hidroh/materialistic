@@ -104,7 +104,7 @@ public class KeyDelegate {
      * Toggle {@link AppBarLayout} expand/collapse
      * @param enabled true to enable, false otherwise
      */
-    public void setAppBarEnabled(boolean enabled) {
+    void setAppBarEnabled(boolean enabled) {
         mAppBarEnabled = enabled;
     }
 
@@ -112,7 +112,7 @@ public class KeyDelegate {
      * Intercepts back pressed
      * @param backInterceptor listener to back pressed event
      */
-    public void setBackInterceptor(BackInterceptor backInterceptor) {
+    void setBackInterceptor(BackInterceptor backInterceptor) {
         mBackInterceptor = backInterceptor;
     }
 

@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 /**
  * {@link Preference} with spinner as custom widget.
@@ -37,10 +38,11 @@ import io.github.hidroh.materialistic.R;
  * Preference value will be persisted as string.
  */
 public abstract class SpinnerPreference extends Preference {
-    protected String[] mEntries = new String[0];
-    protected String[] mEntryValues = new String[0];
-    private int mSelection = 0;
+    @Synthetic String[] mEntries = new String[0];
+    @Synthetic String[] mEntryValues = new String[0];
+    @Synthetic int mSelection = 0;
 
+    @SuppressWarnings("unused")
     public SpinnerPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }

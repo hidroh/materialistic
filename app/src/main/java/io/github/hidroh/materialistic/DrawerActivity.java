@@ -37,14 +37,16 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
+
 public abstract class DrawerActivity extends InjectableActivity {
 
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private View mDrawer;
-    private Class<? extends Activity> mPendingNavigation;
-    private Bundle mPendingNavigationExtras;
+    @Synthetic View mDrawer;
+    @Synthetic Class<? extends Activity> mPendingNavigation;
+    @Synthetic Bundle mPendingNavigationExtras;
     private TextView mDrawerAccount;
     private View mDrawerLogout;
     private View mDrawerUser;

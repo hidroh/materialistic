@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
@@ -107,7 +106,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         mUserServices.login(username, password, createAccount, new LoginCallback(this));
     }
 
-    private void onLoggedIn(Boolean successful) {
+    void onLoggedIn(Boolean successful) {
         if (successful == null) {
             mLoginButton.setEnabled(true);
             mRegisterButton.setEnabled(true);
@@ -136,10 +135,10 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         finish();
     }
 
-    private static class LoginCallback extends UserServices.Callback {
+    static class LoginCallback extends UserServices.Callback {
         private final WeakReference<LoginActivity> mLoginActivity;
 
-        public LoginCallback(LoginActivity loginActivity) {
+        LoginCallback(LoginActivity loginActivity) {
             mLoginActivity = new WeakReference<>(loginActivity);
         }
 

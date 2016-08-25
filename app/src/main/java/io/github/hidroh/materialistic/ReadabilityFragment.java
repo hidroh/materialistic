@@ -25,6 +25,7 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
 
@@ -75,7 +76,8 @@ public class ReadabilityFragment extends BaseWebFragment implements Scrollable {
         mReadabilityClient.parse(item.getId(), item.getUrl(), new ReadabilityCallback(this));
     }
 
-    private void onParsed(String content) {
+    @Synthetic
+    void onParsed(String content) {
         if (isAttached()) {
             mProgressBar.setIndeterminate(false);
             loadContent(content);
@@ -90,9 +92,10 @@ public class ReadabilityFragment extends BaseWebFragment implements Scrollable {
         loadUrl(item.getUrl());
     }
 
-    private static class ReadabilityCallback implements ReadabilityClient.Callback {
+    static class ReadabilityCallback implements ReadabilityClient.Callback {
         private final WeakReference<ReadabilityFragment> mReadabilityFragment;
 
+        @Synthetic
         ReadabilityCallback(ReadabilityFragment readabilityFragment) {
             mReadabilityFragment = new WeakReference<>(readabilityFragment);
         }

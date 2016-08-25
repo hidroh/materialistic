@@ -23,6 +23,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
+    @SuppressWarnings("unused")
     public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
         this();
     }

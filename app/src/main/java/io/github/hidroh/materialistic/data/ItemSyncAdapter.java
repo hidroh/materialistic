@@ -46,6 +46,7 @@ import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -53,7 +54,7 @@ import retrofit2.Callback;
  * Simple sync adapter that triggers OkHttp requests so their responses become available in
  * cache for subsequent requests
  */
-public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
+class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
 
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
     private static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
@@ -172,7 +173,8 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void sync(@NonNull HackerNewsItem item, String progressId) {
+    @Synthetic
+    void sync(@NonNull HackerNewsItem item, String progressId) {
         mSharedPreferences.edit().remove(item.getId()).apply();
         notifyItem(progressId, item.getId(), item);
         syncReadability(item);
@@ -219,8 +221,9 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
                 mSyncProgresses.containsKey(progressId);
     }
 
-    private void notifyItem(@Nullable String progressId, @NonNull String id,
-                            @Nullable HackerNewsItem item) {
+    @Synthetic
+    void notifyItem(@Nullable String progressId, @NonNull String id,
+                    @Nullable HackerNewsItem item) {
         if (isNotificationEnabled(progressId)) {
             mSyncProgresses.get(progressId).finishItem(id, item,
                     mCommentsEnabled && mConnectionEnabled,
@@ -271,7 +274,8 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
         private Boolean readability;
         String title;
 
-        public SyncProgress(String id) {
+        @Synthetic
+        SyncProgress(String id) {
             this.id = id;
         }
 
@@ -283,6 +287,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
             return (self != null ? 1 : 0) + finishedKids + (readability != null && readability ? 1 :0);
         }
 
+        @Synthetic
         void finishItem(@NonNull String id, @Nullable HackerNewsItem item,
                         boolean kidsEnabled, boolean readabilityEnabled) {
             if (TextUtils.equals(id, this.id)) {
@@ -292,6 +297,7 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
+        @Synthetic
         void finishReadability() {
             readability = true;
         }
@@ -315,7 +321,6 @@ public class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
             finishedKids++;
         }
     }
-
 
     static class BackgroundThreadExecutor implements Executor {
 
