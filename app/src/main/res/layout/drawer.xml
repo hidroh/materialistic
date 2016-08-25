@@ -69,15 +69,15 @@
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
-        android:id="@id/drawer_best"
-        android:text="@string/title_activity_best"
-        app:iconStart="@drawable/ic_thumb_up_white_24dp"
-        style="@style/DrawerTextStyle"/>
-
-    <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_popular"
         android:text="@string/title_activity_popular"
         app:iconStart="@drawable/ic_history_white_24dp"
+        style="@style/DrawerTextStyle"/>
+
+    <io.github.hidroh.materialistic.widget.TintableTextView
+        android:id="@id/drawer_new"
+        android:text="@string/title_activity_new"
+        app:iconStart="@drawable/ic_new_releases_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
@@ -95,9 +95,9 @@
         android:layout_height="wrap_content">
 
         <io.github.hidroh.materialistic.widget.TintableTextView
-            android:id="@id/drawer_new"
-            android:text="@string/title_activity_new"
-            app:iconStart="@drawable/ic_new_releases_white_24dp"
+            android:id="@id/drawer_best"
+            android:text="@string/title_activity_best"
+            app:iconStart="@drawable/ic_thumb_up_white_24dp"
             style="@style/DrawerTextStyle"/>
 
         <io.github.hidroh.materialistic.widget.TintableTextView
