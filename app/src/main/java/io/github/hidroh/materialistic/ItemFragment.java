@@ -39,6 +39,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
@@ -204,7 +205,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         mItemManager.getItem(mItemId, mCacheMode, new ItemResponseListener(this));
     }
 
-    private void onItemLoaded(@Nullable Item item) {
+    void onItemLoaded(@Nullable Item item) {
         mSwipeRefreshLayout.setRefreshing(false);
         if (item != null) {
             mAdapterItems = null;
@@ -267,10 +268,11 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
     }
 
-    private static class ItemResponseListener implements ResponseListener<Item> {
+    static class ItemResponseListener implements ResponseListener<Item> {
         private WeakReference<ItemFragment> mItemFragment;
 
-        public ItemResponseListener(ItemFragment itemFragment) {
+        @Synthetic
+        ItemResponseListener(ItemFragment itemFragment) {
             mItemFragment = new WeakReference<>(itemFragment);
         }
 

@@ -40,6 +40,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
@@ -265,7 +266,8 @@ public class FavoriteFragment extends BaseListFragment
         mFavoriteManager.get(getActivity(), mFilter);
     }
 
-    private void export(ArrayList<Favorite> favorites) {
+    @Synthetic
+    void export(ArrayList<Favorite> favorites) {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }

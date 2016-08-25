@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ import android.text.TextUtils;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
@@ -62,7 +64,8 @@ public interface ReadabilityClient {
         }
 
         class Readable {
-            private String content;
+            @Keep @Synthetic
+            String content;
         }
 
         @Inject

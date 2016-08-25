@@ -28,6 +28,8 @@ import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
+
 public class MaterialisticProvider extends ContentProvider {
     static final String PROVIDER_AUTHORITY = "io.github.hidroh.materialistic.provider";
     private static final Uri BASE_URI = Uri.parse("content://" + PROVIDER_AUTHORITY);
@@ -215,8 +217,8 @@ public class MaterialisticProvider extends ContentProvider {
                 " ORDER BY " + ReadabilityEntry._ID + " DESC" +
                 " LIMIT -1 OFFSET " + READABILITY_MAX_ENTRIES + ")";
 
-
-        private DbHelper(Context context) {
+        @Synthetic
+        DbHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
         }
 

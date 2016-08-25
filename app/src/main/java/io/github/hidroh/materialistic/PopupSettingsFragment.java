@@ -42,6 +42,7 @@ public class PopupSettingsFragment extends AppCompatDialogFragment {
         return inflater.inflate(R.layout.fragment_popup_settings, container, false);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new BottomSheetDialog(getActivity(), getTheme());
@@ -91,6 +92,7 @@ public class PopupSettingsFragment extends AppCompatDialogFragment {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             int width = getContext().getResources().getDimensionPixelSize(R.dimen.bottom_sheet_width);
+            //noinspection ConstantConditions
             getWindow().setLayout(
                     width > 0 ? width : ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);

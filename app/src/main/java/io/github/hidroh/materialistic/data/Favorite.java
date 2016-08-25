@@ -23,10 +23,10 @@ import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 /**
  * Represents a favorite item
@@ -60,7 +60,8 @@ public class Favorite implements WebItem {
         this.favorite = true;
     }
 
-    private Favorite(Parcel source) {
+    @Synthetic
+    Favorite(Parcel source) {
         itemId = source.readString();
         url = source.readString();
         title = source.readString();

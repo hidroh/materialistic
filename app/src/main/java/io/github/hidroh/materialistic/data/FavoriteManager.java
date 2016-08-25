@@ -36,6 +36,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import rx.Observable;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
@@ -45,7 +46,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 public class FavoriteManager implements LocalItemManager<Favorite> {
 
-    public static final int LOADER = 0;
+    private static final int LOADER = 0;
     /**
      * {@link android.content.Intent#getAction()} for broadcasting getting favorites matching query
      */
@@ -59,7 +60,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private static final String URI_PATH_REMOVE = "remove";
     private static final String URI_PATH_CLEAR = "clear";
     private final Scheduler mIoScheduler;
-    private Cursor mCursor;
+    @Synthetic Cursor mCursor;
 
     @Override
     public int getSize() {

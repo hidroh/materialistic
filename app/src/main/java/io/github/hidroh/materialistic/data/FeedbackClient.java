@@ -17,10 +17,12 @@
 package io.github.hidroh.materialistic.data;
 
 import android.os.Build;
+import android.support.annotation.Keep;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -69,11 +71,15 @@ public interface FeedbackClient {
         static class Issue {
             private static final String LABEL_FEEDBACK = "feedback";
 
-            private final String title;
-            private final String body;
-            private final String[] labels;
+            @Keep @Synthetic
+            final String title;
+            @Keep @Synthetic
+            final String body;
+            @Keep @Synthetic
+            final String[] labels;
 
-            private Issue(String title, String body) {
+            @Synthetic
+            Issue(String title, String body) {
                 this.title = title;
                 this.body = body;
                 this.labels = new String[]{LABEL_FEEDBACK};

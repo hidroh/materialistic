@@ -28,6 +28,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 public class ThemePreference extends Preference {
 
@@ -64,6 +65,7 @@ public class ThemePreference extends Preference {
         return isTranslucent ? themeSpec.getTranslucent() : themeSpec;
     }
 
+    @SuppressWarnings("unused")
     public ThemePreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -110,7 +112,8 @@ public class ThemePreference extends Preference {
         public final @StyleRes int themeOverrides;
         ThemeSpec translucent;
 
-        private ThemeSpec(@StringRes int summary, @StyleRes int theme, @StyleRes int themeOverrides) {
+        @Synthetic
+        ThemeSpec(@StringRes int summary, @StyleRes int theme, @StyleRes int themeOverrides) {
             this.summary = summary;
             this.theme = theme;
             this.themeOverrides = themeOverrides;

@@ -46,6 +46,7 @@ import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
@@ -54,7 +55,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         extends RecyclerView.Adapter<VH> {
     private static final String PROPERTY_MAX_LINES = "maxLines";
     private static final int DURATION_PER_LINE_MILLIS = 20;
-    protected LayoutInflater mLayoutInflater;
+    LayoutInflater mLayoutInflater;
     private ItemManager mItemManager;
     @Inject UserServices mUserServices;
     @Inject PopupMenu mPopupMenu;
@@ -62,8 +63,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     protected Context mContext;
     private int mTertiaryTextColorResId;
     private int mSecondaryTextColorResId;
-    protected int mCardBackgroundColorResId;
-    protected int mCardHighlightColorResId;
+    private int mCardBackgroundColorResId;
+    private int mCardHighlightColorResId;
     private int mContentMaxLines = Integer.MAX_VALUE;
     private String mUsername;
     private final Map<String, Integer> mLineCounted = new HashMap<>();
@@ -74,7 +75,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         void onPosition(int position);
     }
 
-    public ItemRecyclerViewAdapter(ItemManager itemManager) {
+    ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
     }
 
@@ -184,7 +185,8 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mReadMoreTextView.setVisibility(View.GONE);
     }
 
-    private boolean isAttached() {
+    @Synthetic
+    boolean isAttached() {
         return mContext != null;
     }
 
@@ -240,39 +242,39 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             return;
         }
         holder.mMoreButton.setVisibility(View.VISIBLE);
-        holder.mMoreButton.setOnClickListener(v -> {
+        holder.mMoreButton.setOnClickListener(v ->
             mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY)
-                    .inflate(R.menu.menu_contextual_comment)
-                    .setOnMenuItemClickListener(menuItem -> {
-                        if (menuItem.getItemId() == R.id.menu_contextual_vote) {
-                            vote(item);
-                            return true;
-                        }
-                        if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                            mContext.startActivity(new Intent(mContext, ComposeActivity.class)
-                                    .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                                    .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
-                            return true;
-                        }
-                        if (menuItem.getItemId() == R.id.menu_contextual_share) {
-                            mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
-                                    item.isStoryType() ? item.getDisplayedTitle() : null,
-                                    item.isStoryType() ? item.getUrl() :
-                                            item.getDisplayedText() == null ?
-                                                    null : item.getDisplayedText().toString()));
-                            return true;
-                        }
-                        return false;
-                    })
-                    .show();
-        });
+                .inflate(R.menu.menu_contextual_comment)
+                .setOnMenuItemClickListener(menuItem -> {
+                    if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                        vote(item);
+                        return true;
+                    }
+                    if (menuItem.getItemId() == R.id.menu_contextual_comment) {
+                        mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                                .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
+                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getText()));
+                        return true;
+                    }
+                    if (menuItem.getItemId() == R.id.menu_contextual_share) {
+                        mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
+                                item.isStoryType() ? item.getDisplayedTitle() : null,
+                                item.isStoryType() ? item.getUrl() :
+                                        item.getDisplayedText() == null ?
+                                                null : item.getDisplayedText().toString()));
+                        return true;
+                    }
+                    return false;
+                })
+                .show());
     }
 
     private void vote(final Item item) {
         mUserServices.voteUp(mContext, item.getId(), new VoteCallback(this));
     }
 
-    private void onVoted(Boolean successful) {
+    @Synthetic
+    void onVoted(Boolean successful) {
         if (successful == null) {
             Toast.makeText(mContext, R.string.vote_failed, Toast.LENGTH_SHORT).show();
         } else if (successful) {
@@ -303,7 +305,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mContentView = itemView.findViewById(R.id.content);
         }
 
-        ItemViewHolder(View itemView, Object payload) {
+        ItemViewHolder(View itemView, @SuppressWarnings("UnusedParameters") Object payload) {
             super(itemView);
             mIsFooter = true;
         }
@@ -318,6 +320,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         private final int mPosition;
         private final Item mPartialItem;
 
+        @Synthetic
         ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
                                     Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
@@ -339,10 +342,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         }
     }
 
-    private static class VoteCallback extends UserServices.Callback {
+    static class VoteCallback extends UserServices.Callback {
         private final WeakReference<ItemRecyclerViewAdapter> mAdapter;
 
-        public VoteCallback(ItemRecyclerViewAdapter adapter) {
+        @Synthetic
+        VoteCallback(ItemRecyclerViewAdapter adapter) {
             mAdapter = new WeakReference<>(adapter);
         }
 

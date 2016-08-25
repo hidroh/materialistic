@@ -68,7 +68,6 @@ public class WidgetService extends RemoteViewsService {
 
     static class ListRemoteViewsFactory implements RemoteViewsFactory {
 
-        private static final String HOST_ITEM = "item";
         private static final String SCORE = "%1$dp";
         private static final String COMMENT = "%1$dc";
         private static final String SUBTITLE_SEPARATOR = " - ";

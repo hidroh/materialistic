@@ -18,8 +18,11 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Parcel;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
+
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 class UserItem implements UserManager.User {
     public static final Creator<UserItem> CREATOR = new Creator<UserItem>() {
@@ -33,17 +36,18 @@ class UserItem implements UserManager.User {
             return new UserItem[size];
         }
     };
-    private String id;
-    private long delay;
-    private long created;
-    private long karma;
-    private String about;
-    private int[] submitted;
+    @Keep private String id;
+    @Keep private long delay;
+    @Keep private long created;
+    @Keep private long karma;
+    @Keep private String about;
+    @Keep private int[] submitted;
 
     // view state
     private HackerNewsItem[] submittedItems = new HackerNewsItem[0];
 
-    private UserItem(Parcel source) {
+    @Synthetic
+    UserItem(Parcel source) {
         id = source.readString();
         delay = source.readLong();
         created = source.readLong();

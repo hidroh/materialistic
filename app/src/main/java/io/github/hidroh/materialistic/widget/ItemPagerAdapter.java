@@ -35,6 +35,7 @@ import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ReadabilityFragment;
 import io.github.hidroh.materialistic.Scrollable;
 import io.github.hidroh.materialistic.WebFragment;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
 
@@ -150,9 +151,10 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
 
     }
 
-    private void toggleFabs(boolean isComments,
-                            FloatingActionButton navigationFab,
-                            FloatingActionButton genericFab) {
+    @Synthetic
+    void toggleFabs(boolean isComments,
+                    FloatingActionButton navigationFab,
+                    FloatingActionButton genericFab) {
         AppUtils.toggleFab(navigationFab, isComments &&
                 Preferences.navigationEnabled(navigationFab.getContext()));
         AppUtils.toggleFab(genericFab, true);

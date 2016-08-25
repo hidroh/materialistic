@@ -58,7 +58,7 @@ public abstract class ListRecyclerViewAdapter
     protected Context mContext;
     private MultiPaneListener mMultiPaneListener;
     protected RecyclerView mRecyclerView;
-    protected LayoutInflater mInflater;
+    LayoutInflater mInflater;
     @Inject PopupMenu mPopupMenu;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject UserServices mUserServices;
@@ -179,11 +179,7 @@ public abstract class ListRecyclerViewAdapter
 
     protected abstract boolean isItemAvailable(T item);
 
-    /**
-     * Clears previously bind data from given view holder
-     * @param holder    view holder to clear
-     */
-    protected final void clearViewHolder(VH holder) {
+    private void clearViewHolder(VH holder) {
         holder.mStoryView.reset();
         holder.itemView.setOnClickListener(null);
         holder.itemView.setOnLongClickListener(null);
@@ -243,11 +239,12 @@ public abstract class ListRecyclerViewAdapter
     /**
      * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
      */
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        public final StoryView mStoryView;
-        public final FlatCardView mCardView;
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
+        final StoryView mStoryView;
+        @SuppressWarnings("WeakerAccess")
+        final FlatCardView mCardView;
 
-        public ItemViewHolder(View itemView) {
+        ItemViewHolder(View itemView) {
             super(itemView);
             mCardView = (FlatCardView) itemView;
             mStoryView = (StoryView) itemView.findViewById(R.id.story_view);

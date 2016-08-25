@@ -19,6 +19,7 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.style.ReplacementSpan;
 
@@ -39,12 +40,12 @@ public class AsteriskSpan extends ReplacementSpan {
     }
 
     @Override
-    public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+    public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         return Math.round(mPadding * 4); // padding let + radius * 2 + padding right
     }
 
     @Override
-    public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
         float radius = mPadding;
         float centerX = x + radius + mPadding;
         float centerY = top + radius + mPadding;

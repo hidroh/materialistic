@@ -34,6 +34,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.Item;
@@ -179,7 +180,8 @@ public class ListFragment extends BaseListFragment {
         mItemManager.getStories(mFilter, mCacheMode, new ListResponseListener(this));
     }
 
-    private void onItemsLoaded(Item[] items) {
+    @Synthetic
+    void onItemsLoaded(Item[] items) {
         if (!isAttached()) {
             return;
         }
@@ -211,10 +213,11 @@ public class ListFragment extends BaseListFragment {
         }
     }
 
-    private static class ListResponseListener implements ResponseListener<Item[]> {
+    static class ListResponseListener implements ResponseListener<Item[]> {
         private final WeakReference<ListFragment> mListFragment;
 
-        public ListResponseListener(ListFragment listFragment) {
+        @Synthetic
+        ListResponseListener(ListFragment listFragment) {
             mListFragment = new WeakReference<>(listFragment);
         }
         @Override

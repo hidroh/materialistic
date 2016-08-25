@@ -41,6 +41,7 @@ import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ResourcesProvider;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -275,7 +276,8 @@ public class SinglePageItemRecyclerViewAdapter
         mLock = lock;
     }
 
-    private void unlockBinding() {
+    @Synthetic
+    void unlockBinding() {
         if (mLock != null) {
             notifyItemRangeChanged(mLock[0], mLock[1] - mLock[0] + 1);
             mLock = null;
@@ -297,7 +299,8 @@ public class SinglePageItemRecyclerViewAdapter
         bindToggle(holder, item, mState.isExpanded(item));
     }
 
-    private void toggleKids(Item item) {
+    @Synthetic
+    void toggleKids(Item item) {
         boolean expanded = mState.isExpanded(item);
         item.setCollapsed(!item.isCollapsed());
         if (expanded) {
@@ -376,7 +379,8 @@ public class SinglePageItemRecyclerViewAdapter
         }
 
         @SuppressWarnings("unchecked")
-        private SavedState(Parcel source) {
+        @Synthetic
+        SavedState(Parcel source) {
             ArrayList<Item> savedList = source.readArrayList(Item.class.getClassLoader());
             addAll(0, savedList);
             expanded.addAll(source.createStringArrayList());
@@ -393,30 +397,37 @@ public class SinglePageItemRecyclerViewAdapter
             dest.writeStringList(new ArrayList<>(expanded));
         }
 
+        @Synthetic
         int size() {
             return list.size();
         }
 
+        @Synthetic
         Item get(int position) {
             return list.get(position);
         }
 
+        @Synthetic
         int indexOf(long itemId) {
             return indexOf(map.get(itemId));
         }
 
+        @Synthetic
         int indexOf(Item item) {
             return list.indexOf(item);
         }
 
+        @Synthetic
         boolean isExpanded(Item item) {
             return isExpanded(item.getId());
         }
 
+        @Synthetic
         boolean isExpanded(String itemId) {
             return expanded.contains(itemId);
         }
 
+        @Synthetic
         int expand(Item item) {
             expanded.add(item.getId());
             int index = indexOf(item) + 1;
@@ -424,6 +435,7 @@ public class SinglePageItemRecyclerViewAdapter
             return index;
         }
 
+        @Synthetic
         int[] collapse(Item item) {
             int index = indexOf(item) + 1;
             int count = recursiveRemove(item);

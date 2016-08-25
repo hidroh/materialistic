@@ -69,11 +69,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.hidroh.materialistic.annotation.PublicApi;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 
+@SuppressWarnings("WeakerAccess")
+@PublicApi
 public class AppUtils {
     private static final String ABBR_YEAR = "y";
     private static final String ABBR_WEEK = "w";
@@ -89,7 +92,7 @@ public class AppUtils {
     private static final String HOST_ITEM = "item";
     private static final String HOST_USER = "user";
 
-    static void openWebUrlExternal(Context context, WebItem item, String url, CustomTabsSession session) {
+    public static void openWebUrlExternal(Context context, WebItem item, String url, CustomTabsSession session) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
@@ -170,7 +173,7 @@ public class AppUtils {
         return fromHtml(htmlText, false);
     }
 
-    static CharSequence fromHtml(String htmlText, boolean compact) {
+    public static CharSequence fromHtml(String htmlText, boolean compact) {
         if (TextUtils.isEmpty(htmlText)) {
             return null;
         }
@@ -186,7 +189,7 @@ public class AppUtils {
         return trim(spanned);
     }
 
-    static Intent makeEmailIntent(String subject, String text) {
+    public static Intent makeEmailIntent(String subject, String text) {
         final Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -194,7 +197,7 @@ public class AppUtils {
         return intent;
     }
 
-    static void openExternal(@NonNull final Context context,
+    public static void openExternal(@NonNull final Context context,
                              @NonNull PopupMenu popupMenu,
                              @NonNull View anchor,
                              @NonNull final WebItem item,
@@ -255,7 +258,7 @@ public class AppUtils {
         return size;
     }
 
-    static boolean isHackerNewsUrl(WebItem item) {
+    public static boolean isHackerNewsUrl(WebItem item) {
         return !TextUtils.isEmpty(item.getUrl()) &&
                 item.getUrl().equals(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
     }
@@ -265,7 +268,7 @@ public class AppUtils {
                         context.getResources().getDisplayMetrics().density);
     }
 
-    static void restart(Activity activity, boolean transition) {
+    public static void restart(Activity activity, boolean transition) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             activity.recreate();
         } else {
@@ -345,7 +348,7 @@ public class AppUtils {
     }
 
     @SuppressLint("MissingPermission")
-    static void registerAccountsUpdatedListener(final Context context) {
+    public static void registerAccountsUpdatedListener(final Context context) {
         AccountManager.get(context).addOnAccountsUpdatedListener(accounts -> {
             String username = Preferences.getUsername(context);
             if (TextUtils.isEmpty(username)) {
@@ -378,7 +381,7 @@ public class AppUtils {
         }
     }
 
-    static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
+    public static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
                                            Account[] accounts) {
         String username = Preferences.getUsername(context);
         final String[] items = new String[accounts.length + 1];
@@ -443,12 +446,12 @@ public class AppUtils {
         });
     }
 
-    static String toHtmlColor(Context context, @AttrRes int colorAttr) {
+    public static String toHtmlColor(Context context, @AttrRes int colorAttr) {
         return String.format(FORMAT_HTML_COLOR, 0xFFFFFF & ContextCompat.getColor(context,
                 AppUtils.getThemedResId(context, colorAttr)));
     }
 
-    static void toggleWebViewZoom(WebSettings webSettings, boolean enabled) {
+    public static void toggleWebViewZoom(WebSettings webSettings, boolean enabled) {
         webSettings.setSupportZoom(enabled);
         webSettings.setBuiltInZoomControls(enabled);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -456,19 +459,19 @@ public class AppUtils {
         }
     }
 
-    static void setStatusBarDim(Window window, boolean dim) {
+    public static void setStatusBarDim(Window window, boolean dim) {
         setStatusBarColor(window, dim ? Color.TRANSPARENT :
                 ContextCompat.getColor(window.getContext(),
                         AppUtils.getThemedResId(window.getContext(), R.attr.colorPrimaryDark)));
     }
 
-    static void setStatusBarColor(Window window, int color) {
+    public static void setStatusBarColor(Window window, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(color);
         }
     }
 
-    static void navigate(int direction, AppBarLayout appBarLayout, Navigable navigable) {
+    public static void navigate(int direction, AppBarLayout appBarLayout, Navigable navigable) {
         switch (direction) {
             case Navigable.DIRECTION_DOWN:
             case Navigable.DIRECTION_RIGHT:
@@ -500,6 +503,40 @@ public class AppUtils {
     public static LayoutInflater createLayoutInflater(Context context) {
         return LayoutInflater.from(new ContextThemeWrapper(context,
                 Preferences.Theme.resolvePreferredTextSize(context)));
+    }
+
+    public static Intent makeChooserShareIntent(Context context, String subject, String text) {
+        Intent shareIntent = AppUtils.makeShareIntent(subject, text);
+        Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
+        chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return chooserIntent;
+    }
+
+    public static Uri createItemUri(@NonNull String itemId) {
+        return new Uri.Builder()
+                .scheme(BuildConfig.APPLICATION_ID)
+                .authority(HOST_ITEM)
+                .path(itemId)
+                .build();
+    }
+
+    public static Uri createUserUri(@NonNull String userId) {
+        return new Uri.Builder()
+                .scheme(BuildConfig.APPLICATION_ID)
+                .authority(HOST_USER)
+                .path(userId)
+                .build();
+    }
+
+    public static String getDataUriId(@NonNull Intent intent, String altParamId) {
+        if (intent.getData() == null) {
+            return null;
+        }
+        if (TextUtils.equals(intent.getData().getScheme(), BuildConfig.APPLICATION_ID)) {
+            return intent.getData().getLastPathSegment();
+        } else { // web URI
+            return intent.getData().getQueryParameter(altParamId);
+        }
     }
 
     public static String wrapHtml(Context context, String html) {
@@ -540,40 +577,6 @@ public class AppUtils {
         intent.putExtra(Intent.EXTRA_TEXT, !TextUtils.isEmpty(subject) ?
                 TextUtils.join(" - ", new String[]{subject, text}) : text);
         return intent;
-    }
-
-    public static Intent makeChooserShareIntent(Context context, String subject, String text) {
-        Intent shareIntent = AppUtils.makeShareIntent(subject, text);
-        Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
-        chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return chooserIntent;
-    }
-
-    public static Uri createItemUri(@NonNull String itemId) {
-        return new Uri.Builder()
-                .scheme(BuildConfig.APPLICATION_ID)
-                .authority(HOST_ITEM)
-                .path(itemId)
-                .build();
-    }
-
-    public static Uri createUserUri(@NonNull String userId) {
-        return new Uri.Builder()
-                .scheme(BuildConfig.APPLICATION_ID)
-                .authority(HOST_USER)
-                .path(userId)
-                .build();
-    }
-
-    static String getDataUriId(@NonNull Intent intent, String altParamId) {
-        if (intent.getData() == null) {
-            return null;
-        }
-        if (TextUtils.equals(intent.getData().getScheme(), BuildConfig.APPLICATION_ID)) {
-            return intent.getData().getLastPathSegment();
-        } else { // web URI
-            return intent.getData().getQueryParameter(altParamId);
-        }
     }
 
     @NonNull

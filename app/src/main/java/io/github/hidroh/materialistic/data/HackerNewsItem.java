@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Parcel;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
@@ -39,38 +40,40 @@ import android.view.View;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 class HackerNewsItem implements Item {
     private static final String AUTHOR_SEPARATOR = " - ";
 
     // The item's unique id. Required.
-    private long id;
+    @Keep private long id;
     // true if the item is deleted.
-    private boolean deleted;
+    @Keep private boolean deleted;
     // The type of item. One of "job", "story", "comment", "poll", or "pollopt".
-    private String type;
+    @Keep private String type;
     // The username of the item's author.
-    private String by;
+    @Keep private String by;
     // Creation date of the item, in Unix Time.
-    private long time;
+    @Keep private long time;
     // The comment, Ask HN, or poll text. HTML.
-    private String text;
+    @Keep private String text;
     // true if the item is dead.
-    private boolean dead;
+    @Keep private boolean dead;
     // The item's parent. For comments, either another comment or the relevant story. For pollopts, the relevant poll.
-    private long parent;
+    @Keep private long parent;
     // The ids of the item's comments, in ranked display order.
-    private long[] kids;
+    @Keep private long[] kids;
     // The URL of the story.
-    private String url;
+    @Keep private String url;
     // The story's score, or the votes for a pollopt.
-    private int score;
+    @Keep private int score;
     // The title of the story or poll.
-    private String title;
+    @Keep private String title;
     // A list of related pollopts, in display order.
-    private long[] parts;
+    @SuppressWarnings("unused")
+    @Keep private long[] parts;
     // In the case of stories or polls, the total comment count.
-    private int descendants = -1;
+    @Keep private int descendants = -1;
 
     // view state
     private boolean favorite;
@@ -115,7 +118,8 @@ class HackerNewsItem implements Item {
         this.level = level;
     }
 
-    private HackerNewsItem(Parcel source) {
+    @Synthetic
+    HackerNewsItem(Parcel source) {
         id = source.readLong();
         title = source.readString();
         time = source.readLong();
@@ -348,7 +352,7 @@ class HackerNewsItem implements Item {
             @Override
             public void onClick(View view) {
                 view.getContext().startActivity(new Intent(Intent.ACTION_VIEW)
-                        .setData(AppUtils.createUserUri(by)));
+                        .setData(AppUtils.createUserUri(getBy())));
             }
 
             @Override

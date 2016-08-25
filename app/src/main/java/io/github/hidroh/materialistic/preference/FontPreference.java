@@ -31,6 +31,7 @@ import io.github.hidroh.materialistic.R;
 public class FontPreference extends SpinnerPreference {
     private final LayoutInflater mLayoutInflater;
 
+    @SuppressWarnings("unused")
     public FontPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }

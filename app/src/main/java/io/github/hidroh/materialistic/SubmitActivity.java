@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 
 public class SubmitActivity extends InjectableActivity {
     private static final String HN_GUIDELINES_URL = "https://news.ycombinator.com/newsguidelines.html";
@@ -50,7 +51,7 @@ public class SubmitActivity extends InjectableActivity {
     private static final String REGEX_FUZZY_URL = "(.*)((http|https)://[^\\s]*)$";
     @Inject UserServices mUserServices;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
-    private TextView mTitleEditText;
+    @Synthetic TextView mTitleEditText;
     private TextView mContentEditText;
     private TextInputLayout mTitleLayout;
     private TextInputLayout mContentLayout;
@@ -62,6 +63,7 @@ public class SubmitActivity extends InjectableActivity {
         AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_submit);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
         mTitleLayout = (TextInputLayout) findViewById(R.id.textinput_title);
@@ -178,7 +180,8 @@ public class SubmitActivity extends InjectableActivity {
                 mContentEditText.getText().toString(), isUrl, new SubmitCallback(this));
     }
 
-    private void onSubmitted(Boolean successful) {
+    @Synthetic
+    void onSubmitted(Boolean successful) {
         if (successful == null) {
             toggleControls(false);
             Toast.makeText(this, R.string.submit_failed, Toast.LENGTH_SHORT).show();
@@ -196,7 +199,8 @@ public class SubmitActivity extends InjectableActivity {
         }
     }
 
-    private void onError(int message, Uri data) {
+    @Synthetic
+    void onError(int message, Uri data) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         if (data != null) {
             startActivity(new Intent(Intent.ACTION_VIEW).setData(data));
@@ -244,10 +248,11 @@ public class SubmitActivity extends InjectableActivity {
         supportInvalidateOptionsMenu();
     }
 
-    private static class SubmitCallback extends UserServices.Callback {
+    static class SubmitCallback extends UserServices.Callback {
         private final WeakReference<SubmitActivity> mSubmitActivity;
 
-        public SubmitCallback(SubmitActivity submitActivity) {
+        @Synthetic
+        SubmitCallback(SubmitActivity submitActivity) {
             mSubmitActivity = new WeakReference<>(submitActivity);
         }
 

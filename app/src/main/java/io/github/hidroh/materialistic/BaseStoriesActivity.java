@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 
@@ -30,7 +31,7 @@ public abstract class BaseStoriesActivity extends BaseListActivity
         implements ListFragment.RefreshCallback {
 
     private static final String STATE_LAST_UPDATED = "state:lastUpdated";
-    private Long mLastUpdated;
+    @Synthetic Long mLastUpdated;
     private final Runnable mLastUpdateTask = new Runnable() {
         @Override
         public void run() {
@@ -53,7 +54,7 @@ public abstract class BaseStoriesActivity extends BaseListActivity
             }
         }
     };
-    private final Handler mHandler = new Handler();
+    @Synthetic final Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
