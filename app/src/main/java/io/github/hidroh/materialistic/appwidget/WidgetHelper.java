@@ -183,7 +183,7 @@ class WidgetHelper {
             } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
                 title = context.getString(R.string.title_activity_best);
                 destination = BestActivity.class;
-            } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
+            } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_top))) {
                 title = context.getString(R.string.title_activity_list);
                 destination = ListActivity.class;
             } else {
