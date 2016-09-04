@@ -95,7 +95,7 @@ public abstract class ThemedActivity extends AppCompatActivity {
     void setTaskTitle(CharSequence title) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(title)) {
             setTaskDescription(new ActivityManager.TaskDescription(title.toString(),
-                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_notification),
+                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_app),
                     ContextCompat.getColor(this, AppUtils.getThemedResId(this, R.attr.colorPrimary))));
         }
     }
