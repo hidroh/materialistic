@@ -98,7 +98,7 @@ public class AppUtils {
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
             return;
         }
-        Intent intent = createViewIntent(context, item, session);
+        Intent intent = createViewIntent(context, item, url, session);
         if (!HackerNewsClient.BASE_WEB_URL.contains(Uri.parse(url).getHost())) {
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
@@ -112,7 +112,7 @@ public class AppUtils {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, item, session)
+            intents.add(createViewIntent(context, item, url, session)
                     .setPackage(info.activityInfo.packageName));
         }
         if (intents.isEmpty()) {
@@ -580,7 +580,7 @@ public class AppUtils {
     }
 
     @NonNull
-    private static Intent createViewIntent(Context context, WebItem item, CustomTabsSession session) {
+    private static Intent createViewIntent(Context context, WebItem item, String url, CustomTabsSession session) {
         if (Preferences.customChromeTabEnabled(context)) {
             return new CustomTabsIntent.Builder(session)
                     .setToolbarColor(ContextCompat.getColor(context,
@@ -596,9 +596,9 @@ public class AppUtils {
                                     PendingIntent.FLAG_ONE_SHOT))
                     .build()
                     .intent
-                    .setData(Uri.parse(item.getUrl()));
+                    .setData(Uri.parse(url));
         } else {
-            return new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
+            return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }
     }
 
