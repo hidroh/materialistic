@@ -59,10 +59,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected static final String LIST_FRAGMENT_TAG = BaseListActivity.class.getName() +
             ".LIST_FRAGMENT_TAG";
     private static final String STATE_SELECTED_ITEM = "state:selectedItem";
-    private static final String STATE_STORY_VIEW_MODE = "state:storyViewMode";
-    private static final String STATE_EXTERNAL_BROWSER = "state:externalBrowser";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
-    private static final String STATE_MULTI_WINDOW_ENABLED = "state:multiWindowEnabled";
     private boolean mIsMultiPane;
     protected WebItem mSelectedItem;
     private Preferences.StoryViewMode mStoryViewMode;
@@ -124,10 +121,10 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             AppUtils.toggleFab(mNavButton, false);
             AppUtils.toggleFab(mReplyButton, false);
         }
+        mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
+        mStoryViewMode = Preferences.getDefaultStoryView(this);
+        mExternalBrowser = Preferences.externalBrowserEnabled(this);
         if (savedInstanceState == null) {
-            mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
-            mStoryViewMode = Preferences.getDefaultStoryView(this);
-            mExternalBrowser = Preferences.externalBrowserEnabled(this);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(android.R.id.list,
@@ -135,10 +132,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                             LIST_FRAGMENT_TAG)
                     .commit();
         } else {
-            mMultiWindowEnabled = savedInstanceState.getBoolean(STATE_MULTI_WINDOW_ENABLED);
-            mStoryViewMode = Preferences.StoryViewMode.values()[
-                    savedInstanceState.getInt(STATE_STORY_VIEW_MODE, 0)];
-            mExternalBrowser = savedInstanceState.getBoolean(STATE_EXTERNAL_BROWSER);
             mSelectedItem = savedInstanceState.getParcelable(STATE_SELECTED_ITEM);
             mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN);
             if (mIsMultiPane) {
@@ -218,10 +211,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_SELECTED_ITEM, mSelectedItem);
-        outState.putInt(STATE_STORY_VIEW_MODE, mStoryViewMode.ordinal());
-        outState.putBoolean(STATE_EXTERNAL_BROWSER, mExternalBrowser);
         outState.putBoolean(STATE_FULLSCREEN, mFullscreen);
-        outState.putBoolean(STATE_MULTI_WINDOW_ENABLED, mMultiWindowEnabled);
     }
 
     @Override
