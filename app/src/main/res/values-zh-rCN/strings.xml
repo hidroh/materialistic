@@ -20,7 +20,9 @@
     <string name="app_name">骇客资讯</string>
     <string name="action_settings">设置</string>
     <string name="title_activity_list">置顶帖子</string>
+    <string name="title_activity_best">最佳帖子</string>
     <string name="title_activity_item">评论</string>
+    <string name="title_activity_release">更新内容</string>
     <string name="filter_title_item">骇客资讯</string>
     <string name="open_drawer">打开侧边栏</string>
     <string name="close_drawer">关闭侧边栏</string>
@@ -56,6 +58,7 @@
     <string name="no_stories_search">未搜索到您想要搜索的帖子</string>
 
     <!-- preferences -->
+    <string name="display">显示</string>
     <string name="pref_external_title">使用其他浏览器</string>
     <string name="pref_external_summary">浏览器中查看帖子</string>
     <string name="pref_color_code_title">高亮评论左边框</string>
@@ -72,8 +75,38 @@
     <string name="pref_font_title">字体</string>
     <string name="pref_comment_display_title">评论显示方式</string>
     <string name="pref_max_lines_title">评论显示行数</string>
+    <string name="pref_multi_window_title">分屏模式</string>
+    <string name="pref_multi_window_summary">分屏展示帖子 (仅支持Android 7+)</string>
+    <string name="pref_multi_window_none">当前屏幕</string>
+    <string name="pref_multi_window_one">其他</string>
+    <string name="pref_navigation_title">屏幕导航</string>
     <string name="pref_lazy_load_title">懒加载内容</string>
     <string name="pref_lazy_load_summary">当只切换到该标签的时候才加载内容</string>
+    <string name="pref_saved_item_sync_title">离线阅读</string>
+    <string name="pref_saved_item_sync_summary">帖子收藏后自动下载内容</string>
+    <string name="pref_offline_data_title">下载模式</string>
+    <string name="pref_offline_comments_title">下载评论</string>
+    <string name="pref_offline_article_title">下载帖子内容</string>
+    <string name="pref_offline_readability_title">下载预览</string>
+    <string name="pref_offline_data_wifi">仅在Wifi下</string>
+    <string name="pref_offline_data_always">有网络情况下</string>
+    <string name="pref_offline_notification_title">显示进度</string>
+    <string name="pref_offline_notification_summary">通知栏显示下载进度</string>
+    <string name="pref_launch_screen_title">默认</string>
+    <string name="pref_volume_title">使用音量键导航</string>
+    <string name="pref_volume_summary">使用音量键控制上下滑动</string>
+    <string name="pref_ad_block_title">广告屏蔽</string>
+    <string name="pref_ad_block_summary">启用内部浏览器简易广告屏蔽</string>
+    <string name="pref_line_height_title">行间距</string>
+    <string name="pref_list_item_view_title">卡片式</string>
+    <string name="pref_thread_indicator_title">引用指示</string>
+    <string name="pref_widget_section_title">选项</string>
+    <string name="pref_widget_query_title">通过查询过滤（可选）</string>
+    <string name="pref_widget_frequency_title">更新频率</string>
+    <string name="pref_auto_viewed_title">自动标记为已读</string>
+    <string name="pref_auto_viewed_summary">向上滑动标记为已读</string>
+    <string name="pref_smooth_scroll_title">导航动画</string>
+    <string name="pref_smooth_scroll_summary">关闭动画以提高精确度滚动</string>
 
     <string name="connection_error">无法连接到 Hacker News。 请检查网络或稍后重试。</string>
     <string name="select_story">选中并阅读一则帖子</string>
@@ -109,8 +142,8 @@
     </string>
     <string name="title_required">标题不能为空</string>
     <string name="comment_required">内容不能为空</string>
-    <string name="feedback_sent">十分感谢您的反馈</string>
-    <string name="feedback_failed">反馈失败，请稍后重试</string>
+    <string name="feedback_sent">非常感谢您的反馈</string>
+    <string name="feedback_failed">提交反馈失败，请稍后重试</string>
     <string name="chooser_title">打开使用</string>
     <string name="title_activity_popular">热门帖子</string>
     <string name="range">范围</string>
@@ -126,12 +159,21 @@
         <item quantity="other">展示 %1$s 条新帖子</item>
     </plurals>
     <string name="show_all">显示全部</string>
-    <string name="whats_this">新特性是什么？</string>
-    <string name="got_it">知道了</string>
+    <string name="whats_this">这是什么？</string>
+    <string name="got_it">已了解</string>
     <string name="help_new_story">自上次刷新以来新帖子</string>
     <string name="help_promoted_story">自上次刷新以来的新帖子</string>
     <string name="help_new_comments">自上次刷新以来的新评论</string>
     <string name="help_lazy_load">启用懒加载设置后，只有您的帖子第一次打开时，默认选项卡才会加载。\n\n如果您处于较差的网络下并因此导致加载缓慢，启用该选项会给你带来帮助。\n\n懒加载在非WiFi连接下默认启用。</string>
+    <string name="help_volume_up">按压上音量向上滑动页面</string>
+    <string name="help_long_volume_up">长按上音量键快速滑动到顶部</string>
+    <string name="help_volume_down">按压下音量向下滑动页面</string>
+    <string name="help_navigate">页面将显示一个可滑动的按钮</string>
+    <string name="help_navigate_up">向 \u2191: 上一条评论</string>
+    <string name="help_navigate_down">向 \u2193: 下一条评论</string>
+    <string name="help_navigate_right">向 \u2192: 展开隐藏的评论 &amp; 指向起始楼层</string>
+    <string name="help_navigate_left">向 \u2190: 返回</string>
+    <string name="help_navigate_move">长按可拖动导航按钮</string>
     <string name="readability">帖子预览</string>
     <string name="text_size_extra_small">特小号</string>
     <string name="text_size_small">小号</string>
@@ -143,6 +185,7 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_sepia">Sepia</string>
     <string name="theme_green">Green</string>
+    <string name="theme_transparent">Transparent</string>
     <string name="theme_solarized_dark">Solarized Dark</string>
     <string name="theme_solarized">Solarized</string>
     <string name="comment_display_multiple">分页</string>
@@ -159,6 +202,14 @@
     <string name="comment_max_lines_4">最多4行</string>
     <string name="comment_max_lines_5">最多5行</string>
     <string name="comment_max_lines_all">全部</string>
+    <string name="line_height_compact">紧凑</string>
+    <string name="line_height_normal">正常</string>
+    <string name="line_height_cozy">合理的</string>
+    <string name="line_height_comfortable">舒适的</string>
+    <string name="frequency_3_hours">3 小时</string>
+    <string name="frequency_6_hours">6 小时</string>
+    <string name="frequency_12_hours">12 小时</string>
+    <string name="frequency_1_day">1 天</string>
     <string name="file_not_supported">内容不支持</string>
     <string name="username_hint">用户名</string>
     <string name="password_hint">密码</string>
@@ -185,6 +236,7 @@
     <string name="original_content">引用内容</string>
     <string name="quote">引用</string>
     <string name="formatting_guidelines">HN 排版格式指南</string>
+    <string name="confirm_save_draft">保存草稿？</string>
     <string name="create_account">创建账户</string>
     <string name="comment_failed">发送评论失败</string>
     <string name="comment_successful">评论已添加，请刷新后查看</string>
@@ -216,5 +268,37 @@
     <string name="view_user">查看发帖人</string>
     <string name="more">更多</string>
     <string name="logout">退出登录</string>
+    <string name="offline">离线设置</string>
+    <string name="offline_notice">您目前处于离线状态</string>
+    <string name="download_in_progress">下载进行中</string>
+    <string name="love_it">超爱它!</string>
+    <string name="display_options">显示设置</string>
+    <string name="pull_up_hint">上拉加载更多</string>
+    <string name="find_in_page">在页面中查找</string>
+    <string name="no_matches">没有找到相匹配的</string>
+    <string name="back">返回</string>
+    <string name="forward">向前</string>
+    <string name="zoom_out">缩小</string>
+    <string name="zoom_in">放大</string>
+    <string name="refresh">刷新</string>
+    <string name="exit_fullscreen">退出</string>
+    <string name="next">下一项</string>
+    <string name="list_display_options">列表显示</string>
+    <string name="last_screen">最近使用的</string>
+    <string name="widget_options">窗口小部件的选项</string>
+    <string name="not_supported">不支持该设备</string>
+    <string name="item_exist">类似帖子已提交</string>
+    <string name="hn_link">Hacker News 链接</string>
+    <string name="article_link">文章链接</string>
+    <string name="hint_drag">拖动重新定位</string>
+    <string name="hint_nav_short">向 \u2191 \u2193 \u2192 \u2190 滑动进行导航\n长按重新定位</string>
+    <string name="konami">You got the Konami code! Give me 5 stars?</string>
+    <string name="end_of_thread">已到底部</string>
+    <string name="save_draft">保存草稿</string>
+    <string name="discard_draft">舍弃草稿</string>
+    <string name="clear_drafts">清除所有草稿</string>
+    <string name="more_sections">更多节点</string>
+    <string name="list">列表</string>
+    <string name="delete">删除</string>
 
 </resources>
