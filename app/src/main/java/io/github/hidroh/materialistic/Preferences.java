@@ -282,6 +282,10 @@ public class Preferences {
                 get(context, R.string.pref_multi_window, R.string.pref_multi_window_value_none));
     }
 
+    public static boolean swipeGesturesEnabled(Context context) {
+        return get(context, R.string.pref_swipe_gestures, true);
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()

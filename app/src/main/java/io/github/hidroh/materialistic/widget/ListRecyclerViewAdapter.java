@@ -69,6 +69,7 @@ public abstract class ListRecyclerViewAdapter
     private int mHotThreshold = Integer.MAX_VALUE;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private boolean mMultiWindowEnabled;
+    boolean mSwipeEnabled = true;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -140,6 +141,10 @@ public abstract class ListRecyclerViewAdapter
     public final void setCardViewEnabled(boolean cardViewEnabled) {
         this.mCardViewEnabled = cardViewEnabled;
         notifyDataSetChanged();
+    }
+
+    public void setSwipeEnabled(boolean enabled) {
+        mSwipeEnabled = enabled;
     }
 
     public void setCustomTabsDelegate(CustomTabsDelegate customTabsDelegate) {

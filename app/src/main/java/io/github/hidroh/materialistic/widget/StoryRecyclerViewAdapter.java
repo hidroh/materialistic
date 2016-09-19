@@ -128,6 +128,9 @@ public class StoryRecyclerViewAdapter extends
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(recyclerView.getContext()) {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (!mSwipeEnabled) {
+                    return 0;
+                }
                 Item item = getItem(viewHolder.getAdapterPosition());
                 if (item == null) {
                     return 0;

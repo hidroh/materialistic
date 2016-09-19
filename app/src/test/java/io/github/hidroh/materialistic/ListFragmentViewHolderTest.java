@@ -451,6 +451,18 @@ public class ListFragmentViewHolderTest {
                 .isEqualTo(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
     }
 
+    @Test
+    public void testDisableSwipe() {
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putBoolean(activity.getString(R.string.pref_swipe_gestures), false)
+                .apply();
+        verify(itemManager).getItem(anyString(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder)).isEqualTo(0);
+    }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testViewUser() {
