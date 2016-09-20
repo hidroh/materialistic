@@ -51,7 +51,6 @@ public abstract class ListRecyclerViewAdapter
         extends RecyclerView.Adapter<VH> {
 
     private static final String STATE_LAST_SELECTION_POSITION = "state:lastSelectedPosition";
-    private static final String STATE_CARD_VIEW_ENABLED = "state:cardViewEnabled";
     private static final int VIEW_TYPE_CARD = 0;
     private static final int VIEW_TYPE_FLAT = 1;
     private CustomTabsDelegate mCustomTabsDelegate;
@@ -158,7 +157,6 @@ public abstract class ListRecyclerViewAdapter
     public Bundle saveState() {
         Bundle savedState = new Bundle();
         savedState.putInt(STATE_LAST_SELECTION_POSITION, mLastSelectedPosition);
-        savedState.putBoolean(STATE_CARD_VIEW_ENABLED, mCardViewEnabled);
         return savedState;
     }
 
@@ -166,7 +164,6 @@ public abstract class ListRecyclerViewAdapter
         if (savedState == null) {
             return;
         }
-        mCardViewEnabled = savedState.getBoolean(STATE_CARD_VIEW_ENABLED, true);
         mLastSelectedPosition = savedState.getInt(STATE_LAST_SELECTION_POSITION);
     }
 
