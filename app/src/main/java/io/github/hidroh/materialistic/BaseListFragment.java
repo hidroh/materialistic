@@ -54,9 +54,9 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (savedInstanceState == null) {
-            getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
-        } else {
+        getAdapter().setSwipeEnabled(Preferences.swipeGesturesEnabled(getActivity()));
+        getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
+        if (savedInstanceState != null) {
             getAdapter().restoreState(savedInstanceState.getBundle(STATE_ADAPTER));
         }
     }

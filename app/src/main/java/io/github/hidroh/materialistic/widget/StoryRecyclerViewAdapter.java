@@ -67,7 +67,6 @@ public class StoryRecyclerViewAdapter extends
     private static final String STATE_PROMOTED_KEY = "state:promotedKey";
     private static final String STATE_PROMOTED_VALUE = "state:promotedValue";
     private static final String STATE_SHOW_ALL = "state:showAll";
-    private static final String STATE_HIGHLIGHT_UPDATED = "state:highlightUpdated";
     private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
     private static final String STATE_USERNAME = "state:username";
     private final Object VOTED = new Object();
@@ -205,7 +204,6 @@ public class StoryRecyclerViewAdapter extends
         savedState.putStringArrayList(STATE_PROMOTED_KEY, promotedKey);
         savedState.putIntegerArrayList(STATE_PROMOTED_VALUE, promotedValue);
         savedState.putBoolean(STATE_SHOW_ALL, mShowAll);
-        savedState.putBoolean(STATE_HIGHLIGHT_UPDATED, mHighlightUpdated);
         savedState.putInt(STATE_FAVORITE_REVISION, mFavoriteRevision);
         savedState.putString(STATE_USERNAME, mUsername);
         return savedState;
@@ -234,7 +232,6 @@ public class StoryRecyclerViewAdapter extends
             mPromoted.put(promotedKey.get(i), promotedValue.get(i));
         }
         mShowAll = savedState.getBoolean(STATE_SHOW_ALL, true);
-        mHighlightUpdated = savedState.getBoolean(STATE_HIGHLIGHT_UPDATED, true);
         mFavoriteRevision = savedState.getInt(STATE_FAVORITE_REVISION);
         mUsername = savedState.getString(STATE_USERNAME);
     }
