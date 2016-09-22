@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;

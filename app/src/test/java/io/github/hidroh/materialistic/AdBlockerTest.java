@@ -21,10 +21,10 @@ import android.webkit.WebResourceResponse;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
 
 import java.io.IOException;
 
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import okio.Okio;
 
 import static junit.framework.Assert.assertFalse;
