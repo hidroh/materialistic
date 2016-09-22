@@ -3,7 +3,7 @@ package io.github.hidroh.materialistic;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.ItemManager;

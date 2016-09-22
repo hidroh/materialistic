@@ -4,7 +4,7 @@ import android.os.Parcel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import static junit.framework.Assert.assertEquals;

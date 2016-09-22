@@ -5,9 +5,9 @@ import android.widget.TextView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
 
-import static junit.framework.Assert.assertFalse;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+
 import static org.assertj.android.api.Assertions.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)

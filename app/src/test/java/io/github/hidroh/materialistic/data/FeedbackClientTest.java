@@ -3,7 +3,7 @@ package io.github.hidroh.materialistic.data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 
 import java.io.IOException;
 
