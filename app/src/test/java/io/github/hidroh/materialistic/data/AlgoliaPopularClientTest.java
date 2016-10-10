@@ -19,8 +19,8 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
 import rx.Observable;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -58,7 +58,7 @@ public class AlgoliaPopularClientTest {
 
     @Test
     public void testGetStories() {
-        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestamp(anyString()))
+        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestamp(any()))
                 .thenReturn(Observable.error(new IOException()));
         client.getStories(range, ItemManager.MODE_DEFAULT, mock(ResponseListener.class));
         verify(TestRestServiceFactory.algoliaRestService)

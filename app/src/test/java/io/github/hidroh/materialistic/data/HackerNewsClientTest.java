@@ -23,10 +23,10 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -61,7 +61,7 @@ public class HackerNewsClientTest {
     @Test
     public void testGetItemNoListener() {
         client.getItem("1", ItemManager.MODE_DEFAULT, null);
-        verify(TestRestServiceFactory.hnRestService, never()).itemRx(anyString());
+        verify(TestRestServiceFactory.hnRestService, never()).itemRx(any());
     }
 
     @Test
@@ -219,7 +219,7 @@ public class HackerNewsClientTest {
     @Test
     public void testGetUserNoListener() {
         client.getUser("username", null);
-        verify(TestRestServiceFactory.hnRestService, never()).userRx(anyString());
+        verify(TestRestServiceFactory.hnRestService, never()).userRx(any());
     }
 
     @Test

@@ -36,7 +36,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
@@ -64,6 +63,7 @@ import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
@@ -76,11 +76,10 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -128,7 +127,7 @@ public class FavoriteActivityTest {
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
         verify(keyDelegate).attach(any(Activity.class));
         verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), anyString());
+                observerCaptor.capture(), any());
     }
 
     @Test
@@ -151,7 +150,7 @@ public class FavoriteActivityTest {
         shadowOf(activity).clickMenuItem(R.id.menu_clear);
         dialog = ShadowAlertDialog.getLatestAlertDialog();
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
-        verify(favoriteManager).clear(any(Context.class), anyString());
+        verify(favoriteManager).clear(any(Context.class), any());
         when(favoriteManager.getSize()).thenReturn(0);
         observerCaptor.getValue().onChanged();
         assertEquals(0, adapter.getItemCount());
@@ -172,7 +171,7 @@ public class FavoriteActivityTest {
         assertEquals(2, adapter.getItemCount());
         ((FavoriteFragment) fragment).filter("ask");
         verify(favoriteManager, times(2)).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), anyString());
+                observerCaptor.capture(), any());
         when(favoriteManager.getSize()).thenReturn(1);
         when(favoriteManager.getItem(eq(0))).thenReturn(new TestFavorite(
                 "2", "http://example.com", "ask HN", System.currentTimeMillis()));
@@ -268,7 +267,7 @@ public class FavoriteActivityTest {
     @Test
     public void testEmail() {
         shadowOf(activity).clickMenuItem(R.id.menu_email);
-        verify(favoriteManager).get(any(Context.class), anyString());
+        verify(favoriteManager).get(any(Context.class), any());
         AlertDialog progressDialog = ShadowProgressDialog.getLatestAlertDialog();
         assertThat(progressDialog).isShowing();
 
@@ -333,7 +332,7 @@ public class FavoriteActivityTest {
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
-        verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
+        verify(userServices).voteUp(any(Context.class), any(), userServicesCallback.capture());
         userServicesCallback.getValue().onDone(true);
         assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
     }
@@ -349,7 +348,7 @@ public class FavoriteActivityTest {
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
-        verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
+        verify(userServices).voteUp(any(Context.class), any(), userServicesCallback.capture());
         userServicesCallback.getValue().onDone(false);
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, LoginActivity.class);
@@ -366,7 +365,7 @@ public class FavoriteActivityTest {
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
-        verify(userServices).voteUp(any(Context.class), anyString(), userServicesCallback.capture());
+        verify(userServices).voteUp(any(Context.class), any(), userServicesCallback.capture());
         userServicesCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }

@@ -25,9 +25,9 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -81,7 +81,7 @@ public class SearchActivityTest {
         activity.onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
                 .findItem(R.id.menu_sort_popular)); // should trigger search
         assertFalse(AlgoliaClient.sSortByTime);
-        verify(itemManager, times(2)).getStories(anyString(),
+        verify(itemManager, times(2)).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 any(ResponseListener.class));
     }

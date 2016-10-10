@@ -41,9 +41,9 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -114,7 +114,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {
@@ -159,7 +159,7 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.list, fragment)
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {
@@ -185,7 +185,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         listener.getValue().onResponse(new Item[0]);
@@ -204,7 +204,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         listener.getValue().onError(null);
@@ -223,7 +223,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {}});
@@ -232,7 +232,7 @@ public class ListFragmentTest {
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_NETWORK),
                 listener.capture());
         listener.getValue().onError(null);
@@ -251,7 +251,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         controller.pause().stop().destroy();
@@ -269,7 +269,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(anyString(),
+        verify(itemManager).getStories(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         controller.pause().stop().destroy();

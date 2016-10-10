@@ -34,7 +34,7 @@ ext {
 dependencies {
     testCompile "org.robolectric:robolectric:$robolectricVersion",
             "org.robolectric:shadows-support-v4:$robolectricVersion",
-            'org.mockito:mockito-core:1.9.5+',
+            'org.mockito:mockito-core:2.1.0',
             'junit:junit:4.12'
     testCompile("com.squareup.assertj:assertj-android:$assertjVersion") {
             exclude group: 'com.android.support', module: 'support-annotations'

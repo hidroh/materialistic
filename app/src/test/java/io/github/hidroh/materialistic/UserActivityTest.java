@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -18,7 +17,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowToast;
@@ -32,14 +30,15 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.UserManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -278,7 +277,7 @@ public class UserActivityTest {
     public void testVolumeNavigation() {
         activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
-        verify(keyDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
+        verify(keyDelegate).setScrollable(any(Scrollable.class), any());
         verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
         activity.onKeyUp(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_VOLUME_UP));
