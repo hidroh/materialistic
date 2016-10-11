@@ -33,9 +33,9 @@ import io.github.hidroh.materialistic.data.TestHnItem;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -66,8 +66,8 @@ public class WidgetServiceTest {
 
     @Test
     public void testAdapter() {
-        when(itemManager.getStories(anyString(), anyInt())).thenReturn(new Item[]{new TestHnItem(1L)});
-        when(itemManager.getItem(anyString(), anyInt())).thenReturn(new TestHnItem(1L) {
+        when(itemManager.getStories(any(), anyInt())).thenReturn(new Item[]{new TestHnItem(1L)});
+        when(itemManager.getItem(any(), anyInt())).thenReturn(new TestHnItem(1L) {
             @Override
             public String getDisplayedTitle() {
                 return "title";
@@ -79,7 +79,7 @@ public class WidgetServiceTest {
             }
         });
         viewFactory.onDataSetChanged();
-        verify(itemManager).getStories(anyString(), anyInt());
+        verify(itemManager).getStories(any(), anyInt());
         assertThat(viewFactory.hasStableIds()).isTrue();
         assertThat(viewFactory.getCount()).isEqualTo(1);
         assertThat(viewFactory.getLoadingView()).isNotNull();
@@ -92,11 +92,11 @@ public class WidgetServiceTest {
     @Test
     public void testEmpty() {
         viewFactory.onDataSetChanged();
-        verify(itemManager).getStories(anyString(), anyInt());
+        verify(itemManager).getStories(any(), anyInt());
         assertThat(viewFactory.getCount()).isEqualTo(0);
         assertThat(viewFactory.getItemId(0)).isEqualTo(0L);
         assertThat(viewFactory.getViewAt(0)).isNotNull();
-        verify(itemManager, never()).getItem(anyString(), anyInt());
+        verify(itemManager, never()).getItem(any(), anyInt());
     }
 
     @After

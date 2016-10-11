@@ -57,8 +57,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -111,14 +111,14 @@ public class ItemSyncAdapterTest {
         HackerNewsItem hnItem = mock(HackerNewsItem.class);
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(hnItem));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // cache hit, should not try network or defer
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.hnRestService, never()).networkItem(anyString());
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
+        verify(TestRestServiceFactory.hnRestService, never()).networkItem(any());
         assertThat(syncPreferences.getAll()).isEmpty();
     }
 
@@ -126,7 +126,7 @@ public class ItemSyncAdapterTest {
     public void testSyncEnabledNonWifi() throws IOException {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenThrow(IOException.class);
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
         ItemSyncAdapter.initSync(service, "1");
@@ -140,8 +140,8 @@ public class ItemSyncAdapterTest {
     public void testSyncEnabledAnyConnection() throws IOException {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenThrow(IOException.class);
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkItem(any())).thenReturn(call);
 
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
@@ -153,8 +153,8 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache, then network
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.hnRestService).networkItem(anyString());
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
+        verify(TestRestServiceFactory.hnRestService).networkItem(any());
         assertThat(syncPreferences.getAll()).isEmpty();
     }
 
@@ -162,15 +162,15 @@ public class ItemSyncAdapterTest {
     public void testSyncEnabledWifi() throws IOException {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenThrow(IOException.class);
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkItem(any())).thenReturn(call);
 
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache before network
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(TestRestServiceFactory.hnRestService).networkItem(anyString());
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
+        verify(TestRestServiceFactory.hnRestService).networkItem(any());
         assertThat(syncPreferences.getAll()).isEmpty();
 
         // on network response should try children
@@ -178,7 +178,7 @@ public class ItemSyncAdapterTest {
         HackerNewsItem item = mock(HackerNewsItem.class);
         when(item.getKids()).thenReturn(new long[]{2L, 3L});
         callbackCapture.getValue().onResponse(null, Response.success(item));
-        verify(TestRestServiceFactory.hnRestService, times(3)).cachedItem(anyString());
+        verify(TestRestServiceFactory.hnRestService, times(3)).cachedItem(any());
     }
 
     @Test
@@ -187,7 +187,7 @@ public class ItemSyncAdapterTest {
         when(item.getKids()).thenReturn(new long[]{2L, 3L});
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(item));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
@@ -197,20 +197,20 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should not sync children
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
     }
 
     @Test
     public void testSyncDeferred() throws IOException {
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenThrow(IOException.class);
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
-        when(TestRestServiceFactory.hnRestService.networkItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.networkItem(any())).thenReturn(call);
 
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
         ItemSyncAdapter.initSync(service, null);
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
-        verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(anyString());
+        verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(any());
     }
 
     @Test
@@ -228,7 +228,7 @@ public class ItemSyncAdapterTest {
         };
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(item));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
@@ -237,8 +237,8 @@ public class ItemSyncAdapterTest {
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient, never()).parse(anyString(), anyString());
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
+        verify(readabilityClient, never()).parse(any(), any());
     }
 
     @Test
@@ -256,13 +256,13 @@ public class ItemSyncAdapterTest {
         };
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(item));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient).parse(anyString(), eq("http://example.com"));
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
+        verify(readabilityClient).parse(any(), eq("http://example.com"));
     }
 
     @Test
@@ -275,13 +275,13 @@ public class ItemSyncAdapterTest {
         };
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(item));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        verify(readabilityClient, never()).parse(anyString(), anyString());
+        verify(readabilityClient, never()).parse(any(), any());
     }
 
     @Test
@@ -294,13 +294,13 @@ public class ItemSyncAdapterTest {
         };
         Call<HackerNewsItem> call = mock(Call.class);
         when(call.execute()).thenReturn(Response.success(item));
-        when(TestRestServiceFactory.hnRestService.cachedItem(anyString())).thenReturn(call);
+        when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         ItemSyncAdapter.initSync(service, "1");
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
-        verify(TestRestServiceFactory.hnRestService).cachedItem(anyString());
-        verify(readabilityClient, never()).parse(anyString(), anyString());
+        verify(TestRestServiceFactory.hnRestService).cachedItem(any());
+        verify(readabilityClient, never()).parse(any(), any());
     }
 
     @Test

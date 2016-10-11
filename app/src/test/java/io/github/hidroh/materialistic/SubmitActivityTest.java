@@ -32,10 +32,10 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -74,7 +74,7 @@ public class SubmitActivityTest {
         shadowOf(activity).clickMenuItem(R.id.menu_send);
         ((EditText) activity.findViewById(R.id.edittext_title)).setText(null);
         ((EditText) activity.findViewById(R.id.edittext_content)).setText("content");
-        verify(userServices, never()).submit(any(Context.class), anyString(), anyString(),
+        verify(userServices, never()).submit(any(Context.class), any(), any(),
                 anyBoolean(), any(UserServices.Callback.class));
         assertThat(activity).isNotFinishing();
     }

@@ -21,7 +21,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.customtabs.ICustomTabsCallback;
@@ -32,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowResolveInfo;
@@ -40,15 +38,15 @@ import org.robolectric.util.ActivityController;
 
 import java.util.List;
 
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,7 +66,7 @@ public class CustomTabsDelegateTest {
         service = mock(ICustomTabsService.class);
         when(service.newSession(any(ICustomTabsCallback.class))).thenReturn(true);
         IBinder binder = mock(IBinder.class);
-        when(binder.queryLocalInterface(anyString())).thenReturn(service);
+        when(binder.queryLocalInterface(any())).thenReturn(service);
         ShadowApplication.getInstance()
                 .setComponentNameAndServiceForBindService(mock(ComponentName.class), binder);
     }
@@ -104,8 +102,7 @@ public class CustomTabsDelegateTest {
         verify(service).newSession(any(ICustomTabsCallback.class));
 
         // may launch url should success
-        when(service.mayLaunchUrl(any(ICustomTabsCallback.class),
-                any(Uri.class), any(Bundle.class), anyListOf(Bundle.class))).thenReturn(true);
+        when(service.mayLaunchUrl(any(), any(), any(), any())).thenReturn(true);
         assertTrue(delegate.mayLaunchUrl(Uri.parse("http://www.example.com"), null, null));
 
         // on service disconnected should clear session

@@ -23,9 +23,9 @@ import dagger.Provides;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -56,10 +56,10 @@ public class ReadabilityClientTest {
     public void testWithContent() {
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
-        when(TestRestServiceFactory.readabilityService.parse(anyString()))
+        when(TestRestServiceFactory.readabilityService.parse(any()))
                 .thenReturn(Observable.just(readable));
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(TestRestServiceFactory.readabilityService).parse(any());
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -67,19 +67,19 @@ public class ReadabilityClientTest {
     public void testEmptyContent() {
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
-        when(TestRestServiceFactory.readabilityService.parse(anyString()))
+        when(TestRestServiceFactory.readabilityService.parse(any()))
                 .thenReturn(Observable.just(readable));
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(TestRestServiceFactory.readabilityService).parse(any());
         verify(callback).onResponse((String) isNull());
     }
 
     @Test
     public void testError() {
-        when(TestRestServiceFactory.readabilityService.parse(anyString()))
+        when(TestRestServiceFactory.readabilityService.parse(any()))
                 .thenReturn(Observable.error(new IOException()));
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(anyString());
+        verify(TestRestServiceFactory.readabilityService).parse(any());
         verify(callback).onResponse((String) isNull());
     }
 
@@ -90,7 +90,7 @@ public class ReadabilityClientTest {
         cv.put("content", "<div>content</div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
+        verify(TestRestServiceFactory.readabilityService, never()).parse(any());
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -101,7 +101,7 @@ public class ReadabilityClientTest {
         cv.put("content", "<div></div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService, never()).parse(anyString());
+        verify(TestRestServiceFactory.readabilityService, never()).parse(any());
         verify(callback).onResponse((String) isNull());
     }
 

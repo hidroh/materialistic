@@ -23,9 +23,9 @@ import io.github.hidroh.materialistic.data.FeedbackClient;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -54,7 +54,7 @@ public class FeedbackActivityTest {
         activity.findViewById(R.id.feedback_button).performClick();
         assertNotNull(((TextInputLayout) activity.findViewById(R.id.textinput_title)).getError());
         assertNotNull(((TextInputLayout) activity.findViewById(R.id.textinput_body)).getError());
-        verify(feedbackClient, never()).send(anyString(), anyString(), any(FeedbackClient.Callback.class));
+        verify(feedbackClient, never()).send(any(), any(), any(FeedbackClient.Callback.class));
         assertThat(activity).isNotFinishing();
         controller.pause().stop().destroy();
     }

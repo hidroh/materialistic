@@ -23,7 +23,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
@@ -53,6 +52,7 @@ import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
@@ -64,10 +64,9 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -153,7 +152,7 @@ public class ItemActivityTest {
         assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
         reset(hackerNewsClient);
         shadowOf(activity).recreate();
-        verify(hackerNewsClient, never()).getItem(anyString(),
+        verify(hackerNewsClient, never()).getItem(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 any(ResponseListener.class));
     }
@@ -595,7 +594,7 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume().visible();
         activity.onKeyDown(KeyEvent.KEYCODE_BACK,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
-        verify(keyDelegate).setBackInterceptor(any(KeyDelegate.BackInterceptor.class));
+        verify(keyDelegate).setBackInterceptor(any());
         verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
     }
 

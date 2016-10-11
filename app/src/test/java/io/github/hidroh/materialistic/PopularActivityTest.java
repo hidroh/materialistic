@@ -23,8 +23,8 @@ import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRun
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;

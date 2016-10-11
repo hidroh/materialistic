@@ -60,8 +60,8 @@ import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -501,7 +501,7 @@ public class ItemFragmentSinglePageTest {
         assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
-        verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
+        verify(userServices).voteUp(any(Context.class), any(), voteCallback.capture());
         voteCallback.getValue().onDone(true);
         assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
     }
@@ -514,7 +514,7 @@ public class ItemFragmentSinglePageTest {
         assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
-        verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
+        verify(userServices).voteUp(any(Context.class), any(), voteCallback.capture());
         voteCallback.getValue().onDone(false);
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, LoginActivity.class);
@@ -528,7 +528,7 @@ public class ItemFragmentSinglePageTest {
         assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
-        verify(userServices).voteUp(any(Context.class), anyString(), voteCallback.capture());
+        verify(userServices).voteUp(any(Context.class), any(), voteCallback.capture());
         voteCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());
     }

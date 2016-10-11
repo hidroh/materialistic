@@ -23,8 +23,8 @@ import io.github.hidroh.materialistic.data.LocalItemManager;
 
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -46,7 +46,7 @@ public class FavoriteActivityEmptyTest {
         controller = Robolectric.buildActivity(FavoriteActivity.class);
         activity = controller.create().start().resume().visible().get();
         verify(favoriteManager, atLeastOnce()).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), anyString());
+                observerCaptor.capture(), any());
         observerCaptor.getValue().onChanged();
     }
 
@@ -69,7 +69,7 @@ public class FavoriteActivityEmptyTest {
         reset(favoriteManager);
         controller.newIntent(new Intent().putExtra(SearchManager.QUERY, "query"));
         verify(favoriteManager, atLeastOnce()).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), anyString());
+                observerCaptor.capture(), any());
         observerCaptor.getValue().onChanged();
         assertThat(activity.findViewById(R.id.empty_search)).isVisible();
     }
