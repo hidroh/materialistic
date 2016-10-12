@@ -6,6 +6,7 @@ import org.robolectric.shadows.ShadowApplication;
 import java.lang.reflect.Method;
 
 import dagger.ObjectGraph;
+import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
 public class TestApplication extends Application implements TestLifecycleApplication {
     public static ObjectGraph applicationGraph = ObjectGraph.create(new TestActivityModule());
@@ -28,6 +29,6 @@ public class TestApplication extends Application implements TestLifecycleApplica
 
     @Override
     public void afterTest(Method method) {
-
+        ShadowSnackbar.reset();
     }
 }

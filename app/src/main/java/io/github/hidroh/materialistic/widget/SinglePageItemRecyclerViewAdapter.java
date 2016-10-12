@@ -339,8 +339,8 @@ public class SinglePageItemRecyclerViewAdapter
                 return; // adapter detached
             }
             int index = mState.expand(item);
-            notifyItemChanged(index - 1, TOGGLE);
             notifyItemRangeInserted(index, item.getKidCount());
+            notifyItemChanged(index - 1, TOGGLE);
             mRecyclerView.getItemAnimator().isRunning(() -> setSelectedPosition(index, callback));
         });
     }

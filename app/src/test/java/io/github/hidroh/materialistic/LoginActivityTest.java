@@ -24,7 +24,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;

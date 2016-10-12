@@ -30,7 +30,6 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -41,8 +40,8 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.shadow.CustomShadows;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -53,7 +52,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@Config(shadows = {ShadowRecyclerViewAdapter.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ThreadPreviewActivityTest {
     private ActivityController<ThreadPreviewActivity> controller;
@@ -96,9 +95,6 @@ public class ThreadPreviewActivityTest {
     @Test
     public void testBinding() {
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter)
-                ShadowExtractor.extract(recyclerView.getAdapter());
-        shadowAdapter.makeItemVisible(0);
         verify(itemManager).getItem(eq("2"), eq(ItemManager.MODE_DEFAULT), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(2L) {
             @NonNull
@@ -140,10 +136,13 @@ public class ThreadPreviewActivityTest {
                 return "author";
             }
         });
-        RecyclerView.ViewHolder viewHolder1 = shadowAdapter.getViewHolder(0);
+        RecyclerView.ViewHolder viewHolder1 = CustomShadows.customShadowOf(recyclerView.getAdapter())
+                .getViewHolder(0);
+        recyclerView.getAdapter().bindViewHolder(viewHolder1, 0); // TODO should not need this
         assertThat(viewHolder1.itemView.findViewById(R.id.comment)).isVisible();
         assertEquals(0, recyclerView.getAdapter().getItemViewType(0));
-        RecyclerView.ViewHolder viewHolder2 = shadowAdapter.getViewHolder(1);
+        RecyclerView.ViewHolder viewHolder2 = CustomShadows.customShadowOf(recyclerView.getAdapter())
+                .getViewHolder(1);
         assertThat(viewHolder2.itemView.findViewById(R.id.comment)).isNotVisible();
         assertEquals(1, recyclerView.getAdapter().getItemViewType(1));
         viewHolder1.itemView.findViewById(R.id.comment).performClick();

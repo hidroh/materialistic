@@ -18,8 +18,8 @@ import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.ShadowSupportDrawerLayout;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
 import static org.assertj.android.api.Assertions.assertThat;

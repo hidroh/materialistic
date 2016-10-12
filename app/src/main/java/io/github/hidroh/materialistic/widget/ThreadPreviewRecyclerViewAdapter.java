@@ -96,8 +96,8 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
             mExpanded.add(item.getId());
             new Handler().post(() -> {
                 mItems.add(0, item.getParentItem()); // recursive
-                notifyItemRangeChanged(1, mItems.size());
                 notifyItemInserted(0);
+                notifyItemRangeChanged(1, mItems.size());
             });
         }
     }

@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,11 +33,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ServiceController;
@@ -45,8 +44,9 @@ import java.io.IOException;
 
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowWebView;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -392,10 +392,10 @@ public class ItemSyncAdapterTest {
 
         ShadowNotificationManager notificationManager = shadowOf((NotificationManager) service
                 .getSystemService(Context.NOTIFICATION_SERVICE));
-        ShadowNotification.Progress progress = shadowOf(notificationManager.getNotification(1))
-                .getProgress();
-        assertThat(progress.progress).isEqualTo(3); // self + kid 1 + readability
-        assertThat(progress.max).isEqualTo(4); // self + 2 kids + readability
+        ProgressBar progress = shadowOf(notificationManager.getNotification(1))
+                .getProgressBar();
+        assertThat(progress.getProgress()).isEqualTo(3); // self + kid 1 + readability
+        assertThat(progress.getMax()).isEqualTo(4); // self + 2 kids + readability
 
         verify(kid2Call).enqueue(callbackCapture.capture());
         callbackCapture.getValue().onFailure(null, null);

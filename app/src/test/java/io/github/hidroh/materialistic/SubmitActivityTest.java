@@ -15,7 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
@@ -26,7 +25,8 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.test.ShadowWebView;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -34,7 +34,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -210,11 +209,11 @@ public class SubmitActivityTest {
         activity = controller
                 .withIntent(new Intent().putExtra(Intent.EXTRA_TEXT, "title - http://example.com"))
                 .create().start().resume().visible().get();
-        assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasText("title");
-        assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasText("http://example.com");
+        assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasTextString("title");
+        assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
         shadowOf(activity).recreate();
-        assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasText("title");
-        assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasText("http://example.com");
+        assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasTextString("title");
+        assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
     }
 
     @Test
@@ -225,7 +224,7 @@ public class SubmitActivityTest {
                 .withIntent(new Intent().putExtra(Intent.EXTRA_TEXT, " : http://example.com"))
                 .create().start().resume().visible().get();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).isEmpty();
-        assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasText("http://example.com");
+        assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
     }
 
     @Test
@@ -237,7 +236,7 @@ public class SubmitActivityTest {
                 .create().start().resume().visible().get();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).isEmpty();
         assertThat((EditText) activity.findViewById(R.id.edittext_content))
-                .hasText("title - http://example.com blah blah");
+                .hasTextString("title - http://example.com blah blah");
     }
 
     @Test

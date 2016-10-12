@@ -31,7 +31,7 @@ import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowWebView;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
+import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 

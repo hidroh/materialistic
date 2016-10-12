@@ -9,7 +9,7 @@ import org.robolectric.Robolectric;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;

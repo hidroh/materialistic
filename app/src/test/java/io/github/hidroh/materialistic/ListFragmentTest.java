@@ -1,10 +1,10 @@
 package io.github.hidroh.materialistic;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import org.assertj.android.api.Assertions;
@@ -15,7 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
@@ -31,17 +30,18 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
+import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
+import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowSnackbar.class, ShadowPreferenceFragmentCompat.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentTest {
     private ActivityController<ListActivity> controller;
@@ -136,15 +136,17 @@ public class ListFragmentTest {
                 new TestHnItem(2L)
         });
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
-        Assertions.assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+        View snackbarView = ShadowSnackbar.getLatestView();
+        Assertions.assertThat((TextView) snackbarView.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(activity.getResources().getQuantityString(R.plurals.new_stories_count, 1, 1));
-        activity.findViewById(R.id.snackbar_action).performClick();
+        snackbarView.findViewById(R.id.snackbar_action).performClick();
         assertEquals(1, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
-        Assertions.assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+        snackbarView = ShadowSnackbar.getLatestView();
+        Assertions.assertThat((TextView) snackbarView.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(activity.getResources().getQuantityString(R.plurals.showing_new_stories, 1, 1));
-        activity.findViewById(R.id.snackbar_action).performClick();
+        snackbarView.findViewById(R.id.snackbar_action).performClick();
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
         controller.pause().stop().destroy();
     }
@@ -287,18 +289,17 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        Rect rect = new Rect();
-        assertCompactView(rect);
+        assertCompactView();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_list_item_view), true)
                 .apply();
-        assertCardView(rect);
+        assertCardView();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_list_item_view), false)
                 .apply();
-        assertCompactView(rect);
+        assertCompactView();
         controller.pause().stop().destroy();
     }
 
@@ -313,8 +314,7 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args),
                         ListFragment.class.getName())
                 .commit();
-        Rect rect = new Rect();
-        assertCompactView(rect);
+        assertCompactView();
         controller.pause();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
@@ -323,7 +323,7 @@ public class ListFragmentTest {
         controller.resume().postResume();
         activity.getSupportFragmentManager().findFragmentByTag(ListFragment.class.getName())
                 .onPrepareOptionsMenu(shadowOf(activity).getOptionsMenu());
-        assertCardView(rect);
+        assertCardView();
         controller.pause().stop().destroy();
     }
 
@@ -344,31 +344,17 @@ public class ListFragmentTest {
                 .hasFragmentWithTag(PopupSettingsFragment.class.getName());
     }
 
-    private void assertCardView(Rect rect) {
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor
-                .extract(recyclerView);
-        shadowRecyclerView.getItemDecorations().get(0)
-                .getItemOffsets(rect, null, recyclerView, null);
-        int horizontalMargin = activity.getResources()
-                .getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
-        int verticalMargin = activity.getResources()
-                .getDimensionPixelSize(R.dimen.cardview_vertical_margin);
-        assertThat(rect).hasLeft(horizontalMargin)
-                .hasRight(horizontalMargin)
-                .hasTop(verticalMargin);
+    private void assertCardView() {
+        assertThat(((ListRecyclerViewAdapter)
+                ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter())
+                .isCardViewEnabled())
+                .isTrue();
     }
 
-    private void assertCompactView(Rect rect) {
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor
-                .extract(recyclerView);
-        shadowRecyclerView.getItemDecorations().get(0)
-                .getItemOffsets(rect, null, recyclerView, null);
-        int divider = activity.getResources().getDimensionPixelSize(R.dimen.divider);
-        assertThat(rect).hasTop(0)
-                .hasLeft(0)
-                .hasRight(0)
-                .hasBottom(divider);
+    private void assertCompactView() {
+        assertThat(((ListRecyclerViewAdapter)
+                ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter())
+                .isCardViewEnabled())
+                .isFalse();
     }
 }

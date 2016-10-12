@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -18,13 +19,13 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
+import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,11 +35,13 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.shadow.CustomShadows;
+import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -52,11 +55,13 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowPreferenceFragmentCompat.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Captor ArgumentCaptor<ResponseListener<Item>> listener;
+    private ActivityController<TestItemActivity> controller;
+    private TestItemActivity activity;
 
     @Before
     public void setUp() {
@@ -73,6 +78,8 @@ public class ItemFragmentMultiPageTest {
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_multiple))
                 .putBoolean(RuntimeEnvironment.application.getString(R.string.pref_lazy_load), false)
                 .apply();
+        controller = Robolectric.buildActivity(TestItemActivity.class);
+        activity = controller.create().start().resume().get();
     }
 
     @Test
@@ -81,8 +88,7 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, new TestItem() { });
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
+        makeVisible(fragment);
         assertThat(fragment.getView().findViewById(R.id.empty)).isVisible();
     }
 
@@ -94,8 +100,7 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
+        makeVisible(fragment);
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
@@ -148,14 +153,11 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, story);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
+        makeVisible(fragment);
         assertThat(fragment.getView().findViewById(R.id.empty)).isNotVisible();
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
-                ShadowExtractor.extract(recyclerView.getAdapter());
-        adapter.makeItemVisible(0);
-        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
+        RecyclerView.ViewHolder viewHolder = CustomShadows.customShadowOf(recyclerView.getAdapter())
+                .getViewHolder(0);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text)).hasTextString("text");
         assertThat(viewHolder.itemView.findViewById(R.id.comment)).isVisible();
         viewHolder.itemView.findViewById(R.id.comment).performClick();
@@ -177,12 +179,7 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, item);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
-        RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
-                ShadowExtractor.extract(recyclerView.getAdapter());
-        adapter.makeItemVisible(0);
+        makeVisible(fragment);
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
@@ -204,8 +201,7 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
+        makeVisible(fragment);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(fragment.getView().findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
@@ -230,8 +226,7 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
+        makeVisible(fragment);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(fragment.getView().findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
@@ -254,8 +249,7 @@ public class ItemFragmentMultiPageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, webItem);
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        SupportFragmentTestUtil.startVisibleFragment(fragment, TestItemActivity.class,
-                R.id.content_frame);
+        makeVisible(fragment);
         fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_comments));
         assertThat(fragment.getFragmentManager())
                 .hasFragmentWithTag(PopupSettingsFragment.class.getName());
@@ -264,6 +258,16 @@ public class ItemFragmentMultiPageTest {
     @After
     public void tearDown() {
         reset(hackerNewsClient);
+        controller.pause().stop().destroy();
+    }
+
+    private void makeVisible(Fragment fragment) {
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(R.id.content_frame, fragment, "tag")
+                .commit();
+        View view = activity.findViewById(R.id.recycler_view);
+        view.measure(0, 0);
+        view.layout(0, 0, 100, 1000);
     }
 
     public static class TestItemActivity extends InjectableActivity

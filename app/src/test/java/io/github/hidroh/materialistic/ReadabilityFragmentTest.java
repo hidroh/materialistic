@@ -16,10 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
@@ -30,12 +28,15 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowWebView;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
+import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
@@ -46,7 +47,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class, ShadowWebView.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowWebView.class, ShadowPreferenceFragmentCompat.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
@@ -119,15 +120,14 @@ public class ReadabilityFragmentTest {
         controller.pause().stop().destroy();
     }
 
+    @Config(shadows = ShadowNestedScrollView.class)
     @Test
     public void testScrollToTop() {
         NestedScrollView scrollView = (NestedScrollView) activity.findViewById(R.id.nested_scroll_view);
         scrollView.smoothScrollTo(0, 1);
-        assertEquals(1, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
-                .getSmoothScrollY());
+        assertThat(customShadowOf(scrollView).getSmoothScrollY()).isEqualTo(1);
         fragment.scrollToTop();
-        assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
-                .getSmoothScrollY());
+        assertThat(customShadowOf(scrollView).getSmoothScrollY()).isEqualTo(0);
         controller.pause().stop().destroy();
     }
 

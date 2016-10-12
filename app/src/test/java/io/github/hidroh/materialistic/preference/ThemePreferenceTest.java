@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic.preference;
 
 import android.content.Intent;
 import android.support.v7.preference.PreferenceGroupAdapter;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -19,13 +20,16 @@ import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.PreferencesActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowSupportPreference;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreference;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.CustomShadows;
+import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportPreference.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportPreference.class, ShadowPreferenceFragmentCompat.class, ShadowRecyclerViewAdapter.class})
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class ThemePreferenceTest {
     private final int preferenceId;
@@ -55,12 +59,11 @@ public class ThemePreferenceTest {
                 .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
                 .create().postCreate(null).start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
+        list.setLayoutManager(new LinearLayoutManager(activity));
         RecyclerView.Adapter adapter = list.getAdapter();
         int position = ShadowSupportPreferenceManager
                 .getPreferencePosition((PreferenceGroupAdapter) adapter, ThemePreference.class);
-        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(list,
-                adapter.getItemViewType(position));
-        adapter.onBindViewHolder(holder, position);
+        RecyclerView.ViewHolder holder = CustomShadows.customShadowOf(adapter).getViewHolder(position);
         preferenceView = holder.itemView;
     }
 

@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static android.content.Context.MODE_PRIVATE;
 import static org.assertj.android.api.Assertions.assertThat;

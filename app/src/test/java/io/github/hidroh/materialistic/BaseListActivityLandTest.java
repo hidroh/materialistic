@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
@@ -27,24 +26,27 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.TestHnItem;
-import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(qualifiers = "w820dp-land", shadows = {ShadowRecyclerView.class, ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
+@Config(qualifiers = "w820dp-land", shadows = {ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
@@ -239,6 +241,7 @@ public class BaseListActivityLandTest {
         assertReadabilityMode();
     }
 
+    @Config(shadows = ShadowRecyclerView.class)
     @Test
     public void testScrollItemToTop() {
         activity.onItemSelected(new TestHnItem(1L) {
@@ -249,20 +252,18 @@ public class BaseListActivityLandTest {
             }
         });
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertEquals(3, tabLayout.getTabCount());
+        assertThat(tabLayout.getTabCount()).isEqualTo(3);
         tabLayout.getTabAt(0).select();
         ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
         viewPager.getAdapter().instantiateItem(viewPager, 0);
         viewPager.getAdapter().finishUpdate(viewPager);
         RecyclerView itemRecyclerView = (RecyclerView) viewPager.findViewById(R.id.recycler_view);
         itemRecyclerView.smoothScrollToPosition(1);
-        assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(itemRecyclerView))
-                .getSmoothScrollToPosition());
+        assertThat(customShadowOf(itemRecyclerView).getScrollPosition()).isEqualTo(1);
         tabLayout.getTabAt(1).select();
         tabLayout.getTabAt(0).select();
         tabLayout.getTabAt(0).select();
-        assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(itemRecyclerView))
-                .getSmoothScrollToPosition());
+        assertThat(customShadowOf(itemRecyclerView).getScrollPosition()).isEqualTo(0);
     }
 
     @Test

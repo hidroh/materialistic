@@ -26,8 +26,8 @@ import java.util.Set;
 
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowWebView;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import rx.schedulers.Schedulers;
 

@@ -11,7 +11,7 @@ android.testOptions.unitTests.all {
 
     // Specify max number of test classes to execute in a test process
     // before restarting the process (default is unlimited)
-    forkEvery = 150
+    forkEvery = 5
 
     // configure whether failing tests should fail the build
     ignoreFailures false
@@ -28,7 +28,7 @@ android.testOptions.unitTests.all {
 
 ext {
     assertjVersion = '1.1.1'
-    robolectricVersion = '3.0'
+    robolectricVersion = '3.1'
 }
 
 dependencies {
