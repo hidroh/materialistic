@@ -1,6 +1,11 @@
 language: android
 jdk:
   - oraclejdk8
+sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 android:
   components:
     # Uncomment the lines below if you want to
