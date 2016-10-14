@@ -14,24 +14,33 @@
  * limitations under the License.
  */
 
-package io.github.hidroh.materialistic.test;
+package io.github.hidroh.materialistic.test.shadow;
 
-import android.support.v7.widget.LinearLayoutManager;
+import android.graphics.Typeface;
+import android.widget.TextView;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 
-@Implements(LinearLayoutManager.class)
-public class ShadowLinearLayoutManager {
-
-    private int firstVisiblePosition;
+@Implements(TextView.class)
+public class ShadowTextView extends org.robolectric.shadows.ShadowTextView {
+    private Typeface typeface;
+    private int lineCount = 0;
 
     @Implementation
-    public int findFirstVisibleItemPosition() {
-        return firstVisiblePosition;
+    public void setTypeface(Typeface tf) {
+        typeface = tf;
     }
 
-    public void setFirstVisibleItemPosition(int position) {
-        firstVisiblePosition = position;
+    public Typeface getTypeface() {
+        return typeface;
+    }
+
+    public void setLineCount(int lineCount) {
+        this.lineCount = lineCount;
+    }
+    @Implementation
+    public int getLineCount() {
+        return lineCount;
     }
 }

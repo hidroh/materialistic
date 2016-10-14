@@ -53,12 +53,13 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowFloatingActionButton;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -75,7 +76,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class, ShadowFloatingActionButton.class, ShadowContentResolverCompatJellybean.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class, ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -410,6 +411,7 @@ public class ItemActivityTest {
         assertTrue(item.isFavorite());
     }
 
+    @Config(shadows = ShadowRecyclerView.class)
     @Test
     public void testScrollToTop() {
         Intent intent = new Intent();
@@ -447,15 +449,13 @@ public class ItemActivityTest {
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         recyclerView.smoothScrollToPosition(1);
-        assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                .getSmoothScrollToPosition());
+        assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertEquals(3, tabLayout.getTabCount());
+        assertThat(tabLayout.getTabCount()).isEqualTo(3);
         tabLayout.getTabAt(1).select();
         tabLayout.getTabAt(0).select();
         tabLayout.getTabAt(0).select();
-        assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                .getSmoothScrollToPosition());
+        assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(0);
     }
 
     @Test

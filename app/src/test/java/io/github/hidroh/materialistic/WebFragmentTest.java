@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
@@ -39,11 +38,13 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.ShadowNestedScrollView;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowWebView;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import io.github.hidroh.materialistic.test.WebActivity;
+import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -57,7 +58,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowWebView.class, ShadowNestedScrollView.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowWebView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentTest {
     private WebActivity activity;
@@ -120,15 +121,14 @@ public class WebFragmentTest {
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
+    @Config(shadows = ShadowNestedScrollView.class)
     @Test
     public void testScrollToTop() {
         NestedScrollView scrollView = (NestedScrollView) activity.findViewById(R.id.nested_scroll_view);
         scrollView.smoothScrollTo(0, 1);
-        assertEquals(1, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
-                .getSmoothScrollY());
+        assertThat(customShadowOf(scrollView).getSmoothScrollY()).isEqualTo(1);
         activity.fragment.scrollToTop();
-        assertEquals(0, ((ShadowNestedScrollView) ShadowExtractor.extract(scrollView))
-                .getSmoothScrollY());
+        assertThat(customShadowOf(scrollView).getSmoothScrollY()).isEqualTo(0);
 
     }
 
@@ -260,18 +260,19 @@ public class WebFragmentTest {
         assertThat(shadowWebView.getPageIndex()).isEqualTo(0);
     }
 
+    @Config(shadows = ShadowNestedScrollView.class)
     @Test
     public void testScroll() {
-        ShadowNestedScrollView shadowScrollView = (ShadowNestedScrollView) ShadowExtractor
-                .extract(activity.findViewById(R.id.nested_scroll_view));
+        ShadowNestedScrollView shadowScrollView =
+                customShadowOf((NestedScrollView) activity.findViewById(R.id.nested_scroll_view));
         WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
                 .findFragmentByTag(WebFragment.class.getName());
         fragment.scrollToNext();
-        assertEquals(View.FOCUS_DOWN, shadowScrollView.getLastScrollDirection());
+        assertThat(shadowScrollView.getLastScrollDirection()).isEqualTo(View.FOCUS_DOWN);
         fragment.scrollToPrevious();
-        assertEquals(View.FOCUS_UP, shadowScrollView.getLastScrollDirection());
+        assertThat(shadowScrollView.getLastScrollDirection()).isEqualTo(View.FOCUS_UP);
         fragment.scrollToTop();
-        assertEquals(0, shadowScrollView.getSmoothScrollY());
+        assertThat(shadowScrollView.getSmoothScrollY()).isEqualTo(0);
     }
 
     @Test

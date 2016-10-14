@@ -54,14 +54,16 @@ import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowAnimation;
-import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
-import io.github.hidroh.materialistic.test.ShadowLinearLayoutManager;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.TestLayoutManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowAnimation;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
@@ -79,14 +81,14 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
+@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSwipeRefreshLayout.class,
         ShadowSupportPreferenceManager.class,
-        ShadowRecyclerView.class,
-        ShadowLinearLayoutManager.class,
-        ShadowItemTouchHelper.class,
         ShadowRecyclerViewAdapter.class,
-        ShadowRecyclerViewAdapter.ShadowViewHolder.class,
+        ShadowRecyclerView.class,
+        ShadowItemTouchHelper.class,
         ShadowAnimation.class,
+        ShadowSnackbar.class,
         ShadowContentResolverCompatJellybean.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {
@@ -139,11 +141,8 @@ public class ListFragmentViewHolderTest {
                 storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{item});
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        swipeCallback = (ItemTouchHelper.SimpleCallback)
-                ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                        .getItemTouchHelperCallback();
-        adapter = (ShadowRecyclerViewAdapter) ShadowExtractor.extract(recyclerView.getAdapter());
-        adapter.makeItemVisible(0);
+        swipeCallback = (ItemTouchHelper.SimpleCallback) customShadowOf(recyclerView).getItemTouchHelperCallback();
+        adapter = customShadowOf(recyclerView.getAdapter());
         item.populate(new PopulatedStory(1));
     }
 
@@ -181,7 +180,7 @@ public class ListFragmentViewHolderTest {
                 return 46;
             }
         }});
-        activity.findViewById(R.id.snackbar_action).performClick();
+        ShadowSnackbar.getLatestView().findViewById(R.id.snackbar_action).performClick();
         verify(itemManager, atLeastOnce()).getItem(any(),
                 eq(ItemManager.MODE_NETWORK),
                 itemListener.capture());
@@ -368,7 +367,6 @@ public class ListFragmentViewHolderTest {
                 .buildUpon()
                 .appendPath("clear")
                 .build());
-        adapter.makeItemVisible(0);
         RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
         assertFalse(item.isFavorite());
         assertThat(viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
@@ -412,10 +410,11 @@ public class ListFragmentViewHolderTest {
                 .appendPath("1")
                 .build());
         assertTrue(item.isFavorite());
-        assertThat((TextView) activity.findViewById(R.id.snackbar_text))
+        View snackbarView = ShadowSnackbar.getLatestView();
+        assertThat((TextView) snackbarView.findViewById(R.id.snackbar_text))
                 .isNotNull()
                 .containsText(R.string.toast_saved);
-        activity.findViewById(R.id.snackbar_action).performClick();
+        snackbarView.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
         observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
                 .buildUpon()
@@ -594,25 +593,25 @@ public class ListFragmentViewHolderTest {
                 .putBoolean(activity.getString(R.string.pref_auto_viewed), true)
                 .apply();
 
-        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
-        ShadowLinearLayoutManager shadowLayout = (ShadowLinearLayoutManager)
-                ShadowExtractor.extract(recyclerView.getLayoutManager());
-        shadowLayout.setFirstVisibleItemPosition(0);
+        ShadowRecyclerView shadowRecyclerView = customShadowOf(recyclerView);
+        TestLayoutManager testLayout = new TestLayoutManager(activity);
+        recyclerView.setLayoutManager(testLayout);
+        testLayout.firstVisiblePosition = 0;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager, never()).view(any(Context.class), any());
 
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
-        shadowLayout.setFirstVisibleItemPosition(0);
+        testLayout.firstVisiblePosition = 0;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager, never()).view(any(Context.class), any());
 
-        shadowLayout.setFirstVisibleItemPosition(1);
+        testLayout.firstVisiblePosition = 1;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager).view(any(Context.class), any());
 
         item.setIsViewed(true);
-        shadowLayout.setFirstVisibleItemPosition(1);
+        testLayout.firstVisiblePosition = 1;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager).view(any(Context.class), any()); // should not trigger again
 
@@ -666,4 +665,5 @@ public class ListFragmentViewHolderTest {
             return 0;
         }
     }
+
 }

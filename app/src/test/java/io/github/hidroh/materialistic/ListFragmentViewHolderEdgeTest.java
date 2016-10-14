@@ -14,9 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -28,15 +26,17 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-@Config(shadows = {ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@Config(shadows = {ShadowRecyclerViewAdapter.class})
 @SuppressWarnings("ConstantConditions")
 @SuppressLint("WrongViewCast")
 @RunWith(RobolectricGradleTestRunner.class)
@@ -68,9 +68,7 @@ public class ListFragmentViewHolderEdgeTest {
                 storiesListener.capture());
         storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1L)});
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter shadowAdapter = ((ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(recyclerView.getAdapter()));
-        shadowAdapter.makeItemVisible(0);
+        ShadowRecyclerViewAdapter shadowAdapter = customShadowOf(recyclerView.getAdapter());
         holder = shadowAdapter.getViewHolder(0);
     }
 

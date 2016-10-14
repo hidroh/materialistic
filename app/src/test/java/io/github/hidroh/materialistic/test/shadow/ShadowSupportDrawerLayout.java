@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hidroh.materialistic.test;
+package io.github.hidroh.materialistic.test.shadow;
 
 import android.support.v4.widget.DrawerLayout;
 

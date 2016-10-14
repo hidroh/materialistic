@@ -39,7 +39,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowContentObserver;
@@ -64,11 +63,12 @@ import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
+import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -89,7 +89,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class, ShadowRecyclerView.class, ShadowItemTouchHelper.class})
+@Config(shadows = {ShadowRecyclerViewAdapter.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteActivityTest {
     private ActivityController<TestFavoriteActivity> controller;
@@ -106,6 +106,7 @@ public class FavoriteActivityTest {
     @Captor ArgumentCaptor<SearchView.OnCloseListener> searchViewCloseListener;
     @Captor ArgumentCaptor<UserServices.Callback> userServicesCallback;
     @Captor ArgumentCaptor<LocalItemManager.Observer> observerCaptor;
+    private ShadowRecyclerViewAdapter shadowAdapter;
 
     @Before
     public void setUp() {
@@ -124,6 +125,7 @@ public class FavoriteActivityTest {
         activity = controller.create().postCreate(null).start().resume().visible().get(); // skip menu due to search view
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
+        shadowAdapter = customShadowOf(adapter);
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
         verify(keyDelegate).attach(any(Activity.class));
         verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
@@ -185,9 +187,6 @@ public class FavoriteActivityTest {
     @Test
     public void testItemClick() {
         assertEquals(2, adapter.getItemCount());
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
@@ -195,9 +194,6 @@ public class FavoriteActivityTest {
 
     @Test
     public void testActionMode() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performLongClick();
         assertNotNull(activity.actionModeCallback);
@@ -205,9 +201,6 @@ public class FavoriteActivityTest {
 
     @Test
     public void testSelectionToggle() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performLongClick();
         holder.itemView.performClick();
@@ -218,9 +211,6 @@ public class FavoriteActivityTest {
 
     @Test
     public void testDelete() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
         holder.itemView.performLongClick();
 
@@ -242,13 +232,11 @@ public class FavoriteActivityTest {
         assertEquals(1, adapter.getItemCount());
     }
 
+    @Config(shadows = {ShadowRecyclerView.class, ShadowItemTouchHelper.class})
     @Test
     public void testSwipeToDelete() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
-        ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView)).getItemTouchHelperCallback()
+        customShadowOf(recyclerView).getItemTouchHelperCallback()
                 .onSwiped(holder, ItemTouchHelper.LEFT);
         verify(favoriteManager).remove(any(Context.class), anyCollection());
         when(favoriteManager.getSize()).thenReturn(1);
@@ -324,9 +312,6 @@ public class FavoriteActivityTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testVoteItem() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
@@ -340,9 +325,6 @@ public class FavoriteActivityTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testVoteItemPromptToLogin() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
@@ -357,9 +339,6 @@ public class FavoriteActivityTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testVoteItemFailed() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
@@ -373,9 +352,6 @@ public class FavoriteActivityTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testReply() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
@@ -388,9 +364,6 @@ public class FavoriteActivityTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testShare() {
-        ShadowRecyclerViewAdapter shadowAdapter = (ShadowRecyclerViewAdapter) ShadowExtractor
-                .extract(adapter);
-        shadowAdapter.makeItemVisible(0);
         shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);

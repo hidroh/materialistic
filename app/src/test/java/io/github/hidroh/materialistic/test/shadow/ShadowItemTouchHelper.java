@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Ha Duy Trung
+ * Copyright (c) 2016 Ha Duy Trung
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.hidroh.materialistic.test;
+package io.github.hidroh.materialistic.test.shadow;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.internal.ShadowExtractor;
+
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 
 @Implements(ItemTouchHelper.class)
 public class ShadowItemTouchHelper {
@@ -30,11 +32,11 @@ public class ShadowItemTouchHelper {
         this.callback = callback;
     }
 
+    @Implementation
     public void attachToRecyclerView(RecyclerView recyclerView) {
         if (recyclerView == null) {
             return;
         }
-        ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                .setItemTouchHelperCallback(this.callback);
+        customShadowOf(recyclerView).setItemTouchHelperCallback(this.callback);
     }
 }

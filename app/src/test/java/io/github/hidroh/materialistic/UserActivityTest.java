@@ -18,7 +18,6 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
@@ -31,11 +30,13 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,7 +46,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowRecyclerView.class, ShadowRecyclerViewAdapter.class, ShadowRecyclerViewAdapter.ShadowViewHolder.class})
+@Config(shadows = ShadowRecyclerViewAdapter.class)
 @RunWith(RobolectricGradleTestRunner.class)
 public class UserActivityTest {
     private ActivityController<UserActivity> controller;
@@ -127,17 +128,18 @@ public class UserActivityTest {
         assertEquals(activity.getString(R.string.user_failed), ShadowToast.getTextOfLatestToast());
     }
 
+    @Config(shadows = ShadowRecyclerView.class)
     @Test
     public void testScrollToTop() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        ShadowRecyclerView recyclerView = (ShadowRecyclerView) ShadowExtractor
-                .extract(activity.findViewById(R.id.recycler_view));
-        recyclerView.setSmoothScrollToPosition(1);
+        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        recyclerView.smoothScrollToPosition(1);
+        assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         TabLayout.Tab tab = ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0);
         tab.select();
         tab.select();
-        assertEquals(0, recyclerView.getSmoothScrollToPosition());
+        assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(0);
     }
 
     @Test
@@ -179,9 +181,6 @@ public class UserActivityTest {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
-                ShadowExtractor.extract(recyclerView.getAdapter());
-        adapter.makeItemVisible(0);
         verify(itemManager).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -196,8 +195,7 @@ public class UserActivityTest {
                 return "2";
             }
         });
-        adapter.makeItemVisible(0);
-        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
+        RecyclerView.ViewHolder viewHolder = customShadowOf(recyclerView.getAdapter()).getViewHolder(0);
         assertThat(viewHolder.itemView.findViewById(R.id.title)).isNotVisible();
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
                 .isVisible()
@@ -213,9 +211,6 @@ public class UserActivityTest {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
-                ShadowExtractor.extract(recyclerView.getAdapter());
-        adapter.makeItemVisible(1);
         verify(itemManager).getItem(eq("2"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -235,8 +230,7 @@ public class UserActivityTest {
                 return 46;
             }
         });
-        adapter.makeItemVisible(1);
-        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(1);
+        RecyclerView.ViewHolder viewHolder = customShadowOf(recyclerView.getAdapter()).getViewHolder(1);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.posted))
                 .containsText(activity.getResources().getQuantityString(R.plurals.score, 46, 46));
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.title))
@@ -256,9 +250,6 @@ public class UserActivityTest {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
-        ShadowRecyclerViewAdapter adapter = (ShadowRecyclerViewAdapter)
-                ShadowExtractor.extract(recyclerView.getAdapter());
-        adapter.makeItemVisible(0);
         verify(itemManager).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -268,8 +259,7 @@ public class UserActivityTest {
                 return true;
             }
         });
-        adapter.makeItemVisible(0);
-        RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
+        RecyclerView.ViewHolder viewHolder = customShadowOf(recyclerView.getAdapter()).getViewHolder(0);
         assertThat(viewHolder.itemView.findViewById(R.id.comment)).isNotVisible();
     }
 

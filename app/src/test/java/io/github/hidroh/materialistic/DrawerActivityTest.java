@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.ShadowSupportDrawerLayout;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
 import io.github.hidroh.materialistic.test.TestListActivity;
 
 import static junit.framework.Assert.assertEquals;

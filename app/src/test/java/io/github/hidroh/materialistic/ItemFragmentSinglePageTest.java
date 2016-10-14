@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -24,15 +23,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
+import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
 
@@ -44,23 +42,24 @@ import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
-import io.github.hidroh.materialistic.test.ShadowItemTouchHelper;
-import io.github.hidroh.materialistic.test.ShadowLinearLayoutManager;
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowRecyclerViewAdapter;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.ShadowTextView;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestLayoutManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowTextView;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -68,11 +67,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowRecyclerView.class,
-        ShadowItemTouchHelper.class,
-        ShadowLinearLayoutManager.class,
-        ShadowRecyclerViewAdapter.class,
-        ShadowRecyclerViewAdapter.ShadowViewHolder.class,
+@Config(shadows = {ShadowRecyclerViewAdapter.class,
         ShadowSupportPreferenceManager.class,
         ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
@@ -86,9 +81,9 @@ public class ItemFragmentSinglePageTest {
     private ToggleItemViewHolder viewHolder;
     private ToggleItemViewHolder viewHolder1;
     private ToggleItemViewHolder viewHolder2;
-    private ToggleItemViewHolder viewHolder3;
     private ItemFragmentMultiPageTest.TestItemActivity activity;
     private ItemFragment fragment;
+    private ActivityController<ItemFragmentMultiPageTest.TestItemActivity> controller;
 
     @Before
     public void setUp() {
@@ -243,8 +238,8 @@ public class ItemFragmentSinglePageTest {
         args.putParcelable(ItemFragment.EXTRA_ITEM, story);
         fragment = (ItemFragment) Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
-        activity = Robolectric.buildActivity(ItemFragmentMultiPageTest.TestItemActivity.class)
-                .create().start().resume().visible().get();
+        controller = Robolectric.buildActivity(ItemFragmentMultiPageTest.TestItemActivity.class);
+        activity = controller.create().start().resume().visible().get();
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
@@ -256,14 +251,9 @@ public class ItemFragmentSinglePageTest {
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
         // auto expand all
-        viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
-        viewHolder1 = adapter.createViewHolder(recyclerView, 1);
-        adapter.bindViewHolder(viewHolder1, 1);
-        viewHolder2 = adapter.createViewHolder(recyclerView, 2);
-        adapter.bindViewHolder(viewHolder2, 2);
-        viewHolder3 = adapter.createViewHolder(recyclerView, 3);
-        adapter.bindViewHolder(viewHolder3, 3);
+        viewHolder = (ToggleItemViewHolder) customShadowOf(adapter).getViewHolder(0);
+        viewHolder1 = (ToggleItemViewHolder) customShadowOf(adapter).getViewHolder(1);
+        viewHolder2 = (ToggleItemViewHolder) customShadowOf(adapter).getViewHolder(2);
     }
 
     @Test
@@ -301,31 +291,24 @@ public class ItemFragmentSinglePageTest {
                 R.id.content_frame);
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
-        ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
     }
 
     @Test
     public void testToggle() {
         // collapse all
         viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
-        adapter.bindViewHolder(viewHolder, 0);
         assertEquals(3, adapter.getItemCount()); // 2 items + footer
 
         // expand again, should add item when binding
         viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
-        adapter.bindViewHolder(viewHolder, 0);
-        adapter.bindViewHolder(viewHolder1, 1);
-        adapter.bindViewHolder(viewHolder2, 2);
-        adapter.bindViewHolder(viewHolder3, 3);
         assertEquals(5, adapter.getItemCount()); // 4 items + footer
     }
 
+    @Config(shadows = {ShadowRecyclerView.class, ShadowItemTouchHelper.class})
     @Test
     public void testSwipeToToggle() {
         ItemTouchHelper.SimpleCallback callback = (ItemTouchHelper.SimpleCallback)
-                ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                        .getItemTouchHelperCallback();
+                customShadowOf(recyclerView).getItemTouchHelperCallback();
         assertThat(callback.getSwipeThreshold(viewHolder)).isGreaterThan(0f);
         assertThat(callback.onMove(recyclerView, viewHolder, viewHolder)).isFalse();
         assertThat(callback.getSwipeDirs(recyclerView, viewHolder))
@@ -334,7 +317,6 @@ public class ItemFragmentSinglePageTest {
                 ItemTouchHelper.ACTION_STATE_SWIPE, true);
         // collapse all
         callback.onSwiped(viewHolder, ItemTouchHelper.RIGHT);
-        adapter.bindViewHolder(viewHolder, 0);
         assertEquals(3, adapter.getItemCount()); // 2 items + footer
     }
 
@@ -399,8 +381,6 @@ public class ItemFragmentSinglePageTest {
         recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
         assertEquals(2, adapter.getItemCount()); // item + footer
-        ToggleItemViewHolder viewHolder = adapter.createViewHolder(recyclerView, 0);
-        adapter.bindViewHolder(viewHolder, 0);
         assertEquals(2, adapter.getItemCount()); // should not add kid to adapter
     }
 
@@ -413,67 +393,6 @@ public class ItemFragmentSinglePageTest {
     @Test
     public void testDefaultDisplayAllLines() {
         assertThat(viewHolder.itemView.findViewById(R.id.more)).isNotVisible();
-    }
-
-    @Test
-    public void testDisplayMaxLines() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(activity.getString(R.string.pref_max_lines), "3")
-                .apply();
-        adapter.onAttachedToRecyclerView(recyclerView);
-        TextView textView = (TextView) viewHolder.itemView.findViewById(R.id.text);
-        View more = viewHolder.itemView.findViewById(R.id.more);
-        ((ShadowTextView) ShadowExtractor.extract(textView)).setLineCount(10);
-        adapter.bindViewHolder(viewHolder, 0);
-        assertThat(textView).hasMaxLines(3);
-        assertThat(more).isVisible();
-        more.performClick();
-        assertThat(textView).hasMaxLines(10);
-        assertThat(more).isNotVisible();
-        adapter.bindViewHolder(viewHolder, 0);
-        assertThat(more).isNotVisible();
-    }
-
-    @Test
-    public void testMaxLines() {
-        adapter.bindViewHolder(viewHolder, 0);
-        TextView textView = (TextView) viewHolder.itemView.findViewById(R.id.text);
-        ((ShadowTextView) ShadowExtractor.extract(textView)).setLineCount(4); // content has 4 lines
-        View more = viewHolder.itemView.findViewById(R.id.more);
-        assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
-        assertThat(more).isNotVisible();
-
-        // display all regardless of content size
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(activity.getString(R.string.pref_max_lines), "-1") //all
-                .apply();
-        adapter.bindViewHolder(viewHolder, 0);
-        assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
-        assertThat(more).isNotVisible();
-
-        // content longer than max lines
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(activity.getString(R.string.pref_max_lines), "3")
-                .apply();
-        adapter.bindViewHolder(viewHolder, 0);
-        assertThat(textView).hasMaxLines(3);
-        assertThat(more).isVisible();
-        // rebind should not post runnable
-        adapter.bindViewHolder(viewHolder, 0);
-        assertThat(textView).hasMaxLines(3);
-        assertThat(more).isVisible();
-
-        // content shorter than max lines
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putString(activity.getString(R.string.pref_max_lines), "5")
-                .apply();
-        adapter.bindViewHolder(viewHolder, 0);
-        assertThat(textView).hasMaxLines(Integer.MAX_VALUE);
-        assertThat(more).isNotVisible();
     }
 
     @Test
@@ -558,37 +477,39 @@ public class ItemFragmentSinglePageTest {
                 .hasAction(Intent.ACTION_CHOOSER);
     }
 
+    @Config(shadows = ShadowRecyclerView.class)
     @Test
     public void testNavigate() {
-        ShadowRecyclerView shadowRecyclerView = (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
-        ShadowLinearLayoutManager shadowLayout = (ShadowLinearLayoutManager) ShadowExtractor.extract(
-                recyclerView.getLayoutManager());
+        ShadowRecyclerView shadowRecyclerView = customShadowOf(recyclerView);
+        TestLayoutManager testLayout
+                = new TestLayoutManager(activity);
+        recyclerView.setLayoutManager(testLayout);
         fragment.onNavigate(Navigable.DIRECTION_DOWN);
-        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(3);
+        assertThat(shadowRecyclerView.getScrollPosition()).isEqualTo(3);
         shadowRecyclerView.getScrollListener()
                 .onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
 
-        shadowLayout.setFirstVisibleItemPosition(3);
+        testLayout.firstVisiblePosition = 3;
         fragment.onNavigate(Navigable.DIRECTION_UP);
-        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(0);
+        assertThat(shadowRecyclerView.getScrollPosition()).isEqualTo(0);
 
-        shadowLayout.setFirstVisibleItemPosition(0);
+        testLayout.firstVisiblePosition = 0;
         fragment.onNavigate(Navigable.DIRECTION_RIGHT);
-        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(1);
+        assertThat(shadowRecyclerView.getScrollPosition()).isEqualTo(1);
         shadowRecyclerView.getScrollListener()
                 .onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
 
-        shadowLayout.setFirstVisibleItemPosition(1);
+        testLayout.firstVisiblePosition = 1;
         fragment.onNavigate(Navigable.DIRECTION_LEFT);
-        assertThat(shadowRecyclerView.getSmoothScrollToPosition()).isEqualTo(0);
+        assertThat(shadowRecyclerView.getScrollPosition()).isEqualTo(0);
         shadowRecyclerView.getScrollListener()
                 .onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
     }
 
     @After
     public void tearDown() {
-        recyclerView.setAdapter(null);
         reset(hackerNewsClient);
+        controller.pause().stop().destroy();
     }
 
     private void assertSinglePage() {

@@ -11,28 +11,29 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 
+import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowRecyclerView.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;
@@ -212,15 +213,14 @@ public class BaseListActivityTest {
         assertThat(activity.getSupportActionBar()).hasSubtitle(expected);
     }
 
+    @Config(shadows = ShadowRecyclerView.class)
     @Test
     public void testScrollToTop() {
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         recyclerView.smoothScrollToPosition(1);
-        assertEquals(1, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                .getSmoothScrollToPosition());
+        assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         activity.findViewById(R.id.toolbar).performClick();
-        assertEquals(0, ((ShadowRecyclerView) ShadowExtractor.extract(recyclerView))
-                .getSmoothScrollToPosition());
+        assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(0);
     }
 
     @Test

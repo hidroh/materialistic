@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic.appwidget;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 
@@ -24,17 +25,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -58,9 +59,15 @@ public class WidgetServiceTest {
 
     @Test
     public void testGetViewFactory() {
-        assertNotNull(new WidgetService().onGetViewFactory(new Intent()
+        WidgetService service = new WidgetService() {
+            @Override
+            public Context getApplicationContext() {
+                return RuntimeEnvironment.application;
+            }
+        };
+        assertNotNull(service.onGetViewFactory(new Intent()
                 .putExtra(WidgetService.EXTRA_SECTION, ItemManager.BEST_FETCH_MODE)));
-        assertNotNull(new WidgetService().onGetViewFactory(new Intent()
+        assertNotNull(service.onGetViewFactory(new Intent()
                 .putExtra(WidgetService.EXTRA_SECTION, ItemManager.NEW_FETCH_MODE)));
     }
 

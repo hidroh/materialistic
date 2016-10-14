@@ -18,7 +18,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
-import io.github.hidroh.materialistic.test.ShadowSearchRecentSuggestions;
+import io.github.hidroh.materialistic.test.shadow.ShadowSearchRecentSuggestions;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

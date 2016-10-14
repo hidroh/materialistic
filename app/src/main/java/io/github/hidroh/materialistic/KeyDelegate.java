@@ -235,7 +235,6 @@ public class KeyDelegate {
         static final int SCROLL_PAGE = 1;
 
         private final RecyclerView mRecyclerView;
-        private final LinearLayoutManager mLayoutManager;
         private final @ScrollMode int mScrollMode;
         private boolean mSmoothScroll = true;
 
@@ -244,7 +243,6 @@ public class KeyDelegate {
             if (!(mRecyclerView.getLayoutManager() instanceof LinearLayoutManager)) {
                 throw new IllegalArgumentException("Only LinearLayoutManager supported");
             }
-            mLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
             mScrollMode = scrollMode;
         }
 
@@ -256,8 +254,8 @@ public class KeyDelegate {
         @Override
         public boolean scrollToNext() {
             int pos = mScrollMode == SCROLL_ITEM ?
-                    mLayoutManager.findFirstVisibleItemPosition() :
-                    mLayoutManager.findLastCompletelyVisibleItemPosition(),
+                    getLinearLayoutManager().findFirstVisibleItemPosition() :
+                    getLinearLayoutManager().findLastCompletelyVisibleItemPosition(),
                     next = pos != RecyclerView.NO_POSITION ?
                             pos + 1 : RecyclerView.NO_POSITION;
             if (next != RecyclerView.NO_POSITION &&
@@ -274,7 +272,7 @@ public class KeyDelegate {
             switch (mScrollMode) {
                 case SCROLL_ITEM:
                 default:
-                    int pos = mLayoutManager.findFirstVisibleItemPosition(),
+                    int pos = getLinearLayoutManager().findFirstVisibleItemPosition(),
                             previous = pos != RecyclerView.NO_POSITION ?
                                     pos - 1 : RecyclerView.NO_POSITION;
                     if (previous >= 0) {
@@ -284,7 +282,7 @@ public class KeyDelegate {
                         return false;
                     }
                 case SCROLL_PAGE:
-                    if (mLayoutManager.findFirstVisibleItemPosition() <= 0) {
+                    if (getLinearLayoutManager().findFirstVisibleItemPosition() <= 0) {
                         return false;
                     } else {
                         mRecyclerView.smoothScrollBy(0, -mRecyclerView.getHeight());
@@ -299,16 +297,16 @@ public class KeyDelegate {
 
         int getCurrentPosition() {
             // TODO handle last page item
-            return mLayoutManager.findFirstVisibleItemPosition();
+            return getLinearLayoutManager().findFirstVisibleItemPosition();
         }
 
         int[] scrollToPosition(int position) {
             if (position >= 0 && position < mRecyclerView.getAdapter().getItemCount()) {
                 if (!mSmoothScroll) {
-                    mLayoutManager.scrollToPositionWithOffset(position, 0);
+                    getLinearLayoutManager().scrollToPositionWithOffset(position, 0);
                     return null;
                 }
-                int first = mLayoutManager.findFirstVisibleItemPosition();
+                int first = getLinearLayoutManager().findFirstVisibleItemPosition();
                 int[] lock = null;
                 if (Math.abs(position - first) > 1) { // lock nothing if scroll to adjacent
                     if (position < first) { // scroll up, lock lower part
@@ -322,6 +320,10 @@ public class KeyDelegate {
             } else {
                 return null;
             }
+        }
+
+        private LinearLayoutManager getLinearLayoutManager() {
+            return (LinearLayoutManager) mRecyclerView.getLayoutManager();
         }
     }
 
