@@ -61,6 +61,7 @@ import static android.view.View.VISIBLE;
 abstract class BaseWebFragment extends LazyLoadFragment
         implements Scrollable, KeyDelegate.BackInterceptor {
 
+    public static final String EXTRA_RETAIN_INSTANCE = BaseWebFragment.class.getName() + ".EXTRA_RETAIN_INSTANCE";
     static final String ACTION_FULLSCREEN = BaseWebFragment.class.getName() + ".ACTION_FULLSCREEN";
     static final String EXTRA_FULLSCREEN = BaseWebFragment.class.getName() + ".EXTRA_FULLSCREEN";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
@@ -91,6 +92,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
     protected String mContent;
     @Synthetic String mUrl;
     private AppUtils.SystemUiHelper mSystemUiHelper;
+    private View mFragmentView;
 
     @Override
     public void onAttach(Context context) {
@@ -106,6 +108,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(getArguments().getBoolean(EXTRA_RETAIN_INSTANCE, false));
         if (savedInstanceState != null) {
             mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN, false);
             mContent = savedInstanceState.getString(STATE_CONTENT);
@@ -115,32 +118,36 @@ abstract class BaseWebFragment extends LazyLoadFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState)
-                .inflate(R.layout.fragment_web, container, false);
-        mFullscreenView = (ViewGroup) view.findViewById(R.id.fullscreen);
-        mScrollViewContent = (ViewGroup) view.findViewById(R.id.scroll_view_content);
-        mScrollView = (NestedScrollView) view.findViewById(R.id.nested_scroll_view);
-        mControls = (ViewSwitcher) view.findViewById(R.id.control_switcher);
-        mWebView = (WebView) view.findViewById(R.id.web_view);
-        mButtonRefresh = (ImageButton) view.findViewById(R.id.button_refresh);
-        mButtonMore = view.findViewById(R.id.button_more);
-        mButtonNext = view.findViewById(R.id.button_next);
-        mButtonNext.setEnabled(false);
-        mEditText = (EditText) view.findViewById(R.id.edittext);
-        setUpWebControls(view);
-        setUpWebView(view);
-        return view;
+        if (shouldCreateView()) {
+            mFragmentView = getLayoutInflater(savedInstanceState)
+                    .inflate(R.layout.fragment_web, container, false);
+            mFullscreenView = (ViewGroup) mFragmentView.findViewById(R.id.fullscreen);
+            mScrollViewContent = (ViewGroup) mFragmentView.findViewById(R.id.scroll_view_content);
+            mScrollView = (NestedScrollView) mFragmentView.findViewById(R.id.nested_scroll_view);
+            mControls = (ViewSwitcher) mFragmentView.findViewById(R.id.control_switcher);
+            mWebView = (WebView) mFragmentView.findViewById(R.id.web_view);
+            mButtonRefresh = (ImageButton) mFragmentView.findViewById(R.id.button_refresh);
+            mButtonMore = mFragmentView.findViewById(R.id.button_more);
+            mButtonNext = mFragmentView.findViewById(R.id.button_next);
+            mButtonNext.setEnabled(false);
+            mEditText = (EditText) mFragmentView.findViewById(R.id.edittext);
+            setUpWebControls(mFragmentView);
+            setUpWebView(mFragmentView);
+        }
+        return mFragmentView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        mScrollableHelper = new KeyDelegate.NestedScrollViewHelper(mScrollView);
-        mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
-        mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
-        if (mFullscreen) {
-            setFullscreen(true);
+        if (shouldCreateView()) {
+            mScrollableHelper = new KeyDelegate.NestedScrollViewHelper(mScrollView);
+            mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
+            mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
+            if (mFullscreen) {
+                setFullscreen(true);
+            }
         }
     }
 
@@ -192,12 +199,6 @@ abstract class BaseWebFragment extends LazyLoadFragment
         super.onDetach();
         mPreferenceObservable.unsubscribe(getActivity());
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mWebView.destroy();
     }
 
     @Override
@@ -372,13 +373,14 @@ abstract class BaseWebFragment extends LazyLoadFragment
         ViewGroup.LayoutParams params = mWebView.getLayoutParams();
         if (isFullscreen) {
             mScrollView.removeView(mScrollViewContent);
+            mWebView.scrollTo(mScrollView.getScrollX(), mScrollView.getScrollY());
             mFullscreenView.addView(mScrollViewContent);
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
-            mWebView.pageUp(true);
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
+            mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
         mWebView.setLayoutParams(params);
@@ -442,5 +444,9 @@ abstract class BaseWebFragment extends LazyLoadFragment
         } else {
             imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
         }
+    }
+
+    private boolean shouldCreateView() {
+        return !getRetainInstance() || mNewInstance;
     }
 }
