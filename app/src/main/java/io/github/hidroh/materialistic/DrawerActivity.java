@@ -147,14 +147,16 @@ public abstract class DrawerActivity extends InjectableActivity {
                         AppUtils.getThemedResId(DrawerActivity.this,
                                 android.R.attr.textColorTertiary)));
                 moreToggle.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_expand_more_white_24dp, 0, 0, 0);
+                        R.drawable.ic_dummy_transparent_24dp, 0,
+                        R.drawable.ic_expand_more_white_24dp, 0);
                 moreContainer.setVisibility(View.GONE);
             } else {
                 moreToggle.setTextColor(ContextCompat.getColor(DrawerActivity.this,
                         AppUtils.getThemedResId(DrawerActivity.this,
                                 android.R.attr.textColorSecondary)));
                 moreToggle.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_expand_less_white_24dp, 0, 0, 0);
+                        R.drawable.ic_dummy_transparent_24dp, 0,
+                        R.drawable.ic_expand_less_white_24dp, 0);
                 moreContainer.setVisibility(View.VISIBLE);
             }
         });
