@@ -447,6 +447,9 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
+        if (!Preferences.navigationEnabled(this)) {
+            NavFloatingActionButton.resetPosition(this);
+        }
         AppUtils.toggleFab(mNavButton, navigationVisible());
     }
 
