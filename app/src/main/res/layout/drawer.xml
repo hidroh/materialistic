@@ -83,7 +83,8 @@
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@id/drawer_more"
         android:text="@string/more_sections"
-        app:iconStart="@drawable/ic_expand_more_white_24dp"
+        app:iconStart="@drawable/ic_dummy_transparent_24dp"
+        app:iconEnd="@drawable/ic_expand_more_white_24dp"
         style="@style/DrawerTextStyle"/>
 
     <LinearLayout
