@@ -46,6 +46,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
     private final boolean mShowArticle;
     private final int mCacheMode;
     private final int mDefaultItem;
+    private final boolean mRetainInstance;
     private TabLayout.OnTabSelectedListener mTabListener;
 
     public ItemPagerAdapter(Context context, FragmentManager fm, @NonNull Builder builder) {
@@ -54,6 +55,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         mItem = builder.item;
         mShowArticle = builder.showArticle;
         mCacheMode = builder.cacheMode;
+        mRetainInstance = builder.retainInstance;
         switch (builder.defaultViewMode) {
             case Article:
                 mDefaultItem = 1;
@@ -80,9 +82,11 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
             fragmentName = ItemFragment.class.getName();
         } else if (position == getCount() - 1) {
             args.putParcelable(ReadabilityFragment.EXTRA_ITEM, mItem);
+            args.putBoolean(ReadabilityFragment.EXTRA_RETAIN_INSTANCE, mRetainInstance);
             fragmentName = ReadabilityFragment.class.getName();
         } else {
             args.putParcelable(WebFragment.EXTRA_ITEM, mItem);
+            args.putBoolean(ReadabilityFragment.EXTRA_RETAIN_INSTANCE, mRetainInstance);
             fragmentName = WebFragment.class.getName();
         }
         return Fragment.instantiate(mContext, fragmentName, args);
@@ -172,6 +176,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         boolean showArticle;
         int cacheMode;
         Preferences.StoryViewMode defaultViewMode;
+        boolean retainInstance;
 
         public Builder setItem(@NonNull WebItem item) {
             this.item = item;
@@ -190,6 +195,11 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
 
         public Builder setDefaultViewMode(Preferences.StoryViewMode viewMode) {
             this.defaultViewMode = viewMode;
+            return this;
+        }
+
+        public Builder setRetainInstance(boolean retainInstance) {
+            this.retainInstance = retainInstance;
             return this;
         }
     }
