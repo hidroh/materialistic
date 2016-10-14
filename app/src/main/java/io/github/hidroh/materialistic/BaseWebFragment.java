@@ -373,13 +373,14 @@ abstract class BaseWebFragment extends LazyLoadFragment
         ViewGroup.LayoutParams params = mWebView.getLayoutParams();
         if (isFullscreen) {
             mScrollView.removeView(mScrollViewContent);
+            mWebView.scrollTo(mScrollView.getScrollX(), mScrollView.getScrollY());
             mFullscreenView.addView(mScrollViewContent);
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
-            mWebView.pageUp(true);
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
+            mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
         mWebView.setLayoutParams(params);
