@@ -26,12 +26,10 @@ public abstract class LazyLoadFragment extends BaseFragment {
     private static final String STATE_EAGER_LOAD = "state:eagerLoad";
     private static final String STATE_LOADED = "state:loaded";
     private boolean mEagerLoad, mLoaded, mActivityCreated;
-    protected boolean mNewInstance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mNewInstance = true;
         if (savedInstanceState != null) {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
             mLoaded = savedInstanceState.getBoolean(STATE_LOADED);
@@ -45,7 +43,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivityCreated = true;
-        if (!getRetainInstance() || mNewInstance) {
+        if (!getRetainInstance() || savedInstanceState == null) {
             eagerLoad();
         }
     }
@@ -55,7 +53,6 @@ public abstract class LazyLoadFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EAGER_LOAD, mEagerLoad);
         outState.putBoolean(STATE_LOADED, false); // allow re-loading on state restoration
-        mNewInstance = false;
     }
 
     @Override

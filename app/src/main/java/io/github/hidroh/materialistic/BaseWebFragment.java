@@ -118,9 +118,8 @@ abstract class BaseWebFragment extends LazyLoadFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (shouldCreateView()) {
-            mFragmentView = getLayoutInflater(savedInstanceState)
-                    .inflate(R.layout.fragment_web, container, false);
+        if (shouldCreateView(savedInstanceState)) {
+            mFragmentView = inflater.inflate(R.layout.fragment_web, container, false);
             mFullscreenView = (ViewGroup) mFragmentView.findViewById(R.id.fullscreen);
             mScrollViewContent = (ViewGroup) mFragmentView.findViewById(R.id.scroll_view_content);
             mScrollView = (NestedScrollView) mFragmentView.findViewById(R.id.nested_scroll_view);
@@ -141,7 +140,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        if (shouldCreateView()) {
+        if (shouldCreateView(savedInstanceState)) {
             mScrollableHelper = new KeyDelegate.NestedScrollViewHelper(mScrollView);
             mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
             mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
@@ -446,7 +445,7 @@ abstract class BaseWebFragment extends LazyLoadFragment
         }
     }
 
-    private boolean shouldCreateView() {
-        return !getRetainInstance() || mNewInstance;
+    private boolean shouldCreateView(Bundle savedInstanceState) {
+        return !getRetainInstance() || savedInstanceState == null;
     }
 }
