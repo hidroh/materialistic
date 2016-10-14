@@ -390,6 +390,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                         .setItem(story)
                         .setShowArticle(!mExternalBrowser)
                         .setCacheMode(getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT))
+                        .setRetainInstance(true)
                         .setDefaultViewMode(mStoryViewMode));
         mAdapter.bind(mViewPager, mTabLayout, mNavButton, mReplyButton);
         mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
