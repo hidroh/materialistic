@@ -451,7 +451,7 @@ public class ItemActivityTest {
         recyclerView.smoothScrollToPosition(1);
         assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertThat(tabLayout.getTabCount()).isEqualTo(3);
+        assertThat(tabLayout.getTabCount()).isEqualTo(2);
         tabLayout.getTabAt(1).select();
         tabLayout.getTabAt(0).select();
         tabLayout.getTabAt(0).select();
@@ -495,8 +495,8 @@ public class ItemActivityTest {
         });
         controller.withIntent(intent).create().start().resume();
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertEquals(3, tabLayout.getTabCount());
-        assertEquals(2, tabLayout.getSelectedTabPosition());
+        assertEquals(2, tabLayout.getTabCount());
+        assertEquals(1, tabLayout.getSelectedTabPosition());
     }
 
     @Test
@@ -618,12 +618,12 @@ public class ItemActivityTest {
                 .extract(activity.findViewById(R.id.reply_button));
         assertTrue(shadowFab.isVisible());
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         assertFalse(shadowFab.isVisible());
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, false));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, false));
         assertTrue(shadowFab.isVisible());
     }
 
@@ -644,8 +644,8 @@ public class ItemActivityTest {
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
         controller.withIntent(intent).create().start().resume().visible();
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         activity.onBackPressed();
         assertThat(activity).isNotFinishing();
         activity.onBackPressed();

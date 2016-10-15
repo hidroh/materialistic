@@ -117,7 +117,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mFullscreen = intent.getBooleanExtra(BaseWebFragment.EXTRA_FULLSCREEN, false);
+            mFullscreen = intent.getBooleanExtra(WebFragment.EXTRA_FULLSCREEN, false);
             setFullscreen();
         }
     };
@@ -156,7 +156,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
                 true, mObserver);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
-                new IntentFilter(BaseWebFragment.ACTION_FULLSCREEN));
+                new IntentFilter(WebFragment.ACTION_FULLSCREEN));
         mPreferenceObservable.subscribe(this, this::onPreferenceChanged,
                 R.string.pref_navigation);
         if (savedInstanceState != null) {

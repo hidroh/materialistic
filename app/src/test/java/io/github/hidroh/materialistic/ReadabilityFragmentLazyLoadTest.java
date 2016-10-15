@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
@@ -19,11 +18,11 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -36,7 +35,7 @@ public class ReadabilityFragmentLazyLoadTest {
     private TestReadabilityActivity activity;
     private ActivityController<TestReadabilityActivity> controller;
     @Inject ReadabilityClient readabilityClient;
-    private ReadabilityFragment fragment;
+    private WebFragment fragment;
 
     @Before
     public void setUp() {
@@ -44,6 +43,11 @@ public class ReadabilityFragmentLazyLoadTest {
         reset(readabilityClient);
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_readability))
+                .apply();
         Bundle args = new Bundle();
         WebItem item = new TestWebItem() {
             @Override
@@ -56,8 +60,8 @@ public class ReadabilityFragmentLazyLoadTest {
                 return "http://example.com/article.html";
             }
         };
-        args.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
-        fragment = (ReadabilityFragment) Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
+        args.putParcelable(WebFragment.EXTRA_ITEM, item);
+        fragment = (WebFragment) Fragment.instantiate(activity, WebFragment.class.getName(), args);
         shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(null);
     }

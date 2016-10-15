@@ -24,4 +24,10 @@
         android:icon="@drawable/ic_format_size_white_24dp"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@id/menu_readability"
+        android:title="@string/toggle_readability"
+        android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
+        app:showAsAction="always" />
+
 </menu>

@@ -57,7 +57,6 @@ import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
                 FavoriteFragment.class,
                 ItemFragment.class,
                 ListFragment.class,
-                ReadabilityFragment.class,
                 WebFragment.class,
                 FavoriteRecyclerViewAdapter.class,
                 SinglePageItemRecyclerViewAdapter.class,

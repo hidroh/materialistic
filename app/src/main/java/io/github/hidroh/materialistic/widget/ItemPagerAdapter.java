@@ -32,7 +32,6 @@ import io.github.hidroh.materialistic.ItemFragment;
 import io.github.hidroh.materialistic.LazyLoadFragment;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.ReadabilityFragment;
 import io.github.hidroh.materialistic.Scrollable;
 import io.github.hidroh.materialistic.WebFragment;
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -56,16 +55,8 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         mShowArticle = builder.showArticle;
         mCacheMode = builder.cacheMode;
         mRetainInstance = builder.retainInstance;
-        switch (builder.defaultViewMode) {
-            case Article:
-                mDefaultItem = 1;
-                break;
-            case Readability:
-                mDefaultItem = mShowArticle ? 2 : 1;
-                break;
-            default:
-                mDefaultItem = 0;
-        }
+        mDefaultItem = Math.min(getCount()-1,
+                builder.defaultViewMode == Preferences.StoryViewMode.Comment ? 0 : 1);
     }
 
     @Override
@@ -80,13 +71,9 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
             args.putParcelable(ItemFragment.EXTRA_ITEM, mItem);
             args.putInt(ItemFragment.EXTRA_CACHE_MODE, mCacheMode);
             fragmentName = ItemFragment.class.getName();
-        } else if (position == getCount() - 1) {
-            args.putParcelable(ReadabilityFragment.EXTRA_ITEM, mItem);
-            args.putBoolean(ReadabilityFragment.EXTRA_RETAIN_INSTANCE, mRetainInstance);
-            fragmentName = ReadabilityFragment.class.getName();
         } else {
             args.putParcelable(WebFragment.EXTRA_ITEM, mItem);
-            args.putBoolean(ReadabilityFragment.EXTRA_RETAIN_INSTANCE, mRetainInstance);
+            args.putBoolean(WebFragment.EXTRA_RETAIN_INSTANCE, mRetainInstance);
             fragmentName = WebFragment.class.getName();
         }
         return Fragment.instantiate(mContext, fragmentName, args);
@@ -100,11 +87,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        if (mItem.isStoryType()) {
-            return mShowArticle ? 3 : 2;
-        } else {
-            return 1;
-        }
+        return mItem.isStoryType() && mShowArticle ? 2 : 1;
     }
 
     @Override
@@ -116,9 +99,6 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
                         .getQuantityString(R.plurals.comments_count, count, count);
             }
             return mContext.getString(R.string.title_activity_item);
-        }
-        if (position == getCount() - 1) {
-            return mContext.getString(R.string.readability);
         }
         return mContext.getString(R.string.article);
     }

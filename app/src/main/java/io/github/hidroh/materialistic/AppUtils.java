@@ -440,8 +440,8 @@ public class AppUtils {
                                 item instanceof Item ? ((Item) item).getText() : null));
             } else {
                 LocalBroadcastManager.getInstance(context)
-                        .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                                .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                        .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                                .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
             }
         });
     }
