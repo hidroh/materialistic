@@ -81,7 +81,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mFullscreen = intent.getBooleanExtra(BaseWebFragment.EXTRA_FULLSCREEN, false);
+            mFullscreen = intent.getBooleanExtra(WebFragment.EXTRA_FULLSCREEN, false);
             setFullscreen();
         }
     };
@@ -106,7 +106,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         mIsMultiPane = getResources().getBoolean(R.bool.multi_pane);
         if (mIsMultiPane) {
             LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
-                    new IntentFilter(BaseWebFragment.ACTION_FULLSCREEN));
+                    new IntentFilter(WebFragment.ACTION_FULLSCREEN));
             mListView = findViewById(android.R.id.list);
             mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
             mTabLayout.setVisibility(View.GONE);
@@ -390,8 +390,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
         mAdapter = new ItemPagerAdapter(this, getSupportFragmentManager(), new ItemPagerAdapter.Builder()
                 .setItem(mSelectedItem)
-                .setShowArticle(true)
                 .setCacheMode(getItemCacheMode())
+                .setShowArticle(true)
                 .setDefaultViewMode(mStoryViewMode));
         mAdapter.bind(mViewPager, mTabLayout, mNavButton, mReplyButton);
         if (mFullscreen) {

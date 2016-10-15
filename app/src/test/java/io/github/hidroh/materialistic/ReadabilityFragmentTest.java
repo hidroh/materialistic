@@ -54,7 +54,7 @@ public class ReadabilityFragmentTest {
     private ActivityController<TestReadabilityActivity> controller;
     @Inject ReadabilityClient readabilityClient;
     @Captor ArgumentCaptor<ReadabilityClient.Callback> callback;
-    private ReadabilityFragment fragment;
+    private WebFragment fragment;
 
     @Before
     public void setUp() {
@@ -66,6 +66,8 @@ public class ReadabilityFragmentTest {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_readability))
                 .apply();
         shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
@@ -82,8 +84,8 @@ public class ReadabilityFragmentTest {
                 return "http://example.com/article.html";
             }
         };
-        args.putParcelable(ReadabilityFragment.EXTRA_ITEM, item);
-        fragment = (ReadabilityFragment) Fragment.instantiate(activity, ReadabilityFragment.class.getName(), args);
+        args.putParcelable(WebFragment.EXTRA_ITEM, item);
+        fragment = (WebFragment) Fragment.instantiate(activity, WebFragment.class.getName(), args);
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
@@ -165,6 +167,13 @@ public class ReadabilityFragmentTest {
         controller.pause().stop().destroy();
     }
 
+    @Test
+    public void testWebToggle() {
+        fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_readability));
+        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
+                .getLastLoadedUrl()).isEqualTo("http://example.com/article.html");
+    }
+
     @SuppressLint("NewApi")
     @Test
     public void testFullscreenMenu() {
@@ -172,8 +181,8 @@ public class ReadabilityFragmentTest {
                 callback.capture());
         callback.getValue().onResponse("<div>content</div>");
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         activity.findViewById(R.id.button_more).performClick();
         shadowOf(ShadowPopupMenu.getLatestPopupMenu()).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_font_options));

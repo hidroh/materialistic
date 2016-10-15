@@ -37,12 +37,13 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -52,8 +53,11 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -65,6 +69,7 @@ public class WebFragmentTest {
     private ActivityController<WebActivity> controller;
     private WebItem item;
     @Inject FavoriteManager favoriteManager;
+    @Inject ReadabilityClient readabilityClient;
     private Intent intent;
 
     @Before
@@ -173,8 +178,8 @@ public class WebFragmentTest {
     @Test
     public void testFullscreen() {
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         assertThat(activity.findViewById(R.id.control_switcher)).isVisible();
         shadowOf(activity).recreate();
         assertThat(activity.findViewById(R.id.control_switcher)).isVisible();
@@ -185,8 +190,8 @@ public class WebFragmentTest {
     @Test
     public void testSearch() {
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         activity.findViewById(R.id.button_find).performClick();
         ViewSwitcher controlSwitcher = (ViewSwitcher) activity.findViewById(R.id.control_switcher);
         assertThat(controlSwitcher.getDisplayedChild()).isEqualTo(1);
@@ -220,30 +225,19 @@ public class WebFragmentTest {
     @Test
     public void testRefresh() {
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView.lastGlobalLoadedUrl = null;
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
-                .extract(activity.findViewById(R.id.web_view));
-
-        // should reload if fully loaded
-        shadowWebView.setProgress(100);
         activity.findViewById(R.id.button_refresh).performClick();
         assertNotNull(ShadowWebView.getLastGlobalLoadedUrl());
-
-        // should stop loading if not yet fully loaded
-        ShadowWebView.lastGlobalLoadedUrl = null;
-        shadowWebView.setProgress(50);
-        activity.findViewById(R.id.button_refresh).performClick();
-        assertNull(ShadowWebView.getLastGlobalLoadedUrl());
     }
 
     @SuppressLint("NewApi")
     @Test
     public void testWebControls() {
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
                 .extract(activity.findViewById(R.id.web_view));
         activity.findViewById(R.id.button_more).performClick();
@@ -278,8 +272,8 @@ public class WebFragmentTest {
     @Test
     public void testFullScroll() {
         ShadowLocalBroadcastManager.getInstance(activity)
-                .sendBroadcast(new Intent(BaseWebFragment.ACTION_FULLSCREEN)
-                        .putExtra(BaseWebFragment.EXTRA_FULLSCREEN, true));
+                .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
+                        .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
                 .extract(activity.findViewById(R.id.web_view));
         WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
@@ -299,6 +293,12 @@ public class WebFragmentTest {
         assertTrue(activity.fragment.onBackPressed());
         shadowOf(webView).setCanGoBack(false);
         assertFalse(activity.fragment.onBackPressed());
+    }
+
+    @Test
+    public void testReadabilityToggle() {
+        activity.fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_readability));
+        verify(readabilityClient).parse(any(), eq("http://example.com"), any());
     }
 
     @After

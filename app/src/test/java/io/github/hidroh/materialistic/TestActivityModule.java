@@ -77,7 +77,6 @@ import static org.mockito.Mockito.when;
                 ItemFragment.class,
                 ListFragment.class,
                 WebFragment.class,
-                ReadabilityFragment.class,
                 ReleaseNotesActivity.class,
                 StoryRecyclerViewAdapter.class,
                 FavoriteRecyclerViewAdapter.class,

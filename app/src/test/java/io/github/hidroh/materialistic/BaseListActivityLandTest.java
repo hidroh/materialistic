@@ -176,7 +176,7 @@ public class BaseListActivityLandTest {
         });
         ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
         viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
-        assertReadabilityMode();
+        assertStoryMode();
     }
 
     @Test
@@ -231,14 +231,12 @@ public class BaseListActivityLandTest {
             }
         });
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertEquals(3, tabLayout.getTabCount());
+        assertEquals(2, tabLayout.getTabCount());
         assertStoryMode();
         tabLayout.getTabAt(0).select();
         assertCommentMode();
         tabLayout.getTabAt(1).select();
         assertStoryMode();
-        tabLayout.getTabAt(2).select();
-        assertReadabilityMode();
     }
 
     @Config(shadows = ShadowRecyclerView.class)
@@ -252,7 +250,7 @@ public class BaseListActivityLandTest {
             }
         });
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
-        assertThat(tabLayout.getTabCount()).isEqualTo(3);
+        assertThat(tabLayout.getTabCount()).isEqualTo(2);
         tabLayout.getTabAt(0).select();
         ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
         viewPager.getAdapter().instantiateItem(viewPager, 0);
@@ -289,12 +287,6 @@ public class BaseListActivityLandTest {
 
     private void assertStoryMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
-        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
-    }
-
-    private void assertReadabilityMode() {
-        assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(2);
         assertTrue(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
