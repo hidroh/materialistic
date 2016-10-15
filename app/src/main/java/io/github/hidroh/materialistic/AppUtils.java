@@ -612,6 +612,15 @@ public class AppUtils {
         return intent;
     }
 
+    public static void setTextAppearance(TextView textView, @StyleRes int textAppearance) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            textView.setTextAppearance(textAppearance);
+        } else {
+            //noinspection deprecation
+            textView.setTextAppearance(textView.getContext(), textAppearance);
+        }
+    }
+
     static class SystemUiHelper {
         private final Window window;
         private final int originalUiFlags;

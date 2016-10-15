@@ -40,6 +40,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -366,7 +367,10 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 sourceTextView.setVisibility(View.VISIBLE);
             }
         } else {
-            CharSequence title = AppUtils.fromHtml(story.getDisplayedTitle());
+            AppUtils.setTextAppearance(titleTextView, R.style.TextAppearance_App_Small);
+            titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    getResources().getDimension(AppUtils.getThemedResId(this, R.attr.contentTextSize)));
+            CharSequence title = AppUtils.fromHtml(story.getDisplayedTitle(), true);
             titleTextView.setText(title);
             setTaskTitle(title);
         }
