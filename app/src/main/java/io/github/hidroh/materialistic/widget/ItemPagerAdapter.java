@@ -55,6 +55,10 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         mShowArticle = builder.showArticle;
         mCacheMode = builder.cacheMode;
         mRetainInstance = builder.retainInstance;
+        if (!mItem.isStoryType()) {
+            // if not story must be comment, show comment full text by default
+            builder.defaultViewMode = Preferences.StoryViewMode.Article;
+        }
         mDefaultItem = Math.min(getCount()-1,
                 builder.defaultViewMode == Preferences.StoryViewMode.Comment ? 0 : 1);
     }
@@ -87,7 +91,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mItem.isStoryType() && mShowArticle ? 2 : 1;
+        return mItem.isStoryType() && !mShowArticle ? 1 : 2;
     }
 
     @Override
@@ -100,7 +104,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
             }
             return mContext.getString(R.string.title_activity_item);
         }
-        return mContext.getString(R.string.article);
+        return mContext.getString(mItem.isStoryType() ? R.string.article : R.string.full_text);
     }
 
     public void bind(ViewPager viewPager, TabLayout tabLayout,

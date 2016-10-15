@@ -312,5 +312,6 @@
     <string name="list">List</string>
     <string name="delete">Delete</string>
     <string name="toggle_readability">Toggle readability mode</string>
+    <string name="full_text">Full text</string>
 
 </resources>
