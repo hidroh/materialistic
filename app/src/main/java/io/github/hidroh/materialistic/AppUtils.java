@@ -545,7 +545,7 @@ public class AppUtils {
                 toHtmlPx(context, Preferences.Theme.resolvePreferredReadabilityTextSize(context)),
                 AppUtils.toHtmlColor(context, android.R.attr.textColorPrimary),
                 AppUtils.toHtmlColor(context, android.R.attr.textColorLink),
-                html,
+                TextUtils.isEmpty(html) ? context.getString(R.string.empty_text) : html,
                 toHtmlPx(context, context.getResources().getDimension(R.dimen.activity_vertical_margin)),
                 toHtmlPx(context, context.getResources().getDimension(R.dimen.activity_horizontal_margin)),
                 Preferences.getReadabilityLineHeight(context));

@@ -25,7 +25,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.File;
@@ -132,7 +131,7 @@ public class CacheableWebView extends WebView {
 
         @CallSuper
         @Override
-        public void onProgressChanged(WebView view, int newProgress) {
+        public void onProgressChanged(android.webkit.WebView view, int newProgress) {
             if (view.getSettings().getCacheMode() == WebSettings.LOAD_CACHE_ONLY) {
                 return;
             }

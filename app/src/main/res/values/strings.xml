@@ -313,5 +313,6 @@
     <string name="delete">Delete</string>
     <string name="toggle_readability">Toggle readability mode</string>
     <string name="full_text">Full text</string>
+    <string name="empty_text">[This story has no content]</string>
 
 </resources>

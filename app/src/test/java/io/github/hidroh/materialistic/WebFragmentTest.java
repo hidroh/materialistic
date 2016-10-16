@@ -229,7 +229,7 @@ public class WebFragmentTest {
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView.lastGlobalLoadedUrl = null;
         activity.findViewById(R.id.button_refresh).performClick();
-        assertNotNull(ShadowWebView.getLastGlobalLoadedUrl());
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isEqualTo(ShadowWebView.RELOADED);
     }
 
     @SuppressLint("NewApi")
@@ -289,6 +289,7 @@ public class WebFragmentTest {
     @Test
     public void testBackPressed() {
         WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "http://example.com");
         shadowOf(webView).setCanGoBack(true);
         assertTrue(activity.fragment.onBackPressed());
         shadowOf(webView).setCanGoBack(false);

@@ -29,6 +29,7 @@
         <![CDATA[
         <html>
             <head>
+                <title>Title</title>
                 <style type="text/css">
                     @font-face {
                         font-family: materialistic;
