@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowWebView;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -30,11 +31,11 @@ import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -104,8 +105,10 @@ public class WebFragmentLocalTest {
                 return "text";
             }
         });
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data).contains("text");
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = shadowOf(webView);
+        shadowWebView.getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowWebView.getLastLoadDataWithBaseURL().data).contains("text");
     }
 
     @Test
@@ -135,8 +138,10 @@ public class WebFragmentLocalTest {
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume().visible();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data).contains("comment");
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = shadowOf(webView);
+        shadowWebView.getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowWebView.getLastLoadDataWithBaseURL().data).contains("comment");
     }
 
     @Test
@@ -182,8 +187,10 @@ public class WebFragmentLocalTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
                 .apply();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data)
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = shadowOf(webView);
+        shadowWebView.getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowWebView.getLastLoadDataWithBaseURL().data)
                 .contains("text")
                 .contains("DroidSans.ttf");
     }

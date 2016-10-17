@@ -98,11 +98,13 @@ public class ReadabilityFragmentTest {
         verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
                 callback.capture());
         callback.getValue().onResponse("<div>content</div>");
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data).contains("content");
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowOf(webView).getLastLoadDataWithBaseURL().data).contains("content");
         shadowOf(activity).recreate();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data).contains("content");
+        webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowOf(webView).getLastLoadDataWithBaseURL().data).contains("content");
         controller.pause().stop().destroy();
     }
 
@@ -116,6 +118,8 @@ public class ReadabilityFragmentTest {
         reset(readabilityClient);
         assertThat(ShadowToast.getTextOfLatestToast())
                 .contains(activity.getString(R.string.readability_failed));
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "about:blank");
         assertThat(ShadowWebView.getLastGlobalLoadedUrl())
                 .contains("http://example.com/article.html");
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
@@ -145,8 +149,9 @@ public class ReadabilityFragmentTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_text_size), "3")
                 .apply();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data).contains("20");
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowOf(webView).getLastLoadDataWithBaseURL().data).contains("20");
         assertEquals(R.style.AppTextSize_XLarge,
                 Preferences.Theme.resolvePreferredReadabilityTextSize(activity));
         controller.pause().stop().destroy();
@@ -161,8 +166,9 @@ public class ReadabilityFragmentTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
                 .apply();
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadDataWithBaseURL().data).contains("DroidSans.ttf");
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowOf(webView).getLastLoadDataWithBaseURL().data).contains("DroidSans.ttf");
         assertEquals("DroidSans.ttf", Preferences.Theme.getReadabilityTypeface(activity));
         controller.pause().stop().destroy();
     }
@@ -170,8 +176,9 @@ public class ReadabilityFragmentTest {
     @Test
     public void testWebToggle() {
         fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_readability));
-        assertThat(shadowOf((WebView) activity.findViewById(R.id.web_view))
-                .getLastLoadedUrl()).isEqualTo("http://example.com/article.html");
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        shadowOf(webView).getWebViewClient().onPageFinished(webView, "about:blank");
+        assertThat(shadowOf(webView).getLastLoadedUrl()).isEqualTo("http://example.com/article.html");
     }
 
     @SuppressLint("NewApi")

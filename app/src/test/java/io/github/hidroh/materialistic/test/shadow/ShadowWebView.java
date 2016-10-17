@@ -23,9 +23,12 @@ import android.webkit.WebView;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
+import org.robolectric.annotation.RealObject;
 
 @Implements(value = WebView.class, inheritImplementationMethods = true)
 public class ShadowWebView extends org.robolectric.shadows.ShadowWebView {
+    public static final String RELOADED = "reloaded";
+    @RealObject WebView realObject;
     private DownloadListener downloadListener;
     private WebView.FindListener findListener;
     public static String lastGlobalLoadedUrl;
@@ -102,6 +105,11 @@ public class ShadowWebView extends org.robolectric.shadows.ShadowWebView {
     public boolean pageDown(boolean bottom) {
         scrollY++;
         return true;
+    }
+
+    @Implementation
+    public void reload() {
+        lastGlobalLoadedUrl = RELOADED;
     }
 
     public int getFindIndex() {

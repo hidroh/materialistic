@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -40,7 +41,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -61,6 +61,7 @@ import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 import io.github.hidroh.materialistic.widget.PopupMenu;
+import io.github.hidroh.materialistic.widget.WebView;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -75,7 +76,6 @@ public class WebFragment extends LazyLoadFragment
     static final String EXTRA_FULLSCREEN = WebFragment.class.getName() + ".EXTRA_FULLSCREEN";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
     private static final String STATE_CONTENT = "state:content";
-    private static final String BLANK = "about:blank";
     @Synthetic WebView mWebView;
     private NestedScrollView mScrollView;
     @Synthetic boolean mExternalRequired = false;
@@ -104,7 +104,6 @@ public class WebFragment extends LazyLoadFragment
     @Inject ReadabilityClient mReadabilityClient;
     private WebItem mItem;
     private boolean mIsHackerNewsUrl, mEmpty, mReadability;
-    @Synthetic boolean mPendingClearHistory;
 
     @Override
     public void onAttach(Context context) {
@@ -176,9 +175,8 @@ public class WebFragment extends LazyLoadFragment
 
     @Override
     protected void prepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_readability).setVisible(!mIsHackerNewsUrl);
-        menu.findItem(R.id.menu_font_options).setVisible(mIsHackerNewsUrl ||
-                mReadability && !TextUtils.isEmpty(mContent));
+        menu.findItem(R.id.menu_readability).setVisible(modeToggleEnabled());
+        menu.findItem(R.id.menu_font_options).setVisible(fontEnabled());
     }
 
     @Override
@@ -189,8 +187,7 @@ public class WebFragment extends LazyLoadFragment
         }
         if (item.getItemId() == R.id.menu_readability) {
             mReadability = !mReadability;
-            mPendingClearHistory = true;
-            reload();
+            load();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -283,19 +280,13 @@ public class WebFragment extends LazyLoadFragment
 
     private void loadUrl() {
         setWebSettings(true);
-        mWebView.loadUrl(mItem.getUrl());
+        mWebView.reloadUrl(mItem.getUrl());
     }
 
-    private void loadContent() {
+    @Synthetic
+    void loadContent() {
         setWebSettings(false);
-        mWebView.loadDataWithBaseURL(null, AppUtils.wrapHtml(getActivity(), mContent),
-                "text/html", "UTF-8", null);
-    }
-
-    private void reload() {
-        mWebView.stopLoading();
-        mWebView.loadUrl(BLANK);
-        load();
+        mWebView.reloadHtml(AppUtils.wrapHtml(getActivity(), mContent));
     }
 
     private void parse() {
@@ -319,6 +310,14 @@ public class WebFragment extends LazyLoadFragment
         mWebView.pauseTimers();
     }
 
+    private boolean fontEnabled() {
+        return mReadability && !mEmpty && !TextUtils.isEmpty(mContent);
+    }
+
+    private boolean modeToggleEnabled() {
+        return !mIsHackerNewsUrl && !mWebView.canGoBack();
+    }
+
     private void setUpWebControls(View view) {
         view.findViewById(R.id.toolbar_web).setOnClickListener(v -> scrollToTop());
         view.findViewById(R.id.button_back).setOnClickListener(v -> mWebView.goBack());
@@ -333,7 +332,7 @@ public class WebFragment extends LazyLoadFragment
             toggleSoftKeyboard(true);
             mControls.showNext();
         });
-        mButtonRefresh.setOnClickListener(v -> reload());
+        mButtonRefresh.setOnClickListener(v -> mWebView.reload());
         view.findViewById(R.id.button_exit).setOnClickListener(v ->
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
                         new Intent(WebFragment.ACTION_FULLSCREEN)
@@ -365,20 +364,32 @@ public class WebFragment extends LazyLoadFragment
     private void setUpWebView(View view) {
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
-        mWebView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(getActivity())));
+        mWebView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(getActivity())) {
+            @Override
+            public void onPageStarted(android.webkit.WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                if (getActivity() != null) {
+                    getActivity().supportInvalidateOptionsMenu();
+                }
+            }
+
+            @Override
+            public void onPageFinished(android.webkit.WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (getActivity() != null) {
+                    getActivity().supportInvalidateOptionsMenu();
+                }
+            }
+        });
         mWebView.setWebChromeClient(new CacheableWebView.ArchiveClient() {
             @Override
-            public void onProgressChanged(WebView view, int newProgress) {
+            public void onProgressChanged(android.webkit.WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
                 mProgressBar.setVisibility(VISIBLE);
                 mProgressBar.setProgress(newProgress);
                 if (newProgress == 100) {
                     mProgressBar.setVisibility(GONE);
                     mWebView.setVisibility(mExternalRequired ? GONE : VISIBLE);
-                    if (mPendingClearHistory && !TextUtils.equals(BLANK, mWebView.getUrl())) {
-                        mPendingClearHistory = false;
-                        view.clearHistory();
-                    }
                 }
                 mButtonRefresh.setImageResource(newProgress == 100 ?
                         R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
