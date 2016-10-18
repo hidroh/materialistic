@@ -50,22 +50,34 @@
         android:title="@string/pref_thread_indicator_title"
         android:defaultValue="true" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_navigation"
-        android:title="@string/pref_navigation_title"
-        android:defaultValue="false" />
+    <android.support.v7.preference.PreferenceCategory
+        android:summary="@string/pref_navigation_title"
+        style="@style/Preference.Category.Hint">
 
-    <io.github.hidroh.materialistic.preference.PreferenceHelp
-        android:key="@string/pref_navigation_help"
-        android:title="@string/whats_this"
-        app:dialogTitle="@string/pref_navigation_title"
-        app:dialogLayout="@layout/help_navigation" />
+        <io.github.hidroh.materialistic.preference.PreferenceHelp
+            android:key="@string/pref_navigation_help"
+            android:title="@string/whats_this"
+            app:dialogTitle="@string/pref_navigation_title"
+            app:dialogLayout="@layout/help_navigation" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_smooth_scroll"
-        android:title="@string/pref_smooth_scroll_title"
-        android:summary="@string/pref_smooth_scroll_summary"
-        android:dependency="@string/pref_navigation"
-        android:defaultValue="true" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_navigation"
+            android:title="@string/pref_navigation_title"
+            android:defaultValue="false" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_navigation_vibrate"
+            android:title="@string/pref_navigation_vibrate_title"
+            android:dependency="@string/pref_navigation"
+            android:defaultValue="true" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="@string/pref_smooth_scroll"
+            android:title="@string/pref_smooth_scroll_title"
+            android:summary="@string/pref_smooth_scroll_summary"
+            android:dependency="@string/pref_navigation"
+            android:defaultValue="true" />
+
+    </android.support.v7.preference.PreferenceCategory>
 
 </android.support.v7.preference.PreferenceScreen>

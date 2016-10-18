@@ -40,6 +40,7 @@ import java.util.Locale;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Navigable;
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 
@@ -61,11 +62,13 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
             DOUBLE_TAP
     };
     @Synthetic final Vibrator mVibrator;
+    private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     @Synthetic Navigable mNavigable;
     @Synthetic boolean mMoved;
     private int mNextKonamiCode = 0;
     private SharedPreferences mPreferences;
     private String mPreferenceX, mPreferenceY;
+    @Synthetic boolean mVibrationEnabled;
 
     public static void resetPosition(Context context) {
         getSharedPreferences(context).edit().clear().apply();
@@ -82,6 +85,7 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
     public NavFloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         bindNavigationPad();
+        mVibrationEnabled = Preferences.navigationEnabled(context);
         if (!isInEditMode()) {
             mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         } else {
@@ -93,12 +97,16 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getViewTreeObserver().addOnGlobalLayoutListener(this);
+        mPreferenceObservable.subscribe(getContext(), (key, contextChanged) ->
+                mVibrationEnabled = Preferences.navigationVibrationEnabled(getContext()),
+                R.string.pref_navigation_vibrate);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         stopObservingViewTree();
+        mPreferenceObservable.unsubscribe(getContext());
     }
 
     @Override
@@ -144,7 +152,9 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
                                     Navigable.DIRECTION_UP : Navigable.DIRECTION_DOWN;
                         }
                         mNavigable.onNavigate(direction);
-                        mVibrator.vibrate(VIBRATE_DURATION_MS);
+                        if (mVibrationEnabled) {
+                            mVibrator.vibrate(VIBRATE_DURATION_MS);
+                        }
                         trackKonami(direction);
                         return false;
                     }
@@ -173,7 +183,9 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
 
     @Synthetic
     void startDrag(float startX, float startY) {
-        mVibrator.vibrate(VIBRATE_DURATION_MS * 2);
+        if (mVibrationEnabled) {
+            mVibrator.vibrate(VIBRATE_DURATION_MS * 2);
+        }
         Toast.makeText(getContext(), R.string.hint_drag, Toast.LENGTH_SHORT).show();
         //noinspection Convert2Lambda
         super.setOnTouchListener(new OnTouchListener() {
@@ -209,8 +221,10 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
             return false;
         } else if (mNextKonamiCode == KONAMI_CODE.length - 1) {
             mNextKonamiCode = 0;
-            mVibrator.vibrate(new long[]{0, VIBRATE_DURATION_MS * 2,
-                    100, VIBRATE_DURATION_MS * 2}, -1);
+            if (mVibrationEnabled) {
+                mVibrator.vibrate(new long[]{0, VIBRATE_DURATION_MS * 2,
+                        100, VIBRATE_DURATION_MS * 2}, -1);
+            }
             new AlertDialog.Builder(getContext())
                     .setView(R.layout.dialog_konami)
                     .setPositiveButton(android.R.string.ok, (dialogInterface, i) ->
