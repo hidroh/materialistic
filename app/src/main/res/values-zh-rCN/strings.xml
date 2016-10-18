@@ -164,7 +164,7 @@
     <string name="help_new_story">自上次刷新以来新帖子</string>
     <string name="help_promoted_story">自上次刷新以来的新帖子</string>
     <string name="help_new_comments">自上次刷新以来的新评论</string>
-    <string name="help_lazy_load">启用懒加载设置后，只有您的帖子第一次打开时，默认选项卡才会加载。\n\n如果您处于较差的网络下并因此导致加载缓慢，启用该选项会给你带来帮助。\n\n懒加载在非WiFi连接下默认启用。</string>
+    <string name="help_lazy_load">启用懒加载设置后，只有您的帖子第一次打开时，默认选项卡才会加载。\n\n如果您处于较差的网络下并因此导致加载缓慢，启用该选项会给你带来帮助。</string>
     <string name="help_volume_up">按压上音量向上滑动页面</string>
     <string name="help_long_volume_up">长按上音量键快速滑动到顶部</string>
     <string name="help_volume_down">按压下音量向下滑动页面</string>

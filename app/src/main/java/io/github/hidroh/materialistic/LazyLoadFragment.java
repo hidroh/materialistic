@@ -35,7 +35,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
             mLoaded = savedInstanceState.getBoolean(STATE_LOADED);
         } else {
             mEagerLoad = getArguments() != null && getArguments().getBoolean(EXTRA_EAGER_LOAD) ||
-                    !Preferences.shouldLazyLoad(getActivity()) && AppUtils.isOnWiFi(getContext());
+                    !Preferences.shouldLazyLoad(getActivity());
         }
     }
 
