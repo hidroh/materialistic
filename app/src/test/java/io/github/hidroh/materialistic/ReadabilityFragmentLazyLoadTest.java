@@ -1,7 +1,5 @@
 package io.github.hidroh.materialistic;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -11,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -27,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
@@ -62,30 +58,10 @@ public class ReadabilityFragmentLazyLoadTest {
         };
         args.putParcelable(WebFragment.EXTRA_ITEM, item);
         fragment = (WebFragment) Fragment.instantiate(activity, WebFragment.class.getName(), args);
-        shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
-                .setActiveNetworkInfo(null);
     }
 
     @Test
     public void testLazyLoadByDefault() {
-        activity.getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_frame, fragment, "tag")
-                .commit();
-        verify(readabilityClient, never()).parse(any(), any(),
-                any(ReadabilityClient.Callback.class));
-        reset(readabilityClient);
-        fragment.loadNow();
-        verify(readabilityClient).parse(any(), any(),
-                any(ReadabilityClient.Callback.class));
-    }
-
-    @Test
-    public void testLazyLoadOnWifi() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putBoolean(activity.getString(R.string.pref_lazy_load), false)
-                .commit();
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment, "tag")
@@ -104,9 +80,6 @@ public class ReadabilityFragmentLazyLoadTest {
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .commit();
-        shadowOf((ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE))
-                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
-                        ConnectivityManager.TYPE_WIFI, 0, true, true));
         fragment.setUserVisibleHint(true);
         verify(readabilityClient, never()).parse(any(), any(),
                 any(ReadabilityClient.Callback.class));
