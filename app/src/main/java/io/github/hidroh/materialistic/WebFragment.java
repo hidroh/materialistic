@@ -136,7 +136,7 @@ public class WebFragment extends LazyLoadFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (shouldCreateView(savedInstanceState)) {
+        if (isNewInstance()) {
             mFragmentView = inflater.inflate(R.layout.fragment_web, container, false);
             mFullscreenView = (ViewGroup) mFragmentView.findViewById(R.id.fullscreen);
             mScrollViewContent = (ViewGroup) mFragmentView.findViewById(R.id.scroll_view_content);
@@ -158,7 +158,7 @@ public class WebFragment extends LazyLoadFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
-        if (shouldCreateView(savedInstanceState)) {
+        if (isNewInstance()) {
             mScrollableHelper = new KeyDelegate.NestedScrollViewHelper(mScrollView);
             mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
             mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
@@ -220,6 +220,12 @@ public class WebFragment extends LazyLoadFragment
         outState.putParcelable(EXTRA_ITEM, mItem);
         outState.putBoolean(STATE_EMPTY, mEmpty);
         outState.putBoolean(STATE_READABILITY, mReadability);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
     }
 
     @Override
@@ -507,10 +513,6 @@ public class WebFragment extends LazyLoadFragment
         } else {
             imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
         }
-    }
-
-    private boolean shouldCreateView(Bundle savedInstanceState) {
-        return !getRetainInstance() || savedInstanceState == null;
     }
 
     @Synthetic
