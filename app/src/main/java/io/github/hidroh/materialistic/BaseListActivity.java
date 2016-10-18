@@ -165,7 +165,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mIsMultiPane) {
-            getMenuInflater().inflate(R.menu.menu_item, menu);
+            getMenuInflater().inflate(R.menu.menu_item_compact, menu);
         }
         if (isSearchable()) {
             getMenuInflater().inflate(R.menu.menu_search, menu);

@@ -175,7 +175,11 @@ public class WebFragment extends LazyLoadFragment
 
     @Override
     protected void prepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_readability).setVisible(modeToggleEnabled());
+        MenuItem menuReadability = menu.findItem(R.id.menu_readability);
+        menuReadability.setVisible(modeToggleEnabled());
+        mMenuTintDelegate.setIcon(menuReadability, mReadability ?
+                R.drawable.ic_web_black_24dp : R.drawable.ic_chrome_reader_mode_black_24dp);
+        menuReadability.setTitle(mReadability ? R.string.article : R.string.readability);
         menu.findItem(R.id.menu_font_options).setVisible(fontEnabled());
     }
 
