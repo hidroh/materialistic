@@ -44,6 +44,7 @@
     <string translatable="false" name="pref_multi_window">pref_multi_window</string>
     <string translatable="false" name="pref_navigation">pref_navigation</string>
     <string translatable="false" name="pref_navigation_help">pref_navigation_help</string>
+    <string translatable="false" name="pref_navigation_vibrate">pref_navigation_vibrate</string>
     <string translatable="false" name="pref_popular_range">pref_popular_range</string>
     <string translatable="false" name="pref_readability_font">pref_readability_font</string>
     <string translatable="false" name="pref_readability_line_height">pref_readability_line_height</string>
