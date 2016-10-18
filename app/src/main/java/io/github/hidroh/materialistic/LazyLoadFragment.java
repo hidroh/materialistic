@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.content.Context;
 import android.os.Bundle;
 
 /**
@@ -26,10 +27,18 @@ public abstract class LazyLoadFragment extends BaseFragment {
     private static final String STATE_EAGER_LOAD = "state:eagerLoad";
     private static final String STATE_LOADED = "state:loaded";
     private boolean mEagerLoad, mLoaded, mActivityCreated;
+    private boolean mNewInstance;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mNewInstance = false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mNewInstance = true;
         if (savedInstanceState != null) {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
             mLoaded = savedInstanceState.getBoolean(STATE_LOADED);
@@ -43,7 +52,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivityCreated = true;
-        if (!getRetainInstance() || savedInstanceState == null) {
+        if (isNewInstance()) {
             eagerLoad();
         }
     }
@@ -72,6 +81,10 @@ public abstract class LazyLoadFragment extends BaseFragment {
      * Load data after fragment becomes visible or if WIFI is enabled
      */
     protected abstract void load();
+
+    protected boolean isNewInstance() {
+        return !getRetainInstance() || mNewInstance;
+    }
 
     final void eagerLoad() {
         if (mEagerLoad && !mLoaded) {
