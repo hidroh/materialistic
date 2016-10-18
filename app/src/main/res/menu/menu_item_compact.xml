@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2015 Ha Duy Trung
+  ~ Copyright (c) 2016 Ha Duy Trung
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@id/menu_font_options"
-        android:title="@string/font_options"
-        android:icon="@drawable/ic_format_size_white_24dp"
-        app:showAsAction="ifRoom" />
-
+        android:id="@id/menu_external"
+        android:title="@string/view_in_browser"
+        android:menuCategory="secondary"
+        app:showAsAction="never"/>
     <item
-        android:id="@id/menu_readability"
-        android:title="@string/readability"
-        android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
-        app:showAsAction="always" />
-
+        android:id="@id/menu_share"
+        android:title="@string/share"
+        android:menuCategory="secondary"
+        app:showAsAction="never" />
 </menu>
