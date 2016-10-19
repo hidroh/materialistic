@@ -60,6 +60,8 @@ import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 
+import static io.github.hidroh.materialistic.Preferences.SwipeAction.Save;
+
 public class StoryRecyclerViewAdapter extends
         ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, Item> {
     private static final String STATE_ITEMS = "state:items";
@@ -104,6 +106,7 @@ public class StoryRecyclerViewAdapter extends
             }
         }
     };
+    private final Preferences.Observable mPrefObservable = new Preferences.Observable();
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject SessionManager mSessionManager;
     @Synthetic ArrayList<Item> mItems;
@@ -117,6 +120,7 @@ public class StoryRecyclerViewAdapter extends
     private boolean mShowAll = true;
     private int mCacheMode = ItemManager.MODE_DEFAULT;
     private ItemTouchHelper mItemTouchHelper;
+    @Synthetic ItemTouchHelperCallback mCallback;
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -124,40 +128,69 @@ public class StoryRecyclerViewAdapter extends
         ContentResolver cr = recyclerView.getContext().getContentResolver();
         cr.registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
         cr.registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
-        mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(recyclerView.getContext()) {
+        mCallback = new ItemTouchHelperCallback(recyclerView.getContext(),
+                Preferences.getListSwipePreferences(recyclerView.getContext())) {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                if (!mSwipeEnabled) {
-                    return 0;
-                }
                 Item item = getItem(viewHolder.getAdapterPosition());
                 if (item == null) {
                     return 0;
                 }
                 mSaved = item.isFavorite();
-                int swipeDirs = ItemTouchHelper.LEFT;
-                if (!item.isVoted() && !item.isPendingVoted()) {
-                    swipeDirs |= ItemTouchHelper.RIGHT;
-                }
-                return swipeDirs;
+                return checkSwipeDir(0, ItemTouchHelper.LEFT, mCallback.getLeftSwipeAction(), item) |
+                        checkSwipeDir(0, ItemTouchHelper.RIGHT, mCallback.getRightSwipeAction(), item);
             }
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                Preferences.SwipeAction action = direction == ItemTouchHelper.LEFT ?
+                        getLeftSwipeAction() : getRightSwipeAction();
                 Item item = getItem(viewHolder.getAdapterPosition());
                 if (item == null) {
                     return;
                 }
-                if (direction == ItemTouchHelper.LEFT) {
-                    toggleSave(item);
-                } else {
-                    notifyItemChanged(viewHolder.getAdapterPosition());
-                    vote(item, viewHolder);
+                switch (action) {
+                    case Save:
+                        toggleSave(item);
+                        break;
+                    case Refresh:
+                        // TODO
+                        notifyItemChanged(viewHolder.getAdapterPosition());
+                        break;
+                    case Vote:
+                        notifyItemChanged(viewHolder.getAdapterPosition());
+                        vote(item, viewHolder);
+                        break;
                 }
             }
-        });
+
+            private int checkSwipeDir(int swipeDirs, int swipeDir, Preferences.SwipeAction action, Item item) {
+                switch (action) {
+                    case None:
+                        break;
+                    case Vote:
+                        if (!item.isVoted() && !item.isPendingVoted()) {
+                            swipeDirs |= swipeDir;
+                        }
+                        break;
+                    default:
+                        swipeDirs |= swipeDir;
+                        break;
+                }
+                return swipeDirs;
+            }
+        };
+        mItemTouchHelper = new ItemTouchHelper(mCallback);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
         toggleAutoMarkAsViewed(recyclerView.getContext());
+        mPrefObservable.subscribe(recyclerView.getContext(),
+                (key, contextChanged) -> {
+                    mCallback.setSwipePreferences(recyclerView.getContext(),
+                            Preferences.getListSwipePreferences(recyclerView.getContext()));
+                    notifyDataSetChanged();
+                },
+                R.string.pref_list_swipe_left,
+                R.string.pref_list_swipe_right);
     }
 
     @Override
@@ -165,6 +198,7 @@ public class StoryRecyclerViewAdapter extends
         super.onDetachedFromRecyclerView(recyclerView);
         recyclerView.getContext().getContentResolver().unregisterContentObserver(mObserver);
         mItemTouchHelper.attachToRecyclerView(null);
+        mPrefObservable.unsubscribe(recyclerView.getContext());
     }
 
     @Override
@@ -552,38 +586,73 @@ public class StoryRecyclerViewAdapter extends
     static abstract class ItemTouchHelperCallback extends PeekabooTouchHelperCallback {
         private final String mSaveText;
         private final String mUnsaveText;
-        private final String mVoteText;
-        private final int mSaveColor;
-        private final int mVoteColor;
         boolean mSaved;
+        private Preferences.SwipeAction[] mSwipePreferences;
+        private String[] mTexts = new String[2];
+        private int[] mColors = new int[2];
 
-        ItemTouchHelperCallback(Context context) {
+        ItemTouchHelperCallback(Context context, Preferences.SwipeAction[] swipePreferences) {
             super(context);
             mSaveText = context.getString(R.string.save);
             mUnsaveText = context.getString(R.string.unsave);
-            mVoteText = context.getString(R.string.vote_up);
-            mSaveColor = ContextCompat.getColor(context, R.color.orange500);
-            mVoteColor = ContextCompat.getColor(context, R.color.greenA700);
+            setSwipePreferences(context, swipePreferences);
         }
 
         @Override
         protected String getLeftText() {
-            return mVoteText;
+            return getLeftSwipeAction() == Save ? getSaveText() : mTexts[0];
         }
 
         @Override
         protected String getRightText() {
-            return mSaved ? mUnsaveText : mSaveText;
+            return getRightSwipeAction() == Save ? getSaveText() : mTexts[1];
         }
 
         @Override
         protected int getLeftTextColor() {
-            return mVoteColor;
+            return mColors[0];
         }
 
         @Override
         protected int getRightTextColor() {
-            return mSaveColor;
+            return mColors[1];
+        }
+
+        @Synthetic
+        void setSwipePreferences(Context context, Preferences.SwipeAction[] swipePreferences) {
+            mSwipePreferences = swipePreferences;
+            for (int i = 0; i < 2; i++) {
+                switch (swipePreferences[i]) {
+                    case Vote:
+                        mTexts[i] = context.getString(R.string.vote_up);
+                        mColors[i] = ContextCompat.getColor(context, R.color.greenA700);
+                        break;
+                    case Save:
+                        mTexts[i] = null; // dynamic text
+                        mColors[i] = ContextCompat.getColor(context, R.color.orange500);
+                        break;
+                    case Refresh:
+                        mTexts[i] = context.getString(R.string.refresh);
+                        mColors[i] = ContextCompat.getColor(context, R.color.lightBlueA700);
+                        break;
+                    default:
+                        mTexts[i] = null;
+                        mColors[i] = 0;
+                        break;
+                }
+            }
+        }
+
+        Preferences.SwipeAction getLeftSwipeAction() {
+            return mSwipePreferences == null ? Preferences.SwipeAction.None : mSwipePreferences[0];
+        }
+
+        Preferences.SwipeAction getRightSwipeAction() {
+            return mSwipePreferences == null ? Preferences.SwipeAction.None : mSwipePreferences[1];
+        }
+
+        private String getSaveText() {
+            return mSaved ? mUnsaveText : mSaveText;
         }
     }
 }

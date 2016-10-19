@@ -46,15 +46,13 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
         mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
                 R.string.pref_font,
                 R.string.pref_text_size,
-                R.string.pref_list_item_view,
-                R.string.pref_swipe_gestures);
+                R.string.pref_list_item_view);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        getAdapter().setSwipeEnabled(Preferences.swipeGesturesEnabled(getActivity()));
         getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
         if (savedInstanceState != null) {
             getAdapter().restoreState(savedInstanceState.getBundle(STATE_ADAPTER));
@@ -151,8 +149,6 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
             mRecyclerView.setAdapter(getAdapter());
         } else if (key == R.string.pref_list_item_view) {
             getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
-        } else if (key == R.string.pref_swipe_gestures) {
-            getAdapter().setSwipeEnabled(Preferences.swipeGesturesEnabled(getActivity()));
         }
     }
 

@@ -60,18 +60,18 @@ abstract class PeekabooTouchHelperCallback extends ItemTouchHelper.SimpleCallbac
 
     private void drawPeekingText(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX) {
         View itemView = viewHolder.itemView;
-        boolean showLeft = dX > 0;
-        String text = showLeft ? getLeftText() : getRightText();
+        boolean swipeRight = dX > 0;
+        String text = swipeRight ? getRightText() : getLeftText();
         Rect rect = new Rect();
         mPaint.getTextBounds(text, 0, text.length(), rect);
         float textWidth = rect.right - rect.left,
                 textHeight = rect.bottom - rect.top,
                 width = itemView.getWidth(),
                 paddingY = (itemView.getHeight() - textHeight) / 2;
-        mPaint.setColor(showLeft ? getLeftTextColor() : getRightTextColor());
+        mPaint.setColor(swipeRight ? getRightTextColor() : getLeftTextColor());
         mPaint.setAlpha(Math.min(255, (int) (255 / getSwipeThreshold(viewHolder) * Math.abs(dX) / width)));
         canvas.drawText(text.toUpperCase(Locale.getDefault()),
-                showLeft ? itemView.getLeft() + mPadding :
+                swipeRight ? itemView.getLeft() + mPadding :
                         itemView.getRight() - mPadding - textWidth,
                 itemView.getBottom() - paddingY,
                 mPaint);

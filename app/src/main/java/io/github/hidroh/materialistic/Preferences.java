@@ -37,8 +37,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.annotation.PublicApi;
+import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.preference.ThemePreference;
 
@@ -49,6 +49,12 @@ public class Preferences {
     private static final String PREFERENCES_DRAFT = "_drafts";
     @VisibleForTesting static Boolean sReleaseNotesSeen = null;
 
+    public enum SwipeAction {
+        None,
+        Vote,
+        Save,
+        Refresh
+    }
     public enum StoryViewMode {
         Comment,
         Article,
@@ -286,8 +292,10 @@ public class Preferences {
                 get(context, R.string.pref_multi_window, R.string.pref_multi_window_value_none));
     }
 
-    public static boolean swipeGesturesEnabled(Context context) {
-        return get(context, R.string.pref_swipe_gestures, true);
+    public static SwipeAction[] getListSwipePreferences(Context context) {
+        String left = get(context, R.string.pref_list_swipe_left, R.string.swipe_save),
+                right = get(context, R.string.pref_list_swipe_right, R.string.swipe_vote);
+        return new SwipeAction[]{parseSwipeAction(left), parseSwipeAction(right)};
     }
 
     public static void reset(Context context) {
@@ -295,6 +303,14 @@ public class Preferences {
                 .edit()
                 .clear()
                 .apply();
+    }
+
+    private static SwipeAction parseSwipeAction(String value) {
+        try {
+            return SwipeAction.valueOf(value);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return SwipeAction.None;
+        }
     }
 
     @Synthetic

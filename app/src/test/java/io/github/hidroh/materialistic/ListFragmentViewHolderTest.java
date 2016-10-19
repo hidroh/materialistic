@@ -453,7 +453,10 @@ public class ListFragmentViewHolderTest {
     public void testDisableSwipe() {
         ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
-                .putBoolean(activity.getString(R.string.pref_swipe_gestures), false)
+                .putString(activity.getString(R.string.pref_list_swipe_left),
+                        Preferences.SwipeAction.None.name())
+                .putString(activity.getString(R.string.pref_list_swipe_right),
+                        Preferences.SwipeAction.None.name())
                 .apply();
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
