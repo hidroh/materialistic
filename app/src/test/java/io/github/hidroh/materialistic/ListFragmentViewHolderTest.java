@@ -56,12 +56,12 @@ import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.TestLayoutManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowAnimation;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -401,6 +401,7 @@ public class ListFragmentViewHolderTest {
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         assertNotNull(popupMenu);
+        assertThat(popupMenu.getMenu().findItem(R.id.menu_contextual_save).isVisible()).isFalse();
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_save));
         verify(favoriteManager).add(any(Context.class), eq(item));
@@ -487,6 +488,7 @@ public class ListFragmentViewHolderTest {
         adapter.getViewHolder(0).itemView.performLongClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         assertNotNull(popupMenu);
+        assertThat(popupMenu.getMenu().findItem(R.id.menu_contextual_vote).isVisible()).isFalse();
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
@@ -573,6 +575,47 @@ public class ListFragmentViewHolderTest {
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class)
                 .hasExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testRefresh() {
+        verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        reset(itemManager);
+        adapter.getViewHolder(0).itemView.performLongClick();
+        PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
+        assertNotNull(popupMenu);
+        shadowOf(popupMenu).getOnMenuItemClickListener()
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_refresh));
+        verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), any());
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Test
+    public void testSwipeToRefresh() {
+        verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
+        itemListener.getValue().onResponse(item);
+        reset(itemManager);
+        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_list_swipe_left),
+                        Preferences.SwipeAction.None.name())
+                .putString(activity.getString(R.string.pref_list_swipe_right),
+                        Preferences.SwipeAction.Refresh.name())
+                .apply();
+        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
+        assertThat(swipeCallback.getSwipeDirs(recyclerView, holder))
+                .isEqualTo(ItemTouchHelper.RIGHT);
+
+        Canvas canvas = mock(Canvas.class);
+        swipeCallback.onChildDraw(canvas, recyclerView, holder, 1f, 0f,
+                ItemTouchHelper.ACTION_STATE_SWIPE, true);
+        verify(canvas).drawText(eq(activity.getString(R.string.refresh).toUpperCase()),
+                anyFloat(), anyFloat(), any(Paint.class));
+
+        swipeCallback.onSwiped(holder, ItemTouchHelper.RIGHT);
+        verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), any());
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

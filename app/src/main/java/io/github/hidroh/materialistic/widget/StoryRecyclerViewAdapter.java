@@ -154,8 +154,7 @@ public class StoryRecyclerViewAdapter extends
                         toggleSave(item);
                         break;
                     case Refresh:
-                        // TODO
-                        notifyItemChanged(viewHolder.getAdapterPosition());
+                        refresh(item, viewHolder);
                         break;
                     case Vote:
                         notifyItemChanged(viewHolder.getAdapterPosition());
@@ -428,6 +427,12 @@ public class StoryRecyclerViewAdapter extends
                 .inflate(R.menu.menu_contextual_story)
                 .setMenuItemTitle(R.id.menu_contextual_save,
                         story.isFavorite() ? R.string.unsave : R.string.save)
+                .setMenuItemVisible(R.id.menu_contextual_save,
+                        !mCallback.hasAction(Preferences.SwipeAction.Save))
+                .setMenuItemVisible(R.id.menu_contextual_vote,
+                        !mCallback.hasAction(Preferences.SwipeAction.Vote))
+                .setMenuItemVisible(R.id.menu_contextual_refresh,
+                        !mCallback.hasAction(Preferences.SwipeAction.Refresh))
                 .setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.menu_contextual_save) {
                         toggleSave(story);
@@ -435,6 +440,10 @@ public class StoryRecyclerViewAdapter extends
                     }
                     if (item.getItemId() == R.id.menu_contextual_vote) {
                         vote(story, holder);
+                        return true;
+                    }
+                    if (item.getItemId() == R.id.menu_contextual_refresh) {
+                        refresh(story, holder);
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_comment) {
@@ -473,6 +482,12 @@ public class StoryRecyclerViewAdapter extends
         Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
                 .setAction(R.string.undo, v -> toggleSave(story))
                 .show();
+    }
+
+    @Synthetic
+    void refresh(Item story, RecyclerView.ViewHolder holder) {
+        story.setLocalRevision(-1);
+        notifyItemChanged(holder.getAdapterPosition());
     }
 
     @Synthetic
@@ -649,6 +664,11 @@ public class StoryRecyclerViewAdapter extends
 
         Preferences.SwipeAction getRightSwipeAction() {
             return mSwipePreferences == null ? Preferences.SwipeAction.None : mSwipePreferences[1];
+        }
+
+        boolean hasAction(Preferences.SwipeAction action) {
+            return mSwipePreferences != null &&
+                    (mSwipePreferences[0] == action || mSwipePreferences[1] == action);
         }
 
         private String getSaveText() {
