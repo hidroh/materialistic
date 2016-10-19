@@ -224,4 +224,24 @@
         <item>@color/brown500</item>
         <item>@color/blueGrey500</item>
     </array>
+
+    <!-- Swipe options -->
+    <string-array name="pref_list_swipe_options">
+        <item>@string/none</item>
+        <item>@string/refresh</item>
+        <item>@string/save</item>
+        <item>@string/vote_up</item>
+    </string-array>
+    <string-array name="pref_list_swipe_values">
+        <item>@string/swipe_none</item>
+        <item>@string/swipe_refresh</item>
+        <item>@string/swipe_save</item>
+        <item>@string/swipe_vote</item>
+    </string-array>
+
+    <string name="swipe_none" translatable="false">None</string>
+    <string name="swipe_save" translatable="false">Save</string>
+    <string name="swipe_vote" translatable="false">Vote</string>
+    <string name="swipe_refresh" translatable="false">Refresh</string>
+
 </resources>

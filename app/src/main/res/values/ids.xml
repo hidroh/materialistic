@@ -85,6 +85,7 @@
     <item type="id" name="menu_list" />
     <item type="id" name="menu_contextual_save" />
     <item type="id" name="menu_contextual_vote" />
+    <item type="id" name="menu_contextual_refresh" />
     <item type="id" name="menu_contextual_comment" />
     <item type="id" name="menu_contextual_profile" />
     <item type="id" name="menu_contextual_share" />

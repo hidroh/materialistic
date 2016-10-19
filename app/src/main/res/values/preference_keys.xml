@@ -52,7 +52,8 @@
     <string translatable="false" name="pref_search_sort">pref_search_sort</string>
     <string translatable="false" name="pref_smooth_scroll">pref_smooth_scroll</string>
     <string translatable="false" name="pref_story_display">pref_story_display</string>
-    <string translatable="false" name="pref_swipe_gestures">pref_swipe_gestures</string>
+    <string translatable="false" name="pref_list_swipe_left">pref_list_swipe_left</string>
+    <string translatable="false" name="pref_list_swipe_right">pref_list_swipe_right</string>
     <string translatable="false" name="pref_text_size">pref_text_size</string>
     <string translatable="false" name="pref_theme">pref_theme</string>
     <string translatable="false" name="pref_widget_theme">pref_widget_theme</string>

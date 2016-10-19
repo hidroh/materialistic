@@ -57,10 +57,18 @@
         android:summary="@string/pref_auto_viewed_summary"
         android:defaultValue="false" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:key="@string/pref_swipe_gestures"
-        android:title="@string/pref_swipe_gestures_title"
-        android:summary="@string/pref_swipe_gestures_summary"
-        android:defaultValue="true" />
+    <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
+        android:key="@string/pref_list_swipe_left"
+        android:title="@string/pref_list_swipe_left_title"
+        app:entries="@array/pref_list_swipe_options"
+        app:entryValues="@array/pref_list_swipe_values"
+        android:defaultValue="@string/swipe_save" />
+
+    <io.github.hidroh.materialistic.preference.SimpleSpinnerPreference
+        android:key="@string/pref_list_swipe_right"
+        android:title="@string/pref_list_swipe_right_title"
+        app:entries="@array/pref_list_swipe_options"
+        app:entryValues="@array/pref_list_swipe_values"
+        android:defaultValue="@string/swipe_vote" />
 
 </android.support.v7.preference.PreferenceScreen>
