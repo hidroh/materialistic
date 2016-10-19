@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -50,12 +52,16 @@ public class BaseListActivityTest {
         assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share));
     }
 
+    @Config(shadows = ShadowSnackbar.class)
     @Test
     public void testShowReleaseNotes() {
         controller.pause().stop().destroy();
         Preferences.sReleaseNotesSeen = false;
         controller = Robolectric.buildActivity(TestListActivity.class);
         activity = controller.create().postCreate(null).start().resume().visible().get();
+        View snackbarView = ShadowSnackbar.getLatestView();
+        assertNotNull(snackbarView);
+        snackbarView.findViewById(R.id.snackbar_action).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ReleaseNotesActivity.class);
         Preferences.sReleaseNotesSeen = null;

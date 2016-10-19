@@ -27,9 +27,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
@@ -151,7 +153,15 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (!Preferences.isReleaseNotesSeen(this)) {
-            startActivity(new Intent(this, ReleaseNotesActivity.class));
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.content_frame),
+                    R.string.hint_update, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.title_activity_release,
+                    v -> {
+                        snackbar.dismiss();
+                        startActivity(new Intent(BaseListActivity.this, ReleaseNotesActivity.class));
+                    })
+                    .setActionTextColor(ContextCompat.getColor(this, R.color.orange500))
+                    .show();
         }
     }
 
