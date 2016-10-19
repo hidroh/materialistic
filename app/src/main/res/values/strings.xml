@@ -315,5 +315,6 @@
     <string name="full_text">Full text</string>
     <string name="empty_text">[This story has no content]</string>
     <string name="none">None</string>
+    <string name="hint_update">Your app has just been updated!</string>
 
 </resources>

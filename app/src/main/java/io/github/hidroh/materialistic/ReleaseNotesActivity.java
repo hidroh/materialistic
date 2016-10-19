@@ -29,7 +29,6 @@ public class ReleaseNotesActivity extends InjectableActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.slide_in_up, 0);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_release);
         findViewById(R.id.button_ok).setOnClickListener(v -> finish());
