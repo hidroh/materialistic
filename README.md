@@ -9,7 +9,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - Latest Android SDK tools
 - Latest Android platform tools
 - Android SDK Build tools 25
-- Android SDK 24
+- Android SDK 25
 - Android Support Repository
 - Android Support Library 24.2.0
 

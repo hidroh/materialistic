@@ -5,13 +5,13 @@ plugins {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
-        targetSdkVersion 24 // TODO http://b.android.com/212316
+        targetSdkVersion 25 // TODO http://b.android.com/212316
         versionCode 61
         versionName "3.0"
         buildConfigField "int", "LATEST_RELEASE", "59"
