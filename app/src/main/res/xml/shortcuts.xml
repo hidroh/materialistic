@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016 Ha Duy Trung
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<shortcuts
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="top"
+        android:icon="@drawable/sc_trending"
+        android:shortcutShortLabel="@string/title_activity_list"
+        android:shortcutLongLabel="@string/title_activity_list"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.hidroh.materialistic"
+            android:targetClass="io.github.hidroh.materialistic.ListActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="new"
+        android:icon="@drawable/sc_new_releases"
+        android:shortcutShortLabel="@string/title_activity_new"
+        android:shortcutLongLabel="@string/title_activity_new"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.hidroh.materialistic"
+            android:targetClass="io.github.hidroh.materialistic.NewActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="favorite"
+        android:icon="@drawable/sc_bookmark"
+        android:shortcutShortLabel="@string/title_activity_favorite"
+        android:shortcutLongLabel="@string/title_activity_favorite"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.hidroh.materialistic"
+            android:targetClass="io.github.hidroh.materialistic.FavoriteActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="compose"
+        android:icon="@drawable/sc_add"
+        android:shortcutShortLabel="@string/title_activity_submit"
+        android:shortcutLongLabel="@string/title_activity_submit"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.github.hidroh.materialistic"
+            android:targetClass="io.github.hidroh.materialistic.SubmitActivity" />
+    </shortcut>
+</shortcuts>
