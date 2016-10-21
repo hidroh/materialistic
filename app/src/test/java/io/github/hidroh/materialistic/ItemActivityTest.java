@@ -343,7 +343,7 @@ public class ItemActivityTest {
                 .putBoolean(activity.getString(R.string.pref_external), true)
                 .apply();
         controller.withIntent(intent).create().start().resume();
-        activity.findViewById(R.id.header_card_view).performClick();
+        activity.findViewById(R.id.button_article).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
 
