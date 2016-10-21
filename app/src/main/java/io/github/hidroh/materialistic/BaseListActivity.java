@@ -365,7 +365,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void openSinglePaneItem() {
-        if (mExternalBrowser) {
+        if (mExternalBrowser && mStoryViewMode != Preferences.StoryViewMode.Comment) {
             AppUtils.openWebUrlExternal(this, mSelectedItem, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
         } else {
             Intent intent = new Intent(this, ItemActivity.class)
