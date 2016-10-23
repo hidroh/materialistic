@@ -76,6 +76,7 @@ public class WebFragment extends LazyLoadFragment
     static final String EXTRA_FULLSCREEN = WebFragment.class.getName() + ".EXTRA_FULLSCREEN";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
     private static final String STATE_CONTENT = "state:content";
+    private static final int DEFAULT_PROGRESS = 20;
     @Synthetic WebView mWebView;
     private NestedScrollView mScrollView;
     @Synthetic boolean mExternalRequired = false;
@@ -300,7 +301,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void parse() {
-        mProgressBar.setIndeterminate(true);
+        mProgressBar.setProgress(DEFAULT_PROGRESS);
         mReadabilityClient.parse(mItem.getId(), mItem.getUrl(), new ReadabilityCallback(this));
     }
 
@@ -518,7 +519,6 @@ public class WebFragment extends LazyLoadFragment
     @Synthetic
     void onParsed(String content) {
         if (isAttached()) {
-            mProgressBar.setIndeterminate(false);
             mContent = content;
             if (!TextUtils.isEmpty(mContent)) {
                 loadContent();

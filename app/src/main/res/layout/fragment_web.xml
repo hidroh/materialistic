@@ -66,12 +66,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <ProgressBar
-                    android:id="@id/progress"
-                    android:indeterminateTint="@color/lightBlueA700"
-                    style="@style/AppProgressBarHorizontalStyle"
-                    tools:targetApi="lollipop"/>
-
             </FrameLayout>
 
         </LinearLayout>
@@ -86,5 +80,9 @@
         <!-- dynamically add web view here -->
 
     </FrameLayout>
+
+    <ProgressBar
+        android:id="@id/progress"
+        style="@style/AppProgressBarHorizontalStyle" />
 
 </FrameLayout>
