@@ -367,7 +367,7 @@ public class WebFragment extends LazyLoadFragment
                             }
                             return false;
                         })
-                        .setMenuItemVisible(R.id.menu_font_options, !TextUtils.isEmpty(mContent))
+                        .setMenuItemVisible(R.id.menu_font_options, fontEnabled())
                         .show());
         mEditText.setOnEditorActionListener((v, actionId, event) -> { findInPage(); return true; });
     }
