@@ -344,7 +344,13 @@ public class WebFragment extends LazyLoadFragment
             toggleSoftKeyboard(true);
             mControls.showNext();
         });
-        mButtonRefresh.setOnClickListener(v -> mWebView.reload());
+        mButtonRefresh.setOnClickListener(v -> {
+            if (mWebView.getProgress() < 100) {
+                mWebView.stopLoading();
+            } else {
+                mWebView.reload();
+            }
+        });
         view.findViewById(R.id.button_exit).setOnClickListener(v ->
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
                         new Intent(WebFragment.ACTION_FULLSCREEN)

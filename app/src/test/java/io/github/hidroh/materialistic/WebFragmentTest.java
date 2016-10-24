@@ -228,6 +228,12 @@ public class WebFragmentTest {
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView.lastGlobalLoadedUrl = null;
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
+                .extract(activity.findViewById(R.id.web_view));
+        shadowWebView.setProgress(20);
+        activity.findViewById(R.id.button_refresh).performClick();
+        assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
+        shadowWebView.setProgress(100);
         activity.findViewById(R.id.button_refresh).performClick();
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isEqualTo(ShadowWebView.RELOADED);
     }
