@@ -76,6 +76,7 @@ public class WebFragment extends LazyLoadFragment
     static final String EXTRA_FULLSCREEN = WebFragment.class.getName() + ".EXTRA_FULLSCREEN";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
     private static final String STATE_CONTENT = "state:content";
+    private static final int DEFAULT_PROGRESS = 20;
     @Synthetic WebView mWebView;
     private NestedScrollView mScrollView;
     @Synthetic boolean mExternalRequired = false;
@@ -275,6 +276,7 @@ public class WebFragment extends LazyLoadFragment
 
     @Override
     protected void load() {
+        mWebView.setVisibility(View.INVISIBLE);
         if (mIsHackerNewsUrl) {
             bindContent();
         } else if (mReadability && !mEmpty) {
@@ -300,7 +302,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void parse() {
-        mProgressBar.setIndeterminate(true);
+        mProgressBar.setProgress(DEFAULT_PROGRESS);
         mReadabilityClient.parse(mItem.getId(), mItem.getUrl(), new ReadabilityCallback(this));
     }
 
@@ -342,7 +344,13 @@ public class WebFragment extends LazyLoadFragment
             toggleSoftKeyboard(true);
             mControls.showNext();
         });
-        mButtonRefresh.setOnClickListener(v -> mWebView.reload());
+        mButtonRefresh.setOnClickListener(v -> {
+            if (mWebView.getProgress() < 100) {
+                mWebView.stopLoading();
+            } else {
+                mWebView.reload();
+            }
+        });
         view.findViewById(R.id.button_exit).setOnClickListener(v ->
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
                         new Intent(WebFragment.ACTION_FULLSCREEN)
@@ -366,7 +374,7 @@ public class WebFragment extends LazyLoadFragment
                             }
                             return false;
                         })
-                        .setMenuItemVisible(R.id.menu_font_options, !TextUtils.isEmpty(mContent))
+                        .setMenuItemVisible(R.id.menu_font_options, fontEnabled())
                         .show());
         mEditText.setOnEditorActionListener((v, actionId, event) -> { findInPage(); return true; });
     }
@@ -395,12 +403,8 @@ public class WebFragment extends LazyLoadFragment
             @Override
             public void onProgressChanged(android.webkit.WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                mProgressBar.setVisibility(VISIBLE);
                 mProgressBar.setProgress(newProgress);
-                if (newProgress == 100) {
-                    mProgressBar.setVisibility(GONE);
-                    mWebView.setVisibility(mExternalRequired ? GONE : VISIBLE);
-                }
+                mProgressBar.setVisibility(newProgress == 100 ? GONE : VISIBLE);
                 mButtonRefresh.setImageResource(newProgress == 100 ?
                         R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
             }
@@ -518,7 +522,6 @@ public class WebFragment extends LazyLoadFragment
     @Synthetic
     void onParsed(String content) {
         if (isAttached()) {
-            mProgressBar.setIndeterminate(false);
             mContent = content;
             if (!TextUtils.isEmpty(mContent)) {
                 loadContent();

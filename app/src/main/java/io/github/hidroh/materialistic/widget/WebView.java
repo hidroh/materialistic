@@ -61,8 +61,8 @@ public class WebView extends android.webkit.WebView {
         if (getProgress() < 100) {
             stopLoading(); // this will fire onPageFinished for current URL
         }
-        loadUrl(BLANK);
         mPendingUrl = url;
+        loadUrl(BLANK); // clear current web resources, load pending URL upon onPageFinished
     }
 
     public void reloadHtml(String html) {
@@ -77,6 +77,10 @@ public class WebView extends android.webkit.WebView {
         public void onPageStarted(android.webkit.WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             view.pageUp(true);
+            WebView webView = (WebView) view;
+            if (TextUtils.equals(url, webView.mPendingUrl)) {
+                view.setVisibility(VISIBLE);
+            }
             if (mClient != null) {
                 mClient.onPageStarted(view, url, favicon);
             }
@@ -86,7 +90,7 @@ public class WebView extends android.webkit.WebView {
         public void onPageFinished(android.webkit.WebView view, String url) {
             super.onPageFinished(view, url);
             WebView webView = (WebView) view;
-            if (TextUtils.equals(url, BLANK)) {
+            if (TextUtils.equals(url, BLANK)) { // has pending reload, open corresponding URL
                 if (!TextUtils.isEmpty(webView.mPendingHtml)) {
                     view.loadDataWithBaseURL(webView.mPendingUrl, webView.mPendingHtml,
                             "text/html", "UTF-8", webView.mPendingUrl);
@@ -94,7 +98,7 @@ public class WebView extends android.webkit.WebView {
                     view.loadUrl(webView.mPendingUrl);
                 }
             } else if (!TextUtils.isEmpty(webView.mPendingUrl) &&
-                    TextUtils.equals(url, webView.mPendingUrl)) {
+                    TextUtils.equals(url, webView.mPendingUrl)) { // reload done, clear history
                 webView.mPendingUrl = null;
                 webView.mPendingHtml = null;
                 view.clearHistory();

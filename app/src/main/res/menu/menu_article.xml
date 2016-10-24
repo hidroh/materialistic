@@ -15,19 +15,22 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:tools="http://schemas.android.com/tools"
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@id/menu_font_options"
         android:title="@string/font_options"
         android:icon="@drawable/ic_format_size_white_24dp"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"/>
 
     <item
         android:id="@id/menu_readability"
         android:title="@string/readability"
         android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"/>
 
 </menu>
