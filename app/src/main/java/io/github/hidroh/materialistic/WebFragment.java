@@ -276,6 +276,7 @@ public class WebFragment extends LazyLoadFragment
 
     @Override
     protected void load() {
+        mWebView.setVisibility(View.INVISIBLE);
         if (mIsHackerNewsUrl) {
             bindContent();
         } else if (mReadability && !mEmpty) {
@@ -396,12 +397,8 @@ public class WebFragment extends LazyLoadFragment
             @Override
             public void onProgressChanged(android.webkit.WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                mProgressBar.setVisibility(VISIBLE);
                 mProgressBar.setProgress(newProgress);
-                if (newProgress == 100) {
-                    mProgressBar.setVisibility(GONE);
-                    mWebView.setVisibility(mExternalRequired ? GONE : VISIBLE);
-                }
+                mProgressBar.setVisibility(newProgress == 100 ? GONE : VISIBLE);
                 mButtonRefresh.setImageResource(newProgress == 100 ?
                         R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
             }
