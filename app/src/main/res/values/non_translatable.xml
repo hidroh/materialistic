@@ -63,25 +63,28 @@
                 </style>
             </head>
             <body>
-                <h3>v3.0</h3>
+                <h3>3.1</h3>
                 <ul>
-                    <li><b>Home screen widget</b><sup>new!</sup>: quick glance at top articles from your home screen</li>
-                    <li><b>On-screen D-pad</b><sup>new!</sup>: swipe it to quickly navigate nested comment threads
-                        <br/>
-                        <small>Enable in Comments display options</small>
-                        <br/>
-                        <small>Psst, it supports Konami code!</small>
-                    </li>
-                    <li><b>New list option</b>: Auto mark as viewed</li>
-                    <li><b>New app option</b>: Remember last launched screen</li>
-                    <li><b>New swipe gestures</b>: vote/save stories, expand/collapse comments</li>
+                    <li>Merge article &amp; readability tabs, with option to toggle between 2 modes</li>
+                    <li>Improve article display:
+                         <br/>
+                         <small>Rotate device without refreshing page</small>
+                         <br/>
+                         <small>Remember scroll position in fullscreen</small>
+                     </li>
+                    <li>Customize swipe actions: vote/refresh/save story</li>
+                    <li>Remember on-screen D-Pad position, option to turn off vibration</li>
+                    <li>Enable lazy loading for all connections</li>
+                    <li>Android N features<sup>new!</sup>: multi-window support, app shortcuts</li>
+                    <li>Many other fixes and improvements based on your feedback</li>
                 </ul>
                 If you encounter issues, please send me details via feedback dialog.
-                <h3>v2.8-2.9</h3>
+                <h3>v2.8-3.0</h3>
                 <ul>
+                    <li>Home screen widget</li>
+                    <li>On-screen D-pad to navigate nested comment threads</li>
                     <li>Full screen reading mode for article &amp; readability</li>
-                    <li><b>New section</b>: <a href="https://news.ycombinator.com/best">Best stories</a></li>
-                    <li><b>New option</b>: block ads for internal browser</li>
+                    <li>Block ads for internal browser</li>
                 </ul>
             </body>
         </html>
