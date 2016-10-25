@@ -37,7 +37,6 @@ public class HelpLazyLoadView extends ScrollView {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.comments));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.article));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.readability));
         Preferences.StoryViewMode defaultView = Preferences.getDefaultStoryView(getContext());
         int defaultTab;
         switch (defaultView) {
@@ -46,10 +45,8 @@ public class HelpLazyLoadView extends ScrollView {
                 defaultTab = 0;
                 break;
             case Article:
-                defaultTab = 1;
-                break;
             case Readability:
-                defaultTab = 2;
+                defaultTab = 1;
                 break;
         }
         //noinspection ConstantConditions
