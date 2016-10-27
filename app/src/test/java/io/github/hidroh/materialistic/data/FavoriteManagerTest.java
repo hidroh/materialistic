@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Parcel;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.app.AppCompatActivity;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
@@ -26,9 +24,10 @@ import java.util.Set;
 
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
-import io.github.hidroh.materialistic.test.TestWebItem;
 import rx.schedulers.Schedulers;
 
 import static junit.framework.Assert.assertEquals;
@@ -43,7 +42,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowContentResolverCompatJellybean.class, ShadowWebView.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowWebView.class, ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;

@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -53,11 +52,11 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -76,7 +75,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class, ShadowContentResolverCompatJellybean.class})
+@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;

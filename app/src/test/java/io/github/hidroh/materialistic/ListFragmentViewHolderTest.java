@@ -2,7 +2,6 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -11,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -88,8 +86,7 @@ import static org.robolectric.Shadows.shadowOf;
         ShadowRecyclerView.class,
         ShadowItemTouchHelper.class,
         ShadowAnimation.class,
-        ShadowSnackbar.class,
-        ShadowContentResolverCompatJellybean.class})
+        ShadowSnackbar.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
@@ -148,15 +145,11 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testStory() {
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        shadowOf(activity.getContentResolver())
-                .insert(MaterialisticProvider.URI_VIEWED, cv);
+        item.setIsViewed(true);
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
-        assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat((TextView) holder.itemView.findViewById(R.id.comment))
@@ -288,7 +281,6 @@ public class ListFragmentViewHolderTest {
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
         assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
-        assertViewed();
     }
 
     @Test
@@ -324,9 +316,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performClick();
-        assertViewed();
-        verify(activity.multiPaneListener).onItemSelected(any(WebItem.class)
-        );
+        verify(activity.multiPaneListener).onItemSelected(any(WebItem.class));
     }
 
     @Test

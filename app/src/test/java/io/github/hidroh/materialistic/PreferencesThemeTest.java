@@ -6,9 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +23,7 @@ public class PreferencesThemeTest {
     @Before
     public void setUp() {
         activity = Robolectric.setupActivity(Activity.class);
-        shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
+        activity.getTheme().setTo(activity.getResources().newTheme());
     }
 
     @Test

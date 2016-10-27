@@ -163,11 +163,11 @@ public class AppUtilsTest {
     public void testOpenExternalComment() {
         ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
         TestListActivity activity = controller.create().get();
-        AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
+        AppUtils.openExternal(activity, mock(PopupMenu.class),
                 new View(activity), new TestHnItem(1), null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
-        AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
-                new View(RuntimeEnvironment.application), new TestHnItem(1) {
+        AppUtils.openExternal(activity, mock(PopupMenu.class),
+                new View(activity), new TestHnItem(1) {
                     @Override
                     public String getUrl() {
                         return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
