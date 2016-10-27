@@ -11,23 +11,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
+import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
 
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportDrawerLayout.class})
+@Config(shadows = {ShadowSupportDrawerLayout.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class DrawerActivityLoginTest {
     private ActivityController<TestListActivity> controller;

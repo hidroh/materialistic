@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.ProgressBar;
 
 import org.junit.After;
@@ -45,7 +46,6 @@ import java.io.IOException;
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,7 +68,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("unchecked")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowWebView.class})
+@Config(shadows = {ShadowWebView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemSyncAdapterTest {
     private ItemSyncAdapter adapter;
@@ -86,7 +86,7 @@ public class ItemSyncAdapterTest {
         serviceController = Robolectric.buildService(ItemSyncService.class);
         service = serviceController.attach().create().get();
         setNetworkType(ConnectivityManager.TYPE_WIFI);
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_saved_item_sync), true)
                 .putBoolean(service.getString(R.string.pref_offline_comments), true)
@@ -99,7 +99,7 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncDisabled() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit().clear().apply();
         ItemSyncAdapter.initSync(service, "1");
         assertNull(ShadowContentResolver.getStatus(Application.createSyncAccount(),
@@ -143,7 +143,7 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.networkItem(any())).thenReturn(call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putString(service.getString(R.string.pref_offline_data),
                         service.getString(R.string.offline_data_default))
@@ -189,7 +189,7 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_comments), false)
                 .apply();
@@ -230,7 +230,7 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_readability), false)
                 .apply();
@@ -313,7 +313,7 @@ public class ItemSyncAdapterTest {
     @Test
     public void testSyncWebCache() {
         ShadowWebView.lastGlobalLoadedUrl = null;
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_article), true)
                 .apply();
@@ -327,7 +327,7 @@ public class ItemSyncAdapterTest {
     public void testSyncWebCacheNonWifi() {
         ShadowWebView.lastGlobalLoadedUrl = null;
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_article), true)
                 .apply();
@@ -340,7 +340,7 @@ public class ItemSyncAdapterTest {
     @Test
     public void testSyncWebCacheDisabled() {
         ShadowWebView.lastGlobalLoadedUrl = null;
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_article), false)
                 .apply();
@@ -383,7 +383,7 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(eq("3"))).thenReturn(kid2Call);
         when(TestRestServiceFactory.hnRestService.networkItem(eq("3"))).thenReturn(kid2Call);
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(service)
+        PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_notification), true)
                 .apply();

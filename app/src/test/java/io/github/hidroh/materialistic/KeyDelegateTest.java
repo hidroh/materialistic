@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.view.KeyEvent;
 
@@ -25,11 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -41,7 +40,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Config(shadows = ShadowSupportPreferenceManager.class)
 @RunWith(RobolectricGradleTestRunner.class)
 public class KeyDelegateTest {
     private KeyDelegate delegate;
@@ -55,7 +53,7 @@ public class KeyDelegateTest {
         reset(scrollable, appBar);
         controller = Robolectric.buildActivity(Activity.class);
         activity = controller.create().get();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), true)
                 .apply();
@@ -152,7 +150,7 @@ public class KeyDelegateTest {
 
     @Test
     public void testOnKeyDownDisabled() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), false)
                 .apply();
@@ -162,7 +160,7 @@ public class KeyDelegateTest {
 
     @Test
     public void testOnKeyUpDisabled() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), false)
                 .apply();
@@ -172,7 +170,7 @@ public class KeyDelegateTest {
 
     @Test
     public void testOnKeyLongPressDisabled() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_volume), false)
                 .apply();

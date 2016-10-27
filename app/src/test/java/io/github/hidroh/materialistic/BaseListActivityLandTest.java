@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -27,10 +28,9 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
+import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
@@ -39,14 +39,14 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(qualifiers = "w820dp-land", shadows = {ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
+@Config(qualifiers = "w820dp-land", shadows = {ShadowFloatingActionButton.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
@@ -135,11 +135,11 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testDefaultCommentView() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
                         activity.getString(R.string.pref_story_display_value_comments))
-                .commit();
+                .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestHnItem(1L) {
             @Override
@@ -161,11 +161,11 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testDefaultReadabilityView() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
                         activity.getString(R.string.pref_story_display_value_readability))
-                .commit();
+                .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestHnItem(1L) {
             @NonNull

@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.widget.TextView;
 
 import org.junit.Before;
@@ -30,14 +31,13 @@ import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowPreferenceFragmentCompat.class})
+@Config(shadows = {ShadowPreferenceFragmentCompat.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class PreferencesActivityTest {
     private TestPreferencesActivity activity;
@@ -57,7 +57,7 @@ public class PreferencesActivityTest {
     public void testPrefTheme() {
         String key = activity.getString(R.string.pref_theme);
         // trigger listener
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(key, "dark")
                 .apply();

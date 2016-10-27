@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 
 import org.junit.After;
@@ -8,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -18,14 +18,12 @@ import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ReadabilityFragmentLazyLoadTest {
     private TestReadabilityActivity activity;
@@ -39,7 +37,7 @@ public class ReadabilityFragmentLazyLoadTest {
         reset(readabilityClient);
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
                         activity.getString(R.string.pref_story_display_value_readability))
@@ -76,7 +74,7 @@ public class ReadabilityFragmentLazyLoadTest {
 
     @Test
     public void testVisible() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .commit();

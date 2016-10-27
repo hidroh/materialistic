@@ -17,6 +17,7 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
+import android.preference.PreferenceManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,20 +25,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = ShadowSupportPreferenceManager.class)
 @RunWith(ParameterizedRobolectricGradleTestRunner.class)
 public class LauncherActivityTest {
     private final int choice;
@@ -66,7 +64,7 @@ public class LauncherActivityTest {
 
     @Before
     public void setUp() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_launch_screen),
                         RuntimeEnvironment.application.getString(choice))

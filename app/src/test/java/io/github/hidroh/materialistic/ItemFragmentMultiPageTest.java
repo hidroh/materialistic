@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,12 +37,11 @@ import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.shadow.CustomShadows;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
+import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowRecyclerViewAdapter.class, ShadowPreferenceFragmentCompat.class})
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowRecyclerViewAdapter.class, ShadowPreferenceFragmentCompat.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
@@ -72,7 +72,7 @@ public class ItemFragmentMultiPageTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_multiple))

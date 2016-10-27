@@ -26,20 +26,17 @@ import android.widget.TextView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 
 import static android.content.Context.MODE_PRIVATE;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = ShadowSupportPreferenceManager.class)
 @RunWith(RobolectricGradleTestRunner.class)
 public class WidgetProviderTest {
     private WidgetProvider widgetProvider;

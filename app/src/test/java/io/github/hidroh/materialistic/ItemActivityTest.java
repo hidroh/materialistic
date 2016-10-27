@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -56,7 +57,6 @@ import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -75,7 +75,6 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowFloatingActionButton.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
@@ -304,7 +303,7 @@ public class ItemActivityTest {
 
     @Test
     public void testHeaderOpenExternal() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_custom_tab), false)
                 .apply();
@@ -337,7 +336,7 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
                 .apply();
@@ -459,7 +458,7 @@ public class ItemActivityTest {
 
     @Test
     public void testDefaultReadabilityView() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
                         activity.getString(R.string.pref_story_display_value_readability))
@@ -534,7 +533,7 @@ public class ItemActivityTest {
 
     @Test
     public void testReply() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_story_display),
                         activity.getString(R.string.pref_story_display_value_comments))
@@ -597,6 +596,7 @@ public class ItemActivityTest {
         verify(keyDelegate).onKeyDown(anyInt(), any(KeyEvent.class));
     }
 
+    @Config(shadows = {ShadowFloatingActionButton.class})
     @Test
     public void testFullscreen() {
         Intent intent = new Intent();

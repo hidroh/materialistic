@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
 import android.webkit.WebView;
@@ -42,7 +43,6 @@ import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
@@ -62,7 +62,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowWebView.class, ShadowSupportPreferenceManager.class})
+@Config(shadows = {ShadowWebView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class WebFragmentTest {
     private WebActivity activity;
@@ -88,7 +88,7 @@ public class WebFragmentTest {
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
         activity = controller.get();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_ad_block), true)
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
@@ -162,7 +162,7 @@ public class WebFragmentTest {
     @Test
     public void testAdBlockerDisabled() {
         controller.pause().stop().destroy();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_ad_block), false)
                 .apply();

@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -81,7 +82,6 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSwipeRefreshLayout.class,
-        ShadowSupportPreferenceManager.class,
         ShadowRecyclerViewAdapter.class,
         ShadowRecyclerView.class,
         ShadowItemTouchHelper.class,
@@ -248,7 +248,7 @@ public class ListFragmentViewHolderTest {
         itemListener.getValue().onResponse(new PopulatedStory(2));
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_highlight_updated), false)
                 .apply();
@@ -442,7 +442,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testDisableSwipe() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_list_swipe_left),
                         Preferences.SwipeAction.None.name())
@@ -587,7 +587,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         reset(itemManager);
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_list_swipe_left),
                         Preferences.SwipeAction.None.name())
@@ -624,7 +624,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testAutoMarkAsViewed() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_auto_viewed), true)
                 .apply();
@@ -651,7 +651,7 @@ public class ListFragmentViewHolderTest {
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager).view(any(Context.class), any()); // should not trigger again
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_auto_viewed), false)
                 .apply();

@@ -12,9 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -24,7 +22,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -35,7 +33,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class LoginActivityTest {
     private ActivityController<LoginActivity> controller;

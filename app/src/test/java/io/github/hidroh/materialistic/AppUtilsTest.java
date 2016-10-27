@@ -50,7 +50,6 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class AppUtilsTest {
     @Inject AlertDialogBuilder alertDialogBuilder;

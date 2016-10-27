@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -48,7 +49,6 @@ import io.github.hidroh.materialistic.test.TestLayoutManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowTextView;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
@@ -68,7 +68,6 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowRecyclerViewAdapter.class,
-        ShadowSupportPreferenceManager.class,
         ShadowTextView.class})
 @RunWith(RobolectricGradleTestRunner.class)
 public class ItemFragmentSinglePageTest {
@@ -240,7 +239,7 @@ public class ItemFragmentSinglePageTest {
                 ItemFragment.class.getName(), args);
         controller = Robolectric.buildActivity(ItemFragmentMultiPageTest.TestItemActivity.class);
         activity = controller.create().start().resume().visible().get();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .apply();
@@ -336,7 +335,7 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testDefaultCollapsed() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
                         RuntimeEnvironment.application.getString(R.string.pref_comment_display_value_collapsed))
@@ -398,13 +397,13 @@ public class ItemFragmentSinglePageTest {
     @Test
     public void testChangeThreadDisplay() {
         assertSinglePage();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_comment_display),
                         activity.getString(R.string.pref_comment_display_value_single))
                 .apply(); // still single
         assertSinglePage();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_comment_display),
                         activity.getString(R.string.pref_comment_display_value_multiple))
