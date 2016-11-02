@@ -221,6 +221,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
             return;
         }
 
+        mEmptyView.setVisibility(View.GONE);
         String displayOption = Preferences.getCommentDisplayOption(getActivity());
         if (Preferences.isSinglePage(getActivity(), displayOption)) {
             boolean autoExpand = Preferences.isAutoExpand(getActivity(), displayOption);
