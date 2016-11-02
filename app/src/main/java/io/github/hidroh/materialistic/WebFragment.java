@@ -71,7 +71,6 @@ public class WebFragment extends LazyLoadFragment
     public static final String EXTRA_ITEM = WebFragment.class.getName() +".EXTRA_ITEM";
     private static final String STATE_EMPTY = "state:empty";
     private static final String STATE_READABILITY = "state:readability";
-    public static final String EXTRA_RETAIN_INSTANCE = WebFragment.class.getName() + ".EXTRA_RETAIN_INSTANCE";
     static final String ACTION_FULLSCREEN = WebFragment.class.getName() + ".ACTION_FULLSCREEN";
     static final String EXTRA_FULLSCREEN = WebFragment.class.getName() + ".EXTRA_FULLSCREEN";
     private static final String STATE_FULLSCREEN = "state:fullscreen";
@@ -120,7 +119,6 @@ public class WebFragment extends LazyLoadFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(getArguments().getBoolean(EXTRA_RETAIN_INSTANCE, false));
         if (savedInstanceState != null) {
             mFullscreen = savedInstanceState.getBoolean(STATE_FULLSCREEN, false);
             mContent = savedInstanceState.getString(STATE_CONTENT);
