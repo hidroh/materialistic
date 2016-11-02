@@ -55,10 +55,6 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         mShowArticle = builder.showArticle;
         mCacheMode = builder.cacheMode;
         mRetainInstance = builder.retainInstance;
-        if (!mItem.isStoryType()) {
-            // if not story must be comment, show comment full text by default
-            builder.defaultViewMode = Preferences.StoryViewMode.Article;
-        }
         mDefaultItem = Math.min(getCount()-1,
                 builder.defaultViewMode == Preferences.StoryViewMode.Comment ? 0 : 1);
     }
