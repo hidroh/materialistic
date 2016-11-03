@@ -70,6 +70,7 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         if (position == 0) {
             args.putParcelable(ItemFragment.EXTRA_ITEM, mItem);
             args.putInt(ItemFragment.EXTRA_CACHE_MODE, mCacheMode);
+            args.putBoolean(ItemFragment.EXTRA_RETAIN_INSTANCE, mRetainInstance);
             fragmentName = ItemFragment.class.getName();
         } else {
             args.putParcelable(WebFragment.EXTRA_ITEM, mItem);

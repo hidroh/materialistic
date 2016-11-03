@@ -70,6 +70,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     private @ItemManager.CacheMode int mCacheMode = ItemManager.MODE_DEFAULT;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private CommentItemDecoration mItemDecoration;
+    private View mFragmentView;
 
     @Override
     public void onAttach(Context context) {
@@ -107,34 +108,38 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
-        final View view = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
-        mEmptyView = view.findViewById(R.id.empty);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), true));
-        mItemDecoration = new CommentItemDecoration(getActivity());
-        mRecyclerView.addItemDecoration(mItemDecoration);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
-        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            if (TextUtils.isEmpty(mItemId)) {
-                return;
-            }
-            mCacheMode = ItemManager.MODE_NETWORK;
-            if (mAdapter != null) {
-                mAdapter.setCacheMode(mCacheMode);
-            }
-            loadKidData();
-        });
-        return view;
+        if (isNewInstance()) {
+            mFragmentView = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_item, container, false);
+            mEmptyView = mFragmentView.findViewById(R.id.empty);
+            mRecyclerView = (RecyclerView) mFragmentView.findViewById(R.id.recycler_view);
+            mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), true));
+            mItemDecoration = new CommentItemDecoration(getActivity());
+            mRecyclerView.addItemDecoration(mItemDecoration);
+            mSwipeRefreshLayout = (SwipeRefreshLayout) mFragmentView.findViewById(R.id.swipe_layout);
+            mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
+            mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);
+            mSwipeRefreshLayout.setOnRefreshListener(() -> {
+                if (TextUtils.isEmpty(mItemId)) {
+                    return;
+                }
+                mCacheMode = ItemManager.MODE_NETWORK;
+                if (mAdapter != null) {
+                    mAdapter.setCacheMode(mCacheMode);
+                }
+                loadKidData();
+            });
+        }
+        return mFragmentView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
-                KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
-        mScrollableHelper.smoothScrollEnabled(Preferences.smoothScrollEnabled(getActivity()));
+        if (isNewInstance()) {
+            mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
+                    KeyDelegate.RecyclerViewHelper.SCROLL_ITEM);
+            mScrollableHelper.smoothScrollEnabled(Preferences.smoothScrollEnabled(getActivity()));
+        }
     }
 
     @Override
@@ -156,9 +161,14 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRecyclerView.setAdapter(null);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
-        mRecyclerView.setAdapter(null);
         mPreferenceObservable.unsubscribe(getActivity());
     }
 

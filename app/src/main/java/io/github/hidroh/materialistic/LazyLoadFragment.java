@@ -24,6 +24,7 @@ import android.os.Bundle;
  */
 public abstract class LazyLoadFragment extends BaseFragment {
     public static final String EXTRA_EAGER_LOAD = LazyLoadFragment.class.getName() + ".EXTRA_EAGER_LOAD";
+    public static final String EXTRA_RETAIN_INSTANCE = WebFragment.class.getName() + ".EXTRA_RETAIN_INSTANCE";
     private static final String STATE_EAGER_LOAD = "state:eagerLoad";
     private static final String STATE_LOADED = "state:loaded";
     private boolean mEagerLoad, mLoaded, mActivityCreated;
@@ -38,6 +39,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(getArguments().getBoolean(EXTRA_RETAIN_INSTANCE, false));
         mNewInstance = true;
         if (savedInstanceState != null) {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
