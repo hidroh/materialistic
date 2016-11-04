@@ -61,6 +61,7 @@ public class ListFragment extends BaseListFragment {
     private RefreshCallback mRefreshCallback;
     private String mFilter;
     private int mCacheMode = ItemManager.MODE_DEFAULT;
+    private View mFragmentView;
 
     public interface RefreshCallback {
         void onRefreshed();
@@ -69,6 +70,7 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        getArguments().putBoolean(EXTRA_RETAIN_INSTANCE, true);
         if (context instanceof RefreshCallback) {
             mRefreshCallback = (RefreshCallback) context;
         }
@@ -93,28 +95,55 @@ public class ListFragment extends BaseListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_list, container, false);
-        mErrorView = view.findViewById(R.id.empty);
-        mEmptyView = view.findViewById(R.id.empty_search);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
-        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
-                AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
-        if (savedInstanceState == null) {
-            mSwipeRefreshLayout.setRefreshing(true);
+        if (isNewInstance()) {
+            mFragmentView = inflater.inflate(R.layout.fragment_list, container, false);
+            mErrorView = mFragmentView.findViewById(R.id.empty);
+            mEmptyView = mFragmentView.findViewById(R.id.empty_search);
+            mRecyclerView = (RecyclerView) mFragmentView.findViewById(R.id.recycler_view);
+            mSwipeRefreshLayout = (SwipeRefreshLayout) mFragmentView.findViewById(R.id.swipe_layout);
+            mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
+            mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
+                    AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
+            if (savedInstanceState == null) {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+            mSwipeRefreshLayout.setOnRefreshListener(() -> {
+                mCacheMode = ItemManager.MODE_NETWORK;
+                mAdapter.setCacheMode(mCacheMode);
+                refresh();
+            });
         }
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mCacheMode = ItemManager.MODE_NETWORK;
-            mAdapter.setCacheMode(mCacheMode);
-            refresh();
-        });
-        return view;
+        return mFragmentView;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_FILTER, mFilter);
+        outState.putInt(STATE_CACHE_MODE, mCacheMode);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRefreshCallback = null;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mPreferenceObservable.unsubscribe(getActivity());
+    }
+
+    public void filter(String filter) {
+        mFilter = filter;
+        mAdapter.setHighlightUpdated(false);
+        mSwipeRefreshLayout.setRefreshing(true);
+        refresh();
+    }
+
+    @Override
+    protected void load() {
         String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
         if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
             mItemManager = mAlgoliaItemManager;
@@ -141,27 +170,6 @@ public class ListFragment extends BaseListFragment {
         } else {
             refresh();
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(STATE_FILTER, mFilter);
-        outState.putInt(STATE_CACHE_MODE, mCacheMode);
-    }
-
-    @Override
-    public void onDetach() {
-        mPreferenceObservable.unsubscribe(getActivity());
-        mRefreshCallback = null;
-        super.onDetach();
-    }
-
-    public void filter(String filter) {
-        mFilter = filter;
-        mAdapter.setHighlightUpdated(false);
-        mSwipeRefreshLayout.setRefreshing(true);
-        refresh();
     }
 
     @Override
