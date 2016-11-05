@@ -45,7 +45,7 @@ public class ReadabilityClientTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         ObjectGraph.create(new TestModule()).inject(this);
-        reset(TestRestServiceFactory.readabilityService);
+        reset(TestRestServiceFactory.mercuryService);
         client = new ReadabilityClient.Impl(RuntimeEnvironment.application, factory,
                 Schedulers.immediate());
         callback = mock(ReadabilityClient.Callback.class);
@@ -56,10 +56,10 @@ public class ReadabilityClientTest {
     public void testWithContent() {
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div>content</div>\"}", ReadabilityClient.Impl.Readable.class);
-        when(TestRestServiceFactory.readabilityService.parse(any()))
+        when(TestRestServiceFactory.mercuryService.parse(any()))
                 .thenReturn(Observable.just(readable));
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(any());
+        verify(TestRestServiceFactory.mercuryService).parse(any());
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -67,19 +67,19 @@ public class ReadabilityClientTest {
     public void testEmptyContent() {
         ReadabilityClient.Impl.Readable readable = new GsonBuilder().create()
                 .fromJson("{\"content\":\"<div></div>\"}", ReadabilityClient.Impl.Readable.class);
-        when(TestRestServiceFactory.readabilityService.parse(any()))
+        when(TestRestServiceFactory.mercuryService.parse(any()))
                 .thenReturn(Observable.just(readable));
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(any());
+        verify(TestRestServiceFactory.mercuryService).parse(any());
         verify(callback).onResponse((String) isNull());
     }
 
     @Test
     public void testError() {
-        when(TestRestServiceFactory.readabilityService.parse(any()))
+        when(TestRestServiceFactory.mercuryService.parse(any()))
                 .thenReturn(Observable.error(new IOException()));
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService).parse(any());
+        verify(TestRestServiceFactory.mercuryService).parse(any());
         verify(callback).onResponse((String) isNull());
     }
 
@@ -90,7 +90,7 @@ public class ReadabilityClientTest {
         cv.put("content", "<div>content</div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService, never()).parse(any());
+        verify(TestRestServiceFactory.mercuryService, never()).parse(any());
         verify(callback).onResponse(eq("<div>content</div>"));
     }
 
@@ -101,7 +101,7 @@ public class ReadabilityClientTest {
         cv.put("content", "<div></div>");
         resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
         client.parse("1", "http://example.com/article.html", callback);
-        verify(TestRestServiceFactory.readabilityService, never()).parse(any());
+        verify(TestRestServiceFactory.mercuryService, never()).parse(any());
         verify(callback).onResponse((String) isNull());
     }
 

@@ -16,7 +16,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 **Dependencies**
 - [Official Hacker News API][HackerNews/API], user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
 - [Algolia Hacker News Search API]
-- [Readability Parser API]
+- [Mercury Web Parser API]
 - [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [Retrolambda] & [Retrolambda Gradle plugin]
@@ -31,7 +31,7 @@ Build with LeakCanary on
 
     ./gradlew assembleLeak
 
-Grab your Readability Parser API key [here][readability] if you want to connect to Readability.
+Grab your Mercury Web Parser API key [here][mercury] if you want to connect to Mercury.
 
 **Test** [![Build Status]][Travis]
 
@@ -84,7 +84,7 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [Play Store]: https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic&referrer=utm_source%3Dgithub
 [Play Store Badge]: https://play.google.com/intl/en_us/badges/images/badge_new.png
 [Algolia Hacker News Search API]: https://github.com/algolia/hn-search
-[Readability Parser API]: https://www.readability.com/developers/api/parser
+[Mercury Web Parser API]: https://mercury.postlight.com/web-parser/
 [AOSP support library]: https://developer.android.com/tools/support-library/features.html
 [Retrofit]: https://github.com/square/retrofit
 [OkHttp]: https://github.com/square/okhttp
@@ -96,7 +96,7 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [RxJava]: https://github.com/ReactiveX/RxJava
 [RxAndroid]: https://github.com/ReactiveX/RxAndroid
 [Robolectric]: https://github.com/robolectric/robolectric
-[readability]: https://www.readability.com/developers/api/parser
+[mercury]: https://mercury.postlight.com/web-parser/
 [article-theme1]: http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/
 [article-theme2]: http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/
 [article-preference]: http://www.hidroh.com/2015/11/30/building-custom-preferences-v7/

@@ -11,8 +11,8 @@ public class TestRestServiceFactory implements RestServiceFactory {
             mock(AlgoliaClient.RestService.class);
     public static final FeedbackClient.Impl.FeedbackService feedbackService =
             mock(FeedbackClient.Impl.FeedbackService.class);
-    public static final ReadabilityClient.Impl.ReadabilityService readabilityService =
-            mock(ReadabilityClient.Impl.ReadabilityService.class);
+    public static final ReadabilityClient.Impl.MercuryService mercuryService =
+            mock(ReadabilityClient.Impl.MercuryService.class);
 
     @Override
     public RestServiceFactory rxEnabled(boolean enabled) {
@@ -35,8 +35,8 @@ public class TestRestServiceFactory implements RestServiceFactory {
         if (clazz.isInstance(feedbackService)) {
             return (T) feedbackService;
         }
-        if (clazz.isInstance(readabilityService)) {
-            return (T) readabilityService;
+        if (clazz.isInstance(mercuryService)) {
+            return (T) mercuryService;
         }
         return mock(clazz);
     }
