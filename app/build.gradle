@@ -17,17 +17,21 @@ android {
         buildConfigField "int", "LATEST_RELEASE", "62"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "MERCURY_TOKEN", "\"\""
+        proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                'proguard-rules.pro',
+                'proguard-square.pro',
+                'proguard-support.pro',
+                'proguard-rx.pro'
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            useProguard false
+        }
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro',
-                    'proguard-square.pro',
-                    'proguard-support.pro',
-                    'proguard-rx.pro'
         }
         leak.initWith(buildTypes.debug)
     }
