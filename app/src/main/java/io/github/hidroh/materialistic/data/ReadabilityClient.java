@@ -38,7 +38,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public interface ReadabilityClient {
-    String HOST = "readability.com";
+    String HOST = "mercury.postlight.com";
 
     interface Callback {
         void onResponse(String content);
@@ -51,15 +51,17 @@ public interface ReadabilityClient {
 
     class Impl implements ReadabilityClient {
         private static final CharSequence EMPTY_CONTENT = "<div></div>";
-        private final ReadabilityService mReadabilityService;
+        private final MercuryService mMercuryService;
         private final ContentResolver mContentResolver;
         private final Scheduler mIoScheduler;
 
-        interface ReadabilityService {
-            String READABILITY_API_URL = "https://" + HOST + "/api/content/v1/";
+        interface MercuryService {
+            String MERCURY_API_URL = "https://" + HOST + "/";
+            String X_API_KEY = "x-api-key: ";
 
-            @Headers(RestServiceFactory.CACHE_CONTROL_MAX_AGE_24H)
-            @GET("parser?token=" + BuildConfig.READABILITY_TOKEN)
+            @Headers({RestServiceFactory.CACHE_CONTROL_MAX_AGE_24H,
+                    X_API_KEY + BuildConfig.MERCURY_TOKEN})
+            @GET("parser")
             Observable<Readable> parse(@Query("url") String url);
         }
 
@@ -70,9 +72,9 @@ public interface ReadabilityClient {
 
         @Inject
         public Impl(Context context, RestServiceFactory factory, Scheduler ioScheduler) {
-            mReadabilityService = factory.rxEnabled(true)
-                    .create(ReadabilityService.READABILITY_API_URL,
-                            ReadabilityService.class);
+            mMercuryService = factory.rxEnabled(true)
+                    .create(MercuryService.MERCURY_API_URL,
+                            MercuryService.class);
             mContentResolver = context.getContentResolver();
             mIoScheduler = ioScheduler;
         }
@@ -101,7 +103,7 @@ public interface ReadabilityClient {
 
         @NonNull
         private Observable<String> fromNetwork(String itemId, String url) {
-            return mReadabilityService.parse(url)
+            return mMercuryService.parse(url)
                     .onErrorReturn(throwable -> null)
                     .map(readable -> readable == null ? null : readable.content)
                     .doOnNext(content -> cache(itemId, content));

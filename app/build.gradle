@@ -16,7 +16,7 @@ android {
         versionName "3.1"
         buildConfigField "int", "LATEST_RELEASE", "62"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
-        buildConfigField "String", "READABILITY_TOKEN", "\"\""
+        buildConfigField "String", "MERCURY_TOKEN", "\"\""
     }
 
     buildTypes {
