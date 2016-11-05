@@ -330,11 +330,11 @@ public class StoryRecyclerViewAdapter extends
 
     @Override
     protected Item getItem(int position) {
-        if (mShowAll) {
-            return mItems.get(position);
-        } else {
-            return mUpdated.get(position);
+        ArrayList<Item> list = mShowAll ? mItems : mUpdated;
+        if (position < 0 || position >= list.size()) {
+            return null;
         }
+        return list.get(position);
     }
 
     @Override
