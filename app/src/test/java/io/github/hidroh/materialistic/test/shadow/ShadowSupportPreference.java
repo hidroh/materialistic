@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
+import android.preference.PreferenceManager;
 import android.support.v7.preference.Preference;
 
 import org.robolectric.RuntimeEnvironment;
@@ -31,7 +32,7 @@ public class ShadowSupportPreference {
     @Implementation
     public void persistString(String value) {
         persistedString = value;
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(realObject.getKey(), value)
                 .apply();

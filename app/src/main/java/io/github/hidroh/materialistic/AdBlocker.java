@@ -33,16 +33,16 @@ import okhttp3.HttpUrl;
 import okio.BufferedSource;
 import okio.Okio;
 import rx.Observable;
-import rx.schedulers.Schedulers;
+import rx.Scheduler;
 
 public class AdBlocker {
     private static final String AD_HOSTS_FILE = "pgl.yoyo.org.txt";
     private static final Set<String> AD_HOSTS = new HashSet<>();
 
-    public static void init(Context context) {
+    public static void init(Context context, Scheduler scheduler) {
         Observable.fromCallable(() -> loadFromAssets(context))
                 .onErrorReturn(throwable -> null)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(scheduler)
                 .subscribe();
     }
 

@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
@@ -28,8 +27,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.TestHnItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 
@@ -50,8 +48,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class AppUtilsTest {
     @Inject AlertDialogBuilder alertDialogBuilder;
 
@@ -163,11 +160,11 @@ public class AppUtilsTest {
     public void testOpenExternalComment() {
         ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
         TestListActivity activity = controller.create().get();
-        AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
+        AppUtils.openExternal(activity, mock(PopupMenu.class),
                 new View(activity), new TestHnItem(1), null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
-        AppUtils.openExternal(RuntimeEnvironment.application, mock(PopupMenu.class),
-                new View(RuntimeEnvironment.application), new TestHnItem(1) {
+        AppUtils.openExternal(activity, mock(PopupMenu.class),
+                new View(activity), new TestHnItem(1) {
                     @Override
                     public String getUrl() {
                         return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");

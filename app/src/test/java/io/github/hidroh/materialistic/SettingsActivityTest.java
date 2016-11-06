@@ -2,20 +2,20 @@ package io.github.hidroh.materialistic;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.preference.PreferenceManager;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowSearchRecentSuggestions;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -25,8 +25,8 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSearchRecentSuggestions.class, ShadowSupportPreferenceManager.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@Config(shadows = {ShadowSearchRecentSuggestions.class})
+@RunWith(TestRunner.class)
 public class SettingsActivityTest {
     private SettingsActivity activity;
     private ActivityController<SettingsActivity> controller;
@@ -51,7 +51,7 @@ public class SettingsActivityTest {
 
     @Test
     public void testReset() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_color_code), false)
                 .apply();

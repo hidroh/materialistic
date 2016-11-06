@@ -18,18 +18,17 @@ package io.github.hidroh.materialistic;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -38,8 +37,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = ShadowSupportPreferenceManager.class)
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ReleaseNotesActivityTest {
     private ActivityController<ReleaseNotesActivity> controller;
     private ReleaseNotesActivity activity;
@@ -83,7 +81,7 @@ public class ReleaseNotesActivityTest {
     @Test
     public void testUpdateSeen() throws PackageManager.NameNotFoundException {
         Preferences.sReleaseNotesSeen = null;
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putInt(RuntimeEnvironment.application.getString(R.string.pref_latest_release),
                         BuildConfig.LATEST_RELEASE)

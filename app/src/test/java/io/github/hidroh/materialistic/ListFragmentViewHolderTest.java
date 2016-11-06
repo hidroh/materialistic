@@ -2,16 +2,15 @@ package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.ShadowContentResolverCompatJellybean;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -53,14 +52,13 @@ import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestLayoutManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowAnimation;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
@@ -83,14 +81,12 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSwipeRefreshLayout.class,
-        ShadowSupportPreferenceManager.class,
         ShadowRecyclerViewAdapter.class,
         ShadowRecyclerView.class,
         ShadowItemTouchHelper.class,
         ShadowAnimation.class,
-        ShadowSnackbar.class,
-        ShadowContentResolverCompatJellybean.class})
-@RunWith(RobolectricGradleTestRunner.class)
+        ShadowSnackbar.class})
+@RunWith(TestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
     private ShadowRecyclerViewAdapter adapter;
@@ -148,15 +144,11 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testStory() {
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        shadowOf(activity.getContentResolver())
-                .insert(MaterialisticProvider.URI_VIEWED, cv);
+        item.setIsViewed(true);
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
-        assertNotViewed();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat((TextView) holder.itemView.findViewById(R.id.comment))
@@ -255,7 +247,7 @@ public class ListFragmentViewHolderTest {
         itemListener.getValue().onResponse(new PopulatedStory(2));
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_highlight_updated), false)
                 .apply();
@@ -288,7 +280,6 @@ public class ListFragmentViewHolderTest {
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());
         assertThat(actual).hasExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
-        assertViewed();
     }
 
     @Test
@@ -324,9 +315,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performClick();
-        assertViewed();
-        verify(activity.multiPaneListener).onItemSelected(any(WebItem.class)
-        );
+        verify(activity.multiPaneListener).onItemSelected(any(WebItem.class));
     }
 
     @Test
@@ -452,7 +441,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testDisableSwipe() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_list_swipe_left),
                         Preferences.SwipeAction.None.name())
@@ -597,7 +586,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         reset(itemManager);
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_list_swipe_left),
                         Preferences.SwipeAction.None.name())
@@ -634,7 +623,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testAutoMarkAsViewed() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_auto_viewed), true)
                 .apply();
@@ -661,7 +650,7 @@ public class ListFragmentViewHolderTest {
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager).view(any(Context.class), any()); // should not trigger again
 
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_auto_viewed), false)
                 .apply();

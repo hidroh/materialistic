@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -19,24 +20,22 @@ import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
+import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class BaseListActivityTest {
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;
@@ -97,7 +96,7 @@ public class BaseListActivityTest {
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
                 ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
                 .commit();
@@ -123,7 +122,7 @@ public class BaseListActivityTest {
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
                 ShadowResolveInfo.newResolveInfo("label", "com.android.browser", "DefaultActivity"));
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
                 .commit();
@@ -149,7 +148,7 @@ public class BaseListActivityTest {
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://news.ycombinator.com/item?id=1")),
                 ShadowResolveInfo.newResolveInfo("label", "com.android.browser", "DefaultActivity"));
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
                 .commit();
@@ -165,7 +164,7 @@ public class BaseListActivityTest {
 
     @Test
     public void testSelectItemOpenItem() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                         .edit()
                         .putString(activity.getString(R.string.pref_story_display),
                                 activity.getString(R.string.pref_story_display_value_comments))
@@ -231,8 +230,7 @@ public class BaseListActivityTest {
 
     @Test
     public void testBackPressed() {
-        ShadowSupportPreferenceManager
-                .getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_launch_screen),
                         activity.getString(R.string.pref_launch_screen_value_last))

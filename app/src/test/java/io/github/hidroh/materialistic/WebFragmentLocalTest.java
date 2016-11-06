@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.webkit.WebView;
@@ -30,12 +31,11 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -46,8 +46,8 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@Config(shadows = {ShadowPreferenceFragmentCompat.class})
+@RunWith(TestRunner.class)
 public class WebFragmentLocalTest {
     private ActivityController<WebActivity> controller;
     private WebActivity activity;
@@ -61,7 +61,7 @@ public class WebFragmentLocalTest {
         reset(itemManager);
         controller = Robolectric.buildActivity(WebActivity.class);
         activity = controller.get();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .apply();
@@ -183,7 +183,7 @@ public class WebFragmentLocalTest {
         assertTrue(fragment.hasOptionsMenu());
         fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_font_options));
         assertNotNull(ShadowDialog.getLatestDialog());
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
                 .apply();

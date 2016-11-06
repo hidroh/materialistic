@@ -29,7 +29,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.UserManager;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = ShadowRecyclerViewAdapter.class)
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class UserActivityTest {
     private ActivityController<UserActivity> controller;
     private UserActivity activity;

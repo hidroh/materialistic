@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -30,12 +31,11 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
+import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
@@ -49,8 +49,8 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSupportPreferenceManager.class, ShadowSnackbar.class, ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSnackbar.class, ShadowPreferenceFragmentCompat.class})
+@RunWith(TestRunner.class)
 public class ListFragmentTest {
     private ActivityController<ListActivity> controller;
     private ListActivity activity;
@@ -290,12 +290,12 @@ public class ListFragmentTest {
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
         assertCompactView();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_list_item_view), true)
                 .apply();
         assertCardView();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_list_item_view), false)
                 .apply();
@@ -316,7 +316,7 @@ public class ListFragmentTest {
                 .commit();
         assertCompactView();
         controller.pause();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_list_item_view), true)
                 .apply();

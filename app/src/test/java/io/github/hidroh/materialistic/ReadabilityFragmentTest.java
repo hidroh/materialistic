@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.webkit.WebView;
@@ -28,13 +29,12 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
-import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
+import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -47,8 +47,8 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Config(shadows = {ShadowSupportPreferenceManager.class, ShadowWebView.class, ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@Config(shadows = {ShadowWebView.class, ShadowPreferenceFragmentCompat.class})
+@RunWith(TestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
     private ActivityController<TestReadabilityActivity> controller;
@@ -63,7 +63,7 @@ public class ReadabilityFragmentTest {
         reset(readabilityClient);
         controller = Robolectric.buildActivity(TestReadabilityActivity.class);
         activity = controller.create().start().resume().visible().get();
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .putString(activity.getString(R.string.pref_story_display),
@@ -145,7 +145,7 @@ public class ReadabilityFragmentTest {
         fragment.onOptionsItemSelected(new RoboMenuItem(R.id.menu_font_options));
         assertThat(fragment.getFragmentManager())
                 .hasFragmentWithTag(PopupSettingsFragment.class.getName());
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_text_size), "3")
                 .apply();
@@ -162,7 +162,7 @@ public class ReadabilityFragmentTest {
         verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
                 callback.capture());
         callback.getValue().onResponse("<div>content</div>");
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
                 .apply();

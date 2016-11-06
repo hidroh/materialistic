@@ -26,7 +26,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
 @Config(shadows = {ShadowRecyclerViewAdapter.class})
 @SuppressWarnings("ConstantConditions")
 @SuppressLint("WrongViewCast")
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ListFragmentViewHolderEdgeTest {
     private ActivityController<ListActivity> controller;
     private RecyclerView.ViewHolder holder;

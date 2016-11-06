@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowWebView;
@@ -39,7 +39,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = ShadowNestedScrollView.class)
 @SuppressWarnings("ConstantConditions")
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class OfflineWebActivityTest {
     private ActivityController<OfflineWebActivity> controller;
     private OfflineWebActivity activity;

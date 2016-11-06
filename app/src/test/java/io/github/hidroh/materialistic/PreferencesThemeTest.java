@@ -1,21 +1,19 @@
 package io.github.hidroh.materialistic;
 
 import android.app.Activity;
+import android.preference.PreferenceManager;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
 
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@Config(shadows = {ShadowSupportPreferenceManager.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class PreferencesThemeTest {
 
     private Activity activity;
@@ -23,7 +21,7 @@ public class PreferencesThemeTest {
     @Before
     public void setUp() {
         activity = Robolectric.setupActivity(Activity.class);
-        shadowOf(activity.getTheme()).setTo(activity.getResources().newTheme());
+        activity.getTheme().setTo(activity.getResources().newTheme());
     }
 
     @Test
@@ -35,7 +33,7 @@ public class PreferencesThemeTest {
 
     @Test
     public void testDarkTheme() {
-        ShadowSupportPreferenceManager.getDefaultSharedPreferences(activity)
+        PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_theme), "dark")
                 .commit();

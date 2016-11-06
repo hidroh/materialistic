@@ -12,7 +12,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
@@ -33,7 +33,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @SuppressLint("SetTextI18n")
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class FeedbackActivityTest {
     private ActivityController<FeedbackActivity> controller;
     private FeedbackActivity activity;
