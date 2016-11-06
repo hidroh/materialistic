@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 import java.util.Arrays;
 
+import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
@@ -32,8 +33,8 @@ public class MultiPageItemRecyclerViewAdapter
     private static final int VIEW_TYPE_FOOTER = -1;
     private final Item[] mItems;
 
-    public MultiPageItemRecyclerViewAdapter(ItemManager itemManager, Item[] items) {
-        super(itemManager);
+    public MultiPageItemRecyclerViewAdapter(Injectable injectable, ItemManager itemManager, Item[] items) {
+        super(injectable, itemManager);
         mItems = Arrays.copyOf(items, items.length + 1);
         mItems[items.length] = null; // footer
     }

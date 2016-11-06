@@ -75,17 +75,15 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         void onPosition(int position);
     }
 
-    ItemRecyclerViewAdapter(ItemManager itemManager) {
+    ItemRecyclerViewAdapter(Injectable injectable, ItemManager itemManager) {
         mItemManager = itemManager;
+        injectable.inject(this);
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mContext = recyclerView.getContext();
-        if (mContext instanceof Injectable) {
-            ((Injectable) mContext).inject(this);
-        }
         mLayoutInflater = AppUtils.createLayoutInflater(mContext);
         TypedArray ta = mContext.obtainStyledAttributes(new int[]{
                 android.R.attr.textColorTertiary,

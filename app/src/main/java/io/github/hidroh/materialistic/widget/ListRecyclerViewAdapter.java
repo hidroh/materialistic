@@ -75,8 +75,6 @@ public abstract class ListRecyclerViewAdapter
         mRecyclerView = recyclerView;
         mContext = recyclerView.getContext();
         mInflater = AppUtils.createLayoutInflater(mContext);
-        ((Injectable) mContext).inject(this);
-        mMultiPaneListener = (MultiPaneListener) mContext;
         mCardElevation = mContext.getResources()
                 .getDimensionPixelSize(R.dimen.cardview_default_elevation);
         mMultiWindowEnabled = Preferences.multiWindowEnabled(mContext);
@@ -130,6 +128,11 @@ public abstract class ListRecyclerViewAdapter
     @Override
     public final long getItemId(int position) {
         return getItem(position).getLongId();
+    }
+
+    public void attach(Injectable injectable, MultiPaneListener multiPaneListener) {
+        injectable.inject(this);
+        mMultiPaneListener = multiPaneListener;
     }
 
     public final boolean isCardViewEnabled() {
@@ -230,7 +233,7 @@ public abstract class ListRecyclerViewAdapter
                 .putExtra(ItemActivity.EXTRA_ITEM, item)
                 .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true);
         mContext.startActivity(mMultiWindowEnabled ?
-                AppUtils.multiWindowIntent((Activity) mContext, intent) : intent);
+                AppUtils.multiWindowIntent((Activity) mContext, intent) : intent); // TODO avoid casting context
     }
 
     /**

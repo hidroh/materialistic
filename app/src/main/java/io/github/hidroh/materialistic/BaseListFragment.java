@@ -87,6 +87,7 @@ abstract class BaseListFragment extends LazyLoadFragment implements Scrollable {
         super.onActivityCreated(savedInstanceState);
         if (isNewInstance()) {
             getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
+            getAdapter().attach((Injectable) getActivity(), (MultiPaneListener) getActivity());
             mRecyclerView.setAdapter(getAdapter());
             mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
                     KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
