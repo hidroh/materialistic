@@ -25,7 +25,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
 import static org.assertj.android.api.Assertions.assertThat;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = ShadowWebView.class)
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class SubmitActivityTest {
     private ActivityController<SubmitActivity> controller;
     private SubmitActivity activity;

@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class AlgoliaClientTest {
     @Inject RestServiceFactory factory;
     private ItemManager hackerNewsClient = mock(ItemManager.class);

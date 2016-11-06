@@ -31,7 +31,7 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.WebActivity;
@@ -47,7 +47,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class WebFragmentLocalTest {
     private ActivityController<WebActivity> controller;
     private WebActivity activity;

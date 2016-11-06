@@ -26,7 +26,7 @@ import java.util.List;
  * is overridden in order to create instances of the test class with the appropriate parameters. Merged in the ability
  * to name your tests through the {@link Parameters#name()} property.
  */
-public final class ParameterizedRobolectricGradleTestRunner extends Suite {
+public final class ParameterizedTestRunner extends Suite {
 
     /**
      * Annotation for a method which provides parameters to be injected into the test class constructor by
@@ -54,7 +54,7 @@ public final class ParameterizedRobolectricGradleTestRunner extends Suite {
         String name() default "{index}";
     }
 
-    private static class TestClassRunnerForParameters extends RobolectricGradleTestRunner {
+    private static class TestClassRunnerForParameters extends TestRunner {
 
         private final String name;
         private final Object[] parameters;
@@ -131,7 +131,7 @@ public final class ParameterizedRobolectricGradleTestRunner extends Suite {
     /*
      * Only called reflectively. Do not use programmatically.
      */
-    public ParameterizedRobolectricGradleTestRunner(Class<?> klass) throws Throwable {
+    public ParameterizedTestRunner(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner>emptyList());
         Parameters parameters = getParametersMethod().getAnnotation(Parameters.class);
         List<Object[]> parametersList = getParametersList();

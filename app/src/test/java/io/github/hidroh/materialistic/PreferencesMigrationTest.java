@@ -10,14 +10,14 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.Arrays;
 import java.util.List;
 
-import io.github.hidroh.materialistic.test.ParameterizedRobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.ParameterizedTestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
-@RunWith(ParameterizedRobolectricGradleTestRunner.class)
+@RunWith(ParameterizedTestRunner.class)
 public class PreferencesMigrationTest {
     private final int oldKey;
     private final boolean oldValue;
@@ -32,7 +32,7 @@ public class PreferencesMigrationTest {
         this.newValue = newValue;
     }
 
-    @ParameterizedRobolectricGradleTestRunner.Parameters
+    @ParameterizedTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{R.string.pref_item_click, true,

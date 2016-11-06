@@ -52,7 +52,7 @@ import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
@@ -75,7 +75,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;
     private ItemActivity activity;
@@ -669,6 +669,12 @@ public class ItemActivityTest {
 
     @Test
     public void testNavButtonHint() {
+        PreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_comments))
+                .putBoolean(activity.getString(R.string.pref_navigation), true)
+                .apply();
         startWithIntent();
         View navButton = activity.findViewById(R.id.navigation_button);
         assertThat(navButton).isVisible();
@@ -680,6 +686,12 @@ public class ItemActivityTest {
 
     @Test
     public void testNavButtonDrag() {
+        PreferenceManager.getDefaultSharedPreferences(activity)
+                .edit()
+                .putString(activity.getString(R.string.pref_story_display),
+                        activity.getString(R.string.pref_story_display_value_comments))
+                .putBoolean(activity.getString(R.string.pref_navigation), true)
+                .apply();
         startWithIntent();
         View navButton = activity.findViewById(R.id.navigation_button);
         assertThat(navButton).isVisible();

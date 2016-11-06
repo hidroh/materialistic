@@ -25,7 +25,7 @@ import java.util.Set;
 
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import rx.schedulers.Schedulers;
@@ -43,7 +43,7 @@ import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowWebView.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
     private FavoriteManager manager;

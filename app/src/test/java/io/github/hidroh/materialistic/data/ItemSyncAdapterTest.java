@@ -45,7 +45,7 @@ import java.io.IOException;
 
 import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,7 +69,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("unchecked")
 @Config(shadows = {ShadowWebView.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ItemSyncAdapterTest {
     private ItemSyncAdapter adapter;
     private SharedPreferences syncPreferences;

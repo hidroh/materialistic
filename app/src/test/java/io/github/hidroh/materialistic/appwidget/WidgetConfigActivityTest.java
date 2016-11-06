@@ -31,7 +31,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 
 import static junit.framework.Assert.assertNotNull;
@@ -41,7 +41,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class WidgetConfigActivityTest {
     private ActivityController<WidgetConfigActivity> controller;
     private WidgetConfigActivity activity;

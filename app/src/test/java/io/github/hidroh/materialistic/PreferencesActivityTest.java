@@ -30,7 +30,7 @@ import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 
 import static junit.framework.Assert.assertNotNull;
@@ -38,7 +38,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 
 @Config(shadows = {ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class PreferencesActivityTest {
     private TestPreferencesActivity activity;
     private ActivityController<TestPreferencesActivity> controller;

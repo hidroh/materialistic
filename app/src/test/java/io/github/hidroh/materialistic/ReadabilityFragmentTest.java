@@ -29,7 +29,7 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
@@ -48,7 +48,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowWebView.class, ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ReadabilityFragmentTest {
     private TestReadabilityActivity activity;
     private ActivityController<TestReadabilityActivity> controller;

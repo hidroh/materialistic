@@ -27,7 +27,7 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.TestHnItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(qualifiers = "w820dp-land", shadows = {ShadowFloatingActionButton.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class BaseListActivityLandTest {
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;

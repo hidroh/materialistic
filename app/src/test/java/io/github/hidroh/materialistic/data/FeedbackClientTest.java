@@ -3,7 +3,7 @@ package io.github.hidroh.materialistic.data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class FeedbackClientTest {
     @Inject RestServiceFactory factory;
     private FeedbackClient client;

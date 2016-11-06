@@ -9,7 +9,7 @@ import android.os.Bundle;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import io.github.hidroh.materialistic.BuildConfig;
@@ -19,7 +19,7 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class AccountAuthenticatorTest {
     private AccountAuthenticator authenticator;
 

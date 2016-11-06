@@ -40,7 +40,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
@@ -63,7 +63,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowWebView.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class WebFragmentTest {
     private WebActivity activity;
     private ActivityController<WebActivity> controller;

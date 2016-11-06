@@ -62,7 +62,7 @@ import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
@@ -90,7 +90,7 @@ import static org.robolectric.Shadows.shadowOf;
 import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowRecyclerViewAdapter.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class FavoriteActivityTest {
     private ActivityController<TestFavoriteActivity> controller;
     private TestFavoriteActivity activity;

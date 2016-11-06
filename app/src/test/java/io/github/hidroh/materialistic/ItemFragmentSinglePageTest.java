@@ -43,7 +43,7 @@ import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.TestLayoutManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
@@ -69,7 +69,7 @@ import static org.robolectric.Shadows.shadowOf;
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowRecyclerViewAdapter.class,
         ShadowTextView.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ItemFragmentSinglePageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Inject UserServices userServices;

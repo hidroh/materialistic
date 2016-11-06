@@ -52,14 +52,13 @@ import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestLayoutManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowAnimation;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
-import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager;
 import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
@@ -87,7 +86,7 @@ import static org.robolectric.Shadows.shadowOf;
         ShadowItemTouchHelper.class,
         ShadowAnimation.class,
         ShadowSnackbar.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ListFragmentViewHolderTest {
     private ActivityController<ListActivity> controller;
     private ShadowRecyclerViewAdapter adapter;

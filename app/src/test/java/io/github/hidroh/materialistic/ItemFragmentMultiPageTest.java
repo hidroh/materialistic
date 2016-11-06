@@ -36,7 +36,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestItem;
 import io.github.hidroh.materialistic.test.shadow.CustomShadows;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
@@ -56,7 +56,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowRecyclerViewAdapter.class, ShadowPreferenceFragmentCompat.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class ItemFragmentMultiPageTest {
     @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Captor ArgumentCaptor<ResponseListener<Item>> listener;

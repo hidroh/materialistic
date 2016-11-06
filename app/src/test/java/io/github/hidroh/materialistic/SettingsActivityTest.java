@@ -14,7 +14,7 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowSearchRecentSuggestions;
 
 import static junit.framework.Assert.assertEquals;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = {ShadowSearchRecentSuggestions.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class SettingsActivityTest {
     private SettingsActivity activity;
     private ActivityController<SettingsActivity> controller;

@@ -17,7 +17,7 @@ import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.RobolectricGradleTestRunner;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
 
@@ -27,7 +27,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportDrawerLayout.class})
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(TestRunner.class)
 public class DrawerActivityLoginTest {
     private ActivityController<TestListActivity> controller;
     private TestListActivity activity;

@@ -27,6 +27,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 import dagger.ObjectGraph;
+import rx.schedulers.Schedulers;
 
 public class Application extends android.app.Application {
 
@@ -65,7 +66,7 @@ public class Application extends android.app.Application {
         TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
         AccountManager.get(this).addAccountExplicitly(createSyncAccount(), null, null);
         AppUtils.registerAccountsUpdatedListener(this);
-        AdBlocker.init(this);
+        AdBlocker.init(this, Schedulers.io());
     }
 
     public ObjectGraph getApplicationGraph() {
