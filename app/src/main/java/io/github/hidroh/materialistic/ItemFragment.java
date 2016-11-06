@@ -233,7 +233,6 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
 
         mEmptyView.setVisibility(View.GONE);
         String displayOption = Preferences.getCommentDisplayOption(getActivity());
-        Injectable injectable = (Injectable) getActivity();
         if (Preferences.isSinglePage(getActivity(), displayOption)) {
             boolean autoExpand = Preferences.isAutoExpand(getActivity(), displayOption);
             // if collapsed or no saved state then start a fresh (adapter items all collapsed)
@@ -241,9 +240,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
                 mAdapterItems = new SinglePageItemRecyclerViewAdapter.SavedState(
                         new ArrayList<>(Arrays.asList(mItem.getKidItems())));
             }
-            mAdapter = new SinglePageItemRecyclerViewAdapter(injectable, mItemManager, mAdapterItems, autoExpand);
+            mAdapter = new SinglePageItemRecyclerViewAdapter(mItemManager, mAdapterItems, autoExpand);
         } else {
-            mAdapter = new MultiPageItemRecyclerViewAdapter(injectable, mItemManager, mItem.getKidItems());
+            mAdapter = new MultiPageItemRecyclerViewAdapter(mItemManager, mItem.getKidItems());
         }
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());

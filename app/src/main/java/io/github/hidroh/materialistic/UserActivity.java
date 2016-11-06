@@ -240,7 +240,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
         int count = mUser.getItems().length;
         mTabLayout.addTab(mTabLayout.newTab()
                 .setText(getResources().getQuantityString(R.plurals.submissions_count, count, count)));
-        mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(this, mItemManger, mUser.getItems()));
+        mRecyclerView.setAdapter(new SubmissionRecyclerViewAdapter(mItemManger, mUser.getItems()));
         mRecyclerView.setLayoutFrozen(mBottomSheetBehavior.getState() !=
                 BottomSheetBehavior.STATE_EXPANDED);
     }

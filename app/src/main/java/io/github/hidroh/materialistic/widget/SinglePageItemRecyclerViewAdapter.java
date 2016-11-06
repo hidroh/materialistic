@@ -37,7 +37,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
@@ -68,11 +67,10 @@ public class SinglePageItemRecyclerViewAdapter
     private ItemTouchHelper mItemTouchHelper;
     private int[] mLock;
 
-    public SinglePageItemRecyclerViewAdapter(Injectable injectable,
-                                             ItemManager itemManager,
+    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager,
                                              @NonNull SavedState state,
                                              boolean autoExpand) {
-        super(injectable, itemManager);
+        super(itemManager);
         this.mState = state;
         mAutoExpand = autoExpand;
     }

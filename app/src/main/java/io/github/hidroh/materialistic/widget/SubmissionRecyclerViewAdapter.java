@@ -22,7 +22,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ThreadPreviewActivity;
@@ -32,8 +31,8 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
     private final Item[] mItems;
 
-    public SubmissionRecyclerViewAdapter(Injectable injectable, ItemManager itemManager, @NonNull Item[] items) {
-        super(injectable, itemManager);
+    public SubmissionRecyclerViewAdapter(ItemManager itemManager, @NonNull Item[] items) {
+        super(itemManager);
         mItems = items;
     }
 
