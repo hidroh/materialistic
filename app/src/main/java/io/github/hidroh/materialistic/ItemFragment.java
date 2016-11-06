@@ -163,7 +163,9 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mRecyclerView.setAdapter(null);
+        if (mAdapter != null) {
+            mAdapter.detach(getActivity(), mRecyclerView);
+        }
     }
 
     @Override
@@ -246,6 +248,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
         }
         mAdapter.setCacheMode(mCacheMode);
         mAdapter.initDisplayOptions(getActivity());
+        mAdapter.attach(getActivity(), mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
     }
 

@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,18 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
     public SubmissionRecyclerViewAdapter(ItemManager itemManager, @NonNull Item[] items) {
         super(itemManager);
         mItems = items;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        attach(recyclerView.getContext(), recyclerView);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        detach(recyclerView.getContext(), recyclerView);
     }
 
     @Override

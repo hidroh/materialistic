@@ -62,7 +62,6 @@ public class SinglePageItemRecyclerViewAdapter
     private final boolean mAutoExpand;
     private boolean mColorCoded = true;
     private TypedArray mColors;
-    private RecyclerView mRecyclerView;
     private final @NonNull SavedState mState;
     private ItemTouchHelper mItemTouchHelper;
     private int[] mLock;
@@ -76,11 +75,10 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
+    public void attach(Context context, RecyclerView recyclerView) {
+        super.attach(context, recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
         mColors = mResourcesProvider.obtainTypedArray(R.array.color_codes);
-        mRecyclerView = recyclerView;
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.RIGHT) {
             @Override
@@ -125,11 +123,10 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
+    public void detach(Context context, RecyclerView recyclerView) {
+        super.detach(context, recyclerView);
         recyclerView.removeOnScrollListener(mScrollListener);
         mColors.recycle();
-        mRecyclerView = null;
         mItemTouchHelper.attachToRecyclerView(null);
     }
 
