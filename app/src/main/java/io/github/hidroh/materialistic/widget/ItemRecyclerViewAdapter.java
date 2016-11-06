@@ -52,7 +52,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
 
 public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter.ItemViewHolder>
-        extends RecyclerView.Adapter<VH> {
+        extends RecyclerViewAdapter<VH> {
     private static final String PROPERTY_MAX_LINES = "maxLines";
     private static final int DURATION_PER_LINE_MILLIS = 20;
     LayoutInflater mLayoutInflater;
@@ -60,7 +60,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
     @Inject UserServices mUserServices;
     @Inject PopupMenu mPopupMenu;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
-    protected Context mContext;
     private int mTertiaryTextColorResId;
     private int mSecondaryTextColorResId;
     private int mCardBackgroundColorResId;
@@ -75,15 +74,16 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         void onPosition(int position);
     }
 
-    ItemRecyclerViewAdapter(Injectable injectable, ItemManager itemManager) {
+    ItemRecyclerViewAdapter(ItemManager itemManager) {
         mItemManager = itemManager;
-        injectable.inject(this);
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        mContext = recyclerView.getContext();
+    public void attach(Context context, RecyclerView recyclerView) {
+        super.attach(context, recyclerView);
+        if (mContext instanceof Injectable) {
+            ((Injectable) mContext).inject(this);
+        }
         mLayoutInflater = AppUtils.createLayoutInflater(mContext);
         TypedArray ta = mContext.obtainStyledAttributes(new int[]{
                 android.R.attr.textColorTertiary,
@@ -96,12 +96,6 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         mCardBackgroundColorResId = ta.getInt(2, 0);
         mCardHighlightColorResId = ta.getInt(3, 0);
         ta.recycle();
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-        mContext = null;
     }
 
     @Override

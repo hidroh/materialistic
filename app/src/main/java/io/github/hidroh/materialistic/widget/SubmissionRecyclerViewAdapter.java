@@ -18,11 +18,11 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ThreadPreviewActivity;
@@ -32,9 +32,21 @@ import io.github.hidroh.materialistic.data.ItemManager;
 public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
     private final Item[] mItems;
 
-    public SubmissionRecyclerViewAdapter(Injectable injectable, ItemManager itemManager, @NonNull Item[] items) {
-        super(injectable, itemManager);
+    public SubmissionRecyclerViewAdapter(ItemManager itemManager, @NonNull Item[] items) {
+        super(itemManager);
         mItems = items;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        attach(recyclerView.getContext(), recyclerView);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        detach(recyclerView.getContext(), recyclerView);
     }
 
     @Override

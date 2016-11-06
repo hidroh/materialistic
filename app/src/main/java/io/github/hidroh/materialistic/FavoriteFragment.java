@@ -110,6 +110,12 @@ public class FavoriteFragment extends BaseListFragment
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFavoriteManager.attach(getActivity(), getLoaderManager(), this, mFilter);
+    }
+
+    @Override
     protected void createOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_search, menu);
         createSearchView(menu.findItem(R.id.menu_search));
@@ -166,11 +172,6 @@ public class FavoriteFragment extends BaseListFragment
     public void filter(String query) {
         mSearchViewExpanded = false;
         mFilter = query;
-        mFavoriteManager.attach(getActivity(), getLoaderManager(), this, mFilter);
-    }
-
-    @Override
-    protected void load() {
         mFavoriteManager.attach(getActivity(), getLoaderManager(), this, mFilter);
     }
 

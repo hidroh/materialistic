@@ -56,7 +56,7 @@ public class ThreadPreviewActivity extends InjectableActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new SnappyLinearLayoutManager(this, false));
         recyclerView.addItemDecoration(new CommentItemDecoration(this));
-        recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(this, mItemManager, item));
+        recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(mItemManager, item));
         mKeyDelegate.setScrollable(
                 new KeyDelegate.RecyclerViewHelper(recyclerView,
                         KeyDelegate.RecyclerViewHelper.SCROLL_ITEM), null);

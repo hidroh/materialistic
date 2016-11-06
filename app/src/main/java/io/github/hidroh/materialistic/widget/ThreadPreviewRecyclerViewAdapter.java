@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
@@ -39,8 +38,8 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     private int mLevelIndicatorWidth;
     private final String mUsername;
 
-    public ThreadPreviewRecyclerViewAdapter(Injectable injectable, ItemManager itemManager, Item item) {
-        super(injectable, itemManager);
+    public ThreadPreviewRecyclerViewAdapter(ItemManager itemManager, Item item) {
+        super(itemManager);
         mItems.add(item);
         mUsername = item.getBy();
     }
@@ -48,7 +47,14 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        attach(recyclerView.getContext(), recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        detach(recyclerView.getContext(), recyclerView);
     }
 
     @Override

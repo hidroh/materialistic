@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SnappyLinearLayoutManager;
 
-abstract class BaseListFragment extends LazyLoadFragment implements Scrollable {
+abstract class BaseListFragment extends BaseFragment implements Scrollable {
     private static final String STATE_ADAPTER = "state:adapter";
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     private KeyDelegate.RecyclerViewHelper mScrollableHelper;
@@ -43,7 +43,6 @@ abstract class BaseListFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        getArguments().putBoolean(EXTRA_EAGER_LOAD, true);
         mPreferenceObservable.subscribe(context, this::onPreferenceChanged,
                 R.string.pref_font,
                 R.string.pref_text_size,
@@ -63,35 +62,32 @@ abstract class BaseListFragment extends LazyLoadFragment implements Scrollable {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (isNewInstance()) {
-            mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), false));
-            int verticalMargin = getResources().getDimensionPixelSize(R.dimen.cardview_vertical_margin);
-            int horizontalMargin = getResources().getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
-            int divider = getResources().getDimensionPixelSize(R.dimen.divider);
-            mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-                @Override
-                public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                           RecyclerView.State state) {
-                    if (getAdapter().isCardViewEnabled()) {
-                        outRect.set(horizontalMargin, verticalMargin, horizontalMargin, 0);
-                    } else {
-                        outRect.set(0, 0, 0, divider);
-                    }
+        mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), false));
+        final int verticalMargin = getResources()
+                .getDimensionPixelSize(R.dimen.cardview_vertical_margin);
+        final int horizontalMargin = getResources()
+                .getDimensionPixelSize(R.dimen.cardview_horizontal_margin);
+        final int divider = getResources().getDimensionPixelSize(R.dimen.divider);
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                       RecyclerView.State state) {
+                if (getAdapter().isCardViewEnabled()) {
+                    outRect.set(horizontalMargin, verticalMargin, horizontalMargin, 0);
+                } else {
+                    outRect.set(0, 0, 0, divider);
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (isNewInstance()) {
-            getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
-            getAdapter().attach((Injectable) getActivity(), (MultiPaneListener) getActivity());
-            mRecyclerView.setAdapter(getAdapter());
-            mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
-                    KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
-        }
+        getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
+        mRecyclerView.setAdapter(getAdapter());
+        mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
+                KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
     }
 
     @Override
@@ -127,15 +123,10 @@ abstract class BaseListFragment extends LazyLoadFragment implements Scrollable {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRecyclerView.setAdapter(null); // force adapter detach
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mPreferenceObservable.unsubscribe(getActivity());
+        mRecyclerView.setAdapter(null); // force adapter detach
     }
 
     @Override

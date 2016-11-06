@@ -37,7 +37,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
@@ -63,26 +62,23 @@ public class SinglePageItemRecyclerViewAdapter
     private final boolean mAutoExpand;
     private boolean mColorCoded = true;
     private TypedArray mColors;
-    private RecyclerView mRecyclerView;
     private final @NonNull SavedState mState;
     private ItemTouchHelper mItemTouchHelper;
     private int[] mLock;
 
-    public SinglePageItemRecyclerViewAdapter(Injectable injectable,
-                                             ItemManager itemManager,
+    public SinglePageItemRecyclerViewAdapter(ItemManager itemManager,
                                              @NonNull SavedState state,
                                              boolean autoExpand) {
-        super(injectable, itemManager);
+        super(itemManager);
         this.mState = state;
         mAutoExpand = autoExpand;
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
+    public void attach(Context context, RecyclerView recyclerView) {
+        super.attach(context, recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
         mColors = mResourcesProvider.obtainTypedArray(R.array.color_codes);
-        mRecyclerView = recyclerView;
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.RIGHT) {
             @Override
@@ -127,11 +123,10 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
+    public void detach(Context context, RecyclerView recyclerView) {
+        super.detach(context, recyclerView);
         recyclerView.removeOnScrollListener(mScrollListener);
         mColors.recycle();
-        mRecyclerView = null;
         mItemTouchHelper.attachToRecyclerView(null);
     }
 
