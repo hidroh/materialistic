@@ -98,9 +98,9 @@ public class SinglePageItemRecyclerViewAdapter
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                notifyItemChanged(position);
                 Item item = getItem(position);
                 if (item != null) {
+                    notifyItemChanged(position);
                     toggleKids(item);
                 }
             }
@@ -238,6 +238,9 @@ public class SinglePageItemRecyclerViewAdapter
 
     @Override
     protected Item getItem(int position) {
+        if (position < 0 || position >= mState.size()) {
+            return null;
+        }
         return mState.get(position);
     }
 
