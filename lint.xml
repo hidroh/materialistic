@@ -16,6 +16,9 @@
   -->
 
 <lint>
+    <issue id="AnimatorKeep">
+        <ignore regexp="setMaxLines" />
+    </issue>
     <issue id="NewApi">
         <ignore regexp="android.webkit.WebView.FindListener" />
     </issue>
