@@ -77,8 +77,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             }
             mLoginButton.setEnabled(false);
             mRegisterButton.setEnabled(false);
-            login(mUsernameEditText.getText().toString(),
-                    mPasswordEditText.getText().toString(),
+            login(mUsernameEditText.getText().toString().trim(),
+                    mPasswordEditText.getText().toString().trim(),
                     true);
         });
     }
