@@ -26,7 +26,7 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled !rootProject.ext.ci
             useProguard false
         }
         release {

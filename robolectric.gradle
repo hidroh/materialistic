@@ -1,26 +1,11 @@
 android.testOptions.unitTests.all {
-    // configure the set of classes for JUnit tests
-    include project.hasProperty("testFilter") ? "**/*${project.ext.testFilter}*Test.class" : '**/*Test.class'
-    exclude '**/espresso/**/*.class'
-
-    // configure max heap size of the test JVM
-    maxHeapSize = '2048m'
-
-    // Specify max number of processes (default is 1)
-    maxParallelForks = 1
-
-    // Specify max number of test classes to execute in a test process
-    // before restarting the process (default is unlimited)
-    forkEvery = 5
-
-    // configure whether failing tests should fail the build
-    ignoreFailures false
-
+    // full options: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
+    maxHeapSize = "2048m"
+    forkEvery = 4
     testLogging {
         events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         exceptionFormat 'full'
     }
-
     jacoco {
         includeNoLocationClasses = true
     }

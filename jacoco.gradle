@@ -3,7 +3,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 
 def jacocoDaggerMap = [:]
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+task jacocoTestReport(type: JacocoReport) {
     reports {
         xml.enabled true
         csv.enabled false

@@ -34,10 +34,11 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
-script: "./gradlew $TASK"
+script:
+    - GRADLE_CMD='./gradlew -Pci --console=plain'
+    - $GRADLE_CMD $TASK
 env:
-    - TASK="assembleDebug assembleRelease"
-    - TASK="lintDebug testDebug"
+    - TASK="lintDebug"
+    - TASK="testDebugUnitTest"
 after_success:
-    - if [ "$TASK" = "lintDebug testDebug" ]; then ./gradlew jacocoTestReport coveralls; fi
-
+    - if [[ $TASK = test* ]]; then $GRADLE_CMD jacocoTestReport coveralls; fi
