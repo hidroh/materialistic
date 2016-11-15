@@ -58,7 +58,7 @@ android {
 }
 
 ext {
-    supportVersion = '24.2.0'
+    supportVersion = '25.0.1'
     okHttpVersion = '3.4.1'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.4'
