@@ -27,7 +27,6 @@
     <string name="open_drawer">打开侧边栏</string>
     <string name="close_drawer">关闭侧边栏</string>
     <string name="view_in_browser">使用浏览器打开</string>
-    <string name="favorite_email_subject">您在骇客资讯上收藏的帖子</string>
     <string name="share">分享</string>
     <string name="title_activity_about">关于</string>
     <string name="license_title">许可</string>
@@ -49,8 +48,6 @@
     <string name="no_saved_stories">暂无收藏</string>
     <string name="no_comments">暂无评论</string>
     <string name="confirm_clear">确定清空收藏吗？</string>
-    <string name="email">导出到邮箱</string>
-    <string name="preparing" tools:ignore="TypographyEllipsis">准备中...</string>
     <string name="clear_selected">清空选中选项</string>
     <string name="confirm_clear_selected">确定要清空选中选项吗？</string>
     <string name="search">搜索</string>

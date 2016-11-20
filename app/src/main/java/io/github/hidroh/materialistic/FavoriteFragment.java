@@ -16,14 +16,10 @@
 
 package io.github.hidroh.materialistic;
 
-import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
@@ -36,12 +32,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.annotation.Synthetic;
-import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
 import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
@@ -52,17 +44,7 @@ public class FavoriteFragment extends BaseListFragment
     public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_SEARCH_VIEW_EXPANDED = "state:searchViewExpanded";
-
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ArrayList<Favorite> favorites =
-                    intent.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA);
-            export(favorites);
-        }
-    };
     private final FavoriteRecyclerViewAdapter mAdapter = new FavoriteRecyclerViewAdapter(this);
-    private ProgressDialog mProgressDialog;
     private ActionMode mActionMode;
     private String mFilter;
     private boolean mSearchViewExpanded;
@@ -71,13 +53,6 @@ public class FavoriteFragment extends BaseListFragment
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private View mEmptySearchView;
     private View mEmptyView;
-
-    @Override
-    public void onAttach(final Context context) {
-        super.onAttach(context);
-        LocalBroadcastManager.getInstance(context).registerReceiver(mBroadcastReceiver,
-                FavoriteManager.makeGetIntentFilter());
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,8 +116,8 @@ public class FavoriteFragment extends BaseListFragment
             clear();
             return true;
         }
-        if (item.getItemId() == R.id.menu_email) {
-            startExport();
+        if (item.getItemId() == R.id.menu_export) {
+            mFavoriteManager.export(getActivity(), mFilter);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -158,7 +133,6 @@ public class FavoriteFragment extends BaseListFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         mFavoriteManager.detach();
         if (mActionMode != null) {
             mActionMode.finish();
@@ -254,32 +228,5 @@ public class FavoriteFragment extends BaseListFragment
                         (dialog, which) -> mFavoriteManager.clear(getActivity(), mFilter))
                 .setNegativeButton(android.R.string.cancel, null)
                 .create().show();
-    }
-
-    private void startExport() {
-        if (mProgressDialog == null) {
-            mProgressDialog = ProgressDialog.show(getActivity(), null,
-                    getString(R.string.preparing), true, true);
-        } else {
-            mProgressDialog.show();
-        }
-        mFavoriteManager.get(getActivity(), mFilter);
-    }
-
-    @Synthetic
-    void export(ArrayList<Favorite> favorites) {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-        }
-        final Intent intent = AppUtils.makeEmailIntent(
-                getString(R.string.favorite_email_subject),
-                makeEmailContent(favorites));
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivity(intent);
-        }
-    }
-
-    private String makeEmailContent(ArrayList<Favorite> favorites) {
-        return TextUtils.join("\n\n", favorites);
     }
 }
