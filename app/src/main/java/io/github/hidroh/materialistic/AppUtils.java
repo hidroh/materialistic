@@ -189,12 +189,14 @@ public class AppUtils {
         return trim(spanned);
     }
 
-    public static Intent makeEmailIntent(String subject, String text) {
-        final Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-        return intent;
+    public static Intent makeSendIntentChooser(Context context, Uri data) {
+        // use ACTION_SEND_MULTIPLE instead of ACTION_SEND to filter out
+        // share receivers that accept only EXTRA_TEXT but not EXTRA_STREAM
+        return Intent.createChooser(new Intent(Intent.ACTION_SEND_MULTIPLE)
+                        .setType("text/plain")
+                        .putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                                new ArrayList<Uri>(){{add(data);}}),
+                context.getString(R.string.share_file));
     }
 
     public static void openExternal(@NonNull final Context context,

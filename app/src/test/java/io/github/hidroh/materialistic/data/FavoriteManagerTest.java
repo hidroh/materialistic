@@ -1,9 +1,12 @@
 package io.github.hidroh.materialistic.data;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,10 +20,11 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
+import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.github.hidroh.materialistic.Application;
@@ -63,7 +67,12 @@ public class FavoriteManagerTest {
         cv.put("url", "http://example.com");
         cv.put("time", String.valueOf(System.currentTimeMillis()));
         resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        manager = new FavoriteManager(Schedulers.immediate());
+        manager = new FavoriteManager(Schedulers.immediate()) {
+            @Override
+            protected Uri getUriForFile(Context context, File file) {
+                return Uri.parse("content://" + FavoriteManager.FILE_AUTHORITY + "/files/saved/export.txt");
+            }
+        };
     }
 
     @Test
@@ -82,20 +91,23 @@ public class FavoriteManagerTest {
     }
 
     @Test
-    public void testGetNoQuery() {
-        manager.get(RuntimeEnvironment.application, null);
-        Intent actual = getBroadcastIntent();
-        assertThat(actual).hasAction(FavoriteManager.ACTION_GET);
-        assertThat(actual.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA))
-                .hasSize(2);
+    public void testExportNoQuery() {
+        manager.export(RuntimeEnvironment.application, null);
+        List<Notification> allNotifications = shadowOf((NotificationManager)
+                RuntimeEnvironment.application
+                        .getSystemService(Context.NOTIFICATION_SERVICE))
+                .getAllNotifications();
+        assertThat(allNotifications).isNotEmpty();
+        assertThat(shadowOf(allNotifications.get(0).contentIntent).getSavedIntent())
+                .hasAction(Intent.ACTION_CHOOSER);
     }
 
     @Test
-    public void testGetEmpty() {
-        manager.get(RuntimeEnvironment.application, "blah");
-        Intent actual = getBroadcastIntent();
-        assertThat(actual).hasAction(FavoriteManager.ACTION_GET);
-        assertThat(actual.getParcelableArrayListExtra(FavoriteManager.ACTION_GET_EXTRA_DATA))
+    public void testExportEmpty() {
+        manager.export(RuntimeEnvironment.application, "blah");
+        assertThat(shadowOf((NotificationManager) RuntimeEnvironment.application
+                .getSystemService(Context.NOTIFICATION_SERVICE))
+                .getAllNotifications())
                 .isEmpty();
     }
 
@@ -125,7 +137,7 @@ public class FavoriteManagerTest {
                         .getString(R.string.pref_saved_item_sync), true)
                 .putBoolean(RuntimeEnvironment.application
                         .getString(R.string.pref_offline_article), true)
-                .commit();
+                .apply();
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
@@ -220,10 +232,5 @@ public class FavoriteManagerTest {
         output.setDataPosition(0);
         assertEquals("1", output.readString());
         assertThat(Favorite.CREATOR.newArray(1)).hasSize(1);
-    }
-
-    private Intent getBroadcastIntent() {
-        ShadowLocalBroadcastManager broadcastManager = shadowOf(LocalBroadcastManager.getInstance(RuntimeEnvironment.application));
-        return broadcastManager.getSentBroadcastIntents().get(0);
     }
 }

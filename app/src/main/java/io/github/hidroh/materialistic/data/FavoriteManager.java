@@ -16,27 +16,37 @@
 
 package io.github.hidroh.materialistic.data;
 
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.CursorWrapper;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
+import okhttp3.internal.Util;
+import okio.BufferedSink;
+import okio.Okio;
 import rx.Observable;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
@@ -51,16 +61,15 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
      * {@link android.content.Intent#getAction()} for broadcasting getting favorites matching query
      */
     public static final String ACTION_GET = FavoriteManager.class.getName() + ".ACTION_GET";
-    /**
-     * {@link android.os.Bundle} key for {@link #ACTION_GET} that contains {@link ArrayList} of
-     * {@link Favorite}
-     */
-    public static final String ACTION_GET_EXTRA_DATA = ACTION_GET + ".EXTRA_DATA";
     private static final String URI_PATH_ADD = "add";
     private static final String URI_PATH_REMOVE = "remove";
     private static final String URI_PATH_CLEAR = "clear";
+    @VisibleForTesting static final String FILE_AUTHORITY = "io.github.hidroh.materialistic.fileprovider";
+    private static final String PATH_SAVED = "saved";
+    private static final String FILENAME_EXPORT = "export.txt";
     private final Scheduler mIoScheduler;
     @Synthetic Cursor mCursor;
+    private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
 
     @Override
     public int getSize() {
@@ -119,30 +128,30 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     /**
-     * Gets all favorites matched given query, a {@link #ACTION_GET} broadcast will be sent upon
-     * completion
+     * Exports all favorites matched given query to file
      * @param context   an instance of {@link android.content.Context}
      * @param query     query to filter stories to be retrieved
-     * @see #makeGetIntentFilter()
      */
-    public void get(Context context, String query) {
+    public void export(Context context, String query) {
+        Context appContext = context.getApplicationContext();
+        notifyExportStart(appContext);
         Observable.defer(() -> Observable.just(query))
-                .map(filter -> query(context, filter))
+                .map(filter -> query(appContext, filter))
                 .filter(cursor -> cursor != null && cursor.moveToFirst())
                 .map(cursor -> {
-                    ArrayList<Favorite> favorites = new ArrayList<>(cursor.getCount());
-                    Cursor favoriteCursor = new Cursor(cursor);
-                    do {
-                        favorites.add(favoriteCursor.getFavorite());
-                    } while (favoriteCursor.moveToNext());
-                    favoriteCursor.close();
-                    return favorites;
+                    try {
+                        return toFile(appContext, new Cursor(cursor));
+                    } catch (IOException e) {
+                        return null;
+                    } finally {
+                        cursor.close();
+                    }
                 })
-                .defaultIfEmpty(new ArrayList<>())
-                .map(FavoriteManager::makeGetBroadcastIntent)
+                .onErrorReturn(throwable -> null)
+                .defaultIfEmpty(null)
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(LocalBroadcastManager.getInstance(context)::sendBroadcast);
+                .subscribe(uri -> notifyExportDone(appContext, uri));
     }
 
     /**
@@ -297,13 +306,39 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 .delete(MaterialisticProvider.URI_FAVORITE, selection, selectionArgs);
     }
 
-    /**
-     * Creates an intent filter for get action broadcast
-     * @return get intent filter
-     * @see #get(android.content.Context, String)
-     */
-    public static IntentFilter makeGetIntentFilter() {
-        return new IntentFilter(ACTION_GET);
+    @WorkerThread
+    private Uri toFile(Context context, Cursor cursor) throws IOException {
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+        File dir = new File(context.getFilesDir(), PATH_SAVED);
+        if (!dir.exists() && !dir.mkdir()) {
+            return null;
+        }
+        File file = new File(dir, FILENAME_EXPORT);
+        if (!file.exists() && !file.createNewFile()) {
+            return null;
+        }
+        BufferedSink bufferedSink = Okio.buffer(Okio.sink(file));
+        do {
+            Favorite item = cursor.getFavorite();
+            bufferedSink.writeUtf8(item.getDisplayedTitle())
+                    .writeByte('\n')
+                    .writeUtf8(item.getUrl())
+                    .writeByte('\n')
+                    .writeUtf8(String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
+            if (!cursor.isLast()) {
+                bufferedSink.writeByte('\n')
+                        .writeByte('\n');
+            }
+        } while (cursor.moveToNext());
+        Util.closeQuietly(bufferedSink);
+        return getUriForFile(context, file);
+    }
+
+    @VisibleForTesting
+    protected Uri getUriForFile(Context context, File file) {
+        return FileProvider.getUriForFile(context, FILE_AUTHORITY, file);
     }
 
     public static boolean isAdded(Uri uri) {
@@ -330,10 +365,39 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
     }
 
-    private static Intent makeGetBroadcastIntent(ArrayList<Favorite> favorites) {
-        final Intent intent = new Intent(ACTION_GET);
-        intent.putExtra(ACTION_GET_EXTRA_DATA, favorites);
-        return intent;
+    private void notifyExportStart(Context context) {
+        NotificationManagerCompat.from(context)
+                .notify(mNotificationId, createNotificationBuilder(context)
+                        .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                        .setProgress(0, 0, true)
+                        .build());
+    }
+
+    private void notifyExportDone(Context context, Uri uri) {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        manager.cancel(mNotificationId);
+        if (uri == null) {
+            return;
+        }
+        context.grantUriPermission(context.getPackageName(), uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        manager.notify(mNotificationId, createNotificationBuilder(context)
+                .setContentText(context.getString(R.string.export_notification))
+                .setContentIntent(PendingIntent.getActivity(context, 0,
+                        AppUtils.makeSendIntentChooser(context, uri),
+                        PendingIntent.FLAG_UPDATE_CURRENT))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVibrate(new long[0])
+                .build());
+    }
+
+    private NotificationCompat.Builder createNotificationBuilder(Context context) {
+        return new NotificationCompat.Builder(context)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.mipmap.ic_launcher))
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(context.getString(R.string.export_saved_stories))
+                .setAutoCancel(true);
     }
 
     /**

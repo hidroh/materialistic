@@ -7,16 +7,11 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -36,34 +31,28 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowPopupMenu;
-import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
-import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
-import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
@@ -87,7 +76,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @Config(shadows = {ShadowRecyclerViewAdapter.class})
 @RunWith(TestRunner.class)
@@ -253,28 +241,9 @@ public class FavoriteActivityTest {
     }
 
     @Test
-    public void testEmail() {
-        shadowOf(activity).clickMenuItem(R.id.menu_email);
-        verify(favoriteManager).get(any(Context.class), any());
-        AlertDialog progressDialog = ShadowProgressDialog.getLatestAlertDialog();
-        assertThat(progressDialog).isShowing();
-
-        ResolveInfo emailResolveInfo = new ResolveInfo();
-        emailResolveInfo.activityInfo = new ActivityInfo();
-        emailResolveInfo.activityInfo.applicationInfo = new ApplicationInfo();
-        emailResolveInfo.activityInfo.applicationInfo.packageName =
-                ListActivity.class.getPackage().getName();
-        emailResolveInfo.activityInfo.name = ListActivity.class.getName();
-        RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
-        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:")),
-                emailResolveInfo);
-        ShadowLocalBroadcastManager manager = shadowOf(LocalBroadcastManager.getInstance(activity));
-        Intent intent = new Intent(FavoriteManager.ACTION_GET);
-        intent.putExtra(FavoriteManager.ACTION_GET_EXTRA_DATA, new ArrayList<Favorite>());
-        manager.getRegisteredBroadcastReceivers().get(0).broadcastReceiver
-                .onReceive(activity, intent);
-        assertThat(progressDialog).isNotShowing();
-        assertNotNull(shadowOf(activity).getNextStartedActivity());
+    public void testExport() {
+        shadowOf(activity).clickMenuItem(R.id.menu_export);
+        verify(favoriteManager).export(any(Context.class), any());
     }
 
     @Test

@@ -27,7 +27,6 @@
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="view_in_browser">View in external browser</string>
-    <string name="favorite_email_subject">Your Materialistic saved stories</string>
     <string name="share">Share</string>
     <string name="title_activity_about">About</string>
     <string name="license_title">License</string>
@@ -49,8 +48,7 @@
     <string name="no_saved_stories">No saved stories so far</string>
     <string name="no_comments">It\'s still quiet here</string>
     <string name="confirm_clear">Clear all saved stories?</string>
-    <string name="email">Export via email</string>
-    <string name="preparing" tools:ignore="TypographyEllipsis">Preparing...</string>
+    <string name="export">Export</string>
     <string name="clear_selected">Clear selected</string>
     <string name="confirm_clear_selected">Clear selected saved stories?</string>
     <string name="search">Search</string>
@@ -316,5 +314,8 @@
     <string name="empty_text">[This story has no content]</string>
     <string name="none">None</string>
     <string name="hint_update">Your app has just been updated!</string>
+    <string name="export_saved_stories">Export saved stories</string>
+    <string name="export_notification">Saved to file. Tap for options.</string>
+    <string name="share_file">Share file</string>
 
 </resources>

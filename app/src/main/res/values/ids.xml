@@ -68,7 +68,7 @@
     <item type="id" name="menu_share" />
     <item type="id" name="menu_external" />
     <item type="id" name="menu_clear" />
-    <item type="id" name="menu_email" />
+    <item type="id" name="menu_export" />
     <item type="id" name="menu_search" />
     <item type="id" name="menu_clear_recent" />
     <item type="id" name="menu_reset" />
