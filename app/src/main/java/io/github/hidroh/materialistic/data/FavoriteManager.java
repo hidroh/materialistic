@@ -42,6 +42,7 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.FavoriteActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import okhttp3.internal.Util;
@@ -368,6 +369,10 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private void notifyExportStart(Context context) {
         NotificationManagerCompat.from(context)
                 .notify(mNotificationId, createNotificationBuilder(context)
+                        .setContentIntent(PendingIntent.getActivity(context, 0,
+                                new Intent(context, FavoriteActivity.class)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                                PendingIntent.FLAG_UPDATE_CURRENT))
                         .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                         .setProgress(0, 0, true)
                         .build());
@@ -384,7 +389,8 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         manager.notify(mNotificationId, createNotificationBuilder(context)
                 .setContentText(context.getString(R.string.export_notification))
                 .setContentIntent(PendingIntent.getActivity(context, 0,
-                        AppUtils.makeSendIntentChooser(context, uri),
+                        AppUtils.makeSendIntentChooser(context, uri)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                         PendingIntent.FLAG_UPDATE_CURRENT))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(new long[0])
