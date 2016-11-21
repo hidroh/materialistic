@@ -246,6 +246,7 @@ public class ItemActivityTest {
     @SuppressLint("NewApi")
     @Test
     public void testShare() {
+        TestApplication.addResolver(new Intent(Intent.ACTION_SEND));
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull
@@ -284,9 +285,7 @@ public class ItemActivityTest {
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         Intent actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual)
-                .hasAction(Intent.ACTION_CHOOSER);
-        assertThat((Intent) actual.getParcelableExtra(Intent.EXTRA_INTENT))
-                .hasExtra(Intent.EXTRA_TEXT, "http://example.com");
+                .hasAction(Intent.ACTION_SEND);
 
         // share item
         shadowOf(activity).clickMenuItem(R.id.menu_share);
@@ -296,9 +295,7 @@ public class ItemActivityTest {
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
         actual = shadowOf(activity).getNextStartedActivity();
         assertThat(actual)
-                .hasAction(Intent.ACTION_CHOOSER);
-        assertThat((Intent) actual.getParcelableExtra(Intent.EXTRA_INTENT))
-                .hasExtra(Intent.EXTRA_TEXT, "https://news.ycombinator.com/item?id=1");
+                .hasAction(Intent.ACTION_SEND);
     }
 
     @Test
@@ -307,12 +304,7 @@ public class ItemActivityTest {
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_custom_tab), false)
                 .apply();
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
-        packageManager.addResolveInfoForIntent(
-                new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://example.com")),
-                ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
+        TestApplication.addResolver(new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com")));
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestItem() {
             @NonNull

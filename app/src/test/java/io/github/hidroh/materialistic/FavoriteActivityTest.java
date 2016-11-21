@@ -333,13 +333,14 @@ public class FavoriteActivityTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testShare() {
+        TestApplication.addResolver(new Intent(Intent.ACTION_SEND));
         shadowAdapter.getViewHolder(0).itemView.findViewById(R.id.button_more).performClick();
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
         assertThat(shadowOf(activity).getNextStartedActivity())
-                .hasAction(Intent.ACTION_CHOOSER);
+                .hasAction(Intent.ACTION_SEND);
     }
 
     @Test
