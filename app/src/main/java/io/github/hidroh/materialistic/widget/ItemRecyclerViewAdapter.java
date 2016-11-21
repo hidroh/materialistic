@@ -249,11 +249,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                         return true;
                     }
                     if (menuItem.getItemId() == R.id.menu_contextual_share) {
-                        mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
+                        AppUtils.share(mContext,
                                 item.isStoryType() ? item.getDisplayedTitle() : null,
                                 item.isStoryType() ? item.getUrl() :
                                         item.getDisplayedText() == null ?
-                                                null : item.getDisplayedText().toString()));
+                                                null : item.getDisplayedText().toString());
                         return true;
                     }
                     return false;

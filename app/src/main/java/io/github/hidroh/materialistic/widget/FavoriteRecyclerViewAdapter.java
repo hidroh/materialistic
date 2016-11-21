@@ -263,9 +263,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
                         return true;
                     }
                     if (menuItem.getItemId() == R.id.menu_contextual_share) {
-                        mContext.startActivity(AppUtils.makeChooserShareIntent(mContext,
-                                item.getDisplayedTitle(),
-                                item.getUrl()));
+                        AppUtils.share(mContext, item.getDisplayedTitle(), item.getUrl());
                         return true;
                     }
                     return false;

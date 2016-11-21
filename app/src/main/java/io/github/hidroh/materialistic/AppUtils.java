@@ -228,19 +228,17 @@ public class AppUtils {
                              @NonNull final WebItem item) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
-            context.startActivity(makeChooserShareIntent(context,
-                    item.getDisplayedTitle(),
-                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
+            share(context, item.getDisplayedTitle(),
+                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
             return;
         }
         popupMenu.create(context, anchor, GravityCompat.END)
                 .inflate(R.menu.menu_share)
                 .setOnMenuItemClickListener(menuItem -> {
-                    context.startActivity(makeChooserShareIntent(context,
-                            item.getDisplayedTitle(),
+                    share(context, item.getDisplayedTitle(),
                             menuItem.getItemId() == R.id.menu_article ?
                                     item.getUrl() :
-                                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId())));
+                                    String.format(HackerNewsClient.WEB_ITEM_PATH, item.getId()));
                     return true;
                 })
                 .show();
@@ -507,13 +505,16 @@ public class AppUtils {
                 Preferences.Theme.resolvePreferredTextSize(context)));
     }
 
-    public static Intent makeChooserShareIntent(Context context, String subject, String text) {
-        Intent shareIntent = AppUtils.makeShareIntent(subject, text);
-        Intent chooserIntent = Intent.createChooser(shareIntent, context.getString(R.string.share));
-        chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return chooserIntent;
+    public static void share(Context context, String subject, String text) {
+        Intent intent = new Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_SUBJECT, subject)
+                .putExtra(Intent.EXTRA_TEXT, !TextUtils.isEmpty(subject) ?
+                        TextUtils.join(" - ", new String[]{subject, text}) : text);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        }
     }
-
     public static Uri createItemUri(@NonNull String itemId) {
         return new Uri.Builder()
                 .scheme(BuildConfig.APPLICATION_ID)
@@ -570,15 +571,6 @@ public class AppUtils {
             end--;
         }
         return charSequence.subSequence(0, end + 1);
-    }
-
-    private static Intent makeShareIntent(String subject, String text) {
-        final Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, !TextUtils.isEmpty(subject) ?
-                TextUtils.join(" - ", new String[]{subject, text}) : text);
-        return intent;
     }
 
     @NonNull

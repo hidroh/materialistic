@@ -610,6 +610,7 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testShare() {
+        TestApplication.addResolver(new Intent(Intent.ACTION_SEND));
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
@@ -618,7 +619,7 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_share));
         assertThat(shadowOf(activity).getNextStartedActivity())
-                .hasAction(Intent.ACTION_CHOOSER);
+                .hasAction(Intent.ACTION_SEND);
     }
 
     @Test
