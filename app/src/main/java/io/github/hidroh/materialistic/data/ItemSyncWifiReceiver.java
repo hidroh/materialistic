@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.AppUtils;
@@ -30,8 +31,8 @@ public class ItemSyncWifiReceiver extends BroadcastReceiver {
         if (!TextUtils.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
             return;
         }
-        if (AppUtils.isOnWiFi(context)) {
-            ItemSyncAdapter.initSync(context, null);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && AppUtils.isOnWiFi(context)) {
+            SyncDelegate.initSync(context, null);
         }
     }
 }
