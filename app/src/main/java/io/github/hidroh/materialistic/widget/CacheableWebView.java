@@ -51,6 +51,11 @@ public class CacheableWebView extends WebView {
     }
 
     @Override
+    public void reloadUrl(String url) {
+        super.reloadUrl(getCacheableUrl(url));
+    }
+
+    @Override
     public void loadUrl(String url) {
         if (TextUtils.isEmpty(url)) {
             return;
@@ -108,6 +113,9 @@ public class CacheableWebView extends WebView {
     }
 
     private String getCacheableUrl(String url) {
+        if (TextUtils.equals(url, BLANK) || TextUtils.equals(url, FILE)) {
+            return url;
+        }
         mArchiveClient.cacheFileName = generateCacheFilename(url);
         setCacheModeInternal();
         if (getSettings().getCacheMode() != WebSettings.LOAD_CACHE_ONLY) {

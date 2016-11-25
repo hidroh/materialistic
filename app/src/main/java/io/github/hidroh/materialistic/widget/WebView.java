@@ -29,8 +29,8 @@ import android.webkit.WebViewClient;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 
 public class WebView extends android.webkit.WebView {
-    private static final String BLANK = "about:blank";
-    private static final String FILE = "file:///";
+    static final String BLANK = "about:blank";
+    static final String FILE = "file:///";
     private final HistoryWebViewClient mClient = new HistoryWebViewClient();
     @Synthetic String mPendingUrl, mPendingHtml;
 

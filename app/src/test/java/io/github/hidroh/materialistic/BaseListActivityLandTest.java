@@ -27,6 +27,7 @@ import org.robolectric.util.ActivityController;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.TestHnItem;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -181,17 +182,7 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testGetSelectedItem() {
-        activity.onItemSelected(new TestWebItem() {
-            @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
-            }
-        });
+        activity.onItemSelected(createWebItem());
         assertNotNull(activity.getSelectedItem());
         shadowOf(activity).recreate();
         assertNotNull(activity.getSelectedItem());
@@ -199,17 +190,7 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testClearSelection() {
-        activity.onItemSelected(new TestWebItem() {
-            @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
-            }
-        });
+        activity.onItemSelected(createWebItem());
         assertThat(activity.findViewById(R.id.empty_selection)).isNotVisible();
         activity.onItemSelected(null);
         assertThat(activity.findViewById(R.id.empty_selection)).isVisible();
@@ -219,17 +200,7 @@ public class BaseListActivityLandTest {
 
     @Test
     public void testToggleItemView() {
-        activity.onItemSelected(new TestWebItem() {
-            @Override
-            public boolean isStoryType() {
-                return true;
-            }
-
-            @Override
-            public String getId() {
-                return "1";
-            }
-        });
+        activity.onItemSelected(createWebItem());
         TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
         assertEquals(2, tabLayout.getTabCount());
         assertStoryMode();
@@ -289,6 +260,25 @@ public class BaseListActivityLandTest {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
         assertTrue(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
+    }
+
+    private WebItem createWebItem() {
+        return new TestWebItem() {
+            @Override
+            public boolean isStoryType() {
+                return true;
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+        };
     }
 
     @After
