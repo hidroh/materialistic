@@ -16,11 +16,13 @@
 
 package io.github.hidroh.materialistic.appwidget;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlarmManager;
+import android.app.job.JobScheduler;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +36,6 @@ import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 
-import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
@@ -66,13 +67,14 @@ public class WidgetConfigActivityTest {
         assertThat(shadowOf(activity).getResultCode()).isEqualTo(Activity.RESULT_CANCELED);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Test
     public void testOk() {
         activity.findViewById(R.id.button_ok).performClick();
         assertThat(shadowOf(activity).getResultCode()).isEqualTo(Activity.RESULT_OK);
         assertThat(activity).isFinishing();
-        assertNotNull(shadowOf((AlarmManager) activity.getSystemService(Context.ALARM_SERVICE))
-                .getNextScheduledAlarm());
+        assertThat(shadowOf((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE))
+                .getAllPendingJobs()).isNotEmpty();
     }
 
     @After
