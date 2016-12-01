@@ -490,7 +490,7 @@ public class Preferences {
             return get(context, R.string.pref_offline_notification, false);
         }
 
-        private static boolean isWifiOnly(Context context) {
+        public static boolean isWifiOnly(Context context) {
             String wifiValue = context.getString(R.string.offline_data_wifi);
             return TextUtils.equals(wifiValue, get(context, R.string.pref_offline_data, wifiValue));
         }

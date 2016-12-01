@@ -28,10 +28,12 @@ import io.github.hidroh.materialistic.appwidget.WidgetConfigActivityTest;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ItemSyncJobServiceTest;
 import io.github.hidroh.materialistic.data.ItemSyncService;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.SyncDelegate;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
@@ -116,7 +118,8 @@ import static org.mockito.Mockito.when;
                 ThreadPreviewActivityTest.class,
                 WidgetConfigActivityTest.class,
                 BaseListActivityLandTest.class,
-                PreferencesActivityTest.class
+                PreferencesActivityTest.class,
+                ItemSyncJobServiceTest.class
         },
         library = true,
         overrides = true
@@ -136,6 +139,7 @@ public class TestActivityModule {
     private final KeyDelegate keyDelegate = mock(KeyDelegate.class);
     private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
     private final ResourcesProvider resourcesProvider = mock(ResourcesProvider.class);
+    private final SyncDelegate syncDelegate = mock(SyncDelegate.class);
     {
         TypedArray typedArray = mock(TypedArray.class);
         when(typedArray.length()).thenReturn(1);
@@ -333,5 +337,10 @@ public class TestActivityModule {
     @Provides @Singleton
     public ResourcesProvider provideResourcesProvider() {
         return resourcesProvider;
+    }
+
+    @Provides @Singleton
+    public SyncDelegate provideSyncDelegate() {
+        return syncDelegate;
     }
 }

@@ -24,12 +24,14 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.appwidget.WidgetService;
+import io.github.hidroh.materialistic.data.ItemSyncJobService;
 import io.github.hidroh.materialistic.data.ItemSyncService;
 
 @Module(
         injects = {
                 ItemSyncService.class,
-                WidgetService.class
+                WidgetService.class,
+                ItemSyncJobService.class
         },
         library = true,
         includes = DataModule.class

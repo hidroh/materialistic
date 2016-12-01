@@ -265,8 +265,15 @@
                 android:resource="@xml/syncadapter" />
         </service>
         <service
+            android:name=".data.ItemSyncJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true" />
+        <service
             android:name=".appwidget.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service
+            android:name=".data.WebCacheService"
+            android:exported="false" />
         <provider
             android:authorities="io.github.hidroh.materialistic.provider"
             android:name=".data.MaterialisticProvider"

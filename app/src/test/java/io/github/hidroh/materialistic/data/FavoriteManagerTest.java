@@ -129,6 +129,7 @@ public class FavoriteManagerTest {
                 .toBlocking().single());
     }
 
+    @Config(sdk = 18)
     @Test
     public void testAdd() {
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
