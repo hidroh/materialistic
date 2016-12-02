@@ -21,13 +21,17 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -92,14 +96,32 @@ class WidgetHelper {
         String frequency = getConfig(appWidgetId, R.string.pref_widget_frequency);
         long frequencyHourMillis = DateUtils.HOUR_IN_MILLIS * (TextUtils.isEmpty(frequency) ?
                 DEFAULT_FREQUENCY_HOUR : Integer.valueOf(frequency));
-        mAlarmManager.setInexactRepeating(AlarmManager.RTC,
-                System.currentTimeMillis() + frequencyHourMillis,
-                frequencyHourMillis,
-                createRefreshPendingIntent(appWidgetId));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getJobScheduler().schedule(new JobInfo.Builder(appWidgetId,
+                    new ComponentName(mContext.getPackageName(), WidgetRefreshJobService.class.getName()))
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setPeriodic(frequencyHourMillis)
+                    .build());
+        } else {
+            mAlarmManager.setInexactRepeating(AlarmManager.RTC,
+                    System.currentTimeMillis() + frequencyHourMillis,
+                    frequencyHourMillis,
+                    createRefreshPendingIntent(appWidgetId));
+        }
 
     }
+
     private void cancelScheduledUpdate(int appWidgetId) {
-        mAlarmManager.cancel(createRefreshPendingIntent(appWidgetId));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getJobScheduler().cancel(appWidgetId);
+        } else {
+            mAlarmManager.cancel(createRefreshPendingIntent(appWidgetId));
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private JobScheduler getJobScheduler() {
+        return (JobScheduler) mContext.getSystemService(Context.JOB_SCHEDULER_SERVICE);
     }
 
     private String getConfig(int appWidgetId, @StringRes int key) {

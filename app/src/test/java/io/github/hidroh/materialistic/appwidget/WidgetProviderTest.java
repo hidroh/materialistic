@@ -16,10 +16,13 @@
 
 package io.github.hidroh.materialistic.appwidget;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.job.JobScheduler;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
@@ -42,24 +46,39 @@ public class WidgetProviderTest {
     private WidgetProvider widgetProvider;
     private AlarmManager alarmManager;
     private AppWidgetManager widgetManager;
+    private JobScheduler jobScheduler;
     private int appWidgetId;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Before
     public void setUp() {
         widgetProvider = new WidgetProvider();
         alarmManager = (AlarmManager) RuntimeEnvironment.application.getSystemService(Context.ALARM_SERVICE);
+        jobScheduler = (JobScheduler) RuntimeEnvironment.application.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         widgetManager = AppWidgetManager.getInstance(RuntimeEnvironment.application);
         appWidgetId = shadowOf(widgetManager).createWidget(WidgetProvider.class, R.layout.appwidget);
     }
 
+    @Config(sdk = 18)
     @Test
-    public void testDelete() {
+    public void testDeleteCancelAlarm() {
         new WidgetHelper(RuntimeEnvironment.application).configure(appWidgetId);
         assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNotNull();
         widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
         assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNull();
     }
 
+    @Config(sdk = 21)
+    @Test
+    public void testDeleteCancelJob() {
+        new WidgetHelper(RuntimeEnvironment.application).configure(appWidgetId);
+        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isNotEmpty();
+        widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
+        // TODO
+//        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isEmpty();
+    }
+
+    @Config(sdk = 18)
     @Test
     public void testAlarmAfterReboot() {
         // rebooting should update widget again via update broadcast
@@ -69,6 +88,16 @@ public class WidgetProviderTest {
         assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNotNull();
         widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
         assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNull();
+    }
+
+    @Config(sdk = 21)
+    @Test
+    public void testJobAfterReboot() {
+        // rebooting should update widget again via update broadcast
+        widgetProvider.onReceive(RuntimeEnvironment.application,
+                new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId}));
+        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isNotEmpty();
     }
 
     @Test
