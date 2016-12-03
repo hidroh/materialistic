@@ -1,5 +1,5 @@
 plugins {
-    id "me.tatarka.retrolambda" version "3.2.5"
+    id "me.tatarka.retrolambda" version "3.4.0"
 }
 
 apply plugin: 'com.android.application'
@@ -12,7 +12,7 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
         targetSdkVersion 25 // TODO http://b.android.com/212316
-        versionCode 66
+        versionCode 67
         versionName "3.1"
         buildConfigField "int", "LATEST_RELEASE", "62"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
@@ -59,9 +59,9 @@ android {
 
 ext {
     supportVersion = '24.2.0'
-    okHttpVersion = '3.4.1'
+    okHttpVersion = '3.5.0'
     daggerVersion = '1.2.5'
-    leakCanaryVersion = '1.4'
+    leakCanaryVersion = '1.5'
     retrofitVersion = '2.1.0'
 }
 
