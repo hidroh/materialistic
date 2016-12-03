@@ -303,6 +303,12 @@ public class SyncDelegate {
         }
     }
 
+    void stopSync(int progressId) {
+        // TODO
+        mJob.connectionEnabled = false;
+        mNotificationManager.cancel(progressId);
+    }
+
     private PendingIntent getItemActivity(String itemId) {
         return PendingIntent.getActivity(mContext, 0,
                 new Intent(Intent.ACTION_VIEW)
