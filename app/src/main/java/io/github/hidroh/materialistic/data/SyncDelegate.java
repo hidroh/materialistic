@@ -106,15 +106,18 @@ public class SyncDelegate {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(itemId)) {
             PersistableBundle extras = new PersistableBundle();
             extras.putString(ItemSyncJobService.EXTRA_ID, itemId);
+            JobInfo.Builder builder = new JobInfo.Builder(Long.valueOf(itemId).intValue(),
+                    new ComponentName(context.getPackageName(),
+                            ItemSyncJobService.class.getName()))
+                    .setRequiredNetworkType(Preferences.Offline.isWifiOnly(context) ?
+                            JobInfo.NETWORK_TYPE_UNMETERED :
+                            JobInfo.NETWORK_TYPE_ANY)
+                    .setExtras(extras);
+            if (Preferences.Offline.currentConnectionEnabled(context)) {
+                builder.setOverrideDeadline(0);
+            }
             ((JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE))
-                    .schedule(new JobInfo.Builder(Long.valueOf(itemId).intValue(),
-                            new ComponentName(context.getPackageName(),
-                                    ItemSyncJobService.class.getName()))
-                            .setRequiredNetworkType(Preferences.Offline.isWifiOnly(context) ?
-                                    JobInfo.NETWORK_TYPE_UNMETERED :
-                                    JobInfo.NETWORK_TYPE_ANY)
-                            .setExtras(extras)
-                            .build());
+                    .schedule(builder.build());
         } else {
             Bundle extras = new Bundle();
             if (itemId != null) {
@@ -298,6 +301,12 @@ public class SyncDelegate {
                     .setSortKey(progressId)
                     .build());
         }
+    }
+
+    void stopSync(int progressId) {
+        // TODO
+        mJob.connectionEnabled = false;
+        mNotificationManager.cancel(progressId);
     }
 
     private PendingIntent getItemActivity(String itemId) {

@@ -64,6 +64,7 @@ public class ItemSyncJobService extends JobService implements SyncDelegate.Progr
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
+        mSyncDelegate.stopSync(jobParameters.getJobId());
         return true;
     }
 
