@@ -1,0 +1,22 @@
+Privacy Policy
+
+This Privacy Policy explains how personal data might be collected from users of Materialistic - Hacker News (https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic) - from now on referred to as the app - how they are stored, processed and used by the app.
+
+1. Your provided data
+As a Hacker News (https://news.ycombinator.com) user, one may optionally provide login credentials to the app. Once provided, your login credentials will be used by the app for the sole purpose of connecting to Hacker News on your behalf, and only when your explicit interactions within the app require such credentials.
+
+Your login credentials if provided will be stored securely under your device's Accounts, and remain there until you explicitly remove them via device's Settings, or when you uninstall the app.
+
+2. Required permission
+Due to platform limitation, Android 5.1 and lower device users will see an extra permission called "Identity", or "Accounts", requested by the app. This permission allows an app to:
+- create accounts and set passwords
+- find accounts on the device
+
+This permission is required for the purpose of integrating with device's Accounts for your Hacker News login credentials explained above. The app does not have access or attempt to manipulate any other accounts on your device.
+
+Identity/Acount permission is not required for Android 6 and above.
+
+3. Collection of anonymous data for analytics
+While you are interacting with the app, anonymous information regarding your device might be collected for the purpose of crash reporting and usage monitoring related to the app. The information collected helps identify app defects and popular features, that would serve as guidelines for the app's future improvements.
+
+Analytics data collected includes solely those permitted by Android platform without any extra permissions, and are not shared with any other third party services except the ones that the app relies on for data collection.
