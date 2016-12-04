@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -259,23 +258,6 @@ public class FavoriteActivityTest {
         controller.newIntent(intent);
         verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
                 any(LocalItemManager.Observer.class), eq("ask"));
-    }
-
-    @Test
-    public void testSaveState() {
-        Bundle outState = new Bundle();
-        controller.saveInstanceState(outState);
-        ActivityController<TestFavoriteActivity> controller = Robolectric
-                .buildActivity(TestFavoriteActivity.class)
-                .create(outState)
-                .postCreate(outState)
-                .start()
-                .resume()
-                .visible();
-        assertEquals(2, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
-                .getAdapter().getItemCount());
-        controller.pause().stop().destroy();
-        reset(keyDelegate);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
