@@ -37,6 +37,10 @@ public class WebCacheService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) { // restarted
+            stopSelf(startId);
+            return START_STICKY;
+        }
         CacheableWebView webView = new CacheableWebView(this);
         webView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(this)));
         webView.setWebChromeClient(new CacheableWebView.ArchiveClient() {

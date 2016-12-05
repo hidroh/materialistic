@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.data;
 
+import android.app.Service;
 import android.content.Intent;
 
 import org.junit.After;
@@ -30,6 +31,7 @@ import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = ShadowWebView.class)
 @RunWith(TestRunner.class)
@@ -51,6 +53,12 @@ public class WebCacheServiceTest {
                 .startCommand(0, 0);
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://example.com");
 
+    }
+
+    @Test
+    public void testRestartNullIntent() {
+        service.onStartCommand(null, Service.START_FLAG_REDELIVERY, 0);
+        assertThat(shadowOf(service).isStoppedBySelf()).isTrue();
     }
 
     @After
