@@ -53,7 +53,6 @@ public class FavoriteFragment extends BaseListFragment
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     private View mEmptySearchView;
     private View mEmptyView;
-    private boolean mLoaded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,13 +150,6 @@ public class FavoriteFragment extends BaseListFragment
     }
 
     @Override
-    protected void setAdapter(Bundle savedInstanceState) {
-        if (savedInstanceState == null || mLoaded) {
-            super.setAdapter(savedInstanceState);
-        }
-    }
-
-    @Override
     protected ListRecyclerViewAdapter getAdapter() {
         return mAdapter;
     }
@@ -185,12 +177,7 @@ public class FavoriteFragment extends BaseListFragment
 
     @Override
     public void onChanged() {
-        if (!mLoaded) {
-            mLoaded = true;
-            setAdapter(null);
-        } else {
-            mAdapter.notifyChanged();
-        }
+        mAdapter.notifyChanged();
         if (!isDetached()) {
             toggleEmptyView(mAdapter.getItemCount() == 0, mFilter);
             getActivity().supportInvalidateOptionsMenu();
