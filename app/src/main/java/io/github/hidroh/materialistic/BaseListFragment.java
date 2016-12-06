@@ -85,13 +85,9 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
-        setAdapter(savedInstanceState);
+        mRecyclerView.setAdapter(getAdapter());
         mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
                 KeyDelegate.RecyclerViewHelper.SCROLL_PAGE);
-    }
-
-    protected void setAdapter(Bundle savedInstanceState) {
-        mRecyclerView.setAdapter(getAdapter());
     }
 
     @Override
