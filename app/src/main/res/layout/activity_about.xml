@@ -77,6 +77,14 @@
                 style="@style/textContentStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/privacy_policy"
+                style="@style/HeadlineTextStyle" />
+            <TextView
+                android:id="@id/text_privacy_policy"
+                style="@style/textContentStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

@@ -54,7 +54,12 @@
     </string>
     <string translatable="false" name="third_party_licenses_text" tools:ignore="TypographyOther">
         <![CDATA[
-            <a href="https://raw.githubusercontent.com/hidroh/materialistic/master/THIRD-PARTY-NOTICES.txt">View full text</a>
+            <a href="https://hidroh.github.io/materialistic/licenses.html">View full text</a>
+        ]]>
+    </string>
+    <string translatable="false" name="privacy_policy_text" tools:ignore="TypographyOther">
+        <![CDATA[
+            <a href="https://hidroh.github.io/materialistic/privacy.html">View full text</a>
         ]]>
     </string>
 </resources>

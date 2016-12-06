@@ -35,7 +35,7 @@
     <string name="application_info_title">Application Info</string>
     <string name="application_info_text">
         <![CDATA[
-            <p>Version: %1$s</p>
+            <p>Version: %1$s (%2$d)</p>
             <p>This application is open source at <a href="https://github.com/hidroh/materialistic">github.com/hidroh/materialistic</a></p>
         ]]>
     </string>
@@ -317,5 +317,6 @@
     <string name="export_saved_stories">Export saved stories</string>
     <string name="export_notification">Saved to file. Tap for options.</string>
     <string name="share_file">Share file</string>
+    <string name="privacy_policy">Privacy Policy</string>
 
 </resources>
