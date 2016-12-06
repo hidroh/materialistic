@@ -35,16 +35,19 @@ public class AboutActivity extends InjectableActivity {
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 
         String versionName = "";
+        int versionCode = 0;
         try {
             versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             // do nothing
         }
-        setTextWithLinks(R.id.text_application_info, getString(R.string.application_info_text, versionName));
+        setTextWithLinks(R.id.text_application_info, getString(R.string.application_info_text, versionName, versionCode));
         setTextWithLinks(R.id.text_developer_info, getString(R.string.developer_info_text));
         setTextWithLinks(R.id.text_libraries, getString(R.string.libraries_text));
         setTextWithLinks(R.id.text_license, getString(R.string.license_text));
         setTextWithLinks(R.id.text_3rd_party_licenses, getString(R.string.third_party_licenses_text));
+        setTextWithLinks(R.id.text_privacy_policy, getString(R.string.privacy_policy_text));
     }
 
     private void setTextWithLinks(@IdRes int textViewResId, String htmlText) {

@@ -19,10 +19,12 @@
     <string name="loading_text" translatable="false" tools:ignore="TypographyEllipsis">...</string>
     <string name="developer_info_text" translatable="false">
         <![CDATA[
-            <p>Ha Duy Trung</p>
-            <p><a href="https://twitter.com/hadt">@hadt</a></p>
-            <p><a href="https://github.com/hidroh">Github</a></p>
-            <p><a href="https://hidroh.github.io">Blog</a></p>
+            <p>
+            Ha Duy Trung
+            <a href="https://twitter.com/hadt">@hadt</a> /
+            <a href="https://github.com/hidroh">Github</a> /
+            <a href="https://hidroh.github.io">Blog</a>
+            </p>
         ]]>
     </string>
     <string name="html" translatable="false">
