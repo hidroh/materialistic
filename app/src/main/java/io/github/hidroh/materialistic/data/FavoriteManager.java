@@ -67,7 +67,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private static final String URI_PATH_CLEAR = "clear";
     @VisibleForTesting static final String FILE_AUTHORITY = "io.github.hidroh.materialistic.fileprovider";
     private static final String PATH_SAVED = "saved";
-    private static final String FILENAME_EXPORT = "export.txt";
+    private static final String FILENAME_EXPORT = "materialistic-export.txt";
     private final Scheduler mIoScheduler;
     @Synthetic Cursor mCursor;
     private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
