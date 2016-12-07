@@ -70,7 +70,7 @@ public class FavoriteManagerTest {
         manager = new FavoriteManager(Schedulers.immediate()) {
             @Override
             protected Uri getUriForFile(Context context, File file) {
-                return Uri.parse("content://" + FavoriteManager.FILE_AUTHORITY + "/files/saved/export.txt");
+                return Uri.parse("content://" + FavoriteManager.FILE_AUTHORITY + "/files/saved/materialistic-export.txt");
             }
         };
     }
