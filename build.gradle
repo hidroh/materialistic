@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0-alpha1'
+        classpath 'com.android.tools.build:gradle:2.3.0-alpha2'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -22,20 +22,4 @@ allprojects {
 
 ext {
     ci = project.hasProperty("ci")
-}
-
-subprojects {
-    project.plugins.whenPluginAdded { plugin ->
-        if (rootProject.ext.ci) {
-            switch (plugin.class.name) {
-                case "com.android.build.gradle.AppPlugin":
-                case "com.android.build.gradle.LibraryPlugin":
-                    project.android.dexOptions.preDexLibraries = false
-                    project.android.variantFilter { variant ->
-                        variant.setIgnore(variant.buildType.name != 'debug')
-                    }
-                    break
-            }
-        }
-    }
 }
