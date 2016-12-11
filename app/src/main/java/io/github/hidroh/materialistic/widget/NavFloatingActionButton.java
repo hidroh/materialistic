@@ -255,6 +255,7 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Synthetic void persistPosition() {
         getPreferences()

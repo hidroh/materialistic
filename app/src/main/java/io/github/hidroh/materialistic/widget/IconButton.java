@@ -22,13 +22,13 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
-import android.widget.ImageButton;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 
-public class IconButton extends ImageButton {
+public class IconButton extends AppCompatImageButton {
     private static final int[][] STATES = new int[][]{
             new int[]{android.R.attr.state_enabled},
             new int[]{-android.R.attr.state_enabled}
