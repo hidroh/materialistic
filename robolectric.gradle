@@ -1,6 +1,6 @@
 android.testOptions.unitTests.all {
     // full options: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
-    maxHeapSize = "2048m"
+    maxHeapSize = rootProject.ext.ci ? "3584m" : "2048m"
     forkEvery = 4
     testLogging {
         events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
@@ -9,6 +9,12 @@ android.testOptions.unitTests.all {
     jacoco {
         includeNoLocationClasses = true
     }
+    reports {
+        html.enabled = false
+        junitXml.enabled = false
+    }
+    include "**/suite/${rootProject.ext.testSuite}.class"
+    systemProperty 'robolectric.buildDir', buildDir
 }
 
 ext {
@@ -20,7 +26,8 @@ dependencies {
     testCompile "org.robolectric:robolectric:$robolectricVersion",
             "org.robolectric:shadows-support-v4:$robolectricVersion",
             'org.mockito:mockito-core:2.1.0',
-            'junit:junit:4.12'
+            'junit:junit:4.12',
+            'io.takari.junit:takari-cpsuite:1.2.7'
     testCompile("com.squareup.assertj:assertj-android:$assertjVersion") {
             exclude group: 'com.android.support', module: 'support-annotations'
     }

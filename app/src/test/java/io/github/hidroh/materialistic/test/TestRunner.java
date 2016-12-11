@@ -24,6 +24,8 @@ import org.robolectric.internal.ManifestFactory;
 import org.robolectric.internal.ManifestIdentifier;
 import org.robolectric.res.FileFsFile;
 
+import java.lang.reflect.Method;
+
 public class TestRunner extends RobolectricTestRunner {
 
     public TestRunner(Class<?> klass) throws InitializationError {
@@ -53,5 +55,13 @@ public class TestRunner extends RobolectricTestRunner {
         } else {
             return super.getManifestFactory(config);
         }
+    }
+
+    @Override
+    public Config getConfig(Method method) {
+        return new Config.Implementation(super.getConfig(method),
+                new Config.Builder()
+                        .setBuildDir(System.getProperty("robolectric.buildDir"))
+                        .build());
     }
 }

@@ -22,6 +22,7 @@ import android.widget.ViewSwitcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -52,14 +53,15 @@ import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.ListActivity;
-import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestLayoutManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowAnimation;
 import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
+import io.github.hidroh.materialistic.test.suite.SlowTest;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -80,6 +82,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
+@Category(SlowTest.class)
 @Config(shadows = {ShadowSwipeRefreshLayout.class,
         ShadowRecyclerViewAdapter.class,
         ShadowRecyclerView.class,
