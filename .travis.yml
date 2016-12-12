@@ -1,7 +1,7 @@
 language: android
 jdk:
   - oraclejdk8
-sudo: false
+sudo: required
 addons:
   apt:
     packages:
@@ -36,10 +36,10 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache/
 script:
-    - GRADLE_CMD='./gradlew -Pci --console=plain'
-    - $GRADLE_CMD $TASK
+    - .travis/${TASK}.sh
 env:
-    - TASK="lintDebug"
-    - TASK="testDebugUnitTest"
+    - TASK=lint
+    - TASK=test1
+    - TASK=test2
 after_success:
-    - if [[ $TASK = test* ]]; then $GRADLE_CMD jacocoTestReport coveralls; fi
+    - .travis/coverage.sh
