@@ -8,10 +8,10 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - JDK 8
 - Latest Android SDK tools
 - Latest Android platform tools
-- Android SDK Build tools 25.0.1
+- Android SDK Build tools 25.0.2
 - Android SDK 25
 - Android Support Repository
-- Android Support Library 24.2.0
+- Android Support Library 25.1.0
 
 **Dependencies**
 - [Official Hacker News API][HackerNews/API], user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website

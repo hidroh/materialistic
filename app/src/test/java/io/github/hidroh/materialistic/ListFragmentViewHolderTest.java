@@ -14,10 +14,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +30,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowContentObserver;
-import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -484,16 +481,6 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
         verify(userServices).voteUp(any(Context.class), eq(item.getId()), voteCallback.capture());
-        voteCallback.getValue().onDone(true);
-        assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
-        Animation animation = ((ViewSwitcher) adapter.getViewHolder(0).itemView
-                .findViewById(R.id.vote_switcher))
-                .getInAnimation();
-        ((ShadowAnimation) ShadowExtractor.extract(animation))
-                .getAnimationListener().onAnimationEnd(animation);
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
-        assertThat((TextView) adapter.getViewHolder(0).itemView.findViewById(R.id.score))
-                .hasTextString(activity.getResources().getQuantityString(R.plurals.score, 1, 1));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
