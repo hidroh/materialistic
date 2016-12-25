@@ -13,7 +13,7 @@ android.testOptions.unitTests.all {
         html.enabled = false
         junitXml.enabled = false
     }
-    include "**/suite/${rootProject.ext.testSuite}.class"
+    include rootProject.hasProperty("testSuite") ? "**/${rootProject.ext.testSuite}.class" : "**/*Test.class"
     systemProperty 'robolectric.buildDir', buildDir
 }
 

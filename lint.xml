@@ -24,5 +24,7 @@
     </issue>
     <issue id="MissingTranslation" severity="ignore" />
     <issue id="Overdraw" severity="informational" /> <!-- TODO http://b.android.com/169879 -->
+    <issue id="IconLauncherShape" severity="informational" />
     <issue id="ResourceType" severity="ignore" />    <!-- TODO http://b.android.com/201882 -->
+    <issue id="RestrictedApi" severity="ignore" /> <!-- TODO http://b.android.com/230387 -->
 </lint>

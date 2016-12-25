@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
@@ -26,7 +27,7 @@ import org.robolectric.annotation.RealObject;
 import java.util.Deque;
 import java.util.LinkedList;
 
-@Implements(Snackbar.class)
+@Implements(BaseTransientBottomBar.class)
 public class ShadowSnackbar {
     @RealObject Snackbar realObject;
     private static Deque<View> latestViews = new LinkedList<>();
