@@ -69,6 +69,7 @@ public class UserServicesClient implements UserServices {
     private static final String DEFAULT_SUBMIT_REDIRECT = "newest";
     private static final String REGEX_INPUT = "<\\s*input[^>]*>";
     private static final String REGEX_VALUE = "value[^\"]*\"([^\"]*)\"";
+    private static final String REGEX_CREATE_ERROR_BODY = "<body>([^<]*)";
     private static final String HEADER_LOCATION = "location";
     private static final String HEADER_COOKIE = "cookie";
     private static final String HEADER_SET_COOKIE = "set-cookie";
@@ -84,7 +85,19 @@ public class UserServicesClient implements UserServices {
     @Override
     public void login(String username, String password, boolean createAccount, Callback callback) {
         execute(postLogin(username, password, createAccount))
-                .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
+                .map(response -> {
+                    if (response.code() == HttpURLConnection.HTTP_MOVED_TEMP) {
+                        return true;
+                    } else if (response.code() == HttpURLConnection.HTTP_OK) {
+                        try {
+                            throw new RuntimeException(parseLoginError(response.body().string()));
+                        } catch (IOException e) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(callback::onDone, callback::onError);
     }
@@ -281,5 +294,10 @@ public class UserServicesClient implements UserServices {
             }
         }
         return null;
+    }
+
+    private String parseLoginError(String html) {
+        Matcher matcher = Pattern.compile(REGEX_CREATE_ERROR_BODY).matcher(html);
+        return matcher.find() ? matcher.group(1).replaceAll("\\n|\\r|\\t|\\s+", " ").trim() : null;
     }
 }

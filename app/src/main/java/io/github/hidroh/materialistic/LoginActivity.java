@@ -106,20 +106,17 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         mUserServices.login(username, password, createAccount, new LoginCallback(this));
     }
 
-    void onLoggedIn(Boolean successful) {
-        if (successful == null) {
-            mLoginButton.setEnabled(true);
-            mRegisterButton.setEnabled(true);
-            Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show();
-            return;
-        }
+    void onLoggedIn(boolean successful, String errorMessage) {
         mLoginButton.setEnabled(true);
         mRegisterButton.setEnabled(true);
         if (successful) {
             addAccount(mUsername, mPassword);
             Toast.makeText(this, getString(R.string.welcome, mUsername), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, TextUtils.isEmpty(errorMessage) ?
+                    getString(R.string.login_failed) :
+                    errorMessage,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -145,14 +142,14 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         @Override
         public void onDone(boolean successful) {
             if (mLoginActivity.get() != null && !mLoginActivity.get().isActivityDestroyed()) {
-                mLoginActivity.get().onLoggedIn(successful);
+                mLoginActivity.get().onLoggedIn(successful, null);
             }
         }
 
         @Override
         public void onError(Throwable throwable) {
             if (mLoginActivity.get() != null && !mLoginActivity.get().isActivityDestroyed()) {
-                mLoginActivity.get().onLoggedIn(null);
+                mLoginActivity.get().onLoggedIn(false, throwable != null ? throwable.getMessage() : null);
             }
         }
     }
