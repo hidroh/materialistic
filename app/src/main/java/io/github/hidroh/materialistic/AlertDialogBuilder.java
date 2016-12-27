@@ -106,6 +106,15 @@ public interface AlertDialogBuilder<T extends Dialog> {
     AlertDialogBuilder setPositiveButton(@StringRes int textId, DialogInterface.OnClickListener listener);
 
     /**
+     * Set a listener to be invoked when the neutral button of the dialog is pressed.
+     *
+     * @param textId   The resource id of the text to display in the neutral button
+     * @param listener The {@link DialogInterface.OnClickListener} to use.
+     * @return This Builder object to allow for chaining of calls to set methods
+     */
+    AlertDialogBuilder setNeutralButton(@StringRes int textId, DialogInterface.OnClickListener listener);
+
+    /**
      * Creates a {@link Dialog} with the arguments supplied to this builder. It does not
      * {@link Dialog#show()} the dialog. This allows the user to do any extra processing
      * before displaying the dialog. Use {@link #show()} if you don't have any other processing
@@ -169,6 +178,12 @@ public interface AlertDialogBuilder<T extends Dialog> {
         public AlertDialogBuilder setPositiveButton(@StringRes int textId,
                                                     DialogInterface.OnClickListener listener) {
             mBuilder.setPositiveButton(textId, listener);
+            return this;
+        }
+
+        @Override
+        public AlertDialogBuilder setNeutralButton(@StringRes int textId, DialogInterface.OnClickListener listener) {
+            mBuilder.setNeutralButton(textId, listener);
             return this;
         }
 

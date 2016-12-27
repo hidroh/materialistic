@@ -381,10 +381,11 @@ public class AppUtils {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
                                            Account[] accounts) {
         String username = Preferences.getUsername(context);
-        final String[] items = new String[accounts.length + 1];
+        final String[] items = new String[accounts.length];
         int checked = -1;
         for (int i = 0; i < accounts.length; i++) {
             String accountName = accounts[i].name;
@@ -393,28 +394,49 @@ public class AppUtils {
                 checked = i;
             }
         }
-        items[items.length - 1] = context.getString(R.string.add_account);
-        //noinspection Convert2Lambda
+        int initialSelection = checked;
+        DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+            private int selection = initialSelection;
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Preferences.setUsername(context, items[selection]);
+                        Toast.makeText(context,
+                                context.getString(R.string.welcome, items[selection]),
+                                Toast.LENGTH_SHORT)
+                                .show();
+                        dialog.dismiss();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
+                        context.startActivity(intent);
+                        dialog.dismiss();
+                        break;
+                    case DialogInterface.BUTTON_NEUTRAL:
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                            AccountManager.get(context).removeAccount(accounts[selection], null, null, null);
+                        } else {
+                            //noinspection deprecation
+                            AccountManager.get(context).removeAccount(accounts[selection], null, null);
+                        }
+                        dialog.dismiss();
+                        break;
+                    default:
+                        selection = which;
+                        break;
+                }
+            }
+        };
         alertDialogBuilder
                 .init(context)
                 .setTitle(R.string.choose_account)
-                .setSingleChoiceItems(items, checked, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == items.length - 1) {
-                            Intent intent = new Intent(context, LoginActivity.class);
-                            intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
-                            context.startActivity(intent);
-                        } else {
-                            Preferences.setUsername(context, items[which]);
-                            Toast.makeText(context,
-                                    context.getString(R.string.welcome, items[which]),
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                        }
-                        dialog.dismiss();
-                    }
-                })
+                .setSingleChoiceItems(items, checked, clickListener)
+                .setPositiveButton(android.R.string.ok, clickListener)
+                .setNegativeButton(R.string.add_account, clickListener)
+                .setNeutralButton(R.string.remove_account, clickListener)
                 .show();
     }
 
