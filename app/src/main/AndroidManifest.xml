@@ -246,15 +246,6 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service android:name=".data.ItemSyncService$DummyAuthenticatorService"
-            android:permission="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/syncauthenticator" />
-        </service>
         <service android:name=".data.ItemSyncService"
             android:process=":sync"
             android:permission="io.github.hidroh.materialistic.permission.SYNC_ITEM">

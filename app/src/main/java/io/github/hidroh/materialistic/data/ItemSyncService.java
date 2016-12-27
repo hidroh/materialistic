@@ -19,13 +19,11 @@ package io.github.hidroh.materialistic.data;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.Application;
-import io.github.hidroh.materialistic.accounts.EmptyAccountAuthenticator;
 
 public class ItemSyncService extends Service {
 
@@ -52,21 +50,5 @@ public class ItemSyncService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return sItemSyncAdapter.getSyncAdapterBinder();
-    }
-
-    public static class DummyAuthenticatorService extends Service {
-        private EmptyAccountAuthenticator mAuthenticator;
-
-        @Override
-        public void onCreate() {
-            super.onCreate();
-            mAuthenticator = new EmptyAccountAuthenticator(this);
-        }
-
-        @Nullable
-        @Override
-        public IBinder onBind(Intent intent) {
-            return mAuthenticator.getIBinder();
-        }
     }
 }

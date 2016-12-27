@@ -19,7 +19,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:contentAuthority="io.github.hidroh.materialistic.provider"
-    android:accountType="io.github.hidroh.materialistic.sync"
+    android:accountType="io.github.hidroh.materialistic"
     android:userVisible="false"
     android:supportsUploading="false"
     android:allowParallelSyncs="false"

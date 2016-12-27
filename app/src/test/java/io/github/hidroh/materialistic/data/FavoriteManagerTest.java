@@ -1,5 +1,6 @@
 package io.github.hidroh.materialistic.data;
 
+import android.accounts.Account;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.ContentValues;
@@ -27,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestWebItem;
@@ -160,7 +161,7 @@ public class FavoriteManagerTest {
             }
         });
         assertThat(resolver.getNotifiedUris()).isNotEmpty();
-        assertTrue(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
+        assertTrue(ShadowContentResolver.isSyncActive(new Account("Materialistic", BuildConfig.APPLICATION_ID),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
     }
 

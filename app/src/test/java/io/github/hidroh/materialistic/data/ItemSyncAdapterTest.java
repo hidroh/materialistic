@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.widget.ProgressBar;
 
 import org.junit.After;
@@ -42,7 +43,7 @@ import org.robolectric.util.ServiceController;
 
 import java.io.IOException;
 
-import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
@@ -102,7 +103,7 @@ public class ItemSyncAdapterTest {
         PreferenceManager.getDefaultSharedPreferences(service)
                 .edit().clear().apply();
         SyncDelegate.initSync(service, "1");
-        assertNull(ShadowContentResolver.getStatus(Application.createSyncAccount(),
+        assertNull(ShadowContentResolver.getStatus(createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
     }
 
@@ -433,18 +434,18 @@ public class ItemSyncAdapterTest {
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
-        assertFalse(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
+        assertFalse(ShadowContentResolver.isSyncActive(createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver().onReceive(service, new Intent());
-        assertFalse(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
+        assertFalse(ShadowContentResolver.isSyncActive(createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
-        assertTrue(ShadowContentResolver.isSyncActive(Application.createSyncAccount(),
+        assertTrue(ShadowContentResolver.isSyncActive(createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
     }
 
@@ -459,7 +460,12 @@ public class ItemSyncAdapterTest {
     }
 
     private Bundle getLastSyncExtras() {
-        return ShadowContentResolver.getStatus(Application.createSyncAccount(),
+        return ShadowContentResolver.getStatus(createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY).syncExtras;
+    }
+
+    @NonNull
+    private Account createSyncAccount() {
+        return new Account("Materialistic", BuildConfig.APPLICATION_ID);
     }
 }

@@ -16,8 +16,6 @@
 
 package io.github.hidroh.materialistic;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -31,9 +29,6 @@ import rx.schedulers.Schedulers;
 
 public class Application extends android.app.Application {
 
-    private static final String SYNC_ACCOUNT_NAME = "sync";
-    private static final String SYNC_ACCOUNT_TYPE = BuildConfig.APPLICATION_ID + ".sync";
-
     public static Typeface TYPE_FACE = null;
     private RefWatcher mRefWatcher;
     private ObjectGraph mApplicationGraph;
@@ -41,10 +36,6 @@ public class Application extends android.app.Application {
     public static RefWatcher getRefWatcher(Context context) {
         Application application = (Application) context.getApplicationContext();
         return application.mRefWatcher;
-    }
-
-    public static Account createSyncAccount() {
-        return new Account(SYNC_ACCOUNT_NAME, SYNC_ACCOUNT_TYPE);
     }
 
     @Override
@@ -64,7 +55,6 @@ public class Application extends android.app.Application {
         mApplicationGraph = ObjectGraph.create();
         Preferences.migrate(this);
         TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
-        AccountManager.get(this).addAccountExplicitly(createSyncAccount(), null, null);
         AppUtils.registerAccountsUpdatedListener(this);
         AdBlocker.init(this, Schedulers.io());
     }
