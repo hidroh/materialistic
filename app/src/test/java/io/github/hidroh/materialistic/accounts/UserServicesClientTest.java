@@ -5,8 +5,9 @@ import android.accounts.Account;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowAccountManager;
 
@@ -15,6 +16,7 @@ import java.net.HttpURLConnection;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.test.TestRunner;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -26,6 +28,7 @@ import rx.schedulers.Schedulers;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -41,6 +44,7 @@ public class UserServicesClientTest {
     private Call call;
     private Response.Builder responseBuilder = createResponseBuilder();
     private Account account;
+    @Captor ArgumentCaptor<Throwable> throwableCaptor;
 
     @Before
     public void setUp() {
@@ -67,10 +71,13 @@ public class UserServicesClientTest {
     @Test
     public void testRegisterFailed() throws IOException {
         when(call.execute()).thenReturn(responseBuilder
+                .body(ResponseBody.create(MediaType.parse("text/html"), "<body>Message<br/></body>"))
                 .code(HttpURLConnection.HTTP_OK).build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", true, callback);
-        verify(callback).onDone(eq(false));
+        verify(callback).onError(throwableCaptor.capture());
+        //noinspection ThrowableResultOfMethodCallIgnored
+        assertThat(throwableCaptor.getValue().getMessage()).contains("Message");
     }
 
     @Test
