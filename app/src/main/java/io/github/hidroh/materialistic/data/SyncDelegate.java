@@ -16,6 +16,8 @@
 
 package io.github.hidroh.materialistic.data;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -48,7 +50,7 @@ import java.util.concurrent.Executor;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
@@ -67,6 +69,8 @@ public class SyncDelegate {
     static final String EXTRA_ARTICLE_ENABLED = "extra:articleEnabled";
     static final String EXTRA_COMMENTS_ENABLED = "extra:commentsEnabled";
     static final String EXTRA_NOTIFICATION_ENABLED = "extra:notificationEnabled";
+    private static final String SYNC_ACCOUNT_NAME = "Materialistic";
+
     private final HackerNewsClient.RestService mHnRestService;
     private final ReadabilityClient mReadabilityClient;
     private final SharedPreferences mSharedPreferences;
@@ -130,8 +134,16 @@ public class SyncDelegate {
             extras.putBoolean(EXTRA_ARTICLE_ENABLED, Preferences.Offline.isArticleEnabled(context));
             extras.putBoolean(EXTRA_COMMENTS_ENABLED, Preferences.Offline.isCommentsEnabled(context));
             extras.putBoolean(EXTRA_NOTIFICATION_ENABLED, Preferences.Offline.isNotificationEnabled(context));
-            ContentResolver.requestSync(Application.createSyncAccount(),
-                    MaterialisticProvider.PROVIDER_AUTHORITY, extras);
+            Account syncAccount;
+            AccountManager accountManager = AccountManager.get(context);
+            Account[] accounts = accountManager.getAccountsByType(BuildConfig.APPLICATION_ID);
+            if (accounts.length == 0) {
+                syncAccount = new Account(SYNC_ACCOUNT_NAME, BuildConfig.APPLICATION_ID);
+                accountManager.addAccountExplicitly(syncAccount, null, null);
+            } else {
+                syncAccount = accounts[0];
+            }
+            ContentResolver.requestSync(syncAccount, MaterialisticProvider.PROVIDER_AUTHORITY, extras);
         }
     }
 

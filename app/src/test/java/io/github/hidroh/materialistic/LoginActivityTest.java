@@ -74,7 +74,7 @@ public class LoginActivityTest {
         callback.getValue().onDone(true);
         assertThat(activity).isFinishing();
         assertEquals(activity.getString(R.string.welcome, "username"), ShadowToast.getTextOfLatestToast());
-        assertThat(ShadowAccountManager.get(activity).getAccounts()).hasSize(2); // sync + user acc
+        assertThat(ShadowAccountManager.get(activity).getAccounts()).hasSize(1);
         assertEquals("username", Preferences.getUsername(activity));
     }
 
