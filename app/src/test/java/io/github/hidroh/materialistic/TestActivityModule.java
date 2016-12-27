@@ -249,6 +249,12 @@ public class TestActivityModule {
             }
 
             @Override
+            public AlertDialogBuilder setNeutralButton(@StringRes int textId, DialogInterface.OnClickListener listener) {
+                builder.setNeutralButton(textId, listener);
+                return this;
+            }
+
+            @Override
             public Dialog create() {
                 return builder.create();
             }

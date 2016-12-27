@@ -22,6 +22,7 @@ import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
 
 import static org.assertj.android.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -86,14 +87,15 @@ public class DrawerActivityLoginTest {
         drawerAccount.performClick();
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull(alertDialog);
-        assertThat(alertDialog.getListView().getAdapter()).hasCount(2); // existing + add account
+        assertThat(alertDialog.getListView().getAdapter()).hasCount(1);
         shadowOf(alertDialog).clickOnItem(0);
+        alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
         assertThat(alertDialog).isNotShowing();
         assertThat(drawerAccount).hasText("existing");
         assertThat(drawerLogout).isVisible();
         drawerAccount.performClick();
         alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-        assertThat(alertDialog.getListView().getAdapter()).hasCount(2); // existing + add account
+        assertThat(alertDialog.getListView().getAdapter()).hasCount(1);
     }
 
     @Test
@@ -103,14 +105,29 @@ public class DrawerActivityLoginTest {
         drawerAccount.performClick();
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
         assertNotNull(alertDialog);
-        assertThat(alertDialog.getListView().getAdapter()).hasCount(2); // existing + add account
-        shadowOf(alertDialog).clickOnItem(1);
+        assertThat(alertDialog.getListView().getAdapter()).hasCount(1);
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         assertThat(alertDialog).isNotShowing();
         ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
                 .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, LoginActivity.class);
+    }
+
+    @Config(sdk = 21)
+    @Test
+    public void testRemoveAccount() {
+        ShadowAccountManager.get(activity).addAccountExplicitly(new Account("existing",
+                BuildConfig.APPLICATION_ID), "password", null);
+        Preferences.setUsername(activity, "existing");
+        drawerAccount.performClick();
+        AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+        assertNotNull(alertDialog);
+        assertThat(alertDialog.getListView().getAdapter()).hasCount(1);
+        alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).performClick();
+        assertThat(alertDialog).isNotShowing();
+        assertThat(ShadowAccountManager.get(activity).getAccounts()).isEmpty();
     }
 
     @Test
