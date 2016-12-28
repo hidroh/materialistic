@@ -17,6 +17,7 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -39,8 +40,12 @@
                 android:id="@+id/edittext_username"
                 android:hint="@string/username_hint"
                 android:maxLines="1"
+                android:inputType="text"
+                android:nextFocusDown="@+id/edittext_password"
+                android:nextFocusForward="@id/edittext_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:targetApi="honeycomb"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -51,7 +56,7 @@
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/edittext_password"
+                android:id="@id/edittext_password"
                 android:hint="@string/password_hint"
                 android:maxLines="1"
                 android:inputType="textPassword"

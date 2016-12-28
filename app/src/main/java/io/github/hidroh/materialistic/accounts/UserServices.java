@@ -35,6 +35,11 @@ public interface UserServices {
         public Exception(int message) {
             this.message = message;
         }
+
+        Exception(String message) {
+            super(message);
+            this.message = 0;
+        }
     }
 
     void login(String username, String password, boolean createAccount, Callback callback);

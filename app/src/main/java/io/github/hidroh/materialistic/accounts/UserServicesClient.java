@@ -85,18 +85,11 @@ public class UserServicesClient implements UserServices {
     @Override
     public void login(String username, String password, boolean createAccount, Callback callback) {
         execute(postLogin(username, password, createAccount))
-                .map(response -> {
-                    if (response.code() == HttpURLConnection.HTTP_MOVED_TEMP) {
-                        return true;
-                    } else if (response.code() == HttpURLConnection.HTTP_OK) {
-                        try {
-                            throw new RuntimeException(parseLoginError(response.body().string()));
-                        } catch (IOException e) {
-                            return false;
-                        }
-                    } else {
-                        return false;
+                .flatMap(response -> {
+                    if (response.code() == HttpURLConnection.HTTP_OK) {
+                        return Observable.error(new UserServices.Exception(parseLoginError(response)));
                     }
+                    return Observable.just(response.code() == HttpURLConnection.HTTP_MOVED_TEMP);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(callback::onDone, callback::onError);
@@ -296,8 +289,12 @@ public class UserServicesClient implements UserServices {
         return null;
     }
 
-    private String parseLoginError(String html) {
-        Matcher matcher = Pattern.compile(REGEX_CREATE_ERROR_BODY).matcher(html);
-        return matcher.find() ? matcher.group(1).replaceAll("\\n|\\r|\\t|\\s+", " ").trim() : null;
+    private String parseLoginError(Response response) {
+        try {
+            Matcher matcher = Pattern.compile(REGEX_CREATE_ERROR_BODY).matcher(response.body().string());
+            return matcher.find() ? matcher.group(1).replaceAll("\\n|\\r|\\t|\\s+", " ").trim() : null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
