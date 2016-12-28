@@ -55,8 +55,11 @@
                 android:freezesText="true"
                 android:inputType="textCapSentences"
                 android:maxLines="1"
+                android:nextFocusDown="@+id/edittext_content"
+                android:nextFocusForward="@id/edittext_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                tools:targetApi="honeycomb" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -66,7 +69,7 @@
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/edittext_content"
+                android:id="@id/edittext_content"
                 android:scrollbars="vertical"
                 android:scrollbarStyle="outsideOverlay"
                 android:hint="@string/submit_content_hint"
