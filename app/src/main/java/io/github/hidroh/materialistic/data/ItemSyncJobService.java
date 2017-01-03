@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.os.Build;
+import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +32,11 @@ import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.Preferences;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class ItemSyncJobService extends JobService implements SyncDelegate.ProgressListener {
+public class ItemSyncJobService extends JobService {
     static final String EXTRA_ID = "extra:id";
     @Inject RestServiceFactory mFactory;
     @Inject ReadabilityClient mReadabilityClient;
     @Inject SyncDelegate mSyncDelegate;
-    private final Map<String, JobParameters> mJobs = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -49,10 +49,14 @@ public class ItemSyncJobService extends JobService implements SyncDelegate.Progr
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        String id = jobParameters.getExtras().getString(EXTRA_ID);
-        mJobs.put(id, jobParameters);
-        mSyncDelegate.subscribe(this);
-        mSyncDelegate.performSync(new SyncDelegate.JobBuilder(id)
+        String id = jobParameters.getExtras().getString(EXTRA_ID),
+                jobId = String.valueOf(jobParameters.getJobId());
+        mSyncDelegate.subscribe(token -> {
+            if (TextUtils.equals(jobId, token)) {
+                jobFinished(jobParameters, false);
+            }
+        });
+        mSyncDelegate.performSync(new SyncDelegate.JobBuilder(id, jobId)
                 .setConnectionEnabled(true)
                 .setReadabilityEnabled(Preferences.Offline.isReadabilityEnabled(this))
                 .setArticleEnabled(Preferences.Offline.isArticleEnabled(this))
@@ -66,12 +70,5 @@ public class ItemSyncJobService extends JobService implements SyncDelegate.Progr
     public boolean onStopJob(JobParameters jobParameters) {
         mSyncDelegate.stopSync(jobParameters.getJobId());
         return true;
-    }
-
-    @Override
-    public void onDone(String token) {
-        if (mJobs.containsKey(token)) {
-            jobFinished(mJobs.remove(token), false);
-        }
     }
 }

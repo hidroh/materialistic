@@ -156,7 +156,7 @@ public class SyncDelegate {
         mJob = job;
         if (!TextUtils.isEmpty(mJob.id)) {
             mSyncProgresses.put(mJob.id, new SyncProgress(mJob));
-            sync(mJob.id, mJob.id);
+            sync(mJob.id, mJob.progressId);
         } else {
             syncDeferredItems();
         }
@@ -415,6 +415,7 @@ public class SyncDelegate {
 
     static class Job {
         String id;
+        String progressId;
         boolean connectionEnabled;
         boolean readabilityEnabled;
         boolean articleEnabled;
@@ -425,9 +426,10 @@ public class SyncDelegate {
     static class JobBuilder {
         private final Job job;
 
-        JobBuilder(String id) {
+        JobBuilder(String id, String progressId) {
             job = new Job();
             job.id = id;
+            job.progressId = progressId;
         }
 
         JobBuilder setConnectionEnabled(boolean connectionEnabled) {
