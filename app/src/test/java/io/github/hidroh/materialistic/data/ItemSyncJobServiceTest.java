@@ -97,10 +97,11 @@ public class ItemSyncJobServiceTest {
         bundle.putString(ItemSyncJobService.EXTRA_ID, "1");
         JobParameters jobParameters = mock(JobParameters.class);
         when(jobParameters.getExtras()).thenReturn(bundle);
+        when(jobParameters.getJobId()).thenReturn(2);
         service.onStartJob(jobParameters);
         verify(syncDelegate).subscribe(listenerCaptor.capture());
         verify(syncDelegate).performSync(any(SyncDelegate.Job.class));
-        listenerCaptor.getValue().onDone("1");
+        listenerCaptor.getValue().onDone("2");
     }
 
     @After
