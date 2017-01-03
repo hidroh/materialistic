@@ -20,6 +20,8 @@ import android.annotation.TargetApi;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import java.util.HashMap;
@@ -36,7 +38,7 @@ public class ItemSyncJobService extends JobService {
     static final String EXTRA_ID = "extra:id";
     @Inject RestServiceFactory mFactory;
     @Inject ReadabilityClient mReadabilityClient;
-    @Inject SyncDelegate mSyncDelegate;
+    private final Map<String, SyncDelegate> mSyncDelegates = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -51,12 +53,15 @@ public class ItemSyncJobService extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
         String id = jobParameters.getExtras().getString(EXTRA_ID),
                 jobId = String.valueOf(jobParameters.getJobId());
-        mSyncDelegate.subscribe(token -> {
+        SyncDelegate syncDelegate = createSyncDelegate();
+        mSyncDelegates.put(jobId, syncDelegate);
+        syncDelegate.subscribe(token -> {
             if (TextUtils.equals(jobId, token)) {
                 jobFinished(jobParameters, false);
+                mSyncDelegates.remove(jobId);
             }
         });
-        mSyncDelegate.performSync(new SyncDelegate.JobBuilder(id, jobId)
+        syncDelegate.performSync(new SyncDelegate.JobBuilder(id, jobId)
                 .setConnectionEnabled(true)
                 .setReadabilityEnabled(Preferences.Offline.isReadabilityEnabled(this))
                 .setArticleEnabled(Preferences.Offline.isArticleEnabled(this))
@@ -68,7 +73,16 @@ public class ItemSyncJobService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        mSyncDelegate.stopSync(jobParameters.getJobId());
+        String key = String.valueOf(jobParameters.getJobId());
+        if (mSyncDelegates.containsKey(key)) {
+            mSyncDelegates.remove(key).stopSync(jobParameters.getJobId());
+        }
         return true;
+    }
+
+    @VisibleForTesting
+    @NonNull
+    SyncDelegate createSyncDelegate() {
+        return new SyncDelegate(this, mFactory, mReadabilityClient);
     }
 }

@@ -71,7 +71,7 @@ import static org.robolectric.Shadows.shadowOf;
 @Config(shadows = {ShadowWebView.class}, sdk = 18)
 @RunWith(TestRunner.class)
 public class ItemSyncAdapterTest {
-    private ItemSyncAdapter adapter;
+    private TestItemSyncAdapter adapter;
     private SharedPreferences syncPreferences;
     private @Captor ArgumentCaptor<Callback<HackerNewsItem>> callbackCapture;
     private ReadabilityClient readabilityClient = mock(ReadabilityClient.class);
@@ -92,7 +92,7 @@ public class ItemSyncAdapterTest {
                 .putBoolean(service.getString(R.string.pref_saved_item_sync), true)
                 .putBoolean(service.getString(R.string.pref_offline_comments), true)
                 .apply();
-        adapter = new ItemSyncAdapter(service, new TestRestServiceFactory(), readabilityClient);
+        adapter = new TestItemSyncAdapter(service, new TestRestServiceFactory(), readabilityClient);
         syncPreferences = service.getSharedPreferences(
                 service.getPackageName() +
                         SyncDelegate.SYNC_PREFERENCES_FILE, Context.MODE_PRIVATE);
@@ -416,8 +416,8 @@ public class ItemSyncAdapterTest {
         assertThat(progress.getProgress()).isEqualTo(3); // self + kid 1 + readability
         assertThat(progress.getMax()).isEqualTo(104); // self + 2 kids + readability + web
 
-        shadowOf(adapter.mDelegate.mWebView).getWebChromeClient()
-                .onProgressChanged(adapter.mDelegate.mWebView, 100);
+        shadowOf(adapter.syncDelegate.mWebView).getWebChromeClient()
+                .onProgressChanged(adapter.syncDelegate.mWebView, 100);
 
         verify(kid2Call).enqueue(callbackCapture.capture());
         callbackCapture.getValue().onFailure(null, null);
@@ -467,5 +467,21 @@ public class ItemSyncAdapterTest {
     @NonNull
     private Account createSyncAccount() {
         return new Account("Materialistic", BuildConfig.APPLICATION_ID);
+    }
+
+    private static class TestItemSyncAdapter extends ItemSyncAdapter {
+
+        SyncDelegate syncDelegate;
+
+        TestItemSyncAdapter(Context context, RestServiceFactory factory, ReadabilityClient readabilityClient) {
+            super(context, factory, readabilityClient);
+        }
+
+        @NonNull
+        @Override
+        SyncDelegate createSyncDelegate() {
+            syncDelegate = super.createSyncDelegate();
+            return syncDelegate;
+        }
     }
 }
