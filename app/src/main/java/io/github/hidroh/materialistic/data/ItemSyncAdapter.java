@@ -22,6 +22,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 /**
@@ -29,24 +30,33 @@ import android.support.annotation.VisibleForTesting;
  * cache for subsequent requests
  */
 class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
-    @VisibleForTesting final SyncDelegate mDelegate;
+    private final RestServiceFactory mFactory;
+    private final ReadabilityClient mReadabilityClient;
 
     ItemSyncAdapter(Context context, RestServiceFactory factory,
                            ReadabilityClient readabilityClient) {
         super(context, true);
-        mDelegate = new SyncDelegate(context, factory, readabilityClient);
+        mFactory = factory;
+        mReadabilityClient = readabilityClient;
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
         String itemId = extras.getString(SyncDelegate.EXTRA_ID);
-        mDelegate.performSync(new SyncDelegate.JobBuilder(itemId, itemId)
+        createSyncDelegate()
+                .performSync(new SyncDelegate.JobBuilder(itemId, itemId)
                 .setConnectionEnabled(extras.getBoolean(SyncDelegate.EXTRA_CONNECTION_ENABLED))
                 .setReadabilityEnabled(extras.getBoolean(SyncDelegate.EXTRA_READABILITY_ENABLED))
                 .setArticleEnabled(extras.getBoolean(SyncDelegate.EXTRA_ARTICLE_ENABLED))
                 .setCommentsEnabled(extras.getBoolean(SyncDelegate.EXTRA_COMMENTS_ENABLED))
                 .setNotificationEnabled(extras.getBoolean(SyncDelegate.EXTRA_NOTIFICATION_ENABLED))
                 .build());
+    }
+
+    @VisibleForTesting
+    @NonNull
+    SyncDelegate createSyncDelegate() {
+        return new SyncDelegate(getContext(), mFactory, mReadabilityClient);
     }
 }

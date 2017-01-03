@@ -25,6 +25,7 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,16 +41,12 @@ import org.robolectric.util.ServiceController;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.TestApplication;
 import io.github.hidroh.materialistic.test.TestRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
@@ -57,17 +54,14 @@ import static org.robolectric.Shadows.shadowOf;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 @RunWith(TestRunner.class)
 public class ItemSyncJobServiceTest {
-    private ServiceController<ItemSyncJobService> controller;
-    private ItemSyncJobService service;
-    @Inject SyncDelegate syncDelegate;
+    private ServiceController<TestItemSyncJobService> controller;
+    private TestItemSyncJobService service;
     @Captor ArgumentCaptor<SyncDelegate.ProgressListener> listenerCaptor;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        TestApplication.applicationGraph.inject(this);
-        reset(syncDelegate);
-        controller = Robolectric.buildService(ItemSyncJobService.class);
+        controller = Robolectric.buildService(TestItemSyncJobService.class);
         service = controller.create().get();
     }
 
@@ -99,13 +93,23 @@ public class ItemSyncJobServiceTest {
         when(jobParameters.getExtras()).thenReturn(bundle);
         when(jobParameters.getJobId()).thenReturn(2);
         service.onStartJob(jobParameters);
-        verify(syncDelegate).subscribe(listenerCaptor.capture());
-        verify(syncDelegate).performSync(any(SyncDelegate.Job.class));
+        verify(service.syncDelegate).subscribe(listenerCaptor.capture());
+        verify(service.syncDelegate).performSync(any(SyncDelegate.Job.class));
         listenerCaptor.getValue().onDone("2");
     }
 
     @After
     public void tearDown() {
         controller.destroy();
+    }
+
+    public static class TestItemSyncJobService extends ItemSyncJobService {
+        SyncDelegate syncDelegate = mock(SyncDelegate.class);
+
+        @NonNull
+        @Override
+        SyncDelegate createSyncDelegate() {
+            return syncDelegate;
+        }
     }
 }

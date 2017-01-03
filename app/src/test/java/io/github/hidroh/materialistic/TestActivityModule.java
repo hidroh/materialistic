@@ -119,7 +119,7 @@ import static org.mockito.Mockito.when;
                 WidgetConfigActivityTest.class,
                 BaseListActivityLandTest.class,
                 PreferencesActivityTest.class,
-                ItemSyncJobServiceTest.class
+                ItemSyncJobServiceTest.TestItemSyncJobService.class
         },
         library = true,
         overrides = true
