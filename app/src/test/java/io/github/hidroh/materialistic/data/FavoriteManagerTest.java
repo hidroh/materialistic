@@ -219,6 +219,9 @@ public class FavoriteManagerTest {
         parcel.writeString("title");
         parcel.setDataPosition(0);
         Favorite favorite = Favorite.CREATOR.createFromParcel(parcel);
+		if (parcel != null) {
+			parcel.recycle();
+		}
         assertEquals("title", favorite.getDisplayedTitle());
         assertEquals("example.com", favorite.getSource());
         assertEquals("http://example.com", favorite.getUrl());
@@ -232,6 +235,9 @@ public class FavoriteManagerTest {
         favorite.writeToParcel(output, 0);
         output.setDataPosition(0);
         assertEquals("1", output.readString());
+		if (output != null) {
+			output.recycle();
+		}
         assertThat(Favorite.CREATOR.newArray(1)).hasSize(1);
     }
 }

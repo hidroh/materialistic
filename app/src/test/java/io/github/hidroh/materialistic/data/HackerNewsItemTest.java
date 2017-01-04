@@ -398,12 +398,18 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public String getTitle() {
-                return "title";
+                if (parcel != null) {
+					parcel.recycle();
+				}
+				return "title";
             }
         });
         item.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
         Item actual = HackerNewsItem.CREATOR.createFromParcel(parcel);
+		if (parcel != null) {
+			parcel.recycle();
+		}
         assertEquals("title", actual.getDisplayedTitle());
         assertFalse(actual.isFavorite());
     }
@@ -417,6 +423,9 @@ public class HackerNewsItemTest {
         item.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
         assertTrue(HackerNewsItem.CREATOR.createFromParcel(parcel).isFavorite());
+		if (parcel != null) {
+			parcel.recycle();
+		}
     }
 
     @Test
