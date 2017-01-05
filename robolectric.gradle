@@ -19,7 +19,7 @@ android.testOptions.unitTests.all {
 
 ext {
     assertjVersion = '1.1.1'
-    robolectricVersion = '3.1.4'
+    robolectricVersion = '3.2'
 }
 
 dependencies {
