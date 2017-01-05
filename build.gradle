@@ -22,5 +22,4 @@ allprojects {
 
 ext {
     ci = project.hasProperty("ci")
-    testSuite = project.hasProperty("testSuite") ? project.ext.testSuite : "AllSuite"
 }
