@@ -61,7 +61,7 @@ public class ItemSyncJobService extends JobService {
                 mSyncDelegates.remove(jobId);
             }
         });
-        syncDelegate.performSync(new SyncDelegate.JobBuilder(id, jobId)
+        syncDelegate.performSync(new SyncDelegate.JobBuilder(id)
                 .setConnectionEnabled(true)
                 .setReadabilityEnabled(Preferences.Offline.isReadabilityEnabled(this))
                 .setArticleEnabled(Preferences.Offline.isArticleEnabled(this))
@@ -75,7 +75,7 @@ public class ItemSyncJobService extends JobService {
     public boolean onStopJob(JobParameters jobParameters) {
         String key = String.valueOf(jobParameters.getJobId());
         if (mSyncDelegates.containsKey(key)) {
-            mSyncDelegates.remove(key).stopSync(jobParameters.getJobId());
+            mSyncDelegates.remove(key).stopSync();
         }
         return true;
     }

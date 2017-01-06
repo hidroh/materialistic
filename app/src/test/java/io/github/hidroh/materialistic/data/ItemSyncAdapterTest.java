@@ -211,7 +211,10 @@ public class ItemSyncAdapterTest {
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
         SyncDelegate.initSync(service, null);
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
-        verify(TestRestServiceFactory.hnRestService, times(2)).cachedItem(any());
+        ShadowContentResolver.Status syncStatus = ShadowContentResolver.getStatus(
+                new Account("Materialistic", BuildConfig.APPLICATION_ID),
+                MaterialisticProvider.PROVIDER_AUTHORITY);
+        assertThat(syncStatus.syncRequests).isEqualTo(3); // original + 2 deferred
     }
 
     @Test

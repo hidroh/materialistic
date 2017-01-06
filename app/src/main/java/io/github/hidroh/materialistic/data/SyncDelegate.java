@@ -42,8 +42,6 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
@@ -76,7 +74,7 @@ public class SyncDelegate {
     private final SharedPreferences mSharedPreferences;
     private final NotificationManager mNotificationManager;
     private final NotificationCompat.Builder mNotificationBuilder;
-    private final Map<String, SyncProgress> mSyncProgresses = new HashMap<>();
+    private SyncProgress mSyncProgress;
     private final Context mContext;
     private ProgressListener mListener;
     private Job mJob;
@@ -155,8 +153,8 @@ public class SyncDelegate {
         // assume that connection wouldn't change until we finish syncing
         mJob = job;
         if (!TextUtils.isEmpty(mJob.id)) {
-            mSyncProgresses.put(mJob.id, new SyncProgress(mJob));
-            sync(mJob.id, mJob.progressId);
+            mSyncProgress = new SyncProgress(mJob);
+            sync(mJob.id);
         } else {
             syncDeferredItems();
         }
@@ -165,20 +163,20 @@ public class SyncDelegate {
     private void syncDeferredItems() {
         Set<String> itemIds = mSharedPreferences.getAll().keySet();
         for (String itemId : itemIds) {
-            sync(itemId, null); // do not show notifications for deferred items
+            SyncDelegate.initSync(mContext, itemId);
         }
     }
 
-    private void sync(String itemId, final String progressId) {
+    private void sync(String itemId) {
         if (!mJob.connectionEnabled) {
             defer(itemId);
             return;
         }
         HackerNewsItem cachedItem;
         if ((cachedItem = getFromCache(itemId)) != null) {
-            sync(cachedItem, progressId);
+            sync(cachedItem);
         } else {
-            showNotification(progressId);
+            updateProgress();
             // TODO defer on low battery as well?
             mHnRestService.networkItem(itemId).enqueue(new Callback<HackerNewsItem>() {
                 @Override
@@ -186,22 +184,22 @@ public class SyncDelegate {
                                        retrofit2.Response<HackerNewsItem> response) {
                     HackerNewsItem item;
                     if ((item = response.body()) != null) {
-                        sync(item, progressId);
+                        sync(item);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<HackerNewsItem> call, Throwable t) {
-                    notifyItem(progressId, itemId, null);
+                    notifyItem(itemId, null);
                 }
             });
         }
     }
 
     @Synthetic
-    void sync(@NonNull HackerNewsItem item, String progressId) {
+    void sync(@NonNull HackerNewsItem item) {
         mSharedPreferences.edit().remove(item.getId()).apply();
-        notifyItem(progressId, item.getId(), item);
+        notifyItem(item.getId(), item);
         syncReadability(item);
         syncArticle(item);
         syncChildren(item);
@@ -210,7 +208,7 @@ public class SyncDelegate {
     private void syncReadability(@NonNull HackerNewsItem item) {
         if (mJob.readabilityEnabled && item.isStoryType()) {
             final String itemId = item.getId();
-            mReadabilityClient.parse(itemId, item.getRawUrl(), content -> notifyReadability(itemId));
+            mReadabilityClient.parse(itemId, item.getRawUrl(), content -> notifyReadability());
         }
     }
 
@@ -221,7 +219,7 @@ public class SyncDelegate {
             } else {
                 mContext.startService(new Intent(mContext, WebCacheService.class)
                         .putExtra(WebCacheService.EXTRA_URL, item.getUrl()));
-                notifyArticle(item.getId(), 100);
+                notifyArticle(100);
             }
         }
     }
@@ -233,17 +231,17 @@ public class SyncDelegate {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                notifyArticle(item.getId(), newProgress);
+                notifyArticle(newProgress);
             }
         });
-        notifyArticle(item.getId(), 0);
+        notifyArticle(0);
         mWebView.loadUrl(item.getUrl());
     }
 
     private void syncChildren(@NonNull HackerNewsItem item) {
         if (mJob.commentsEnabled && item.getKids() != null) {
             for (long id : item.getKids()) {
-                sync(String.valueOf(id), item.getId());
+                sync(String.valueOf(id));
             }
         }
     }
@@ -261,64 +259,56 @@ public class SyncDelegate {
     }
 
     @Synthetic
-    void notifyItem(@Nullable String progressId, @NonNull String id,
-                    @Nullable HackerNewsItem item) {
-        if (!mSyncProgresses.containsKey(progressId)) {
-            return;
-        }
-        mSyncProgresses.get(progressId).finishItem(id, item,
+    void notifyItem(@NonNull String id, @Nullable HackerNewsItem item) {
+        mSyncProgress.finishItem(id, item,
                 mJob.commentsEnabled && mJob.connectionEnabled,
                 mJob.readabilityEnabled && mJob.connectionEnabled);
-        showNotification(progressId);
+        updateProgress();
     }
 
-    void notifyReadability(@Nullable String progressId) {
-        if (!mSyncProgresses.containsKey(progressId)) {
-            return;
-        }
-        mSyncProgresses.get(progressId).finishReadability();
-        showNotification(progressId);
+    private void notifyReadability() {
+        mSyncProgress.finishReadability();
+        updateProgress();
     }
 
-    void notifyArticle(String progressId, int newProgress) {
-        if (!mSyncProgresses.containsKey(progressId)) {
-            return;
-        }
-        mSyncProgresses.get(progressId).updateArticle(newProgress, 100);
-        showNotification(progressId);
+    @Synthetic
+    void notifyArticle(int newProgress) {
+        mSyncProgress.updateArticle(newProgress, 100);
+        updateProgress();
     }
 
-    private void showNotification(String progressId) {
-        SyncProgress syncProgress = mSyncProgresses.get(progressId);
-        if (syncProgress == null) {
-            return;
-        }
-        if (mListener != null) {
-            if (syncProgress.getProgress() >= syncProgress.getMax()) { // TODO may never done
-                mListener.onDone(progressId);
-                mListener = null;
-            }
-        }
-        if (syncProgress.getProgress() >= syncProgress.getMax()) {
-            mSyncProgresses.remove(progressId);
-            if (mJob.notificationEnabled) {
-                mNotificationManager.cancel(Integer.valueOf(progressId));
-            }
+    private void updateProgress() {
+        if (mSyncProgress.getProgress() >= mSyncProgress.getMax()) { // TODO may never done
+            finish();
         } else if (mJob.notificationEnabled) {
-            mNotificationManager.notify(Integer.valueOf(progressId), mNotificationBuilder
-                    .setContentTitle(mContext.getString(R.string.download_in_progress))
-                    .setContentText(syncProgress.title)
-                    .setContentIntent(getItemActivity(progressId))
-                    .setProgress(syncProgress.getMax(), syncProgress.getProgress(), false)
-                    .setSortKey(progressId)
-                    .build());
+            showProgress();
         }
     }
 
-    void stopSync(int progressId) {
+    private void showProgress() {
+        mNotificationManager.notify(Integer.valueOf(mJob.id), mNotificationBuilder
+                .setContentTitle(mContext.getString(R.string.download_in_progress))
+                .setContentText(mSyncProgress.title)
+                .setContentIntent(getItemActivity(mJob.id))
+                .setProgress(mSyncProgress.getMax(), mSyncProgress.getProgress(), false)
+                .setSortKey(mJob.id)
+                .build());
+    }
+
+    private void finish() {
+        if (mListener != null) {
+            mListener.onDone(mJob.id);
+            mListener = null;
+        }
+        if (mJob.notificationEnabled) {
+            mNotificationManager.cancel(Integer.valueOf(mJob.id));
+        }
+    }
+
+    void stopSync() {
         // TODO
         mJob.connectionEnabled = false;
-        mNotificationManager.cancel(progressId);
+        mNotificationManager.cancel(Integer.valueOf(mJob.id));
     }
 
     private PendingIntent getItemActivity(String itemId) {
@@ -330,7 +320,7 @@ public class SyncDelegate {
                 PendingIntent.FLAG_ONE_SHOT);
     }
 
-    static class SyncProgress {
+    private static class SyncProgress {
         private final String id;
         private Boolean self;
         private int totalKids, finishedKids, webProgress, maxWebProgress;
@@ -400,7 +390,7 @@ public class SyncDelegate {
         }
     }
 
-    static class BackgroundThreadExecutor implements Executor {
+    private static class BackgroundThreadExecutor implements Executor {
 
         @Override
         public void execute(@NonNull Runnable r) {
@@ -415,7 +405,6 @@ public class SyncDelegate {
 
     static class Job {
         String id;
-        String progressId;
         boolean connectionEnabled;
         boolean readabilityEnabled;
         boolean articleEnabled;
@@ -426,10 +415,9 @@ public class SyncDelegate {
     static class JobBuilder {
         private final Job job;
 
-        JobBuilder(String id, String progressId) {
+        JobBuilder(String id) {
             job = new Job();
             job.id = id;
-            job.progressId = progressId;
         }
 
         JobBuilder setConnectionEnabled(boolean connectionEnabled) {
