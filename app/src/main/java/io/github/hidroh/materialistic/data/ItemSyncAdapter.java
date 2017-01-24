@@ -45,7 +45,7 @@ class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient provider, SyncResult syncResult) {
         String itemId = extras.getString(SyncDelegate.EXTRA_ID);
         createSyncDelegate()
-                .performSync(new SyncDelegate.JobBuilder(itemId, itemId)
+                .performSync(new SyncDelegate.JobBuilder(itemId)
                 .setConnectionEnabled(extras.getBoolean(SyncDelegate.EXTRA_CONNECTION_ENABLED))
                 .setReadabilityEnabled(extras.getBoolean(SyncDelegate.EXTRA_READABILITY_ENABLED))
                 .setArticleEnabled(extras.getBoolean(SyncDelegate.EXTRA_ARTICLE_ENABLED))
