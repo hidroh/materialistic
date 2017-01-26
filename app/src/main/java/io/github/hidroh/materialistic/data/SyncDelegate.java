@@ -30,7 +30,9 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.PersistableBundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
@@ -39,6 +41,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.webkit.WebView;
 
 import java.io.IOException;
@@ -68,12 +71,14 @@ public class SyncDelegate {
     static final String EXTRA_COMMENTS_ENABLED = "extra:commentsEnabled";
     static final String EXTRA_NOTIFICATION_ENABLED = "extra:notificationEnabled";
     private static final String SYNC_ACCOUNT_NAME = "Materialistic";
+    private static final long TIMEOUT_MILLIS = DateUtils.MINUTE_IN_MILLIS;
 
     private final HackerNewsClient.RestService mHnRestService;
     private final ReadabilityClient mReadabilityClient;
     private final SharedPreferences mSharedPreferences;
     private final NotificationManager mNotificationManager;
     private final NotificationCompat.Builder mNotificationBuilder;
+    private final Handler mHandler = new Handler();
     private SyncProgress mSyncProgress;
     private final Context mContext;
     private ProgressListener mListener;
@@ -153,6 +158,9 @@ public class SyncDelegate {
         // assume that connection wouldn't change until we finish syncing
         mJob = job;
         if (!TextUtils.isEmpty(mJob.id)) {
+            Message message = Message.obtain(mHandler, this::stopSync);
+            message.what = Integer.valueOf(mJob.id);
+            mHandler.sendMessageDelayed(message, TIMEOUT_MILLIS);
             mSyncProgress = new SyncProgress(mJob);
             sync(mJob.id);
         } else {
@@ -279,7 +287,7 @@ public class SyncDelegate {
 
     private void updateProgress() {
         if (mSyncProgress.getProgress() >= mSyncProgress.getMax()) { // TODO may never done
-            finish();
+            finish(); // TODO finish once only
         } else if (mJob.notificationEnabled) {
             showProgress();
         }
@@ -300,15 +308,15 @@ public class SyncDelegate {
             mListener.onDone(mJob.id);
             mListener = null;
         }
-        if (mJob.notificationEnabled) {
-            mNotificationManager.cancel(Integer.valueOf(mJob.id));
-        }
+        stopSync();
     }
 
     void stopSync() {
         // TODO
         mJob.connectionEnabled = false;
-        mNotificationManager.cancel(Integer.valueOf(mJob.id));
+        int id = Integer.valueOf(mJob.id);
+        mNotificationManager.cancel(id);
+        mHandler.removeMessages(id);
     }
 
     private PendingIntent getItemActivity(String itemId) {
