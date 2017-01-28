@@ -43,15 +43,7 @@ class ItemSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
-        String itemId = extras.getString(SyncDelegate.EXTRA_ID);
-        createSyncDelegate()
-                .performSync(new SyncDelegate.JobBuilder(itemId)
-                .setConnectionEnabled(extras.getBoolean(SyncDelegate.EXTRA_CONNECTION_ENABLED))
-                .setReadabilityEnabled(extras.getBoolean(SyncDelegate.EXTRA_READABILITY_ENABLED))
-                .setArticleEnabled(extras.getBoolean(SyncDelegate.EXTRA_ARTICLE_ENABLED))
-                .setCommentsEnabled(extras.getBoolean(SyncDelegate.EXTRA_COMMENTS_ENABLED))
-                .setNotificationEnabled(extras.getBoolean(SyncDelegate.EXTRA_NOTIFICATION_ENABLED))
-                .build());
+        createSyncDelegate().performSync(new SyncDelegate.Job(extras));
     }
 
     @VisibleForTesting

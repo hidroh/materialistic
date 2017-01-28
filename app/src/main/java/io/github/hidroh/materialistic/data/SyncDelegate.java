@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.data;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -37,6 +38,7 @@ import android.os.PersistableBundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.NotificationCompat;
@@ -63,13 +65,7 @@ import retrofit2.Callback;
 
 public class SyncDelegate {
     static final String SYNC_PREFERENCES_FILE = "_syncpreferences";
-    static final String EXTRA_ID = ItemSyncAdapter.class.getName() + ".EXTRA_ID";
     private static final String NOTIFICATION_GROUP_KEY = "group";
-    static final String EXTRA_CONNECTION_ENABLED = "extra:connectionEnabled";
-    static final String EXTRA_READABILITY_ENABLED = "extra:readabilityEnabled";
-    static final String EXTRA_ARTICLE_ENABLED = "extra:articleEnabled";
-    static final String EXTRA_COMMENTS_ENABLED = "extra:commentsEnabled";
-    static final String EXTRA_NOTIFICATION_ENABLED = "extra:notificationEnabled";
     private static final String SYNC_ACCOUNT_NAME = "Materialistic";
     private static final long TIMEOUT_MILLIS = DateUtils.MINUTE_IN_MILLIS;
 
@@ -106,37 +102,26 @@ public class SyncDelegate {
     }
 
     @UiThread
-    static void initSync(Context context, @Nullable String itemId) {
+    public static void scheduleSync(Context context, Job job) {
         if (!Preferences.Offline.isEnabled(context)) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(itemId)) {
-            PersistableBundle extras = new PersistableBundle();
-            extras.putString(ItemSyncJobService.EXTRA_ID, itemId);
-            JobInfo.Builder builder = new JobInfo.Builder(Long.valueOf(itemId).intValue(),
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(job.id)) {
+            JobInfo.Builder builder = new JobInfo.Builder(Long.valueOf(job.id).intValue(),
                     new ComponentName(context.getPackageName(),
                             ItemSyncJobService.class.getName()))
                     .setRequiredNetworkType(Preferences.Offline.isWifiOnly(context) ?
                             JobInfo.NETWORK_TYPE_UNMETERED :
                             JobInfo.NETWORK_TYPE_ANY)
-                    .setExtras(extras);
+                    .setExtras(job.toPersistableBundle());
             if (Preferences.Offline.currentConnectionEnabled(context)) {
                 builder.setOverrideDeadline(0);
             }
             ((JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE))
                     .schedule(builder.build());
         } else {
-            Bundle extras = new Bundle();
-            if (itemId != null) {
-                extras.putString(EXTRA_ID, itemId);
-            }
+            Bundle extras = new Bundle(job.toBundle());
             extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-            extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-            extras.putBoolean(EXTRA_CONNECTION_ENABLED, Preferences.Offline.currentConnectionEnabled(context));
-            extras.putBoolean(EXTRA_READABILITY_ENABLED, Preferences.Offline.isReadabilityEnabled(context));
-            extras.putBoolean(EXTRA_ARTICLE_ENABLED, Preferences.Offline.isArticleEnabled(context));
-            extras.putBoolean(EXTRA_COMMENTS_ENABLED, Preferences.Offline.isCommentsEnabled(context));
-            extras.putBoolean(EXTRA_NOTIFICATION_ENABLED, Preferences.Offline.isNotificationEnabled(context));
             Account syncAccount;
             AccountManager accountManager = AccountManager.get(context);
             Account[] accounts = accountManager.getAccountsByType(BuildConfig.APPLICATION_ID);
@@ -171,7 +156,7 @@ public class SyncDelegate {
     private void syncDeferredItems() {
         Set<String> itemIds = mSharedPreferences.getAll().keySet();
         for (String itemId : itemIds) {
-            SyncDelegate.initSync(mContext, itemId);
+            scheduleSync(mContext, new JobBuilder(mContext, itemId).setNotificationEnabled(false).build());
         }
     }
 
@@ -295,8 +280,8 @@ public class SyncDelegate {
 
     private void showProgress() {
         mNotificationManager.notify(Integer.valueOf(mJob.id), mNotificationBuilder
-                .setContentTitle(mContext.getString(R.string.download_in_progress))
-                .setContentText(mSyncProgress.title)
+                .setContentTitle(mSyncProgress.title)
+                .setContentText(mContext.getString(R.string.download_in_progress))
                 .setContentIntent(getItemActivity(mJob.id))
                 .setProgress(mSyncProgress.getMax(), mSyncProgress.getProgress(), false)
                 .setSortKey(mJob.id)
@@ -400,6 +385,8 @@ public class SyncDelegate {
 
     private static class BackgroundThreadExecutor implements Executor {
 
+        @Synthetic BackgroundThreadExecutor() { }
+
         @Override
         public void execute(@NonNull Runnable r) {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
@@ -412,20 +399,78 @@ public class SyncDelegate {
     }
 
     static class Job {
-        String id;
+        private static final String EXTRA_ID = "extra:id";
+        private static final String EXTRA_CONNECTION_ENABLED = "extra:connectionEnabled";
+        private static final String EXTRA_READABILITY_ENABLED = "extra:readabilityEnabled";
+        private static final String EXTRA_ARTICLE_ENABLED = "extra:articleEnabled";
+        private static final String EXTRA_COMMENTS_ENABLED = "extra:commentsEnabled";
+        private static final String EXTRA_NOTIFICATION_ENABLED = "extra:notificationEnabled";
+        final String id;
         boolean connectionEnabled;
         boolean readabilityEnabled;
         boolean articleEnabled;
         boolean commentsEnabled;
         boolean notificationEnabled;
+
+        Job(String id) {
+            this.id = id;
+        }
+
+        @SuppressLint("NewApi") // TODO http://b.android.com/225519
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        Job(PersistableBundle bundle) {
+            id = bundle.getString(EXTRA_ID);
+            connectionEnabled = bundle.getBoolean(EXTRA_CONNECTION_ENABLED);
+            readabilityEnabled = bundle.getBoolean(EXTRA_READABILITY_ENABLED);
+            articleEnabled = bundle.getBoolean(EXTRA_ARTICLE_ENABLED);
+            commentsEnabled = bundle.getBoolean(EXTRA_COMMENTS_ENABLED);
+            notificationEnabled = bundle.getBoolean(EXTRA_NOTIFICATION_ENABLED);
+        }
+
+        Job(Bundle bundle) {
+            id = bundle.getString(EXTRA_ID);
+            connectionEnabled = bundle.getBoolean(EXTRA_CONNECTION_ENABLED);
+            readabilityEnabled = bundle.getBoolean(EXTRA_READABILITY_ENABLED);
+            articleEnabled = bundle.getBoolean(EXTRA_ARTICLE_ENABLED);
+            commentsEnabled = bundle.getBoolean(EXTRA_COMMENTS_ENABLED);
+            notificationEnabled = bundle.getBoolean(EXTRA_NOTIFICATION_ENABLED);
+        }
+
+        @SuppressLint("NewApi") // TODO http://b.android.com/225519
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Synthetic PersistableBundle toPersistableBundle() {
+            PersistableBundle bundle = new PersistableBundle();
+            bundle.putString(EXTRA_ID, id);
+            bundle.putBoolean(EXTRA_CONNECTION_ENABLED, connectionEnabled);
+            bundle.putBoolean(EXTRA_READABILITY_ENABLED, readabilityEnabled);
+            bundle.putBoolean(EXTRA_ARTICLE_ENABLED, articleEnabled);
+            bundle.putBoolean(EXTRA_COMMENTS_ENABLED, commentsEnabled);
+            bundle.putBoolean(EXTRA_NOTIFICATION_ENABLED, notificationEnabled);
+            return bundle;
+        }
+
+        @Synthetic Bundle toBundle() {
+            Bundle bundle = new Bundle();
+            bundle.putString(EXTRA_ID, id);
+            bundle.putBoolean(EXTRA_CONNECTION_ENABLED, connectionEnabled);
+            bundle.putBoolean(EXTRA_READABILITY_ENABLED, readabilityEnabled);
+            bundle.putBoolean(EXTRA_ARTICLE_ENABLED, articleEnabled);
+            bundle.putBoolean(EXTRA_COMMENTS_ENABLED, commentsEnabled);
+            bundle.putBoolean(EXTRA_NOTIFICATION_ENABLED, notificationEnabled);
+            return bundle;
+        }
     }
 
-    static class JobBuilder {
+    public static class JobBuilder {
         private final Job job;
 
-        JobBuilder(String id) {
-            job = new Job();
-            job.id = id;
+        public JobBuilder(Context context, String id) {
+            job = new Job(id);
+            setConnectionEnabled(Preferences.Offline.currentConnectionEnabled(context));
+            setReadabilityEnabled(Preferences.Offline.isReadabilityEnabled(context));
+            setArticleEnabled(Preferences.Offline.isArticleEnabled(context));
+            setCommentsEnabled(Preferences.Offline.isCommentsEnabled(context));
+            setNotificationEnabled(Preferences.Offline.isNotificationEnabled(context));
         }
 
         JobBuilder setConnectionEnabled(boolean connectionEnabled) {
@@ -448,12 +493,12 @@ public class SyncDelegate {
             return this;
         }
 
-        JobBuilder setNotificationEnabled(boolean notificationEnabled) {
+        public JobBuilder setNotificationEnabled(boolean notificationEnabled) {
             job.notificationEnabled = notificationEnabled;
             return this;
         }
 
-        Job build() {
+        public Job build() {
             return job;
         }
     }
