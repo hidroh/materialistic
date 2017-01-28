@@ -170,7 +170,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
-        SyncDelegate.initSync(context, story.getId());
+        SyncDelegate.scheduleSync(context, new SyncDelegate.JobBuilder(context, story.getId()).build());
     }
 
     /**

@@ -32,7 +32,7 @@ public class ItemSyncWifiReceiver extends BroadcastReceiver {
             return;
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && AppUtils.isOnWiFi(context)) {
-            SyncDelegate.initSync(context, null);
+            SyncDelegate.scheduleSync(context, new SyncDelegate.JobBuilder(context, null).build());
         }
     }
 }

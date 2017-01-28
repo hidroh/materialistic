@@ -35,6 +35,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
@@ -102,7 +103,8 @@ public class ItemSyncAdapterTest {
     public void testSyncDisabled() {
         PreferenceManager.getDefaultSharedPreferences(service)
                 .edit().clear().apply();
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         assertNull(ShadowContentResolver.getStatus(createSyncAccount(),
                 MaterialisticProvider.PROVIDER_AUTHORITY));
     }
@@ -114,7 +116,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(hnItem));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // cache hit, should not try network or defer
@@ -130,7 +133,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should defer
@@ -150,7 +154,8 @@ public class ItemSyncAdapterTest {
                         service.getString(R.string.offline_data_default))
                 .apply();
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache, then network
@@ -166,7 +171,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
         when(TestRestServiceFactory.hnRestService.networkItem(any())).thenReturn(call);
 
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should try cache before network
@@ -194,7 +200,8 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_comments), false)
                 .apply();
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         // should not sync children
@@ -209,7 +216,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.networkItem(any())).thenReturn(call);
 
         syncPreferences.edit().putBoolean("1", true).putBoolean("2", true).apply();
-        SyncDelegate.initSync(service, null);
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, null).build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         ShadowContentResolver.Status syncStatus = ShadowContentResolver.getStatus(
                 new Account("Materialistic", BuildConfig.APPLICATION_ID),
@@ -238,7 +246,8 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_readability), false)
                 .apply();
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(any());
@@ -262,7 +271,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(any());
@@ -282,7 +292,8 @@ public class ItemSyncAdapterTest {
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(readabilityClient, never()).parse(any(), any(), any());
@@ -300,7 +311,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
 
         verify(TestRestServiceFactory.hnRestService).cachedItem(any());
@@ -337,7 +349,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://example.com");
     }
@@ -364,7 +377,8 @@ public class ItemSyncAdapterTest {
         when(call.execute()).thenReturn(Response.success(item));
         when(TestRestServiceFactory.hnRestService.cachedItem(any())).thenReturn(call);
 
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
@@ -406,7 +420,8 @@ public class ItemSyncAdapterTest {
                 .edit()
                 .putBoolean(service.getString(R.string.pref_offline_notification), true)
                 .apply();
-        SyncDelegate.initSync(service, "1");
+        SyncDelegate.scheduleSync(service,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         verify(readabilityClient).parse(any(), eq("http://example.com"),
                 readabilityCallbackCaptor.capture());

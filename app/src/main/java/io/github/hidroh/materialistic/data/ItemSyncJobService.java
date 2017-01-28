@@ -31,11 +31,9 @@ import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.Application;
-import io.github.hidroh.materialistic.Preferences;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ItemSyncJobService extends JobService {
-    static final String EXTRA_ID = "extra:id";
     @Inject RestServiceFactory mFactory;
     @Inject ReadabilityClient mReadabilityClient;
     private final Map<String, SyncDelegate> mSyncDelegates = new HashMap<>();
@@ -51,8 +49,7 @@ public class ItemSyncJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        String id = jobParameters.getExtras().getString(EXTRA_ID),
-                jobId = String.valueOf(jobParameters.getJobId());
+        String jobId = String.valueOf(jobParameters.getJobId());
         SyncDelegate syncDelegate = createSyncDelegate();
         mSyncDelegates.put(jobId, syncDelegate);
         syncDelegate.subscribe(token -> {
@@ -61,13 +58,7 @@ public class ItemSyncJobService extends JobService {
                 mSyncDelegates.remove(jobId);
             }
         });
-        syncDelegate.performSync(new SyncDelegate.JobBuilder(id)
-                .setConnectionEnabled(true)
-                .setReadabilityEnabled(Preferences.Offline.isReadabilityEnabled(this))
-                .setArticleEnabled(Preferences.Offline.isArticleEnabled(this))
-                .setCommentsEnabled(Preferences.Offline.isCommentsEnabled(this))
-                .setNotificationEnabled(Preferences.Offline.isNotificationEnabled(this))
-                .build());
+        syncDelegate.performSync(new SyncDelegate.Job(jobParameters.getExtras()));
         return true;
     }
 

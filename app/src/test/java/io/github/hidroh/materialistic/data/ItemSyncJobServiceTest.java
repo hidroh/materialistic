@@ -23,7 +23,6 @@ import android.app.job.JobScheduler;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
@@ -75,22 +74,21 @@ public class ItemSyncJobServiceTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        SyncDelegate.initSync(RuntimeEnvironment.application, "1");
+        SyncDelegate.scheduleSync(RuntimeEnvironment.application,
+                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
         List<JobInfo> pendingJobs = shadowOf((JobScheduler) RuntimeEnvironment.application
                 .getSystemService(Context.JOB_SCHEDULER_SERVICE)).getAllPendingJobs();
         assertThat(pendingJobs).isNotEmpty();
         JobInfo actual = pendingJobs.get(0);
         assertThat(actual.getService().getClassName())
                 .isEqualTo(ItemSyncJobService.class.getName());
-        assertThat(actual.getExtras().getString(ItemSyncJobService.EXTRA_ID)).contains("1");
     }
 
     @Test
     public void testStartJob() {
-        PersistableBundle bundle = new PersistableBundle();
-        bundle.putString(ItemSyncJobService.EXTRA_ID, "1");
         JobParameters jobParameters = mock(JobParameters.class);
-        when(jobParameters.getExtras()).thenReturn(bundle);
+        when(jobParameters.getExtras())
+                .thenReturn(new SyncDelegate.JobBuilder(service, "1").build().toPersistableBundle());
         when(jobParameters.getJobId()).thenReturn(2);
         service.onStartJob(jobParameters);
         verify(service.syncDelegate).subscribe(listenerCaptor.capture());
