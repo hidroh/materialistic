@@ -32,7 +32,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.BestActivity;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.SearchActivity;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 
@@ -75,6 +77,78 @@ public class WidgetConfigActivityTest {
         assertThat(activity).isFinishing();
         assertThat(shadowOf((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE))
                 .getAllPendingJobs()).isNotEmpty();
+    }
+
+    @Test
+    public void testSectionTop() {
+        activity.getSharedPreferences(WidgetHelper.WidgetConfig.getConfigName(1), Context.MODE_PRIVATE)
+                .edit()
+                .putString(activity.getString(R.string.pref_widget_section),
+                        activity.getString(R.string.pref_widget_section_value_top))
+                .apply();
+        WidgetHelper.WidgetConfig config = WidgetHelper.WidgetConfig.createWidgetConfig(activity, 1);
+        assertThat(config.section).isEqualTo(activity.getString(R.string.pref_widget_section_value_top));
+        assertThat(config.customQuery).isFalse();
+        assertThat(config.destination).isEqualTo(io.github.hidroh.materialistic.ListActivity.class);
+        assertThat(config.title).isEqualTo(activity.getString(R.string.title_activity_list));
+    }
+
+    @Test
+    public void testSectionBest() {
+        activity.getSharedPreferences(WidgetHelper.WidgetConfig.getConfigName(1), Context.MODE_PRIVATE)
+                .edit()
+                .putString(activity.getString(R.string.pref_widget_section),
+                        activity.getString(R.string.pref_widget_section_value_best))
+                .apply();
+        WidgetHelper.WidgetConfig config = WidgetHelper.WidgetConfig.createWidgetConfig(activity, 1);
+        assertThat(config.section).isEqualTo(activity.getString(R.string.pref_widget_section_value_best));
+        assertThat(config.customQuery).isFalse();
+        assertThat(config.destination).isEqualTo(BestActivity.class);
+        assertThat(config.title).isEqualTo(activity.getString(R.string.title_activity_best));
+    }
+
+    @Test
+    public void testCustomQuery() {
+        activity.getSharedPreferences(WidgetHelper.WidgetConfig.getConfigName(1), Context.MODE_PRIVATE)
+                .edit()
+                .putString(activity.getString(R.string.pref_widget_query), "query")
+                .apply();
+        WidgetHelper.WidgetConfig config = WidgetHelper.WidgetConfig.createWidgetConfig(activity, 1);
+        assertThat(config.section).isEqualTo("query");
+        assertThat(config.customQuery).isTrue();
+        assertThat(config.destination).isEqualTo(SearchActivity.class);
+        assertThat(config.title).isEqualTo("query");
+    }
+
+    @Test
+    public void testTransparentTheme() {
+        WidgetHelper.WidgetConfig config = WidgetHelper.WidgetConfig.createWidgetConfig(activity, 1);
+        assertThat(config.widgetLayout).isEqualTo(R.layout.appwidget);
+        assertThat(config.isLightTheme).isFalse();
+    }
+
+    @Test
+    public void testLightTheme() {
+        activity.getSharedPreferences(WidgetHelper.WidgetConfig.getConfigName(1), Context.MODE_PRIVATE)
+                .edit()
+                .putString(activity.getString(R.string.pref_widget_theme),
+                        activity.getString(R.string.pref_widget_theme_value_light))
+                .apply();
+        WidgetHelper.WidgetConfig config = WidgetHelper.WidgetConfig.createWidgetConfig(activity, 1);
+        assertThat(config.widgetLayout).isEqualTo(R.layout.appwidget_light);
+        assertThat(config.isLightTheme).isTrue();
+    }
+
+    @Test
+    public void testDarkTheme() {
+        activity.getSharedPreferences(WidgetHelper.WidgetConfig.getConfigName(1), Context.MODE_PRIVATE)
+                .edit()
+                .putString(activity.getString(R.string.pref_widget_theme),
+                        activity.getString(R.string.pref_widget_theme_value_dark))
+                .apply();
+        WidgetHelper.WidgetConfig config = WidgetHelper.WidgetConfig.createWidgetConfig(activity, 1);
+        assertThat(config.widgetLayout).isEqualTo(R.layout.appwidget_dark);
+        assertThat(config.isLightTheme).isFalse();
     }
 
     @After
