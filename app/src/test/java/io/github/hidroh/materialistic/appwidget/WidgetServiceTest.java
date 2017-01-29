@@ -53,7 +53,8 @@ public class WidgetServiceTest {
     public void setUp() {
         reset(itemManager);
         viewFactory = new WidgetService.ListRemoteViewsFactory(RuntimeEnvironment.application,
-                itemManager, ItemManager.TOP_FETCH_MODE, false);
+                WidgetHelper.WidgetConfig.createWidgetConfig(RuntimeEnvironment.application, 1),
+                itemManager);
         viewFactory.onCreate();
     }
 
@@ -65,10 +66,8 @@ public class WidgetServiceTest {
                 return RuntimeEnvironment.application;
             }
         };
-        assertNotNull(service.onGetViewFactory(new Intent()
-                .putExtra(WidgetService.EXTRA_SECTION, ItemManager.BEST_FETCH_MODE)));
-        assertNotNull(service.onGetViewFactory(new Intent()
-                .putExtra(WidgetService.EXTRA_SECTION, ItemManager.NEW_FETCH_MODE)));
+        assertNotNull(service.onGetViewFactory(new Intent().putExtra(WidgetService.EXTRA_CONFIG,
+                WidgetHelper.WidgetConfig.createWidgetConfig(RuntimeEnvironment.application, 1).toBundle())));
     }
 
     @Test
