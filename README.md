@@ -3,6 +3,8 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 
 [![Get it on Google Play][Play Store Badge]][Play Store]
 
+[![Join the chat at https://gitter.im/hidroh/materialistic](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hidroh/materialistic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ### Setup
 **Requirements**
 - JDK 8
