@@ -159,7 +159,7 @@ public class AppUtilsTest {
     @Test
     public void testOpenExternalComment() {
         ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
-        TestListActivity activity = controller.create().get();
+        TestListActivity activity = controller.create().start().resume().get();
         AppUtils.openExternal(activity, mock(PopupMenu.class),
                 new View(activity), new TestHnItem(1), null);
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
@@ -230,7 +230,7 @@ public class AppUtilsTest {
     @Test
     public void testFullscreenButton() {
         ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
-        TestListActivity activity = controller.create().get();
+        TestListActivity activity = controller.create().start().resume().get();
         FloatingActionButton fab = new FloatingActionButton(activity);
         AppUtils.toggleFabAction(fab, null, false);
         fab.performClick();
