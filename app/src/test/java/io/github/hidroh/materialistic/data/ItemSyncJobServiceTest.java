@@ -74,8 +74,7 @@ public class ItemSyncJobServiceTest {
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        SyncDelegate.scheduleSync(RuntimeEnvironment.application,
-                new SyncDelegate.JobBuilder(RuntimeEnvironment.application, "1").build());
+        new SyncScheduler().scheduleSync(RuntimeEnvironment.application, "1");
         List<JobInfo> pendingJobs = shadowOf((JobScheduler) RuntimeEnvironment.application
                 .getSystemService(Context.JOB_SCHEDULER_SERVICE)).getAllPendingJobs();
         assertThat(pendingJobs).isNotEmpty();

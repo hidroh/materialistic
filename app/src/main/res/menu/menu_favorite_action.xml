@@ -22,4 +22,8 @@
         android:icon="@drawable/ic_delete_white_24dp"
         android:title="@string/clear_selected"
         app:showAsAction="always" />
+    <item android:id="@id/menu_refresh"
+        android:title="@string/refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        app:showAsAction="always" />
 </menu>
