@@ -37,7 +37,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.text.AllCapsTransformationMethod;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -406,7 +405,6 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         });
         if (story.isStoryType() && mExternalBrowser) {
             TextView buttonArticle = (TextView) findViewById(R.id.button_article);
-            buttonArticle.setTransformationMethod(new AllCapsTransformationMethod(this));
             buttonArticle.setVisibility(View.VISIBLE);
             buttonArticle.setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,

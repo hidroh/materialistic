@@ -68,8 +68,7 @@ public class FavoriteFragment extends BaseListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = getLayoutInflater(savedInstanceState)
-                .inflate(R.layout.fragment_favorite, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorite, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mEmptySearchView = view.findViewById(R.id.empty_search);
         mEmptyView = view.findViewById(R.id.empty);

@@ -19,7 +19,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="RelativeLayout"
+    tools:parentTag="android.widget.RelativeLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent">
 

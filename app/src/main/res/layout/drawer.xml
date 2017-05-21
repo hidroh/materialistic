@@ -23,6 +23,7 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true"
     android:clickable="true"
+    android:focusable="true"
     tools:context="io.github.hidroh.materialistic.DrawerActivity"
     tools:targetApi="honeycomb">
 

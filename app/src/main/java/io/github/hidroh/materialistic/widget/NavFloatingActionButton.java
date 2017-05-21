@@ -189,7 +189,6 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
         Toast.makeText(getContext(), R.string.hint_drag, Toast.LENGTH_SHORT).show();
         //noinspection Convert2Lambda
         super.setOnTouchListener(new OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

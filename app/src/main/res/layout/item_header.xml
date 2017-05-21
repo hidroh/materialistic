@@ -126,7 +126,7 @@
         android:layout_alignEnd="@+id/action_container"
         android:visibility="gone"
         tools:visibility="visible"
-        tools:textAllCaps="true"
+        app:textAllCaps="true"
         android:layout_width="wrap_content"
         android:layout_height="?attr/listPreferredItemHeightSmall" />
 

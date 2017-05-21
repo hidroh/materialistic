@@ -38,7 +38,6 @@
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="?android:attr/textColorPrimary"
-            android:ellipsize="marquee"
             android:fadingEdge="horizontal" />
 
         <TextView android:id="@android:id/summary"

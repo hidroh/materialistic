@@ -129,14 +129,14 @@ public class UserServicesClient implements UserServices {
             callback.onDone(false);
             return;
         }
-        /**
-         * The flow:
-         * POST /submit with acc, pw
-         *  if 302 to /login, considered failed
-         * POST /r with fnid, fnop, title, url or text
-         *  if 302 to /newest, considered successful
-         *  if 302 to /x, considered error, maybe duplicate or invalid input
-         *  if 200 or anything else, considered error
+        /*
+          The flow:
+          POST /submit with acc, pw
+           if 302 to /login, considered failed
+          POST /r with fnid, fnop, title, url or text
+           if 302 to /newest, considered successful
+           if 302 to /x, considered error, maybe duplicate or invalid input
+           if 200 or anything else, considered error
          */
         // fetch submit page with given credentials
         execute(postSubmitForm(credentials.first, credentials.second))
