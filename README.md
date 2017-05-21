@@ -1,3 +1,7 @@
+( <b>jim's fork of: https://github.com/hidroh/materialistic</b> )<br>
+Note: you need Android Studio 3 to build hidroh's MagnumOpus now.  AS3 is available in the Canary channel.<br>
+YANote: it is lovely to pull in a project and not see *ANY* changes needed for a clean build.   That is REALLY pretty amazing.   Good job, hidroh!
+
 ## Materialistic for Hacker News
 Material design [Hacker News] client for Android, uses official [HackerNews/API], [Dagger] for dependency injection and [Robolectric] for unit testing.
 
