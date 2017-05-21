@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ComposeActivity;
 import io.github.hidroh.materialistic.MenuTintDelegate;
@@ -46,9 +48,12 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.Favorite;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.SyncScheduler;
 
 public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         <ListRecyclerViewAdapter.ItemViewHolder, Favorite> {
+
+    @Inject SyncScheduler mSyncScheduler;
 
     public interface ActionModeDelegate {
 
@@ -90,7 +95,10 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
                         .show();
                 return true;
             }
-
+            if (menuItem.getItemId() == R.id.menu_refresh) {
+                refreshSelection();
+                actionMode.finish();
+            }
             return false;
         }
 
@@ -135,7 +143,15 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                dismiss(viewHolder.getAdapterPosition());
+                if (direction == ItemTouchHelper.LEFT) {
+                    dismiss(viewHolder.getAdapterPosition());
+                } else {
+                    Favorite item = getItem(viewHolder.getAdapterPosition());
+                    if (item != null) {
+                        mSyncScheduler.scheduleSync(mContext, item.getId());
+                    }
+                    notifyItemChanged(viewHolder.getAdapterPosition());
+                }
             }
         });
         mItemTouchHelper.attachToRecyclerView(recyclerView);
@@ -227,6 +243,13 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Synthetic
+    void refreshSelection() {
+        for (String id : mSelected.values()) {
+            mSyncScheduler.scheduleSync(mContext, id);
+        }
+    }
+
+    @Synthetic
     void dismiss(final int position) {
         final Favorite item = getItem(position);
         mSelected.put(position, item.getId());
@@ -311,13 +334,17 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
     static abstract class ItemTouchHelperCallback extends PeekabooTouchHelperCallback {
 
-        private final String mText;
-        private final int mColor;
+        private final String mDeleteText;
+        private final String mRefreshText;
+        private final int mDeleteColor;
+        private final int mRefreshColor;
 
         ItemTouchHelperCallback(Context context) {
             super(context);
-            mText = context.getString(R.string.delete);
-            mColor = ContextCompat.getColor(context, R.color.red500);
+            mDeleteText = context.getString(R.string.delete);
+            mRefreshText = context.getString(R.string.refresh);
+            mDeleteColor = ContextCompat.getColor(context, R.color.red500);
+            mRefreshColor = ContextCompat.getColor(context, R.color.lightBlueA700);
         }
 
         @Override
@@ -331,22 +358,22 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
         @Override
         protected String getLeftText() {
-            return mText;
+            return mDeleteText;
         }
 
         @Override
         protected String getRightText() {
-            return mText;
+            return mRefreshText;
         }
 
         @Override
         protected int getLeftTextColor() {
-            return mColor;
+            return mDeleteColor;
         }
 
         @Override
         protected int getRightTextColor() {
-            return mColor;
+            return mRefreshColor;
         }
     }
 }

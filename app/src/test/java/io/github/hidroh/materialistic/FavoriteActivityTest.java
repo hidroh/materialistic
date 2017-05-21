@@ -49,6 +49,7 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
@@ -92,6 +93,7 @@ public class FavoriteActivityTest {
     @Inject ActionViewResolver actionViewResolver;
     @Inject UserServices userServices;
     @Inject KeyDelegate keyDelegate;
+    @Inject SyncScheduler syncScheduler;
     @Captor ArgumentCaptor<Set<String>> selection;
     @Captor ArgumentCaptor<View.OnClickListener> searchViewClickListener;
     @Captor ArgumentCaptor<SearchView.OnCloseListener> searchViewCloseListener;
@@ -223,6 +225,17 @@ public class FavoriteActivityTest {
         assertEquals(1, adapter.getItemCount());
     }
 
+    @Test
+    public void testRefresh() {
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
+        holder.itemView.performLongClick();
+
+        ActionMode actionMode = mock(ActionMode.class);
+        activity.actionModeCallback.onActionItemClicked(actionMode, new RoboMenuItem(R.id.menu_refresh));
+        verify(syncScheduler).scheduleSync(any(), any());
+        verify(actionMode).finish();
+    }
+
     @Config(shadows = {ShadowRecyclerView.class, ShadowItemTouchHelper.class})
     @Test
     public void testSwipeToDelete() {
@@ -241,6 +254,15 @@ public class FavoriteActivityTest {
         when(favoriteManager.getSize()).thenReturn(2);
         observerCaptor.getValue().onChanged();
         assertEquals(2, adapter.getItemCount());
+    }
+
+    @Config(shadows = {ShadowRecyclerView.class, ShadowItemTouchHelper.class})
+    @Test
+    public void testSwipeToRefresh() {
+        RecyclerView.ViewHolder holder = shadowAdapter.getViewHolder(0);
+        customShadowOf(recyclerView).getItemTouchHelperCallback()
+                .onSwiped(holder, ItemTouchHelper.RIGHT);
+        verify(syncScheduler).scheduleSync(any(), any());
     }
 
     @Test

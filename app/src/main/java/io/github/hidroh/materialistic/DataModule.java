@@ -31,6 +31,7 @@ import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.UserManager;
 import okhttp3.Call;
 import rx.Scheduler;
@@ -90,5 +91,10 @@ class DataModule {
     @Provides @Singleton
     public Scheduler provideIoScheduler() {
         return Schedulers.io();
+    }
+
+    @Provides @Singleton
+    public SyncScheduler provideSyncScheduler() {
+        return new SyncScheduler();
     }
 }
