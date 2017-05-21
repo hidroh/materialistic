@@ -7,8 +7,8 @@ task jacocoTestReport(type: JacocoReport) {
     reports {
         xml.enabled true
         csv.enabled false
-        xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-        html.destination "${buildDir}/reports/coverage"
+        xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+        html.destination file("${buildDir}/reports/coverage")
     }
 
     classDirectories = fileTree(

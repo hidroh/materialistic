@@ -27,4 +27,5 @@
     <issue id="IconLauncherShape" severity="informational" />
     <issue id="ResourceType" severity="ignore" />    <!-- TODO http://b.android.com/201882 -->
     <issue id="RestrictedApi" severity="ignore" /> <!-- TODO http://b.android.com/230387 -->
+    <issue id="ClickableViewAccessibility" severity="informational" />
 </lint>

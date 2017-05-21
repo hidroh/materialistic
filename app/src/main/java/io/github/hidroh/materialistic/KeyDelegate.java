@@ -67,7 +67,7 @@ public class KeyDelegate {
      * Attaches this delegate to given activity lifecycle
      * Should call {@link #detach(Activity)} accordingly
      * @param activity    active activity to receive key events
-     * @see {@link #detach(Activity)}
+     * @see #detach(Activity)
      */
     public void attach(Activity activity) {
         mPreferenceKey = activity.getString(R.string.pref_volume);
@@ -81,7 +81,7 @@ public class KeyDelegate {
      * Detaches this delegate from given activity lifecycle
      * Should already call {@link #attach(Activity)}
      * @param activity    active activity that has been receiving key events
-     * @see {@link #attach(Activity)}
+     * @see #attach(Activity)
      */
     public void detach(Activity activity) {
         PreferenceManager.getDefaultSharedPreferences(activity)

@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -409,6 +410,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void unbindViewPager() {
         // fragment manager always restores view pager fragments,
         // even when view pager no longer exists (e.g. after rotation),

@@ -36,8 +36,8 @@ public interface WebItem extends Parcelable {
             COMMENT_TYPE,
             POLL_TYPE
     })
-    /**
-     * Item types
+    /*
+      Item types
      */
     @interface Type {}
     String JOB_TYPE = "job";

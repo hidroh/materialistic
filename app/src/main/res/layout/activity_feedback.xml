@@ -53,6 +53,7 @@
                 android:theme="@style/ThemeOverlay.App.Rating"
                 android:isIndicator="true"
                 android:clickable="true"
+                android:focusable="true"
                 android:numStars="5"
                 android:rating="5" />
 
