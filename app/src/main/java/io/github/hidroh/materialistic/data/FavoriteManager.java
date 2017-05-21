@@ -71,6 +71,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private final Scheduler mIoScheduler;
     @Synthetic Cursor mCursor;
     private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
+    private final SyncScheduler mSyncScheduler = new SyncScheduler();
 
     @Override
     public int getSize() {
@@ -170,7 +171,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
-        SyncDelegate.scheduleSync(context, new SyncDelegate.JobBuilder(context, story.getId()).build());
+        mSyncScheduler.scheduleSync(context, story.getId());
     }
 
     /**

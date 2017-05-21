@@ -34,6 +34,7 @@ import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.SyncDelegate;
+import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
@@ -140,6 +141,7 @@ public class TestActivityModule {
     private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
     private final ResourcesProvider resourcesProvider = mock(ResourcesProvider.class);
     private final SyncDelegate syncDelegate = mock(SyncDelegate.class);
+    private final SyncScheduler syncScheduler = mock(SyncScheduler.class);
     {
         TypedArray typedArray = mock(TypedArray.class);
         when(typedArray.length()).thenReturn(1);
@@ -348,5 +350,10 @@ public class TestActivityModule {
     @Provides @Singleton
     public SyncDelegate provideSyncDelegate() {
         return syncDelegate;
+    }
+
+    @Provides @Singleton
+    public SyncScheduler provideSyncScheduler() {
+        return syncScheduler;
     }
 }
