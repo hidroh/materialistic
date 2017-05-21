@@ -19,6 +19,3 @@
 -dontobfuscate
 -keep class io.github.hidroh.materialistic.** { *; }
 -keep interface io.github.hidroh.materialistic.** { *; }
-
-# Retrolambda
--dontwarn java.lang.invoke.*

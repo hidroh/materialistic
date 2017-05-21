@@ -19,7 +19,6 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - [Mercury Web Parser API]
 - [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
-- [Retrolambda] & [Retrolambda Gradle plugin]
 - [RxJava] & [RxAndroid]
 - [Robolectric]
 
@@ -91,8 +90,6 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [AssertJ]: https://github.com/square/assertj-android
 [Dagger]: https://github.com/square/dagger
 [LeakCanary]: https://github.com/square/leakcanary
-[Retrolambda]: https://github.com/orfjackal/retrolambda
-[Retrolambda Gradle plugin]: https://github.com/evant/gradle-retrolambda
 [RxJava]: https://github.com/ReactiveX/RxJava
 [RxAndroid]: https://github.com/ReactiveX/RxAndroid
 [Robolectric]: https://github.com/robolectric/robolectric
