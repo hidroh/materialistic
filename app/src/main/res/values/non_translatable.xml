@@ -92,6 +92,6 @@
         </html>
         ]]>
     </string>
-    <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.ScrollAwareFABBehavior</string>
+    <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.FabAwareScrollBehavior</string>
 
 </resources>
