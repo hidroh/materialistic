@@ -42,7 +42,7 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_behavior="@string/fab_scrolling_view_behavior"
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -80,18 +80,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <!-- TODO http://b.android.com/220250 -->
-            <android.support.design.widget.CoordinatorLayout
+            <io.github.hidroh.materialistic.widget.ViewPager
+                android:id="@id/content"
                 android:layout_below="@id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <io.github.hidroh.materialistic.widget.ViewPager
-                    android:id="@id/content"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </android.support.design.widget.CoordinatorLayout>
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
 
@@ -101,20 +94,16 @@
         android:id="@+id/reply_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/fab_scrolling_view_behavior"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/content"
-        app:layout_anchorGravity="bottom|right" />
+        android:layout_gravity="end|bottom" />
 
     <include
         layout="@layout/button_navigation"
         android:id="@+id/navigation_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/fab_scrolling_view_behavior"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/content"
-        app:layout_anchorGravity="bottom|center_horizontal"
+        android:layout_gravity="center_horizontal|bottom"
         tools:ignore="RtlHardcoded"/>
 
 </android.support.design.widget.CoordinatorLayout>
