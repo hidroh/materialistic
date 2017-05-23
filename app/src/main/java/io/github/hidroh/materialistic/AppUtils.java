@@ -43,7 +43,6 @@ import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -441,13 +440,12 @@ public class AppUtils {
     }
 
     public static void toggleFab(FloatingActionButton fab, boolean visible) {
-        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
         if (visible) {
+            fab.setTag(null);
             fab.show();
-            p.setBehavior(new ScrollAwareFABBehavior());
         } else {
+            fab.setTag(FabAwareScrollBehavior.HIDDEN);
             fab.hide();
-            p.setBehavior(null);
         }
     }
 
