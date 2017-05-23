@@ -85,7 +85,7 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
     public NavFloatingActionButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         bindNavigationPad();
-        mVibrationEnabled = Preferences.navigationEnabled(context);
+        mVibrationEnabled = Preferences.navigationVibrationEnabled(context);
         if (!isInEditMode()) {
             mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         } else {
