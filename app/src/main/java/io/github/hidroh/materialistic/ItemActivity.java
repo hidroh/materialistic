@@ -389,10 +389,11 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                         R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;
         }
+        boolean hasText = story instanceof Item && !TextUtils.isEmpty(((Item) story).getText());
         mAdapter = new ItemPagerAdapter(this, getSupportFragmentManager(),
                 new ItemPagerAdapter.Builder()
                         .setItem(story)
-                        .setShowArticle(!mExternalBrowser)
+                        .setShowArticle(hasText || !mExternalBrowser)
                         .setCacheMode(getIntent().getIntExtra(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT))
                         .setRetainInstance(true)
                         .setDefaultViewMode(mStoryViewMode));
@@ -403,7 +404,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                 mAppBar.setExpanded(true, true);
             }
         });
-        if (story.isStoryType() && mExternalBrowser) {
+        if (story.isStoryType() && mExternalBrowser && !hasText) {
             TextView buttonArticle = (TextView) findViewById(R.id.button_article);
             buttonArticle.setVisibility(View.VISIBLE);
             buttonArticle.setOnClickListener(v ->
