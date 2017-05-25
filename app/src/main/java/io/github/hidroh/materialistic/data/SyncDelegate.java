@@ -74,7 +74,7 @@ public class SyncDelegate {
     private final SharedPreferences mSharedPreferences;
     private final NotificationManager mNotificationManager;
     private final NotificationCompat.Builder mNotificationBuilder;
-    private final Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private SyncProgress mSyncProgress;
     private final Context mContext;
     private ProgressListener mListener;
