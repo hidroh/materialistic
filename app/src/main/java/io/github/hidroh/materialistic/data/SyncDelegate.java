@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic.data;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -416,15 +415,14 @@ public class SyncDelegate {
             this.id = id;
         }
 
-        @SuppressLint("NewApi") // TODO http://b.android.com/225519
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         Job(PersistableBundle bundle) {
             id = bundle.getString(EXTRA_ID);
-            connectionEnabled = bundle.getBoolean(EXTRA_CONNECTION_ENABLED);
-            readabilityEnabled = bundle.getBoolean(EXTRA_READABILITY_ENABLED);
-            articleEnabled = bundle.getBoolean(EXTRA_ARTICLE_ENABLED);
-            commentsEnabled = bundle.getBoolean(EXTRA_COMMENTS_ENABLED);
-            notificationEnabled = bundle.getBoolean(EXTRA_NOTIFICATION_ENABLED);
+            connectionEnabled = bundle.getInt(EXTRA_CONNECTION_ENABLED) == 1;
+            readabilityEnabled = bundle.getInt(EXTRA_READABILITY_ENABLED) == 1;
+            articleEnabled = bundle.getInt(EXTRA_ARTICLE_ENABLED) == 1;
+            commentsEnabled = bundle.getInt(EXTRA_COMMENTS_ENABLED) == 1;
+            notificationEnabled = bundle.getInt(EXTRA_NOTIFICATION_ENABLED) == 1;
         }
 
         Job(Bundle bundle) {
@@ -436,16 +434,15 @@ public class SyncDelegate {
             notificationEnabled = bundle.getBoolean(EXTRA_NOTIFICATION_ENABLED);
         }
 
-        @SuppressLint("NewApi") // TODO http://b.android.com/225519
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Synthetic PersistableBundle toPersistableBundle() {
             PersistableBundle bundle = new PersistableBundle();
             bundle.putString(EXTRA_ID, id);
-            bundle.putBoolean(EXTRA_CONNECTION_ENABLED, connectionEnabled);
-            bundle.putBoolean(EXTRA_READABILITY_ENABLED, readabilityEnabled);
-            bundle.putBoolean(EXTRA_ARTICLE_ENABLED, articleEnabled);
-            bundle.putBoolean(EXTRA_COMMENTS_ENABLED, commentsEnabled);
-            bundle.putBoolean(EXTRA_NOTIFICATION_ENABLED, notificationEnabled);
+            bundle.putInt(EXTRA_CONNECTION_ENABLED, connectionEnabled ? 1 : 0);
+            bundle.putInt(EXTRA_READABILITY_ENABLED, readabilityEnabled ? 1 : 0);
+            bundle.putInt(EXTRA_ARTICLE_ENABLED, articleEnabled ? 1 : 0);
+            bundle.putInt(EXTRA_COMMENTS_ENABLED, commentsEnabled ? 1 : 0);
+            bundle.putInt(EXTRA_NOTIFICATION_ENABLED, notificationEnabled ? 1 : 0);
             return bundle;
         }
 
