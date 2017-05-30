@@ -29,7 +29,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -45,7 +44,6 @@ import io.github.hidroh.materialistic.ListActivity;
 import io.github.hidroh.materialistic.NewActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.SearchActivity;
-import io.github.hidroh.materialistic.annotation.Synthetic;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
@@ -63,13 +61,20 @@ class WidgetHelper {
         mAlarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
     }
 
+    static String getConfigName(int appWidgetId) {
+        return String.format(Locale.US, SP_NAME, appWidgetId);
+    }
+
     void configure(int appWidgetId) {
         scheduleUpdate(appWidgetId);
         update(appWidgetId);
     }
 
     void update(int appWidgetId) {
-        WidgetConfig config = WidgetConfig.createWidgetConfig(mContext, appWidgetId);
+        WidgetConfig config = WidgetConfig.createWidgetConfig(mContext,
+                getConfig(appWidgetId, R.string.pref_widget_theme),
+                getConfig(appWidgetId, R.string.pref_widget_section),
+                getConfig(appWidgetId, R.string.pref_widget_query));
         RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), config.widgetLayout);
         updateTitle(remoteViews, config);
         updateCollection(appWidgetId, remoteViews, config);
@@ -88,7 +93,7 @@ class WidgetHelper {
     }
 
     private void scheduleUpdate(int appWidgetId) {
-        String frequency = WidgetConfig.getConfig(mContext, appWidgetId, R.string.pref_widget_frequency);
+        String frequency = getConfig(appWidgetId, R.string.pref_widget_frequency);
         long frequencyHourMillis = DateUtils.HOUR_IN_MILLIS * (TextUtils.isEmpty(frequency) ?
                 DEFAULT_FREQUENCY_HOUR : Integer.valueOf(frequency));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -119,8 +124,13 @@ class WidgetHelper {
         return (JobScheduler) mContext.getSystemService(Context.JOB_SCHEDULER_SERVICE);
     }
 
+    private String getConfig(int appWidgetId, @StringRes int key) {
+        return mContext.getSharedPreferences(getConfigName(appWidgetId), MODE_PRIVATE)
+                .getString(mContext.getString(key), null);
+    }
+
     private void clearConfig(int appWidgetId) {
-        mContext.getSharedPreferences(WidgetConfig.getConfigName(appWidgetId), MODE_PRIVATE)
+        mContext.getSharedPreferences(getConfigName(appWidgetId), MODE_PRIVATE)
                 .edit()
                 .clear()
                 .apply();
@@ -144,7 +154,9 @@ class WidgetHelper {
                 createRefreshPendingIntent(appWidgetId));
         Intent intent = new Intent(mContext, WidgetService.class)
                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                .putExtra(WidgetService.EXTRA_CONFIG, config.toBundle());
+                .putExtra(WidgetService.EXTRA_CUSTOM_QUERY, config.customQuery)
+                .putExtra(WidgetService.EXTRA_SECTION, config.section)
+                .putExtra(WidgetService.EXTRA_LIGHT_THEME, config.isLightTheme);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             remoteViews.setRemoteAdapter(android.R.id.list, intent);
@@ -165,80 +177,53 @@ class WidgetHelper {
     }
 
     static class WidgetConfig {
-        private static final String EXTRA_CUSTOM_QUERY = "extra:customQuery";
-        private static final String EXTRA_TITLE = "extra:title";
-        private static final String EXTRA_IS_LIGHT_THEME = "extra:isLightTheme";
-        private static final String EXTRA_WIDGET_LAYOUT = "extra:widgetLayout";
-        private static final String EXTRA_SECTION = "extra:section";
-        boolean customQuery;
-        @Synthetic Class<? extends Activity> destination;
-        @Synthetic String title;
-        boolean isLightTheme;
-        @Synthetic @LayoutRes int widgetLayout;
-        String section;
-
-        @Synthetic WidgetConfig(Bundle bundle) {
-            customQuery = bundle.getBoolean(EXTRA_CUSTOM_QUERY);
-            title = bundle.getString(EXTRA_TITLE);
-            isLightTheme = bundle.getBoolean(EXTRA_IS_LIGHT_THEME);
-            widgetLayout = bundle.getInt(EXTRA_WIDGET_LAYOUT);
-            section = bundle.getString(EXTRA_SECTION);
-            destination = ListActivity.class; // not part of bundle
-        }
+        final boolean customQuery;
+        final Class<? extends Activity> destination;
+        final String title;
+        final boolean isLightTheme;
+        final @LayoutRes int widgetLayout;
+        final String section;
 
         @NonNull
-        static WidgetConfig createWidgetConfig(Context context, int appWidgetId) {
-            String theme = getConfig(context, appWidgetId, R.string.pref_widget_theme),
-                    section = getConfig(context, appWidgetId, R.string.pref_widget_section),
-                    query = getConfig(context, appWidgetId, R.string.pref_widget_query);
-            WidgetConfig config = new WidgetConfig();
+        static WidgetConfig createWidgetConfig(Context context, String theme, String section, String query) {
+            int widgetLayout;
+            boolean isLightTheme = false;
             if (TextUtils.equals(theme, context.getString(R.string.pref_widget_theme_value_dark))) {
-                config.widgetLayout = R.layout.appwidget_dark;
+                widgetLayout = R.layout.appwidget_dark;
             } else if (TextUtils.equals(theme, context.getString(R.string.pref_widget_theme_value_light))) {
-                config.widgetLayout = R.layout.appwidget_light;
-                config.isLightTheme = true;
+                widgetLayout = R.layout.appwidget_light;
+                isLightTheme = true;
             } else {
-                config.widgetLayout = R.layout.appwidget;
+                widgetLayout = R.layout.appwidget;
             }
-            config.section = section;
+            String title;
+            Class<? extends Activity> destination;
             if (!TextUtils.isEmpty(query)) {
-                config.title = query;
-                config.section = query;
-                config.destination = SearchActivity.class;
-                config.customQuery = true;
+                title = query;
+                section = query;
+                destination = SearchActivity.class;
             } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_best))) {
-                config.title = context.getString(R.string.title_activity_best);
-                config.destination = BestActivity.class;
+                title = context.getString(R.string.title_activity_best);
+                destination = BestActivity.class;
             } else if (TextUtils.equals(section, context.getString(R.string.pref_widget_section_value_top))) {
-                config.title = context.getString(R.string.title_activity_list);
-                config.destination = ListActivity.class;
+                title = context.getString(R.string.title_activity_list);
+                destination = ListActivity.class;
             } else {
                 // legacy "new stories" widget
-                config.title = context.getString(R.string.title_activity_new);
-                config.destination = NewActivity.class;
+                title = context.getString(R.string.title_activity_new);
+                destination = NewActivity.class;
             }
-            return config;
+            return new WidgetConfig(destination, title, section, isLightTheme, widgetLayout);
         }
 
-        @Synthetic static String getConfig(Context context, int appWidgetId, @StringRes int key) {
-            return context.getSharedPreferences(getConfigName(appWidgetId), MODE_PRIVATE)
-                    .getString(context.getString(key), null);
-        }
-
-        static String getConfigName(int appWidgetId) {
-            return String.format(Locale.US, SP_NAME, appWidgetId);
-        }
-
-        private WidgetConfig() {}
-
-        Bundle toBundle() {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(EXTRA_CUSTOM_QUERY, customQuery);
-            bundle.putString(EXTRA_TITLE, title);
-            bundle.putBoolean(EXTRA_IS_LIGHT_THEME, isLightTheme);
-            bundle.putInt(EXTRA_WIDGET_LAYOUT, widgetLayout);
-            bundle.putString(EXTRA_SECTION, section);
-            return bundle;
+        private WidgetConfig(Class<? extends Activity> destination, String title, String section,
+                             boolean isLightTheme, int widgetLayout) {
+            this.destination = destination;
+            this.title = title;
+            this.section = section;
+            this.isLightTheme = isLightTheme;
+            this.widgetLayout = widgetLayout;
+            this.customQuery = destination == SearchActivity.class;
         }
     }
 }
