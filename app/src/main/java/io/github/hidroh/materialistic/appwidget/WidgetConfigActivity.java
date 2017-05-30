@@ -80,7 +80,7 @@ public class WidgetConfigActivity extends InjectableActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            getPreferenceManager().setSharedPreferencesName(WidgetHelper.WidgetConfig.getConfigName(
+            getPreferenceManager().setSharedPreferencesName(WidgetHelper.getConfigName(
                     getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)));
             getPreferenceManager().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(mListener);

@@ -43,7 +43,9 @@ import io.github.hidroh.materialistic.data.ItemManager;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class WidgetService extends RemoteViewsService {
-    static final String EXTRA_CONFIG = "extra:config";
+    static final String EXTRA_SECTION = "extra:section";
+    static final String EXTRA_LIGHT_THEME = "extra:lightTheme";
+    static final String EXTRA_CUSTOM_QUERY = "extra:customQuery";
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mSearchManager;
 
@@ -58,9 +60,10 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        WidgetHelper.WidgetConfig config = new WidgetHelper.WidgetConfig(intent.getBundleExtra(EXTRA_CONFIG));
-        return new ListRemoteViewsFactory(getApplicationContext(), config,
-                config.customQuery ? mSearchManager : mItemManager);
+        return new ListRemoteViewsFactory(getApplicationContext(),
+                intent.getBooleanExtra(EXTRA_CUSTOM_QUERY, false) ? mSearchManager : mItemManager,
+                intent.getStringExtra(EXTRA_SECTION),
+                intent.getBooleanExtra(EXTRA_LIGHT_THEME, false));
     }
 
     static class ListRemoteViewsFactory implements RemoteViewsFactory {
@@ -76,20 +79,20 @@ public class WidgetService extends RemoteViewsService {
         private final int mHotThreshold;
         private Item[] mItems;
 
-        ListRemoteViewsFactory(Context context, WidgetHelper.WidgetConfig config, ItemManager itemManager) {
+        ListRemoteViewsFactory(Context context, ItemManager itemManager, String section, boolean lightTheme) {
             mContext = context;
             mItemManager = itemManager;
-            mLightTheme = config.isLightTheme;
-            if (TextUtils.equals(config.section,
+            mLightTheme = lightTheme;
+            if (TextUtils.equals(section,
                     context.getString(R.string.pref_widget_section_value_best))) {
                 mFilter = ItemManager.BEST_FETCH_MODE;
                 mHotThreshold = AppUtils.HOT_THRESHOLD_HIGH;
-            } else if (TextUtils.equals(config.section,
+            } else if (TextUtils.equals(section,
                     context.getString(R.string.pref_widget_section_value_top))) {
                 mFilter = ItemManager.TOP_FETCH_MODE;
                 mHotThreshold = AppUtils.HOT_THRESHOLD_NORMAL;
             } else {
-                mFilter = config.section;
+                mFilter = section;
                 mHotThreshold = AppUtils.HOT_THRESHOLD_NORMAL;
             }
         }
