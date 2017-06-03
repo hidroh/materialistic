@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
+import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 
@@ -50,15 +51,17 @@ public class ThemePreference extends Preference {
         BUTTONS.put(R.id.theme_solarized, SOLARIZED);
         BUTTONS.put(R.id.theme_solarized_dark, SOLARIZED_DARK);
 
-        VALUES.put(LIGHT, new LightSpec(R.string.theme_light));
+        VALUES.put(LIGHT, new DayNightSpec(R.string.theme_light));
         VALUES.put(DARK, new DarkSpec(R.string.theme_dark));
         VALUES.put(BLACK, new DarkSpec(R.string.theme_black, R.style.Black));
         VALUES.put(SEPIA, new LightSpec(R.string.theme_sepia, R.style.Sepia));
         VALUES.put(GREEN, new LightSpec(R.string.theme_green, R.style.Green));
-        VALUES.put(SOLARIZED, new LightSpec(R.string.theme_solarized, R.style.Solarized));
+        VALUES.put(SOLARIZED, new DayNightSpec(R.string.theme_solarized, R.style.Solarized));
         VALUES.put(SOLARIZED_DARK, new DarkSpec(R.string.theme_solarized_dark,
                 R.style.Solarized_Dark));
     }
+
+    private String mSelectedTheme;
 
     public static ThemeSpec getTheme(String value, boolean isTranslucent) {
         ThemeSpec themeSpec = VALUES.get(VALUES.containsKey(value) ? value : LIGHT);
@@ -83,11 +86,11 @@ public class ThemePreference extends Preference {
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
-        String value = restorePersistedValue ? getPersistedString(null): (String) defaultValue;
-        if (TextUtils.isEmpty(value)) {
-            value = LIGHT;
+        mSelectedTheme = restorePersistedValue ? getPersistedString(null): (String) defaultValue;
+        if (TextUtils.isEmpty(mSelectedTheme)) {
+            mSelectedTheme = LIGHT;
         }
-        setSummary(VALUES.get(value).summary);
+        setSummary(VALUES.get(mSelectedTheme).summary);
     }
 
     @Override
@@ -100,10 +103,20 @@ public class ThemePreference extends Preference {
             View button = holder.findViewById(buttonId);
             button.setClickable(true);
             button.setOnClickListener(v -> {
+                mSelectedTheme = value;
+                if (shouldDisableDependents()) {
+                    Preferences.Theme.disableAutoDayNight(getContext());
+                }
                 setSummary(VALUES.get(value).summary);
                 persistString(value);
             });
         }
+    }
+
+    @Override
+    public boolean shouldDisableDependents() {
+        // assume only auto day-night is dependent
+        return !(VALUES.get(mSelectedTheme) instanceof DayNightSpec);
     }
 
     public static class ThemeSpec {
@@ -125,10 +138,6 @@ public class ThemePreference extends Preference {
     }
 
     static class LightSpec extends ThemeSpec {
-
-        LightSpec(@StringRes int summary) {
-            this(summary, -1);
-        }
 
         LightSpec(@StringRes int summary, @StyleRes int themeOverrides) {
             super(summary, R.style.AppTheme, themeOverrides);
@@ -157,6 +166,25 @@ public class ThemePreference extends Preference {
         ThemeSpec getTranslucent() {
             if (translucent == null) {
                 translucent = new ThemeSpec(summary, R.style.AppTheme_Dark_Translucent, themeOverrides);
+            }
+            return translucent;
+        }
+    }
+
+    public static class DayNightSpec extends ThemeSpec {
+
+        DayNightSpec(@StringRes int summary) {
+            this(summary, -1);
+        }
+
+        DayNightSpec(@StringRes int summary, @StyleRes int themeOverrides) {
+            super(summary, R.style.AppTheme_DayNight, themeOverrides);
+        }
+
+        @Override
+        ThemeSpec getTranslucent() {
+            if (translucent == null) {
+                translucent = new ThemeSpec(summary, R.style.AppTheme_Translucent, themeOverrides);
             }
             return translucent;
         }

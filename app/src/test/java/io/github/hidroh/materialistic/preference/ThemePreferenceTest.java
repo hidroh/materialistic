@@ -42,7 +42,7 @@ public class ThemePreferenceTest {
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{R.id.theme_dark, R.style.AppTheme_Dark},
-                new Object[]{R.id.theme_light, R.style.AppTheme}
+                new Object[]{R.id.theme_light, R.style.AppTheme_DayNight}
         );
     }
 
@@ -57,7 +57,7 @@ public class ThemePreferenceTest {
         activity = controller.withIntent(new Intent()
                 .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
                 .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
-                .create().postCreate(null).start().resume().visible().get();
+                .create().start().resume().visible().get();
         RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(activity));
         RecyclerView.Adapter adapter = list.getAdapter();
