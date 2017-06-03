@@ -66,6 +66,7 @@
     <string name="pref_custom_tab_summary">Open Chrome tab instead of browser</string>
     <string name="pref_story_display_title">Default open</string>
     <string name="pref_theme_title">Theme</string>
+    <string name="pref_daynight_title">Auto day-night mode</string>
     <string name="pref_search_sort_title">Sort by</string>
     <string name="pref_search_sort_value_recent">recent</string>
     <string name="pref_search_sort_value_default">default</string>

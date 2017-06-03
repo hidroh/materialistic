@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.StrictMode;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -41,6 +42,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppCompatDelegate.setDefaultNightMode(Preferences.Theme.getAutoDayNightMode(this));
         mRefWatcher = LeakCanary.install(this);
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

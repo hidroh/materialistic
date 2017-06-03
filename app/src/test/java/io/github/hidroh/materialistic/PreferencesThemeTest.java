@@ -21,14 +21,12 @@ public class PreferencesThemeTest {
     @Before
     public void setUp() {
         activity = Robolectric.setupActivity(Activity.class);
-        activity.getTheme().setTo(activity.getResources().newTheme());
     }
 
     @Test
     public void testDefaultTheme() {
-        Integer originalTheme = shadowOf(activity).callGetThemeResId();
         Preferences.Theme.apply(activity, false, false);
-        assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(originalTheme);
+        assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(R.style.AppTheme_DayNight);
     }
 
     @Test

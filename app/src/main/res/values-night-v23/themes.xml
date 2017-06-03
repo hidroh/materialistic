@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 Ha Duy Trung
+  ~ Copyright (c) 2017 Ha Duy Trung
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,19 +17,9 @@
 
 <resources>
 
-    <style name="AppTheme" parent="BaseAppTheme">
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">?android:attr/textColorPrimary</item>
-    </style>
-
-    <style name="AppTheme.Dark" parent="BaseAppTheme.Dark">
+    <style name="AppTheme.DayNight" parent="BaseAppTheme.DayNight">
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
-    </style>
-
-    <style name="AppTheme.DayNight" parent="BaseAppTheme.DayNight">
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">?android:attr/textColorPrimary</item>
     </style>
 
 </resources>
