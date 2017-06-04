@@ -21,8 +21,10 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.Menu;
 
@@ -38,8 +40,13 @@ public abstract class ThemedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTaskTitle(getTitle());
         mMenuTintDelegate.onActivityCreated(this);
-        mThemeObservable.subscribe(this, (key, contextChanged) ->  onThemeChanged(),
-                R.string.pref_theme);
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mThemeObservable.subscribe(this, (key, contextChanged) ->  onThemeChanged(key),
+                R.string.pref_theme, R.string.pref_daynight_auto);
     }
 
     @CallSuper
@@ -84,7 +91,10 @@ public abstract class ThemedActivity extends AppCompatActivity {
         return false;
     }
 
-    private void onThemeChanged() {
+    private void onThemeChanged(int key) {
+        if (key == R.string.pref_daynight_auto) {
+            AppCompatDelegate.setDefaultNightMode(Preferences.Theme.getAutoDayNightMode(this));
+        }
         if (mResumed) {
             AppUtils.restart(this, true);
         } else {

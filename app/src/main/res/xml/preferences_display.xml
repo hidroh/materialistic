@@ -26,6 +26,12 @@
         android:title="@string/pref_theme_title"
         android:defaultValue="light" />
 
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:dependency="@string/pref_theme"
+        android:key="@string/pref_daynight_auto"
+        android:title="@string/pref_daynight_title"
+        android:defaultValue="false" />
+
     <io.github.hidroh.materialistic.preference.FontSizePreference
         android:key="@string/pref_text_size"
         android:title="@string/pref_text_size_title"

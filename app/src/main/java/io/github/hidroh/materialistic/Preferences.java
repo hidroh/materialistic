@@ -26,6 +26,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.annotation.VisibleForTesting;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
@@ -366,6 +367,14 @@ public class Preferences {
                 .apply();
     }
 
+    @Synthetic
+    static void set(Context context, @StringRes int key, boolean value) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(context.getString(key), value)
+                .apply();
+    }
+
     public static class BoolToStringPref {
         @Synthetic final int oldKey;
         private final boolean oldDefault;
@@ -441,6 +450,16 @@ public class Preferences {
 
         static @StyleRes int resolvePreferredReadabilityTextSize(Context context) {
             return resolveTextSize(getPreferredReadabilityTextSize(context));
+        }
+
+        public static int getAutoDayNightMode(Context context) {
+            return getTheme(context, false) instanceof ThemePreference.DayNightSpec &&
+                    get(context, R.string.pref_daynight_auto, false) ?
+                    AppCompatDelegate.MODE_NIGHT_AUTO : AppCompatDelegate.MODE_NIGHT_NO;
+        }
+
+        public static void disableAutoDayNight(Context context) {
+            set(context, R.string.pref_daynight_auto, false);
         }
 
         private static @NonNull String getPreferredReadabilityTextSize(Context context) {
@@ -541,6 +560,7 @@ public class Preferences {
             CONTEXT_KEYS.add(context.getString(R.string.pref_theme));
             CONTEXT_KEYS.add(context.getString(R.string.pref_text_size));
             CONTEXT_KEYS.add(context.getString(R.string.pref_font));
+            CONTEXT_KEYS.add(context.getString(R.string.pref_daynight_auto));
         }
     }
 

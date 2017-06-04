@@ -78,6 +78,41 @@
         <item name="backgroundDrawerHeader">@drawable/bg_drawer_dark</item>
     </style>
 
+    <style name="BaseAppTheme.DayNight.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- default theme override -->
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:textColorTertiary">?android:textColorPrimary</item>
+        <item name="android:textColorLink">?colorAccent</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">?colorPrimary</item>
+        <item name="preferenceTheme">@style/AppPreferenceThemeOverlay</item>
+        <item name="popupMenuStyle">@style/Widget.AppCompat.Light.PopupMenu.Overflow</item>
+        <item name="drawerArrowStyle">@style/AppDrawerArrowToggle</item>
+
+        <!-- custom themed attributes -->
+        <item name="titleTextSize">@dimen/text_size_medium</item>
+        <item name="subtitleTextSize">@dimen/text_size_small</item>
+        <item name="contentTextSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="BaseAppTheme.DayNight" parent="BaseAppTheme.DayNight.NoActionBar">
+        <!-- color palette -->
+        <item name="colorPrimary">@color/orange300</item>
+        <item name="colorPrimaryDark">@color/orange400</item>
+        <item name="colorAccent">@color/redA200</item>
+        <item name="colorCardBackground">@color/grey100</item>
+        <item name="colorCardHighlight">@color/orange100</item>
+        <item name="android:textColorPrimary">@color/blackT87</item>
+        <item name="android:textColorSecondary">@color/grey500</item>
+
+        <!-- default theme override -->
+        <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog</item>
+
+        <!-- custom themed attributes -->
+        <item name="backgroundDrawerHeader">@drawable/bg_drawer_light</item>
+    </style>
+
     <style name="AppTheme" parent="BaseAppTheme">
     </style>
 
@@ -94,6 +129,9 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="AppTheme.DayNight" parent="BaseAppTheme.DayNight">
     </style>
 
     <style name="Black">
@@ -141,7 +179,7 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Solarized</item>
     </style>
 
-    <style name="Solarized.Dark">
+    <style name="BaseDarkSolarized">
         <item name="colorPrimary">@color/grey900</item>
         <item name="colorPrimaryDark">@color/blackT87</item>
         <item name="colorAccent">@color/solarizedOrange</item>
@@ -151,6 +189,9 @@
         <item name="android:textColorSecondary">@color/solarizedBase1</item>
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark.Solarized</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Dark.Solarized</item>
+    </style>
+
+    <style name="Solarized.Dark" parent="BaseDarkSolarized">
     </style>
 
     <!-- =================== -->
