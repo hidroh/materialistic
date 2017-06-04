@@ -28,7 +28,7 @@
         <item name="colorCardBackground">@color/grey100</item>
         <item name="colorCardHighlight">@color/orange100</item>
         <item name="android:textColorPrimary">@color/blackT87</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/blackT50</item>
 
         <!-- default theme override -->
         <item name="android:windowDisablePreview">true</item>
@@ -57,7 +57,7 @@
         <item name="colorCardBackground">@color/grey900</item>
         <item name="colorCardHighlight">@color/grey800</item>
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/whiteT50</item>
 
         <!-- default theme override -->
         <item name="android:windowDisablePreview">true</item>
@@ -103,7 +103,7 @@
         <item name="colorCardBackground">@color/grey100</item>
         <item name="colorCardHighlight">@color/orange100</item>
         <item name="android:textColorPrimary">@color/blackT87</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/blackT50</item>
 
         <!-- default theme override -->
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
@@ -201,7 +201,7 @@
         <item name="colorPrimary">@color/orange400</item>
         <item name="colorAccent">@color/redA200</item>
         <item name="android:textColorPrimary">@color/blackT87</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/blackT50</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
         <item name="colorCardBackground">@color/grey100</item>
@@ -212,7 +212,7 @@
     <style name="AppAlertDialog.Dark" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorAccent">@color/redA100</item>
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/whiteT50</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
         <item name="colorCardBackground">@color/cardview_dark_background</item>
@@ -254,7 +254,7 @@
     <style name="AppBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="colorAccent">@color/redA200</item>
         <item name="android:textColorPrimary">@color/blackT87</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/blackT50</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:colorBackground">@color/grey100</item>
     </style>
@@ -262,7 +262,7 @@
     <style name="AppBottomSheetDialog.Dark" parent="Theme.Design.BottomSheetDialog">
         <item name="colorAccent">@color/redA100</item>
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/whiteT50</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:colorBackground">@color/cardview_dark_background</item>
     </style>
