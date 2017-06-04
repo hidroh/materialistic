@@ -143,6 +143,10 @@ public class Preferences {
         return get(context, R.string.pref_color_code, true);
     }
 
+    public static int colorCodeOpacity(Context context) {
+        return getInt(context, R.string.pref_color_code_opacity, 100);
+    }
+
     public static boolean smoothScrollEnabled(Context context) {
         return get(context, R.string.pref_smooth_scroll, true);
     }

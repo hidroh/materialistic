@@ -23,6 +23,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LongSparseArray;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -65,6 +66,7 @@ public class SinglePageItemRecyclerViewAdapter
     private final @NonNull SavedState mState;
     private ItemTouchHelper mItemTouchHelper;
     private int[] mLock;
+    private int mColorOpacity = 100;
 
     public SinglePageItemRecyclerViewAdapter(ItemManager itemManager,
                                              @NonNull SavedState state,
@@ -168,6 +170,7 @@ public class SinglePageItemRecyclerViewAdapter
         if (mColorCoded && mColors != null && mColors.length() > 0) {
             holder.mLevel.setVisibility(View.VISIBLE);
             holder.mLevel.setBackgroundColor(getThreadColor(getItemViewType(position)));
+            ViewCompat.setAlpha(holder.mLevel, mColorOpacity / 100f);
         } else {
             holder.mLevel.setVisibility(View.GONE);
         }
@@ -191,6 +194,7 @@ public class SinglePageItemRecyclerViewAdapter
     @Override
     public void initDisplayOptions(Context context) {
         mColorCoded = Preferences.colorCodeEnabled(context);
+        mColorOpacity = Preferences.colorCodeOpacity(context);
         super.initDisplayOptions(context);
     }
 
