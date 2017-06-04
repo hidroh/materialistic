@@ -45,6 +45,14 @@
         android:title="@string/pref_color_code_title"
         android:defaultValue="true" />
 
+    <android.support.v7.preference.SeekBarPreference
+        android:dependency="@string/pref_color_code"
+        android:key="@string/pref_color_code_opacity"
+        android:title="@string/pref_color_code_opacity_title"
+        app:showSeekBarValue="false"
+        android:max="100"
+        android:defaultValue="100" />
+
     <android.support.v7.preference.SwitchPreferenceCompat
         android:key="@string/pref_thread_indicator"
         android:title="@string/pref_thread_indicator_title"
