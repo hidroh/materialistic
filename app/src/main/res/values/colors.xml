@@ -18,10 +18,11 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="whiteT70">#B3FFFFFF</color>
+    <color name="whiteT50">#80FFFFFF</color>
     <color name="blackT87">#DE000000</color>
+    <color name="blackT50">#80000000</color>
     <color name="blackT12">#1F000000</color>
     <color name="grey100">#F5F5F5</color>
-    <color name="grey500">#9E9E9E</color>
     <color name="grey800">#424242</color>
     <color name="grey900">#212121</color>
 

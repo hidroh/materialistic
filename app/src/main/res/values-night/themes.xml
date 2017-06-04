@@ -24,7 +24,7 @@
         <item name="colorCardBackground">@color/grey900</item>
         <item name="colorCardHighlight">@color/grey800</item>
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/grey500</item>
+        <item name="android:textColorSecondary">@color/whiteT50</item>
 
         <!-- default theme override -->
         <item name="alertDialogTheme">@style/AppAlertDialog.Dark</item>
