@@ -162,6 +162,12 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                         startActivity(new Intent(BaseListActivity.this, ReleaseNotesActivity.class));
                     })
                     .setActionTextColor(ContextCompat.getColor(this, R.color.orange500))
+                    .addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int event) {
+                            Preferences.setReleaseNotesSeen(BaseListActivity.this);
+                        }
+                    })
                     .show();
         }
     }
