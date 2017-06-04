@@ -54,8 +54,8 @@ public class ThemePreference extends Preference {
         VALUES.put(LIGHT, new DayNightSpec(R.string.theme_light));
         VALUES.put(DARK, new DarkSpec(R.string.theme_dark));
         VALUES.put(BLACK, new DarkSpec(R.string.theme_black, R.style.Black));
-        VALUES.put(SEPIA, new LightSpec(R.string.theme_sepia, R.style.Sepia));
-        VALUES.put(GREEN, new LightSpec(R.string.theme_green, R.style.Green));
+        VALUES.put(SEPIA, new DayNightSpec(R.string.theme_sepia, R.style.Sepia));
+        VALUES.put(GREEN, new DayNightSpec(R.string.theme_green, R.style.Green));
         VALUES.put(SOLARIZED, new DayNightSpec(R.string.theme_solarized, R.style.Solarized));
         VALUES.put(SOLARIZED_DARK, new DarkSpec(R.string.theme_solarized_dark,
                 R.style.Solarized_Dark));
@@ -134,21 +134,6 @@ public class ThemePreference extends Preference {
 
         ThemeSpec getTranslucent() {
             return this;
-        }
-    }
-
-    static class LightSpec extends ThemeSpec {
-
-        LightSpec(@StringRes int summary, @StyleRes int themeOverrides) {
-            super(summary, R.style.AppTheme, themeOverrides);
-        }
-
-        @Override
-        ThemeSpec getTranslucent() {
-            if (translucent == null) {
-                translucent = new ThemeSpec(summary, R.style.AppTheme_Translucent, themeOverrides);
-            }
-            return translucent;
         }
     }
 
