@@ -34,10 +34,44 @@
         <item name="backgroundDrawerHeader">@drawable/bg_drawer_dark</item>
     </style>
 
+    <style name="AppTheme.Translucent" parent="AppTheme.Dark.Translucent">
+    </style>
+
+    <style name="Sepia">
+        <item name="android:textColorPrimary">@color/orange100</item>
+        <item name="android:textColorSecondary">@color/orange50</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog.Dark.Sepia</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Dark.Sepia</item>
+    </style>
+
+    <style name="Green">
+        <item name="android:textColorPrimary">@color/teal100</item>
+        <item name="android:textColorSecondary">@color/teal50</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog.Dark.Green</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialog.Dark.Green</item>
+    </style>
+
     <style name="Solarized" parent="BaseDarkSolarized">
     </style>
 
-    <style name="AppTheme.Translucent" parent="AppTheme.Dark.Translucent">
+    <style name="AppAlertDialog.Dark.Sepia">
+        <item name="android:textColorPrimary">@color/orange100</item>
+        <item name="android:textColorSecondary">@color/orange50</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Dark.Sepia">
+        <item name="android:textColorPrimary">@color/orange100</item>
+        <item name="android:textColorSecondary">@color/orange50</item>
+    </style>
+
+    <style name="AppAlertDialog.Dark.Green">
+        <item name="android:textColorPrimary">@color/teal100</item>
+        <item name="android:textColorSecondary">@color/teal50</item>
+    </style>
+
+    <style name="AppBottomSheetDialog.Dark.Green">
+        <item name="android:textColorPrimary">@color/teal100</item>
+        <item name="android:textColorSecondary">@color/teal50</item>
     </style>
 
 </resources>
