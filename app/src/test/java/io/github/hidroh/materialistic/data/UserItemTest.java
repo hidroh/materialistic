@@ -31,6 +31,9 @@ public class UserItemTest {
         parcel.setDataPosition(0);
 
         UserItem actualRead = UserItem.CREATOR.createFromParcel(parcel);
+		if (parcel != null) {
+			parcel.recycle();
+		}
         assertEquals("username", actualRead.getId());
         assertNotNull(actualRead.getCreated(RuntimeEnvironment.application));
         assertEquals(3, actualRead.getKarma());
@@ -50,5 +53,8 @@ public class UserItemTest {
         assertEquals("about", actualWrite.readString());
         assertThat(actualWrite.createIntArray()).hasSize(3);
         assertThat(actualWrite.createTypedArray(HackerNewsItem.CREATOR)).hasSize(3);
+		if (actualWrite != null) {
+			actualWrite.recycle();
+		}
     }
 }
