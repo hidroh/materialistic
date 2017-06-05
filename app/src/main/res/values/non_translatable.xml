@@ -67,26 +67,11 @@
             <body>
                 <h3>3.1</h3>
                 <ul>
-                    <li>Merge article &amp; readability tabs, with option to toggle between 2 modes</li>
-                    <li>Improve article display:
-                         <br/>
-                         <small>Rotate device without refreshing page</small>
-                         <br/>
-                         <small>Remember scroll position in fullscreen</small>
-                     </li>
-                    <li>Customize swipe actions: vote/refresh/save story</li>
-                    <li>Remember on-screen D-Pad position, option to turn off vibration</li>
-                    <li>Enable lazy loading for all connections</li>
-                    <li>Android N features<sup>new!</sup>: multi-window support, app shortcuts</li>
-                    <li>Many other fixes and improvements based on your feedback</li>
-                </ul>
-                If you encounter issues, please send me details via feedback dialog.
-                <h3>v2.8-3.0</h3>
-                <ul>
-                    <li>Home screen widget</li>
-                    <li>On-screen D-pad to navigate nested comment threads</li>
-                    <li>Full screen reading mode for article &amp; readability</li>
-                    <li>Block ads for internal browser</li>
+                    <li>Auto day-night option<sup>new!</sup>
+                        <br/>
+                        <small>When this option is turned on, the app will auto switch between light/dark version of selected themes based on sunrise/sunset time</small>
+                    </li>
+                    <li>Option to adjust opacity of comment color codes to make them lighter/darker</li>
                 </ul>
             </body>
         </html>
