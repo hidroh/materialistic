@@ -32,6 +32,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -77,6 +78,7 @@ public class WebFragment extends LazyLoadFragment
     private static final String STATE_CONTENT = "state:content";
     private static final int DEFAULT_PROGRESS = 20;
     @Synthetic WebView mWebView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private NestedScrollView mScrollView;
     @Synthetic boolean mExternalRequired = false;
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
@@ -141,6 +143,7 @@ public class WebFragment extends LazyLoadFragment
             mScrollViewContent = (ViewGroup) mFragmentView.findViewById(R.id.scroll_view_content);
             mScrollView = (NestedScrollView) mFragmentView.findViewById(R.id.nested_scroll_view);
             mControls = (ViewSwitcher) mFragmentView.findViewById(R.id.control_switcher);
+            mSwipeRefreshLayout = (SwipeRefreshLayout) mFragmentView.findViewById(R.id.swipe_to_refresh);
             mWebView = (WebView) mFragmentView.findViewById(R.id.web_view);
             mButtonRefresh = (ImageButton) mFragmentView.findViewById(R.id.button_refresh);
             mButtonMore = mFragmentView.findViewById(R.id.button_more);
@@ -274,7 +277,7 @@ public class WebFragment extends LazyLoadFragment
 
     @Override
     protected void load() {
-        mWebView.setVisibility(View.INVISIBLE);
+        // mWebView.setVisibility(View.INVISIBLE);
         if (mIsHackerNewsUrl) {
             bindContent();
         } else if (mReadability && !mEmpty) {
@@ -329,6 +332,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void setUpWebControls(View view) {
+        // mWebView.reloadHtml(AppUtils.wrapHtml(getActivity(), mContent));
         view.findViewById(R.id.toolbar_web).setOnClickListener(v -> scrollToTop());
         view.findViewById(R.id.button_back).setOnClickListener(v -> mWebView.goBack());
         view.findViewById(R.id.button_forward).setOnClickListener(v -> mWebView.goForward());
@@ -349,6 +353,8 @@ public class WebFragment extends LazyLoadFragment
                 mWebView.reload();
             }
         });
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mWebView.reload());
+
         view.findViewById(R.id.button_exit).setOnClickListener(v ->
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
                         new Intent(WebFragment.ACTION_FULLSCREEN)
@@ -395,6 +401,7 @@ public class WebFragment extends LazyLoadFragment
                 if (getActivity() != null) {
                     getActivity().supportInvalidateOptionsMenu();
                 }
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
         mWebView.setWebChromeClient(new CacheableWebView.ArchiveClient() {
@@ -421,6 +428,10 @@ public class WebFragment extends LazyLoadFragment
             view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
         });
         AppUtils.toggleWebViewZoom(mWebView.getSettings(), false);
+
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
+        mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
+                AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
     }
 
     @SuppressLint("SetJavaScriptEnabled")
