@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2015 Ha Duy Trung
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,62 +14,67 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/colorCardBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorCardBackground">
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/nested_scroll_view"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/scroll_view_content"
-            android:orientation="vertical"
-            android:animateLayoutChanges="true"
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/nested_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:targetApi="honeycomb">
+            android:layout_height="wrap_content"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical">
 
-            <include
-                layout="@layout/toolbar_web"
-                android:visibility="gone"
-                tools:visibility="visible"
+            <LinearLayout
+                android:id="@+id/scroll_view_content"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical"
+                tools:targetApi="honeycomb">
 
-            <FrameLayout
-                android:id="@+id/web_view_container"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <io.github.hidroh.materialistic.widget.CacheableWebView
-                    android:id="@id/web_view"
-                    android:scrollbarStyle="insideOverlay"
-                    android:scrollbars="vertical"
-                    android:focusableInTouchMode="true"
+                <include
+                    layout="@layout/toolbar_web"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="?attr/actionBarSize"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
-                <ViewStub
-                    android:id="@id/empty"
-                    android:inflatedId="@id/empty"
-                    android:layout="@layout/button_download"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <FrameLayout
+                    android:id="@+id/web_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
-            </FrameLayout>
+                    <io.github.hidroh.materialistic.widget.CacheableWebView
+                        android:id="@id/web_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="true"
+                        android:scrollbarStyle="insideOverlay"
+                        android:scrollbars="vertical" />
 
-        </LinearLayout>
+                    <ViewStub
+                        android:id="@id/empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:inflatedId="@id/empty"
+                        android:layout="@layout/button_download" />
 
-    </android.support.v4.widget.NestedScrollView>
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <FrameLayout
         android:id="@+id/fullscreen"
