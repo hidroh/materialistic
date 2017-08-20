@@ -26,7 +26,6 @@
     <dimen name="cardview_vertical_margin">4dp</dimen>
     <dimen name="cardview_horizontal_margin">8dp</dimen>
     <dimen name="cardview_min_height">64dp</dimen>
-    <dimen name="cardview_default_radius">2dp</dimen>
     <dimen name="level_indicator_width">24dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="divider">1dp</dimen>
@@ -42,6 +41,4 @@
     <dimen name="bottom_sheet_width">0dp</dimen>
     <dimen name="bg_widget_radius">4dp</dimen>
 
-    <dimen name="design_fab_size_mini" tools:override="true">56dp</dimen>
-    <dimen name="design_fab_size_normal" tools:override="true">72dp</dimen>
 </resources>
