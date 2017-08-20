@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 9
-        targetSdkVersion 25 // TODO http://b.android.com/212316
+        targetSdkVersion 25
         versionCode 74
         versionName "3.1"
         buildConfigField "int", "LATEST_RELEASE", "74"
