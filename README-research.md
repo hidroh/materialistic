@@ -1,3 +1,7 @@
+## merge
+
+   git pull --rebase https://github.com/hidroh/materialistic.git
+
 ## Synthetic methods
 
 - what the heck are synthetic methods and why do they matter?
