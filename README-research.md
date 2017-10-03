@@ -1,6 +1,6 @@
 ## merge
 
-   git pull --rebase https://github.com/hidroh/materialistic.git
+    git pull --rebase https://github.com/hidroh/materialistic.git
 
 ## Synthetic methods
 
