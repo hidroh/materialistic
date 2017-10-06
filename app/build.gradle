@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
-        minSdkVersion 9
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 26
         versionCode 74
         versionName "3.1"
         buildConfigField "int", "LATEST_RELEASE", "74"
@@ -55,7 +55,7 @@ android {
 }
 
 ext {
-    supportVersion = '25.3.1'
+    supportVersion = '26.1.0'
     okHttpVersion = '3.7.0'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.5'

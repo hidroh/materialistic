@@ -268,15 +268,7 @@ public class AppUtils {
     }
 
     public static void restart(Activity activity, boolean transition) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            activity.recreate();
-        } else {
-            activity.finish();
-            if (transition) {
-                activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
-            activity.startActivity(activity.getIntent());
-        }
+        activity.recreate();
     }
 
     public static String getAbbreviatedTimeSpan(long timeMillis) {
@@ -474,9 +466,7 @@ public class AppUtils {
     public static void toggleWebViewZoom(WebSettings webSettings, boolean enabled) {
         webSettings.setSupportZoom(enabled);
         webSettings.setBuiltInZoomControls(enabled);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            webSettings.setDisplayZoomControls(false);
-        }
+        webSettings.setDisplayZoomControls(false);
     }
 
     public static void setStatusBarDim(Window window, boolean dim) {
@@ -510,14 +500,9 @@ public class AppUtils {
     public static int getDisplayHeight(Context context) {
         Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            Point point = new Point();
-            display.getSize(point);
-            return point.y;
-        } else {
-            //noinspection deprecation
-            return display.getHeight();
-        }
+        Point point = new Point();
+        display.getSize(point);
+        return point.y;
     }
 
     public static LayoutInflater createLayoutInflater(Context context) {
@@ -642,11 +627,7 @@ public class AppUtils {
 
         SystemUiHelper(Window window) {
             this.window = window;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                this.originalUiFlags = window.getDecorView().getSystemUiVisibility();
-            } else {
-                this.originalUiFlags = 0;
-            }
+            this.originalUiFlags = window.getDecorView().getSystemUiVisibility();
         }
 
         @SuppressLint("InlinedApi")

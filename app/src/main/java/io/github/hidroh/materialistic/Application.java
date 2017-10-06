@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
@@ -44,7 +43,7 @@ public class Application extends android.app.Application {
         super.onCreate();
         AppCompatDelegate.setDefaultNightMode(Preferences.Theme.getAutoDayNightMode(this));
         mRefWatcher = LeakCanary.install(this);
-        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyFlashScreen()

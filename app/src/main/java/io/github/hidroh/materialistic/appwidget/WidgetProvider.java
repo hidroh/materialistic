@@ -33,10 +33,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            Toast.makeText(context, R.string.not_supported, Toast.LENGTH_SHORT).show();
-            return;
-        }
         if (TextUtils.equals(intent.getAction(), ACTION_REFRESH_WIDGET)) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                     AppWidgetManager.INVALID_APPWIDGET_ID);

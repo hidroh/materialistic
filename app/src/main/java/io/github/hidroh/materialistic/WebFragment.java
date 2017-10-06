@@ -199,9 +199,7 @@ public class WebFragment extends LazyLoadFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            mWebView.onResume();
-        }
+        mWebView.onResume();
         mWebView.resumeTimers();
     }
 
@@ -314,9 +312,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void pauseWebView() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            mWebView.onPause();
-        }
+        mWebView.onPause();
         mWebView.pauseTimers();
     }
 
@@ -385,7 +381,7 @@ public class WebFragment extends LazyLoadFragment
             public void onPageStarted(android.webkit.WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 if (getActivity() != null) {
-                    getActivity().supportInvalidateOptionsMenu();
+                    getActivity().invalidateOptionsMenu();
                 }
             }
 
@@ -393,7 +389,7 @@ public class WebFragment extends LazyLoadFragment
             public void onPageFinished(android.webkit.WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (getActivity() != null) {
-                    getActivity().supportInvalidateOptionsMenu();
+                    getActivity().invalidateOptionsMenu();
                 }
             }
         });
@@ -430,7 +426,7 @@ public class WebFragment extends LazyLoadFragment
         mWebView.getSettings().setLoadWithOverviewMode(isRemote);
         mWebView.getSettings().setUseWideViewPort(isRemote);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
     @Synthetic
@@ -535,7 +531,7 @@ public class WebFragment extends LazyLoadFragment
 
     @Synthetic
     void onItemLoaded(@NonNull Item response) {
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
         mItem = response;
         bindContent();
     }

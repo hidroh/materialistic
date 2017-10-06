@@ -30,7 +30,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="divider">1dp</dimen>
     <dimen name="icon_button_width">48dp</dimen>
-    <dimen name="padding_widget">8dp</dimen>
+    <dimen name="padding_widget">0dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_size_small">14sp</dimen>

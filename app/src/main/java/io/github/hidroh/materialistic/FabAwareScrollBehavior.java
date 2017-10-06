@@ -16,6 +16,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -39,18 +40,15 @@ public class FabAwareScrollBehavior extends AppBarLayout.ScrollingViewBehavior {
     }
 
     @Override
-    public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final View child,
-                                       final View directTargetChild, final View target, final int nestedScrollAxes) {
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
         // Ensure we react to vertical scrolling
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
-                || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
+        return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+                || super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type);
     }
 
     @Override
-    public void onNestedScroll(final CoordinatorLayout coordinatorLayout, final View child,
-                               final View target, final int dxConsumed, final int dyConsumed,
-                               final int dxUnconsumed, final int dyUnconsumed) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+    public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
         if (dyConsumed > 0) {
             // User scrolled down -> hide the FAB
             List<View> dependencies = coordinatorLayout.getDependencies(child);

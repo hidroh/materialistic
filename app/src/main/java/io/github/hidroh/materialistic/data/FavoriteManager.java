@@ -399,6 +399,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     private NotificationCompat.Builder createNotificationBuilder(Context context) {
+        // TODO specify notification channel
         return new NotificationCompat.Builder(context)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.mipmap.ic_launcher))

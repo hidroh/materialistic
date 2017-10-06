@@ -164,11 +164,7 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
                         if (mNavigable == null) {
                             return;
                         }
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                            Toast.makeText(getContext(), R.string.not_supported, Toast.LENGTH_SHORT).show();
-                        } else {
-                            startDrag(e.getX(), e.getY());
-                        }
+                        startDrag(e.getX(), e.getY());
                     }
                 });
         //noinspection Convert2Lambda
@@ -239,9 +235,7 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
 
     @Override
     public void onGlobalLayout() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            restorePosition();
-        }
+        restorePosition();
         stopObservingViewTree();
     }
 

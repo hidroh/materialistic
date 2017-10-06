@@ -218,13 +218,9 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         holder.mReadMoreTextView.setOnClickListener(v -> {
             item.setContentExpanded(true);
             v.setVisibility(View.GONE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
-                        .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)
-                        .start();
-            } else {
-                holder.mContentTextView.setMaxLines(Integer.MAX_VALUE);
-            }
+            ObjectAnimator.ofInt(holder.mContentTextView, PROPERTY_MAX_LINES, lineCount)
+                    .setDuration((lineCount - mContentMaxLines) * DURATION_PER_LINE_MILLIS)
+                    .start();
         });
     }
 

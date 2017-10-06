@@ -179,7 +179,7 @@ public class FavoriteFragment extends BaseListFragment
         mAdapter.notifyChanged();
         if (!isDetached()) {
             toggleEmptyView(mAdapter.getItemCount() == 0, mFilter);
-            getActivity().supportInvalidateOptionsMenu();
+            getActivity().invalidateOptionsMenu();
         }
     }
 

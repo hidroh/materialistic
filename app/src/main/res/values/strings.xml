@@ -299,7 +299,6 @@
     <string name="list_display_options">List display options</string>
     <string name="last_screen">Last used screen</string>
     <string name="widget_options">Widget options</string>
-    <string name="not_supported">Device not supported</string>
     <string name="item_exist">Similar story has been submitted</string>
     <string name="hn_link">Hacker News link</string>
     <string name="article_link">Article link</string>

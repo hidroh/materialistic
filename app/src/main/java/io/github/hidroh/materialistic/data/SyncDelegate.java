@@ -91,6 +91,7 @@ public class SyncDelegate {
         mReadabilityClient = readabilityClient;
         mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
+        // TODO specify notification channel
         mNotificationBuilder = new NotificationCompat.Builder(context)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.mipmap.ic_launcher))
