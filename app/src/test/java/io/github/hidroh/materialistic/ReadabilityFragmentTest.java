@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.view.View;
 import android.webkit.WebView;
 
 import org.junit.Before;
@@ -94,7 +95,7 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testParseAndBind() {
-        assertThat(activity.findViewById(R.id.progress)).isVisible();
+        assertThat((View) activity.findViewById(R.id.progress)).isVisible();
         verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
                 callback.capture());
         callback.getValue().onResponse("<div>content</div>");
@@ -111,7 +112,7 @@ public class ReadabilityFragmentTest {
     @Test
     public void testParseFailed() {
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_font_options)).isNotVisible();
-        assertThat(activity.findViewById(R.id.progress)).isVisible();
+        assertThat((View) activity.findViewById(R.id.progress)).isVisible();
         verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
                 callback.capture());
         callback.getValue().onResponse(null);
@@ -199,7 +200,7 @@ public class ReadabilityFragmentTest {
 
     @Test
     public void testBindAfterDetached() {
-        assertThat(activity.findViewById(R.id.progress)).isVisible();
+        assertThat((View) activity.findViewById(R.id.progress)).isVisible();
         controller.pause().stop().destroy();
         verify(readabilityClient).parse(eq("1"), eq("http://example.com/article.html"),
                 callback.capture());

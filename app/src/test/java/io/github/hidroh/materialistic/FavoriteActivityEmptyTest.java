@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.LoaderManager;
+import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,17 +14,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
@@ -52,12 +52,12 @@ public class FavoriteActivityEmptyTest {
 
     @Test
     public void testEmpty() {
-        assertThat(activity.findViewById(R.id.empty)).isVisible();
+        assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         activity.findViewById(R.id.header_card_view).performLongClick();
-        assertThat(activity.findViewById(R.id.header_card_view)
+        assertThat((View) activity.findViewById(R.id.header_card_view)
                 .findViewById(R.id.bookmarked)).isVisible();
         activity.findViewById(R.id.header_card_view).performLongClick();
-        assertThat(activity.findViewById(R.id.header_card_view)
+        assertThat((View) activity.findViewById(R.id.header_card_view)
                 .findViewById(R.id.bookmarked)).isNotVisible();
         assertNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_clear));
         assertThat(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_search)).isNotVisible();
@@ -65,13 +65,13 @@ public class FavoriteActivityEmptyTest {
 
     @Test
     public void testDataChanged() {
-        assertThat(activity.findViewById(R.id.empty_search)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.empty_search)).isNotVisible();
         reset(favoriteManager);
         controller.newIntent(new Intent().putExtra(SearchManager.QUERY, "query"));
         verify(favoriteManager, atLeastOnce()).attach(any(Context.class), any(LoaderManager.class),
                 observerCaptor.capture(), any());
         observerCaptor.getValue().onChanged();
-        assertThat(activity.findViewById(R.id.empty_search)).isVisible();
+        assertThat((View) activity.findViewById(R.id.empty_search)).isVisible();
     }
 
     @After

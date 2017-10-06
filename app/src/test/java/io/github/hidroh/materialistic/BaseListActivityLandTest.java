@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.PopupMenu;
 
 import org.junit.After;
@@ -114,7 +115,7 @@ public class BaseListActivityLandTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testSelectItemOpenStory() {
-        assertThat(activity.findViewById(R.id.empty_selection)).isVisible();
+        assertThat((View) activity.findViewById(R.id.empty_selection)).isVisible();
         activity.onItemSelected(new TestHnItem(1L) {
             @NonNull
             @Override
@@ -127,7 +128,7 @@ public class BaseListActivityLandTest {
                 return "http://example.com";
             }
         });
-        assertThat(activity.findViewById(R.id.empty_selection)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.empty_selection)).isNotVisible();
         assertStoryMode();
         shadowOf(activity).clickMenuItem(R.id.menu_share);
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
@@ -194,9 +195,9 @@ public class BaseListActivityLandTest {
     @Test
     public void testClearSelection() {
         activity.onItemSelected(createWebItem());
-        assertThat(activity.findViewById(R.id.empty_selection)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.empty_selection)).isNotVisible();
         activity.onItemSelected(null);
-        assertThat(activity.findViewById(R.id.empty_selection)).isVisible();
+        assertThat((View) activity.findViewById(R.id.empty_selection)).isVisible();
         assertFalse(((ShadowFloatingActionButton) ShadowExtractor
                 .extract(activity.findViewById(R.id.reply_button))).isVisible());
     }

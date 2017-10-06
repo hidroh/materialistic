@@ -180,7 +180,7 @@ public class ItemActivityTest {
             }
         });
         controller.withIntent(intent).create().start().resume();
-        assertThat(activity.findViewById(R.id.source)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.source)).isNotVisible();
         assertEquals(R.drawable.ic_poll_white_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
                         .getCompoundDrawables()[0]).getCreatedFromResId());

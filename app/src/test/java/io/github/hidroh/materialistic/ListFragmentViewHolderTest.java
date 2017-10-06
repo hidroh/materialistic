@@ -148,7 +148,7 @@ public class ListFragmentViewHolderTest {
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat(holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
+        assertThat((View) holder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
         assertThat((TextView) holder.itemView.findViewById(R.id.title)).hasTextString("title");
         assertThat((TextView) holder.itemView.findViewById(R.id.comment))
@@ -358,7 +358,7 @@ public class ListFragmentViewHolderTest {
                 .build());
         RecyclerView.ViewHolder viewHolder = adapter.getViewHolder(0);
         assertFalse(item.isFavorite());
-        assertThat(viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
+        assertThat((View) viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         // observed add
         observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
                 .buildUpon()

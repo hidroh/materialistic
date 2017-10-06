@@ -133,9 +133,9 @@ public class DrawerActivityLoginTest {
     @Test
     public void testMoreToggle() {
         activity.findViewById(R.id.drawer_more).performClick();
-        assertThat(activity.findViewById(R.id.drawer_more_container)).isVisible();
+        assertThat((View) activity.findViewById(R.id.drawer_more_container)).isVisible();
         activity.findViewById(R.id.drawer_more).performClick();
-        assertThat(activity.findViewById(R.id.drawer_more_container)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.drawer_more_container)).isNotVisible();
     }
 
     @After

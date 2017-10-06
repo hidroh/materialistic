@@ -195,7 +195,7 @@ public class ListFragmentTest {
                 listener.capture());
         listener.getValue().onResponse(new Item[0]);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
-        Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
+        Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();
         controller.pause().stop().destroy();
     }
 
@@ -214,7 +214,7 @@ public class ListFragmentTest {
                 listener.capture());
         listener.getValue().onError(null);
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
-        Assertions.assertThat(activity.findViewById(R.id.empty)).isVisible();
+        Assertions.assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         controller.pause().stop().destroy();
     }
 
@@ -232,7 +232,7 @@ public class ListFragmentTest {
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
         listener.getValue().onResponse(new Item[]{new TestItem() {}});
-        Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
+        Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();
         reset(itemManager);
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
@@ -241,7 +241,7 @@ public class ListFragmentTest {
                 eq(ItemManager.MODE_NETWORK),
                 listener.capture());
         listener.getValue().onError(null);
-        Assertions.assertThat(activity.findViewById(R.id.empty)).isNotVisible();
+        Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();
         assertNotNull(ShadowToast.getLatestToast());
         controller.pause().stop().destroy();
     }

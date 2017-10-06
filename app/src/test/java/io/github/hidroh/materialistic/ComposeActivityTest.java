@@ -70,14 +70,14 @@ public class ComposeActivityTest {
 
     @Test
     public void testToggle() {
-        assertThat(activity.findViewById(R.id.toggle)).isVisible();
-        assertThat(activity.findViewById(R.id.text)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.toggle)).isVisible();
+        assertThat((View) activity.findViewById(R.id.text)).isNotVisible();
         activity.findViewById(R.id.toggle).performClick();
-        assertThat(activity.findViewById(R.id.text)).isVisible();
+        assertThat((View) activity.findViewById(R.id.text)).isVisible();
         assertThat((TextView) activity.findViewById(R.id.text))
                 .hasTextString("Paragraph 1\n\nParagraph 2");
         activity.findViewById(R.id.toggle).performClick();
-        assertThat(activity.findViewById(R.id.text)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.text)).isNotVisible();
     }
 
     @Test
@@ -153,7 +153,7 @@ public class ComposeActivityTest {
         controller = Robolectric.buildActivity(ComposeActivity.class)
                 .withIntent(intent).create().start().resume().visible();
         activity = controller.get();
-        assertThat(activity.findViewById(R.id.quote)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.quote)).isNotVisible();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());
     }
 

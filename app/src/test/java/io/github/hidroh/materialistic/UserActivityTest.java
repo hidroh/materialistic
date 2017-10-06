@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -118,7 +119,7 @@ public class UserActivityTest {
     public void testEmpty() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(null);
-        assertThat(activity.findViewById(R.id.empty)).isVisible();
+        assertThat((View) activity.findViewById(R.id.empty)).isVisible();
     }
 
     @Test
@@ -196,7 +197,7 @@ public class UserActivityTest {
             }
         });
         RecyclerView.ViewHolder viewHolder = customShadowOf(recyclerView.getAdapter()).getViewHolder(0);
-        assertThat(viewHolder.itemView.findViewById(R.id.title)).isNotVisible();
+        assertThat((View) viewHolder.itemView.findViewById(R.id.title)).isNotVisible();
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text))
                 .isVisible()
                 .hasTextString("content");
@@ -260,7 +261,7 @@ public class UserActivityTest {
             }
         });
         RecyclerView.ViewHolder viewHolder = customShadowOf(recyclerView.getAdapter()).getViewHolder(0);
-        assertThat(viewHolder.itemView.findViewById(R.id.comment)).isNotVisible();
+        assertThat((View) viewHolder.itemView.findViewById(R.id.comment)).isNotVisible();
     }
 
     @Test
