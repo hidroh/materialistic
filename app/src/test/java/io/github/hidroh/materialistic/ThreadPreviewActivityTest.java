@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
+import android.view.View;
 
 import org.junit.After;
 import org.junit.Before;
@@ -139,11 +140,11 @@ public class ThreadPreviewActivityTest {
         RecyclerView.ViewHolder viewHolder1 = CustomShadows.customShadowOf(recyclerView.getAdapter())
                 .getViewHolder(0);
         recyclerView.getAdapter().bindViewHolder(viewHolder1, 0); // TODO should not need this
-        assertThat(viewHolder1.itemView.findViewById(R.id.comment)).isVisible();
+        assertThat((View) viewHolder1.itemView.findViewById(R.id.comment)).isVisible();
         assertEquals(0, recyclerView.getAdapter().getItemViewType(0));
         RecyclerView.ViewHolder viewHolder2 = CustomShadows.customShadowOf(recyclerView.getAdapter())
                 .getViewHolder(1);
-        assertThat(viewHolder2.itemView.findViewById(R.id.comment)).isNotVisible();
+        assertThat((View) viewHolder2.itemView.findViewById(R.id.comment)).isNotVisible();
         assertEquals(1, recyclerView.getAdapter().getItemViewType(1));
         viewHolder1.itemView.findViewById(R.id.comment).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())

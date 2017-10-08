@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 Ha Duy Trung
+  ~ Copyright (c) 2017 Ha Duy Trung
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,5 +17,13 @@
 
 <appwidget-provider
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:minWidth="180dp"
-    android:minHeight="110dp" />
+    android:minHeight="110dp"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/appwidget"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:previewImage="@drawable/appwidget_preview"
+    android:configure="io.github.hidroh.materialistic.appwidget.WidgetConfigActivity"
+    tools:targetApi="jelly_bean_mr1" />

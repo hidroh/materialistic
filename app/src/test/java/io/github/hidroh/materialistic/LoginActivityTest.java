@@ -2,6 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
+import android.view.View;
 import android.widget.EditText;
 
 import org.junit.After;
@@ -106,7 +107,7 @@ public class LoginActivityTest {
         Preferences.setUsername(RuntimeEnvironment.application, "existing");
         activity = controller.create().postCreate(null).start().resume().get();
         assertThat(activity).hasTitle(R.string.re_enter_password);
-        assertThat(activity.findViewById(R.id.register_button)).isNotVisible();
+        assertThat((View) activity.findViewById(R.id.register_button)).isNotVisible();
         assertThat((EditText) activity.findViewById(R.id.edittext_username))
                 .hasTextString("existing");
     }
@@ -119,7 +120,7 @@ public class LoginActivityTest {
         intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
         activity = controller.withIntent(intent).create().postCreate(null).start().resume().get();
         assertThat(activity).hasTitle(R.string.title_activity_login);
-        assertThat(activity.findViewById(R.id.register_button)).isVisible();
+        assertThat((View) activity.findViewById(R.id.register_button)).isVisible();
         assertThat((EditText) activity.findViewById(R.id.edittext_username)).isEmpty();
     }
 

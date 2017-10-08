@@ -92,7 +92,7 @@ public class ItemFragmentMultiPageTest {
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         makeVisible(fragment);
-        assertThat(fragment.getView().findViewById(R.id.empty)).isVisible();
+        assertThat((View) fragment.getView().findViewById(R.id.empty)).isVisible();
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ItemFragmentMultiPageTest {
                 return 1;
             }
         });
-        assertThat(fragment.getView().findViewById(R.id.empty)).isNotVisible();
+        assertThat((View) fragment.getView().findViewById(R.id.empty)).isNotVisible();
     }
 
     @Test
@@ -157,12 +157,12 @@ public class ItemFragmentMultiPageTest {
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         makeVisible(fragment);
-        assertThat(fragment.getView().findViewById(R.id.empty)).isNotVisible();
+        assertThat((View) fragment.getView().findViewById(R.id.empty)).isNotVisible();
         RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
         RecyclerView.ViewHolder viewHolder = CustomShadows.customShadowOf(recyclerView.getAdapter())
                 .getViewHolder(0);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text)).hasTextString("text");
-        assertThat(viewHolder.itemView.findViewById(R.id.comment)).isVisible();
+        assertThat((View) viewHolder.itemView.findViewById(R.id.comment)).isVisible();
         viewHolder.itemView.findViewById(R.id.comment).performClick();
         Intent actual = shadowOf(fragment.getActivity()).getNextStartedActivity();
         assertEquals(ItemActivity.class.getName(), actual.getComponent().getClassName());

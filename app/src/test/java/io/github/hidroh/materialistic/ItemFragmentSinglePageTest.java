@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -324,7 +325,7 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testDeleted() {
-        assertNull(shadowOf(viewHolder1.itemView.findViewById(R.id.posted)).getOnClickListener());
+        assertNull(shadowOf((View) viewHolder1.itemView.findViewById(R.id.posted)).getOnClickListener());
     }
 
     @Test
@@ -394,7 +395,7 @@ public class ItemFragmentSinglePageTest {
 
     @Test
     public void testDefaultDisplayAllLines() {
-        assertThat(viewHolder.itemView.findViewById(R.id.more)).isNotVisible();
+        assertThat((View) viewHolder.itemView.findViewById(R.id.more)).isNotVisible();
     }
 
     @Test

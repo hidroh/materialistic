@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic;
 
-import android.support.v4.view.MenuItemCompat;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -31,6 +30,6 @@ class ActionViewResolver {
      * @return This item's action view
      */
     View getActionView(MenuItem menuItem) {
-        return MenuItemCompat.getActionView(menuItem);
+        return menuItem.getActionView();
     }
 }

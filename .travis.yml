@@ -18,7 +18,7 @@ android:
     - build-tools-26.0.2
 
     # The SDK version used to compile your project
-    - android-25
+    - android-26
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:

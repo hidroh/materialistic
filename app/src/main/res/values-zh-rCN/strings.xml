@@ -283,7 +283,6 @@
     <string name="list_display_options">列表显示</string>
     <string name="last_screen">最近使用的</string>
     <string name="widget_options">窗口小部件的选项</string>
-    <string name="not_supported">不支持该设备</string>
     <string name="item_exist">类似帖子已提交</string>
     <string name="hn_link">Hacker News 链接</string>
     <string name="article_link">文章链接</string>

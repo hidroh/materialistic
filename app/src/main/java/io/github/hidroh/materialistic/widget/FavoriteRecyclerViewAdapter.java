@@ -349,10 +349,8 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
         @Override
         public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                float alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
-                viewHolder.itemView.setAlpha(alpha);
-            }
+            float alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
+            viewHolder.itemView.setAlpha(alpha);
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
 

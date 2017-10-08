@@ -18,7 +18,7 @@ android.testOptions.unitTests.all {
 }
 
 ext {
-    assertjVersion = '1.1.1'
+    assertjVersion = '1.2.0'
     robolectricVersion = '3.2'
 }
 
@@ -27,16 +27,9 @@ dependencies {
             "org.robolectric:shadows-support-v4:$robolectricVersion",
             'org.mockito:mockito-core:2.1.0',
             'junit:junit:4.12',
-            'io.takari.junit:takari-cpsuite:1.2.7'
-    testImplementation("com.squareup.assertj:assertj-android:$assertjVersion") {
-            exclude group: 'com.android.support', module: 'support-annotations'
-    }
-    testImplementation("com.squareup.assertj:assertj-android-support-v4:$assertjVersion") {
-            exclude group: 'com.android.support', module: 'support-annotations'
-            exclude group: 'com.android.support', module: 'support-v4' // see robolectric/robolectric#1633
-    }
-    testImplementation("com.squareup.assertj:assertj-android-appcompat-v7:$assertjVersion") {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'appcompat-v7' // see robolectric/robolectric#1633
-    }
+            'io.takari.junit:takari-cpsuite:1.2.7',
+            "com.squareup.assertj:assertj-android:$assertjVersion",
+            "com.squareup.assertj:assertj-android-support-v4:$assertjVersion@aar",
+            "com.squareup.assertj:assertj-android-appcompat-v7:$assertjVersion@aar"
+
 }
