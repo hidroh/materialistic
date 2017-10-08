@@ -160,6 +160,10 @@ public class StoryRecyclerViewAdapter extends
                         notifyItemChanged(viewHolder.getAdapterPosition());
                         vote(item, viewHolder);
                         break;
+                    case Share:
+                        notifyItemChanged(viewHolder.getAdapterPosition());
+                        AppUtils.share(mContext, item.getDisplayedTitle(), item.getUrl());
+                        break;
                 }
             }
 
@@ -646,6 +650,10 @@ public class StoryRecyclerViewAdapter extends
                         break;
                     case Refresh:
                         mTexts[i] = context.getString(R.string.refresh);
+                        mColors[i] = ContextCompat.getColor(context, R.color.lightBlueA700);
+                        break;
+                    case Share:
+                        mTexts[i] = context.getString(R.string.share);
                         mColors[i] = ContextCompat.getColor(context, R.color.lightBlueA700);
                         break;
                     default:

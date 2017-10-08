@@ -54,7 +54,8 @@ public class Preferences {
         None,
         Vote,
         Save,
-        Refresh
+        Refresh,
+        Share
     }
     public enum StoryViewMode {
         Comment,
