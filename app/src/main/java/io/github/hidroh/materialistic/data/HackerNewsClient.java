@@ -23,7 +23,9 @@ import android.support.annotation.NonNull;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import io.github.hidroh.materialistic.DataModule;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -50,7 +52,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
     public HackerNewsClient(Context context, RestServiceFactory factory,
                             SessionManager sessionManager,
                             FavoriteManager favoriteManager,
-                            Scheduler ioScheduler) {
+                            @Named(DataModule.IO_THREAD) Scheduler ioScheduler) {
         mRestService = factory.rxEnabled(true).create(BASE_API_URL, RestService.class);
         mSessionManager = sessionManager;
         mFavoriteManager = favoriteManager;

@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
@@ -27,13 +26,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
-import io.github.hidroh.materialistic.Preferences;
+import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.Scheduler;
 
 public class AlgoliaClient implements ItemManager {
 
@@ -43,11 +42,11 @@ public class AlgoliaClient implements ItemManager {
     static final String MIN_CREATED_AT = "created_at_i>";
     RestService mRestService;
     @Inject @Named(ActivityModule.HN) ItemManager mHackerNewsClient;
+    @Inject @Named(DataModule.MAIN_THREAD) Scheduler mMainThreadScheduler;
 
     @Inject
-    public AlgoliaClient(Context context, RestServiceFactory factory) {
+    public AlgoliaClient(RestServiceFactory factory) {
         mRestService = factory.rxEnabled(true).create(BASE_API_URL, RestService.class);
-        sSortByTime = Preferences.isSortByRecent(context);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class AlgoliaClient implements ItemManager {
         }
         search(filter)
                 .map(this::toItems)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mMainThreadScheduler)
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
     }

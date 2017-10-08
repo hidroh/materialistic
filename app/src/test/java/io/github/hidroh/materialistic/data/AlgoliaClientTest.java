@@ -5,21 +5,26 @@ import com.google.gson.GsonBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import io.github.hidroh.materialistic.test.TestRunner;
-import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import io.github.hidroh.materialistic.ActivityModule;
+import io.github.hidroh.materialistic.DataModule;
 import rx.Observable;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,25 +34,24 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(TestRunner.class)
+@RunWith(JUnit4.class)
 public class AlgoliaClientTest {
     @Inject RestServiceFactory factory;
-    private ItemManager hackerNewsClient = mock(ItemManager.class);
+    @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     @Captor ArgumentCaptor<Item[]> getStoriesResponse;
     private AlgoliaClient client;
-    private ResponseListener<Item> itemListener;
-    private ResponseListener<Item[]> storiesListener;
+    @Mock ResponseListener<Item> itemListener;
+    @Mock ResponseListener<Item[]> storiesListener;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        ObjectGraph.create(new TestModule()).inject(this);
         reset(TestRestServiceFactory.algoliaRestService);
-        client = new AlgoliaClient(RuntimeEnvironment.application, factory);
-        client.mHackerNewsClient = hackerNewsClient;
-        client.sSortByTime = true;
-        itemListener = mock(ResponseListener.class);
-        storiesListener = mock(ResponseListener.class);
+        AlgoliaClient.sSortByTime = true;
+        ObjectGraph objectGraph = ObjectGraph.create(new TestModule());
+        objectGraph.inject(this);
+        client = new AlgoliaClient(factory);
+        objectGraph.inject(client);
     }
 
     @Test
@@ -106,10 +110,23 @@ public class AlgoliaClientTest {
     }
 
     @Module(
-            injects = AlgoliaClientTest.class,
+            injects = {
+                    AlgoliaClientTest.class,
+                    AlgoliaClient.class
+            },
             overrides = true
     )
     static class TestModule {
+        @Provides @Singleton @Named(ActivityModule.HN)
+        public ItemManager provideHackerNewsClient() {
+            return mock(ItemManager.class);
+        }
+
+        @Provides @Singleton @Named(DataModule.MAIN_THREAD)
+        public Scheduler provideMainThreadScheduler() {
+            return Schedulers.immediate();
+        }
+
         @Provides @Singleton
         public RestServiceFactory provideRestServiceFactory() {
             return new TestRestServiceFactory();

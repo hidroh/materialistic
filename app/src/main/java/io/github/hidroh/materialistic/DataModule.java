@@ -35,6 +35,7 @@ import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.UserManager;
 import okhttp3.Call;
 import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static io.github.hidroh.materialistic.ActivityModule.ALGOLIA;
@@ -42,7 +43,10 @@ import static io.github.hidroh.materialistic.ActivityModule.HN;
 import static io.github.hidroh.materialistic.ActivityModule.POPULAR;
 
 @Module(library = true, complete = false, includes = NetworkModule.class)
-class DataModule {
+public class DataModule {
+    public static final String MAIN_THREAD = "main";
+    public static final String IO_THREAD = "io";
+
     @Provides @Singleton @Named(HN)
     public ItemManager provideHackerNewsClient(HackerNewsClient client) {
         return client;
@@ -74,23 +78,29 @@ class DataModule {
     }
 
     @Provides @Singleton
-    public FavoriteManager provideFavoriteManager(Scheduler ioScheduler) {
+    public FavoriteManager provideFavoriteManager(@Named(IO_THREAD) Scheduler ioScheduler) {
         return new FavoriteManager(ioScheduler);
     }
 
     @Provides @Singleton
-    public SessionManager provideSessionManager(Scheduler ioScheduler) {
+    public SessionManager provideSessionManager(@Named(IO_THREAD) Scheduler ioScheduler) {
         return new SessionManager(ioScheduler);
     }
 
     @Provides @Singleton
-    public UserServices provideUserServices(Call.Factory callFactory, Scheduler ioScheduler) {
+    public UserServices provideUserServices(Call.Factory callFactory,
+                                            @Named(IO_THREAD) Scheduler ioScheduler) {
         return new UserServicesClient(callFactory, ioScheduler);
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Named(IO_THREAD)
     public Scheduler provideIoScheduler() {
         return Schedulers.io();
+    }
+
+    @Provides @Singleton @Named(MAIN_THREAD)
+    public Scheduler provideMainThreadScheduler() {
+        return AndroidSchedulers.mainThread();
     }
 
     @Provides @Singleton

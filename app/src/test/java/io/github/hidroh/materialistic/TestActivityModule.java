@@ -47,6 +47,8 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -355,5 +357,10 @@ public class TestActivityModule {
     @Provides @Singleton
     public SyncScheduler provideSyncScheduler() {
         return syncScheduler;
+    }
+
+    @Provides @Singleton @Named(DataModule.MAIN_THREAD)
+    public Scheduler provideMainThreadScheduler() {
+        return Schedulers.immediate();
     }
 }
