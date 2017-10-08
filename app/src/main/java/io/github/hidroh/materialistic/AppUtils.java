@@ -39,6 +39,7 @@ import android.os.Parcelable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsSession;
@@ -54,6 +55,7 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -91,7 +93,8 @@ public class AppUtils {
     private static final String HOST_ITEM = "item";
     private static final String HOST_USER = "user";
 
-    public static void openWebUrlExternal(Context context, WebItem item, String url, CustomTabsSession session) {
+    public static void openWebUrlExternal(Context context, @Nullable WebItem item,
+                                          String url, @Nullable CustomTabsSession session) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
@@ -152,13 +155,18 @@ public class AppUtils {
                     int line = layout.getLineForVertical(y);
                     int off = layout.getOffsetForHorizontal(line, x);
 
-                    ClickableSpan[] link = Spannable.Factory.getInstance()
+                    ClickableSpan[] links = Spannable.Factory.getInstance()
                             .newSpannable(widget.getText())
                             .getSpans(off, off, ClickableSpan.class);
 
-                    if (link.length != 0) {
+                    if (links.length != 0) {
                         if (action == MotionEvent.ACTION_UP) {
-                            link[0].onClick(widget);
+                            if (links[0] instanceof URLSpan) {
+                                openWebUrlExternal(widget.getContext(), null,
+                                        ((URLSpan) links[0]).getURL(), null);
+                            } else {
+                                links[0].onClick(widget);
+                            }
                         }
                         return true;
                     }
@@ -594,23 +602,24 @@ public class AppUtils {
     }
 
     @NonNull
-    private static Intent createViewIntent(Context context, WebItem item, String url, CustomTabsSession session) {
+    private static Intent createViewIntent(Context context, @Nullable WebItem item,
+                                           String url, @Nullable CustomTabsSession session) {
         if (Preferences.customChromeTabEnabled(context)) {
-            return new CustomTabsIntent.Builder(session)
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(session)
                     .setToolbarColor(ContextCompat.getColor(context,
                             AppUtils.getThemedResId(context, R.attr.colorPrimary)))
                     .setShowTitle(true)
                     .enableUrlBarHiding()
-                    .addDefaultShareMenuItem()
-                    .addMenuItem(context.getString(R.string.comments),
-                            PendingIntent.getActivity(context, 0,
-                                    new Intent(context, ItemActivity.class)
-                                            .putExtra(ItemActivity.EXTRA_ITEM, item)
-                                            .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true),
-                                    PendingIntent.FLAG_ONE_SHOT))
-                    .build()
-                    .intent
-                    .setData(Uri.parse(url));
+                    .addDefaultShareMenuItem();
+            if (item != null) {
+                builder.addMenuItem(context.getString(R.string.comments),
+                        PendingIntent.getActivity(context, 0,
+                                new Intent(context, ItemActivity.class)
+                                        .putExtra(ItemActivity.EXTRA_ITEM, item)
+                                        .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true),
+                                PendingIntent.FLAG_ONE_SHOT));
+            }
+            return builder.build().intent.setData(Uri.parse(url));
         } else {
             return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         }
