@@ -20,14 +20,16 @@ import android.os.Build;
 import android.support.annotation.Keep;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.Scheduler;
 
 public interface FeedbackClient {
     interface Callback {
@@ -38,11 +40,14 @@ public interface FeedbackClient {
 
     class Impl implements FeedbackClient {
         private final FeedbackService mFeedbackService;
+        private final Scheduler mMainThreadScheduler;
 
         @Inject
-        public Impl(RestServiceFactory factory) {
+        public Impl(RestServiceFactory factory,
+                    @Named(DataModule.MAIN_THREAD) Scheduler mainThreadScheduler) {
             mFeedbackService = factory.rxEnabled(true)
                     .create(FeedbackService.GITHUB_API_URL, FeedbackService.class);
+            mMainThreadScheduler = mainThreadScheduler;
         }
 
         @Override
@@ -56,7 +61,7 @@ public interface FeedbackClient {
             mFeedbackService.createGithubIssue(new Issue(title, body))
                     .map(response -> true)
                     .onErrorReturn(throwable -> false)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(mMainThreadScheduler)
                     .subscribe(callback::onSent);
         }
 

@@ -3,7 +3,7 @@ package io.github.hidroh.materialistic.data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.TestRunner;
+import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 
@@ -14,6 +14,7 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(TestRunner.class)
+@RunWith(JUnit4.class)
 public class FeedbackClientTest {
     @Inject RestServiceFactory factory;
     private FeedbackClient client;
@@ -32,7 +33,7 @@ public class FeedbackClientTest {
     public void setUp() {
         ObjectGraph.create(new TestModule()).inject(this);
         reset(TestRestServiceFactory.feedbackService);
-        client = new FeedbackClient.Impl(factory);
+        client = new FeedbackClient.Impl(factory, Schedulers.immediate());
         callback = mock(FeedbackClient.Callback.class);
     }
 

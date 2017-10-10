@@ -26,8 +26,10 @@ import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.github.hidroh.materialistic.BuildConfig;
+import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -71,7 +73,8 @@ public interface ReadabilityClient {
         }
 
         @Inject
-        public Impl(Context context, RestServiceFactory factory, Scheduler ioScheduler) {
+        public Impl(Context context, RestServiceFactory factory,
+                    @Named(DataModule.IO_THREAD) Scheduler ioScheduler) {
             mMercuryService = factory.rxEnabled(true)
                     .create(MercuryService.MERCURY_API_URL,
                             MercuryService.class);

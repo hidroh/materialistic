@@ -25,6 +25,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 import dagger.ObjectGraph;
+import io.github.hidroh.materialistic.data.AlgoliaClient;
 import rx.schedulers.Schedulers;
 
 public class Application extends android.app.Application {
@@ -42,6 +43,7 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         AppCompatDelegate.setDefaultNightMode(Preferences.Theme.getAutoDayNightMode(this));
+        AlgoliaClient.sSortByTime = Preferences.isSortByRecent(this);
         mRefWatcher = LeakCanary.install(this);
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

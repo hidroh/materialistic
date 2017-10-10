@@ -3,21 +3,25 @@ package io.github.hidroh.materialistic.data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
-import io.github.hidroh.materialistic.test.ParameterizedTestRunner;
+import io.github.hidroh.materialistic.ActivityModule;
+import io.github.hidroh.materialistic.DataModule;
 import rx.Observable;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
@@ -26,18 +30,18 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(ParameterizedTestRunner.class)
+@RunWith(Parameterized.class)
 public class AlgoliaPopularClientTest {
     private final String range;
     @Inject RestServiceFactory factory;
-    private ItemManager hackerNewsClient = mock(ItemManager.class);
+    @Inject @Named(ActivityModule.HN) ItemManager hackerNewsClient;
     private AlgoliaPopularClient client;
 
     public AlgoliaPopularClientTest(String range) {
         this.range = range;
     }
 
-    @ParameterizedTestRunner.Parameters
+    @Parameterized.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{AlgoliaPopularClient.LAST_24H},
@@ -50,10 +54,11 @@ public class AlgoliaPopularClientTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        ObjectGraph.create(new TestModule()).inject(this);
         reset(TestRestServiceFactory.algoliaRestService);
-        client = new AlgoliaPopularClient(RuntimeEnvironment.application, factory);
-        client.mHackerNewsClient = hackerNewsClient;
+        ObjectGraph objectGraph = ObjectGraph.create(new TestModule());
+        objectGraph.inject(this);
+        client = new AlgoliaPopularClient(factory);
+        objectGraph.inject(client);
     }
 
     @Test
@@ -66,12 +71,24 @@ public class AlgoliaPopularClientTest {
     }
 
     @Module(
-            injects = AlgoliaPopularClientTest.class,
+            injects = {
+                    AlgoliaPopularClientTest.class,
+                    AlgoliaPopularClient.class
+            },
             overrides = true
     )
     static class TestModule {
-        @Provides
-        @Singleton
+        @Provides @Singleton @Named(ActivityModule.HN)
+        public ItemManager provideHackerNewsClient() {
+            return mock(ItemManager.class);
+        }
+
+        @Provides @Singleton @Named(DataModule.MAIN_THREAD)
+        public Scheduler provideMainThreadScheduler() {
+            return Schedulers.immediate();
+        }
+
+        @Provides @Singleton
         public RestServiceFactory provideRestServiceFactory() {
             return new TestRestServiceFactory();
         }
