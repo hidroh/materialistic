@@ -29,10 +29,12 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.LocalCache;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.UserManager;
+import io.github.hidroh.materialistic.data.android.Cache;
 import okhttp3.Call;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
@@ -106,5 +108,10 @@ public class DataModule {
     @Provides @Singleton
     public SyncScheduler provideSyncScheduler() {
         return new SyncScheduler();
+    }
+
+    @Provides @Singleton
+    public LocalCache provideLocalCache(Cache cache) {
+        return cache;
     }
 }

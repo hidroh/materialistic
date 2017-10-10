@@ -16,18 +16,14 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
-import android.text.TextUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.github.hidroh.materialistic.AndroidUtils;
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -36,7 +32,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.Query;
 import rx.Observable;
 import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public interface ReadabilityClient {
@@ -54,8 +49,9 @@ public interface ReadabilityClient {
     class Impl implements ReadabilityClient {
         private static final CharSequence EMPTY_CONTENT = "<div></div>";
         private final MercuryService mMercuryService;
-        private final ContentResolver mContentResolver;
-        private final Scheduler mIoScheduler;
+        private final LocalCache mCache;
+        @Inject @Named(DataModule.IO_THREAD) Scheduler mIoScheduler;
+        @Inject @Named(DataModule.MAIN_THREAD) Scheduler mMainThreadScheduler;
 
         interface MercuryService {
             String MERCURY_API_URL = "https://" + HOST + "/";
@@ -73,13 +69,11 @@ public interface ReadabilityClient {
         }
 
         @Inject
-        public Impl(Context context, RestServiceFactory factory,
-                    @Named(DataModule.IO_THREAD) Scheduler ioScheduler) {
+        public Impl(LocalCache cache, RestServiceFactory factory) {
             mMercuryService = factory.rxEnabled(true)
                     .create(MercuryService.MERCURY_API_URL,
                             MercuryService.class);
-            mContentResolver = context.getContentResolver();
-            mIoScheduler = ioScheduler;
+            mCache = cache;
         }
 
         @Override
@@ -88,8 +82,8 @@ public interface ReadabilityClient {
                     .subscribeOn(mIoScheduler)
                     .flatMap(content -> content != null ?
                             Observable.just(content) : fromNetwork(itemId, url))
-                    .map(content -> TextUtils.equals(EMPTY_CONTENT, content) ? null : content)
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(content -> AndroidUtils.TextUtils.equals(EMPTY_CONTENT, content) ? null : content)
+                    .observeOn(mMainThreadScheduler)
                     .subscribe(callback::onResponse);
         }
 
@@ -99,7 +93,7 @@ public interface ReadabilityClient {
             Observable.defer(() -> fromCache(itemId))
                     .subscribeOn(Schedulers.immediate())
                     .switchIfEmpty(fromNetwork(itemId, url))
-                    .map(content -> TextUtils.equals(EMPTY_CONTENT, content) ? null : content)
+                    .map(content -> AndroidUtils.TextUtils.equals(EMPTY_CONTENT, content) ? null : content)
                     .observeOn(Schedulers.immediate())
                     .subscribe();
         }
@@ -109,31 +103,11 @@ public interface ReadabilityClient {
             return mMercuryService.parse(url)
                     .onErrorReturn(throwable -> null)
                     .map(readable -> readable == null ? null : readable.content)
-                    .doOnNext(content -> cache(itemId, content));
+                    .doOnNext(content -> mCache.putReadability(itemId, content));
         }
 
         private Observable<String> fromCache(String itemId) {
-            Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_READABILITY,
-                    new String[]{MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT},
-                    MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                    new String[]{itemId}, null);
-            String content = null;
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    content = cursor.getString(cursor.getColumnIndexOrThrow(
-                            MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT));
-                }
-                cursor.close();
-            }
-            return Observable.just(content);
-        }
-
-        @WorkerThread
-        private void cache(String itemId, String content) {
-            final ContentValues contentValues = new ContentValues();
-            contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_ITEM_ID, itemId);
-            contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT, content);
-            mContentResolver.insert(MaterialisticProvider.URI_READABILITY, contentValues);
+            return Observable.just(mCache.getReadability(itemId));
         }
     }
 }
