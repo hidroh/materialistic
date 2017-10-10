@@ -157,7 +157,7 @@ public class MaterialisticProvider extends ContentProvider {
         return db.update(table, values, selection, selectionArgs);
     }
 
-    interface FavoriteEntry extends BaseColumns {
+    public interface FavoriteEntry extends BaseColumns {
         String TABLE_NAME = "favorite";
         String MIME_TYPE = "vnd.android.cursor.dir/vnd." + PROVIDER_AUTHORITY + "." + TABLE_NAME;
         String COLUMN_NAME_ITEM_ID = "itemid";
@@ -166,7 +166,7 @@ public class MaterialisticProvider extends ContentProvider {
         String COLUMN_NAME_TIME = "time";
     }
 
-    interface ViewedEntry extends BaseColumns {
+    public interface ViewedEntry extends BaseColumns {
         String TABLE_NAME = "viewed";
         String MIME_TYPE = "vnd.android.cursor.dir/vnd." + PROVIDER_AUTHORITY + "." + TABLE_NAME;
         String COLUMN_NAME_ITEM_ID = "itemid";

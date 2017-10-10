@@ -624,22 +624,22 @@ public class ListFragmentViewHolderTest {
         recyclerView.setLayoutManager(testLayout);
         testLayout.firstVisiblePosition = 0;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
-        verify(sessionManager, never()).view(any(Context.class), any());
+        verify(sessionManager, never()).view(any());
 
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         testLayout.firstVisiblePosition = 0;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
-        verify(sessionManager, never()).view(any(Context.class), any());
+        verify(sessionManager, never()).view(any());
 
         testLayout.firstVisiblePosition = 1;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
-        verify(sessionManager).view(any(Context.class), any());
+        verify(sessionManager).view(any());
 
         item.setIsViewed(true);
         testLayout.firstVisiblePosition = 1;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
-        verify(sessionManager).view(any(Context.class), any()); // should not trigger again
+        verify(sessionManager).view(any()); // should not trigger again
 
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()

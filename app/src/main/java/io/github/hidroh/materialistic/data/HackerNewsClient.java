@@ -16,8 +16,6 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
@@ -32,7 +30,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.Path;
 import rx.Observable;
 import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Client to retrieve Hacker News content asynchronously
@@ -42,22 +39,19 @@ public class HackerNewsClient implements ItemManager, UserManager {
     public static final String BASE_WEB_URL = "https://news.ycombinator.com";
     public static final String WEB_ITEM_PATH = BASE_WEB_URL + "/item?id=%s";
     static final String BASE_API_URL = "https://" + HOST + "/v0/";
+    @Inject @Named(DataModule.IO_THREAD) Scheduler mIoScheduler;
+    @Inject @Named(DataModule.MAIN_THREAD) Scheduler mMainThreadScheduler;
     private final RestService mRestService;
     private final SessionManager mSessionManager;
     private final FavoriteManager mFavoriteManager;
-    private final ContentResolver mContentResolver;
-    private Scheduler mIoScheduler;
 
     @Inject
-    public HackerNewsClient(Context context, RestServiceFactory factory,
+    public HackerNewsClient(RestServiceFactory factory,
                             SessionManager sessionManager,
-                            FavoriteManager favoriteManager,
-                            @Named(DataModule.IO_THREAD) Scheduler ioScheduler) {
+                            FavoriteManager favoriteManager) {
         mRestService = factory.rxEnabled(true).create(BASE_API_URL, RestService.class);
         mSessionManager = sessionManager;
         mFavoriteManager = favoriteManager;
-        mContentResolver = context.getApplicationContext().getContentResolver();
-        mIoScheduler = ioScheduler;
     }
 
     @Override
@@ -68,7 +62,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
         }
         Observable.defer(() -> getStoriesObservable(filter, cacheMode))
                 .subscribeOn(mIoScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mMainThreadScheduler)
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
     }
@@ -93,8 +87,8 @@ public class HackerNewsClient implements ItemManager, UserManager {
                 break;
         }
         Observable.defer(() -> Observable.zip(
-                mSessionManager.isViewed(mContentResolver, itemId),
-                mFavoriteManager.check(mContentResolver, itemId),
+                mSessionManager.isViewed(itemId),
+                mFavoriteManager.check(itemId),
                 itemObservable,
                 (isViewed, favorite, hackerNewsItem) -> {
                     if (hackerNewsItem != null) {
@@ -105,7 +99,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
                     return hackerNewsItem;
                 }))
                 .subscribeOn(mIoScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mMainThreadScheduler)
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
 
@@ -153,7 +147,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
                     return userItem;
                 })
                 .subscribeOn(mIoScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(mMainThreadScheduler)
                 .subscribe(listener::onResponse,
                         t -> listener.onError(t != null ? t.getMessage() : ""));
     }

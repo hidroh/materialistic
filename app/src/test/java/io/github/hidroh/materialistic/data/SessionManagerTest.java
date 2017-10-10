@@ -1,64 +1,74 @@
 package io.github.hidroh.materialistic.data;
 
-import android.content.ContentValues;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.TestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowContentResolver;
+import org.junit.runners.JUnit4;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.ObjectGraph;
+import dagger.Provides;
+import io.github.hidroh.materialistic.DataModule;
+import io.github.hidroh.materialistic.test.InMemoryCache;
+import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.robolectric.Shadows.shadowOf;
 
-@RunWith(TestRunner.class)
+@RunWith(JUnit4.class)
 public class SessionManagerTest {
-    private ShadowContentResolver resolver;
+    @Inject LocalCache cache;
     private SessionManager manager;
 
     @Before
     public void setUp() {
-        resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        resolver.insert(MaterialisticProvider.URI_VIEWED, cv);
-        cv = new ContentValues();
-        cv.put("itemid", "2");
-        resolver.insert(MaterialisticProvider.URI_VIEWED, cv);
-        manager = new SessionManager(Schedulers.immediate());
+        ObjectGraph objectGraph = ObjectGraph.create(new TestModule());
+        objectGraph.inject(this);
+        cache.setViewed("1");
+        cache.setViewed("2");
+        manager = new SessionManager();
+        objectGraph.inject(manager);
     }
 
     @Test
     public void testIsViewedNull() {
-        assertFalse(manager.isViewed(RuntimeEnvironment.application.getContentResolver(), null)
+        assertFalse(manager.isViewed(null)
                 .toBlocking().single());
     }
 
     @Test
     public void testIsViewedTrue() {
-        assertTrue(manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "1")
+        assertTrue(manager.isViewed("1")
                 .toBlocking().single());
     }
 
     @Test
     public void testIsViewedFalse() {
-        assertFalse(manager.isViewed(RuntimeEnvironment.application.getContentResolver(), "-1")
+        assertFalse(manager.isViewed("-1")
                 .toBlocking().single());
     }
 
-    @Test
-    public void testViewNoId() {
-        manager.view(RuntimeEnvironment.application, null);
-        assertThat(resolver.getNotifiedUris()).isEmpty();
-    }
-    @Test
-    public void testView() {
-        manager.view(RuntimeEnvironment.application, "3");
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+    @Module(
+            injects = {
+                    SessionManagerTest.class,
+                    SessionManager.class
+            },
+            overrides = true
+    )
+    static class TestModule {
+        @Provides @Singleton @Named(DataModule.IO_THREAD)
+        public Scheduler provideIoThreadScheduler() {
+            return Schedulers.immediate();
+        }
+
+        @Provides @Singleton
+        public LocalCache provideLocalCache() {
+            return new InMemoryCache();
+        }
     }
 }

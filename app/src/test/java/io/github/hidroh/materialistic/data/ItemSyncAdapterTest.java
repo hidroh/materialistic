@@ -45,6 +45,7 @@ import java.io.IOException;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.test.InMemoryCache;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 import retrofit2.Call;
@@ -311,7 +312,7 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncWebCacheEmptyUrl() {
-        new FavoriteManager(Schedulers.immediate())
+        new FavoriteManager(new InMemoryCache(), Schedulers.immediate())
                 .add(service, new Favorite("1", null, "title", System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }

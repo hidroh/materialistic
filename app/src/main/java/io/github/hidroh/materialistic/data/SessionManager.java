@@ -16,74 +16,52 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
-import android.text.TextUtils;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
+import io.github.hidroh.materialistic.AndroidUtils;
+import io.github.hidroh.materialistic.DataModule;
 import rx.Observable;
 import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Data repository for session state
  */
+@Singleton
 public class SessionManager {
 
-    private final Scheduler mIoScheduler;
+    @Inject @Named(DataModule.IO_THREAD) Scheduler mIoScheduler;
+    @Inject LocalCache mCache;
 
     @Inject
-    public SessionManager(Scheduler ioScheduler) {
-        mIoScheduler = ioScheduler;
+    public SessionManager() {
     }
 
     @WorkerThread
     @NonNull
-    Observable<Boolean> isViewed(ContentResolver contentResolver, String itemId) {
-        if (TextUtils.isEmpty(itemId)) {
+    Observable<Boolean> isViewed(String itemId) {
+        if (AndroidUtils.TextUtils.isEmpty(itemId)) {
             return Observable.just(false);
         }
-        Cursor cursor = contentResolver.query(MaterialisticProvider.URI_VIEWED, null,
-                MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId}, null);
-        boolean result = false;
-        if (cursor != null) {
-            result = cursor.getCount() > 0;
-            cursor.close();
-        }
+        boolean result = mCache.isViewed(itemId);
         return Observable.just(result);
     }
 
     /**
      * Marks an item as already being viewed
-     * @param context   an instance of {@link Context}
      * @param itemId    item ID that has been viewed
      */
-    public void view(Context context, final String itemId) {
-        if (TextUtils.isEmpty(itemId)) {
+    public void view(final String itemId) {
+        if (AndroidUtils.TextUtils.isEmpty(itemId)) {
             return;
         }
-        ContentResolver cr = context.getContentResolver();
         Observable.defer(() -> Observable.just(itemId))
-                .map(id -> {
-                    insert(cr, itemId);
-                    return id;
-                })
-                .map(id -> MaterialisticProvider.URI_VIEWED.buildUpon().appendPath(itemId).build())
                 .subscribeOn(mIoScheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(uri -> cr.notifyChange(uri, null));
-    }
-
-    @WorkerThread
-    private void insert(ContentResolver cr, String itemId) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID, itemId);
-        cr.insert(MaterialisticProvider.URI_VIEWED, contentValues);
+                .observeOn(mIoScheduler)
+                .subscribe(id -> mCache.setViewed(id));
     }
 }

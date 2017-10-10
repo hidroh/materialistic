@@ -533,7 +533,7 @@ public class StoryRecyclerViewAdapter extends
         if (item == null || !isItemAvailable(item) || item.isViewed()) {
             return;
         }
-        mSessionManager.view(mContext, item.getId());
+        mSessionManager.view(item.getId());
     }
 
     private void toggleAutoMarkAsViewed(Context context) {
