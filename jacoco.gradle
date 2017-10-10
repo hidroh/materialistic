@@ -21,6 +21,8 @@ task jacocoTestReport(type: JacocoReport) {
                     '**/*$ViewInjector*.class',
                     '**/RestServiceFactory*.class',
                     '**/*Module*.class',
+                    '**/AndroidUtils$*.class',
+                    '**/data/android/*.class',
                     '**/AlertDialogBuilder.class',
                     '**/AlertDialogBuilder$Impl.class',
                     '**/PopupMenu*.class',

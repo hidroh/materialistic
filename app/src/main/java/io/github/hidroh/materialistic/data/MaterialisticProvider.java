@@ -172,7 +172,7 @@ public class MaterialisticProvider extends ContentProvider {
         String COLUMN_NAME_ITEM_ID = "itemid";
     }
 
-    interface ReadabilityEntry extends BaseColumns {
+    public interface ReadabilityEntry extends BaseColumns {
         String TABLE_NAME = "readability";
         String MIME_TYPE = "vnd.android.cursor.dir/vnd." + PROVIDER_AUTHORITY + "." + TABLE_NAME;
         String COLUMN_NAME_ITEM_ID = "itemid";

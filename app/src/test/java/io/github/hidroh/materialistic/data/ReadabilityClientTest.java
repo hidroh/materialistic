@@ -1,26 +1,29 @@
 package io.github.hidroh.materialistic.data;
 
-import android.content.ContentValues;
+import android.support.annotation.Nullable;
 
 import com.google.gson.GsonBuilder;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.MockitoAnnotations;
-import io.github.hidroh.materialistic.test.TestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowContentResolver;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import io.github.hidroh.materialistic.DataModule;
 import rx.Observable;
+import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,25 +34,23 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("unchecked")
-@RunWith(TestRunner.class)
+@RunWith(JUnit4.class)
 public class ReadabilityClientTest {
     @Inject RestServiceFactory factory;
+    @Inject LocalCache cache;
     private ReadabilityClient client;
     private ReadabilityClient.Callback callback;
-    private ShadowContentResolver resolver;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        ObjectGraph.create(new TestModule()).inject(this);
+        ObjectGraph objectGraph = ObjectGraph.create(new TestModule());
+        objectGraph.inject(this);
         reset(TestRestServiceFactory.mercuryService);
-        client = new ReadabilityClient.Impl(RuntimeEnvironment.application, factory,
-                Schedulers.immediate());
+        client = new ReadabilityClient.Impl(cache, factory);
+        objectGraph.inject(client);
         callback = mock(ReadabilityClient.Callback.class);
-        resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
     }
 
     @Test
@@ -71,7 +72,7 @@ public class ReadabilityClientTest {
                 .thenReturn(Observable.just(readable));
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.mercuryService).parse(any());
-        verify(callback).onResponse((String) isNull());
+        verify(callback).onResponse(isNull());
     }
 
     @Test
@@ -80,15 +81,12 @@ public class ReadabilityClientTest {
                 .thenReturn(Observable.error(new IOException()));
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.mercuryService).parse(any());
-        verify(callback).onResponse((String) isNull());
+        verify(callback).onResponse(isNull());
     }
 
     @Test
     public void testCachedContent() {
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        cv.put("content", "<div>content</div>");
-        resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
+        cache.putReadability("1", "<div>content</div>");
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.mercuryService, never()).parse(any());
         verify(callback).onResponse(eq("<div>content</div>"));
@@ -96,17 +94,17 @@ public class ReadabilityClientTest {
 
     @Test
     public void testEmptyCachedContent() {
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        cv.put("content", "<div></div>");
-        resolver.insert(MaterialisticProvider.URI_READABILITY, cv);
+        cache.putReadability("1", "<div></div>");
         client.parse("1", "http://example.com/article.html", callback);
         verify(TestRestServiceFactory.mercuryService, never()).parse(any());
-        verify(callback).onResponse((String) isNull());
+        verify(callback).onResponse(isNull());
     }
 
     @Module(
-            injects = ReadabilityClientTest.class,
+            injects = {
+                    ReadabilityClientTest.class,
+                    ReadabilityClient.Impl.class
+            },
             overrides = true
     )
     static class TestModule {
@@ -114,6 +112,33 @@ public class ReadabilityClientTest {
         @Singleton
         public RestServiceFactory provideRestServiceFactory() {
             return new TestRestServiceFactory();
+        }
+
+        @Provides @Singleton @Named(DataModule.MAIN_THREAD)
+        public Scheduler provideMainThreadScheduler() {
+            return Schedulers.immediate();
+        }
+
+        @Provides @Singleton @Named(DataModule.IO_THREAD)
+        public Scheduler provideIoThreadScheduler() {
+            return Schedulers.immediate();
+        }
+
+        @Provides @Singleton
+        public LocalCache provideLocalCache() {
+            return new LocalCache() {
+                private Map<String, String> map = new HashMap<>();
+                @Nullable
+                @Override
+                public String getReadability(String itemId) {
+                    return map.get(itemId);
+                }
+
+                @Override
+                public void putReadability(String itemId, String content) {
+                    map.put(itemId, content);
+                }
+            };
         }
     }
 }
