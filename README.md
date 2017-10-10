@@ -28,7 +28,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 
 Build with LeakCanary on
 
-    ./gradlew assembleLeak
+    ./gradlew assembleDebug -Pleak
 
 Grab your Mercury Web Parser API key [here][mercury] if you want to connect to Mercury.
 

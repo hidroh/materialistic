@@ -30,7 +30,6 @@ android {
             minifyEnabled true
             shrinkResources true
         }
-        leak.initWith(buildTypes.debug)
     }
 
     lintOptions {
@@ -77,8 +76,7 @@ dependencies {
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
             "io.reactivex:rxandroid:1.2.1",
             "io.reactivex:rxjava:1.1.7"
-    leakImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     annotationProcessor "com.squareup.dagger:dagger-compiler:$daggerVersion"
