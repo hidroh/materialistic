@@ -1,29 +1,29 @@
 package io.github.hidroh.materialistic.data;
 
-import android.content.ContentResolver;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import io.github.hidroh.materialistic.test.TestRunner;
-import org.robolectric.RuntimeEnvironment;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
+import io.github.hidroh.materialistic.DataModule;
 import rx.Observable;
+import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -33,29 +33,27 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(TestRunner.class)
+@RunWith(JUnit4.class)
 public class HackerNewsClientTest {
     @Inject RestServiceFactory factory;
     @Inject SessionManager sessionManager;
     @Inject FavoriteManager favoriteManager;
     private HackerNewsClient client;
     @Captor ArgumentCaptor<Item[]> getStoriesResponse;
-    private ResponseListener<Item> itemListener;
-    private ResponseListener<UserManager.User> userListener;
-    private ResponseListener<Item[]> storiesListener;
+    @Mock ResponseListener<Item> itemListener;
+    @Mock ResponseListener<UserManager.User> userListener;
+    @Mock ResponseListener<Item[]> storiesListener;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        ObjectGraph.create(new TestModule()).inject(this);
+        ObjectGraph objectGraph = ObjectGraph.create(new TestModule());
+        objectGraph.inject(this);
         reset(TestRestServiceFactory.hnRestService);
         reset(sessionManager);
         reset(favoriteManager);
-        client = new HackerNewsClient(RuntimeEnvironment.application, factory, sessionManager,
-                favoriteManager, Schedulers.immediate());
-        itemListener = mock(ResponseListener.class);
-        storiesListener = mock(ResponseListener.class);
-        userListener = mock(ResponseListener.class);
+        client = new HackerNewsClient(factory, sessionManager, favoriteManager);
+        objectGraph.inject(client);
     }
 
     @Test
@@ -69,14 +67,14 @@ public class HackerNewsClientTest {
         HackerNewsItem hnItem = mock(HackerNewsItem.class);
         when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
                 .thenReturn(Observable.just(hnItem));
-        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+        when(sessionManager.isViewed(eq("1")))
                 .thenReturn(Observable.just(false));
-        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+        when(favoriteManager.check(eq("1")))
                 .thenReturn(Observable.just(false));
         client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
         verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
+        verify(sessionManager).isViewed(eq("1"));
+        verify(favoriteManager).check(eq("1"));
         verify(itemListener).onResponse(eq(hnItem));
     }
 
@@ -91,14 +89,14 @@ public class HackerNewsClientTest {
         HackerNewsItem hnItem = mock(HackerNewsItem.class);
         when(TestRestServiceFactory.hnRestService.cachedItemRx(eq("1")))
                 .thenReturn(Observable.just(hnItem));
-        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+        when(sessionManager.isViewed(eq("1")))
                 .thenReturn(Observable.just(false));
-        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+        when(favoriteManager.check(eq("1")))
                 .thenReturn(Observable.just(false));
         client.getItem("1", ItemManager.MODE_CACHE, itemListener);
         verify(TestRestServiceFactory.hnRestService).cachedItemRx(eq("1"));
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
+        verify(sessionManager).isViewed(eq("1"));
+        verify(favoriteManager).check(eq("1"));
         verify(itemListener).onResponse(eq(hnItem));
     }
 
@@ -117,13 +115,13 @@ public class HackerNewsClientTest {
     public void testGetItemFailure() {
         when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
                 .thenReturn(Observable.error(new Throwable("message")));
-        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+        when(sessionManager.isViewed(eq("1")))
                 .thenReturn(Observable.just(true));
-        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+        when(favoriteManager.check(eq("1")))
                 .thenReturn(Observable.just(true));
         client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
+        verify(favoriteManager).check(eq("1"));
+        verify(sessionManager).isViewed(eq("1"));
         verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
         verify(itemListener).onError(eq("message"));
     }
@@ -132,13 +130,13 @@ public class HackerNewsClientTest {
     public void testGetItemFailureNoMessage() {
         when(TestRestServiceFactory.hnRestService.itemRx(eq("1")))
                 .thenReturn(Observable.error(new Throwable("")));
-        when(sessionManager.isViewed(any(ContentResolver.class), eq("1")))
+        when(sessionManager.isViewed(eq("1")))
                 .thenReturn(Observable.just(true));
-        when(favoriteManager.check(any(ContentResolver.class), eq("1")))
+        when(favoriteManager.check(eq("1")))
                 .thenReturn(Observable.just(true));
         client.getItem("1", ItemManager.MODE_DEFAULT, itemListener);
-        verify(sessionManager).isViewed(any(ContentResolver.class), eq("1"));
-        verify(favoriteManager).check(any(ContentResolver.class), eq("1"));
+        verify(sessionManager).isViewed(eq("1"));
+        verify(favoriteManager).check(eq("1"));
         verify(TestRestServiceFactory.hnRestService).itemRx(eq("1"));
         verify(itemListener).onError(eq(""));
     }
@@ -238,7 +236,7 @@ public class HackerNewsClientTest {
                 .thenReturn(Observable.just(null));
         client.getUser("username", userListener);
         verify(TestRestServiceFactory.hnRestService).userRx(eq("username"));
-        verify(userListener).onResponse((UserManager.User) isNull());
+        verify(userListener).onResponse(isNull());
     }
 
     @Test
@@ -251,7 +249,10 @@ public class HackerNewsClientTest {
     }
 
     @Module(
-            injects = HackerNewsClientTest.class,
+            injects = {
+                    HackerNewsClientTest.class,
+                    HackerNewsClient.class
+            },
             overrides = true
     )
     static class TestModule {
@@ -271,6 +272,16 @@ public class HackerNewsClientTest {
         @Singleton
         public FavoriteManager provideFavoriteManager() {
             return mock(FavoriteManager.class);
+        }
+
+        @Provides @Singleton @Named(DataModule.IO_THREAD)
+        public Scheduler provideIoScheduler() {
+            return Schedulers.immediate();
+        }
+
+        @Provides @Singleton @Named(DataModule.MAIN_THREAD)
+        public Scheduler provideMainThreadScheduler() {
+            return Schedulers.immediate();
         }
     }
 }

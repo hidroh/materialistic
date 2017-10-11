@@ -354,7 +354,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         }
         mCustomTabsDelegate.mayLaunchUrl(Uri.parse(story.getUrl()), null, null);
         bindFavorite();
-        mSessionManager.view(this, story.getId());
+        mSessionManager.view(story.getId());
         mVoteButton.setVisibility(View.VISIBLE);
         mVoteButton.setOnClickListener(v -> vote(story));
         final TextView titleTextView = (TextView) findViewById(android.R.id.text2);

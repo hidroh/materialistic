@@ -17,7 +17,6 @@
 package io.github.hidroh.materialistic.data;
 
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -40,8 +39,11 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import io.github.hidroh.materialistic.AppUtils;
+import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.FavoriteActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -55,6 +57,7 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Data repository for {@link Favorite}
  */
+@Singleton
 public class FavoriteManager implements LocalItemManager<Favorite> {
 
     private static final int LOADER = 0;
@@ -68,6 +71,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     @VisibleForTesting static final String FILE_AUTHORITY = "io.github.hidroh.materialistic.fileprovider";
     private static final String PATH_SAVED = "saved";
     private static final String FILENAME_EXPORT = "materialistic-export.txt";
+    private final LocalCache mCache;
     private final Scheduler mIoScheduler;
     @Synthetic Cursor mCursor;
     private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
@@ -125,7 +129,8 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     @Inject
-    public FavoriteManager(Scheduler ioScheduler) {
+    public FavoriteManager(LocalCache cache, @Named(DataModule.IO_THREAD) Scheduler ioScheduler) {
+        mCache = cache;
         mIoScheduler = ioScheduler;
     }
 
@@ -233,22 +238,11 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
 
     @WorkerThread
     @NonNull
-    Observable<Boolean> check(ContentResolver contentResolver, String itemId) {
+    Observable<Boolean> check(String itemId) {
         if (TextUtils.isEmpty(itemId)) {
             return Observable.just(false);
         }
-        android.database.Cursor cursor = contentResolver
-                .query(MaterialisticProvider.URI_FAVORITE,
-                        null,
-                        MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                        new String[]{itemId},
-                        null);
-        boolean result = false;
-        if (cursor != null) {
-            result = cursor.getCount() > 0;
-            cursor.close();
-        }
-        return Observable.just(result);
+        return Observable.just(mCache.isFavorite(itemId));
     }
 
     @WorkerThread

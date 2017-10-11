@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
@@ -59,5 +60,42 @@ public class Cache implements LocalCache {
         contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_ITEM_ID, itemId);
         contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT, content);
         mContentResolver.insert(MaterialisticProvider.URI_READABILITY, contentValues);
+    }
+
+    @Override
+    public boolean isViewed(String itemId) {
+        Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_VIEWED, null,
+                MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                new String[]{itemId}, null);
+        boolean result = false;
+        if (cursor != null) {
+            result = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return result;
+    }
+
+    @Override
+    public void setViewed(String itemId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID, itemId);
+        mContentResolver.insert(MaterialisticProvider.URI_VIEWED, contentValues);
+        Uri uri = MaterialisticProvider.URI_VIEWED.buildUpon().appendPath(itemId).build();
+        mContentResolver.notifyChange(uri, null);
+    }
+
+    @Override
+    public boolean isFavorite(String itemId) {
+        Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_FAVORITE,
+                null,
+                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
+                new String[]{itemId},
+                null);
+        boolean result = false;
+        if (cursor != null) {
+            result = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return result;
     }
 }

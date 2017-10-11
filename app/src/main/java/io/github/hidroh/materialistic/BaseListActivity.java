@@ -397,7 +397,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             mTabLayout.setVisibility(View.VISIBLE);
             mViewPager.setVisibility(View.VISIBLE);
             bindViewPager();
-            mSessionManager.view(this, mSelectedItem.getId());
+            mSessionManager.view(mSelectedItem.getId());
         }
     }
 

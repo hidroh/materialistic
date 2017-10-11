@@ -25,13 +25,11 @@ import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.accounts.UserServicesClient;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
-import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.LocalCache;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
-import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.data.android.Cache;
@@ -77,16 +75,6 @@ public class DataModule {
     @Provides @Singleton
     public ReadabilityClient provideReadabilityClient(ReadabilityClient.Impl client) {
         return client;
-    }
-
-    @Provides @Singleton
-    public FavoriteManager provideFavoriteManager(@Named(IO_THREAD) Scheduler ioScheduler) {
-        return new FavoriteManager(ioScheduler);
-    }
-
-    @Provides @Singleton
-    public SessionManager provideSessionManager(@Named(IO_THREAD) Scheduler ioScheduler) {
-        return new SessionManager(ioScheduler);
     }
 
     @Provides @Singleton

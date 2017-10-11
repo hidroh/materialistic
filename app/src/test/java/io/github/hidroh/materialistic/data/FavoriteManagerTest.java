@@ -30,6 +30,8 @@ import java.util.Set;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.data.android.Cache;
+import io.github.hidroh.materialistic.test.InMemoryCache;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
@@ -52,6 +54,7 @@ import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 public class FavoriteManagerTest {
     private ShadowContentResolver resolver;
     private FavoriteManager manager;
+    private LocalCache cache;
 
     @Before
     public void setUp() {
@@ -68,7 +71,14 @@ public class FavoriteManagerTest {
         cv.put("url", "http://example.com");
         cv.put("time", String.valueOf(System.currentTimeMillis()));
         resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        manager = new FavoriteManager(Schedulers.immediate()) {
+        cache = new InMemoryCache() {
+            Cache androidCache = new Cache(RuntimeEnvironment.application);
+            @Override
+            public boolean isFavorite(String itemId) {
+                return androidCache.isFavorite(itemId);
+            }
+        };
+        manager = new FavoriteManager(cache, Schedulers.immediate()) {
             @Override
             protected Uri getUriForFile(Context context, File file) {
                 return Uri.parse("content://" + FavoriteManager.FILE_AUTHORITY + "/files/saved/materialistic-export.txt");
@@ -114,19 +124,19 @@ public class FavoriteManagerTest {
 
     @Test
     public void testCheckNoId() {
-        assertFalse(manager.check(RuntimeEnvironment.application.getContentResolver(), null)
+        assertFalse(manager.check(null)
                 .toBlocking().single());
     }
 
     @Test
     public void testCheckTrue() {
-        assertTrue(manager.check(RuntimeEnvironment.application.getContentResolver(), "1")
+        assertTrue(manager.check("1")
                 .toBlocking().single());
     }
 
     @Test
     public void testCheckFalse() {
-        assertFalse(manager.check(RuntimeEnvironment.application.getContentResolver(), "-1")
+        assertFalse(manager.check("-1")
                 .toBlocking().single());
     }
 

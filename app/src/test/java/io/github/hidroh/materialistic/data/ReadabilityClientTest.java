@@ -1,7 +1,5 @@
 package io.github.hidroh.materialistic.data;
 
-import android.support.annotation.Nullable;
-
 import com.google.gson.GsonBuilder;
 
 import org.junit.Before;
@@ -11,8 +9,6 @@ import org.junit.runners.JUnit4;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +18,7 @@ import dagger.Module;
 import dagger.ObjectGraph;
 import dagger.Provides;
 import io.github.hidroh.materialistic.DataModule;
+import io.github.hidroh.materialistic.test.InMemoryCache;
 import rx.Observable;
 import rx.Scheduler;
 import rx.schedulers.Schedulers;
@@ -126,19 +123,7 @@ public class ReadabilityClientTest {
 
         @Provides @Singleton
         public LocalCache provideLocalCache() {
-            return new LocalCache() {
-                private Map<String, String> map = new HashMap<>();
-                @Nullable
-                @Override
-                public String getReadability(String itemId) {
-                    return map.get(itemId);
-                }
-
-                @Override
-                public void putReadability(String itemId, String content) {
-                    map.put(itemId, content);
-                }
-            };
+            return new InMemoryCache();
         }
     }
 }

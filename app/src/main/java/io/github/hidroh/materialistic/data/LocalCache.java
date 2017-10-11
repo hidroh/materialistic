@@ -19,11 +19,16 @@ package io.github.hidroh.materialistic.data;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+@WorkerThread
 public interface LocalCache {
-    @WorkerThread
     @Nullable
     String getReadability(String itemId);
 
-    @WorkerThread
     void putReadability(String itemId, String content);
+
+    boolean isViewed(String itemId);
+
+    void setViewed(String itemId);
+
+    boolean isFavorite(String itemId);
 }
