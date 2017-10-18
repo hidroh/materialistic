@@ -18,6 +18,7 @@ package io.github.hidroh.materialistic.data;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -67,6 +68,7 @@ public class SyncDelegate {
     private static final String NOTIFICATION_GROUP_KEY = "group";
     private static final String SYNC_ACCOUNT_NAME = "Materialistic";
     private static final long TIMEOUT_MILLIS = DateUtils.MINUTE_IN_MILLIS;
+    private static final String DOWNLOADS_CHANNEL_ID = "downloads";
 
     private final HackerNewsClient.RestService mHnRestService;
     private final ReadabilityClient mReadabilityClient;
@@ -91,12 +93,22 @@ public class SyncDelegate {
         mReadabilityClient = readabilityClient;
         mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        // TODO specify notification channel
-        mNotificationBuilder = new NotificationCompat.Builder(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(DOWNLOADS_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_downloads),
+                    NotificationManager.IMPORTANCE_LOW);
+            mNotificationManager.createNotificationChannel(channel);
+            mNotificationBuilder = new NotificationCompat.Builder(context, DOWNLOADS_CHANNEL_ID);
+        } else {
+            //noinspection deprecation
+            mNotificationBuilder = new NotificationCompat.Builder(context);
+        }
+        mNotificationBuilder
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.mipmap.ic_launcher))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setGroup(NOTIFICATION_GROUP_KEY)
+                .setOnlyAlertOnce(true)
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setAutoCancel(true);
     }
@@ -283,6 +295,7 @@ public class SyncDelegate {
                 .setContentTitle(mSyncProgress.title)
                 .setContentText(mContext.getString(R.string.download_in_progress))
                 .setContentIntent(getItemActivity(mJob.id))
+                .setOnlyAlertOnce(true)
                 .setProgress(mSyncProgress.getMax(), mSyncProgress.getProgress(), false)
                 .setSortKey(mJob.id)
                 .build());
