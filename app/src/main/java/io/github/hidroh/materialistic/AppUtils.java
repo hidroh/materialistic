@@ -524,9 +524,7 @@ public class AppUtils {
                 .putExtra(Intent.EXTRA_SUBJECT, subject)
                 .putExtra(Intent.EXTRA_TEXT, !TextUtils.isEmpty(subject) ?
                         TextUtils.join(" - ", new String[]{subject, text}) : text);
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(intent);
-        }
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_text)));
     }
     public static Uri createItemUri(@NonNull String itemId) {
         return new Uri.Builder()
