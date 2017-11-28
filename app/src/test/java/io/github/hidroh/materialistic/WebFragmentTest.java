@@ -45,6 +45,7 @@ import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
+import static io.github.hidroh.materialistic.WebFragment.PDF_LOADER_URL;
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -107,7 +108,7 @@ public class WebFragmentTest {
     }
 
     @Test
-    public void testDownloadPDF() {
+    public void testDownloadContent() {
         ResolveInfo resolverInfo = new ResolveInfo();
         resolverInfo.activityInfo = new ActivityInfo();
         resolverInfo.activityInfo.applicationInfo = new ApplicationInfo();
@@ -116,14 +117,37 @@ public class WebFragmentTest {
         resolverInfo.activityInfo.name = ListActivity.class.getName();
         RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
         rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://example.com/file.pdf")), resolverInfo);
+                Uri.parse("http://example.com/file.doc")), resolverInfo);
 
         WebView webView = (WebView) activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
-        shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.pdf", "", "", "", 0l);
+        shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.doc", "", "", "", 0l);
         assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         activity.findViewById(R.id.download_button).performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
+    }
+
+    @Test
+    public void testDownloadPdf() throws InterruptedException {
+        ResolveInfo resolverInfo = new ResolveInfo();
+        resolverInfo.activityInfo = new ActivityInfo();
+        resolverInfo.activityInfo.applicationInfo = new ApplicationInfo();
+        resolverInfo.activityInfo.applicationInfo.packageName = ListActivity.class.getPackage().getName();
+        resolverInfo.activityInfo.name = ListActivity.class.getName();
+        RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
+        when(item.getUrl()).thenReturn("http://example.com/file.pdf");
+        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl())), resolverInfo);
+
+        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
+        WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(WebFragment.class.getName());
+        shadowWebView.getDownloadListener().onDownloadStart(item.getUrl(), "", "", "application/pdf", 0l);
+        shadowWebView.getWebViewClient().onPageFinished(webView, PDF_LOADER_URL);
+        verify(fragment.mDownloadModule).downloadFile(
+            eq(item.getUrl()),
+            eq("application/pdf"),
+            any(DownloadModule.DownloadModuleCallback.class));
     }
 
     @Config(shadows = ShadowNestedScrollView.class)

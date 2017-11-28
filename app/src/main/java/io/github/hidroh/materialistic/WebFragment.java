@@ -33,6 +33,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,12 +43,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import java.io.*;
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
@@ -76,6 +80,8 @@ public class WebFragment extends LazyLoadFragment
     private static final String STATE_FULLSCREEN = "state:fullscreen";
     private static final String STATE_CONTENT = "state:content";
     private static final int DEFAULT_PROGRESS = 20;
+    public static final String PDF_LOADER_URL = "file:///android_asset/pdf/index.html";
+    private static final String PDF_MIME_TYPE = "application/pdf";
     @Synthetic WebView mWebView;
     private NestedScrollView mScrollView;
     @Synthetic boolean mExternalRequired = false;
@@ -102,8 +108,10 @@ public class WebFragment extends LazyLoadFragment
     private AppUtils.SystemUiHelper mSystemUiHelper;
     private View mFragmentView;
     @Inject ReadabilityClient mReadabilityClient;
+    @Inject DownloadModule mDownloadModule;
     private WebItem mItem;
     private boolean mIsHackerNewsUrl, mEmpty, mReadability;
+    private PdfAndroidJavascriptBridge mPdfAndroidJavascriptBridge;
 
     @Override
     public void onAttach(Context context) {
@@ -288,7 +296,29 @@ public class WebFragment extends LazyLoadFragment
 
     private void loadUrl() {
         setWebSettings(true);
-        mWebView.reloadUrl(mItem.getUrl());
+        reloadUrl(mItem.getUrl());
+    }
+
+    private void reloadUrl(String url) {
+        reloadUrl(url, null);
+    }
+
+    private void reloadUrl(String url, File pdfFile) {
+        if (mPdfAndroidJavascriptBridge != null) {
+            mPdfAndroidJavascriptBridge.cleanUp();
+            mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
+        }
+        if (isPdfRenderingSupported() && url.equals(PDF_LOADER_URL)) {
+            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), mWebView, pdfFile);
+            mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
+        }
+        mWebView.reloadUrl(url);
+    }
+
+    // We can't use @JavascriptInterface for the API versions < 17 because there were security issues -
+    // JS would manipulate the app via reflection via the bridge object
+    private boolean isPdfRenderingSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
 
     @Synthetic
@@ -404,17 +434,21 @@ public class WebFragment extends LazyLoadFragment
             }
         });
         mWebView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
-            if (getActivity() == null) {
-                return;
+            if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
+                downloadFileAndRenderPdf();
+            } else {
+                if (getActivity() == null) {
+                    return;
+                }
+                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+                    return;
+                }
+                mExternalRequired = true;
+                mWebView.setVisibility(GONE);
+                view.findViewById(R.id.empty).setVisibility(VISIBLE);
+                view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
             }
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                return;
-            }
-            mExternalRequired = true;
-            mWebView.setVisibility(GONE);
-            view.findViewById(R.id.empty).setVisibility(VISIBLE);
-            view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
         });
         AppUtils.toggleWebViewZoom(mWebView.getSettings(), false);
     }
@@ -445,6 +479,9 @@ public class WebFragment extends LazyLoadFragment
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
+            if (mWebView.getUrl().equals(PDF_LOADER_URL)) {
+                mWebView.setInitialScale(1);
+            }
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
             mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
@@ -536,6 +573,19 @@ public class WebFragment extends LazyLoadFragment
         bindContent();
     }
 
+    private void downloadFileAndRenderPdf() {
+        mDownloadModule.downloadFile(getContext(), mItem.getUrl(), PDF_MIME_TYPE, new DownloadModule.DownloadModuleCallback() {
+            @Override
+            public void onFailure(IOException e) {
+            }
+
+            @Override
+            public void onSuccess(File file) throws IOException {
+                mWebView.post(() -> reloadUrl(PDF_LOADER_URL, file));
+            }
+        });
+    }
+
     static class ReadabilityCallback implements ReadabilityClient.Callback {
         private final WeakReference<WebFragment> mReadabilityFragment;
 
@@ -570,6 +620,72 @@ public class WebFragment extends LazyLoadFragment
         @Override
         public void onError(String errorMessage) {
             // do nothing
+        }
+    }
+}
+
+
+class PdfAndroidJavascriptBridge {
+    Context mContext;
+    File mFile;
+    RandomAccessFile mRandomAccessFile;
+    WebView mWebView;
+
+    PdfAndroidJavascriptBridge(Context context, WebView webView, File file) {
+        mContext = context;
+        mFile = file;
+        mWebView = webView;
+        try {
+            mRandomAccessFile = new RandomAccessFile(file, "r");
+        } catch (IOException e) {
+            Log.e("Exception", e.toString());
+            mRandomAccessFile = null;
+        }
+    }
+
+    @JavascriptInterface
+    public String getChunk(int begin, int end) {
+        try {
+            if (mRandomAccessFile != null) {
+                final int bufferSize = end - begin;
+                byte[] data = new byte[bufferSize];
+                mRandomAccessFile.seek(begin);
+                mRandomAccessFile.read(data);
+                return Base64.encodeToString(data, Base64.DEFAULT);
+            } else {
+                return "";
+            }
+        } catch (IOException e) {
+            Log.e("Exception", e.toString());
+            return "";
+        }
+    }
+
+    @JavascriptInterface
+    public long getSize() {
+        return mFile.length();
+    }
+
+    @JavascriptInterface
+    public void setInitialScale() {
+        mWebView.post(() -> mWebView.setInitialScale(1));
+    }
+
+    public void cleanUp() {
+        try {
+            if (mRandomAccessFile != null) {
+                mRandomAccessFile.close();
+            }
+        } catch (IOException e) {
+            Log.e("Exception", e.toString());
+        }
+    }
+
+    public void finalize() throws Throwable {
+        try {
+            cleanUp();
+        } finally {
+            super.finalize();
         }
     }
 }

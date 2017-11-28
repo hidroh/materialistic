@@ -14,6 +14,7 @@ import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
 import android.view.View;
 
+import okhttp3.Call;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowAccountManager;
 
@@ -122,6 +123,7 @@ import static org.mockito.Mockito.when;
                 WidgetConfigActivityTest.class,
                 BaseListActivityLandTest.class,
                 PreferencesActivityTest.class,
+                DownloadModuleTest.class,
                 ItemSyncJobServiceTest.TestItemSyncJobService.class
         },
         library = true,
@@ -143,6 +145,8 @@ public class TestActivityModule {
     private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
     private final ResourcesProvider resourcesProvider = mock(ResourcesProvider.class);
     private final SyncDelegate syncDelegate = mock(SyncDelegate.class);
+    private final Call.Factory callFactory = mock(Call.Factory.class);
+    private final DownloadModule downloadModule = mock(DownloadModule.class);
     private final SyncScheduler syncScheduler = mock(SyncScheduler.class);
     {
         TypedArray typedArray = mock(TypedArray.class);
@@ -194,6 +198,16 @@ public class TestActivityModule {
     @Provides @Singleton
     public RestServiceFactory provideRestServiceFactory() {
         return restServiceFactory;
+    }
+
+    @Provides @Singleton
+    public DownloadModule provideDownloadModule() {
+        return downloadModule;
+    }
+
+    @Provides @Singleton
+    public Call.Factory provideCallFactory() {
+        return callFactory;
     }
 
     @Provides @Singleton
