@@ -1,11 +1,14 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import dagger.Module;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
+import okio.*;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -31,24 +34,22 @@ class DownloadModule {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final InputStream inputStream = response.body().byteStream();
-                final File outputFile = new File(context.getCacheDir().getPath(), new File(url).getName());
-                final FileOutputStream outputStream = new FileOutputStream(outputFile);
-                byte[] data = new byte[1024];
-                int count;
-                while ((count = inputStream.read(data)) != -1) {
-                    outputStream.write(data, 0, count);
+            public void onResponse(Call call, Response response) {
+                try {
+                    final File outputFile = new File(context.getCacheDir().getPath(), new File(url).getName());
+                    BufferedSink sink = Okio.buffer(Okio.sink(outputFile));
+                    sink.writeAll(response.body().source());
+                    sink.close();
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(outputFile.getPath()));
+                } catch (IOException e) {
+                    callback.onFailure(e);
                 }
-                inputStream.close();
-                outputStream.close();
-                callback.onSuccess(outputFile);
             }
         });
     }
 
     public interface DownloadModuleCallback {
         void onFailure(IOException e);
-        void onSuccess(File file) throws IOException;
+        void onSuccess(String filePath);
     }
 }

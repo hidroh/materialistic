@@ -303,13 +303,13 @@ public class WebFragment extends LazyLoadFragment
         reloadUrl(url, null);
     }
 
-    private void reloadUrl(String url, File pdfFile) {
+    private void reloadUrl(String url, @Nullable String pdfFilePath) {
         if (mPdfAndroidJavascriptBridge != null) {
             mPdfAndroidJavascriptBridge.cleanUp();
             mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
         }
-        if (isPdfRenderingSupported() && url.equals(PDF_LOADER_URL)) {
-            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), mWebView, pdfFile);
+        if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
+            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), mWebView, pdfFilePath);
             mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
         }
         mWebView.reloadUrl(url);
@@ -434,12 +434,12 @@ public class WebFragment extends LazyLoadFragment
             }
         });
         mWebView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+            if (getActivity() == null) {
+                return;
+            }
             if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
                 downloadFileAndRenderPdf();
             } else {
-                if (getActivity() == null) {
-                    return;
-                }
                 final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
                     return;
@@ -479,9 +479,7 @@ public class WebFragment extends LazyLoadFragment
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
-            if (mWebView.getUrl().equals(PDF_LOADER_URL)) {
-                mWebView.setInitialScale(1);
-            }
+            mWebView.setInitialScale(1);
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
             mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
@@ -580,8 +578,8 @@ public class WebFragment extends LazyLoadFragment
             }
 
             @Override
-            public void onSuccess(File file) throws IOException {
-                mWebView.post(() -> reloadUrl(PDF_LOADER_URL, file));
+            public void onSuccess(String filePath) {
+                reloadUrl(PDF_LOADER_URL, filePath);
             }
         });
     }
@@ -622,70 +620,69 @@ public class WebFragment extends LazyLoadFragment
             // do nothing
         }
     }
-}
 
+    static class PdfAndroidJavascriptBridge {
+        Context mContext;
+        File mFile;
+        @Nullable RandomAccessFile mRandomAccessFile;
+        WebView mWebView;
 
-class PdfAndroidJavascriptBridge {
-    Context mContext;
-    File mFile;
-    RandomAccessFile mRandomAccessFile;
-    WebView mWebView;
-
-    PdfAndroidJavascriptBridge(Context context, WebView webView, File file) {
-        mContext = context;
-        mFile = file;
-        mWebView = webView;
-        try {
-            mRandomAccessFile = new RandomAccessFile(file, "r");
-        } catch (IOException e) {
-            Log.e("Exception", e.toString());
-            mRandomAccessFile = null;
+        PdfAndroidJavascriptBridge(Context context, WebView webView, String filePath) {
+            mContext = context;
+            mFile = new File(filePath);
+            mWebView = webView;
+            try {
+                mRandomAccessFile = new RandomAccessFile(mFile, "r");
+            } catch (IOException e) {
+                Log.e("Exception", e.toString());
+                mRandomAccessFile = null;
+            }
         }
-    }
 
-    @JavascriptInterface
-    public String getChunk(int begin, int end) {
-        try {
-            if (mRandomAccessFile != null) {
-                final int bufferSize = end - begin;
-                byte[] data = new byte[bufferSize];
-                mRandomAccessFile.seek(begin);
-                mRandomAccessFile.read(data);
-                return Base64.encodeToString(data, Base64.DEFAULT);
-            } else {
+        @JavascriptInterface
+        public String getChunk(int begin, int end) {
+            try {
+                if (mRandomAccessFile != null) {
+                    final int bufferSize = end - begin;
+                    byte[] data = new byte[bufferSize];
+                    mRandomAccessFile.seek(begin);
+                    mRandomAccessFile.read(data);
+                    return Base64.encodeToString(data, Base64.DEFAULT);
+                } else {
+                    return "";
+                }
+            } catch (IOException e) {
+                Log.e("Exception", e.toString());
                 return "";
             }
-        } catch (IOException e) {
-            Log.e("Exception", e.toString());
-            return "";
         }
-    }
 
-    @JavascriptInterface
-    public long getSize() {
-        return mFile.length();
-    }
+        @JavascriptInterface
+        public long getSize() {
+            return mFile.length();
+        }
 
-    @JavascriptInterface
-    public void setInitialScale() {
-        mWebView.post(() -> mWebView.setInitialScale(1));
-    }
+        @JavascriptInterface
+        public void setInitialScale() {
+            mWebView.post(() -> mWebView.setInitialScale(1));
+        }
 
-    public void cleanUp() {
-        try {
-            if (mRandomAccessFile != null) {
-                mRandomAccessFile.close();
+        public void cleanUp() {
+            try {
+                if (mRandomAccessFile != null) {
+                    mRandomAccessFile.close();
+                }
+            } catch (IOException e) {
+                Log.e("Exception", e.toString());
             }
-        } catch (IOException e) {
-            Log.e("Exception", e.toString());
         }
-    }
 
-    public void finalize() throws Throwable {
-        try {
-            cleanUp();
-        } finally {
-            super.finalize();
+        public void finalize() throws Throwable {
+            try {
+                cleanUp();
+            } finally {
+                super.finalize();
+            }
         }
     }
 }

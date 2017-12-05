@@ -123,7 +123,6 @@ import static org.mockito.Mockito.when;
                 WidgetConfigActivityTest.class,
                 BaseListActivityLandTest.class,
                 PreferencesActivityTest.class,
-                DownloadModuleTest.class,
                 ItemSyncJobServiceTest.TestItemSyncJobService.class
         },
         library = true,
