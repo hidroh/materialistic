@@ -479,7 +479,8 @@ public class WebFragment extends LazyLoadFragment
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
-            mWebView.setInitialScale(1);
+            // We'll zoom out until it returns false, which means it has min zoom level
+            while (mWebView.zoomOut()) {}
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
             mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
