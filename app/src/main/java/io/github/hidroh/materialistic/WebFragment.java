@@ -311,6 +311,7 @@ public class WebFragment extends LazyLoadFragment
         if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
             mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), mWebView, pdfFilePath);
             mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
+            mWebView.setInitialScale(1);
         }
         mWebView.reloadUrl(url);
     }
@@ -661,11 +662,6 @@ public class WebFragment extends LazyLoadFragment
         @JavascriptInterface
         public long getSize() {
             return mFile.length();
-        }
-
-        @JavascriptInterface
-        public void setInitialScale() {
-            mWebView.post(() -> mWebView.setInitialScale(1));
         }
 
         public void cleanUp() {

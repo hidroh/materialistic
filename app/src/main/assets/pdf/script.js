@@ -18,7 +18,6 @@
     // set proper scale to fit page width
     container.addEventListener("pagesinit", function (e) {
       pdfViewer.currentScaleValue = 2;
-      PdfAndroidJavascriptBridge.setInitialScale();
     });
 
     var fileSize = PdfAndroidJavascriptBridge.getSize();
