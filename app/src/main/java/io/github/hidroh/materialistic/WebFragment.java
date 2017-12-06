@@ -305,7 +305,7 @@ public class WebFragment extends LazyLoadFragment
             mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
         }
         if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
-            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), mWebView, pdfFilePath);
+            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), pdfFilePath);
             mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
             mWebView.setInitialScale(1);
         }
@@ -623,12 +623,10 @@ public class WebFragment extends LazyLoadFragment
         Context mContext;
         File mFile;
         @Nullable RandomAccessFile mRandomAccessFile;
-        WebView mWebView;
 
-        PdfAndroidJavascriptBridge(Context context, WebView webView, String filePath) {
+        PdfAndroidJavascriptBridge(Context context, String filePath) {
             mContext = context;
             mFile = new File(filePath);
-            mWebView = webView;
             try {
                 mRandomAccessFile = new RandomAccessFile(mFile, "r");
             } catch (IOException e) {
@@ -638,10 +636,10 @@ public class WebFragment extends LazyLoadFragment
         }
 
         @JavascriptInterface
-        public String getChunk(int begin, int end) {
+        public String getChunk(long begin, long end) {
             try {
                 if (mRandomAccessFile != null) {
-                    final int bufferSize = end - begin;
+                    final int bufferSize = (int)(end - begin);
                     byte[] data = new byte[bufferSize];
                     mRandomAccessFile.seek(begin);
                     mRandomAccessFile.read(data);
