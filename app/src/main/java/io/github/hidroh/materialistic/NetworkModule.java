@@ -27,10 +27,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.github.hidroh.materialistic.data.AlgoliaClient;
-import io.github.hidroh.materialistic.data.HackerNewsClient;
-import io.github.hidroh.materialistic.data.ReadabilityClient;
-import io.github.hidroh.materialistic.data.RestServiceFactory;
+import io.github.hidroh.materialistic.data.*;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
@@ -59,6 +56,11 @@ class NetworkModule {
                 .addInterceptor(new LoggingInterceptor())
                 .followRedirects(false)
                 .build();
+    }
+
+    @Provides @Singleton
+    public FileDownloader provideFileDownloader(Context context, Call.Factory callFactory) {
+        return new FileDownloader(context, callFactory);
     }
 
     static class ConnectionAwareInterceptor implements Interceptor {

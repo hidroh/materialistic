@@ -57,11 +57,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
-import io.github.hidroh.materialistic.data.Item;
-import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ReadabilityClient;
-import io.github.hidroh.materialistic.data.ResponseListener;
-import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.data.*;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 import io.github.hidroh.materialistic.widget.PopupMenu;
@@ -108,7 +104,7 @@ public class WebFragment extends LazyLoadFragment
     private AppUtils.SystemUiHelper mSystemUiHelper;
     private View mFragmentView;
     @Inject ReadabilityClient mReadabilityClient;
-    @Inject DownloadModule mDownloadModule;
+    @Inject FileDownloader mFileDownloader;
     private WebItem mItem;
     private boolean mIsHackerNewsUrl, mEmpty, mReadability;
     private PdfAndroidJavascriptBridge mPdfAndroidJavascriptBridge;
@@ -574,7 +570,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void downloadFileAndRenderPdf() {
-        mDownloadModule.downloadFile(getContext(), mItem.getUrl(), PDF_MIME_TYPE, new DownloadModule.DownloadModuleCallback() {
+        mFileDownloader.downloadFile(mItem.getUrl(), PDF_MIME_TYPE, new FileDownloader.FileDownloaderCallback() {
             @Override
             public void onFailure(IOException e) {
             }

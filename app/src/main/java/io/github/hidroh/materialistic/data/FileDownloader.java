@@ -1,31 +1,33 @@
-package io.github.hidroh.materialistic;
+package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import dagger.Module;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
-import okio.*;
+import okio.BufferedSink;
+import okio.Okio;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
-@Module(library = true, complete = false, includes = NetworkModule.class)
-class DownloadModule {
+public class FileDownloader {
     private Call.Factory mCallFactory;
+    private final String mCacheDir;
 
     @Inject
-    DownloadModule(Call.Factory callFactory) {
-        this.mCallFactory = callFactory;
+    public FileDownloader(Context context, Call.Factory callFactory) {
+        mCacheDir = context.getCacheDir().getPath(); // don't need to keep a reference to context after this
+        mCallFactory = callFactory;
     }
 
-    void downloadFile(Context context, String url, String mimeType, DownloadModuleCallback callback) {
+    public void downloadFile(String url, String mimeType, FileDownloaderCallback callback) {
         final Request request = new Request.Builder().url(url)
-            .addHeader("Content-Type", mimeType)
-            .build();
+                .addHeader("Content-Type", mimeType)
+                .build();
 
         mCallFactory.newCall(request).enqueue(new Callback() {
             @Override
@@ -36,7 +38,7 @@ class DownloadModule {
             @Override
             public void onResponse(Call call, Response response) {
                 try {
-                    final File outputFile = new File(context.getCacheDir().getPath(), new File(url).getName());
+                    final File outputFile = new File(mCacheDir, new File(url).getName());
                     BufferedSink sink = Okio.buffer(Okio.sink(outputFile));
                     sink.writeAll(response.body().source());
                     sink.close();
@@ -48,7 +50,7 @@ class DownloadModule {
         });
     }
 
-    public interface DownloadModuleCallback {
+    public interface FileDownloaderCallback {
         void onFailure(IOException e);
         void onSuccess(String filePath);
     }
