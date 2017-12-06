@@ -299,6 +299,7 @@ public class WebFragment extends LazyLoadFragment
         reloadUrl(url, null);
     }
 
+    @SuppressLint("AddJavascriptInterface")
     private void reloadUrl(String url, @Nullable String pdfFilePath) {
         if (mPdfAndroidJavascriptBridge != null) {
             mPdfAndroidJavascriptBridge.cleanUp();
