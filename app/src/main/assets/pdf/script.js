@@ -4,6 +4,8 @@
 
   function initializePdfViewer() {
     PDFJS.disableAutoFetch = true;
+    PDFJS.useOnlyCssZoom = true;
+    PDFJS.maxCanvasPixels = 2097152;
     var container = document.getElementById('viewerContainer');
 
     // enable hyperlinks within PDF files.
@@ -24,7 +26,8 @@
 
     PDFJS.getDocument({
       length: fileSize,
-      range: new RangeTransport(fileSize)
+      range: new RangeTransport(fileSize),
+      rangeChunkSize: 262144,
     }).then(function (pdfDocument) {
       pdfViewer.setDocument(pdfDocument);
       pdfLinkService.setDocument(pdfDocument, null);
