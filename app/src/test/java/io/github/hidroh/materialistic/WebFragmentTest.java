@@ -163,9 +163,7 @@ public class WebFragmentTest {
         final long size = file.length();
         final String expected = Base64.encodeToString(Okio.buffer(Okio.source(file)).readByteArray(), Base64.DEFAULT);
 
-        final WebFragment.PdfAndroidJavascriptBridge bridge = new WebFragment.PdfAndroidJavascriptBridge(
-            activity, path
-        );
+        final WebFragment.PdfAndroidJavascriptBridge bridge = new WebFragment.PdfAndroidJavascriptBridge(path, null);
         assertEquals(expected, bridge.getChunk(0, size));
     }
 
@@ -174,9 +172,7 @@ public class WebFragmentTest {
         final String path = this.getClass().getClassLoader().getResource("file.txt").getPath();
         final long expected = new File(path).length();
 
-        final WebFragment.PdfAndroidJavascriptBridge bridge = new WebFragment.PdfAndroidJavascriptBridge(
-                activity, path
-        );
+        final WebFragment.PdfAndroidJavascriptBridge bridge = new WebFragment.PdfAndroidJavascriptBridge(path, null);
         assertEquals(expected, bridge.getSize());
     }
 
