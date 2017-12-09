@@ -122,12 +122,13 @@ public class WebFragmentTest {
                 ListActivity.class.getPackage().getName();
         resolverInfo.activityInfo.name = ListActivity.class.getName();
         RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
-        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://example.com/file.doc")), resolverInfo);
+        final String url = "http://example.com/file.doc";
+        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), resolverInfo);
 
         WebView webView = (WebView) activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
-        shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.doc", "", "", "", 0l);
+        when(item.getUrl()).thenReturn(url);
+        shadowWebView.getDownloadListener().onDownloadStart(url, "", "", "", 0l);
         assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         activity.findViewById(R.id.download_button).performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());

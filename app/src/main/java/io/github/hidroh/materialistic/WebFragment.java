@@ -455,13 +455,10 @@ public class WebFragment extends LazyLoadFragment
         if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
             return;
         }
-        View view = getView();
-        if (view != null) {
-            mExternalRequired = true;
-            mWebView.setVisibility(GONE);
-            view.findViewById(R.id.empty).setVisibility(VISIBLE);
-            view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
-        }
+        mExternalRequired = true;
+        mWebView.setVisibility(GONE);
+        getActivity().findViewById(R.id.empty).setVisibility(VISIBLE);
+        getActivity().findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
     }
 
     @SuppressLint("SetJavaScriptEnabled")
