@@ -26,6 +26,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -62,6 +64,7 @@ import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.WebView;
+import okhttp3.Call;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -226,6 +229,9 @@ public class WebFragment extends LazyLoadFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mPdfAndroidJavascriptBridge != null) {
+            mPdfAndroidJavascriptBridge.cleanUp();
+        }
         mWebView.destroy();
     }
 
@@ -306,7 +312,7 @@ public class WebFragment extends LazyLoadFragment
             mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
         }
         if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
-            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(getContext(), pdfFilePath);
+            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(pdfFilePath, this::offerExternalApp);
             mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
             mWebView.setInitialScale(1);
         }
@@ -438,17 +444,24 @@ public class WebFragment extends LazyLoadFragment
             if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
                 downloadFileAndRenderPdf();
             } else {
-                final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                    return;
-                }
-                mExternalRequired = true;
-                mWebView.setVisibility(GONE);
-                view.findViewById(R.id.empty).setVisibility(VISIBLE);
-                view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
+                offerExternalApp();
             }
         });
         AppUtils.toggleWebViewZoom(mWebView.getSettings(), false);
+    }
+
+    private void offerExternalApp() {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mItem.getUrl()));
+        if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+            return;
+        }
+        View view = getView();
+        if (view != null) {
+            mExternalRequired = true;
+            mWebView.setVisibility(GONE);
+            view.findViewById(R.id.empty).setVisibility(VISIBLE);
+            view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -477,8 +490,13 @@ public class WebFragment extends LazyLoadFragment
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
-            // We'll zoom out until it returns false, which means it has min zoom level
-            while (mWebView.zoomOut()) {}
+            // We'll zoom out until it returns false, which means it has min zoom level.
+            // It's quite dangerous piece of code - potentially could lead to infinite loop,
+            // so let's add some reasonable limit just in case
+            int i = 0;
+            while (mWebView.zoomOut() && i < 30) {
+              i++;
+            }
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
             mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
@@ -573,7 +591,8 @@ public class WebFragment extends LazyLoadFragment
     private void downloadFileAndRenderPdf() {
         mFileDownloader.downloadFile(mItem.getUrl(), PDF_MIME_TYPE, new FileDownloader.FileDownloaderCallback() {
             @Override
-            public void onFailure(IOException e) {
+            public void onFailure(Call call, IOException e) {
+                offerExternalApp();
             }
 
             @Override
@@ -621,24 +640,21 @@ public class WebFragment extends LazyLoadFragment
     }
 
     static class PdfAndroidJavascriptBridge {
-        Context mContext;
-        File mFile;
-        @Nullable RandomAccessFile mRandomAccessFile;
+        private File mFile;
+        private @Nullable RandomAccessFile mRandomAccessFile;
+        private @Nullable PdfAndroidJavascriptBridgeFailureCallback mOnFailure;
 
-        PdfAndroidJavascriptBridge(Context context, String filePath) {
-            mContext = context;
+        PdfAndroidJavascriptBridge(String filePath, @Nullable PdfAndroidJavascriptBridgeFailureCallback onFailure) {
             mFile = new File(filePath);
-            try {
-                mRandomAccessFile = new RandomAccessFile(mFile, "r");
-            } catch (IOException e) {
-                Log.e("Exception", e.toString());
-                mRandomAccessFile = null;
-            }
+            mOnFailure = onFailure;
         }
 
         @JavascriptInterface
         public String getChunk(long begin, long end) {
             try {
+                if (mRandomAccessFile == null) {
+                    mRandomAccessFile = new RandomAccessFile(mFile, "r");
+                }
                 if (mRandomAccessFile != null) {
                     final int bufferSize = (int)(end - begin);
                     byte[] data = new byte[bufferSize];
@@ -659,6 +675,13 @@ public class WebFragment extends LazyLoadFragment
             return mFile.length();
         }
 
+        @JavascriptInterface
+        public void onFailure() {
+            if (mOnFailure != null) {
+                new Handler(Looper.getMainLooper()).post(() -> mOnFailure.onFailure());
+            }
+        }
+
         public void cleanUp() {
             try {
                 if (mRandomAccessFile != null) {
@@ -669,6 +692,7 @@ public class WebFragment extends LazyLoadFragment
             }
         }
 
+        @Override
         public void finalize() throws Throwable {
             try {
                 cleanUp();
@@ -676,5 +700,9 @@ public class WebFragment extends LazyLoadFragment
                 super.finalize();
             }
         }
+    }
+
+    interface PdfAndroidJavascriptBridgeFailureCallback {
+        void onFailure();
     }
 }

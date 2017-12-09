@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic.data;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.WorkerThread;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -24,6 +25,7 @@ public class FileDownloader {
         mCallFactory = callFactory;
     }
 
+    @WorkerThread
     public void downloadFile(String url, String mimeType, FileDownloaderCallback callback) {
         final Request request = new Request.Builder().url(url)
                 .addHeader("Content-Type", mimeType)
@@ -32,7 +34,7 @@ public class FileDownloader {
         mCallFactory.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onFailure(e);
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure(call, e));
             }
 
             @Override
@@ -44,14 +46,14 @@ public class FileDownloader {
                     sink.close();
                     new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(outputFile.getPath()));
                 } catch (IOException e) {
-                    callback.onFailure(e);
+                    this.onFailure(call, e);
                 }
             }
         });
     }
 
     public interface FileDownloaderCallback {
-        void onFailure(IOException e);
+        void onFailure(Call call, IOException e);
         void onSuccess(String filePath);
     }
 }

@@ -31,6 +31,9 @@
     }).then(function (pdfDocument) {
       pdfViewer.setDocument(pdfDocument);
       pdfLinkService.setDocument(pdfDocument, null);
+    }).catch(function (e) {
+      console.error(e);
+      PdfAndroidJavascriptBridge.onFailure();
     });
   }
 
