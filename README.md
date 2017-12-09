@@ -21,6 +21,7 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [RxJava] & [RxAndroid]
 - [Robolectric]
+- [PDF.js]
 
 **Build**
 
@@ -105,3 +106,4 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [Android Weekly 227]: http://androidweekly.net/issues/issue-227
 [AndroidDev Digest 99 Badge]: https://img.shields.io/badge/androiddev--digest-99-blue.svg
 [AndroidDev Digest 99]: https://www.androiddevdigest.com/digest-99/
+[PDF.js]: https://mozilla.github.io/pdf.js/

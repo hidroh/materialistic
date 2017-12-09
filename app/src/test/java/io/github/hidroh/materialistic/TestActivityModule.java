@@ -14,6 +14,8 @@ import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
 import android.view.View;
 
+import io.github.hidroh.materialistic.data.*;
+import okhttp3.Call;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowAccountManager;
 
@@ -25,17 +27,6 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.appwidget.WidgetConfigActivity;
 import io.github.hidroh.materialistic.appwidget.WidgetConfigActivityTest;
-import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.FeedbackClient;
-import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ItemSyncJobServiceTest;
-import io.github.hidroh.materialistic.data.ItemSyncService;
-import io.github.hidroh.materialistic.data.ReadabilityClient;
-import io.github.hidroh.materialistic.data.RestServiceFactory;
-import io.github.hidroh.materialistic.data.SessionManager;
-import io.github.hidroh.materialistic.data.SyncDelegate;
-import io.github.hidroh.materialistic.data.SyncScheduler;
-import io.github.hidroh.materialistic.data.UserManager;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
@@ -143,6 +134,8 @@ public class TestActivityModule {
     private final RestServiceFactory restServiceFactory = mock(RestServiceFactory.class);
     private final ResourcesProvider resourcesProvider = mock(ResourcesProvider.class);
     private final SyncDelegate syncDelegate = mock(SyncDelegate.class);
+    private final Call.Factory callFactory = mock(Call.Factory.class);
+    private final FileDownloader fileDownloader = mock(FileDownloader.class);
     private final SyncScheduler syncScheduler = mock(SyncScheduler.class);
     {
         TypedArray typedArray = mock(TypedArray.class);
@@ -194,6 +187,16 @@ public class TestActivityModule {
     @Provides @Singleton
     public RestServiceFactory provideRestServiceFactory() {
         return restServiceFactory;
+    }
+
+    @Provides @Singleton
+    public FileDownloader provideFileDownloader() {
+        return fileDownloader;
+    }
+
+    @Provides @Singleton
+    public Call.Factory provideCallFactory() {
+        return callFactory;
     }
 
     @Provides @Singleton

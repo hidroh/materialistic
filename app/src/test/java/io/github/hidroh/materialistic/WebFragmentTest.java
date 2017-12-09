@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.NestedScrollView;
+import android.util.Base64;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -17,6 +18,9 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
 
+import io.github.hidroh.materialistic.data.*;
+import okio.ByteString;
+import okio.Okio;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,15 +40,18 @@ import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 
-import io.github.hidroh.materialistic.data.FavoriteManager;
-import io.github.hidroh.materialistic.data.Item;
-import io.github.hidroh.materialistic.data.ReadabilityClient;
-import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+
+import static io.github.hidroh.materialistic.WebFragment.PDF_LOADER_URL;
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -107,7 +114,7 @@ public class WebFragmentTest {
     }
 
     @Test
-    public void testDownloadPDF() {
+    public void testDownloadContent() {
         ResolveInfo resolverInfo = new ResolveInfo();
         resolverInfo.activityInfo = new ActivityInfo();
         resolverInfo.activityInfo.applicationInfo = new ApplicationInfo();
@@ -115,15 +122,59 @@ public class WebFragmentTest {
                 ListActivity.class.getPackage().getName();
         resolverInfo.activityInfo.name = ListActivity.class.getName();
         RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
-        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://example.com/file.pdf")), resolverInfo);
+        final String url = "http://example.com/file.doc";
+        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), resolverInfo);
 
         WebView webView = (WebView) activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
-        shadowWebView.getDownloadListener().onDownloadStart("http://example.com/file.pdf", "", "", "", 0l);
+        when(item.getUrl()).thenReturn(url);
+        shadowWebView.getDownloadListener().onDownloadStart(url, "", "", "", 0l);
         assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         activity.findViewById(R.id.download_button).performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
+    }
+
+    @Test
+    public void testDownloadPdf() throws InterruptedException {
+        ResolveInfo resolverInfo = new ResolveInfo();
+        resolverInfo.activityInfo = new ActivityInfo();
+        resolverInfo.activityInfo.applicationInfo = new ApplicationInfo();
+        resolverInfo.activityInfo.applicationInfo.packageName = ListActivity.class.getPackage().getName();
+        resolverInfo.activityInfo.name = ListActivity.class.getName();
+        RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
+        when(item.getUrl()).thenReturn("http://example.com/file.pdf");
+        rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl())), resolverInfo);
+
+        WebView webView = activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
+        WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
+                .findFragmentByTag(WebFragment.class.getName());
+        shadowWebView.getDownloadListener().onDownloadStart(item.getUrl(), "", "", "application/pdf", 0l);
+        shadowWebView.getWebViewClient().onPageFinished(webView, PDF_LOADER_URL);
+        verify(fragment.mFileDownloader).downloadFile(
+            eq(item.getUrl()),
+            eq("application/pdf"),
+            any(FileDownloader.FileDownloaderCallback.class));
+    }
+
+    @Test
+    public void testPdfAndroidJavascriptBridgeGetChunk() throws IOException {
+        final String path = this.getClass().getClassLoader().getResource("file.txt").getPath();
+        final File file = new File(path);
+        final long size = file.length();
+        final String expected = Base64.encodeToString(Okio.buffer(Okio.source(file)).readByteArray(), Base64.DEFAULT);
+
+        final WebFragment.PdfAndroidJavascriptBridge bridge = new WebFragment.PdfAndroidJavascriptBridge(path, null);
+        assertEquals(expected, bridge.getChunk(0, size));
+    }
+
+    @Test
+    public void testPdfAndroidJavascriptBridgeGetSize() throws IOException {
+        final String path = this.getClass().getClassLoader().getResource("file.txt").getPath();
+        final long expected = new File(path).length();
+
+        final WebFragment.PdfAndroidJavascriptBridge bridge = new WebFragment.PdfAndroidJavascriptBridge(path, null);
+        assertEquals(expected, bridge.getSize());
     }
 
     @Config(shadows = ShadowNestedScrollView.class)

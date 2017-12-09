@@ -26,6 +26,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -33,6 +35,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,27 +45,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.JavascriptInterface;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import java.io.*;
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
-import io.github.hidroh.materialistic.data.Item;
-import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ReadabilityClient;
-import io.github.hidroh.materialistic.data.ResponseListener;
-import io.github.hidroh.materialistic.data.WebItem;
+import io.github.hidroh.materialistic.data.*;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.WebView;
+import okhttp3.Call;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -76,6 +79,8 @@ public class WebFragment extends LazyLoadFragment
     private static final String STATE_FULLSCREEN = "state:fullscreen";
     private static final String STATE_CONTENT = "state:content";
     private static final int DEFAULT_PROGRESS = 20;
+    public static final String PDF_LOADER_URL = "file:///android_asset/pdf/index.html";
+    private static final String PDF_MIME_TYPE = "application/pdf";
     @Synthetic WebView mWebView;
     private NestedScrollView mScrollView;
     @Synthetic boolean mExternalRequired = false;
@@ -102,8 +107,10 @@ public class WebFragment extends LazyLoadFragment
     private AppUtils.SystemUiHelper mSystemUiHelper;
     private View mFragmentView;
     @Inject ReadabilityClient mReadabilityClient;
+    @Inject FileDownloader mFileDownloader;
     private WebItem mItem;
     private boolean mIsHackerNewsUrl, mEmpty, mReadability;
+    private PdfAndroidJavascriptBridge mPdfAndroidJavascriptBridge;
 
     @Override
     public void onAttach(Context context) {
@@ -222,6 +229,9 @@ public class WebFragment extends LazyLoadFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mPdfAndroidJavascriptBridge != null) {
+            mPdfAndroidJavascriptBridge.cleanUp();
+        }
         mWebView.destroy();
     }
 
@@ -288,7 +298,31 @@ public class WebFragment extends LazyLoadFragment
 
     private void loadUrl() {
         setWebSettings(true);
-        mWebView.reloadUrl(mItem.getUrl());
+        reloadUrl(mItem.getUrl());
+    }
+
+    private void reloadUrl(String url) {
+        reloadUrl(url, null);
+    }
+
+    @SuppressLint("AddJavascriptInterface")
+    private void reloadUrl(String url, @Nullable String pdfFilePath) {
+        if (mPdfAndroidJavascriptBridge != null) {
+            mPdfAndroidJavascriptBridge.cleanUp();
+            mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
+        }
+        if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
+            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(pdfFilePath, this::offerExternalApp);
+            mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
+            mWebView.setInitialScale(1);
+        }
+        mWebView.reloadUrl(url);
+    }
+
+    // We can't use @JavascriptInterface for the API versions < 17 because there were security issues -
+    // JS would manipulate the app via reflection via the bridge object
+    private boolean isPdfRenderingSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
 
     @Synthetic
@@ -407,16 +441,24 @@ public class WebFragment extends LazyLoadFragment
             if (getActivity() == null) {
                 return;
             }
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                return;
+            if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
+                downloadFileAndRenderPdf();
+            } else {
+                offerExternalApp();
             }
-            mExternalRequired = true;
-            mWebView.setVisibility(GONE);
-            view.findViewById(R.id.empty).setVisibility(VISIBLE);
-            view.findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
         });
         AppUtils.toggleWebViewZoom(mWebView.getSettings(), false);
+    }
+
+    private void offerExternalApp() {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mItem.getUrl()));
+        if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+            return;
+        }
+        mExternalRequired = true;
+        mWebView.setVisibility(GONE);
+        getActivity().findViewById(R.id.empty).setVisibility(VISIBLE);
+        getActivity().findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -445,6 +487,13 @@ public class WebFragment extends LazyLoadFragment
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         } else {
             reset();
+            // We'll zoom out until it returns false, which means it has min zoom level.
+            // It's quite dangerous piece of code - potentially could lead to infinite loop,
+            // so let's add some reasonable limit just in case
+            int i = 0;
+            while (mWebView.zoomOut() && i < 30) {
+              i++;
+            }
             mFullscreenView.removeView(mScrollViewContent);
             mScrollView.addView(mScrollViewContent);
             mScrollView.post(() -> mScrollView.scrollTo(mWebView.getScrollX(), mWebView.getScrollY()));
@@ -536,6 +585,20 @@ public class WebFragment extends LazyLoadFragment
         bindContent();
     }
 
+    private void downloadFileAndRenderPdf() {
+        mFileDownloader.downloadFile(mItem.getUrl(), PDF_MIME_TYPE, new FileDownloader.FileDownloaderCallback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                offerExternalApp();
+            }
+
+            @Override
+            public void onSuccess(String filePath) {
+                reloadUrl(PDF_LOADER_URL, filePath);
+            }
+        });
+    }
+
     static class ReadabilityCallback implements ReadabilityClient.Callback {
         private final WeakReference<WebFragment> mReadabilityFragment;
 
@@ -571,5 +634,72 @@ public class WebFragment extends LazyLoadFragment
         public void onError(String errorMessage) {
             // do nothing
         }
+    }
+
+    static class PdfAndroidJavascriptBridge {
+        private File mFile;
+        private @Nullable RandomAccessFile mRandomAccessFile;
+        private @Nullable PdfAndroidJavascriptBridgeFailureCallback mOnFailure;
+
+        PdfAndroidJavascriptBridge(String filePath, @Nullable PdfAndroidJavascriptBridgeFailureCallback onFailure) {
+            mFile = new File(filePath);
+            mOnFailure = onFailure;
+        }
+
+        @JavascriptInterface
+        public String getChunk(long begin, long end) {
+            try {
+                if (mRandomAccessFile == null) {
+                    mRandomAccessFile = new RandomAccessFile(mFile, "r");
+                }
+                if (mRandomAccessFile != null) {
+                    final int bufferSize = (int)(end - begin);
+                    byte[] data = new byte[bufferSize];
+                    mRandomAccessFile.seek(begin);
+                    mRandomAccessFile.read(data);
+                    return Base64.encodeToString(data, Base64.DEFAULT);
+                } else {
+                    return "";
+                }
+            } catch (IOException e) {
+                Log.e("Exception", e.toString());
+                return "";
+            }
+        }
+
+        @JavascriptInterface
+        public long getSize() {
+            return mFile.length();
+        }
+
+        @JavascriptInterface
+        public void onFailure() {
+            if (mOnFailure != null) {
+                new Handler(Looper.getMainLooper()).post(() -> mOnFailure.onFailure());
+            }
+        }
+
+        public void cleanUp() {
+            try {
+                if (mRandomAccessFile != null) {
+                    mRandomAccessFile.close();
+                }
+            } catch (IOException e) {
+                Log.e("Exception", e.toString());
+            }
+        }
+
+        @Override
+        public void finalize() throws Throwable {
+            try {
+                cleanUp();
+            } finally {
+                super.finalize();
+            }
+        }
+    }
+
+    interface PdfAndroidJavascriptBridgeFailureCallback {
+        void onFailure();
     }
 }
