@@ -36,13 +36,8 @@ import java.util.List;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 
 public class CustomTabsDelegate {
-    private static final String STABLE_PACKAGE = "com.android.chrome";
-    private static final String BETA_PACKAGE = "com.chrome.beta";
-    private static final String DEV_PACKAGE = "com.chrome.dev";
-    private static final String LOCAL_PACKAGE = "com.google.android.apps.chrome";
     private static final String ACTION_CUSTOM_TABS_CONNECTION =
             "android.support.customtabs.action.CustomTabsService";
-    private static String sPackageNameToUse;
     private CustomTabsSession mCustomTabsSession;
     private CustomTabsClient mClient;
     private CustomTabsServiceConnection mConnection;
@@ -59,7 +54,7 @@ public class CustomTabsDelegate {
             return;
         }
         mConnection = new ServiceConnection(this);
-        CustomTabsClient.bindCustomTabsService(activity, sPackageNameToUse, mConnection);
+        CustomTabsClient.bindCustomTabsService(activity, getPackageNameToUse(activity), mConnection);
     }
 
     /**
@@ -115,9 +110,6 @@ public class CustomTabsDelegate {
     }
 
     private static String getPackageNameToUse(Context context) {
-        if (sPackageNameToUse != null) {
-            return sPackageNameToUse;
-        }
         // packagesSupportingCustomTabs contains all apps that can handle both VIEW intents
         // and service calls.
         List<String> packagesSupportingCustomTabs = new ArrayList<>();
@@ -132,16 +124,7 @@ public class CustomTabsDelegate {
                 packagesSupportingCustomTabs.add(info.activityInfo.packageName);
             }
         }
-        if (packagesSupportingCustomTabs.contains(STABLE_PACKAGE)) {
-            sPackageNameToUse = STABLE_PACKAGE;
-        } else if (packagesSupportingCustomTabs.contains(BETA_PACKAGE)) {
-            sPackageNameToUse = BETA_PACKAGE;
-        } else if (packagesSupportingCustomTabs.contains(DEV_PACKAGE)) {
-            sPackageNameToUse = DEV_PACKAGE;
-        } else if (packagesSupportingCustomTabs.contains(LOCAL_PACKAGE)) {
-            sPackageNameToUse = LOCAL_PACKAGE;
-        }
-        return sPackageNameToUse;
+        return packagesSupportingCustomTabs.isEmpty() ? null : packagesSupportingCustomTabs.get(0);
     }
 
     @Synthetic

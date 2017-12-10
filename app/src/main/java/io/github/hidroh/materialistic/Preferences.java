@@ -172,7 +172,7 @@ public class Preferences {
         return get(context, R.string.pref_navigation_vibrate, true);
     }
 
-    public static boolean customChromeTabEnabled(Context context) {
+    public static boolean customTabsEnabled(Context context) {
         return get(context, R.string.pref_custom_tab, true);
     }
 

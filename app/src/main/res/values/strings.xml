@@ -63,8 +63,8 @@
     <string name="pref_color_code_opacity_title">Color code opacity</string>
     <string name="pref_highlight_updated_title">Highlight updated stories</string>
     <string name="pref_highlight_updated_summary">Show changes from last refresh</string>
-    <string name="pref_custom_tab_title">Use custom Chrome tab</string>
-    <string name="pref_custom_tab_summary">Open Chrome tab instead of browser</string>
+    <string name="pref_custom_tab_title">Use custom tabs</string>
+    <string name="pref_custom_tab_summary">Open a browser tab instead of full browser</string>
     <string name="pref_story_display_title">Default open</string>
     <string name="pref_theme_title">Theme</string>
     <string name="pref_daynight_title">Auto day-night mode</string>

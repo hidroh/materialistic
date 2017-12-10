@@ -589,7 +589,7 @@ public class AppUtils {
     @NonNull
     private static Intent createViewIntent(Context context, @Nullable WebItem item,
                                            String url, @Nullable CustomTabsSession session) {
-        if (Preferences.customChromeTabEnabled(context)) {
+        if (Preferences.customTabsEnabled(context)) {
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(session)
                     .setToolbarColor(ContextCompat.getColor(context,
                             AppUtils.getThemedResId(context, R.attr.colorPrimary)))
