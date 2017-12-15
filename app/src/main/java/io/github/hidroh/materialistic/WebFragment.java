@@ -103,6 +103,7 @@ public class WebFragment extends LazyLoadFragment
     private View mButtonNext;
     protected ProgressBar mProgressBar;
     private boolean mFullscreen;
+    private boolean mIsPdf;
     protected String mContent;
     private AppUtils.SystemUiHelper mSystemUiHelper;
     private View mFragmentView;
@@ -307,12 +308,26 @@ public class WebFragment extends LazyLoadFragment
 
     @SuppressLint("AddJavascriptInterface")
     private void reloadUrl(String url, @Nullable String pdfFilePath) {
+        mIsPdf = false;
         if (mPdfAndroidJavascriptBridge != null) {
             mPdfAndroidJavascriptBridge.cleanUp();
             mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
         }
         if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
-            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(pdfFilePath, this::offerExternalApp);
+            setProgress(80);
+            mIsPdf = true;
+            mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(pdfFilePath, new PdfAndroidJavascriptBridge.Callbacks() {
+                @Override
+                public void onFailure() {
+                    offerExternalApp();
+                    setProgress(100);
+                }
+
+                @Override
+                public void onLoad() {
+                    setProgress(100);
+                }
+            });
             mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
             mWebView.setInitialScale(1);
         }
@@ -431,10 +446,9 @@ public class WebFragment extends LazyLoadFragment
             @Override
             public void onProgressChanged(android.webkit.WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                mProgressBar.setProgress(newProgress);
-                mProgressBar.setVisibility(newProgress == 100 ? GONE : VISIBLE);
-                mButtonRefresh.setImageResource(newProgress == 100 ?
-                        R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
+                if (!mIsPdf) {
+                    setProgress(newProgress);
+                }
             }
         });
         mWebView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
@@ -442,6 +456,8 @@ public class WebFragment extends LazyLoadFragment
                 return;
             }
             if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
+                setProgress(10);
+                mIsPdf = true;
                 downloadFileAndRenderPdf();
             } else {
                 offerExternalApp();
@@ -459,6 +475,13 @@ public class WebFragment extends LazyLoadFragment
         mWebView.setVisibility(GONE);
         getActivity().findViewById(R.id.empty).setVisibility(VISIBLE);
         getActivity().findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
+    }
+
+    private void setProgress(int progress) {
+        mProgressBar.setProgress(progress);
+        mProgressBar.setVisibility(progress == 100 ? GONE : VISIBLE);
+        mButtonRefresh.setImageResource(progress == 100 ?
+                R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -639,11 +662,13 @@ public class WebFragment extends LazyLoadFragment
     static class PdfAndroidJavascriptBridge {
         private File mFile;
         private @Nullable RandomAccessFile mRandomAccessFile;
-        private @Nullable PdfAndroidJavascriptBridgeFailureCallback mOnFailure;
+        private @Nullable Callbacks mCallback;
+        private Handler mHandler;
 
-        PdfAndroidJavascriptBridge(String filePath, @Nullable PdfAndroidJavascriptBridgeFailureCallback onFailure) {
+        PdfAndroidJavascriptBridge(String filePath, @Nullable Callbacks callback) {
             mFile = new File(filePath);
-            mOnFailure = onFailure;
+            mCallback = callback;
+            mHandler = new Handler(Looper.getMainLooper());
         }
 
         @JavascriptInterface
@@ -673,9 +698,16 @@ public class WebFragment extends LazyLoadFragment
         }
 
         @JavascriptInterface
+        public void onLoad() {
+            if (mCallback != null) {
+                mHandler.post(() -> mCallback.onLoad());
+            }
+        }
+
+        @JavascriptInterface
         public void onFailure() {
-            if (mOnFailure != null) {
-                new Handler(Looper.getMainLooper()).post(() -> mOnFailure.onFailure());
+            if (mCallback != null) {
+                mHandler.post(() -> mCallback.onFailure());
             }
         }
 
@@ -697,9 +729,10 @@ public class WebFragment extends LazyLoadFragment
                 super.finalize();
             }
         }
-    }
 
-    interface PdfAndroidJavascriptBridgeFailureCallback {
-        void onFailure();
+        interface Callbacks {
+            void onFailure();
+            void onLoad();
+        }
     }
 }
