@@ -314,18 +314,18 @@ public class WebFragment extends LazyLoadFragment
             mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
         }
         if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
-            mProgressBar.setProgress(80);
+            setProgress(80);
             mIsPdf = true;
             mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(pdfFilePath, new PdfAndroidJavascriptBridge.Callbacks() {
                 @Override
                 public void onFailure() {
                     offerExternalApp();
+                    setProgress(100);
                 }
 
                 @Override
                 public void onLoad() {
-                    mProgressBar.setProgress(100);
-                    mProgressBar.setVisibility(GONE);
+                    setProgress(100);
                 }
             });
             mWebView.addJavascriptInterface(mPdfAndroidJavascriptBridge, "PdfAndroidJavascriptBridge");
@@ -447,10 +447,7 @@ public class WebFragment extends LazyLoadFragment
             public void onProgressChanged(android.webkit.WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
                 if (!mIsPdf) {
-                    mProgressBar.setProgress(newProgress);
-                    mProgressBar.setVisibility(newProgress == 100 ? GONE : VISIBLE);
-                    mButtonRefresh.setImageResource(newProgress == 100 ?
-                            R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
+                    setProgress(newProgress);
                 }
             }
         });
@@ -459,8 +456,7 @@ public class WebFragment extends LazyLoadFragment
                 return;
             }
             if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
-                mProgressBar.setVisibility(VISIBLE);
-                mProgressBar.setProgress(10);
+                setProgress(10);
                 mIsPdf = true;
                 downloadFileAndRenderPdf();
             } else {
@@ -479,6 +475,13 @@ public class WebFragment extends LazyLoadFragment
         mWebView.setVisibility(GONE);
         getActivity().findViewById(R.id.empty).setVisibility(VISIBLE);
         getActivity().findViewById(R.id.download_button).setOnClickListener(v -> startActivity(intent));
+    }
+
+    private void setProgress(int progress) {
+        mProgressBar.setProgress(progress);
+        mProgressBar.setVisibility(progress == 100 ? GONE : VISIBLE);
+        mButtonRefresh.setImageResource(progress == 100 ?
+                R.drawable.ic_refresh_white_24dp : R.drawable.ic_clear_white_24dp);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
