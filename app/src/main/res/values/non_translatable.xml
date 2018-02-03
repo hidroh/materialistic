@@ -65,13 +65,11 @@
                 </style>
             </head>
             <body>
-                <h3>3.1</h3>
+                <h3>3.2</h3>
                 <ul>
-                    <li>Auto day-night option<sup>new!</sup>
-                        <br/>
-                        <small>When this option is turned on, the app will auto switch between light/dark version of selected themes based on sunrise/sunset time</small>
-                    </li>
-                    <li>Option to adjust opacity of comment color codes to make them lighter/darker</li>
+                    <li>In-app PDF reader<sup>new!</sup>, many thanks to <a href="https://github.com/astashov">Astashov</a>!</li>
+                    <li>Better Oreo support</sup>
+                    <li>Better custom tabs support for non-Chrome browsers</li>
                 </ul>
             </body>
         </html>
