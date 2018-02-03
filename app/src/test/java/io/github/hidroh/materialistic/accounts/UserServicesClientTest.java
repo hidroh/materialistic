@@ -62,7 +62,9 @@ public class UserServicesClientTest {
     @Test
     public void testLoginSuccess() throws IOException {
         when(call.execute()).thenReturn(responseBuilder
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_MOVED_TEMP)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", false, callback);
         verify(callback).onDone(eq(true));
@@ -72,7 +74,9 @@ public class UserServicesClientTest {
     public void testRegisterFailed() throws IOException {
         when(call.execute()).thenReturn(responseBuilder
                 .body(ResponseBody.create(MediaType.parse("text/html"), "<body>Message<br/></body>"))
-                .code(HttpURLConnection.HTTP_OK).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_OK)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", true, callback);
         verify(callback).onError(throwableCaptor.capture());
@@ -91,7 +95,9 @@ public class UserServicesClientTest {
     @Test
     public void testVoteSuccess() throws IOException {
         when(call.execute()).thenReturn(responseBuilder
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_MOVED_TEMP)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         assertTrue(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(callback).onDone(eq(true));
@@ -100,7 +106,9 @@ public class UserServicesClientTest {
     @Test
     public void testVoteFailed() throws IOException {
         when(call.execute()).thenReturn(responseBuilder
-                .code(HttpURLConnection.HTTP_OK).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_OK)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         assertTrue(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
         verify(callback).onDone(eq(false));
@@ -115,7 +123,7 @@ public class UserServicesClientTest {
     }
 
     @Test
-    public void testVoteNoMatchingAccount() throws IOException {
+    public void testVoteNoMatchingAccount() {
         Preferences.setUsername(RuntimeEnvironment.application, "another");
         UserServices.Callback callback = mock(UserServices.Callback.class);
         assertFalse(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
@@ -125,14 +133,16 @@ public class UserServicesClientTest {
     @Test
     public void testCommentSuccess() throws IOException {
         when(call.execute()).thenReturn(responseBuilder
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_MOVED_TEMP)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.reply(RuntimeEnvironment.application, "1", "reply", callback);
         verify(callback).onDone(eq(true));
     }
 
     @Test
-    public void testCommentNotLoggedIn() throws IOException {
+    public void testCommentNotLoggedIn() {
         Preferences.setUsername(RuntimeEnvironment.application, null);
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.reply(RuntimeEnvironment.application, "1", "reply", callback);
@@ -141,7 +151,7 @@ public class UserServicesClientTest {
     }
 
     @Test
-    public void testVoteNoAccount() throws IOException {
+    public void testVoteNoAccount() {
         ShadowAccountManager.get(RuntimeEnvironment.application)
                 .removeAccount(account, null, null);
         UserServices.Callback callback = mock(UserServices.Callback.class);
@@ -150,7 +160,7 @@ public class UserServicesClientTest {
     }
 
     @Test
-    public void testSubmitNoAccount() throws IOException {
+    public void testSubmitNoAccount() {
         ShadowAccountManager.get(RuntimeEnvironment.application)
                 .removeAccount(account, null, null);
         UserServices.Callback callback = mock(UserServices.Callback.class);
@@ -165,8 +175,11 @@ public class UserServicesClientTest {
                 .thenReturn(createResponseBuilder()
                         .body(ResponseBody.create(MediaType.parse("text/html"),
                                 "<input \"name\"=\"fnid\" value=\"unique\">"))
-                        .code(HttpURLConnection.HTTP_OK).build())
+                        .message("")
+                        .code(HttpURLConnection.HTTP_OK)
+                        .build())
                 .thenReturn(createResponseBuilder()
+                        .message("")
                         .code(HttpURLConnection.HTTP_MOVED_TEMP)
                         .header("location", "newest")
                         .build());
@@ -182,8 +195,11 @@ public class UserServicesClientTest {
                 .thenReturn(createResponseBuilder()
                         .body(ResponseBody.create(MediaType.parse("text/html"),
                                 "<input \"name\"=\"fnid\" value=\"unique\">"))
-                        .code(HttpURLConnection.HTTP_OK).build())
+                        .message("")
+                        .code(HttpURLConnection.HTTP_OK)
+                        .build())
                 .thenReturn(createResponseBuilder()
+                        .message("")
                         .code(HttpURLConnection.HTTP_MOVED_TEMP)
                         .header("location", "item?id=1234")
                         .build());
@@ -199,8 +215,11 @@ public class UserServicesClientTest {
                 .thenReturn(createResponseBuilder()
                         .body(ResponseBody.create(MediaType.parse("text/html"),
                                 "<input \"name\"=\"fnid\" value=\"unique\">"))
-                        .code(HttpURLConnection.HTTP_OK).build())
+                        .message("")
+                        .code(HttpURLConnection.HTTP_OK)
+                        .build())
                 .thenReturn(createResponseBuilder()
+                        .message("")
                         .code(HttpURLConnection.HTTP_OK)
                         .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
@@ -215,7 +234,9 @@ public class UserServicesClientTest {
                 .thenReturn(createResponseBuilder()
                         .body(ResponseBody.create(MediaType.parse("text/html"),
                                 "<input \"name\"=\"fnid\" value=\"unique\">"))
-                        .code(HttpURLConnection.HTTP_OK).build())
+                        .message("")
+                        .code(HttpURLConnection.HTTP_OK)
+                        .build())
                 .thenThrow(new IOException());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
@@ -227,7 +248,9 @@ public class UserServicesClientTest {
     public void testSubmitParsingNoInput() throws IOException {
         when(call.execute()).thenReturn(createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"), ""))
-                .code(HttpURLConnection.HTTP_OK).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_OK)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(callback).onError(any(Throwable.class));
@@ -238,7 +261,9 @@ public class UserServicesClientTest {
         when(call.execute()).thenReturn(createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"hiddenfield\" value=\"unique\">"))
-                .code(HttpURLConnection.HTTP_OK).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_OK)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(callback).onError(any(Throwable.class));
@@ -249,7 +274,9 @@ public class UserServicesClientTest {
         when(call.execute()).thenReturn(createResponseBuilder()
                 .body(ResponseBody.create(MediaType.parse("text/html"),
                         "<input \"name\"=\"fnid\">"))
-                .code(HttpURLConnection.HTTP_OK).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_OK)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(callback).onError(any(Throwable.class));
@@ -258,7 +285,9 @@ public class UserServicesClientTest {
     @Test
     public void testSubmitLoginFailed() throws IOException {
         when(call.execute()).thenReturn(createResponseBuilder()
-                .code(HttpURLConnection.HTTP_MOVED_TEMP).build());
+                .message("")
+                .code(HttpURLConnection.HTTP_MOVED_TEMP)
+                .build());
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "url", true, callback);
         verify(callback).onError(any(Throwable.class));
@@ -275,6 +304,7 @@ public class UserServicesClientTest {
     private Response.Builder createResponseBuilder() {
         return new Response.Builder()
                 .protocol(Protocol.HTTP_2)
-                .request(new Request.Builder().url("http://example.com").build());
+                .request(new Request.Builder().url("http://example.com")
+                        .build());
     }
 }
