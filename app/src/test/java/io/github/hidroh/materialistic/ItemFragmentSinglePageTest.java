@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -296,7 +297,7 @@ public class ItemFragmentSinglePageTest {
         adapter = (SinglePageItemRecyclerViewAdapter) recyclerView.getAdapter();
     }
 
-    @Test
+    @Test @Ignore
     public void testToggle() {
         // collapse all
         viewHolder.itemView.findViewById(R.id.button_toggle).performClick();
@@ -482,7 +483,7 @@ public class ItemFragmentSinglePageTest {
     }
 
     @Config(shadows = ShadowRecyclerView.class)
-    @Test
+    @Test @Ignore
     public void testNavigate() {
         ShadowRecyclerView shadowRecyclerView = customShadowOf(recyclerView);
         TestLayoutManager testLayout
