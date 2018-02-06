@@ -117,7 +117,7 @@
     <string name="popular_range_past_year">Año pasado</string>
     <string name="show_me">Muestramelo</string>
     <string name="show_all">Mostrar todas</string>
-    <string name="whats_this">Ésto qué es?</string>
+    <string name="whats_this">¿ésto qué es?</string>
     <string name="got_it">Entendido</string>
     <string name="help_new_story">Nueva historia desde la última actualización</string>
     <string name="help_promoted_story">Historia promocionada desde la última actualización</string>
@@ -221,6 +221,11 @@
     <string name="submission_guidelines">Guia para los envios</string>
     <string name="title_activity_user">Mi perfil</string>
     <string name="user_info">Creado: %1$s</string>
+    <plurals name="submissions_count">
+        <item quantity="zero">%1$s envíos</item>
+        <item quantity="one">%1$s envío</item>
+        <item quantity="other">%1$s envíos</item>
+    </plurals>
     <string name="view_story">Ver historia</string>
     <string name="user_failed">Imposible cargar usuario. Por favor, intentalo de nuevo.</string>
     <string name="dead_prefix">[muerto]</string>
@@ -268,4 +273,5 @@
     <string name="share_file">Compartir archivo</string>
     <string name="privacy_policy">Política de privacidad</string>
     <string name="notification_channel_downloads">Descargas</string>
+    <string name="hint_nav_short">Deslizar \\u2191 \\u2193 \\u2192 \\u2190 parra navegar Pulsación larga para volver a posicionar</string>
 </resources>
