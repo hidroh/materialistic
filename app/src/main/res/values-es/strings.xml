@@ -222,7 +222,6 @@
     <string name="title_activity_user">Mi perfil</string>
     <string name="user_info">Creado: %1$s</string>
     <plurals name="submissions_count">
-        <item quantity="zero">%1$s envíos</item>
         <item quantity="one">%1$s envío</item>
         <item quantity="other">%1$s envíos</item>
     </plurals>
