@@ -140,11 +140,7 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="title_hint">Title</string>
     <string name="comment_hint">Comment</string>
-    <string name="feedback_note">
-        <![CDATA[
-            Your feedback will be made public as a <a href="https://github.com/hidroh/materialistic/issues">Materialistic Github issue</a>.
-        ]]>
-    </string>
+    <string name="feedback_note">"         <![CDATA[             Your feedback will be made public as a <a href="https://github.com/hidroh/materialistic/issues">Materialistic Github issue</a>.         ]]>     "</string>
     <string name="title_required">Title is required</string>
     <string name="comment_required">Comment is required</string>
     <string name="feedback_sent">Feedback sent. Thank you!</string>
@@ -180,7 +176,7 @@
     <string name="help_navigate">Display a floating navigation button that responds to swipe gestures to navigate nested comment threads.</string>
     <string name="help_navigate_up">Swipe \u2191: go to previous comment</string>
     <string name="help_navigate_down">Swipe \u2193: go to next comment</string>
-    <string name="help_navigate_right">Swipe \u2192: expand &amp; go to 1st reply</string>
+    <string name="help_navigate_right">Swipe →: expand &amp; go to 1st reply</string>
     <string name="help_navigate_left">Swipe \u2190: go back to parent</string>
     <string name="help_navigate_move">Long press to drag navigation button to new position</string>
     <string name="readability">Readability</string>
