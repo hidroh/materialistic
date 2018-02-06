@@ -227,7 +227,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     }
 
     private void bind() {
-        SpannableString karma = new SpannableString(String.format(Locale.US, KARMA,
+        SpannableString karma = new SpannableString(String.format(Locale.getDefault(), KARMA,
                 NumberFormat.getInstance(Locale.getDefault()).format(mUser.getKarma())));
         karma.setSpan(new RelativeSizeSpan(0.8f), 0, karma.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         mTitle.append(karma);

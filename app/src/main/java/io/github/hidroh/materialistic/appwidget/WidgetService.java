@@ -173,7 +173,7 @@ public class WidgetService extends RemoteViewsService {
         }
 
         private SpannableString getSpan(int value, String format, int hotThreshold) {
-            String text = String.format(Locale.US, format, value);
+            String text = String.format(Locale.getDefault(), format, value);
             SpannableString spannable = new SpannableString(text);
             if (value >= hotThreshold) {
                 spannable.setSpan(new ForegroundColorSpan(

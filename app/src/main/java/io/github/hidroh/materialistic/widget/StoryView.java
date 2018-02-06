@@ -213,7 +213,7 @@ public class StoryView extends RelativeLayout implements Checkable {
     }
 
     public void setPromoted(int change) {
-        SpannableString spannable = new SpannableString(String.format(Locale.US, PROMOTED, change));
+        SpannableString spannable = new SpannableString(String.format(Locale.getDefault(), PROMOTED, change));
         spannable.setSpan(new SuperscriptSpan(), 0, spannable.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new RelativeSizeSpan(0.6f), 0, spannable.length(),
