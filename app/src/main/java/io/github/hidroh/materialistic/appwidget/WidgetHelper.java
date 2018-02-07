@@ -62,7 +62,7 @@ class WidgetHelper {
     }
 
     static String getConfigName(int appWidgetId) {
-        return String.format(Locale.getDefault(), SP_NAME, appWidgetId);
+        return String.format(Locale.US, SP_NAME, appWidgetId);
     }
 
     void configure(int appWidgetId) {

@@ -246,20 +246,20 @@ public class Preferences {
     public static void saveDraft(Context context, String parentId, String draft) {
         context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
                 .edit()
-                .putString(String.format(Locale.getDefault(), DRAFT_PREFIX, parentId), draft)
+                .putString(String.format(Locale.US, DRAFT_PREFIX, parentId), draft)
                 .apply();
     }
 
     public static String getDraft(Context context, String parentId) {
         return context
                 .getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
-                .getString(String.format(Locale.getDefault(), DRAFT_PREFIX, parentId), null);
+                .getString(String.format(Locale.US, DRAFT_PREFIX, parentId), null);
     }
 
     public static void deleteDraft(Context context, String parentId) {
         context.getSharedPreferences(context.getPackageName() + PREFERENCES_DRAFT, Context.MODE_PRIVATE)
                 .edit()
-                .remove(String.format(Locale.getDefault(), DRAFT_PREFIX, parentId))
+                .remove(String.format(Locale.US, DRAFT_PREFIX, parentId))
                 .apply();
     }
 

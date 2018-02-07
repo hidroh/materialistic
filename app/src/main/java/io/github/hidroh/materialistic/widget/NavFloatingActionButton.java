@@ -275,9 +275,9 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
         if (mPreferences == null) {
             mPreferences = getSharedPreferences(getContext());
             DisplayMetrics metrics = getDisplayMetrics();
-            mPreferenceX = String.format(Locale.getDefault(), PREFERENCES_FAB_X,
+            mPreferenceX = String.format(Locale.US, PREFERENCES_FAB_X,
                     getContext().getClass().getName(), metrics.widthPixels, metrics.heightPixels);
-            mPreferenceY = String.format(Locale.getDefault(), PREFERENCES_FAB_Y,
+            mPreferenceY = String.format(Locale.US, PREFERENCES_FAB_Y,
                     getContext().getClass().getName(), metrics.widthPixels, metrics.heightPixels);
         }
         return mPreferences;
