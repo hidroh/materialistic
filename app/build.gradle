@@ -18,7 +18,7 @@ android {
                 'proguard-square.pro',
                 'proguard-support.pro',
                 'proguard-rx.pro'
-        resConfigs "en", "zh-rCN"
+        resConfigs "en", "zh-rCN", "es"
     }
 
     buildTypes {
