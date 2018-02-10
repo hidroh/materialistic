@@ -172,7 +172,8 @@ class WidgetHelper {
     private PendingIntent createRefreshPendingIntent(int appWidgetId) {
         return PendingIntent.getBroadcast(mContext, appWidgetId,
                 new Intent(WidgetProvider.ACTION_REFRESH_WIDGET)
-                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId),
+                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        .setPackage(mContext.getPackageName()),
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
