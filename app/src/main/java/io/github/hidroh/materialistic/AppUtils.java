@@ -415,6 +415,9 @@ public class AppUtils {
                         dialog.dismiss();
                         break;
                     case DialogInterface.BUTTON_NEUTRAL:
+                        if (selection < 0) {
+                            break;
+                        }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                             AccountManager.get(context).removeAccount(accounts[selection], null, null, null);
                         } else {
