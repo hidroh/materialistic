@@ -40,6 +40,12 @@ public class Application extends android.app.Application {
     }
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        mApplicationGraph = ObjectGraph.create();
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         AppCompatDelegate.setDefaultNightMode(Preferences.Theme.getAutoDayNightMode(this));
@@ -55,7 +61,6 @@ public class Application extends android.app.Application {
                     .penaltyLog()
                     .build());
         }
-        mApplicationGraph = ObjectGraph.create();
         Preferences.migrate(this);
         TYPE_FACE = FontCache.getInstance().get(this, Preferences.Theme.getTypeface(this));
         AppUtils.registerAccountsUpdatedListener(this);

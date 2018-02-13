@@ -4,6 +4,7 @@ import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.arch.persistence.db.SupportSQLiteOpenHelper;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -14,8 +15,6 @@ import android.support.v7.widget.SearchView;
 import android.view.MenuItem;
 import android.view.View;
 
-import io.github.hidroh.materialistic.data.*;
-import okhttp3.Call;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowAccountManager;
 
@@ -27,6 +26,22 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.appwidget.WidgetConfigActivity;
 import io.github.hidroh.materialistic.appwidget.WidgetConfigActivityTest;
+import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.FavoriteManagerTest;
+import io.github.hidroh.materialistic.data.FeedbackClient;
+import io.github.hidroh.materialistic.data.FileDownloader;
+import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ItemSyncJobServiceTest;
+import io.github.hidroh.materialistic.data.ItemSyncService;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.RestServiceFactory;
+import io.github.hidroh.materialistic.data.SessionManager;
+import io.github.hidroh.materialistic.data.SyncDelegate;
+import io.github.hidroh.materialistic.data.SyncScheduler;
+import io.github.hidroh.materialistic.data.UserManager;
+import io.github.hidroh.materialistic.test.InMemoryDatabase;
 import io.github.hidroh.materialistic.test.TestFavoriteActivity;
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestReadabilityActivity;
@@ -38,6 +53,7 @@ import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SubmissionRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ThreadPreviewRecyclerViewAdapter;
+import okhttp3.Call;
 import rx.Scheduler;
 import rx.schedulers.Schedulers;
 
@@ -81,6 +97,7 @@ import static org.mockito.Mockito.when;
                 SubmissionRecyclerViewAdapter.class,
                 ThreadPreviewRecyclerViewAdapter.class,
                 ItemSyncService.class,
+                MaterialisticProvider.class,
                 // test classes
                 AppUtilsTest.class,
                 SettingsActivityTest.class,
@@ -96,6 +113,7 @@ import static org.mockito.Mockito.when;
                 ListFragmentViewHolderEdgeTest.class,
                 FavoriteActivityTest.class,
                 FavoriteActivityEmptyTest.class,
+                FavoriteManagerTest.class,
                 TestFavoriteActivity.class,
                 WebFragmentLocalTest.class,
                 WebFragmentTest.class,
@@ -365,5 +383,15 @@ public class TestActivityModule {
     @Provides @Singleton @Named(DataModule.MAIN_THREAD)
     public Scheduler provideMainThreadScheduler() {
         return Schedulers.immediate();
+    }
+
+    @Provides
+    public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao() {
+        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getSavedStoriesDao();
+    }
+
+    @Provides
+    public SupportSQLiteOpenHelper provideOpenHelper() {
+        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getOpenHelper();
     }
 }

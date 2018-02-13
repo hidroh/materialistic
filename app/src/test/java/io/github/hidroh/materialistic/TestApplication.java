@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import dagger.ObjectGraph;
+import io.github.hidroh.materialistic.test.InMemoryDatabase;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
 public class TestApplication extends Application implements TestLifecycleApplication {
@@ -47,6 +48,7 @@ public class TestApplication extends Application implements TestLifecycleApplica
     public void afterTest(Method method) {
         ShadowSnackbar.reset();
         try {
+            InMemoryDatabase.reset();
             resetWindowManager();
         } catch (Exception e) {
             System.err.println(e.toString());

@@ -312,7 +312,8 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncWebCacheEmptyUrl() {
-        new FavoriteManager(new InMemoryCache(), Schedulers.immediate())
+        new FavoriteManager(new InMemoryCache(), Schedulers.immediate(),
+                mock(MaterialisticDatabase.SavedStoriesDao.class))
                 .add(service, new Favorite("1", null, "title", System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }

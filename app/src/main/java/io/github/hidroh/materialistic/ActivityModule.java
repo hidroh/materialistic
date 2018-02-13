@@ -26,12 +26,14 @@ import dagger.Provides;
 import io.github.hidroh.materialistic.appwidget.WidgetService;
 import io.github.hidroh.materialistic.data.ItemSyncJobService;
 import io.github.hidroh.materialistic.data.ItemSyncService;
+import io.github.hidroh.materialistic.data.MaterialisticProvider;
 
 @Module(
         injects = {
                 ItemSyncService.class,
                 WidgetService.class,
-                ItemSyncJobService.class
+                ItemSyncJobService.class,
+                MaterialisticProvider.class
         },
         library = true,
         includes = DataModule.class

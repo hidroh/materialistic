@@ -26,14 +26,17 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.LocalCache;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.MaterialisticProvider;
 
 public class Cache implements LocalCache {
     private final ContentResolver mContentResolver;
+    private final MaterialisticDatabase.SavedStoriesDao mSavedStoriesDao;
 
     @Inject
-    public Cache(Context context) {
+    public Cache(Context context, MaterialisticDatabase.SavedStoriesDao savedStoriesDao) {
         mContentResolver = context.getContentResolver();
+        mSavedStoriesDao = savedStoriesDao;
     }
 
     @Nullable
@@ -86,16 +89,6 @@ public class Cache implements LocalCache {
 
     @Override
     public boolean isFavorite(String itemId) {
-        Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_FAVORITE,
-                null,
-                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId},
-                null);
-        boolean result = false;
-        if (cursor != null) {
-            result = cursor.getCount() > 0;
-            cursor.close();
-        }
-        return result;
+        return mSavedStoriesDao.selectByItemId(itemId) != null;
     }
 }
