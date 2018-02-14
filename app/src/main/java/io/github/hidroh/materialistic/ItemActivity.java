@@ -60,7 +60,7 @@ import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.WebItem;
@@ -154,7 +154,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         AppUtils.toggleFab(mNavButton, false);
         AppUtils.toggleFab(mReplyButton, false);
         final Intent intent = getIntent();
-        getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
+        getContentResolver().registerContentObserver(MaterialisticDatabase.URI_FAVORITE,
                 true, mObserver);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                 new IntentFilter(WebFragment.ACTION_FULLSCREEN));

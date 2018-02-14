@@ -3,7 +3,6 @@ package io.github.hidroh.materialistic.data;
 import android.accounts.Account;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -28,10 +27,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.TestApplication;
 import io.github.hidroh.materialistic.data.android.Cache;
-import io.github.hidroh.materialistic.test.InMemoryCache;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
@@ -52,33 +53,50 @@ import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 @Config(shadows = {ShadowWebView.class})
 @RunWith(TestRunner.class)
 public class FavoriteManagerTest {
+    @Inject MaterialisticDatabase.SavedStoriesDao savedStoriesDao;
+    @Inject MaterialisticDatabase.ReadStoriesDao readStoriesDao;
+    @Inject MaterialisticDatabase.ReadableDao readableDao;
     private ShadowContentResolver resolver;
     private FavoriteManager manager;
-    private LocalCache cache;
 
     @Before
     public void setUp() {
+        TestApplication.applicationGraph.inject(this);
         resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
-        ContentValues cv = new ContentValues();
-        cv.put("itemid", "1");
-        cv.put("title", "title");
-        cv.put("url", "http://example.com");
-        cv.put("time", String.valueOf(System.currentTimeMillis()));
-        resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        cv = new ContentValues();
-        cv.put("itemid", "2");
-        cv.put("title", "ask HN");
-        cv.put("url", "http://example.com");
-        cv.put("time", String.valueOf(System.currentTimeMillis()));
-        resolver.insert(MaterialisticProvider.URI_FAVORITE, cv);
-        cache = new InMemoryCache() {
-            Cache androidCache = new Cache(RuntimeEnvironment.application);
+        savedStoriesDao.insert(MaterialisticDatabase.SavedStory.from(new TestWebItem() {
             @Override
-            public boolean isFavorite(String itemId) {
-                return androidCache.isFavorite(itemId);
+            public String getDisplayedTitle() {
+                return "title";
             }
-        };
-        manager = new FavoriteManager(cache, Schedulers.immediate()) {
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public String getId() {
+                return "1";
+            }
+        }));
+        savedStoriesDao.insert(MaterialisticDatabase.SavedStory.from(new TestWebItem() {
+            @Override
+            public String getDisplayedTitle() {
+                return "ask HN";
+            }
+
+            @Override
+            public String getUrl() {
+                return "http://example.com";
+            }
+
+            @Override
+            public String getId() {
+                return "2";
+            }
+        }));
+        LocalCache cache = new Cache(RuntimeEnvironment.application, savedStoriesDao, readStoriesDao, readableDao);
+        manager = new FavoriteManager(cache, Schedulers.immediate(), savedStoriesDao) {
             @Override
             protected Uri getUriForFile(Context context, File file) {
                 return Uri.parse("content://" + FavoriteManager.FILE_AUTHORITY + "/files/saved/materialistic-export.txt");
@@ -172,7 +190,7 @@ public class FavoriteManagerTest {
         });
         assertThat(resolver.getNotifiedUris()).isNotEmpty();
         assertTrue(ShadowContentResolver.isSyncActive(new Account("Materialistic", BuildConfig.APPLICATION_ID),
-                MaterialisticProvider.PROVIDER_AUTHORITY));
+                SyncContentProvider.PROVIDER_AUTHORITY));
     }
 
     @Test

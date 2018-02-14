@@ -143,7 +143,7 @@ public class SyncDelegate {
             } else {
                 syncAccount = accounts[0];
             }
-            ContentResolver.requestSync(syncAccount, MaterialisticProvider.PROVIDER_AUTHORITY, extras);
+            ContentResolver.requestSync(syncAccount, SyncContentProvider.PROVIDER_AUTHORITY, extras);
         }
     }
 

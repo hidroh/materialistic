@@ -17,7 +17,6 @@
 package io.github.hidroh.materialistic.data;
 
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.CursorWrapper;
@@ -25,11 +24,13 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -61,10 +62,6 @@ import rx.android.schedulers.AndroidSchedulers;
 public class FavoriteManager implements LocalItemManager<Favorite> {
 
     private static final int LOADER = 0;
-    /**
-     * {@link android.content.Intent#getAction()} for broadcasting getting favorites matching query
-     */
-    public static final String ACTION_GET = FavoriteManager.class.getName() + ".ACTION_GET";
     private static final String URI_PATH_ADD = "add";
     private static final String URI_PATH_REMOVE = "remove";
     private static final String URI_PATH_CLEAR = "clear";
@@ -73,6 +70,8 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private static final String FILENAME_EXPORT = "materialistic-export.txt";
     private final LocalCache mCache;
     private final Scheduler mIoScheduler;
+    @Synthetic final MaterialisticDatabase.SavedStoriesDao mDao;
+    @Synthetic FavoriteRoomLoader mLoader;
     @Synthetic Cursor mCursor;
     private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
     private final SyncScheduler mSyncScheduler = new SyncScheduler();
@@ -90,14 +89,12 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     @Override
     public void attach(@NonNull Context context, @NonNull LoaderManager loaderManager,
                        @NonNull Observer observer, String filter) {
+        mLoader = new FavoriteRoomLoader(context, mDao, filter);
         loaderManager.restartLoader(FavoriteManager.LOADER, null,
                 new LoaderManager.LoaderCallbacks<android.database.Cursor>() {
                     @Override
                     public Loader<android.database.Cursor> onCreateLoader(int id, Bundle args) {
-                        if (!TextUtils.isEmpty(filter)) {
-                            return new FavoriteManager.CursorLoader(context, filter);
-                        }
-                        return new FavoriteManager.CursorLoader(context);
+                        return mLoader;
                     }
 
                     @Override
@@ -105,7 +102,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                                                android.database.Cursor data) {
                         if (data != null) {
                             data.setNotificationUri(context.getContentResolver(),
-                                    MaterialisticProvider.URI_FAVORITE);
+                                    MaterialisticDatabase.URI_FAVORITE);
                             mCursor = new Cursor(data);
                         } else {
                             mCursor = null;
@@ -126,12 +123,16 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         if (mCursor != null) {
             mCursor.close();
         }
+        mLoader = null;
     }
 
     @Inject
-    public FavoriteManager(LocalCache cache, @Named(DataModule.IO_THREAD) Scheduler ioScheduler) {
+    public FavoriteManager(LocalCache cache,
+                           @Named(DataModule.IO_THREAD) Scheduler ioScheduler,
+                           MaterialisticDatabase.SavedStoriesDao dao) {
         mCache = cache;
         mIoScheduler = ioScheduler;
+        mDao = dao;
     }
 
     /**
@@ -143,7 +144,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         Context appContext = context.getApplicationContext();
         notifyExportStart(appContext);
         Observable.defer(() -> Observable.just(query))
-                .map(filter -> query(appContext, filter))
+                .map(filter -> query(filter))
                 .filter(cursor -> cursor != null && cursor.moveToFirst())
                 .map(cursor -> {
                     try {
@@ -169,7 +170,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     public void add(Context context, WebItem story) {
         Observable.defer(() -> Observable.just(story))
                 .map(item -> {
-                    insert(context, item);
+                    insert(item);
                     return item.getId();
                 })
                 .map(itemId -> buildAdded().appendPath(story.getId()).build())
@@ -187,7 +188,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
      */
     public void clear(Context context, String query) {
         Observable.defer(() -> Observable.just(query))
-                .map(filter -> deleteMultiple(context, filter))
+                .map(filter -> deleteMultiple(filter))
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(count -> context.getContentResolver()
@@ -206,7 +207,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         }
         Observable.defer(() -> Observable.just(itemId))
                 .map(id -> {
-                    delete(context, id);
+                    delete(id);
                     return id;
                 })
                 .map(id -> buildRemoved().appendPath(itemId).build())
@@ -228,7 +229,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         Observable.defer(() -> Observable.from(itemIds))
                 .subscribeOn(mIoScheduler)
                 .map(itemId -> {
-                    delete(context, itemId);
+                    delete(itemId);
                     return itemId;
                 })
                 .map(itemId -> buildRemoved().appendPath(itemId).build())
@@ -246,60 +247,42 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     @WorkerThread
-    private android.database.Cursor query(Context context, String filter) {
-        String selection;
-        String[] selectionArgs;
+    private android.database.Cursor query(String filter) {
         if (TextUtils.isEmpty(filter)) {
-            selection = null;
-            selectionArgs = null;
-
+            return mDao.selectAllToCursor();
         } else {
-            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
-            selectionArgs = new String[]{"%" + filter + "%"};
+            return mDao.searchToCursor(filter);
         }
-        return context.getContentResolver()
-                .query(MaterialisticProvider.URI_FAVORITE,
-                        null,
-                        selection,
-                        selectionArgs,
-                        null);
     }
 
     @WorkerThread
-    private Uri insert(Context context, WebItem story) {
-        ContentValues cv = new ContentValues();
-        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID, story.getId());
-        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL, story.getUrl());
-        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE, story.getDisplayedTitle());
-        cv.put(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME,
-                story instanceof Favorite ?
-                        String.valueOf(((Favorite) story).getTime()) :
-                        String.valueOf(System.currentTimeMillis()));
-        return context.getContentResolver().
-                insert(MaterialisticProvider.URI_FAVORITE, cv);
+    private void insert(WebItem story) {
+        mDao.insert(MaterialisticDatabase.SavedStory.from(story));
+        if (mLoader != null) {
+            mLoader.forceLoad();
+        }
     }
 
     @WorkerThread
-    private int delete(Context context, String itemId) {
-        return context.getContentResolver()
-                .delete(MaterialisticProvider.URI_FAVORITE,
-                        MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                        new String[]{itemId});
+    private void delete(String itemId) {
+        mDao.deleteByItemId(itemId);
+        if (mLoader != null) {
+            mLoader.forceLoad();
+        }
     }
 
     @WorkerThread
-    private int deleteMultiple(Context context, String query) {
-        String selection;
-        String[] selectionArgs;
+    private int deleteMultiple(String query) {
+        int deleted;
         if (TextUtils.isEmpty(query)) {
-            selection = null;
-            selectionArgs = null;
+            deleted = mDao.deleteAll();
         } else {
-            selection = MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?";
-            selectionArgs = new String[]{"%" + query + "%"};
+            deleted = mDao.deleteByTitle(query);
         }
-        return context.getContentResolver()
-                .delete(MaterialisticProvider.URI_FAVORITE, selection, selectionArgs);
+        if (mLoader != null) {
+            mLoader.forceLoad();
+        }
+        return deleted;
     }
 
     @WorkerThread
@@ -350,15 +333,15 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     private static Uri.Builder buildAdded() {
-        return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_ADD);
+        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_ADD);
     }
 
     private static Uri.Builder buildRemoved() {
-        return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_REMOVE);
+        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_REMOVE);
     }
 
     private static Uri.Builder buildCleared() {
-        return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
+        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
     }
 
     private void notifyExportStart(Context context) {
@@ -411,36 +394,38 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         }
 
         Favorite getFavorite() {
-            final String itemId = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID));
-            final String url = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL));
-            final String title = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE));
-            final String time = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME));
+            final String itemId = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_ITEM_ID));
+            final String url = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_URL));
+            final String title = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_TITLE));
+            final String time = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_TIME));
             return new Favorite(itemId, url, title, Long.valueOf(time));
         }
     }
 
-    /**
-     * A {@link android.support.v4.content.CursorLoader} to query {@link Favorite}
-     */
-    static class CursorLoader extends android.support.v4.content.CursorLoader {
-        /**
-         * Constructs a cursor loader to query all {@link Favorite}
-         * @param context    an instance of {@link android.content.Context}
-         */
-        CursorLoader(Context context) {
-            super(context, MaterialisticProvider.URI_FAVORITE, null, null, null, null);
+    static class FavoriteRoomLoader extends AsyncTaskLoader<android.database.Cursor> {
+
+        private final String mQuery;
+        private final MaterialisticDatabase.SavedStoriesDao mDao;
+
+        FavoriteRoomLoader(Context context, MaterialisticDatabase.SavedStoriesDao dao, @Nullable String query) {
+            super(context);
+            mDao = dao;
+            mQuery = query;
         }
 
-        /**
-         * Constructs a cursor loader to query {@link Favorite}
-         * with title matching given query
-         * @param context   an instance of {@link android.content.Context}
-         * @param query     query to filter
-         */
-        CursorLoader(Context context, String query) {
-            super(context, MaterialisticProvider.URI_FAVORITE, null,
-                    MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE + " LIKE ?",
-                    new String[]{"%" + query + "%"}, null);
+        @Override
+        protected void onStartLoading() {
+            forceLoad();
+        }
+
+        @Nullable
+        @Override
+        public android.database.Cursor loadInBackground() {
+            if (TextUtils.isEmpty(mQuery)) {
+                return mDao.selectAllToCursor();
+            } else {
+                return mDao.searchToCursor(mQuery);
+            }
         }
     }
 }

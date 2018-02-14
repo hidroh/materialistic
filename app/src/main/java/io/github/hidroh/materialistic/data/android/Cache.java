@@ -17,85 +17,58 @@
 package io.github.hidroh.materialistic.data.android;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.LocalCache;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 
 public class Cache implements LocalCache {
     private final ContentResolver mContentResolver;
+    private final MaterialisticDatabase.SavedStoriesDao mSavedStoriesDao;
+    private final MaterialisticDatabase.ReadStoriesDao mReadStoriesDao;
+    private final MaterialisticDatabase.ReadableDao mReadableDao;
 
     @Inject
-    public Cache(Context context) {
+    public Cache(Context context,
+                 MaterialisticDatabase.SavedStoriesDao savedStoriesDao,
+                 MaterialisticDatabase.ReadStoriesDao readStoriesDao,
+                 MaterialisticDatabase.ReadableDao readableDao) {
         mContentResolver = context.getContentResolver();
+        mSavedStoriesDao = savedStoriesDao;
+        mReadStoriesDao = readStoriesDao;
+        mReadableDao = readableDao;
     }
 
     @Nullable
     @Override
     public String getReadability(String itemId) {
-        Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_READABILITY,
-                new String[]{MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT},
-                MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId}, null);
-        String content = null;
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                content = cursor.getString(cursor.getColumnIndexOrThrow(
-                        MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT));
-            }
-            cursor.close();
-        }
-        return content;
+        MaterialisticDatabase.Readable readable = mReadableDao.selectByItemId(itemId);
+        return readable != null ? readable.getContent() : null;
     }
 
     @Override
     public void putReadability(String itemId, String content) {
-        final ContentValues contentValues = new ContentValues();
-        contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_ITEM_ID, itemId);
-        contentValues.put(MaterialisticProvider.ReadabilityEntry.COLUMN_NAME_CONTENT, content);
-        mContentResolver.insert(MaterialisticProvider.URI_READABILITY, contentValues);
+        mReadableDao.insert(new MaterialisticDatabase.Readable(itemId, content));
     }
 
     @Override
     public boolean isViewed(String itemId) {
-        Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_VIEWED, null,
-                MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId}, null);
-        boolean result = false;
-        if (cursor != null) {
-            result = cursor.getCount() > 0;
-            cursor.close();
-        }
-        return result;
+        return mReadStoriesDao.selectByItemId(itemId) != null;
     }
 
     @Override
     public void setViewed(String itemId) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MaterialisticProvider.ViewedEntry.COLUMN_NAME_ITEM_ID, itemId);
-        mContentResolver.insert(MaterialisticProvider.URI_VIEWED, contentValues);
-        Uri uri = MaterialisticProvider.URI_VIEWED.buildUpon().appendPath(itemId).build();
+        mReadStoriesDao.insert(new MaterialisticDatabase.ReadStory(itemId));
+        Uri uri = MaterialisticDatabase.URI_VIEWED.buildUpon().appendPath(itemId).build();
         mContentResolver.notifyChange(uri, null);
     }
 
     @Override
     public boolean isFavorite(String itemId) {
-        Cursor cursor = mContentResolver.query(MaterialisticProvider.URI_FAVORITE,
-                null,
-                MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID + " = ?",
-                new String[]{itemId},
-                null);
-        boolean result = false;
-        if (cursor != null) {
-            result = cursor.getCount() > 0;
-            cursor.close();
-        }
-        return result;
+        return mSavedStoriesDao.selectByItemId(itemId) != null;
     }
 }

@@ -107,7 +107,7 @@ public class ItemSyncAdapterTest {
                 .edit().clear().apply();
         syncScheduler.scheduleSync(service, "1");
         assertNull(ShadowContentResolver.getStatus(createSyncAccount(),
-                MaterialisticProvider.PROVIDER_AUTHORITY));
+                SyncContentProvider.PROVIDER_AUTHORITY));
     }
 
     @Test
@@ -216,7 +216,7 @@ public class ItemSyncAdapterTest {
         adapter.onPerformSync(mock(Account.class), getLastSyncExtras(), null, null, null);
         ShadowContentResolver.Status syncStatus = ShadowContentResolver.getStatus(
                 new Account("Materialistic", BuildConfig.APPLICATION_ID),
-                MaterialisticProvider.PROVIDER_AUTHORITY);
+                SyncContentProvider.PROVIDER_AUTHORITY);
         assertThat(syncStatus.syncRequests).isEqualTo(3); // original + 2 deferred
     }
 
@@ -312,7 +312,8 @@ public class ItemSyncAdapterTest {
 
     @Test
     public void testSyncWebCacheEmptyUrl() {
-        new FavoriteManager(new InMemoryCache(), Schedulers.immediate())
+        new FavoriteManager(new InMemoryCache(), Schedulers.immediate(),
+                mock(MaterialisticDatabase.SavedStoriesDao.class))
                 .add(service, new Favorite("1", null, "title", System.currentTimeMillis()));
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
     }
@@ -441,18 +442,18 @@ public class ItemSyncAdapterTest {
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
         assertFalse(ShadowContentResolver.isSyncActive(createSyncAccount(),
-                MaterialisticProvider.PROVIDER_AUTHORITY));
+                SyncContentProvider.PROVIDER_AUTHORITY));
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver().onReceive(service, new Intent());
         assertFalse(ShadowContentResolver.isSyncActive(createSyncAccount(),
-                MaterialisticProvider.PROVIDER_AUTHORITY));
+                SyncContentProvider.PROVIDER_AUTHORITY));
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
         assertTrue(ShadowContentResolver.isSyncActive(createSyncAccount(),
-                MaterialisticProvider.PROVIDER_AUTHORITY));
+                SyncContentProvider.PROVIDER_AUTHORITY));
     }
 
     @After
@@ -467,7 +468,7 @@ public class ItemSyncAdapterTest {
 
     private Bundle getLastSyncExtras() {
         return ShadowContentResolver.getStatus(createSyncAccount(),
-                MaterialisticProvider.PROVIDER_AUTHORITY).syncExtras;
+                SyncContentProvider.PROVIDER_AUTHORITY).syncExtras;
     }
 
     @NonNull

@@ -44,7 +44,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -326,12 +326,12 @@ public class ListFragmentViewHolderTest {
         controller.pause();
         ShadowContentObserver observer = shadowOf(shadowOf(activity
                 .getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_VIEWED)
+                .getContentObservers(MaterialisticDatabase.URI_VIEWED)
                 .iterator()
                 .next());
-        observer.dispatchChange(false, MaterialisticProvider.URI_VIEWED
+        observer.dispatchChange(false, MaterialisticDatabase.URI_VIEWED
                 .buildUpon().appendPath("2").build()); // not in view
-        observer.dispatchChange(false, MaterialisticProvider.URI_VIEWED
+        observer.dispatchChange(false, MaterialisticDatabase.URI_VIEWED
                     .buildUpon().appendPath("1").build()); // in view
         controller.resume();
         assertViewed();
@@ -348,11 +348,11 @@ public class ListFragmentViewHolderTest {
 
         ShadowContentObserver observer = shadowOf(shadowOf(activity
                 .getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
                 .iterator()
                 .next());
         // observed clear
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("clear")
                 .build());
@@ -360,14 +360,14 @@ public class ListFragmentViewHolderTest {
         assertFalse(item.isFavorite());
         assertThat((View) viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         // observed add
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
                 .build());
         assertTrue(item.isFavorite());
         // observed remove
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -382,7 +382,7 @@ public class ListFragmentViewHolderTest {
     public void testSaveItem() {
         ShadowContentObserver observer = shadowOf(shadowOf(activity
                 .getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
                 .iterator()
                 .next());
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
@@ -394,7 +394,7 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_save));
         verify(favoriteManager).add(any(Context.class), eq(item));
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
@@ -406,7 +406,7 @@ public class ListFragmentViewHolderTest {
                 .containsText(R.string.toast_saved);
         snackbarView.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")

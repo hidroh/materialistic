@@ -270,8 +270,8 @@
             android:name=".data.WebCacheService"
             android:exported="false" />
         <provider
-            android:authorities="io.github.hidroh.materialistic.provider"
-            android:name=".data.MaterialisticProvider"
+            android:authorities="io.github.hidroh.materialistic.syncprovider"
+            android:name=".data.SyncContentProvider"
             android:exported="false" />
         <provider
             android:authorities="io.github.hidroh.materialistic.recentprovider"

@@ -16,6 +16,9 @@
 
 package io.github.hidroh.materialistic;
 
+import android.arch.persistence.db.SupportSQLiteOpenHelper;
+import android.content.Context;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -29,6 +32,7 @@ import io.github.hidroh.materialistic.data.FeedbackClient;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.LocalCache;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.UserManager;
@@ -101,5 +105,25 @@ public class DataModule {
     @Provides @Singleton
     public LocalCache provideLocalCache(Cache cache) {
         return cache;
+    }
+
+    @Provides
+    public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao(Context context) {
+        return MaterialisticDatabase.getInstance(context).getSavedStoriesDao();
+    }
+
+    @Provides
+    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao(Context context) {
+        return MaterialisticDatabase.getInstance(context).getReadStoriesDao();
+    }
+
+    @Provides
+    public MaterialisticDatabase.ReadableDao provideReadableDao(Context context) {
+        return MaterialisticDatabase.getInstance(context).getReadableDao();
+    }
+
+    @Provides
+    public SupportSQLiteOpenHelper provideOpenHelper(Context context) {
+        return MaterialisticDatabase.getInstance(context).getOpenHelper();
     }
 }

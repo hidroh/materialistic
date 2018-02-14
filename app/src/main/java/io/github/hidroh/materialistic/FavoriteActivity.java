@@ -27,12 +27,12 @@ import android.text.TextUtils;
 
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.WebItem;
 
 public class FavoriteActivity extends BaseListActivity {
 
-    static final String EMPTY_QUERY = MaterialisticProvider.class.getName();
+    static final String EMPTY_QUERY = MaterialisticDatabase.class.getName();
     private static final String STATE_FILTER = "state:filter";
     private final ContentObserver mObserver = new ContentObserver(new Handler()) {
         @Override
@@ -57,7 +57,7 @@ public class FavoriteActivity extends BaseListActivity {
             mFilter = savedInstanceState.getString(STATE_FILTER);
             getSupportActionBar().setSubtitle(mFilter);
         }
-        getContentResolver().registerContentObserver(MaterialisticProvider.URI_FAVORITE,
+        getContentResolver().registerContentObserver(MaterialisticDatabase.URI_FAVORITE,
                 true, mObserver);
     }
 
