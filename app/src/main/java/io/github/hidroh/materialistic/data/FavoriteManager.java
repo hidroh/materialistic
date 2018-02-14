@@ -102,7 +102,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                                                android.database.Cursor data) {
                         if (data != null) {
                             data.setNotificationUri(context.getContentResolver(),
-                                    MaterialisticProvider.URI_FAVORITE);
+                                    MaterialisticDatabase.URI_FAVORITE);
                             mCursor = new Cursor(data);
                         } else {
                             mCursor = null;
@@ -333,15 +333,15 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     private static Uri.Builder buildAdded() {
-        return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_ADD);
+        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_ADD);
     }
 
     private static Uri.Builder buildRemoved() {
-        return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_REMOVE);
+        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_REMOVE);
     }
 
     private static Uri.Builder buildCleared() {
-        return MaterialisticProvider.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
+        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
     }
 
     private void notifyExportStart(Context context) {
@@ -394,10 +394,10 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         }
 
         Favorite getFavorite() {
-            final String itemId = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_ITEM_ID));
-            final String url = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_URL));
-            final String title = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TITLE));
-            final String time = getString(getColumnIndexOrThrow(MaterialisticProvider.FavoriteEntry.COLUMN_NAME_TIME));
+            final String itemId = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_ITEM_ID));
+            final String url = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_URL));
+            final String title = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_TITLE));
+            final String time = getString(getColumnIndexOrThrow(MaterialisticDatabase.FavoriteEntry.COLUMN_NAME_TIME));
             return new Favorite(itemId, url, title, Long.valueOf(time));
         }
     }

@@ -54,6 +54,8 @@ import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 @RunWith(TestRunner.class)
 public class FavoriteManagerTest {
     @Inject MaterialisticDatabase.SavedStoriesDao savedStoriesDao;
+    @Inject MaterialisticDatabase.ReadStoriesDao readStoriesDao;
+    @Inject MaterialisticDatabase.ReadableDao readableDao;
     private ShadowContentResolver resolver;
     private FavoriteManager manager;
 
@@ -93,7 +95,7 @@ public class FavoriteManagerTest {
                 return "2";
             }
         }));
-        LocalCache cache = new Cache(RuntimeEnvironment.application, savedStoriesDao);
+        LocalCache cache = new Cache(RuntimeEnvironment.application, savedStoriesDao, readStoriesDao, readableDao);
         manager = new FavoriteManager(cache, Schedulers.immediate(), savedStoriesDao) {
             @Override
             protected Uri getUriForFile(Context context, File file) {
@@ -188,7 +190,7 @@ public class FavoriteManagerTest {
         });
         assertThat(resolver.getNotifiedUris()).isNotEmpty();
         assertTrue(ShadowContentResolver.isSyncActive(new Account("Materialistic", BuildConfig.APPLICATION_ID),
-                MaterialisticProvider.PROVIDER_AUTHORITY));
+                SyncContentProvider.PROVIDER_AUTHORITY));
     }
 
     @Test

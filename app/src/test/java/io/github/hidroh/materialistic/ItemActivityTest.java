@@ -49,7 +49,7 @@ import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.data.WebItem;
@@ -355,12 +355,12 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume();
         assertTrue(item.isFavorite());
         ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
                 .iterator()
                 .next());
         activity.findViewById(R.id.bookmarked).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -370,7 +370,7 @@ public class ItemActivityTest {
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
@@ -393,10 +393,10 @@ public class ItemActivityTest {
         assertFalse(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
         ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
                 .iterator()
                 .next());
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")

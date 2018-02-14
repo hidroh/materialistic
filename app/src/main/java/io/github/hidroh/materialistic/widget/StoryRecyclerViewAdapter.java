@@ -56,7 +56,7 @@ import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 
@@ -126,8 +126,8 @@ public class StoryRecyclerViewAdapter extends
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         ContentResolver cr = recyclerView.getContext().getContentResolver();
-        cr.registerContentObserver(MaterialisticProvider.URI_VIEWED, true, mObserver);
-        cr.registerContentObserver(MaterialisticProvider.URI_FAVORITE, true, mObserver);
+        cr.registerContentObserver(MaterialisticDatabase.URI_VIEWED, true, mObserver);
+        cr.registerContentObserver(MaterialisticDatabase.URI_FAVORITE, true, mObserver);
         mCallback = new ItemTouchHelperCallback(recyclerView.getContext(),
                 Preferences.getListSwipePreferences(recyclerView.getContext())) {
             @Override

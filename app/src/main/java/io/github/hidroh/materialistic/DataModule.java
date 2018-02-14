@@ -113,6 +113,16 @@ public class DataModule {
     }
 
     @Provides
+    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao(Context context) {
+        return MaterialisticDatabase.getInstance(context).getReadStoriesDao();
+    }
+
+    @Provides
+    public MaterialisticDatabase.ReadableDao provideReadableDao(Context context) {
+        return MaterialisticDatabase.getInstance(context).getReadableDao();
+    }
+
+    @Provides
     public SupportSQLiteOpenHelper provideOpenHelper(Context context) {
         return MaterialisticDatabase.getInstance(context).getOpenHelper();
     }

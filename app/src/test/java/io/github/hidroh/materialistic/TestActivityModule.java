@@ -34,7 +34,6 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ItemSyncJobServiceTest;
 import io.github.hidroh.materialistic.data.ItemSyncService;
 import io.github.hidroh.materialistic.data.MaterialisticDatabase;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
 import io.github.hidroh.materialistic.data.ReadabilityClient;
 import io.github.hidroh.materialistic.data.RestServiceFactory;
 import io.github.hidroh.materialistic.data.SessionManager;
@@ -97,7 +96,6 @@ import static org.mockito.Mockito.when;
                 SubmissionRecyclerViewAdapter.class,
                 ThreadPreviewRecyclerViewAdapter.class,
                 ItemSyncService.class,
-                MaterialisticProvider.class,
                 // test classes
                 AppUtilsTest.class,
                 SettingsActivityTest.class,
@@ -388,6 +386,16 @@ public class TestActivityModule {
     @Provides
     public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao() {
         return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getSavedStoriesDao();
+    }
+
+    @Provides
+    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao() {
+        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getReadStoriesDao();
+    }
+
+    @Provides
+    public MaterialisticDatabase.ReadableDao provideReadableDao() {
+        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getReadableDao();
     }
 
     @Provides

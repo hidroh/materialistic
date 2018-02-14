@@ -14,12 +14,28 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
-@Database(entities = {MaterialisticDatabase.SavedStory.class}, version = 4)
+@Database(
+        entities = {
+                MaterialisticDatabase.SavedStory.class,
+                MaterialisticDatabase.ReadStory.class,
+                MaterialisticDatabase.Readable.class
+        },
+        version = 4)
 public abstract class MaterialisticDatabase extends RoomDatabase {
+
+    private static final Uri BASE_URI = Uri.parse("content://io.github.hidroh.materialistic.provider");
+    public static final Uri URI_VIEWED = BASE_URI.buildUpon()
+            .appendPath("viewed")
+            .build();
+    public static final Uri URI_FAVORITE = BASE_URI.buildUpon()
+            .appendPath("favorite")
+            .build();
 
     private static MaterialisticDatabase sInstance;
 
@@ -35,37 +51,97 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
 
     @VisibleForTesting
     protected static Builder<MaterialisticDatabase> setupBuilder(Builder<MaterialisticDatabase> builder) {
-        return builder
-                .addCallback(new Callback() {
-                    @Override
-                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                        db.execSQL(DbConstants.SQL_CREATE_VIEWED_TABLE);
-                        db.execSQL(DbConstants.SQL_CREATE_READABILITY_TABLE);
-                    }
-                })
-                .addMigrations(new Migration(1, 2) {
-                    @Override
-                    public void migrate(@NonNull SupportSQLiteDatabase database) {
-                        database.execSQL(DbConstants.SQL_CREATE_VIEWED_TABLE);
-                    }
-                })
-                .addMigrations(new Migration(2, 3) {
-                    @Override
-                    public void migrate(@NonNull SupportSQLiteDatabase database) {
-                        database.execSQL(DbConstants.SQL_CREATE_READABILITY_TABLE);
-                    }
-                })
-                .addMigrations(new Migration(3, 4) {
-                    @Override
-                    public void migrate(@NonNull SupportSQLiteDatabase database) {
-                        database.execSQL(DbConstants.SQL_CREATE_SAVED_TABLE);
-                        database.execSQL(DbConstants.SQL_INSERT_FAVORITE_SAVED);
-                        database.execSQL(DbConstants.SQL_DROP_FAVORITE_TABLE);
-                    }
-                });
+        return builder.addMigrations(new Migration(3, 4) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL(DbConstants.SQL_CREATE_SAVED_TABLE);
+                database.execSQL(DbConstants.SQL_INSERT_FAVORITE_SAVED);
+                database.execSQL(DbConstants.SQL_DROP_FAVORITE_TABLE);
+
+                database.execSQL(DbConstants.SQL_CREATE_READ_TABLE);
+                database.execSQL(DbConstants.SQL_INSERT_VIEWED_READ);
+                database.execSQL(DbConstants.SQL_DROP_VIEWED_TABLE);
+
+                database.execSQL(DbConstants.SQL_CREATE_READABLE_TABLE);
+                database.execSQL(DbConstants.SQL_INSERT_READABILITY_READABLE);
+                database.execSQL(DbConstants.SQL_DROP_READABILITY_TABLE);
+            }
+        });
     }
 
     public abstract SavedStoriesDao getSavedStoriesDao();
+
+    public abstract ReadStoriesDao getReadStoriesDao();
+
+    public abstract ReadableDao getReadableDao();
+
+    @Entity(tableName = "read")
+    public static class ReadStory {
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "_id")
+        private int id;
+        @ColumnInfo(name = "itemid")
+        private String itemId;
+
+        public ReadStory(String itemId) {
+            this.itemId = itemId;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getItemId() {
+            return itemId;
+        }
+
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
+        }
+    }
+
+    @Entity
+    public static class Readable {
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "_id")
+        private int id;
+        @ColumnInfo(name = "itemid")
+        private String itemId;
+        private String content;
+
+        public Readable(String itemId, String content) {
+            this.itemId = itemId;
+            this.content = content;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getItemId() {
+            return itemId;
+        }
+
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+    }
 
     @Entity(tableName = "saved")
     public static class SavedStory {
@@ -155,15 +231,44 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
         SavedStory selectByItemId(String itemId);
     }
 
+    @Dao
+    public interface ReadStoriesDao {
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        void insert(ReadStory readStory);
+
+        @Query("SELECT * FROM read WHERE itemid = :itemId LIMIT 1")
+        ReadStory selectByItemId(String itemId);
+    }
+
+    @Dao
+    public interface ReadableDao {
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        void insert(Readable readable);
+
+        @Query("SELECT * FROM readable WHERE itemid = :itemId LIMIT 1")
+        Readable selectByItemId(String itemId);
+    }
+
     static class DbConstants {
         static final String DB_NAME = "Materialistic.db";
-        static final String SQL_CREATE_VIEWED_TABLE =
-                "CREATE TABLE viewed (_id INTEGER PRIMARY KEY,itemid TEXT)";
-        static final String SQL_CREATE_READABILITY_TABLE =
-                "CREATE TABLE readability (_id INTEGER PRIMARY KEY,itemid TEXT,content TEXT)";
+        static final String SQL_CREATE_READ_TABLE =
+                "CREATE TABLE read (_id INTEGER NOT NULL PRIMARY KEY, itemid TEXT)";
+        static final String SQL_CREATE_READABLE_TABLE =
+                "CREATE TABLE readable (_id INTEGER NOT NULL PRIMARY KEY, itemid TEXT, content TEXT)";
         static final String SQL_CREATE_SAVED_TABLE =
                 "CREATE TABLE saved (_id INTEGER NOT NULL PRIMARY KEY, itemid TEXT, url TEXT, title TEXT, time TEXT)";
         static final String SQL_INSERT_FAVORITE_SAVED = "INSERT INTO saved SELECT * FROM favorite";
+        static final String SQL_INSERT_VIEWED_READ = "INSERT INTO read SELECT * FROM viewed";
+        static final String SQL_INSERT_READABILITY_READABLE = "INSERT INTO readable SELECT * FROM readability";
         static final String SQL_DROP_FAVORITE_TABLE = "DROP TABLE IF EXISTS favorite";
+        static final String SQL_DROP_VIEWED_TABLE = "DROP TABLE IF EXISTS viewed";
+        static final String SQL_DROP_READABILITY_TABLE = "DROP TABLE IF EXISTS readability";
+    }
+
+    public interface FavoriteEntry extends BaseColumns {
+        String COLUMN_NAME_ITEM_ID = "itemid";
+        String COLUMN_NAME_URL = "url";
+        String COLUMN_NAME_TITLE = "title";
+        String COLUMN_NAME_TIME = "time";
     }
 }

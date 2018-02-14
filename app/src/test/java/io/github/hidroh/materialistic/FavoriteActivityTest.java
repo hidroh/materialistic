@@ -48,7 +48,7 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
-import io.github.hidroh.materialistic.data.MaterialisticProvider;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.SyncScheduler;
 import io.github.hidroh.materialistic.data.TestFavorite;
 import io.github.hidroh.materialistic.data.TestHnItem;
@@ -371,23 +371,23 @@ public class FavoriteActivityTest {
     @Test
     public void testRemoveClearSelection() {
         ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
                 .iterator()
                 .next());
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("3")
                 .build());
         assertNull(activity.getSelectedItem());
         activity.onItemSelected(new TestHnItem(1L));
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("2")
                 .build());
         assertNotNull(activity.getSelectedItem());
-        observer.dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -399,10 +399,10 @@ public class FavoriteActivityTest {
     public void testClearClearSelection() {
         activity.onItemSelected(new TestHnItem(1L));
         shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticProvider.URI_FAVORITE)
+                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
                 .iterator()
                 .next())
-                .dispatchChange(false, MaterialisticProvider.URI_FAVORITE
+                .dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
                         .buildUpon()
                         .appendPath("clear")
                         .build());
