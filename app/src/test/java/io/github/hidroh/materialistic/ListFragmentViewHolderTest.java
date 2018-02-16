@@ -26,10 +26,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -324,14 +324,9 @@ public class ListFragmentViewHolderTest {
         itemListener.getValue().onResponse(item);
         assertNotViewed();
         controller.pause();
-        ShadowContentObserver observer = shadowOf(shadowOf(activity
-                .getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_VIEWED)
-                .iterator()
-                .next());
-        observer.dispatchChange(false, MaterialisticDatabase.URI_VIEWED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_READ
                 .buildUpon().appendPath("2").build()); // not in view
-        observer.dispatchChange(false, MaterialisticDatabase.URI_VIEWED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_READ
                     .buildUpon().appendPath("1").build()); // in view
         controller.resume();
         assertViewed();
@@ -346,13 +341,8 @@ public class ListFragmentViewHolderTest {
 
         controller.pause();
 
-        ShadowContentObserver observer = shadowOf(shadowOf(activity
-                .getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
-                .iterator()
-                .next());
         // observed clear
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("clear")
                 .build());
@@ -360,14 +350,14 @@ public class ListFragmentViewHolderTest {
         assertFalse(item.isFavorite());
         assertThat((View) viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         // observed add
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
                 .build());
         assertTrue(item.isFavorite());
         // observed remove
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -380,11 +370,6 @@ public class ListFragmentViewHolderTest {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Test
     public void testSaveItem() {
-        ShadowContentObserver observer = shadowOf(shadowOf(activity
-                .getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
-                .iterator()
-                .next());
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         adapter.getViewHolder(0).itemView.performLongClick();
@@ -394,7 +379,7 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_save));
         verify(favoriteManager).add(any(Context.class), eq(item));
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
@@ -406,7 +391,7 @@ public class ListFragmentViewHolderTest {
                 .containsText(R.string.toast_saved);
         snackbarView.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")

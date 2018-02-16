@@ -1,5 +1,7 @@
 package io.github.hidroh.materialistic.data;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Dao;
@@ -29,15 +31,12 @@ import android.support.annotation.VisibleForTesting;
         version = 4)
 public abstract class MaterialisticDatabase extends RoomDatabase {
 
-    private static final Uri BASE_URI = Uri.parse("content://io.github.hidroh.materialistic.syncprovider");
-    public static final Uri URI_VIEWED = BASE_URI.buildUpon()
-            .appendPath("viewed")
-            .build();
-    public static final Uri URI_FAVORITE = BASE_URI.buildUpon()
-            .appendPath("favorite")
-            .build();
+    private static final Uri BASE_URI = Uri.parse("content://io.github.hidroh.materialistic");
+    public static final Uri URI_READ = BASE_URI.buildUpon().appendPath("read").build();
+    public static final Uri URI_SAVED = BASE_URI.buildUpon().appendPath("saved").build();
 
     private static MaterialisticDatabase sInstance;
+    private final MutableLiveData<Uri> mLiveData = new MutableLiveData<>();
 
     public static synchronized MaterialisticDatabase getInstance(Context context) {
         if (sInstance == null) {
@@ -74,6 +73,18 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
     public abstract ReadStoriesDao getReadStoriesDao();
 
     public abstract ReadableDao getReadableDao();
+
+    public LiveData<Uri> getLiveData() {
+        return mLiveData;
+    }
+
+    public void setLiveValue(Uri uri) {
+        mLiveData.setValue(uri);
+    }
+
+    public void postLiveValue(Uri uri) {
+        mLiveData.postValue(uri);
+    }
 
     @Entity(tableName = "read")
     public static class ReadStory {

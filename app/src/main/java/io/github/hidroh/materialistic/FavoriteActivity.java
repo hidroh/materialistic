@@ -17,11 +17,10 @@
 package io.github.hidroh.materialistic;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
@@ -34,18 +33,18 @@ public class FavoriteActivity extends BaseListActivity {
 
     static final String EMPTY_QUERY = MaterialisticDatabase.class.getName();
     private static final String STATE_FILTER = "state:filter";
-    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (FavoriteManager.isRemoved(uri)) {
-                WebItem selected = getSelectedItem();
-                if (selected != null &&
-                        TextUtils.equals(selected.getId(), uri.getLastPathSegment())) {
-                    onItemSelected(null);
-                }
-            } else if (FavoriteManager.isCleared(uri)) {
+    private final Observer<Uri> mObserver = uri -> {
+        if (uri == null) {
+            return;
+        }
+        if (FavoriteManager.isRemoved(uri)) {
+            WebItem selected = getSelectedItem();
+            if (selected != null &&
+                    TextUtils.equals(selected.getId(), uri.getLastPathSegment())) {
                 onItemSelected(null);
             }
+        } else if (FavoriteManager.isCleared(uri)) {
+            onItemSelected(null);
         }
     };
     private String mFilter;
@@ -57,8 +56,7 @@ public class FavoriteActivity extends BaseListActivity {
             mFilter = savedInstanceState.getString(STATE_FILTER);
             getSupportActionBar().setSubtitle(mFilter);
         }
-        getContentResolver().registerContentObserver(MaterialisticDatabase.URI_FAVORITE,
-                true, mObserver);
+        MaterialisticDatabase.getInstance(this).getLiveData().observe(this, mObserver);
     }
 
     @Override
@@ -84,12 +82,6 @@ public class FavoriteActivity extends BaseListActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, mFilter);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        getContentResolver().unregisterContentObserver(mObserver);
     }
 
     @Override

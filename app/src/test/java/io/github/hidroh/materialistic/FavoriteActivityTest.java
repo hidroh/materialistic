@@ -32,10 +32,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -370,24 +370,20 @@ public class FavoriteActivityTest {
 
     @Test
     public void testRemoveClearSelection() {
-        ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
-                .iterator()
-                .next());
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("3")
                 .build());
         assertNull(activity.getSelectedItem());
         activity.onItemSelected(new TestHnItem(1L));
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("2")
                 .build());
         assertNotNull(activity.getSelectedItem());
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -396,13 +392,9 @@ public class FavoriteActivityTest {
     }
 
     @Test
-    public void testClearClearSelection() {
+    public void testClearSelection() {
         activity.onItemSelected(new TestHnItem(1L));
-        shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
-                .iterator()
-                .next())
-                .dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                         .buildUpon()
                         .appendPath("clear")
                         .build());

@@ -16,13 +16,11 @@
 
 package io.github.hidroh.materialistic.widget;
 
-import android.content.ContentResolver;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -72,31 +70,6 @@ public class StoryRecyclerViewAdapter extends
     private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
     private static final String STATE_USERNAME = "state:username";
     private final Object VOTED = new Object();
-    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (FavoriteManager.isCleared(uri)) {
-                mFavoriteRevision++; // invalidate all favorite statuses
-                notifyDataSetChanged();
-                return;
-            }
-            Integer position = mItemPositions.get(Long.valueOf(uri.getLastPathSegment()));
-            if (position == null) {
-                return;
-            }
-            Item item = mItems.get(position);
-            if (FavoriteManager.isAdded(uri)) {
-                item.setFavorite(true);
-                item.setLocalRevision(mFavoriteRevision);
-            } else if (FavoriteManager.isRemoved(uri)) {
-                item.setFavorite(false);
-                item.setLocalRevision(mFavoriteRevision);
-            } else {
-                item.setIsViewed(true);
-            }
-            notifyItemChanged(position);
-        }
-    };
     private final RecyclerView.OnScrollListener mAutoViewScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -121,13 +94,36 @@ public class StoryRecyclerViewAdapter extends
     private int mCacheMode = ItemManager.MODE_DEFAULT;
     private ItemTouchHelper mItemTouchHelper;
     @Synthetic ItemTouchHelperCallback mCallback;
+    private final Observer<Uri> mObserver = uri -> {
+        if (uri == null) {
+            return;
+        }
+        if (FavoriteManager.isCleared(uri)) {
+            mFavoriteRevision++; // invalidate all favorite statuses
+            notifyDataSetChanged();
+            return;
+        }
+        Integer position = mItemPositions.get(Long.valueOf(uri.getLastPathSegment()));
+        if (position == null) {
+            return;
+        }
+        Item item = mItems.get(position);
+        if (FavoriteManager.isAdded(uri)) {
+            item.setFavorite(true);
+            item.setLocalRevision(mFavoriteRevision);
+        } else if (FavoriteManager.isRemoved(uri)) {
+            item.setFavorite(false);
+            item.setLocalRevision(mFavoriteRevision);
+        } else {
+            item.setIsViewed(true);
+        }
+        notifyItemChanged(position);
+    };
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        ContentResolver cr = recyclerView.getContext().getContentResolver();
-        cr.registerContentObserver(MaterialisticDatabase.URI_VIEWED, true, mObserver);
-        cr.registerContentObserver(MaterialisticDatabase.URI_FAVORITE, true, mObserver);
+        MaterialisticDatabase.getInstance(recyclerView.getContext()).getLiveData().observeForever(mObserver);
         mCallback = new ItemTouchHelperCallback(recyclerView.getContext(),
                 Preferences.getListSwipePreferences(recyclerView.getContext())) {
             @Override
@@ -199,7 +195,7 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        recyclerView.getContext().getContentResolver().unregisterContentObserver(mObserver);
+        MaterialisticDatabase.getInstance(recyclerView.getContext()).getLiveData().removeObserver(mObserver);
         mItemTouchHelper.attachToRecyclerView(null);
         mPrefObservable.unsubscribe(recyclerView.getContext());
     }

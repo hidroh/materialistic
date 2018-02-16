@@ -60,6 +60,7 @@ ext {
     leakCanaryVersion = '1.5.4'
     retrofitVersion = '2.3.0'
     roomVersion = '1.0.0'
+    archVersion = '1.1.0'
 }
 
 dependencies {
@@ -77,7 +78,9 @@ dependencies {
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
             "io.reactivex:rxandroid:1.2.1",
             "io.reactivex:rxjava:1.1.7",
-            "android.arch.persistence.room:runtime:$roomVersion"
+            "android.arch.persistence.room:runtime:$roomVersion",
+            "android.arch.lifecycle:livedata:$archVersion",
+            "android.arch.lifecycle:common-java8:$archVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"

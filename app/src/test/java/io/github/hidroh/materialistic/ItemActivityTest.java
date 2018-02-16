@@ -30,7 +30,6 @@ import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowContentObserver;
 import org.robolectric.shadows.ShadowGestureDetector;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
@@ -354,13 +353,9 @@ public class ItemActivityTest {
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
         controller.withIntent(intent).create().start().resume();
         assertTrue(item.isFavorite());
-        ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
-                .iterator()
-                .next());
         activity.findViewById(R.id.bookmarked).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -370,7 +365,7 @@ public class ItemActivityTest {
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
@@ -392,11 +387,7 @@ public class ItemActivityTest {
         controller.withIntent(intent).create().start().resume();
         assertFalse(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
-        ShadowContentObserver observer = shadowOf(shadowOf(activity.getContentResolver())
-                .getContentObservers(MaterialisticDatabase.URI_FAVORITE)
-                .iterator()
-                .next());
-        observer.dispatchChange(false, MaterialisticDatabase.URI_FAVORITE
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
