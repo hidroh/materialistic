@@ -29,7 +29,7 @@ import android.support.annotation.VisibleForTesting;
         version = 4)
 public abstract class MaterialisticDatabase extends RoomDatabase {
 
-    private static final Uri BASE_URI = Uri.parse("content://io.github.hidroh.materialistic.provider");
+    private static final Uri BASE_URI = Uri.parse("content://io.github.hidroh.materialistic.syncprovider");
     public static final Uri URI_VIEWED = BASE_URI.buildUpon()
             .appendPath("viewed")
             .build();
