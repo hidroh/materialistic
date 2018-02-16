@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.data.android;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -27,7 +26,7 @@ import io.github.hidroh.materialistic.data.LocalCache;
 import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 
 public class Cache implements LocalCache {
-    private final ContentResolver mContentResolver;
+    private final MaterialisticDatabase mDatabase;
     private final MaterialisticDatabase.SavedStoriesDao mSavedStoriesDao;
     private final MaterialisticDatabase.ReadStoriesDao mReadStoriesDao;
     private final MaterialisticDatabase.ReadableDao mReadableDao;
@@ -37,7 +36,7 @@ public class Cache implements LocalCache {
                  MaterialisticDatabase.SavedStoriesDao savedStoriesDao,
                  MaterialisticDatabase.ReadStoriesDao readStoriesDao,
                  MaterialisticDatabase.ReadableDao readableDao) {
-        mContentResolver = context.getContentResolver();
+        mDatabase = MaterialisticDatabase.getInstance(context);
         mSavedStoriesDao = savedStoriesDao;
         mReadStoriesDao = readStoriesDao;
         mReadableDao = readableDao;
@@ -63,8 +62,8 @@ public class Cache implements LocalCache {
     @Override
     public void setViewed(String itemId) {
         mReadStoriesDao.insert(new MaterialisticDatabase.ReadStory(itemId));
-        Uri uri = MaterialisticDatabase.URI_VIEWED.buildUpon().appendPath(itemId).build();
-        mContentResolver.notifyChange(uri, null);
+        Uri uri = MaterialisticDatabase.URI_READ.buildUpon().appendPath(itemId).build();
+        mDatabase.postLiveValue(uri);
     }
 
     @Override

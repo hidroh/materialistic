@@ -16,15 +16,14 @@
 
 package io.github.hidroh.materialistic;
 
+import android.arch.lifecycle.Observer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -100,19 +99,19 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     private ItemPagerAdapter mAdapter;
     private ViewPager mViewPager;
     @Synthetic boolean mFullscreen;
-    private final ContentObserver mObserver = new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (mItem == null) {
-                return;
-            }
-            if (FavoriteManager.isCleared(uri)) {
-                mItem.setFavorite(false);
-                bindFavorite();
-            } else if (TextUtils.equals(mItemId, uri.getLastPathSegment())) {
-                mItem.setFavorite(FavoriteManager.isAdded(uri));
-                bindFavorite();
-            }
+    private final Observer<Uri> mObserver = uri -> {
+        if (mItem == null) {
+            return;
+        }
+        if (uri == null) {
+            return;
+        }
+        if (FavoriteManager.isCleared(uri)) {
+            mItem.setFavorite(false);
+            bindFavorite();
+        } else if (TextUtils.equals(mItemId, uri.getLastPathSegment())) {
+            mItem.setFavorite(FavoriteManager.isAdded(uri));
+            bindFavorite();
         }
     };
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -154,8 +153,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         AppUtils.toggleFab(mNavButton, false);
         AppUtils.toggleFab(mReplyButton, false);
         final Intent intent = getIntent();
-        getContentResolver().registerContentObserver(MaterialisticDatabase.URI_FAVORITE,
-                true, mObserver);
+        MaterialisticDatabase.getInstance(this).getLiveData().observe(this, mObserver);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
                 new IntentFilter(WebFragment.ACTION_FULLSCREEN));
         mPreferenceObservable.subscribe(this, this::onPreferenceChanged,
@@ -244,7 +242,6 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getContentResolver().unregisterContentObserver(mObserver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
         mPreferenceObservable.unsubscribe(this);
     }

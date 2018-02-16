@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic.data;
 import android.accounts.Account;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -12,9 +13,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -44,7 +48,11 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
@@ -58,9 +66,11 @@ public class FavoriteManagerTest {
     @Inject MaterialisticDatabase.ReadableDao readableDao;
     private ShadowContentResolver resolver;
     private FavoriteManager manager;
+    @Mock Observer<Uri> observer;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
         savedStoriesDao.insert(MaterialisticDatabase.SavedStory.from(new TestWebItem() {
@@ -102,6 +112,8 @@ public class FavoriteManagerTest {
                 return Uri.parse("content://" + FavoriteManager.FILE_AUTHORITY + "/files/saved/materialistic-export.txt");
             }
         };
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).getLiveData().observeForever(observer);
+        reset(observer);
     }
 
     @Test
@@ -188,7 +200,7 @@ public class FavoriteManagerTest {
                 return "new title";
             }
         });
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        verify(observer).onChanged(any(Uri.class));
         assertTrue(ShadowContentResolver.isSyncActive(new Account("Materialistic", BuildConfig.APPLICATION_ID),
                 SyncContentProvider.PROVIDER_AUTHORITY));
     }
@@ -200,19 +212,19 @@ public class FavoriteManagerTest {
         when(favorite.getUrl()).thenReturn("http://example.com");
         when(favorite.getDisplayedTitle()).thenReturn("title");
         manager.add(RuntimeEnvironment.application, favorite);
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        verify(observer).onChanged(any(Uri.class));
     }
 
     @Test
     public void testClearAll() {
         manager.clear(RuntimeEnvironment.application, null);
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        verify(observer).onChanged(any(Uri.class));
     }
 
     @Test
     public void testClearQuery() {
         manager.clear(RuntimeEnvironment.application, "blah");
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        verify(observer).onChanged(any(Uri.class));
     }
 
     @Test
@@ -225,19 +237,19 @@ public class FavoriteManagerTest {
     @Test
     public void testRemoveId() {
         manager.remove(RuntimeEnvironment.application, "1");
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        verify(observer).onChanged(any(Uri.class));
     }
 
     @Test
     public void testRemoveMultipleNoId() {
         manager.remove(RuntimeEnvironment.application, (Set<String>) null);
-        assertThat(resolver.getNotifiedUris()).isEmpty();
+        verify(observer, never()).onChanged(any(Uri.class));
     }
 
     @Test
     public void testRemoveMultiple() {
         manager.remove(RuntimeEnvironment.application, new HashSet<String>(){{add("1");add("2");}});
-        assertThat(resolver.getNotifiedUris()).isNotEmpty();
+        verify(observer, times(2)).onChanged(any(Uri.class));
     }
 
     @Test
@@ -262,5 +274,10 @@ public class FavoriteManagerTest {
         output.setDataPosition(0);
         assertEquals("1", output.readString());
         assertThat(Favorite.CREATOR.newArray(1)).hasSize(1);
+    }
+
+    @After
+    public void tearDown() {
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).getLiveData().removeObserver(observer);
     }
 }

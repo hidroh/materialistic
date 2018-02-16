@@ -76,6 +76,15 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
     private final SyncScheduler mSyncScheduler = new SyncScheduler();
 
+    @Inject
+    public FavoriteManager(LocalCache cache,
+                           @Named(DataModule.IO_THREAD) Scheduler ioScheduler,
+                           MaterialisticDatabase.SavedStoriesDao dao) {
+        mCache = cache;
+        mIoScheduler = ioScheduler;
+        mDao = dao;
+    }
+
     @Override
     public int getSize() {
         return mCursor != null ? mCursor.getCount() : 0;
@@ -101,8 +110,6 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                     public void onLoadFinished(Loader<android.database.Cursor> loader,
                                                android.database.Cursor data) {
                         if (data != null) {
-                            data.setNotificationUri(context.getContentResolver(),
-                                    MaterialisticDatabase.URI_FAVORITE);
                             mCursor = new Cursor(data);
                         } else {
                             mCursor = null;
@@ -124,15 +131,6 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
             mCursor.close();
         }
         mLoader = null;
-    }
-
-    @Inject
-    public FavoriteManager(LocalCache cache,
-                           @Named(DataModule.IO_THREAD) Scheduler ioScheduler,
-                           MaterialisticDatabase.SavedStoriesDao dao) {
-        mCache = cache;
-        mIoScheduler = ioScheduler;
-        mDao = dao;
     }
 
     /**
@@ -176,7 +174,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 .map(itemId -> buildAdded().appendPath(story.getId()).build())
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
+                .subscribe(uri -> MaterialisticDatabase.getInstance(context).setLiveValue(uri));
         mSyncScheduler.scheduleSync(context, story.getId());
     }
 
@@ -191,8 +189,8 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 .map(filter -> deleteMultiple(filter))
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(count -> context.getContentResolver()
-                        .notifyChange(buildCleared().build(), null));
+                .subscribe(count -> MaterialisticDatabase.getInstance(context)
+                        .setLiveValue(buildCleared().build()));
     }
 
     /**
@@ -213,7 +211,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 .map(id -> buildRemoved().appendPath(itemId).build())
                 .subscribeOn(mIoScheduler)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
+                .subscribe(uri -> MaterialisticDatabase.getInstance(context).setLiveValue(uri));
     }
 
     /**
@@ -234,7 +232,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
                 })
                 .map(itemId -> buildRemoved().appendPath(itemId).build())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(uri -> context.getContentResolver().notifyChange(uri, null));
+                .subscribe(uri -> MaterialisticDatabase.getInstance(context).setLiveValue(uri));
     }
 
     @WorkerThread
@@ -333,15 +331,15 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     private static Uri.Builder buildAdded() {
-        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_ADD);
+        return MaterialisticDatabase.URI_SAVED.buildUpon().appendPath(URI_PATH_ADD);
     }
 
     private static Uri.Builder buildRemoved() {
-        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_REMOVE);
+        return MaterialisticDatabase.URI_SAVED.buildUpon().appendPath(URI_PATH_REMOVE);
     }
 
     private static Uri.Builder buildCleared() {
-        return MaterialisticDatabase.URI_FAVORITE.buildUpon().appendPath(URI_PATH_CLEAR);
+        return MaterialisticDatabase.URI_SAVED.buildUpon().appendPath(URI_PATH_CLEAR);
     }
 
     private void notifyExportStart(Context context) {
