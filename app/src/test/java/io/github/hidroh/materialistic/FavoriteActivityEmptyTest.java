@@ -1,9 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.LoaderManager;
 import android.view.View;
 
 import org.junit.After;
@@ -45,8 +43,7 @@ public class FavoriteActivityEmptyTest {
         when(favoriteManager.getSize()).thenReturn(0);
         controller = Robolectric.buildActivity(FavoriteActivity.class);
         activity = controller.create().start().resume().visible().get();
-        verify(favoriteManager, atLeastOnce()).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), any());
+        verify(favoriteManager, atLeastOnce()).attach(observerCaptor.capture(), any());
         observerCaptor.getValue().onChanged();
     }
 
@@ -68,8 +65,7 @@ public class FavoriteActivityEmptyTest {
         assertThat((View) activity.findViewById(R.id.empty_search)).isNotVisible();
         reset(favoriteManager);
         controller.newIntent(new Intent().putExtra(SearchManager.QUERY, "query"));
-        verify(favoriteManager, atLeastOnce()).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), any());
+        verify(favoriteManager, atLeastOnce()).attach(observerCaptor.capture(), any());
         observerCaptor.getValue().onChanged();
         assertThat((View) activity.findViewById(R.id.empty_search)).isVisible();
     }

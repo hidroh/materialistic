@@ -22,17 +22,14 @@ import android.content.Intent;
 import android.database.CursorWrapper;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -47,7 +44,6 @@ import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.FavoriteActivity;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.annotation.Synthetic;
 import okhttp3.internal.Util;
 import okio.BufferedSink;
 import okio.Okio;
@@ -61,7 +57,6 @@ import rx.android.schedulers.AndroidSchedulers;
 @Singleton
 public class FavoriteManager implements LocalItemManager<Favorite> {
 
-    private static final int LOADER = 0;
     private static final String URI_PATH_ADD = "add";
     private static final String URI_PATH_REMOVE = "remove";
     private static final String URI_PATH_CLEAR = "clear";
@@ -70,9 +65,9 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private static final String FILENAME_EXPORT = "materialistic-export.txt";
     private final LocalCache mCache;
     private final Scheduler mIoScheduler;
-    @Synthetic final MaterialisticDatabase.SavedStoriesDao mDao;
-    @Synthetic FavoriteRoomLoader mLoader;
-    @Synthetic Cursor mCursor;
+    private final MaterialisticDatabase.SavedStoriesDao mDao;
+    private FavoriteRoomLoader mLoader;
+    private Cursor mCursor;
     private final int mNotificationId = Long.valueOf(System.currentTimeMillis()).intValue();
     private final SyncScheduler mSyncScheduler = new SyncScheduler();
 
@@ -96,33 +91,9 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     @Override
-    public void attach(@NonNull Context context, @NonNull LoaderManager loaderManager,
-                       @NonNull Observer observer, String filter) {
-        mLoader = new FavoriteRoomLoader(context, mDao, filter);
-        loaderManager.restartLoader(FavoriteManager.LOADER, null,
-                new LoaderManager.LoaderCallbacks<android.database.Cursor>() {
-                    @Override
-                    public Loader<android.database.Cursor> onCreateLoader(int id, Bundle args) {
-                        return mLoader;
-                    }
-
-                    @Override
-                    public void onLoadFinished(Loader<android.database.Cursor> loader,
-                                               android.database.Cursor data) {
-                        if (data != null) {
-                            mCursor = new Cursor(data);
-                        } else {
-                            mCursor = null;
-                        }
-                        observer.onChanged();
-                    }
-
-                    @Override
-                    public void onLoaderReset(Loader<android.database.Cursor> loader) {
-                        mCursor = null;
-                        observer.onChanged();
-                    }
-                });
+    public void attach(@NonNull Observer observer, String filter) {
+        mLoader = new FavoriteRoomLoader(filter, observer);
+        mLoader.load();
     }
 
     @Override
@@ -257,7 +228,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private void insert(WebItem story) {
         mDao.insert(MaterialisticDatabase.SavedStory.from(story));
         if (mLoader != null) {
-            mLoader.forceLoad();
+            mLoader.load();
         }
     }
 
@@ -265,7 +236,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     private void delete(String itemId) {
         mDao.deleteByItemId(itemId);
         if (mLoader != null) {
-            mLoader.forceLoad();
+            mLoader.load();
         }
     }
 
@@ -278,7 +249,7 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
             deleted = mDao.deleteByTitle(query);
         }
         if (mLoader != null) {
-            mLoader.forceLoad();
+            mLoader.load();
         }
         return deleted;
     }
@@ -400,30 +371,29 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
         }
     }
 
-    static class FavoriteRoomLoader extends AsyncTaskLoader<android.database.Cursor> {
-
+    class FavoriteRoomLoader {
         private final String mQuery;
-        private final MaterialisticDatabase.SavedStoriesDao mDao;
+        private final Observer mObserver;
 
-        FavoriteRoomLoader(Context context, MaterialisticDatabase.SavedStoriesDao dao, @Nullable String query) {
-            super(context);
-            mDao = dao;
+        FavoriteRoomLoader(@Nullable String query, Observer observer) {
             mQuery = query;
+            mObserver = observer;
         }
 
-        @Override
-        protected void onStartLoading() {
-            forceLoad();
-        }
-
-        @Nullable
-        @Override
-        public android.database.Cursor loadInBackground() {
-            if (TextUtils.isEmpty(mQuery)) {
-                return mDao.selectAllToCursor();
-            } else {
-                return mDao.searchToCursor(mQuery);
-            }
+        @AnyThread
+        void load() {
+            Observable.defer(() -> Observable.just(mQuery))
+                    .map(queryString -> query(queryString))
+                    .subscribeOn(mIoScheduler)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(cursor -> {
+                        if (cursor != null) {
+                            mCursor = new Cursor(cursor);
+                        } else {
+                            mCursor = null;
+                        }
+                        mObserver.onChanged();
+                    });
         }
     }
 }

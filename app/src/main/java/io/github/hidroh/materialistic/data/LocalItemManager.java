@@ -16,9 +16,6 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.content.Context;
-import android.support.v4.app.LoaderManager;
-
 /**
  * Data repository for local items
  * @param <T>    item type
@@ -39,15 +36,13 @@ public interface LocalItemManager<T> {
 
     /**
      * Initiates an async query for local items
-     * @param context          resources provider
-     * @param loaderManager    loader manager
      * @param observer         listener that will be informed on changes
      * @param filter           query filter if any
      */
-    void attach(Context context, LoaderManager loaderManager, Observer observer, String filter);
+    void attach(Observer observer, String filter);
 
     /**
-     * Cleans up any extra state created by {@link #attach(Context, LoaderManager, Observer, String)}
+     * Cleans up any extra state created by {@link #attach(Observer, String)}
      */
     void detach();
 
