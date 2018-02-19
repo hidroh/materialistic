@@ -16,18 +16,17 @@
 
 package io.github.hidroh.materialistic;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -39,9 +38,9 @@ import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
+import rx.Scheduler;
 
 public class ListFragment extends BaseListFragment {
 
@@ -55,7 +54,8 @@ public class ListFragment extends BaseListFragment {
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
     @Inject @Named(ActivityModule.POPULAR) ItemManager mPopularItemManager;
-    private ItemManager mItemManager;
+    @Inject @Named(DataModule.IO_THREAD) Scheduler mIoThreadScheduler;
+    private StoryListViewModel mStoryListViewModel;
     private View mErrorView;
     private View mEmptyView;
     private RefreshCallback mRefreshCallback;
@@ -96,8 +96,8 @@ public class ListFragment extends BaseListFragment {
         final View view = inflater.inflate(R.layout.fragment_list, container, false);
         mErrorView = view.findViewById(R.id.empty);
         mEmptyView = view.findViewById(R.id.empty_search);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_layout);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
                 AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
@@ -116,15 +116,16 @@ public class ListFragment extends BaseListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
+        ItemManager itemManager;
         if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
-            mItemManager = mAlgoliaItemManager;
+            itemManager = mAlgoliaItemManager;
         } else if (TextUtils.equals(managerClassName, AlgoliaPopularClient.class.getName())) {
-            mItemManager = mPopularItemManager;
+            itemManager = mPopularItemManager;
         } else {
-            mItemManager = mHnItemManager;
+            itemManager = mHnItemManager;
         }
         mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_NORMAL);
-        if (mItemManager == mHnItemManager && mFilter != null) {
+        if (itemManager == mHnItemManager && mFilter != null) {
             switch (mFilter) {
                 case ItemManager.BEST_FETCH_MODE:
                     mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
@@ -133,14 +134,22 @@ public class ListFragment extends BaseListFragment {
                     mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_LOW);
                     break;
             }
-        } else if (mItemManager == mPopularItemManager) {
+        } else if (itemManager == mPopularItemManager) {
             mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
         }
-        if (mAdapter.getItems() != null) {
-            mAdapter.notifyDataSetChanged();
-        } else {
-            refresh();
-        }
+        mStoryListViewModel = ViewModelProviders.of(this).get(StoryListViewModel.class);
+        mStoryListViewModel.inject(itemManager, mIoThreadScheduler);
+        mStoryListViewModel.getStories(mFilter, mCacheMode).observe(this, itemLists -> {
+            if (itemLists == null) {
+                return;
+            }
+            if (itemLists.first != null) {
+                onItemsLoaded(itemLists.first);
+            }
+            if (itemLists.second != null) {
+                onItemsLoaded(itemLists.second);
+            }
+        });
     }
 
     @Override
@@ -177,7 +186,7 @@ public class ListFragment extends BaseListFragment {
 
     private void refresh() {
         mAdapter.setShowAll(true);
-        mItemManager.getStories(mFilter, mCacheMode, new ListResponseListener(this));
+        mStoryListViewModel.refreshStories(mFilter, mCacheMode);
     }
 
     @Synthetic
@@ -209,28 +218,6 @@ public class ListFragment extends BaseListFragment {
             mSwipeRefreshLayout.setRefreshing(false);
             if (mRefreshCallback != null) {
                 mRefreshCallback.onRefreshed();
-            }
-        }
-    }
-
-    static class ListResponseListener implements ResponseListener<Item[]> {
-        private final WeakReference<ListFragment> mListFragment;
-
-        @Synthetic
-        ListResponseListener(ListFragment listFragment) {
-            mListFragment = new WeakReference<>(listFragment);
-        }
-        @Override
-        public void onResponse(@Nullable final Item[] response) {
-            if (mListFragment.get() != null && mListFragment.get().isAttached()) {
-                mListFragment.get().onItemsLoaded(response);
-            }
-        }
-
-        @Override
-        public void onError(String errorMessage) {
-            if (mListFragment.get() != null && mListFragment.get().isAttached()) {
-                mListFragment.get().onItemsLoaded(null);
             }
         }
     }

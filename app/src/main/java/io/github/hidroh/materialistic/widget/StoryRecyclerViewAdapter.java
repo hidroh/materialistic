@@ -62,12 +62,7 @@ import static io.github.hidroh.materialistic.Preferences.SwipeAction.Save;
 
 public class StoryRecyclerViewAdapter extends
         ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, Item> {
-    private static final String STATE_ITEMS = "state:items";
-    private static final String STATE_UPDATED = "state:updated";
-    private static final String STATE_PROMOTED_KEY = "state:promotedKey";
-    private static final String STATE_PROMOTED_VALUE = "state:promotedValue";
     private static final String STATE_SHOW_ALL = "state:showAll";
-    private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
     private static final String STATE_USERNAME = "state:username";
     private final Object VOTED = new Object();
     private final RecyclerView.OnScrollListener mAutoViewScrollListener = new RecyclerView.OnScrollListener() {
@@ -226,18 +221,7 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public Bundle saveState() {
         Bundle savedState = super.saveState();
-        savedState.putParcelableArrayList(STATE_ITEMS, mItems);
-        savedState.putParcelableArrayList(STATE_UPDATED, mUpdated);
-        ArrayList<String> promotedKey = new ArrayList<>(mPromoted.size());
-        ArrayList<Integer> promotedValue = new ArrayList<>(mPromoted.size());
-        for (Map.Entry<String, Integer> entry : mPromoted.entrySet()) {
-            promotedKey.add(entry.getKey());
-            promotedValue.add(entry.getValue());
-        }
-        savedState.putStringArrayList(STATE_PROMOTED_KEY, promotedKey);
-        savedState.putIntegerArrayList(STATE_PROMOTED_VALUE, promotedValue);
         savedState.putBoolean(STATE_SHOW_ALL, mShowAll);
-        savedState.putInt(STATE_FAVORITE_REVISION, mFavoriteRevision);
         savedState.putString(STATE_USERNAME, mUsername);
         return savedState;
     }
@@ -248,24 +232,7 @@ public class StoryRecyclerViewAdapter extends
             return;
         }
         super.restoreState(savedState);
-        ArrayList<Item> savedItems = savedState.getParcelableArrayList(STATE_ITEMS);
-        setItemsInternal(savedItems);
-        mUpdated = savedState.getParcelableArrayList(STATE_UPDATED);
-        if (mUpdated != null) {
-            for (int i = 0; i < mUpdated.size(); i++) {
-                mUpdatedPositions.put(mUpdated.get(i).getLongId(), i);
-            }
-        }
-        ArrayList<String> promotedKey = savedState.getStringArrayList(STATE_PROMOTED_KEY);
-        ArrayList<Integer> promotedValue = savedState.getIntegerArrayList(STATE_PROMOTED_VALUE);
-        mPromoted.clear();
-        //noinspection ConstantConditions
-        for (int i = 0; i < promotedKey.size(); i++) {
-            //noinspection ConstantConditions
-            mPromoted.put(promotedKey.get(i), promotedValue.get(i));
-        }
         mShowAll = savedState.getBoolean(STATE_SHOW_ALL, true);
-        mFavoriteRevision = savedState.getInt(STATE_FAVORITE_REVISION);
         mUsername = savedState.getString(STATE_USERNAME);
     }
 

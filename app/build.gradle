@@ -79,7 +79,7 @@ dependencies {
             "io.reactivex:rxandroid:1.2.1",
             "io.reactivex:rxjava:1.1.7",
             "android.arch.persistence.room:runtime:$roomVersion",
-            "android.arch.lifecycle:livedata:$archVersion",
+            "android.arch.lifecycle:extensions:$archVersion",
             "android.arch.lifecycle:common-java8:$archVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
 

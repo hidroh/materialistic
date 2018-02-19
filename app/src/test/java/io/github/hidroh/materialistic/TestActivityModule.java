@@ -383,6 +383,11 @@ public class TestActivityModule {
         return Schedulers.immediate();
     }
 
+    @Provides @Singleton @Named(DataModule.IO_THREAD)
+    public Scheduler provideIoThreadScheduler() {
+        return Schedulers.immediate();
+    }
+
     @Provides
     public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao() {
         return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getSavedStoriesDao();
