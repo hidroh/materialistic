@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -121,8 +120,7 @@ public class FavoriteActivityTest {
         shadowAdapter = customShadowOf(adapter);
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
         verify(keyDelegate).attach(any(Activity.class));
-        verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), any());
+        verify(favoriteManager).attach(observerCaptor.capture(), any());
     }
 
     @Test
@@ -165,8 +163,7 @@ public class FavoriteActivityTest {
         closeListener.onClose();
         assertEquals(2, adapter.getItemCount());
         ((FavoriteFragment) fragment).filter("ask");
-        verify(favoriteManager, times(2)).attach(any(Context.class), any(LoaderManager.class),
-                observerCaptor.capture(), any());
+        verify(favoriteManager, times(2)).attach(observerCaptor.capture(), any());
         when(favoriteManager.getSize()).thenReturn(1);
         when(favoriteManager.getItem(eq(0))).thenReturn(new TestFavorite(
                 "2", "http://example.com", "ask HN", System.currentTimeMillis()));
@@ -277,13 +274,11 @@ public class FavoriteActivityTest {
         Intent intent = new Intent();
         intent.putExtra(SearchManager.QUERY, "blah");
         controller.newIntent(intent);
-        verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
-                any(LocalItemManager.Observer.class), eq("blah"));
+        verify(favoriteManager).attach(any(LocalItemManager.Observer.class), eq("blah"));
         intent = new Intent();
         intent.putExtra(SearchManager.QUERY, "ask");
         controller.newIntent(intent);
-        verify(favoriteManager).attach(any(Context.class), any(LoaderManager.class),
-                any(LocalItemManager.Observer.class), eq("ask"));
+        verify(favoriteManager).attach(any(LocalItemManager.Observer.class), eq("ask"));
     }
 
     @Test

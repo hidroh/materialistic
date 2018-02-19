@@ -121,8 +121,7 @@ public class FavoriteManagerTest {
         ActivityController<AppCompatActivity> controller = Robolectric.buildActivity(AppCompatActivity.class);
         AppCompatActivity activity = controller.create().start().resume().get();
         LocalItemManager.Observer observer = mock(LocalItemManager.Observer.class);
-        manager.attach(RuntimeEnvironment.application, activity.getSupportLoaderManager(),
-                observer, null);
+        manager.attach(observer, null);
         verify(observer).onChanged();
         assertThat(manager.getSize()).isEqualTo(2);
         assertThat(manager.getItem(0).getDisplayedTitle()).contains("ask HN");
