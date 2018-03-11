@@ -27,9 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.CustomTabsDelegate;
@@ -238,7 +236,7 @@ public abstract class ListRecyclerViewAdapter
     /**
      * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
      */
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         final StoryView mStoryView;
         @SuppressWarnings("WeakerAccess")
         final FlatCardView mCardView;

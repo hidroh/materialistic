@@ -196,7 +196,7 @@ public class ListFragment extends BaseListFragment {
         }
         if (items == null) {
             mSwipeRefreshLayout.setRefreshing(false);
-            if (mAdapter.getItems() == null || mAdapter.getItems().isEmpty()) {
+            if (mAdapter.getItems() == null || mAdapter.getItems().size() == 0) {
                 // TODO make refreshing indicator visible in error view
                 mEmptyView.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.INVISIBLE);
@@ -206,7 +206,7 @@ public class ListFragment extends BaseListFragment {
                         Toast.LENGTH_SHORT).show();
             }
         } else {
-            mAdapter.setItems(new ArrayList<>(Arrays.asList(items)));
+            mAdapter.setItems(items);
             if (items.length == 0) {
                 mEmptyView.setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.INVISIBLE);

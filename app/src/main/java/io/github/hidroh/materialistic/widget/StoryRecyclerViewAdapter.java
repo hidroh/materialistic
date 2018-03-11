@@ -24,10 +24,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.LongSparseArray;
+import android.support.v7.util.DiffUtil;
+import android.support.v7.util.ListUpdateCallback;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -35,7 +38,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,7 @@ import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static io.github.hidroh.materialistic.Preferences.SwipeAction.Save;
 
 public class StoryRecyclerViewAdapter extends
@@ -75,13 +78,27 @@ public class StoryRecyclerViewAdapter extends
         }
     };
     private final Preferences.Observable mPrefObservable = new Preferences.Observable();
+    private final SortedList.Callback<Item> mSortedListCallback = new SortedListAdapterCallback<Item>(this) {
+        @Override
+        public int compare(Item o1, Item o2) {
+            return o1.getRank() - o2.getRank();
+        }
+
+        @Override
+        public boolean areContentsTheSame(Item item1, Item item2) {
+            return areItemsTheSame(item1, item2) && item1.getLocalRevision() == item2.getLocalRevision();
+        }
+
+        @Override
+        public boolean areItemsTheSame(Item item1, Item item2) {
+            return item1.getLongId() == item2.getLongId();
+        }
+    };
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject SessionManager mSessionManager;
-    @Synthetic ArrayList<Item> mItems;
-    private ArrayList<Item> mUpdated = new ArrayList<>();
-    private Map<String, Integer> mPromoted = new HashMap<>();
-    @Synthetic final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
-    private final LongSparseArray<Integer> mUpdatedPositions = new LongSparseArray<>();
+    @Synthetic final SortedList<Item> mItems = new SortedList<>(Item.class, mSortedListCallback);
+    @Synthetic final SortedList<Item> mAdded = new SortedList<>(Item.class, mSortedListCallback);
+    @Synthetic Map<String, Integer> mPromoted = new HashMap<>();
     @Synthetic int mFavoriteRevision = 1;
     private String mUsername;
     private boolean mHighlightUpdated = true;
@@ -98,8 +115,14 @@ public class StoryRecyclerViewAdapter extends
             notifyDataSetChanged();
             return;
         }
-        Integer position = mItemPositions.get(Long.valueOf(uri.getLastPathSegment()));
-        if (position == null) {
+        int position = NO_POSITION;
+        for (int i = 0; i < mItems.size(); i++) {
+            if (TextUtils.equals(mItems.get(i).getId(), uri.getLastPathSegment())) {
+                position = i;
+                break;
+            }
+        }
+        if (position == NO_POSITION) {
             return;
         }
         Item item = mItems.get(position);
@@ -212,9 +235,9 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public int getItemCount() {
         if (mShowAll) {
-            return mItemPositions.size();
+            return mItems.size();
         } else {
-            return mUpdatedPositions.size();
+            return mAdded.size();
         }
     }
 
@@ -236,13 +259,14 @@ public class StoryRecyclerViewAdapter extends
         mUsername = savedState.getString(STATE_USERNAME);
     }
 
-    public ArrayList<Item> getItems() {
+    public SortedList<Item> getItems() {
         return mItems;
     }
 
-    public void setItems(ArrayList<Item> items) {
+    public void setItems(Item[] items) {
         setUpdated(items);
-        setItemsInternal(items);
+        mItems.clear();
+        mItems.addAll(items);
         notifyDataSetChanged();
     }
 
@@ -297,11 +321,10 @@ public class StoryRecyclerViewAdapter extends
 
     @Override
     protected Item getItem(int position) {
-        ArrayList<Item> list = mShowAll ? mItems : mUpdated;
-        if (position < 0 || position >= list.size()) {
+        if (position < 0 || position >= getItems().size()) {
             return null;
         }
-        return list.get(position);
+        return getItems().get(position);
     }
 
     @Override
@@ -309,47 +332,68 @@ public class StoryRecyclerViewAdapter extends
         return mCacheMode;
     }
 
-    private void setItemsInternal(ArrayList<Item> items) {
-        mItems = items;
-        mItemPositions.clear();
-        if (items != null) {
-            for (int i = 0; i < items.size(); i++) {
-                mItemPositions.put(items.get(i).getLongId(), i);
-            }
-        }
-    }
-
-    private void setUpdated(ArrayList<Item> items) {
+    private void setUpdated(Item[] items) {
         if (!mHighlightUpdated || getItems() == null) {
             return;
         }
-        mUpdated.clear();
-        mUpdatedPositions.clear();
+        if (mItems.size() == 0) {
+            return;
+        }
+        mAdded.clear();
         mPromoted.clear();
-        for (Item item : items) {
-            Integer position = mItemPositions.get(item.getLongId());
-            if (position == null) {
-                mUpdated.add(item);
-                mUpdatedPositions.put(item.getLongId(), mUpdated.size() - 1);
-            } else {
-                Item currentRevision = mItems.get(position);
-                item.setLastKidCount(currentRevision.getLastKidCount());
-                int lastRank = currentRevision.getRank();
-                if (lastRank > item.getRank()) {
-                    mPromoted.put(item.getId(), lastRank - item.getRank());
+        DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return mItems.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return items.length;
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return mItems.get(oldItemPosition).getLongId() ==
+                        items[newItemPosition].getLongId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return areItemsTheSame(oldItemPosition, newItemPosition);
+            }
+        }).dispatchUpdatesTo(new ListUpdateCallback() {
+            @Override
+            public void onInserted(int position, int count) {
+                mAdded.add(items[position]);
+                notifyUpdated();
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                // no-op
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                if (toPosition > fromPosition) {
+                    mPromoted.put(mItems.get(fromPosition).getId(), toPosition - fromPosition);
                 }
             }
-        }
-        if (!mUpdated.isEmpty()) {
-            notifyUpdated();
-        }
+
+            @Override
+            public void onChanged(int position, int count, Object payload) {
+                // no-op
+            }
+        });
     }
 
-    private void notifyUpdated() {
+    @Synthetic
+    void notifyUpdated() {
         if (mShowAll) {
             Snackbar.make(mRecyclerView,
                     mContext.getResources().getQuantityString(R.plurals.new_stories_count,
-                            mUpdated.size(), mUpdated.size()),
+                            mAdded.size(), mAdded.size()),
                     Snackbar.LENGTH_LONG)
                     .setAction(R.string.show_me, v -> {
                         setShowAll(false);
@@ -360,11 +404,11 @@ public class StoryRecyclerViewAdapter extends
         } else {
             final Snackbar snackbar = Snackbar.make(mRecyclerView,
                     mContext.getResources().getQuantityString(R.plurals.showing_new_stories,
-                            mUpdated.size(), mUpdated.size()),
+                            mAdded.size(), mAdded.size()),
                     Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction(R.string.show_all, v -> {
                 snackbar.dismiss();
-                mUpdated.clear();
+                mAdded.clear();
                 setShowAll(true);
                 notifyDataSetChanged();
             }).show();
@@ -373,10 +417,9 @@ public class StoryRecyclerViewAdapter extends
 
     @Synthetic
     void onItemLoaded(Item item) {
-        Integer position = mShowAll ? mItemPositions.get(item.getLongId()) :
-                mUpdatedPositions.get(item.getLongId());
+        int position = getItems().indexOf(item);
         // ignore changes if item was invalidated by refresh / filter
-        if (position != null && position >= 0 && position < getItemCount()) {
+        if (position >= 0 && position < getItemCount()) {
             notifyItemChanged(position);
         }
     }
@@ -384,7 +427,7 @@ public class StoryRecyclerViewAdapter extends
     private void bindItemUpdated(ItemViewHolder holder, Item story) {
         if (mHighlightUpdated) {
             holder.mStoryView.setUpdated(story,
-                    mUpdatedPositions.indexOfKey(story.getLongId()) >= 0,
+                    mAdded.indexOf(story) >= 0,
                     mPromoted.containsKey(story.getId()) ? mPromoted.get(story.getId()) : 0);
         }
     }
