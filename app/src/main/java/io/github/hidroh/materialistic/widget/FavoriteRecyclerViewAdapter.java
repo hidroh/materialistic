@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.ArrayMap;
@@ -62,7 +61,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         void stopActionMode();
     }
 
-    private ItemTouchHelper mItemTouchHelper;
+    private final ItemTouchHelper mItemTouchHelper;
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         private boolean mPendingClear;
 
@@ -116,19 +115,14 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             notifyDataSetChanged();
         }
     };
-    @Synthetic ActionModeDelegate mActionModeDelegate;
-    @Synthetic MenuTintDelegate mMenuTintDelegate;
-    @Synthetic ArrayMap<Integer, String> mSelected = new ArrayMap<>();
+    @Synthetic final ActionModeDelegate mActionModeDelegate;
+    @Synthetic final MenuTintDelegate mMenuTintDelegate;
+    @Synthetic final ArrayMap<Integer, String> mSelected = new ArrayMap<>();
     private int mPendingAdd = -1;
 
-    public FavoriteRecyclerViewAdapter(ActionModeDelegate actionModeDelegate) {
-        super();
+    public FavoriteRecyclerViewAdapter(Context context, ActionModeDelegate actionModeDelegate) {
+        super(context);
         mActionModeDelegate = actionModeDelegate;
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(final RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
         mMenuTintDelegate = new MenuTintDelegate();
         mMenuTintDelegate.onActivityCreated(mContext);
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mContext) {
@@ -144,7 +138,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 if (direction == ItemTouchHelper.LEFT) {
-                    dismiss(viewHolder.getAdapterPosition());
+                    dismiss(viewHolder.itemView, viewHolder.getAdapterPosition());
                 } else {
                     Favorite item = getItem(viewHolder.getAdapterPosition());
                     if (item != null) {
@@ -154,6 +148,11 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
                 }
             }
         });
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(final RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
@@ -161,7 +160,6 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mItemTouchHelper.attachToRecyclerView(null);
-        mActionModeDelegate = null;
     }
 
     @Override
@@ -175,9 +173,9 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Override
-    protected void bindItem(final ItemViewHolder holder) {
+    protected void bindItem(final ItemViewHolder holder, int position) {
         final Favorite favorite = getItem(holder.getAdapterPosition());
-        holder.itemView.setOnLongClickListener(v -> {
+        holder.setOnLongClickListener(v -> {
             if (mActionModeDelegate.startActionMode(mActionModeCallback)) {
                 toggle(favorite.getId(), holder.getAdapterPosition());
                 return true;
@@ -185,7 +183,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
 
             return false;
         });
-        holder.mStoryView.getMoreOptions().setOnClickListener(v -> showMoreOptions(v, favorite));
+        holder.bindMoreOptions(v -> showMoreOptions(v, favorite), false);
     }
 
     @Override
@@ -250,11 +248,11 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Synthetic
-    void dismiss(final int position) {
+    void dismiss(View view, final int position) {
         final Favorite item = getItem(position);
         mSelected.put(position, item.getId());
         mFavoriteManager.remove(mContext, mSelected.values());
-        Snackbar.make(mRecyclerView, R.string.toast_removed, Snackbar.LENGTH_LONG)
+        Snackbar.make(view, R.string.toast_removed, Snackbar.LENGTH_LONG)
                 .setAction(R.string.undo, v -> {
                     mPendingAdd = position;
                     mFavoriteManager.add(mContext, item);

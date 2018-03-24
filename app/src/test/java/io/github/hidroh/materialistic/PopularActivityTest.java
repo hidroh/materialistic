@@ -18,12 +18,10 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.test.ParameterizedTestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.appcompat.v7.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
@@ -67,8 +65,7 @@ public class PopularActivityTest {
     @Test
     public void testFilter() {
         shadowOf(activity).clickMenuItem(menuResId);
-        verify(itemManager, atLeastOnce()).getStories(eq(expectedRange),
-                eq(ItemManager.MODE_DEFAULT), any(ResponseListener.class));
+        verify(itemManager, atLeastOnce()).getStories(eq(expectedRange), eq(ItemManager.MODE_DEFAULT));
         assertThat(activity.getSupportActionBar()).hasSubtitle(expectedSubtitleResId);
         assertEquals(expectedRange, Preferences.getPopularRange(activity));
         Bundle savedState = new Bundle();

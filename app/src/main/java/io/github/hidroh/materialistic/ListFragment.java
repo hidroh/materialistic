@@ -16,10 +16,13 @@
 
 package io.github.hidroh.materialistic;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,18 +30,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.data.AlgoliaPopularClient;
+import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
+import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.widget.StoryRecyclerViewAdapter;
 import rx.Scheduler;
 
@@ -49,7 +50,24 @@ public class ListFragment extends BaseListFragment {
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_CACHE_MODE = "state:cacheMode";
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
-    private final StoryRecyclerViewAdapter mAdapter = new StoryRecyclerViewAdapter();
+    private final Observer<Uri> mObserver = uri -> {
+        if (uri == null) {
+            return;
+        }
+        int toastMessageResId = 0;
+        if (FavoriteManager.isAdded(uri)) {
+            toastMessageResId = R.string.toast_saved;
+        } else if (FavoriteManager.isRemoved(uri)) {
+            toastMessageResId = R.string.toast_removed;
+        }
+        if (toastMessageResId == 0) {
+            return;
+        }
+        Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
+                .setAction(R.string.undo, v -> getAdapter().toggleSave(uri.getLastPathSegment()))
+                .show();
+    };
+    private StoryRecyclerViewAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     @Inject @Named(ActivityModule.HN) ItemManager mHnItemManager;
     @Inject @Named(ActivityModule.ALGOLIA) ItemManager mAlgoliaItemManager;
@@ -86,8 +104,6 @@ public class ListFragment extends BaseListFragment {
         } else {
             mFilter = getArguments().getString(EXTRA_FILTER);
         }
-        mAdapter.initDisplayOptions(getActivity());
-        mAdapter.setCacheMode(mCacheMode);
     }
 
     @Override
@@ -106,7 +122,7 @@ public class ListFragment extends BaseListFragment {
         }
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mCacheMode = ItemManager.MODE_NETWORK;
-            mAdapter.setCacheMode(mCacheMode);
+            getAdapter().setCacheMode(mCacheMode);
             refresh();
         });
         return view;
@@ -115,6 +131,7 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        MaterialisticDatabase.getInstance(getContext()).getLiveData().observe(this, mObserver);
         String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
         ItemManager itemManager;
         if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
@@ -124,19 +141,38 @@ public class ListFragment extends BaseListFragment {
         } else {
             itemManager = mHnItemManager;
         }
-        mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_NORMAL);
+        getAdapter().setHotThresHold(AppUtils.HOT_THRESHOLD_NORMAL);
         if (itemManager == mHnItemManager && mFilter != null) {
             switch (mFilter) {
                 case ItemManager.BEST_FETCH_MODE:
-                    mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
+                    getAdapter().setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
                     break;
                 case ItemManager.NEW_FETCH_MODE:
-                    mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_LOW);
+                    getAdapter().setHotThresHold(AppUtils.HOT_THRESHOLD_LOW);
                     break;
             }
         } else if (itemManager == mPopularItemManager) {
-            mAdapter.setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
+            getAdapter().setHotThresHold(AppUtils.HOT_THRESHOLD_HIGH);
         }
+        getAdapter().initDisplayOptions(mRecyclerView);
+        getAdapter().setCacheMode(mCacheMode);
+        getAdapter().setUpdateListener((showAll, itemCount, actionClickListener) -> {
+            if (showAll) {
+                Snackbar.make(mRecyclerView,
+                        getResources().getQuantityString(R.plurals.new_stories_count,
+                                itemCount, itemCount),
+                        Snackbar.LENGTH_LONG)
+                        .setAction(R.string.show_me, actionClickListener)
+                        .show();
+            } else {
+                final Snackbar snackbar = Snackbar.make(mRecyclerView,
+                        getResources().getQuantityString(R.plurals.showing_new_stories,
+                                itemCount, itemCount),
+                        Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction(R.string.show_all, actionClickListener).show();
+            }
+
+        });
         mStoryListViewModel = ViewModelProviders.of(this).get(StoryListViewModel.class);
         mStoryListViewModel.inject(itemManager, mIoThreadScheduler);
         mStoryListViewModel.getStories(mFilter, mCacheMode).observe(this, itemLists -> {
@@ -168,24 +204,27 @@ public class ListFragment extends BaseListFragment {
 
     public void filter(String filter) {
         mFilter = filter;
-        mAdapter.setHighlightUpdated(false);
+        getAdapter().setHighlightUpdated(false);
         mSwipeRefreshLayout.setRefreshing(true);
         refresh();
     }
 
     @Override
-    protected ListRecyclerViewAdapter getAdapter() {
+    protected StoryRecyclerViewAdapter getAdapter() {
+        if (mAdapter == null) {
+            mAdapter = new StoryRecyclerViewAdapter(getContext());
+        }
         return mAdapter;
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
         if (!contextChanged) {
-            mAdapter.initDisplayOptions(getActivity());
+            getAdapter().initDisplayOptions(mRecyclerView);
         }
     }
 
     private void refresh() {
-        mAdapter.setShowAll(true);
+        getAdapter().setShowAll(true);
         mStoryListViewModel.refreshStories(mFilter, mCacheMode);
     }
 
@@ -196,7 +235,7 @@ public class ListFragment extends BaseListFragment {
         }
         if (items == null) {
             mSwipeRefreshLayout.setRefreshing(false);
-            if (mAdapter.getItems() == null || mAdapter.getItems().size() == 0) {
+            if (getAdapter().getItems() == null || getAdapter().getItems().size() == 0) {
                 // TODO make refreshing indicator visible in error view
                 mEmptyView.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.INVISIBLE);
@@ -206,7 +245,7 @@ public class ListFragment extends BaseListFragment {
                         Toast.LENGTH_SHORT).show();
             }
         } else {
-            mAdapter.setItems(items);
+            getAdapter().setItems(items);
             if (items.length == 0) {
                 mEmptyView.setVisibility(View.VISIBLE);
                 mRecyclerView.setVisibility(View.INVISIBLE);

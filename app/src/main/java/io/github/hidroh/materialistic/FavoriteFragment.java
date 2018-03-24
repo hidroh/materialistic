@@ -37,14 +37,13 @@ import javax.inject.Inject;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.LocalItemManager;
 import io.github.hidroh.materialistic.widget.FavoriteRecyclerViewAdapter;
-import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 public class FavoriteFragment extends BaseListFragment
         implements FavoriteRecyclerViewAdapter.ActionModeDelegate, LocalItemManager.Observer {
     public static final String EXTRA_FILTER = FavoriteFragment.class.getName() + ".EXTRA_FILTER";
     private static final String STATE_FILTER = "state:filter";
     private static final String STATE_SEARCH_VIEW_EXPANDED = "state:searchViewExpanded";
-    private final FavoriteRecyclerViewAdapter mAdapter = new FavoriteRecyclerViewAdapter(this);
+    private FavoriteRecyclerViewAdapter mAdapter;
     private ActionMode mActionMode;
     private String mFilter;
     private boolean mSearchViewExpanded;
@@ -98,7 +97,7 @@ public class FavoriteFragment extends BaseListFragment
     protected void createOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_search, menu);
         createSearchView(menu.findItem(R.id.menu_search));
-        if (mAdapter.getItemCount() > 0) {
+        if (getAdapter().getItemCount() > 0) {
             inflater.inflate(R.menu.menu_favorite, menu);
             super.createOptionsMenu(menu, inflater);
         }
@@ -108,8 +107,8 @@ public class FavoriteFragment extends BaseListFragment
     protected void prepareOptionsMenu(Menu menu) {
         // allow clearing filter if empty, or filter if non-empty
         menu.findItem(R.id.menu_search).setVisible(!TextUtils.isEmpty(mFilter) ||
-                mAdapter.getItemCount() > 0);
-        if (mAdapter.getItemCount() > 0) {
+                getAdapter().getItemCount() > 0);
+        if (getAdapter().getItemCount() > 0) {
             super.prepareOptionsMenu(menu);
         }
     }
@@ -159,7 +158,10 @@ public class FavoriteFragment extends BaseListFragment
     }
 
     @Override
-    protected ListRecyclerViewAdapter getAdapter() {
+    protected FavoriteRecyclerViewAdapter getAdapter() {
+        if (mAdapter == null) {
+            mAdapter = new FavoriteRecyclerViewAdapter(getContext(), this);
+        }
         return mAdapter;
     }
 
@@ -186,9 +188,9 @@ public class FavoriteFragment extends BaseListFragment
 
     @Override
     public void onChanged() {
-        mAdapter.notifyChanged();
+        getAdapter().notifyChanged();
         if (!isDetached()) {
-            toggleEmptyView(mAdapter.getItemCount() == 0, mFilter);
+            toggleEmptyView(getAdapter().getItemCount() == 0, mFilter);
             getActivity().invalidateOptionsMenu();
         }
     }

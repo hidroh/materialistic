@@ -13,14 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
@@ -29,7 +26,6 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
-import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.TestHnItem;
 import io.github.hidroh.materialistic.test.ListActivity;
 import io.github.hidroh.materialistic.test.TestItem;
@@ -41,7 +37,6 @@ import io.github.hidroh.materialistic.test.suite.SlowTest;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.support.v4.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,6 +44,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @Category(SlowTest.class)
@@ -58,7 +54,6 @@ public class ListFragmentTest {
     private ActivityController<ListActivity> controller;
     private ListActivity activity;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
-    @Captor ArgumentCaptor<ResponseListener<Item[]>> listener;
 
     @Before
     public void setUp() {
@@ -98,17 +93,19 @@ public class ListFragmentTest {
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
-        verify(itemManager).getStories(any(String.class),
-                eq(ItemManager.MODE_DEFAULT),
-                any(ResponseListener.class));
-        verify(itemManager).getStories(any(String.class),
-                eq(ItemManager.MODE_NETWORK),
-                any(ResponseListener.class));
+        verify(itemManager).getStories(any(String.class), eq(ItemManager.MODE_DEFAULT));
+        verify(itemManager).getStories(any(String.class), eq(ItemManager.MODE_NETWORK));
         controller.pause().stop().destroy();
     }
 
     @Test
     public void testHighlightNewItems() {
+        when(itemManager.getStories(any(), eq(ItemManager.MODE_DEFAULT))).thenReturn(new Item[]{new TestItem() {
+            @Override
+            public String getId() {
+                return "1";
+            }
+        }});
         Bundle args = new Bundle();
         args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
@@ -117,27 +114,17 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        listener.getValue().onResponse(new Item[]{new TestItem() {
-            @Override
-            public String getId() {
-                return "1";
-            }
-        }});
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_DEFAULT));
         reset(itemManager);
+        when(itemManager.getStories(any(), eq(ItemManager.MODE_NETWORK))).thenReturn(new Item[]{
+                new TestHnItem(1L),
+                new TestHnItem(2L)
+        });
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
-        verify(itemManager).getStories(any(String.class),
-                eq(ItemManager.MODE_NETWORK),
-                listener.capture());
-        listener.getValue().onResponse(new Item[]{
-                new TestHnItem(1L),
-                new TestHnItem(2L)
-        });
+        verify(itemManager).getStories(any(String.class), eq(ItemManager.MODE_NETWORK));
         assertEquals(2, ((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter().getItemCount());
         View snackbarView = ShadowSnackbar.getLatestView();
         Assertions.assertThat((TextView) snackbarView.findViewById(R.id.snackbar_text))
@@ -156,6 +143,8 @@ public class ListFragmentTest {
 
     @Test
     public void testConfigurationChanged() {
+        when(itemManager.getStories(any(), eq(ItemManager.MODE_DEFAULT))).thenReturn(new Item[]{new TestItem() {
+        }});
         Bundle args = new Bundle();
         args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
@@ -164,24 +153,19 @@ public class ListFragmentTest {
                 .beginTransaction()
                 .add(android.R.id.list, fragment)
                 .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        listener.getValue().onResponse(new Item[]{new TestItem() {
-        }});
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_DEFAULT));
         reset(itemManager);
         Bundle state = new Bundle();
         fragment.onSaveInstanceState(state);
         fragment.onActivityCreated(state);
         // should not trigger another data request
-        verify(itemManager, never()).getStories(any(String.class),
-                eq(ItemManager.MODE_DEFAULT),
-                any(ResponseListener.class));
+        verify(itemManager, never()).getStories(any(String.class), eq(ItemManager.MODE_DEFAULT));
         controller.pause().stop().destroy();
     }
 
     @Test
     public void testEmptyResponse() {
+        when(itemManager.getStories(any(), eq(ItemManager.MODE_DEFAULT))).thenReturn(new Item[0]);
         Bundle args = new Bundle();
         args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
         args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
@@ -190,31 +174,9 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        listener.getValue().onResponse(new Item[0]);
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_DEFAULT));
         assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
         Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();
-        controller.pause().stop().destroy();
-    }
-
-    @Test
-    public void testErrorResponse() {
-        Bundle args = new Bundle();
-        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
-        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
-        activity.getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.list,
-                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
-                .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        listener.getValue().onError(null);
-        assertThat((SwipeRefreshLayout) activity.findViewById(R.id.swipe_layout)).isNotRefreshing();
-        Assertions.assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         controller.pause().stop().destroy();
     }
 
@@ -228,58 +190,16 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        listener.getValue().onResponse(new Item[]{new TestItem() {}});
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_DEFAULT));
         Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();
         reset(itemManager);
+        when(itemManager.getStories(any(), eq(ItemManager.MODE_DEFAULT))).thenReturn(new Item[]{});
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
                 ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_NETWORK),
-                listener.capture());
-        listener.getValue().onError(null);
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_NETWORK));
         Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();
-        assertNotNull(ShadowToast.getLatestToast());
         controller.pause().stop().destroy();
-    }
-
-    @Test
-    public void testErrorWhenDetached() {
-        Bundle args = new Bundle();
-        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
-        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
-        activity.getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.list,
-                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
-                .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        controller.pause().stop().destroy();
-        listener.getValue().onError(null);
-        // no exception
-    }
-
-    @Test
-    public void testResponseWhenDetached() {
-        Bundle args = new Bundle();
-        args.putString(ListFragment.EXTRA_ITEM_MANAGER, HackerNewsClient.class.getName());
-        args.putString(ListFragment.EXTRA_FILTER, ItemManager.TOP_FETCH_MODE);
-        activity.getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.list,
-                        Fragment.instantiate(activity, ListFragment.class.getName(), args))
-                .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                listener.capture());
-        controller.pause().stop().destroy();
-        listener.getValue().onResponse(null);
-        // no exception
     }
 
     @Test
