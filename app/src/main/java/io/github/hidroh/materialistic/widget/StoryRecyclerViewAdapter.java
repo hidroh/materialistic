@@ -22,12 +22,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.LongSparseArray;
+import android.support.v4.util.ArrayMap;
+import android.support.v4.util.ArraySet;
+import android.support.v7.util.DiffUtil;
+import android.support.v7.util.ListUpdateCallback;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -35,10 +39,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -58,16 +59,12 @@ import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static io.github.hidroh.materialistic.Preferences.SwipeAction.Save;
 
 public class StoryRecyclerViewAdapter extends
         ListRecyclerViewAdapter<ListRecyclerViewAdapter.ItemViewHolder, Item> {
-    private static final String STATE_ITEMS = "state:items";
-    private static final String STATE_UPDATED = "state:updated";
-    private static final String STATE_PROMOTED_KEY = "state:promotedKey";
-    private static final String STATE_PROMOTED_VALUE = "state:promotedValue";
     private static final String STATE_SHOW_ALL = "state:showAll";
-    private static final String STATE_FAVORITE_REVISION = "state:favoriteRevision";
     private static final String STATE_USERNAME = "state:username";
     private final Object VOTED = new Object();
     private final RecyclerView.OnScrollListener mAutoViewScrollListener = new RecyclerView.OnScrollListener() {
@@ -80,13 +77,27 @@ public class StoryRecyclerViewAdapter extends
         }
     };
     private final Preferences.Observable mPrefObservable = new Preferences.Observable();
+    private final SortedList.Callback<Item> mSortedListCallback = new SortedListAdapterCallback<Item>(this) {
+        @Override
+        public int compare(Item o1, Item o2) {
+            return o1.getRank() - o2.getRank();
+        }
+
+        @Override
+        public boolean areContentsTheSame(Item item1, Item item2) {
+            return areItemsTheSame(item1, item2) && item1.getLocalRevision() == item2.getLocalRevision();
+        }
+
+        @Override
+        public boolean areItemsTheSame(Item item1, Item item2) {
+            return item1.getLongId() == item2.getLongId();
+        }
+    };
     @Inject @Named(ActivityModule.HN) ItemManager mItemManager;
     @Inject SessionManager mSessionManager;
-    @Synthetic ArrayList<Item> mItems;
-    private ArrayList<Item> mUpdated = new ArrayList<>();
-    private Map<String, Integer> mPromoted = new HashMap<>();
-    @Synthetic final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
-    private final LongSparseArray<Integer> mUpdatedPositions = new LongSparseArray<>();
+    @Synthetic final SortedList<Item> mItems = new SortedList<>(Item.class, mSortedListCallback);
+    @Synthetic final ArraySet<Item> mAdded = new ArraySet<>();
+    @Synthetic final ArrayMap<String, Integer> mPromoted = new ArrayMap<>();
     @Synthetic int mFavoriteRevision = 1;
     private String mUsername;
     private boolean mHighlightUpdated = true;
@@ -103,8 +114,14 @@ public class StoryRecyclerViewAdapter extends
             notifyDataSetChanged();
             return;
         }
-        Integer position = mItemPositions.get(Long.valueOf(uri.getLastPathSegment()));
-        if (position == null) {
+        int position = NO_POSITION;
+        for (int i = 0; i < mItems.size(); i++) {
+            if (TextUtils.equals(mItems.get(i).getId(), uri.getLastPathSegment())) {
+                position = i;
+                break;
+            }
+        }
+        if (position == NO_POSITION) {
             return;
         }
         Item item = mItems.get(position);
@@ -119,13 +136,16 @@ public class StoryRecyclerViewAdapter extends
         }
         notifyItemChanged(position);
     };
+    private UpdateListener mUpdateListener;
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        MaterialisticDatabase.getInstance(recyclerView.getContext()).getLiveData().observeForever(mObserver);
-        mCallback = new ItemTouchHelperCallback(recyclerView.getContext(),
-                Preferences.getListSwipePreferences(recyclerView.getContext())) {
+    public interface UpdateListener {
+        void onUpdated(boolean showAll, int itemCount, View.OnClickListener actionClickListener);
+    }
+
+    public StoryRecyclerViewAdapter(Context context) {
+        super(context);
+        mCallback = new ItemTouchHelperCallback(context,
+                Preferences.getListSwipePreferences(context)) {
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 Item item = getItem(viewHolder.getAdapterPosition());
@@ -180,8 +200,14 @@ public class StoryRecyclerViewAdapter extends
             }
         };
         mItemTouchHelper = new ItemTouchHelper(mCallback);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        MaterialisticDatabase.getInstance(recyclerView.getContext()).getLiveData().observeForever(mObserver);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
-        toggleAutoMarkAsViewed(recyclerView.getContext());
+        toggleAutoMarkAsViewed(recyclerView);
         mPrefObservable.subscribe(recyclerView.getContext(),
                 (key, contextChanged) -> {
                     mCallback.setSwipePreferences(recyclerView.getContext(),
@@ -208,7 +234,7 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position, List<Object> payloads) {
         if (payloads.contains(VOTED)) {
-            holder.mStoryView.animateVote(getItem(position).getScore());
+            holder.animateVote(getItem(position).getScore());
         } else {
             super.onBindViewHolder(holder, position, payloads);
         }
@@ -217,27 +243,16 @@ public class StoryRecyclerViewAdapter extends
     @Override
     public int getItemCount() {
         if (mShowAll) {
-            return mItemPositions.size();
+            return mItems.size();
         } else {
-            return mUpdatedPositions.size();
+            return mAdded.size();
         }
     }
 
     @Override
     public Bundle saveState() {
         Bundle savedState = super.saveState();
-        savedState.putParcelableArrayList(STATE_ITEMS, mItems);
-        savedState.putParcelableArrayList(STATE_UPDATED, mUpdated);
-        ArrayList<String> promotedKey = new ArrayList<>(mPromoted.size());
-        ArrayList<Integer> promotedValue = new ArrayList<>(mPromoted.size());
-        for (Map.Entry<String, Integer> entry : mPromoted.entrySet()) {
-            promotedKey.add(entry.getKey());
-            promotedValue.add(entry.getValue());
-        }
-        savedState.putStringArrayList(STATE_PROMOTED_KEY, promotedKey);
-        savedState.putIntegerArrayList(STATE_PROMOTED_VALUE, promotedValue);
         savedState.putBoolean(STATE_SHOW_ALL, mShowAll);
-        savedState.putInt(STATE_FAVORITE_REVISION, mFavoriteRevision);
         savedState.putString(STATE_USERNAME, mUsername);
         return savedState;
     }
@@ -248,35 +263,22 @@ public class StoryRecyclerViewAdapter extends
             return;
         }
         super.restoreState(savedState);
-        ArrayList<Item> savedItems = savedState.getParcelableArrayList(STATE_ITEMS);
-        setItemsInternal(savedItems);
-        mUpdated = savedState.getParcelableArrayList(STATE_UPDATED);
-        if (mUpdated != null) {
-            for (int i = 0; i < mUpdated.size(); i++) {
-                mUpdatedPositions.put(mUpdated.get(i).getLongId(), i);
-            }
-        }
-        ArrayList<String> promotedKey = savedState.getStringArrayList(STATE_PROMOTED_KEY);
-        ArrayList<Integer> promotedValue = savedState.getIntegerArrayList(STATE_PROMOTED_VALUE);
-        mPromoted.clear();
-        //noinspection ConstantConditions
-        for (int i = 0; i < promotedKey.size(); i++) {
-            //noinspection ConstantConditions
-            mPromoted.put(promotedKey.get(i), promotedValue.get(i));
-        }
         mShowAll = savedState.getBoolean(STATE_SHOW_ALL, true);
-        mFavoriteRevision = savedState.getInt(STATE_FAVORITE_REVISION);
         mUsername = savedState.getString(STATE_USERNAME);
     }
 
-    public ArrayList<Item> getItems() {
+    public void setUpdateListener(UpdateListener updateListener) {
+        mUpdateListener = updateListener;
+    }
+
+    public SortedList<Item> getItems() {
         return mItems;
     }
 
-    public void setItems(ArrayList<Item> items) {
+    public void setItems(Item[] items) {
         setUpdated(items);
-        setItemsInternal(items);
-        notifyDataSetChanged();
+        mItems.clear();
+        mItems.addAll(items);
     }
 
     public void setHighlightUpdated(boolean highlightUpdated) {
@@ -287,13 +289,27 @@ public class StoryRecyclerViewAdapter extends
         mShowAll = showAll;
     }
 
-    public void initDisplayOptions(Context context) {
-        mHighlightUpdated = Preferences.highlightUpdatedEnabled(context);
-        mUsername = Preferences.getUsername(context);
+    public void initDisplayOptions(RecyclerView recyclerView) {
+        mHighlightUpdated = Preferences.highlightUpdatedEnabled(recyclerView.getContext());
+        mUsername = Preferences.getUsername(recyclerView.getContext());
         if (isAttached()) {
-            toggleAutoMarkAsViewed(context);
+            toggleAutoMarkAsViewed(recyclerView);
             notifyDataSetChanged();
         }
+    }
+
+    public void toggleSave(String itemId) {
+        int position = NO_POSITION;
+        for (int i = 0; i < mItems.size(); i++) {
+            if (TextUtils.equals(mItems.get(i).getId(), itemId)) {
+                position = i;
+                break;
+            }
+        }
+        if (position == NO_POSITION) {
+            return;
+        }
+        toggleSave(mItems.get(position));
     }
 
     @Override
@@ -307,20 +323,21 @@ public class StoryRecyclerViewAdapter extends
     }
 
     @Override
-    protected void bindItem(final ItemViewHolder holder) {
-        final Item story = getItem(holder.getAdapterPosition());
-        bindItemUpdated(holder, story);
-        highlightUserPost(holder, story);
-        holder.mStoryView.setViewed(story.isViewed());
+    protected void bindItem(final ItemViewHolder holder, int position) {
+        final Item story = getItem(position);
+        if (mHighlightUpdated) {
+            holder.setUpdated(story,
+                    mAdded.contains(story),
+                    mPromoted.containsKey(story.getId()) ? mPromoted.get(story.getId()) : 0);
+        }
+        holder.setChecked(isSelected(story.getId()) ||
+                !TextUtils.isEmpty(mUsername) && TextUtils.equals(mUsername, story.getBy()));
+        holder.setViewed(story.isViewed());
         if (story.getLocalRevision() < mFavoriteRevision) {
             story.setFavorite(false);
         }
-        holder.mStoryView.setFavorite(story.isFavorite());
-        holder.itemView.setOnLongClickListener(v -> {
-            showMoreOptions(holder.mStoryView.getMoreOptions(), story, holder);
-            return true;
-        });
-        holder.mStoryView.getMoreOptions().setOnClickListener(v -> showMoreOptions(v, story, holder));
+        holder.setFavorite(story.isFavorite());
+        holder.bindMoreOptions(anchor -> showMoreOptions(anchor, story, holder), true);
     }
 
     @Override
@@ -330,11 +347,10 @@ public class StoryRecyclerViewAdapter extends
 
     @Override
     protected Item getItem(int position) {
-        ArrayList<Item> list = mShowAll ? mItems : mUpdated;
-        if (position < 0 || position >= list.size()) {
+        if (position < 0 || position >= getItems().size()) {
             return null;
         }
-        return list.get(position);
+        return getItems().get(position);
     }
 
     @Override
@@ -342,87 +358,84 @@ public class StoryRecyclerViewAdapter extends
         return mCacheMode;
     }
 
-    private void setItemsInternal(ArrayList<Item> items) {
-        mItems = items;
-        mItemPositions.clear();
-        if (items != null) {
-            for (int i = 0; i < items.size(); i++) {
-                mItemPositions.put(items.get(i).getLongId(), i);
-            }
-        }
-    }
-
-    private void setUpdated(ArrayList<Item> items) {
+    private void setUpdated(Item[] items) {
         if (!mHighlightUpdated || getItems() == null) {
             return;
         }
-        mUpdated.clear();
-        mUpdatedPositions.clear();
+        if (mItems.size() == 0) {
+            return;
+        }
+        mAdded.clear();
         mPromoted.clear();
-        for (Item item : items) {
-            Integer position = mItemPositions.get(item.getLongId());
-            if (position == null) {
-                mUpdated.add(item);
-                mUpdatedPositions.put(item.getLongId(), mUpdated.size() - 1);
-            } else {
-                Item currentRevision = mItems.get(position);
-                item.setLastKidCount(currentRevision.getLastKidCount());
-                int lastRank = currentRevision.getRank();
-                if (lastRank > item.getRank()) {
-                    mPromoted.put(item.getId(), lastRank - item.getRank());
+        DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return mItems.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return items.length;
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return mItems.get(oldItemPosition).getLongId() ==
+                        items[newItemPosition].getLongId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return areItemsTheSame(oldItemPosition, newItemPosition);
+            }
+        }).dispatchUpdatesTo(new ListUpdateCallback() {
+            @Override
+            public void onInserted(int position, int count) {
+                mAdded.add(items[position]);
+                notifyUpdated();
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                // no-op
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                if (toPosition < fromPosition) {
+                    mPromoted.put(mItems.get(fromPosition).getId(), fromPosition - toPosition);
                 }
             }
-        }
-        if (!mUpdated.isEmpty()) {
-            notifyUpdated();
-        }
+
+            @Override
+            public void onChanged(int position, int count, Object payload) {
+                // no-op
+            }
+        });
     }
 
-    private void notifyUpdated() {
-        if (mShowAll) {
-            Snackbar.make(mRecyclerView,
-                    mContext.getResources().getQuantityString(R.plurals.new_stories_count,
-                            mUpdated.size(), mUpdated.size()),
-                    Snackbar.LENGTH_LONG)
-                    .setAction(R.string.show_me, v -> {
-                        setShowAll(false);
-                        notifyUpdated();
-                        notifyDataSetChanged();
-                    })
-                    .show();
-        } else {
-            final Snackbar snackbar = Snackbar.make(mRecyclerView,
-                    mContext.getResources().getQuantityString(R.plurals.showing_new_stories,
-                            mUpdated.size(), mUpdated.size()),
-                    Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction(R.string.show_all, v -> {
-                snackbar.dismiss();
-                mUpdated.clear();
-                setShowAll(true);
+    @Synthetic
+    void notifyUpdated() {
+        if (mUpdateListener != null) {
+            mUpdateListener.onUpdated(mShowAll, mAdded.size(), v -> {
+                setShowAll(!mShowAll);
+                notifyUpdated();
                 notifyDataSetChanged();
-            }).show();
+            });
         }
     }
 
     @Synthetic
     void onItemLoaded(Item item) {
-        Integer position = mShowAll ? mItemPositions.get(item.getLongId()) :
-                mUpdatedPositions.get(item.getLongId());
+        int position = getItems().indexOf(item);
         // ignore changes if item was invalidated by refresh / filter
-        if (position != null && position >= 0 && position < getItemCount()) {
+        if (position >= 0 && position < getItemCount()) {
             notifyItemChanged(position);
         }
     }
 
-    private void bindItemUpdated(ItemViewHolder holder, Item story) {
-        if (mHighlightUpdated) {
-            holder.mStoryView.setUpdated(story,
-                    mUpdatedPositions.indexOfKey(story.getLongId()) >= 0,
-                    mPromoted.containsKey(story.getId()) ? mPromoted.get(story.getId()) : 0);
-        }
-    }
-
-    private void showMoreOptions(View v, final Item story, final ItemViewHolder holder) {
+    @Synthetic
+    void showMoreOptions(View v, final Item story, final ItemViewHolder holder) {
         mPopupMenu.create(mContext, v, Gravity.NO_GRAVITY)
                 .inflate(R.menu.menu_contextual_story)
                 .setMenuItemTitle(R.id.menu_contextual_save,
@@ -469,17 +482,11 @@ public class StoryRecyclerViewAdapter extends
 
     @Synthetic
     void toggleSave(final Item story) {
-        final int toastMessageResId;
         if (!story.isFavorite()) {
             mFavoriteManager.add(mContext, story);
-            toastMessageResId = R.string.toast_saved;
         } else {
             mFavoriteManager.remove(mContext, story.getId());
-            toastMessageResId = R.string.toast_removed;
         }
-        Snackbar.make(mRecyclerView, toastMessageResId, Snackbar.LENGTH_SHORT)
-                .setAction(R.string.undo, v -> toggleSave(story))
-                .show();
     }
 
     @Synthetic
@@ -508,13 +515,6 @@ public class StoryRecyclerViewAdapter extends
         }
     }
 
-    private void highlightUserPost(ItemViewHolder holder,
-                                   Item story) {
-        holder.mStoryView.setChecked(isSelected(story.getId()) ||
-                !TextUtils.isEmpty(mUsername) &&
-                TextUtils.equals(mUsername, story.getBy()));
-    }
-
     public void setCacheMode(int cacheMode) {
         mCacheMode = cacheMode;
     }
@@ -532,11 +532,11 @@ public class StoryRecyclerViewAdapter extends
         mSessionManager.view(item.getId());
     }
 
-    private void toggleAutoMarkAsViewed(Context context) {
-        if (Preferences.autoMarkAsViewed(context)) {
-            mRecyclerView.addOnScrollListener(mAutoViewScrollListener);
+    private void toggleAutoMarkAsViewed(RecyclerView recyclerView) {
+        if (Preferences.autoMarkAsViewed(recyclerView.getContext())) {
+            recyclerView.addOnScrollListener(mAutoViewScrollListener);
         } else {
-            mRecyclerView.removeOnScrollListener(mAutoViewScrollListener);
+            recyclerView.removeOnScrollListener(mAutoViewScrollListener);
         }
     }
 

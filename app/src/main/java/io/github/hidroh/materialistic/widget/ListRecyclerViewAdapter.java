@@ -27,9 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.CustomTabsDelegate;
@@ -40,6 +38,7 @@ import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.WebItem;
 
@@ -58,30 +57,28 @@ public abstract class ListRecyclerViewAdapter
     private CustomTabsDelegate mCustomTabsDelegate;
     protected Context mContext;
     private MultiPaneListener mMultiPaneListener;
-    protected RecyclerView mRecyclerView;
     LayoutInflater mInflater;
     @Inject PopupMenu mPopupMenu;
     @Inject AlertDialogBuilder mAlertDialogBuilder;
     @Inject UserServices mUserServices;
     @Inject FavoriteManager mFavoriteManager;
     private int mLastSelectedPosition = -1;
-    private int mCardElevation;
     private boolean mCardViewEnabled = true;
     private int mHotThreshold = Integer.MAX_VALUE;
     private final Preferences.Observable mPreferenceObservable = new Preferences.Observable();
     private boolean mMultiWindowEnabled;
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        mRecyclerView = recyclerView;
-        mContext = recyclerView.getContext();
+    public ListRecyclerViewAdapter(Context context) {
+        mContext = context;
         mInflater = AppUtils.createLayoutInflater(mContext);
         ((Injectable) mContext).inject(this);
         mMultiPaneListener = (MultiPaneListener) mContext;
-        mCardElevation = mContext.getResources()
-                .getDimensionPixelSize(R.dimen.cardview_default_elevation);
         mMultiWindowEnabled = Preferences.multiWindowEnabled(mContext);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
         mPreferenceObservable.subscribe(mContext, (key, contextChanged) ->
                 mMultiWindowEnabled = Preferences.multiWindowEnabled(mContext),
                 R.string.pref_multi_window);
@@ -91,16 +88,13 @@ public abstract class ListRecyclerViewAdapter
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mPreferenceObservable.unsubscribe(mContext);
-        mContext = null;
-        mMultiPaneListener = null;
-        mRecyclerView = null;
     }
 
     @Override
     public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
         VH holder = create(parent, viewType);
         if (viewType == VIEW_TYPE_FLAT) {
-            holder.mCardView.flatten();
+            holder.flatten();
         }
         return holder;
     }
@@ -108,8 +102,6 @@ public abstract class ListRecyclerViewAdapter
     @Override
     public final void onBindViewHolder(final VH holder, int position) {
         final T item = getItem(position);
-        holder.mCardView.setCardElevation(isSelected(item.getId()) ? mCardElevation * 2 :
-                (mCardViewEnabled ? mCardElevation : 0));
         clearViewHolder(holder);
         if (!isItemAvailable(item)) {
             loadItem(holder.getAdapterPosition());
@@ -117,11 +109,13 @@ public abstract class ListRecyclerViewAdapter
         }
         // TODO naive launch priority for now
         mCustomTabsDelegate.mayLaunchUrl(Uri.parse(item.getUrl()), null, null);
-        holder.mStoryView.setStory(item, mHotThreshold);
-        holder.mStoryView.setChecked(isSelected(item.getId()));
-        holder.itemView.setOnClickListener(v -> handleItemClick(item, holder));
-        holder.mStoryView.setOnCommentClickListener(v -> openItem(item));
-        bindItem(holder);
+        holder.bind(item,
+                mHotThreshold,
+                mCardViewEnabled,
+                isSelected(item.getId()),
+                v -> handleItemClick(item, holder),
+                v -> openItem(item));
+        bindItem(holder, position);
     }
 
     @Override
@@ -174,14 +168,12 @@ public abstract class ListRecyclerViewAdapter
         // override to load item if needed
     }
 
-    protected abstract void bindItem(VH holder);
+    protected abstract void bindItem(VH holder, int position);
 
     protected abstract boolean isItemAvailable(T item);
 
     private void clearViewHolder(VH holder) {
-        holder.mStoryView.reset();
-        holder.itemView.setOnClickListener(null);
-        holder.itemView.setOnLongClickListener(null);
+        holder.clear();
     }
 
     /**
@@ -238,15 +230,80 @@ public abstract class ListRecyclerViewAdapter
     /**
      * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
      */
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
-        final StoryView mStoryView;
-        @SuppressWarnings("WeakerAccess")
-        final FlatCardView mCardView;
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final StoryView mStoryView;
+        private final FlatCardView mCardView;
+        private final int mCardElevation;
+
+        public interface ShowMoreOptionsListener {
+            void showMoreOptions(View anchor);
+        }
 
         ItemViewHolder(View itemView) {
             super(itemView);
             mCardView = (FlatCardView) itemView;
-            mStoryView = (StoryView) itemView.findViewById(R.id.story_view);
+            mStoryView = itemView.findViewById(R.id.story_view);
+            mCardElevation = itemView.getContext().getResources()
+                    .getDimensionPixelSize(R.dimen.cardview_default_elevation);
+        }
+
+        public void bind(WebItem item,
+                         int hotThreshold,
+                         boolean selected,
+                         boolean cardViewEnabled,
+                         View.OnClickListener itemClickListener,
+                         View.OnClickListener commentClickListener) {
+            mCardView.setCardElevation(selected ? mCardElevation * 2 :
+                    (cardViewEnabled ? mCardElevation : 0));
+            mStoryView.setStory(item, hotThreshold);
+            mStoryView.setChecked(selected);
+            itemView.setOnClickListener(itemClickListener);
+            mStoryView.setOnCommentClickListener(commentClickListener);
+        }
+
+        public void clear() {
+            mCardView.setCardElevation(0);
+            mStoryView.reset();
+            itemView.setOnClickListener(null);
+            itemView.setOnLongClickListener(null);
+        }
+
+        public void flatten() {
+            mCardView.flatten();
+        }
+
+        public void animateVote(int score) {
+            mStoryView.animateVote(score);
+        }
+
+        public void setViewed(boolean viewed) {
+            mStoryView.setViewed(viewed);
+        }
+
+        public void setFavorite(boolean favorite) {
+            mStoryView.setFavorite(favorite);
+        }
+
+        public void setUpdated(Item story, boolean updated, int change) {
+            mStoryView.setUpdated(story, updated, change);
+        }
+
+        public void setChecked(boolean checked) {
+            mStoryView.setChecked(checked);
+        }
+
+        public void setOnLongClickListener(View.OnLongClickListener longClickListener) {
+            itemView.setOnLongClickListener(longClickListener);
+        }
+
+        public void bindMoreOptions(ShowMoreOptionsListener listener, boolean allowLongClick) {
+            if (allowLongClick) {
+                itemView.setOnLongClickListener(v -> {
+                    listener.showMoreOptions(mStoryView.getMoreOptions());
+                    return true;
+                });
+            }
+            mStoryView.getMoreOptions().setOnClickListener(v -> listener.showMoreOptions(v));
         }
     }
 }

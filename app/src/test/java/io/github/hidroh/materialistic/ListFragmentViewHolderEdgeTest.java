@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @Config(shadows = {ShadowRecyclerViewAdapter.class})
 @SuppressWarnings("ConstantConditions")
@@ -45,13 +46,13 @@ public class ListFragmentViewHolderEdgeTest {
     private RecyclerView.ViewHolder holder;
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Captor ArgumentCaptor<ResponseListener<Item>> listener;
-    @Captor ArgumentCaptor<ResponseListener<Item[]>> storiesListener;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(itemManager);
+        when(itemManager.getStories(any(), eq(ItemManager.MODE_DEFAULT))).thenReturn(new Item[]{new TestHnItem(1L)});
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
         ListActivity activity = controller.get();
@@ -63,10 +64,7 @@ public class ListFragmentViewHolderEdgeTest {
                 .add(android.R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1L)});
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_DEFAULT));
         RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         ShadowRecyclerViewAdapter shadowAdapter = customShadowOf(recyclerView.getAdapter());
         holder = shadowAdapter.getViewHolder(0);

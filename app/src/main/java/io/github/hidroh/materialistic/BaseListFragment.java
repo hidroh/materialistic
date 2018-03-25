@@ -53,10 +53,6 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
-        if (savedInstanceState != null) {
-            getAdapter().restoreState(savedInstanceState.getBundle(STATE_ADAPTER));
-        }
     }
 
     @Override
@@ -84,6 +80,10 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            getAdapter().restoreState(savedInstanceState.getBundle(STATE_ADAPTER));
+        }
+        getAdapter().setCardViewEnabled(Preferences.isListItemCardView(getActivity()));
         getAdapter().setCustomTabsDelegate(mCustomTabsDelegate);
         mRecyclerView.setAdapter(getAdapter());
         mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,

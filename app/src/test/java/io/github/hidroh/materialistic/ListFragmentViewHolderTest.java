@@ -29,7 +29,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
@@ -70,12 +69,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
@@ -96,7 +97,6 @@ public class ListFragmentViewHolderTest {
     @Inject @Named(ActivityModule.HN) ItemManager itemManager;
     @Inject FavoriteManager favoriteManager;
     @Inject UserServices userServices;
-    @Captor ArgumentCaptor<ResponseListener<Item[]>> storiesListener;
     @Captor ArgumentCaptor<ResponseListener<Item>> itemListener;
     @Captor ArgumentCaptor<UserServices.Callback> voteCallback;
     private RecyclerView recyclerView;
@@ -121,6 +121,7 @@ public class ListFragmentViewHolderTest {
                 return "author";
             }
         };
+        when(itemManager.getStories(anyString(), anyInt())).thenReturn(new Item[]{item});
         controller = Robolectric.buildActivity(ListActivity.class)
                 .create().start().resume().visible();
         activity = controller.get();
@@ -132,10 +133,7 @@ public class ListFragmentViewHolderTest {
                 .add(android.R.id.content,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_DEFAULT),
-                storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{item});
+        verify(itemManager).getStories(any(), eq(ItemManager.MODE_DEFAULT));
         recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
         swipeCallback = (ItemTouchHelper.SimpleCallback) customShadowOf(recyclerView).getItemTouchHelperCallback();
         adapter = customShadowOf(recyclerView.getAdapter());
@@ -155,104 +153,6 @@ public class ListFragmentViewHolderTest {
                 .isVisible()
                 .isEmpty();
         assertViewed();
-    }
-
-    @Test
-    public void testNewStory() {
-        reset(itemManager);
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
-        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_NETWORK),
-                storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(2) {
-            @Override
-            public int getRank() {
-                return 46;
-            }
-        }});
-        ShadowSnackbar.getLatestView().findViewById(R.id.snackbar_action).performClick();
-        verify(itemManager, atLeastOnce()).getItem(any(),
-                eq(ItemManager.MODE_NETWORK),
-                itemListener.capture());
-        itemListener.getValue().onResponse(new PopulatedStory(2));
-        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
-    }
-
-    @Test
-    public void testPromoted() {
-        reset(itemManager);
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
-        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_NETWORK),
-                storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1) {
-            @Override
-            public int getRank() {
-                return 45;
-            }
-        }});
-        verify(itemManager).getItem(any(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
-        itemListener.getValue().onResponse(new PopulatedStory(1));
-        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).containsText("+1");
-    }
-
-    @Test
-    public void testNewComments() {
-        reset(itemManager);
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
-        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_NETWORK),
-                storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(1)});
-        verify(itemManager).getItem(any(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
-        itemListener.getValue().onResponse(new PopulatedStory(1) {
-            @Override
-            public int getDescendants() {
-                return 2;
-            }
-
-            @Override
-            public long[] getKids() {
-                return new long[]{2, 3};
-            }
-        });
-        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat((TextView) holder.itemView.findViewById(R.id.comment)).hasTextString("2*");
-    }
-
-    @Test
-    public void testPreferenceChange() {
-        reset(itemManager);
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
-        shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
-        verify(itemManager).getStories(any(),
-                eq(ItemManager.MODE_NETWORK),
-                storiesListener.capture());
-        storiesListener.getValue().onResponse(new Item[]{new TestHnItem(2) {
-            @Override
-            public int getRank() {
-                return 46;
-            }
-        }});
-        verify(itemManager).getItem(any(), eq(ItemManager.MODE_NETWORK), itemListener.capture());
-        itemListener.getValue().onResponse(new PopulatedStory(2));
-        RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
-        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46*");
-        PreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putBoolean(activity.getString(R.string.pref_highlight_updated), false)
-                .apply();
-        holder = adapter.getViewHolder(0);
-        assertThat((TextView) holder.itemView.findViewById(R.id.rank)).hasTextString("46");
     }
 
     @Test

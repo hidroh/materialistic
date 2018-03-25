@@ -54,7 +54,7 @@ android {
 }
 
 ext {
-    supportVersion = '27.0.2'
+    supportVersion = '27.1.0'
     okHttpVersion = '3.9.1'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.5.4'
@@ -79,7 +79,7 @@ dependencies {
             "io.reactivex:rxandroid:1.2.1",
             "io.reactivex:rxjava:1.1.7",
             "android.arch.persistence.room:runtime:$roomVersion",
-            "android.arch.lifecycle:livedata:$archVersion",
+            "android.arch.lifecycle:extensions:$archVersion",
             "android.arch.lifecycle:common-java8:$archVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
 
