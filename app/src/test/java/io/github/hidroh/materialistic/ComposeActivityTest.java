@@ -16,16 +16,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.TestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.accounts.UserServices;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -52,12 +52,12 @@ public class ComposeActivityTest {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
         reset(userServices);
-        controller = Robolectric.buildActivity(ComposeActivity.class);
-        activity = controller.get();
         Intent intent = new Intent();
         intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
         intent.putExtra(ComposeActivity.EXTRA_PARENT_TEXT, "Paragraph 1<br/><br/>Paragraph 2<br/>");
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(ComposeActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
     }
 
     @Test
@@ -150,8 +150,8 @@ public class ComposeActivityTest {
     public void testEmptyQuote() {
         Intent intent = new Intent();
         intent.putExtra(ComposeActivity.EXTRA_PARENT_ID, "1");
-        controller = Robolectric.buildActivity(ComposeActivity.class)
-                .withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(ComposeActivity.class, intent)
+                .create().start().resume().visible();
         activity = controller.get();
         assertThat((View) activity.findViewById(R.id.quote)).isNotVisible();
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_quote).isVisible());

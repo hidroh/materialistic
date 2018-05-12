@@ -19,13 +19,13 @@ android.testOptions.unitTests.all {
 
 ext {
     assertjVersion = '1.2.0'
-    robolectricVersion = '3.2'
+    robolectricVersion = '3.8'
 }
 
 dependencies {
     testImplementation "org.robolectric:robolectric:$robolectricVersion",
-            "org.robolectric:shadows-support-v4:$robolectricVersion",
-            'org.mockito:mockito-core:2.1.0',
+            "org.robolectric:shadows-supportv4:$robolectricVersion",
+            'org.mockito:mockito-core:2.18.3',
             'junit:junit:4.12',
             'io.takari.junit:takari-cpsuite:1.2.7',
             "com.squareup.assertj:assertj-android:$assertjVersion",

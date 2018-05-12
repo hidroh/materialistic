@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestRunner;
@@ -49,9 +49,9 @@ public class WidgetConfigActivityTest {
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(WidgetConfigActivity.class);
+        controller = Robolectric.buildActivity(WidgetConfigActivity.class,
+                new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 1));
         activity = controller
-                .withIntent(new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 1))
                 .create()
                 .start()
                 .resume()

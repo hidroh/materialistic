@@ -22,6 +22,7 @@ import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -35,8 +36,8 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ServiceController;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.util.ServiceController;
 
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class ItemSyncJobServiceTest {
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
-                        ConnectivityManager.TYPE_WIFI, 0, true, true));
+                        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED));
         new SyncScheduler().scheduleSync(RuntimeEnvironment.application, "1");
         List<JobInfo> pendingJobs = shadowOf((JobScheduler) RuntimeEnvironment.application
                 .getSystemService(Context.JOB_SCHEDULER_SERVICE)).getAllPendingJobs();

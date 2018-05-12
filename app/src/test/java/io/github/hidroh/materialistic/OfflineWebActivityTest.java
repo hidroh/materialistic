@@ -25,12 +25,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.TestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowWebView;
-import org.robolectric.util.ActivityController;
 
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 
 import static org.assertj.android.api.Assertions.assertThat;
@@ -57,12 +57,14 @@ public class OfflineWebActivityTest {
 
     @Test
     public void testLoadUrl() {
-        activity = controller.withIntent(new Intent()
-                .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"))
+        controller = Robolectric.buildActivity(OfflineWebActivity.class,
+                new Intent()
+                        .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"));
+        activity = controller
                 .create()
                 .get();
         assertThat(activity.getTitle()).contains("http://example.com");
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebView webView = activity.findViewById(R.id.web_view);
         View progress = activity.findViewById(R.id.progress);
         ShadowWebView shadowWebView = shadowOf(webView);
         assertThat(shadowWebView.getLastLoadedUrl())
@@ -77,22 +79,24 @@ public class OfflineWebActivityTest {
 
     @Test
     public void testScrollToTop() {
-        activity = controller.withIntent(new Intent()
-                .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"))
+        controller = Robolectric.buildActivity(OfflineWebActivity.class, new Intent()
+                .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"));
+        activity = controller
                 .create()
                 .start()
                 .resume()
                 .visible()
                 .get();
         activity.findViewById(R.id.toolbar).performClick();
-        assertThat(((ShadowNestedScrollView) ShadowExtractor
+        assertThat(((ShadowNestedScrollView) Shadow
                 .extract(activity.findViewById(R.id.nested_scroll_view))).getSmoothScrollY())
                 .isEqualTo(0);
     }
     @Test
     public void testHomeButton() {
-        activity = controller.withIntent(new Intent()
-                .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"))
+        controller = Robolectric.buildActivity(OfflineWebActivity.class, new Intent()
+                .putExtra(OfflineWebActivity.EXTRA_URL, "http://example.com"));
+        activity = controller
                 .create()
                 .start()
                 .resume()

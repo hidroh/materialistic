@@ -25,9 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowDialog;
-import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.test.TestRunner;
@@ -46,11 +46,11 @@ public class PreferencesActivityTest {
     @Before
     public void setUp() {
         TestApplication.applicationGraph.inject(this);
-        controller = Robolectric.buildActivity(TestPreferencesActivity.class);
-        activity = controller.withIntent(new Intent()
-                .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
-                .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
-                .create().postCreate(null).start().resume().visible().get();
+        controller = Robolectric.buildActivity(TestPreferencesActivity.class,
+                new Intent()
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display));
+        activity = controller.create().postCreate(null).start().resume().visible().get();
     }
 
     @Test

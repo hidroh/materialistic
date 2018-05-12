@@ -34,7 +34,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowResolveInfo;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.List;
 
@@ -50,6 +50,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(TestRunner.class)
 public class CustomTabsDelegateTest {
@@ -84,10 +85,10 @@ public class CustomTabsDelegateTest {
         assertThat(ShadowApplication.getInstance().getBoundServiceConnections()).isEmpty();
 
         // bind service should create connection
-        RuntimeEnvironment.getRobolectricPackageManager().addResolveInfoForIntent(
+        shadowOf(RuntimeEnvironment.application.getPackageManager()).addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.example.com")),
                 ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
-        RuntimeEnvironment.getRobolectricPackageManager().addResolveInfoForIntent(
+        shadowOf(RuntimeEnvironment.application.getPackageManager()).addResolveInfoForIntent(
                 new Intent("android.support.customtabs.action.CustomTabsService")
                         .setPackage("com.android.chrome"),
                 ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));

@@ -23,7 +23,7 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowViewGroup;
 
-import static org.robolectric.internal.Shadow.directlyOn;
+import static org.robolectric.shadow.api.Shadow.directlyOn;
 
 @Implements(NestedScrollView.class)
 public class ShadowNestedScrollView extends ShadowViewGroup {

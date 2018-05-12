@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.NestedScrollView;
@@ -18,9 +19,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
 
-import io.github.hidroh.materialistic.data.*;
-import okio.ByteString;
-import okio.Okio;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,28 +26,31 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowPackageManager;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
-import org.robolectric.util.ActivityController;
+
+import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
+import io.github.hidroh.materialistic.data.FavoriteManager;
+import io.github.hidroh.materialistic.data.FileDownloader;
+import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.WebActivity;
 import io.github.hidroh.materialistic.test.shadow.ShadowNestedScrollView;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
+import okio.Okio;
 
 import static io.github.hidroh.materialistic.WebFragment.PDF_LOADER_URL;
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
@@ -89,24 +90,24 @@ public class WebFragmentTest {
         when(item.getUrl()).thenReturn("http://example.com");
         intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
-        controller = Robolectric.buildActivity(WebActivity.class);
+        controller = Robolectric.buildActivity(WebActivity.class, intent);
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
-                        ConnectivityManager.TYPE_WIFI, 0, true, true));
+                        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED));
         activity = controller.get();
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_ad_block), true)
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
                 .apply();
-        controller.withIntent(intent).create().start().resume().visible();
+        controller.create().start().resume().visible();
     }
 
     @Test
     public void testProgressChanged() {
-        ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progress);
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        ProgressBar progressBar = activity.findViewById(R.id.progress);
+        WebView webView = activity.findViewById(R.id.web_view);
         shadowOf(webView).getWebChromeClient().onProgressChanged(webView, 50);
         assertThat(progressBar).isVisible();
         shadowOf(webView).getWebChromeClient().onProgressChanged(webView, 100);
@@ -121,35 +122,35 @@ public class WebFragmentTest {
         resolverInfo.activityInfo.applicationInfo.packageName =
                 ListActivity.class.getPackage().getName();
         resolverInfo.activityInfo.name = ListActivity.class.getName();
-        RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager rpm = shadowOf(RuntimeEnvironment.application.getPackageManager());
         final String url = "http://example.com/file.doc";
         rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(url)), resolverInfo);
 
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
+        WebView webView = activity.findViewById(R.id.web_view);
+        ShadowWebView shadowWebView = Shadow.extract(webView);
         when(item.getUrl()).thenReturn(url);
-        shadowWebView.getDownloadListener().onDownloadStart(url, "", "", "", 0l);
+        shadowWebView.getDownloadListener().onDownloadStart(url, "", "", "", 0L);
         assertThat((View) activity.findViewById(R.id.empty)).isVisible();
         activity.findViewById(R.id.download_button).performClick();
         assertNotNull(shadowOf(activity).getNextStartedActivity());
     }
 
     @Test
-    public void testDownloadPdf() throws InterruptedException {
+    public void testDownloadPdf() {
         ResolveInfo resolverInfo = new ResolveInfo();
         resolverInfo.activityInfo = new ActivityInfo();
         resolverInfo.activityInfo.applicationInfo = new ApplicationInfo();
         resolverInfo.activityInfo.applicationInfo.packageName = ListActivity.class.getPackage().getName();
         resolverInfo.activityInfo.name = ListActivity.class.getName();
-        RobolectricPackageManager rpm = (RobolectricPackageManager) RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager rpm = shadowOf(RuntimeEnvironment.application.getPackageManager());
         when(item.getUrl()).thenReturn("http://example.com/file.pdf");
         rpm.addResolveInfoForIntent(new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl())), resolverInfo);
 
         WebView webView = activity.findViewById(R.id.web_view);
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor.extract(webView);
+        ShadowWebView shadowWebView = Shadow.extract(webView);
         WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
                 .findFragmentByTag(WebFragment.class.getName());
-        shadowWebView.getDownloadListener().onDownloadStart(item.getUrl(), "", "", "application/pdf", 0l);
+        shadowWebView.getDownloadListener().onDownloadStart(item.getUrl(), "", "", "application/pdf", 0L);
         shadowWebView.getWebViewClient().onPageFinished(webView, PDF_LOADER_URL);
         verify(fragment.mFileDownloader).downloadFile(
             eq(item.getUrl()),
@@ -169,7 +170,7 @@ public class WebFragmentTest {
     }
 
     @Test
-    public void testPdfAndroidJavascriptBridgeGetSize() throws IOException {
+    public void testPdfAndroidJavascriptBridgeGetSize() {
         final String path = this.getClass().getClassLoader().getResource("file.txt").getPath();
         final long expected = new File(path).length();
 
@@ -180,7 +181,7 @@ public class WebFragmentTest {
     @Config(shadows = ShadowNestedScrollView.class)
     @Test
     public void testScrollToTop() {
-        NestedScrollView scrollView = (NestedScrollView) activity.findViewById(R.id.nested_scroll_view);
+        NestedScrollView scrollView = activity.findViewById(R.id.nested_scroll_view);
         scrollView.smoothScrollTo(0, 1);
         assertThat(customShadowOf(scrollView).getSmoothScrollY()).isEqualTo(1);
         activity.fragment.scrollToTop();
@@ -191,7 +192,7 @@ public class WebFragmentTest {
     @Test
     public void testFullscreenScrollToTop() {
         activity.findViewById(R.id.toolbar_web).performClick();
-        assertEquals(-1, ((ShadowWebView) ShadowExtractor.extract(activity.findViewById(R.id.web_view)))
+        assertEquals(-1, ((ShadowWebView) Shadow.extract(activity.findViewById(R.id.web_view)))
                     .getScrollY());
 
     }
@@ -200,7 +201,7 @@ public class WebFragmentTest {
     @SuppressLint("NewApi")
     @Test
     public void testAdBlocker() {
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebView webView = activity.findViewById(R.id.web_view);
         WebViewClient client = shadowOf(webView).getWebViewClient();
         assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
         assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
@@ -217,10 +218,10 @@ public class WebFragmentTest {
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_ad_block), false)
                 .apply();
-        controller = Robolectric.buildActivity(WebActivity.class);
+        controller = Robolectric.buildActivity(WebActivity.class, intent);
         activity = controller.get();
-        controller.withIntent(intent).create().start().resume();
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        controller.create().start().resume();
+        WebView webView = activity.findViewById(R.id.web_view);
         WebViewClient client = shadowOf(webView).getWebViewClient();
         assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
         assertNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
@@ -244,13 +245,12 @@ public class WebFragmentTest {
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         activity.findViewById(R.id.button_find).performClick();
-        ViewSwitcher controlSwitcher = (ViewSwitcher) activity.findViewById(R.id.control_switcher);
+        ViewSwitcher controlSwitcher = activity.findViewById(R.id.control_switcher);
         assertThat(controlSwitcher.getDisplayedChild()).isEqualTo(1);
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
-                .extract(activity.findViewById(R.id.web_view));
+        ShadowWebView shadowWebView = Shadow.extract(activity.findViewById(R.id.web_view));
 
         // no query
-        EditText editText = (EditText) activity.findViewById(R.id.edittext);
+        EditText editText = activity.findViewById(R.id.edittext);
         shadowOf(editText).getOnEditorActionListener().onEditorAction(null, 0, null);
         assertThat((View) activity.findViewById(R.id.button_next)).isDisabled();
 
@@ -279,8 +279,7 @@ public class WebFragmentTest {
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView.lastGlobalLoadedUrl = null;
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
-                .extract(activity.findViewById(R.id.web_view));
+        ShadowWebView shadowWebView = Shadow.extract(activity.findViewById(R.id.web_view));
         shadowWebView.setProgress(20);
         activity.findViewById(R.id.button_refresh).performClick();
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).isNullOrEmpty();
@@ -295,8 +294,7 @@ public class WebFragmentTest {
         ShadowLocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
-                .extract(activity.findViewById(R.id.web_view));
+        ShadowWebView shadowWebView = Shadow.extract(activity.findViewById(R.id.web_view));
         activity.findViewById(R.id.button_more).performClick();
         shadowOf(ShadowPopupMenu.getLatestPopupMenu()).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_zoom_in));
@@ -331,8 +329,7 @@ public class WebFragmentTest {
         ShadowLocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
-        ShadowWebView shadowWebView = (ShadowWebView) ShadowExtractor
-                .extract(activity.findViewById(R.id.web_view));
+        ShadowWebView shadowWebView = Shadow.extract(activity.findViewById(R.id.web_view));
         WebFragment fragment = (WebFragment) activity.getSupportFragmentManager()
                 .findFragmentByTag(WebFragment.class.getName());
         fragment.scrollToTop();
@@ -345,7 +342,7 @@ public class WebFragmentTest {
 
     @Test
     public void testBackPressed() {
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebView webView = activity.findViewById(R.id.web_view);
         shadowOf(webView).getWebViewClient().onPageFinished(webView, "http://example.com");
         shadowOf(webView).setCanGoBack(true);
         assertTrue(activity.fragment.onBackPressed());

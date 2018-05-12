@@ -3,6 +3,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,7 @@ import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowWebView;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,7 +69,7 @@ public class WebFragmentLocalTest {
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
-                        ConnectivityManager.TYPE_WIFI, 0, true, true));
+                        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED));
     }
 
     @Test
@@ -97,7 +98,9 @@ public class WebFragmentLocalTest {
         };
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(WebActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
         verify(itemManager).getItem(eq("1"), eq(ItemManager.MODE_DEFAULT), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
@@ -105,7 +108,7 @@ public class WebFragmentLocalTest {
                 return "text";
             }
         });
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebView webView = activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = shadowOf(webView);
         shadowWebView.getWebViewClient().onPageFinished(webView, "about:blank");
         assertThat(shadowWebView.getLastLoadDataWithBaseURL().data).contains("text");
@@ -137,8 +140,10 @@ public class WebFragmentLocalTest {
         };
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
-        controller.withIntent(intent).create().start().resume().visible();
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        controller = Robolectric.buildActivity(WebActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
+        WebView webView = activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = shadowOf(webView);
         shadowWebView.getWebViewClient().onPageFinished(webView, "about:blank");
         assertThat(shadowWebView.getLastLoadDataWithBaseURL().data).contains("comment");
@@ -170,7 +175,9 @@ public class WebFragmentLocalTest {
         };
         Intent intent = new Intent();
         intent.putExtra(WebActivity.EXTRA_ITEM, item);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(WebActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
         verify(itemManager).getItem(eq("1"), eq(ItemManager.MODE_DEFAULT), listener.capture());
         listener.getValue().onResponse(new TestItem() {
             @Override
@@ -187,7 +194,7 @@ public class WebFragmentLocalTest {
                 .edit()
                 .putString(activity.getString(R.string.pref_readability_font), "DroidSans.ttf")
                 .apply();
-        WebView webView = (WebView) activity.findViewById(R.id.web_view);
+        WebView webView = activity.findViewById(R.id.web_view);
         ShadowWebView shadowWebView = shadowOf(webView);
         shadowWebView.getWebViewClient().onPageFinished(webView, "about:blank");
         assertThat(shadowWebView.getLastLoadDataWithBaseURL().data)

@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import io.github.hidroh.materialistic.test.TestRunner;
 
@@ -71,7 +71,7 @@ public class ReleaseNotesActivityTest {
     public void testUpdate() throws PackageManager.NameNotFoundException {
         Preferences.sReleaseNotesSeen = null;
         Preferences.reset(RuntimeEnvironment.application);
-        PackageInfo info = RuntimeEnvironment.getPackageManager().getPackageInfo(
+        PackageInfo info = RuntimeEnvironment.application.getPackageManager().getPackageInfo(
                 RuntimeEnvironment.application.getPackageName(), 0);
         info.firstInstallTime = 0;
         info.lastUpdateTime = 1;
@@ -86,7 +86,7 @@ public class ReleaseNotesActivityTest {
                 .putInt(RuntimeEnvironment.application.getString(R.string.pref_latest_release),
                         BuildConfig.LATEST_RELEASE)
                 .commit();
-        PackageInfo info = RuntimeEnvironment.getPackageManager().getPackageInfo(
+        PackageInfo info = RuntimeEnvironment.application.getPackageManager().getPackageInfo(
                 RuntimeEnvironment.application.getPackageName(), 0);
         info.firstInstallTime = 0;
         info.lastUpdateTime = 1;
