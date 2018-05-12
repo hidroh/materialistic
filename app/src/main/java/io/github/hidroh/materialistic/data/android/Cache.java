@@ -17,13 +17,14 @@
 package io.github.hidroh.materialistic.data.android;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.LocalCache;
 import io.github.hidroh.materialistic.data.MaterialisticDatabase;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class Cache implements LocalCache {
     private final MaterialisticDatabase mDatabase;
@@ -62,8 +63,10 @@ public class Cache implements LocalCache {
     @Override
     public void setViewed(String itemId) {
         mReadStoriesDao.insert(new MaterialisticDatabase.ReadStory(itemId));
-        Uri uri = MaterialisticDatabase.URI_READ.buildUpon().appendPath(itemId).build();
-        mDatabase.postLiveValue(uri);
+        Observable.just(itemId)
+                .map(id -> MaterialisticDatabase.URI_READ.buildUpon().appendPath(id).build())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(uri -> mDatabase.setLiveValue(uri));
     }
 
     @Override

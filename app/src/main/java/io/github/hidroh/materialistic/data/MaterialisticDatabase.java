@@ -86,12 +86,6 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
         mLiveData.setValue(null);
     }
 
-    public void postLiveValue(Uri uri) {
-        mLiveData.postValue(uri);
-        // clear notification Uri after notifying all active observers
-        mLiveData.postValue(null);
-    }
-
     @Entity(tableName = "read")
     public static class ReadStory {
         @PrimaryKey(autoGenerate = true)
