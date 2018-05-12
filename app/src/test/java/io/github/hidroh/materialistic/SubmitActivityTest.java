@@ -18,7 +18,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.io.IOException;
 
@@ -205,9 +205,9 @@ public class SubmitActivityTest {
     @Test
     public void testDeriveTitleAndUrl() {
         controller.pause().stop().destroy();
-        controller = Robolectric.buildActivity(SubmitActivity.class);
+        controller = Robolectric.buildActivity(SubmitActivity.class,
+                new Intent().putExtra(Intent.EXTRA_TEXT, "title - http://example.com"));
         activity = controller
-                .withIntent(new Intent().putExtra(Intent.EXTRA_TEXT, "title - http://example.com"))
                 .create().start().resume().visible().get();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasTextString("title");
         assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
@@ -219,9 +219,9 @@ public class SubmitActivityTest {
     @Test
     public void testDeriveEmptyTitle() {
         controller.pause().stop().destroy();
-        controller = Robolectric.buildActivity(SubmitActivity.class);
+        controller = Robolectric.buildActivity(SubmitActivity.class,
+                new Intent().putExtra(Intent.EXTRA_TEXT, " : http://example.com"));
         activity = controller
-                .withIntent(new Intent().putExtra(Intent.EXTRA_TEXT, " : http://example.com"))
                 .create().start().resume().visible().get();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).isEmpty();
         assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
@@ -230,9 +230,9 @@ public class SubmitActivityTest {
     @Test
     public void testDeriveNoMatches() {
         controller.pause().stop().destroy();
-        controller = Robolectric.buildActivity(SubmitActivity.class);
+        controller = Robolectric.buildActivity(SubmitActivity.class,
+                new Intent().putExtra(Intent.EXTRA_TEXT, "title - http://example.com blah blah"));
         activity = controller
-                .withIntent(new Intent().putExtra(Intent.EXTRA_TEXT, "title - http://example.com blah blah"))
                 .create().start().resume().visible().get();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).isEmpty();
         assertThat((EditText) activity.findViewById(R.id.edittext_content))
@@ -242,9 +242,9 @@ public class SubmitActivityTest {
     @Test
     public void testDeriveTitle() {
         controller.pause().stop().destroy();
-        controller = Robolectric.buildActivity(SubmitActivity.class);
+        controller = Robolectric.buildActivity(SubmitActivity.class,
+                new Intent().putExtra(Intent.EXTRA_TEXT, "http://example.com"));
         activity = controller
-                .withIntent(new Intent().putExtra(Intent.EXTRA_TEXT, "http://example.com"))
                 .create().start().resume().visible().get();
         assertEquals("http://example.com", ShadowWebView.getLastGlobalLoadedUrl());
     }

@@ -20,11 +20,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowPopupMenu;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 
@@ -75,8 +75,7 @@ public class BaseListActivityLandTest {
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_share).isVisible());
         assertNotNull(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_external));
         assertFalse(shadowOf(activity).getOptionsMenu().findItem(R.id.menu_external).isVisible());
-        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
+        assertFalse(((ShadowFloatingActionButton) Shadow.extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @Test
@@ -108,8 +107,7 @@ public class BaseListActivityLandTest {
         controller = Robolectric.buildActivity(TestListActivity.class);
         activity = controller.create(savedState).postCreate(null).start().resume().get();
         assertThat(activity).hasTitle("item title");
-        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
+        assertTrue(((ShadowFloatingActionButton) Shadow.extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -179,7 +177,7 @@ public class BaseListActivityLandTest {
                 return STORY_TYPE;
             }
         });
-        ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
+        ViewPager viewPager = activity.findViewById(R.id.content);
         viewPager.getAdapter().instantiateItem(viewPager, viewPager.getCurrentItem());
         assertStoryMode();
     }
@@ -198,14 +196,13 @@ public class BaseListActivityLandTest {
         assertThat((View) activity.findViewById(R.id.empty_selection)).isNotVisible();
         activity.onItemSelected(null);
         assertThat((View) activity.findViewById(R.id.empty_selection)).isVisible();
-        assertFalse(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
+        assertFalse(((ShadowFloatingActionButton) Shadow.extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     @Test
     public void testToggleItemView() {
         activity.onItemSelected(createWebItem());
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        TabLayout tabLayout = activity.findViewById(R.id.tab_layout);
         assertEquals(2, tabLayout.getTabCount());
         assertStoryMode();
         tabLayout.getTabAt(0).select();
@@ -224,13 +221,13 @@ public class BaseListActivityLandTest {
                 return STORY_TYPE;
             }
         });
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        TabLayout tabLayout = activity.findViewById(R.id.tab_layout);
         assertThat(tabLayout.getTabCount()).isEqualTo(2);
         tabLayout.getTabAt(0).select();
-        ViewPager viewPager = (ViewPager) activity.findViewById(R.id.content);
+        ViewPager viewPager = activity.findViewById(R.id.content);
         viewPager.getAdapter().instantiateItem(viewPager, 0);
         viewPager.getAdapter().finishUpdate(viewPager);
-        RecyclerView itemRecyclerView = (RecyclerView) viewPager.findViewById(R.id.recycler_view);
+        RecyclerView itemRecyclerView = viewPager.findViewById(R.id.recycler_view);
         itemRecyclerView.smoothScrollToPosition(1);
         assertThat(customShadowOf(itemRecyclerView).getScrollPosition()).isEqualTo(1);
         tabLayout.getTabAt(1).select();
@@ -256,14 +253,12 @@ public class BaseListActivityLandTest {
 
     private void assertCommentMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(0);
-        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
+        assertTrue(((ShadowFloatingActionButton) Shadow.extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     private void assertStoryMode() {
         assertThat((ViewPager) activity.findViewById(R.id.content)).hasCurrentItem(1);
-        assertTrue(((ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button))).isVisible());
+        assertTrue(((ShadowFloatingActionButton) Shadow.extract(activity.findViewById(R.id.reply_button))).isVisible());
     }
 
     private WebItem createWebItem() {

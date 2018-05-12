@@ -3,13 +3,13 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,11 +23,11 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -74,7 +74,7 @@ public class ItemFragmentMultiPageTest {
         shadowOf((ConnectivityManager) RuntimeEnvironment.application
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
-                        ConnectivityManager.TYPE_WIFI, 0, true, true));
+                        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED));
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putString(RuntimeEnvironment.application.getString(R.string.pref_comment_display),
@@ -158,7 +158,7 @@ public class ItemFragmentMultiPageTest {
                 ItemFragment.class.getName(), args);
         makeVisible(fragment);
         assertThat((View) fragment.getView().findViewById(R.id.empty)).isNotVisible();
-        RecyclerView recyclerView = (RecyclerView) fragment.getView().findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = fragment.getView().findViewById(R.id.recycler_view);
         RecyclerView.ViewHolder viewHolder = CustomShadows.customShadowOf(recyclerView.getAdapter())
                 .getViewHolder(0);
         assertThat((TextView) viewHolder.itemView.findViewById(R.id.text)).hasTextString("text");
@@ -205,8 +205,7 @@ public class ItemFragmentMultiPageTest {
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         makeVisible(fragment);
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(fragment.getView().findViewById(R.id.swipe_layout));
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = Shadow.extract(fragment.getView().findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
@@ -230,8 +229,7 @@ public class ItemFragmentMultiPageTest {
         Fragment fragment = Fragment.instantiate(RuntimeEnvironment.application,
                 ItemFragment.class.getName(), args);
         makeVisible(fragment);
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(fragment.getView().findViewById(R.id.swipe_layout));
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = Shadow.extract(fragment.getView().findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
@@ -280,7 +278,7 @@ public class ItemFragmentMultiPageTest {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_item);
-            setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+            setSupportActionBar(findViewById(R.id.toolbar));
         }
 
         @Override

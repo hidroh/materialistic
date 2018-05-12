@@ -19,18 +19,18 @@ package io.github.hidroh.materialistic.test.shadow;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 
-import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadow.api.Shadow;
 
 public class CustomShadows {
     public static ShadowRecyclerViewAdapter customShadowOf(RecyclerView.Adapter adapter) {
-        return (ShadowRecyclerViewAdapter) ShadowExtractor.extract(adapter);
+        return Shadow.extract(adapter);
     }
 
     public static ShadowRecyclerView customShadowOf(RecyclerView recyclerView) {
-        return (ShadowRecyclerView) ShadowExtractor.extract(recyclerView);
+        return Shadow.extract(recyclerView);
     }
 
     public static ShadowNestedScrollView customShadowOf(NestedScrollView nestedScrollView) {
-        return (ShadowNestedScrollView) ShadowExtractor.extract(nestedScrollView);
+        return Shadow.extract(nestedScrollView);
     }
 }

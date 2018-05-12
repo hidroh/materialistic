@@ -42,11 +42,11 @@ public class TestRunner extends RobolectricTestRunner {
                     if (identifier.getAssetDir().exists()) {
                         return identifier;
                     } else {
-                        return new ManifestIdentifier(identifier.getManifestFile(),
+                        return new ManifestIdentifier(identifier.getPackageName(),
+                                identifier.getManifestFile(),
                                 identifier.getResDir(),
                                 FileFsFile.from(SRC, "assets"),
-                                identifier.getPackageName(),
-                                identifier.getLibraryDirs());
+                                identifier.getLibraries());
                     }
                 }
             };

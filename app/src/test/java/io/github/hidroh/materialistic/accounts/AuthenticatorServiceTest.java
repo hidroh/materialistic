@@ -7,8 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ServiceController;
+
 import io.github.hidroh.materialistic.test.TestRunner;
-import org.robolectric.util.ServiceController;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -20,7 +21,7 @@ public class AuthenticatorServiceTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildService(AuthenticatorService.class);
-        service = controller.attach().create().get();
+        service = controller.create().get();
     }
 
     @Test

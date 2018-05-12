@@ -19,10 +19,10 @@ package io.github.hidroh.materialistic.test.shadow;
 import android.support.design.widget.FloatingActionButton;
 
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowImageView;
+import org.robolectric.shadows.ShadowView;
 
 @Implements(FloatingActionButton.class)
-public class ShadowFloatingActionButton extends ShadowImageView {
+public class ShadowFloatingActionButton extends ShadowView {
     private boolean visible = true;
 
     public void show() {

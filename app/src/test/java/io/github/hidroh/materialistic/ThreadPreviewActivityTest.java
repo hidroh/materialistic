@@ -30,8 +30,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -68,15 +68,15 @@ public class ThreadPreviewActivityTest {
         TestApplication.applicationGraph.inject(this);
         reset(itemManager);
         reset(keyDelegate);
-        controller = Robolectric.buildActivity(ThreadPreviewActivity.class);
-        activity = controller
-                .withIntent(new Intent().putExtra(ThreadPreviewActivity.EXTRA_ITEM,
+        controller = Robolectric.buildActivity(ThreadPreviewActivity.class,
+                new Intent().putExtra(ThreadPreviewActivity.EXTRA_ITEM,
                         new TestHnItem(2L) {
                             @Override
                             public String getBy() {
                                 return "username";
                             }
-                        }))
+                        }));
+        activity = controller
                 .create().start().resume().visible().get();
     }
 
@@ -95,7 +95,7 @@ public class ThreadPreviewActivityTest {
 
     @Test
     public void testBinding() {
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("2"), eq(ItemManager.MODE_DEFAULT), itemCaptor.capture());
         itemCaptor.getValue().onResponse(new TestHnItem(2L) {
             @NonNull

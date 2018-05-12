@@ -25,18 +25,18 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.res.builder.RobolectricPackageManager;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowGestureDetector;
 import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowPackageManager;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
-import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
 
@@ -105,7 +105,9 @@ public class ItemActivityTest {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://item/1"));
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 any(ResponseListener.class));
@@ -116,7 +118,9 @@ public class ItemActivityTest {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("https://news.ycombinator.com/item?id=1"));
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         verify(hackerNewsClient).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 listener.capture());
@@ -178,7 +182,9 @@ public class ItemActivityTest {
                 return "http://example.com";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         assertThat((View) activity.findViewById(R.id.source)).isNotVisible();
         assertEquals(R.drawable.ic_poll_white_18dp,
                 shadowOf(((TextView) activity.findViewById(R.id.posted))
@@ -188,8 +194,7 @@ public class ItemActivityTest {
     @SuppressLint("NewApi")
     @Test
     public void testOptionExternal() {
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
@@ -221,7 +226,9 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
 
         // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
         ShadowLooper.pauseMainLooper();
@@ -272,7 +279,9 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
 
         // inflate menu, see https://github.com/robolectric/robolectric/issues/1326
         ShadowLooper.pauseMainLooper();
@@ -334,7 +343,9 @@ public class ItemActivityTest {
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
                 .apply();
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         activity.findViewById(R.id.button_article).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity()).hasAction(Intent.ACTION_VIEW);
     }
@@ -351,7 +362,9 @@ public class ItemActivityTest {
         };
         item.setFavorite(true);
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         assertTrue(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
@@ -384,7 +397,9 @@ public class ItemActivityTest {
         };
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, item);
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         assertFalse(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
         MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
@@ -426,15 +441,17 @@ public class ItemActivityTest {
                 return "http://example.com";
             }
         });
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         // see https://github.com/robolectric/robolectric/issues/1326
         ShadowLooper.pauseMainLooper();
         controller.visible();
         ShadowApplication.getInstance().getForegroundThreadScheduler().advanceToLastPostedRunnable();
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         recyclerView.smoothScrollToPosition(1);
         assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        TabLayout tabLayout = activity.findViewById(R.id.tab_layout);
         assertThat(tabLayout.getTabCount()).isEqualTo(2);
         tabLayout.getTabAt(1).select();
         tabLayout.getTabAt(0).select();
@@ -477,8 +494,10 @@ public class ItemActivityTest {
                 return "http://example.com";
             }
         });
-        controller.withIntent(intent).create().start().resume();
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
+        TabLayout tabLayout = activity.findViewById(R.id.tab_layout);
         assertEquals(2, tabLayout.getTabCount());
         assertEquals(1, tabLayout.getSelectedTabPosition());
     }
@@ -487,7 +506,9 @@ public class ItemActivityTest {
     public void testVotePromptToLogin() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         activity.findViewById(R.id.vote_button).performClick();
         verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
         userServicesCallback.getValue().onDone(false);
@@ -499,7 +520,9 @@ public class ItemActivityTest {
     public void testVote() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         activity.findViewById(R.id.vote_button).performClick();
         verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
         userServicesCallback.getValue().onDone(true);
@@ -510,7 +533,9 @@ public class ItemActivityTest {
     public void testVoteError() {
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1));
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         activity.findViewById(R.id.vote_button).performClick();
         verify(userServices).voteUp(any(Context.class), eq("1"), userServicesCallback.capture());
         userServicesCallback.getValue().onError(new IOException());
@@ -526,7 +551,9 @@ public class ItemActivityTest {
                 .apply();
         Intent intent = new Intent();
         intent.putExtra(ItemActivity.EXTRA_ITEM, new TestHnItem(1L));
-        controller.withIntent(intent).create().start().resume();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume();
+        activity = controller.get();
         activity.findViewById(R.id.reply_button).performClick();
         assertThat(shadowOf(activity).getNextStartedActivity())
                 .hasComponent(activity, ComposeActivity.class);
@@ -547,7 +574,9 @@ public class ItemActivityTest {
             }
         };
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
         activity.onKeyDown(KeyEvent.KEYCODE_VOLUME_UP,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_VOLUME_UP));
         verify(keyDelegate).setScrollable(any(Scrollable.class), any(AppBarLayout.class));
@@ -575,7 +604,9 @@ public class ItemActivityTest {
             }
         };
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
         activity.onKeyDown(KeyEvent.KEYCODE_BACK,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
         verify(keyDelegate).setBackInterceptor(any());
@@ -598,9 +629,10 @@ public class ItemActivityTest {
             }
         };
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
-        ShadowFloatingActionButton shadowFab = (ShadowFloatingActionButton) ShadowExtractor
-                .extract(activity.findViewById(R.id.reply_button));
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
+        ShadowFloatingActionButton shadowFab = Shadow.extract(activity.findViewById(R.id.reply_button));
         assertTrue(shadowFab.isVisible());
         ShadowLocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
@@ -627,7 +659,9 @@ public class ItemActivityTest {
             }
         };
         intent.putExtra(ItemActivity.EXTRA_ITEM, webItem);
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
         ShadowLocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
@@ -640,7 +674,7 @@ public class ItemActivityTest {
     @Test
     public void testItemChanged() {
         startWithIntent();
-        TabLayout tabLayout = (TabLayout) activity.findViewById(R.id.tab_layout);
+        TabLayout tabLayout = activity.findViewById(R.id.tab_layout);
         assertEquals(activity.getResources().getQuantityString(R.plurals.comments_count, 0, 0),
                 tabLayout.getTabAt(0).getText());
         activity.onItemChanged(new TestHnItem(1L) {
@@ -726,7 +760,9 @@ public class ItemActivityTest {
                 return "1";
             }
         });
-        controller.withIntent(intent).create().start().resume().visible();
+        controller = Robolectric.buildActivity(ItemActivity.class, intent);
+        controller.create().start().resume().visible();
+        activity = controller.get();
     }
 
     private ShadowGestureDetector getDetector(View view) {

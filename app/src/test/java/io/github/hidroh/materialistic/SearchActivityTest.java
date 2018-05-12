@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,7 +51,9 @@ public class SearchActivityTest {
     public void testCreateWithQuery() {
         Intent intent = new Intent();
         intent.putExtra(SearchManager.QUERY, "filter");
-        controller.withIntent(intent).create().start().resume(); // skip menu inflation
+        controller = Robolectric.buildActivity(SearchActivity.class, intent);
+        controller.create().start().resume(); // skip menu inflation
+        activity = controller.get();
         assertThat(ShadowSearchRecentSuggestions.recentQueries).contains("filter");
         assertEquals(activity.getString(R.string.title_activity_search),
                 activity.getDefaultTitle());
@@ -72,7 +74,9 @@ public class SearchActivityTest {
     public void testSort() {
         Intent intent = new Intent();
         intent.putExtra(SearchManager.QUERY, "filter");
-        controller.withIntent(intent).create().postCreate(null).start().resume().visible();
+        controller = Robolectric.buildActivity(SearchActivity.class, intent);
+        controller.create().postCreate(null).start().resume().visible();
+        activity = controller.get();
         assertTrue(AlgoliaClient.sSortByTime);
         activity.onOptionsItemSelected(shadowOf(activity).getOptionsMenu()
                 .findItem(R.id.menu_sort_recent)); // should not trigger search

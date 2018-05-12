@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.util.ActivityController;
+import org.robolectric.shadow.api.Shadow;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,12 +70,12 @@ public class DrawerActivityTest {
 
     @Test
     public void test() {
-        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+        ((ShadowSupportDrawerLayout) Shadow.extract(activity.findViewById(R.id.drawer_layout)))
                 .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertNull(shadowOf(activity).getNextStartedActivity());
         activity.findViewById(drawerResId).performClick();
-        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+        ((ShadowSupportDrawerLayout) Shadow.extract(activity.findViewById(R.id.drawer_layout)))
                 .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertEquals(startedActivity.getName(),

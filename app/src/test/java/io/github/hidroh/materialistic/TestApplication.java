@@ -5,8 +5,8 @@ import android.view.View;
 
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.TestLifecycleApplication;
-import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowPackageManager;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.util.ReflectionHelpers;
 
@@ -18,12 +18,13 @@ import dagger.ObjectGraph;
 import io.github.hidroh.materialistic.test.InMemoryDatabase;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
+import static org.robolectric.Shadows.shadowOf;
+
 public class TestApplication extends Application implements TestLifecycleApplication {
     public static ObjectGraph applicationGraph = ObjectGraph.create(new TestActivityModule());
 
     public static void addResolver(Intent intent) {
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
         packageManager.addResolveInfoForIntent( intent,
                 ShadowResolveInfo.newResolveInfo("label", "com.android.chrome", "DefaultActivity"));
     }

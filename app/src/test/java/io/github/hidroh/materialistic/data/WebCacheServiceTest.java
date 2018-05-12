@@ -24,8 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ServiceController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ServiceController;
 
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowWebView;
@@ -42,15 +42,17 @@ public class WebCacheServiceTest {
     @Before
     public void setUp() {
         controller = Robolectric.buildService(WebCacheService.class);
-        service = controller.attach().create().get();
+        service = controller.create().get();
     }
 
     @Test
     public void testWebCache() {
+        controller = Robolectric.buildService(WebCacheService.class,
+                new Intent()
+                        .putExtra(WebCacheService.EXTRA_URL, "http://example.com"));
         ShadowWebView.lastGlobalLoadedUrl = null;
-        controller.withIntent(new Intent()
-                .putExtra(WebCacheService.EXTRA_URL, "http://example.com"))
-                .startCommand(0, 0);
+        controller.startCommand(0, 0);
+        service = controller.create().get();
         assertThat(ShadowWebView.getLastGlobalLoadedUrl()).contains("http://example.com");
 
     }

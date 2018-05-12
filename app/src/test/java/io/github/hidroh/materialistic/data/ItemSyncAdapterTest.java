@@ -22,10 +22,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.widget.ProgressBar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,11 +35,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ServiceController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
+import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
-import org.robolectric.util.ServiceController;
 
 import java.io.IOException;
 
@@ -87,7 +88,7 @@ public class ItemSyncAdapterTest {
         reset(TestRestServiceFactory.hnRestService);
         reset(readabilityClient);
         serviceController = Robolectric.buildService(ItemSyncService.class);
-        service = serviceController.attach().create().get();
+        service = serviceController.create().get();
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         PreferenceManager.getDefaultSharedPreferences(service)
                 .edit()
@@ -418,10 +419,9 @@ public class ItemSyncAdapterTest {
 
         ShadowNotificationManager notificationManager = shadowOf((NotificationManager) service
                 .getSystemService(Context.NOTIFICATION_SERVICE));
-        ProgressBar progress = shadowOf(notificationManager.getNotification(1))
-                .getProgressBar();
-        assertThat(progress.getProgress()).isEqualTo(3); // self + kid 1 + readability
-        assertThat(progress.getMax()).isEqualTo(104); // self + 2 kids + readability + web
+        ShadowNotification shadowNotification = shadowOf(notificationManager.getNotification(1));
+        assertThat(shadowNotification.getProgress()).isEqualTo(3); // self + kid 1 + readability
+        assertThat(shadowNotification.getMax()).isEqualTo(104); // self + 2 kids + readability + web
 
         shadowOf(adapter.syncDelegate.mWebView).getWebChromeClient()
                 .onProgressChanged(adapter.syncDelegate.mWebView, 100);
@@ -463,7 +463,7 @@ public class ItemSyncAdapterTest {
 
     private void setNetworkType(int type) {
         shadowOf((ConnectivityManager) service.getSystemService(Context.CONNECTIVITY_SERVICE))
-                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null, type, 0, true, true));
+                .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null, type, 0, true, NetworkInfo.State.CONNECTED));
     }
 
     private Bundle getLastSyncExtras() {

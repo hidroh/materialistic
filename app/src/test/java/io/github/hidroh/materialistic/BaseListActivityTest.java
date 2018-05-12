@@ -15,11 +15,11 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.res.builder.RobolectricPackageManager;
 import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowPackageManager;
 import org.robolectric.shadows.ShadowResolveInfo;
-import org.robolectric.util.ActivityController;
 
 import io.github.hidroh.materialistic.test.TestListActivity;
 import io.github.hidroh.materialistic.test.TestRunner;
@@ -93,8 +93,7 @@ public class BaseListActivityTest {
 
     @Test
     public void testSelectItemOpenExternal() {
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
@@ -115,8 +114,7 @@ public class BaseListActivityTest {
 
     @Test
     public void testSelectItemStartActionView() {
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://example.com")),
@@ -141,8 +139,7 @@ public class BaseListActivityTest {
 
     @Test
     public void testSelectItemOpenChooser() {
-        RobolectricPackageManager packageManager = (RobolectricPackageManager)
-                RuntimeEnvironment.application.getPackageManager();
+        ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
         packageManager.addResolveInfoForIntent(
                 new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://news.ycombinator.com/item?id=1")),
@@ -224,7 +221,7 @@ public class BaseListActivityTest {
     @Config(shadows = ShadowRecyclerView.class)
     @Test
     public void testScrollToTop() {
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         recyclerView.smoothScrollToPosition(1);
         assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         activity.findViewById(R.id.toolbar).performClick();

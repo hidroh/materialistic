@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
@@ -11,14 +12,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.shadows.ShadowAccountManager;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.util.ActivityController;
 
-import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestListActivity;
+import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowSupportDrawerLayout;
 
 import static org.assertj.android.api.Assertions.assertThat;
@@ -46,7 +46,7 @@ public class DrawerActivityLoginTest {
                 .resume()
                 .visible();
         activity = controller.get();
-        drawerAccount = (TextView) activity.findViewById(R.id.drawer_account);
+        drawerAccount = activity.findViewById(R.id.drawer_account);
         drawerLogout = activity.findViewById(R.id.drawer_logout);
         drawerUser = activity.findViewById(R.id.drawer_user);
     }
@@ -72,7 +72,7 @@ public class DrawerActivityLoginTest {
     public void testOpenUserProfile() {
         Preferences.setUsername(activity, "username");
         drawerUser.performClick();
-        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+        ((ShadowSupportDrawerLayout) Shadow.extract(activity.findViewById(R.id.drawer_layout)))
                 .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertThat(shadowOf(activity).getNextStartedActivity())
@@ -82,7 +82,7 @@ public class DrawerActivityLoginTest {
 
     @Test
     public void testExistingAccount() {
-        ShadowAccountManager.get(activity).addAccountExplicitly(new Account("existing",
+        AccountManager.get(activity).addAccountExplicitly(new Account("existing",
                 BuildConfig.APPLICATION_ID), "password", null);
         drawerAccount.performClick();
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -100,7 +100,7 @@ public class DrawerActivityLoginTest {
 
     @Test
     public void testAddAccount() {
-        ShadowAccountManager.get(activity).addAccountExplicitly(new Account("existing",
+        AccountManager.get(activity).addAccountExplicitly(new Account("existing",
                 BuildConfig.APPLICATION_ID), "password", null);
         drawerAccount.performClick();
         AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -108,7 +108,7 @@ public class DrawerActivityLoginTest {
         assertThat(alertDialog.getListView().getAdapter()).hasCount(1);
         alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).performClick();
         assertThat(alertDialog).isNotShowing();
-        ((ShadowSupportDrawerLayout) ShadowExtractor.extract(activity.findViewById(R.id.drawer_layout)))
+        ((ShadowSupportDrawerLayout) Shadow.extract(activity.findViewById(R.id.drawer_layout)))
                 .getDrawerListeners().get(0)
                 .onDrawerClosed(activity.findViewById(R.id.drawer));
         assertThat(shadowOf(activity).getNextStartedActivity())
@@ -118,7 +118,7 @@ public class DrawerActivityLoginTest {
     @Config(sdk = 21)
     @Test
     public void testRemoveAccount() {
-        ShadowAccountManager.get(activity).addAccountExplicitly(new Account("existing",
+        AccountManager.get(activity).addAccountExplicitly(new Account("existing",
                 BuildConfig.APPLICATION_ID), "password", null);
         Preferences.setUsername(activity, "existing");
         drawerAccount.performClick();
@@ -127,7 +127,7 @@ public class DrawerActivityLoginTest {
         assertThat(alertDialog.getListView().getAdapter()).hasCount(1);
         alertDialog.getButton(DialogInterface.BUTTON_NEUTRAL).performClick();
         assertThat(alertDialog).isNotShowing();
-        assertThat(ShadowAccountManager.get(activity).getAccounts()).isEmpty();
+        assertThat(AccountManager.get(activity).getAccounts()).isEmpty();
     }
 
     @Test

@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,12 +57,12 @@ public class FontSizePreferenceTest {
 
     @Before
     public void setUp() {
-        controller = Robolectric.buildActivity(PreferencesActivity.class);
-        activity = controller.withIntent(new Intent()
-                .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
-                .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display))
-                .create().postCreate(null).start().resume().visible().get();
-        RecyclerView list = (RecyclerView) activity.findViewById(R.id.list);
+        controller = Robolectric.buildActivity(PreferencesActivity.class,
+                new Intent()
+                        .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display));
+        activity = controller.create().postCreate(null).start().resume().visible().get();
+        RecyclerView list = activity.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(activity));
         RecyclerView.Adapter adapter = list.getAdapter();
         int position = ShadowSupportPreferenceManager

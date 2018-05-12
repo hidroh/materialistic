@@ -17,8 +17,8 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
-import org.robolectric.internal.ShadowExtractor;
-import org.robolectric.util.ActivityController;
+import org.robolectric.shadow.api.Shadow;
+import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -89,8 +89,7 @@ public class ListFragmentTest {
                 .add(android.R.id.list,
                         Fragment.instantiate(activity, ListFragment.class.getName(), args))
                 .commit();
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = Shadow.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
         verify(itemManager).getStories(any(String.class), eq(ItemManager.MODE_DEFAULT));
@@ -120,8 +119,7 @@ public class ListFragmentTest {
                 new TestHnItem(1L),
                 new TestHnItem(2L)
         });
-        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
+        ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = Shadow.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         // should trigger another data request
         verify(itemManager).getStories(any(String.class), eq(ItemManager.MODE_NETWORK));
@@ -195,7 +193,7 @@ public class ListFragmentTest {
         reset(itemManager);
         when(itemManager.getStories(any(), eq(ItemManager.MODE_DEFAULT))).thenReturn(new Item[]{});
         ShadowSwipeRefreshLayout shadowSwipeRefreshLayout = (ShadowSwipeRefreshLayout)
-                ShadowExtractor.extract(activity.findViewById(R.id.swipe_layout));
+                Shadow.extract(activity.findViewById(R.id.swipe_layout));
         shadowSwipeRefreshLayout.getOnRefreshListener().onRefresh();
         verify(itemManager).getStories(any(), eq(ItemManager.MODE_NETWORK));
         Assertions.assertThat((View) activity.findViewById(R.id.empty)).isNotVisible();

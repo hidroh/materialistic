@@ -20,7 +20,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -66,10 +66,10 @@ public class UserActivityTest {
         reset(userManager);
         reset(itemManager);
         reset(keyDelegate);
-        controller = Robolectric.buildActivity(UserActivity.class);
         Intent intent = new Intent();
         intent.putExtra(UserActivity.EXTRA_USERNAME, "username");
-        activity = controller.withIntent(intent).create().start().resume().visible().get();
+        controller = Robolectric.buildActivity(UserActivity.class, intent);
+        activity = controller.create().start().resume().visible().get();
         user = mock(UserManager.User.class);
         when(user.getId()).thenReturn("username");
         when(user.getCreated(any(Context.class))).thenReturn("May 01 2015");
@@ -152,28 +152,28 @@ public class UserActivityTest {
 
     @Test
     public void testNoDataId() {
-        controller = Robolectric.buildActivity(UserActivity.class);
         Intent intent = new Intent();
         intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://user/"));
-        activity = controller.withIntent(intent).create().get();
+        controller = Robolectric.buildActivity(UserActivity.class, intent);
+        activity = controller.create().get();
         assertThat(activity).isFinishing();
     }
 
     @Test
     public void testWithDataId() {
-        controller = Robolectric.buildActivity(UserActivity.class);
         Intent intent = new Intent();
         intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://user/123"));
-        activity = controller.withIntent(intent).create().get();
+        controller = Robolectric.buildActivity(UserActivity.class, intent);
+        activity = controller.create().get();
         assertThat(activity).isNotFinishing();
     }
 
     @Test
     public void testDeepLink() {
-        controller = Robolectric.buildActivity(UserActivity.class);
         Intent intent = new Intent();
         intent.setData(Uri.parse("https://news.ycombinator.com/user?id=123"));
-        activity = controller.withIntent(intent).create().get();
+        controller = Robolectric.buildActivity(UserActivity.class, intent);
+        activity = controller.create().get();
         assertThat(activity).isNotFinishing();
     }
 
