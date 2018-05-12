@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
@@ -79,14 +81,16 @@ dependencies {
             "io.reactivex:rxjava:1.1.7",
             "android.arch.persistence.room:runtime:$roomVersion",
             "android.arch.lifecycle:extensions:$archVersion",
-            "android.arch.lifecycle:common-java8:$archVersion"
-    annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
+            "android.arch.lifecycle:common-java8:$archVersion",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    annotationProcessor "com.squareup.dagger:dagger-compiler:$daggerVersion"
-    testAnnotationProcessor "com.squareup.dagger:dagger-compiler:$daggerVersion"
+    kapt "android.arch.persistence.room:compiler:$roomVersion",
+            "com.squareup.dagger:dagger-compiler:$daggerVersion"
+    kaptTest "android.arch.persistence.room:compiler:$roomVersion",
+            "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 
 apply from: "${rootProject.getRootDir()}/robolectric.gradle"
