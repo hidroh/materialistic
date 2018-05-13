@@ -302,15 +302,15 @@ public class FavoriteManager implements LocalItemManager<Favorite> {
     }
 
     private static Uri.Builder buildAdded() {
-        return MaterialisticDatabase.URI_SAVED.buildUpon().appendPath(URI_PATH_ADD);
+        return MaterialisticDatabase.getBaseSavedUri().buildUpon().appendPath(URI_PATH_ADD);
     }
 
     private static Uri.Builder buildRemoved() {
-        return MaterialisticDatabase.URI_SAVED.buildUpon().appendPath(URI_PATH_REMOVE);
+        return MaterialisticDatabase.getBaseSavedUri().buildUpon().appendPath(URI_PATH_REMOVE);
     }
 
     private static Uri.Builder buildCleared() {
-        return MaterialisticDatabase.URI_SAVED.buildUpon().appendPath(URI_PATH_CLEAR);
+        return MaterialisticDatabase.getBaseSavedUri().buildUpon().appendPath(URI_PATH_CLEAR);
     }
 
     private void notifyExportStart(Context context) {

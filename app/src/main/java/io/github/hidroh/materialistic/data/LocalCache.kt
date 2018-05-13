@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Ha Duy Trung
+ * Copyright (c) 2018 Ha Duy Trung
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package io.github.hidroh.materialistic.data;
+package io.github.hidroh.materialistic.data
 
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import android.support.annotation.Nullable
+import android.support.annotation.WorkerThread
 
 @WorkerThread
-public interface LocalCache {
-    @Nullable
-    String getReadability(String itemId);
+interface LocalCache {
+  @Nullable
+  fun getReadability(itemId: String?): String?
 
-    void putReadability(String itemId, String content);
+  fun putReadability(itemId: String?, content: String?)
 
-    boolean isViewed(String itemId);
+  fun isViewed(itemId: String?): Boolean
 
-    void setViewed(String itemId);
+  fun setViewed(itemId: String?)
 
-    boolean isFavorite(String itemId);
+  fun isFavorite(itemId: String?): Boolean
 }

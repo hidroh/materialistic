@@ -33,9 +33,7 @@ import java.util.List;
         version = 4)
 public abstract class MaterialisticDatabase extends RoomDatabase {
 
-    private static final Uri BASE_URI = Uri.parse("content://io.github.hidroh.materialistic");
-    public static final Uri URI_READ = BASE_URI.buildUpon().appendPath("read").build();
-    public static final Uri URI_SAVED = BASE_URI.buildUpon().appendPath("saved").build();
+    private static final String BASE_URI = "content://io.github.hidroh.materialistic";
 
     private static MaterialisticDatabase sInstance;
     private final MutableLiveData<Uri> mLiveData = new MutableLiveData<>();
@@ -70,6 +68,14 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
         });
     }
 
+    public static Uri getBaseSavedUri() {
+        return Uri.parse(BASE_URI).buildUpon().appendPath("saved").build();
+    }
+
+    public static Uri getBaseReadUri() {
+        return Uri.parse(BASE_URI).buildUpon().appendPath("read").build();
+    }
+
     public abstract SavedStoriesDao getSavedStoriesDao();
 
     public abstract ReadStoriesDao getReadStoriesDao();
@@ -84,6 +90,10 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
         mLiveData.setValue(uri);
         // clear notification Uri after notifying all active observers
         mLiveData.setValue(null);
+    }
+
+    public Uri createReadUri(String itemId) {
+        return MaterialisticDatabase.getBaseReadUri().buildUpon().path(itemId).build();
     }
 
     @Entity(tableName = "read")
@@ -112,6 +122,24 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
 
         public void setItemId(String itemId) {
             this.itemId = itemId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ReadStory readStory = (ReadStory) o;
+
+            if (id != readStory.id) return false;
+            return itemId != null ? itemId.equals(readStory.itemId) : readStory.itemId == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id;
+            result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
+            return result;
         }
     }
 
@@ -151,6 +179,27 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
 
         public void setContent(String content) {
             this.content = content;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Readable readable = (Readable) o;
+
+            if (id != readable.id) return false;
+            if (itemId != null ? !itemId.equals(readable.itemId) : readable.itemId != null)
+                return false;
+            return content != null ? content.equals(readable.content) : readable.content == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id;
+            result = 31 * result + (itemId != null ? itemId.hashCode() : 0);
+            result = 31 * result + (content != null ? content.hashCode() : 0);
+            return result;
         }
     }
 

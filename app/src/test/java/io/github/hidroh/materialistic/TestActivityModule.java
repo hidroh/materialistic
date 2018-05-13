@@ -389,22 +389,27 @@ public class TestActivityModule {
     }
 
     @Provides
-    public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao() {
-        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getSavedStoriesDao();
+    public MaterialisticDatabase provideDatabase() {
+        return InMemoryDatabase.getInstance(RuntimeEnvironment.application);
     }
 
     @Provides
-    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao() {
-        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getReadStoriesDao();
+    public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao(MaterialisticDatabase database) {
+        return database.getSavedStoriesDao();
     }
 
     @Provides
-    public MaterialisticDatabase.ReadableDao provideReadableDao() {
-        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getReadableDao();
+    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao(MaterialisticDatabase database) {
+        return database.getReadStoriesDao();
     }
 
     @Provides
-    public SupportSQLiteOpenHelper provideOpenHelper() {
-        return InMemoryDatabase.getInstance(RuntimeEnvironment.application).getOpenHelper();
+    public MaterialisticDatabase.ReadableDao provideReadableDao(MaterialisticDatabase database) {
+        return database.getReadableDao();
+    }
+
+    @Provides
+    public SupportSQLiteOpenHelper provideOpenHelper(MaterialisticDatabase database) {
+        return database.getOpenHelper();
     }
 }

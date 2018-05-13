@@ -107,23 +107,28 @@ public class DataModule {
         return cache;
     }
 
-    @Provides
-    public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao(Context context) {
-        return MaterialisticDatabase.getInstance(context).getSavedStoriesDao();
+    @Provides @Singleton
+    public MaterialisticDatabase provideDatabase(Context context) {
+        return MaterialisticDatabase.getInstance(context);
     }
 
     @Provides
-    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao(Context context) {
-        return MaterialisticDatabase.getInstance(context).getReadStoriesDao();
+    public MaterialisticDatabase.SavedStoriesDao provideSavedStoriesDao(MaterialisticDatabase database) {
+        return database.getSavedStoriesDao();
     }
 
     @Provides
-    public MaterialisticDatabase.ReadableDao provideReadableDao(Context context) {
-        return MaterialisticDatabase.getInstance(context).getReadableDao();
+    public MaterialisticDatabase.ReadStoriesDao provideReadStoriesDao(MaterialisticDatabase database) {
+        return database.getReadStoriesDao();
     }
 
     @Provides
-    public SupportSQLiteOpenHelper provideOpenHelper(Context context) {
-        return MaterialisticDatabase.getInstance(context).getOpenHelper();
+    public MaterialisticDatabase.ReadableDao provideReadableDao(MaterialisticDatabase database) {
+        return database.getReadableDao();
+    }
+
+    @Provides
+    public SupportSQLiteOpenHelper provideOpenHelper(MaterialisticDatabase database) {
+        return database.getOpenHelper();
     }
 }

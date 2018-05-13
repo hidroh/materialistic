@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,12 +18,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.android.controller.ActivityController;
 
 import java.io.File;
 import java.util.HashSet;
@@ -61,10 +58,10 @@ import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 @Config(shadows = {ShadowWebView.class})
 @RunWith(TestRunner.class)
 public class FavoriteManagerTest {
+    @Inject MaterialisticDatabase database;
     @Inject MaterialisticDatabase.SavedStoriesDao savedStoriesDao;
     @Inject MaterialisticDatabase.ReadStoriesDao readStoriesDao;
     @Inject MaterialisticDatabase.ReadableDao readableDao;
-    private ShadowContentResolver resolver;
     private FavoriteManager manager;
     @Mock Observer<Uri> observer;
 
@@ -72,7 +69,6 @@ public class FavoriteManagerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         TestApplication.applicationGraph.inject(this);
-        resolver = shadowOf(RuntimeEnvironment.application.getContentResolver());
         savedStoriesDao.insert(MaterialisticDatabase.SavedStory.from(new TestWebItem() {
             @Override
             public String getDisplayedTitle() {
@@ -105,7 +101,7 @@ public class FavoriteManagerTest {
                 return "2";
             }
         }));
-        LocalCache cache = new Cache(RuntimeEnvironment.application, savedStoriesDao, readStoriesDao, readableDao);
+        LocalCache cache = new Cache(database, savedStoriesDao, readStoriesDao, readableDao, Schedulers.immediate());
         manager = new FavoriteManager(cache, Schedulers.immediate(), savedStoriesDao) {
             @Override
             protected Uri getUriForFile(Context context, File file) {
@@ -118,8 +114,6 @@ public class FavoriteManagerTest {
 
     @Test
     public void testLocalItemManager() {
-        ActivityController<AppCompatActivity> controller = Robolectric.buildActivity(AppCompatActivity.class);
-        AppCompatActivity activity = controller.create().start().resume().get();
         LocalItemManager.Observer observer = mock(LocalItemManager.Observer.class);
         manager.attach(observer, null);
         verify(observer).onChanged();
@@ -127,7 +121,6 @@ public class FavoriteManagerTest {
         assertThat(manager.getItem(0).getDisplayedTitle()).contains("ask HN");
         assertThat(manager.getItem(1).getDisplayedTitle()).contains("title");
         manager.detach();
-        controller.pause().stop().destroy();
     }
 
     @Test
