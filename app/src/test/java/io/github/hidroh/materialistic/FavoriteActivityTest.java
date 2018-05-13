@@ -365,20 +365,23 @@ public class FavoriteActivityTest {
 
     @Test
     public void testRemoveClearSelection() {
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("3")
                 .build());
         assertNull(activity.getSelectedItem());
         activity.onItemSelected(new TestHnItem(1L));
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("2")
                 .build());
         assertNotNull(activity.getSelectedItem());
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -389,7 +392,8 @@ public class FavoriteActivityTest {
     @Test
     public void testClearSelection() {
         activity.onItemSelected(new TestHnItem(1L));
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                         .buildUpon()
                         .appendPath("clear")
                         .build());

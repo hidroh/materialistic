@@ -224,9 +224,11 @@ public class ListFragmentViewHolderTest {
         itemListener.getValue().onResponse(item);
         assertNotViewed();
         controller.pause();
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_READ
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseReadUri()
                 .buildUpon().appendPath("2").build()); // not in view
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_READ
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseReadUri()
                     .buildUpon().appendPath("1").build()); // in view
         controller.resume();
         assertViewed();
@@ -242,7 +244,8 @@ public class ListFragmentViewHolderTest {
         controller.pause();
 
         // observed clear
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("clear")
                 .build());
@@ -250,14 +253,16 @@ public class ListFragmentViewHolderTest {
         assertFalse(item.isFavorite());
         assertThat((View) viewHolder.itemView.findViewById(R.id.bookmarked)).isNotVisible();
         // observed add
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
                 .build());
         assertTrue(item.isFavorite());
         // observed remove
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -279,7 +284,8 @@ public class ListFragmentViewHolderTest {
         shadowOf(popupMenu).getOnMenuItemClickListener()
                 .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_save));
         verify(favoriteManager).add(any(Context.class), eq(item));
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
@@ -291,7 +297,8 @@ public class ListFragmentViewHolderTest {
                 .containsText(R.string.toast_saved);
         snackbarView.findViewById(R.id.snackbar_action).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")

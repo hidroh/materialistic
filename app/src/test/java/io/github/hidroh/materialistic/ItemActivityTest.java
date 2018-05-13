@@ -368,7 +368,8 @@ public class ItemActivityTest {
         assertTrue(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
         verify(favoriteManager).remove(any(Context.class), eq("1"));
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("remove")
                 .appendPath("1")
@@ -378,7 +379,8 @@ public class ItemActivityTest {
                 .isNotNull()
                 .containsText(R.string.toast_removed);
         activity.findViewById(R.id.snackbar_action).performClick();
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
@@ -402,7 +404,8 @@ public class ItemActivityTest {
         activity = controller.get();
         assertFalse(item.isFavorite());
         activity.findViewById(R.id.bookmarked).performClick();
-        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase.URI_SAVED
+        MaterialisticDatabase.getInstance(RuntimeEnvironment.application).setLiveValue(MaterialisticDatabase
+                .getBaseSavedUri()
                 .buildUpon()
                 .appendPath("add")
                 .appendPath("1")
