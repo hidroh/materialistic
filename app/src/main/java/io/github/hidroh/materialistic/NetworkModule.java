@@ -17,17 +17,25 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Context;
+import android.net.TrafficStats;
 import android.util.Log;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Singleton;
+import javax.net.SocketFactory;
 
 import dagger.Module;
 import dagger.Provides;
-import io.github.hidroh.materialistic.data.*;
+import io.github.hidroh.materialistic.data.AlgoliaClient;
+import io.github.hidroh.materialistic.data.FileDownloader;
+import io.github.hidroh.materialistic.data.HackerNewsClient;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.RestServiceFactory;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Call;
@@ -50,6 +58,44 @@ class NetworkModule {
     @Provides @Singleton
     public Call.Factory provideCallFactory(Context context) {
         return new OkHttpClient.Builder()
+                .socketFactory(new SocketFactory() {
+                    private SocketFactory mDefaultFactory = SocketFactory.getDefault();
+
+                    @Override
+                    public Socket createSocket() throws IOException {
+                        Socket socket = mDefaultFactory.createSocket();
+                        TrafficStats.setThreadStatsTag(1);
+                        return socket;
+                    }
+
+                    @Override
+                    public Socket createSocket(String host, int port) throws IOException {
+                        Socket socket = mDefaultFactory.createSocket(host, port);
+                        TrafficStats.setThreadStatsTag(1);
+                        return socket;
+                    }
+
+                    @Override
+                    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
+                        Socket socket = mDefaultFactory.createSocket(host, port, localHost, localPort);
+                        TrafficStats.setThreadStatsTag(1);
+                        return socket;
+                    }
+
+                    @Override
+                    public Socket createSocket(InetAddress host, int port) throws IOException {
+                        Socket socket = mDefaultFactory.createSocket(host, port);
+                        TrafficStats.setThreadStatsTag(1);
+                        return socket;
+                    }
+
+                    @Override
+                    public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+                        Socket socket = mDefaultFactory.createSocket(address, port, localAddress, localPort);
+                        TrafficStats.setThreadStatsTag(1);
+                        return socket;
+                    }
+                })
                 .cache(new Cache(context.getApplicationContext().getCacheDir(), CACHE_SIZE))
                 .addNetworkInterceptor(new CacheOverrideNetworkInterceptor())
                 .addInterceptor(new ConnectionAwareInterceptor(context))
