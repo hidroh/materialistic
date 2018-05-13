@@ -93,7 +93,7 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
     }
 
     public Uri createReadUri(String itemId) {
-        return MaterialisticDatabase.getBaseReadUri().buildUpon().path(itemId).build();
+        return MaterialisticDatabase.getBaseReadUri().buildUpon().appendPath(itemId).build();
     }
 
     @Entity(tableName = "read")

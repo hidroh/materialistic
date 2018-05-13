@@ -36,7 +36,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -109,7 +108,12 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         if (FavoriteManager.isCleared(uri)) {
             mItem.setFavorite(false);
             bindFavorite();
-        } else if (TextUtils.equals(mItemId, uri.getLastPathSegment())) {
+            return;
+        }
+        if (!TextUtils.equals(mItemId, uri.getLastPathSegment())) {
+            return;
+        }
+        if (FavoriteManager.isAdded(uri) || FavoriteManager.isRemoved(uri)) {
             mItem.setFavorite(FavoriteManager.isAdded(uri));
             bindFavorite();
         }
@@ -134,22 +138,22 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             mStoryViewMode = Preferences.getDefaultStoryView(this);
         }
         setContentView(R.layout.activity_item);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
         mSystemUiHelper = new AppUtils.SystemUiHelper(getWindow());
-        mReplyButton = (FloatingActionButton) findViewById(R.id.reply_button);
-        mNavButton = (NavFloatingActionButton) findViewById(R.id.navigation_button);
+        mReplyButton = findViewById(R.id.reply_button);
+        mNavButton = findViewById(R.id.navigation_button);
         mNavButton.setNavigable(direction ->
                 // if callback is fired navigable should not be null
                 AppUtils.navigate(direction, mAppBar, (Navigable) mAdapter.getItem(0)));
-        mVoteButton = (ImageButton) findViewById(R.id.vote_button);
-        mBookmark = (ImageView) findViewById(R.id.bookmarked);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.content_frame);
-        mAppBar = (AppBarLayout) findViewById(R.id.appbar);
-        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mVoteButton = findViewById(R.id.vote_button);
+        mBookmark = findViewById(R.id.bookmarked);
+        mCoordinatorLayout = findViewById(R.id.content_frame);
+        mAppBar = findViewById(R.id.appbar);
+        mTabLayout = findViewById(R.id.tab_layout);
+        mViewPager = findViewById(R.id.view_pager);
         AppUtils.toggleFab(mNavButton, false);
         AppUtils.toggleFab(mReplyButton, false);
         final Intent intent = getIntent();
@@ -354,12 +358,12 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         mSessionManager.view(story.getId());
         mVoteButton.setVisibility(View.VISIBLE);
         mVoteButton.setOnClickListener(v -> vote(story));
-        final TextView titleTextView = (TextView) findViewById(android.R.id.text2);
+        final TextView titleTextView = findViewById(android.R.id.text2);
         if (story.isStoryType()) {
             titleTextView.setText(story.getDisplayedTitle());
             setTaskTitle(story.getDisplayedTitle());
             if (!TextUtils.isEmpty(story.getSource())) {
-                TextView sourceTextView = (TextView) findViewById(R.id.source);
+                TextView sourceTextView = findViewById(R.id.source);
                 sourceTextView.setText(story.getSource());
                 sourceTextView.setVisibility(View.VISIBLE);
             }
@@ -372,7 +376,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             setTaskTitle(title);
         }
 
-        final TextView postedTextView = (TextView) findViewById(R.id.posted);
+        final TextView postedTextView = findViewById(R.id.posted);
         postedTextView.setText(story.getDisplayedTime(this));
         postedTextView.append(story.getDisplayedAuthor(this, true, 0));
         postedTextView.setMovementMethod(LinkMovementMethod.getInstance());
