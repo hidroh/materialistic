@@ -105,7 +105,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         if (uri == null) {
             return;
         }
-        if (FavoriteManager.isCleared(uri)) {
+        if (FavoriteManager.Companion.isCleared(uri)) {
             mItem.setFavorite(false);
             bindFavorite();
             return;
@@ -113,8 +113,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         if (!TextUtils.equals(mItemId, uri.getLastPathSegment())) {
             return;
         }
-        if (FavoriteManager.isAdded(uri) || FavoriteManager.isRemoved(uri)) {
-            mItem.setFavorite(FavoriteManager.isAdded(uri));
+        if (FavoriteManager.Companion.isAdded(uri) || FavoriteManager.Companion.isRemoved(uri)) {
+            mItem.setFavorite(FavoriteManager.Companion.isAdded(uri));
             bindFavorite();
         }
     };
