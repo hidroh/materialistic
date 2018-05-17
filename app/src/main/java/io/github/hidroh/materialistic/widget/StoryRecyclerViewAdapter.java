@@ -109,7 +109,7 @@ public class StoryRecyclerViewAdapter extends
         if (uri == null) {
             return;
         }
-        if (FavoriteManager.isCleared(uri)) {
+        if (FavoriteManager.Companion.isCleared(uri)) {
             mFavoriteRevision++; // invalidate all favorite statuses
             notifyDataSetChanged();
             return;
@@ -125,10 +125,10 @@ public class StoryRecyclerViewAdapter extends
             return;
         }
         Item item = mItems.get(position);
-        if (FavoriteManager.isAdded(uri)) {
+        if (FavoriteManager.Companion.isAdded(uri)) {
             item.setFavorite(true);
             item.setLocalRevision(mFavoriteRevision);
-        } else if (FavoriteManager.isRemoved(uri)) {
+        } else if (FavoriteManager.Companion.isRemoved(uri)) {
             item.setFavorite(false);
             item.setLocalRevision(mFavoriteRevision);
         } else {

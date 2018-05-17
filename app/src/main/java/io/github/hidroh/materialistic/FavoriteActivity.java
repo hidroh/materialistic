@@ -37,13 +37,13 @@ public class FavoriteActivity extends BaseListActivity {
         if (uri == null) {
             return;
         }
-        if (FavoriteManager.isRemoved(uri)) {
+        if (FavoriteManager.Companion.isRemoved(uri)) {
             WebItem selected = getSelectedItem();
             if (selected != null &&
                     TextUtils.equals(selected.getId(), uri.getLastPathSegment())) {
                 onItemSelected(null);
             }
-        } else if (FavoriteManager.isCleared(uri)) {
+        } else if (FavoriteManager.Companion.isCleared(uri)) {
             onItemSelected(null);
         }
     };

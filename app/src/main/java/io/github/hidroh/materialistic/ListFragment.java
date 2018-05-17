@@ -55,9 +55,9 @@ public class ListFragment extends BaseListFragment {
             return;
         }
         int toastMessageResId = 0;
-        if (FavoriteManager.isAdded(uri)) {
+        if (FavoriteManager.Companion.isAdded(uri)) {
             toastMessageResId = R.string.toast_saved;
-        } else if (FavoriteManager.isRemoved(uri)) {
+        } else if (FavoriteManager.Companion.isRemoved(uri)) {
             toastMessageResId = R.string.toast_removed;
         }
         if (toastMessageResId == 0) {
