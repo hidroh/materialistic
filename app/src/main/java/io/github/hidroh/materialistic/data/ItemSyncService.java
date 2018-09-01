@@ -23,7 +23,7 @@ import android.os.IBinder;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.ActivityModule;
-import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.Injectable;
 
 public class ItemSyncService extends Service {
 
@@ -35,7 +35,7 @@ public class ItemSyncService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        ((Application) getApplication())
+        ((Injectable) getApplication())
                 .getApplicationGraph()
                 .plus(new ActivityModule(this))
                 .inject(this);

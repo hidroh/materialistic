@@ -37,6 +37,7 @@ import javax.inject.Named;
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
@@ -52,7 +53,7 @@ public class WidgetService extends RemoteViewsService {
     @Override
     public void onCreate() {
         super.onCreate();
-        ((Application) getApplication())
+        ((Injectable) getApplication())
                 .getApplicationGraph()
                 .plus(new ActivityModule(this))
                 .inject(this);
