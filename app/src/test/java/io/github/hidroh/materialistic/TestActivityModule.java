@@ -120,7 +120,6 @@ import static org.mockito.Mockito.when;
                 PopularActivityTest.class,
                 ReadabilityFragmentTest.class,
                 ReadabilityFragmentLazyLoadTest.class,
-                LoginActivityTest.class,
                 DrawerActivityLoginTest.class,
                 ComposeActivityTest.class,
                 SubmitActivityTest.class,
