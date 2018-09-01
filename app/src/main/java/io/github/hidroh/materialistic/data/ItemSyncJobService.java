@@ -30,7 +30,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.ActivityModule;
-import io.github.hidroh.materialistic.Application;
+import io.github.hidroh.materialistic.Injectable;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ItemSyncJobService extends JobService {
@@ -41,7 +41,7 @@ public class ItemSyncJobService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
-        ((Application) getApplication())
+        ((Injectable) getApplication())
                 .getApplicationGraph()
                 .plus(new ActivityModule(this))
                 .inject(this);

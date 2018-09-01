@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Ha Duy Trung
+ * Copyright (c) 2018 Ha Duy Trung
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.hidroh.materialistic;
+package io.github.hidroh.materialistic
 
-import dagger.ObjectGraph;
+import android.app.Application
+import dagger.ObjectGraph
 
-/**
- * Interface for context that can be injected with dependencies
- */
-public interface Injectable {
-    /**
-     * Injects the members of given object, including injectable members
-     * inherited from its supertypes.
-     * @param object object with members to be injected
-     */
-    void inject(Object object);
+class InjectableApplication : Application(), Injectable {
 
-    ObjectGraph getApplicationGraph();
+  override fun getApplicationGraph() = InjectableApplication.applicationGraph
+
+  override fun inject(item: Any?) {
+    applicationGraph.inject(item)
+  }
+
+  companion object {
+    val applicationGraph = ObjectGraph.create()!!
+  }
 }
