@@ -27,8 +27,7 @@ public abstract class InjectableActivity extends ThemedActivity implements Injec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivityGraph = getApplicationGraph().plus(new ActivityModule(this), new UiModule());
-        mActivityGraph.inject(this);
+        inject(this);
     }
 
     @Override
@@ -50,12 +49,16 @@ public abstract class InjectableActivity extends ThemedActivity implements Injec
 
     @Override
     public void inject(Object object) {
-        mActivityGraph.inject(object);
+        getApplicationGraph().inject(object);
     }
 
     @Override
     public ObjectGraph getApplicationGraph() {
-        return ((Injectable) getApplication()).getApplicationGraph();
+        if (mActivityGraph == null) {
+            mActivityGraph = ((Injectable) getApplication()).getApplicationGraph()
+                    .plus(new ActivityModule(this), new UiModule());
+        }
+        return mActivityGraph;
     }
 
     public boolean isActivityDestroyed() {

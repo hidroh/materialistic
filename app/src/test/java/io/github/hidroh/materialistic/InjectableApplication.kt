@@ -18,16 +18,17 @@ package io.github.hidroh.materialistic
 
 import android.app.Application
 import dagger.ObjectGraph
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 
 class InjectableApplication : Application(), Injectable {
 
-  override fun getApplicationGraph() = InjectableApplication.applicationGraph
-
-  override fun inject(item: Any?) {
-    applicationGraph.inject(item)
+  override fun getApplicationGraph(): ObjectGraph {
+    val graph = mock(ObjectGraph::class.java)!!
+    `when`(graph.plus(any())).thenReturn(graph)
+    return graph
   }
 
-  companion object {
-    val applicationGraph = ObjectGraph.create()!!
-  }
+  override fun inject(item: Any?) { }
 }

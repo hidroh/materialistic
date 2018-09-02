@@ -17,27 +17,34 @@
 package io.github.hidroh.materialistic
 
 import android.annotation.SuppressLint
-import io.github.hidroh.materialistic.test.TestRunner
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import android.content.Context
+import android.content.res.AssetManager
 import okio.Okio
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 import rx.schedulers.Schedulers
+import java.io.FileInputStream
 import java.io.IOException
 
-@RunWith(TestRunner::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(application = InjectableApplication::class)
 class AdBlockerTest {
   @Test
   fun testBlockAd() {
-    AdBlocker.init(RuntimeEnvironment.application, Schedulers.immediate())
-    assertFalse(AdBlocker.isAd(""))
-    assertFalse(AdBlocker.isAd("http://localhost"))
-    assertFalse(AdBlocker.isAd("http://google.com"))
-    assertTrue(AdBlocker.isAd("http://pagead2.g.doubleclick.net"))
+    val assetManager = mock(AssetManager::class.java)
+    `when`(assetManager.open(anyString()))
+        .thenReturn(FileInputStream(javaClass.classLoader.getResource("pgl.yoyo.org.txt").file))
+    val context = mock(Context::class.java)
+    `when`(context.assets).thenReturn(assetManager)
+    AdBlocker.init(context, Schedulers.immediate())
+    assertThat(AdBlocker.isAd("")).isFalse()
+    assertThat(AdBlocker.isAd("http://localhost")).isFalse()
+    assertThat(AdBlocker.isAd("http://google.com")).isFalse()
+    assertThat(AdBlocker.isAd("http://pagead2.g.doubleclick.net")).isTrue()
   }
 
   @SuppressLint("NewApi")
