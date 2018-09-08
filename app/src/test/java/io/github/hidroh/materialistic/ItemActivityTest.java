@@ -57,7 +57,6 @@ import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.TestWebItem;
 import io.github.hidroh.materialistic.test.shadow.ShadowFloatingActionButton;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
-import io.github.hidroh.materialistic.test.suite.SlowTest;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -75,7 +74,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Category(SlowTest.class)
 @SuppressWarnings("ConstantConditions")
 @RunWith(TestRunner.class)
 public class ItemActivityTest {

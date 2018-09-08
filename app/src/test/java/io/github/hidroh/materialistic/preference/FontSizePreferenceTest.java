@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
@@ -21,7 +22,6 @@ import java.util.List;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.PreferencesActivity;
 import io.github.hidroh.materialistic.R;
-import io.github.hidroh.materialistic.test.ParameterizedTestRunner;
 import io.github.hidroh.materialistic.test.shadow.CustomShadows;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
@@ -31,7 +31,7 @@ import io.github.hidroh.materialistic.test.shadow.ShadowSupportPreferenceManager
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Config(shadows = {ShadowSupportPreferenceManager.class, ShadowSupportPreference.class, ShadowPreferenceFragmentCompat.class, ShadowRecyclerViewAdapter.class})
-@RunWith(ParameterizedTestRunner.class)
+@RunWith(ParameterizedRobolectricTestRunner.class)
 public class FontSizePreferenceTest {
     private final int selection;
     private final int styleResId;
@@ -39,7 +39,7 @@ public class FontSizePreferenceTest {
     private PreferencesActivity activity;
     private View preferenceView;
 
-    @ParameterizedTestRunner.Parameters
+    @ParameterizedRobolectricTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{0, R.style.AppTextSize_XSmall},

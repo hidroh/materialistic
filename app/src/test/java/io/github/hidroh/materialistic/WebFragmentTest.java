@@ -14,7 +14,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
@@ -57,7 +56,6 @@ import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customSha
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -195,36 +193,6 @@ public class WebFragmentTest {
         assertEquals(-1, ((ShadowWebView) Shadow.extract(activity.findViewById(R.id.web_view)))
                     .getScrollY());
 
-    }
-
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
-    @Test
-    public void testAdBlocker() {
-        WebView webView = activity.findViewById(R.id.web_view);
-        WebViewClient client = shadowOf(webView).getWebViewClient();
-        assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
-        assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
-        assertNotNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
-        assertNotNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
-    }
-
-    @SuppressWarnings("deprecation")
-    @SuppressLint("NewApi")
-    @Test
-    public void testAdBlockerDisabled() {
-        controller.pause().stop().destroy();
-        PreferenceManager.getDefaultSharedPreferences(activity)
-                .edit()
-                .putBoolean(activity.getString(R.string.pref_ad_block), false)
-                .apply();
-        controller = Robolectric.buildActivity(WebActivity.class, intent);
-        activity = controller.get();
-        controller.create().start().resume();
-        WebView webView = activity.findViewById(R.id.web_view);
-        WebViewClient client = shadowOf(webView).getWebViewClient();
-        assertNull(client.shouldInterceptRequest(webView, "http://google.com"));
-        assertNull(client.shouldInterceptRequest(webView, "http://page2.g.doubleclick.net"));
     }
 
     @Test

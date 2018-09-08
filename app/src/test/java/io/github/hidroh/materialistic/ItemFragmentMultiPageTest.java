@@ -43,7 +43,6 @@ import io.github.hidroh.materialistic.test.shadow.CustomShadows;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
-import io.github.hidroh.materialistic.test.suite.SlowTest;
 
 import static junit.framework.Assert.assertEquals;
 import static org.assertj.android.api.Assertions.assertThat;
@@ -57,7 +56,6 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Category(SlowTest.class)
 @Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowRecyclerViewAdapter.class, ShadowPreferenceFragmentCompat.class})
 @RunWith(TestRunner.class)
 public class ItemFragmentMultiPageTest {

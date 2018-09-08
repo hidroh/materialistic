@@ -1,6 +1,8 @@
 package io.github.hidroh.materialistic;
 
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.support.v4.util.ArrayMap;
 import android.view.View;
 
 import org.robolectric.RuntimeEnvironment;
@@ -18,10 +20,18 @@ import dagger.ObjectGraph;
 import io.github.hidroh.materialistic.test.InMemoryDatabase;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
+import static org.mockito.Mockito.mock;
 import static org.robolectric.Shadows.shadowOf;
 
 public class TestApplication extends Application implements TestLifecycleApplication {
     public static ObjectGraph applicationGraph = ObjectGraph.create(new TestActivityModule());
+    static {
+        ArrayMap<String, Typeface> typefaces = ReflectionHelpers.getField(FontCache.getInstance(), "mTypefaceMap");
+        typefaces.put("DroidSans.ttf", mock(Typeface.class));
+        typefaces.put("DroidSerif.ttf", mock(Typeface.class));
+        typefaces.put("LibreBaskerville-Regular.ttf", mock(Typeface.class));
+        typefaces.put("RobotoSlab-Regular.ttf", mock(Typeface.class));
+    }
 
     public static void addResolver(Intent intent) {
         ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
