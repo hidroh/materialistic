@@ -2,7 +2,7 @@ android.testOptions.unitTests {
     all {
         // full options: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
         maxHeapSize = rootProject.ext.ci ? "3584m" : "2048m"
-        forkEvery = 4
+        forkEvery = rootProject.ext.ci ? 1 : 0
         testLogging {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
             exceptionFormat 'full'
