@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -94,6 +95,7 @@ class UiModule {
         return new AlertDialogBuilder.Impl();
     }
 
+    @SuppressLint("Recycle")
     @Provides @Singleton
     public ResourcesProvider provideResourcesProvider(Context context) {
         return resId -> context.getResources().obtainTypedArray(resId);
