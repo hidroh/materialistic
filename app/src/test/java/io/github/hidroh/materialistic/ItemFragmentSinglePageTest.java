@@ -53,7 +53,6 @@ import io.github.hidroh.materialistic.test.shadow.ShadowItemTouchHelper;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowTextView;
-import io.github.hidroh.materialistic.test.suite.SlowTest;
 import io.github.hidroh.materialistic.widget.MultiPageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.SinglePageItemRecyclerViewAdapter;
 import io.github.hidroh.materialistic.widget.ToggleItemViewHolder;
@@ -71,7 +70,6 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Category(SlowTest.class)
 @Config(shadows = {ShadowRecyclerViewAdapter.class,
         ShadowTextView.class})
 @RunWith(TestRunner.class)

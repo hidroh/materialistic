@@ -57,7 +57,6 @@ import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerView;
 import io.github.hidroh.materialistic.test.shadow.ShadowRecyclerViewAdapter;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
-import io.github.hidroh.materialistic.test.suite.SlowTest;
 
 import static io.github.hidroh.materialistic.test.shadow.CustomShadows.customShadowOf;
 import static junit.framework.Assert.assertEquals;
@@ -80,7 +79,6 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @SuppressWarnings("ConstantConditions")
-@Category(SlowTest.class)
 @Config(shadows = {ShadowSwipeRefreshLayout.class,
         ShadowRecyclerViewAdapter.class,
         ShadowRecyclerView.class,

@@ -18,47 +18,10 @@ package io.github.hidroh.materialistic.test;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.internal.GradleManifestFactory;
-import org.robolectric.internal.ManifestFactory;
-import org.robolectric.internal.ManifestIdentifier;
-import org.robolectric.res.FileFsFile;
 
 public class TestRunner extends RobolectricTestRunner {
 
     public TestRunner(Class<?> klass) throws InitializationError {
         super(klass);
-    }
-
-    @Override
-    protected ManifestFactory getManifestFactory(Config config) {
-        if (config.constants() != Void.class) {
-            return new GradleManifestFactory() {
-                private static final String SRC = "src/main";
-
-                @Override
-                public ManifestIdentifier identify(Config config) {
-                    ManifestIdentifier identifier = super.identify(config);
-                    if (identifier.getAssetDir().exists()) {
-                        return identifier;
-                    } else {
-                        return new ManifestIdentifier(identifier.getPackageName(),
-                                identifier.getManifestFile(),
-                                identifier.getResDir(),
-                                FileFsFile.from(SRC, "assets"),
-                                identifier.getLibraries());
-                    }
-                }
-            };
-        } else {
-            return super.getManifestFactory(config);
-        }
-    }
-
-    @Override
-    protected Config buildGlobalConfig() {
-        return new Config.Builder()
-                .setBuildDir(System.getProperty("robolectric.buildDir"))
-                .build();
     }
 }

@@ -5,19 +5,18 @@ import android.support.annotation.StringRes;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.Arrays;
 import java.util.List;
-
-import io.github.hidroh.materialistic.test.ParameterizedTestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
-@RunWith(ParameterizedTestRunner.class)
+@RunWith(ParameterizedRobolectricTestRunner.class)
 public class PreferencesMigrationTest {
     private final int oldKey;
     private final boolean oldValue;
@@ -32,7 +31,7 @@ public class PreferencesMigrationTest {
         this.newValue = newValue;
     }
 
-    @ParameterizedTestRunner.Parameters
+    @ParameterizedRobolectricTestRunner.Parameters
     public static List<Object[]> provideParameters() {
         return Arrays.asList(
                 new Object[]{R.string.pref_item_click, true,

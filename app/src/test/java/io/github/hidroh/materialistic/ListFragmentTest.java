@@ -33,7 +33,6 @@ import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
 import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 import io.github.hidroh.materialistic.test.shadow.ShadowSwipeRefreshLayout;
-import io.github.hidroh.materialistic.test.suite.SlowTest;
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
 
 import static junit.framework.Assert.assertEquals;
@@ -47,7 +46,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@Category(SlowTest.class)
 @Config(shadows = {ShadowSwipeRefreshLayout.class, ShadowSnackbar.class, ShadowPreferenceFragmentCompat.class})
 @RunWith(TestRunner.class)
 public class ListFragmentTest {

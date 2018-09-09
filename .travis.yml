@@ -34,7 +34,6 @@ script:
     - .travis/${TASK}.sh
 env:
     - TASK=lint
-    - TASK=test1
-    - TASK=test2
+    - TASK=test
 after_success:
     - .travis/coverage.sh

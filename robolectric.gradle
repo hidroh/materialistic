@@ -13,7 +13,7 @@ android.testOptions.unitTests.all {
         html.enabled = false
         junitXml.enabled = false
     }
-    include rootProject.hasProperty("testSuite") ? "**/${rootProject.ext.testSuite}.class" : "**/*Test.class"
+    include "**/*Test.class"
     systemProperty 'robolectric.buildDir', buildDir
 }
 
@@ -27,7 +27,6 @@ dependencies {
             "org.robolectric:shadows-supportv4:$robolectricVersion",
             'org.mockito:mockito-core:2.18.3',
             'junit:junit:4.12',
-            'io.takari.junit:takari-cpsuite:1.2.7',
             "com.squareup.assertj:assertj-android:$assertjVersion",
             "com.squareup.assertj:assertj-android-support-v4:$assertjVersion@aar",
             "com.squareup.assertj:assertj-android-appcompat-v7:$assertjVersion@aar"
