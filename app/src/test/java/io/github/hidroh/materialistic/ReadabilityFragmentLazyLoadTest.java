@@ -77,7 +77,7 @@ public class ReadabilityFragmentLazyLoadTest {
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_lazy_load), false)
-                .commit();
+                .apply();
         fragment.setUserVisibleHint(true);
         verify(readabilityClient, never()).parse(any(), any(),
                 any(ReadabilityClient.Callback.class));

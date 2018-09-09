@@ -11,14 +11,13 @@ import android.widget.TextView;
 import org.assertj.android.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadow.api.Shadow;
-import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 import javax.inject.Named;

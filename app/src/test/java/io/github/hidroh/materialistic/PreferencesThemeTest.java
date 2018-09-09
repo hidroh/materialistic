@@ -34,7 +34,7 @@ public class PreferencesThemeTest {
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putString(activity.getString(R.string.pref_theme), "dark")
-                .commit();
+                .apply();
         Preferences.Theme.apply(activity, false, false);
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(R.style.AppTheme_Dark);
     }
