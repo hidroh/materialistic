@@ -11,7 +11,6 @@ import android.view.View;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
@@ -99,7 +98,7 @@ public class BaseListActivityTest {
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
-                .commit();
+                .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestWebItem() {
             @Override
@@ -124,7 +123,7 @@ public class BaseListActivityTest {
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
-                .commit();
+                .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestWebItem() {
             @Override
@@ -149,7 +148,7 @@ public class BaseListActivityTest {
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .edit()
                 .putBoolean(activity.getString(R.string.pref_external), true)
-                .commit();
+                .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestWebItem() {
             @Override
@@ -166,7 +165,7 @@ public class BaseListActivityTest {
                         .edit()
                         .putString(activity.getString(R.string.pref_story_display),
                                 activity.getString(R.string.pref_story_display_value_comments))
-                        .commit();
+                        .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestWebItem() {
             @Override

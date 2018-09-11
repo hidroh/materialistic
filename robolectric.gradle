@@ -1,25 +1,28 @@
-android.testOptions.unitTests.all {
-    // full options: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
-    maxHeapSize = rootProject.ext.ci ? "3584m" : "2048m"
-    forkEvery = 4
-    testLogging {
-        events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
-        exceptionFormat 'full'
+android.testOptions.unitTests {
+    all {
+        // full options: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
+        maxHeapSize = rootProject.ext.ci ? "3584m" : "2048m"
+        forkEvery = rootProject.ext.ci ? 1 : 0
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+            exceptionFormat 'full'
+        }
+        jacoco {
+            includeNoLocationClasses = true
+        }
+        reports {
+            html.enabled = false
+            junitXml.enabled = false
+        }
+        include "**/*Test.class"
+        systemProperty 'robolectric.buildDir', buildDir
     }
-    jacoco {
-        includeNoLocationClasses = true
-    }
-    reports {
-        html.enabled = false
-        junitXml.enabled = false
-    }
-    include "**/*Test.class"
-    systemProperty 'robolectric.buildDir', buildDir
+    includeAndroidResources = true
 }
 
 ext {
     assertjVersion = '1.2.0'
-    robolectricVersion = '3.8'
+    robolectricVersion = '4.0-alpha-3'
 }
 
 dependencies {

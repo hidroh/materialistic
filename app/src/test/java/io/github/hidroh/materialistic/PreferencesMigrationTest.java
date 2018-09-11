@@ -46,7 +46,7 @@ public class PreferencesMigrationTest {
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putBoolean(RuntimeEnvironment.application.getString(oldKey), oldValue)
-                .commit();
+                .apply();
         assertTrue(PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         Preferences.migrate(RuntimeEnvironment.application);
@@ -72,7 +72,7 @@ public class PreferencesMigrationTest {
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .edit()
                 .putBoolean(RuntimeEnvironment.application.getString(oldKey), !oldValue)
-                .commit();
+                .apply();
         assertTrue(PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application)
                 .contains(RuntimeEnvironment.application.getString(oldKey)));
         Preferences.migrate(RuntimeEnvironment.application);

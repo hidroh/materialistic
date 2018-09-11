@@ -16,15 +16,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
-import org.robolectric.android.controller.ActivityController;
 
 import javax.inject.Inject;
 
@@ -54,12 +54,18 @@ import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 @RunWith(TestRunner.class)
 public class AppUtilsTest {
     @Inject AlertDialogBuilder alertDialogBuilder;
+    private Activity context;
+
+    @Before
+    public void setUp() {
+        context = Robolectric.buildActivity(Activity.class).create().get();
+    }
 
     @Test
     public void testSetTextWithLinks() {
         TestApplication.addResolver(new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com")));
-        Preferences.set(RuntimeEnvironment.application, R.string.pref_custom_tab, false);
-        TextView textView = new TextView(RuntimeEnvironment.application);
+        Preferences.set(context, R.string.pref_custom_tab, false);
+        TextView textView = new TextView(context);
         AppUtils.setTextWithLinks(textView, AppUtils.fromHtml("<a href=\"http://example.com\">http://example.com</a>"));
         MotionEvent event = mock(MotionEvent.class);
         when(event.getAction()).thenReturn(MotionEvent.ACTION_DOWN);
@@ -76,7 +82,7 @@ public class AppUtilsTest {
     @Test
     public void testSetTextWithLinksOpenChromeCustomTabs() {
         TestApplication.addResolver(new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com")));
-        TextView textView = new TextView(new ContextThemeWrapper(RuntimeEnvironment.application, R.style.AppTheme));
+        TextView textView = new TextView(new ContextThemeWrapper(context, R.style.AppTheme));
         AppUtils.setTextWithLinks(textView, AppUtils.fromHtml("<a href=\"http://example.com\">http://example.com</a>"));
         MotionEvent event = mock(MotionEvent.class);
         when(event.getAction()).thenReturn(MotionEvent.ACTION_DOWN);
@@ -119,57 +125,57 @@ public class AppUtilsTest {
 
     @Test
     public void testNoActiveNetwork() {
-        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+        shadowOf((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE)).setActiveNetworkInfo(null);
-        assertFalse(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+        assertFalse(AppUtils.isOnWiFi(context));
     }
 
     @Test
     public void testDisconnectedNetwork() {
-        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+        shadowOf((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null, 0, 0, false, false));
-        assertFalse(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+        assertFalse(AppUtils.isOnWiFi(context));
     }
 
     @Test
     public void testNonWiFiNetwork() {
-        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+        shadowOf((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_MOBILE, 0, true, true));
-        assertFalse(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+        assertFalse(AppUtils.isOnWiFi(context));
     }
 
     @Test
     public void testWiFiNetwork() {
-        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+        shadowOf((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
                         ConnectivityManager.TYPE_WIFI, 0, true, true));
-        assertTrue(AppUtils.isOnWiFi(RuntimeEnvironment.application));
+        assertTrue(AppUtils.isOnWiFi(context));
     }
 
     @Test
     public void testRemoveAccount() {
-        Preferences.setUsername(RuntimeEnvironment.application, "olduser");
-        AppUtils.registerAccountsUpdatedListener(RuntimeEnvironment.application);
-        shadowOf(AccountManager.get(RuntimeEnvironment.application)).addAccount(
+        Preferences.setUsername(context, "olduser");
+        AppUtils.registerAccountsUpdatedListener(context);
+        shadowOf(AccountManager.get(context)).addAccount(
                 new Account("newuser", BuildConfig.APPLICATION_ID));
-        assertNull(Preferences.getUsername(RuntimeEnvironment.application));
-        Preferences.setUsername(RuntimeEnvironment.application, "newuser");
-        shadowOf(AccountManager.get(RuntimeEnvironment.application)).addAccount(
+        assertNull(Preferences.getUsername(context));
+        Preferences.setUsername(context, "newuser");
+        shadowOf(AccountManager.get(context)).addAccount(
                 new Account("olduser", BuildConfig.APPLICATION_ID));
-        assertEquals("newuser", Preferences.getUsername(RuntimeEnvironment.application));
+        assertEquals("newuser", Preferences.getUsername(context));
     }
 
     @Test
     public void testShareComment() {
-        AppUtils.share(RuntimeEnvironment.application, mock(PopupMenu.class),
-                new View(RuntimeEnvironment.application), new TestHnItem(1));
+        AppUtils.share(context, mock(PopupMenu.class),
+                new View(context), new TestHnItem(1));
         assertNull(ShadowAlertDialog.getLatestAlertDialog());
-        AppUtils.share(RuntimeEnvironment.application, mock(PopupMenu.class),
-                new View(RuntimeEnvironment.application), new TestHnItem(1) {
+        AppUtils.share(context, mock(PopupMenu.class),
+                new View(context), new TestHnItem(1) {
                     @Override
                     public String getUrl() {
                         return String.format(HackerNewsClient.WEB_ITEM_PATH, "1");
@@ -198,33 +204,33 @@ public class AppUtilsTest {
 
     @Test
     public void testLoginNoAccounts() {
-        AppUtils.showLogin(RuntimeEnvironment.application, null);
-        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
-                .hasComponent(RuntimeEnvironment.application, LoginActivity.class);
+        AppUtils.showLogin(context, null);
+        assertThat(shadowOf(context).getNextStartedActivity())
+                .hasComponent(context, LoginActivity.class);
     }
 
     @Test
     public void testLoginStaleAccount() {
-        Preferences.setUsername(RuntimeEnvironment.application, "username");
-        shadowOf(ShadowAccountManager.get(RuntimeEnvironment.application))
+        Preferences.setUsername(context, "username");
+        shadowOf(ShadowAccountManager.get(context))
                 .addAccount(new Account("username", BuildConfig.APPLICATION_ID));
-        AppUtils.showLogin(RuntimeEnvironment.application, null);
-        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
-                .hasComponent(RuntimeEnvironment.application, LoginActivity.class);
+        AppUtils.showLogin(context, null);
+        assertThat(shadowOf(context).getNextStartedActivity())
+                .hasComponent(context, LoginActivity.class);
     }
 
     @Test
     public void testLoginShowChooser() {
         TestApplication.applicationGraph.inject(this);
-        shadowOf(ShadowAccountManager.get(RuntimeEnvironment.application))
+        shadowOf(ShadowAccountManager.get(context))
                 .addAccount(new Account("username", BuildConfig.APPLICATION_ID));
-        AppUtils.showLogin(RuntimeEnvironment.application, alertDialogBuilder);
+        AppUtils.showLogin(context, alertDialogBuilder);
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());
     }
 
     @Test
     public void testTrimHtmlWhitespaces() {
-        TextView textView = new TextView(RuntimeEnvironment.application);
+        TextView textView = new TextView(context);
         textView.setText(AppUtils.fromHtml("<p>paragraph</p><p><br/><br/><br/></p>"));
         assertThat(textView).hasTextString("paragraph");
         textView.setText(AppUtils.fromHtml(""));
@@ -235,17 +241,17 @@ public class AppUtilsTest {
 
     @Test
     public void testOpenExternalUrlNoConnection() {
-        shadowOf((ConnectivityManager) RuntimeEnvironment.application
+        shadowOf((ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
                 .setActiveNetworkInfo(null);
-        AppUtils.openWebUrlExternal(RuntimeEnvironment.application, new TestHnItem(1L) {
+        AppUtils.openWebUrlExternal(context, new TestHnItem(1L) {
             @Override
             public String getUrl() {
                 return "http://example.com";
             }
         }, "http://example.com", null);
-        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
-                .hasComponent(RuntimeEnvironment.application, OfflineWebActivity.class)
+        assertThat(shadowOf(context).getNextStartedActivity())
+                .hasComponent(context, OfflineWebActivity.class)
                 .hasExtra(OfflineWebActivity.EXTRA_URL, "http://example.com");
     }
 
