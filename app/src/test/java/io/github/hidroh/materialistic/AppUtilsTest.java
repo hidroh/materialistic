@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.SpannedString;
 import android.text.format.DateUtils;
+import android.text.style.TypefaceSpan;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
@@ -237,6 +239,34 @@ public class AppUtilsTest {
         assertThat(textView).hasTextString("");
         textView.setText(AppUtils.fromHtml("paragraph"));
         assertThat(textView).hasTextString("paragraph");
+    }
+
+    @Test
+    public void testPreformattedTextHasMonospaceTypeface() {
+        TextView textView = new TextView(context);
+        textView.setText(AppUtils.fromHtml("<pre><code>val x = myCode()</code></pre>"));
+        assertThat(textView).hasTextString("val x = myCode()");
+
+        SpannedString view = (SpannedString) textView.getText();
+        TypefaceSpan[] spans = view.getSpans(0, view.length(), TypefaceSpan.class);
+        assertThat(spans[0].getFamily()).isEqualTo("monospace");
+    }
+
+    @Test
+    public void testReplacesPreCodeTagsWithTT() {
+        String oneCodeBlock = "<pre><code>val x = myCode()</code></pre><p>More Text<br/><br/><br/></p>";
+        String multipleCodeBlocks = "<pre><code>val x = myCode() \n val y = someMoreCode()</code></pre><p>some more text<br/></p><pre><code>val x = myCode()</code></pre>";
+        String nestedCodeBlocks = "<pre><code>val x = myCode() \n # now some nested codeblocks\n <pre><code>val x = <pre><code>nothing to see here</code></pre></code></pre></code></pre>";
+
+        String oneCodeBlockResult = AppUtils.replacePreCode(oneCodeBlock);
+        String multipleCodeBlocksResult = AppUtils.replacePreCode(multipleCodeBlocks);
+        String nestedCodeBlockResult = AppUtils.replacePreCode(nestedCodeBlocks);
+
+        assertThat(oneCodeBlockResult).isEqualTo("<tt>val x = myCode()</tt><p>More Text<br/><br/><br/></p>");
+        assertThat(multipleCodeBlocksResult).isEqualTo("<tt>val x = myCode() \n val y = someMoreCode()</tt><p>some more text<br/></p><tt>val x = myCode()</tt>");
+        // todo this is a bug, the closing tag is matched eagerly,
+        // however it's not worse than before, where pre code tags were 'eaten'.
+        assertThat(nestedCodeBlockResult).doesNotMatch("<tt>val x = myCode() \n # now some nested codeblocks\n &lt;pre&gt;&lt;code&gt;val x = &lt;pre&gt;&lt;code&gt;nothing to see here&lt;/code&gt;&lt;/pre&gt;&lt;/code&gt;&lt;/pre&gt;</tt>");
     }
 
     @Test
