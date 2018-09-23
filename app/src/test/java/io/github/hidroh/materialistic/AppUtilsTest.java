@@ -10,7 +10,9 @@ import android.net.Uri;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.SpannedString;
 import android.text.format.DateUtils;
+import android.text.style.TypefaceSpan;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
@@ -237,6 +239,30 @@ public class AppUtilsTest {
         assertThat(textView).hasTextString("");
         textView.setText(AppUtils.fromHtml("paragraph"));
         assertThat(textView).hasTextString("paragraph");
+    }
+
+    @Test
+    public void testPreformattedTextHasMonospaceTypeface() {
+        TextView textView = new TextView(context);
+        textView.setText(AppUtils.fromHtml("<pre><code>val x = myCode()</code></pre>"));
+        assertThat(textView).hasTextString("val x = myCode()");
+
+        SpannedString view = (SpannedString) textView.getText();
+        TypefaceSpan[] spans = view.getSpans(0, view.length(), TypefaceSpan.class);
+        assertThat(spans.length).isEqualTo(1);
+        assertThat(spans[0].getFamily()).isEqualTo("monospace");
+    }
+
+    @Test
+    public void testPreformattedTextHasMultipleMonospaceTypeface() {
+        TextView textView = new TextView(context);
+        textView.setText(AppUtils.fromHtml("<pre><code>val x = myCode()</code></pre><p>some more text<br/></p><pre><code>val y = myCode()</code></pre><p>And more text"));
+
+        SpannedString view = (SpannedString) textView.getText();
+        TypefaceSpan[] spans = view.getSpans(0, view.length(), TypefaceSpan.class);
+        assertThat(spans.length).isEqualTo(2);
+        assertThat(spans[0].getFamily()).isEqualTo("monospace");
+        assertThat(spans[1].getFamily()).isEqualTo("monospace");
     }
 
     @Test

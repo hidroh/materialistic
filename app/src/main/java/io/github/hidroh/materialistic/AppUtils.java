@@ -92,6 +92,7 @@ public class AppUtils {
     public static final int HOT_FACTOR = 3;
     private static final String HOST_ITEM = "item";
     private static final String HOST_USER = "user";
+    private static final HtmlCodeTagHandler CODE_TAG_HANDLER = new HtmlCodeTagHandler();
 
     public static void openWebUrlExternal(Context context, @Nullable WebItem item,
                                           String url, @Nullable CustomTabsSession session) {
@@ -184,14 +185,16 @@ public class AppUtils {
         if (TextUtils.isEmpty(htmlText)) {
             return null;
         }
-        CharSequence spanned;
+        final CharSequence spanned;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             //noinspection InlinedApi
             spanned = Html.fromHtml(htmlText, compact ?
-                    Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY);
+                    Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY,
+                    null,
+                    CODE_TAG_HANDLER);
         } else {
             //noinspection deprecation
-            spanned = Html.fromHtml(htmlText);
+            spanned = Html.fromHtml(htmlText, null, CODE_TAG_HANDLER);
         }
         return trim(spanned);
     }
