@@ -92,6 +92,7 @@ public class AppUtils {
     public static final int HOT_FACTOR = 3;
     private static final String HOST_ITEM = "item";
     private static final String HOST_USER = "user";
+    private static final HtmlCodeTagHandler CODE_TAG_HANDLER = new HtmlCodeTagHandler();
 
     public static void openWebUrlExternal(Context context, @Nullable WebItem item,
                                           String url, @Nullable CustomTabsSession session) {
@@ -184,33 +185,18 @@ public class AppUtils {
         if (TextUtils.isEmpty(htmlText)) {
             return null;
         }
-        final String replacedText = replacePreCode(htmlText);
         final CharSequence spanned;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             //noinspection InlinedApi
-            spanned = Html.fromHtml(replacedText, compact ?
-                    Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY);
+            spanned = Html.fromHtml(htmlText, compact ?
+                    Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY,
+                    null,
+                    CODE_TAG_HANDLER);
         } else {
             //noinspection deprecation
-            spanned = Html.fromHtml(replacedText);
+            spanned = Html.fromHtml(htmlText, null, CODE_TAG_HANDLER);
         }
         return trim(spanned);
-    }
-
-    /**
-     * Replaces occurrences of pre and code tags with the Html.fromHtml supported tt tag.
-     * If the pre/code block contains pre code, then we html encode the pre and code tags.
-     *
-     * @param htmlText The text that possibly contains the tags pre and code
-     * @return The text with tt tags
-     */
-    static String replacePreCode(final String htmlText) {
-        return htmlText
-                .replaceAll("<pre><code>((?s).*?)</code></pre>", "<tt>$1</tt>")
-                .replaceAll("<pre>", "&lt;pre&gt;")
-                .replaceAll("<code>", "&lt;code&gt;")
-                .replaceAll("</pre>", "&lt;/pre&gt;")
-                .replaceAll("</code>", "&lt;/code&gt;");
     }
 
     public static Intent makeSendIntentChooser(Context context, Uri data) {
