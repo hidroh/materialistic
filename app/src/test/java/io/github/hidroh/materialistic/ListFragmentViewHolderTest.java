@@ -20,18 +20,17 @@ import android.widget.TextView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.android.controller.ActivityController;
 
 import java.io.IOException;
 
@@ -140,7 +139,7 @@ public class ListFragmentViewHolderTest {
 
     @Test
     public void testStory() {
-        item.setIsViewed(true);
+        item.setViewed(true);
         verify(itemManager).getItem(any(), eq(ItemManager.MODE_DEFAULT), itemListener.capture());
         itemListener.getValue().onResponse(item);
         RecyclerView.ViewHolder holder = adapter.getViewHolder(0);
@@ -526,7 +525,7 @@ public class ListFragmentViewHolderTest {
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager).view(any());
 
-        item.setIsViewed(true);
+        item.setViewed(true);
         testLayout.firstVisiblePosition = 1;
         shadowRecyclerView.getScrollListener().onScrolled(recyclerView, 0, 1);
         verify(sessionManager).view(any()); // should not trigger again

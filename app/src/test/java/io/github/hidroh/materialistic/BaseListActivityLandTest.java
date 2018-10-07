@@ -142,6 +142,7 @@ public class BaseListActivityLandTest {
                 .apply();
         controller.pause().resume();
         activity.onItemSelected(new TestHnItem(1L) {
+            @NonNull
             @Override
             public String getId() {
                 return "1";
@@ -265,6 +266,7 @@ public class BaseListActivityLandTest {
                 return true;
             }
 
+            @NonNull
             @Override
             public String getId() {
                 return "1";

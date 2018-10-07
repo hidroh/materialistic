@@ -31,6 +31,7 @@ import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
     private final List<Item> mItems = new ArrayList<>();
@@ -86,7 +87,7 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
         holder.mPostedTextView.append(item.getDisplayedAuthor(mContext,
                 !TextUtils.equals(item.getBy(), mUsername), 0));
         holder.mMoreButton.setVisibility(View.GONE);
-        if (TextUtils.equals(item.getType(), Item.COMMENT_TYPE)) {
+        if (TextUtils.equals(item.getType(), WebItem.COMMENT_TYPE)) {
             holder.mTitleTextView.setText(null);
             holder.itemView.setOnClickListener(null);
             holder.mCommentButton.setVisibility(View.GONE);

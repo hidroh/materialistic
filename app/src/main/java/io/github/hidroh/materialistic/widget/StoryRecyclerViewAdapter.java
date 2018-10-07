@@ -132,7 +132,7 @@ public class StoryRecyclerViewAdapter extends
             item.setFavorite(false);
             item.setLocalRevision(mFavoriteRevision);
         } else {
-            item.setIsViewed(true);
+            item.setViewed(true);
         }
         notifyItemChanged(position);
     };

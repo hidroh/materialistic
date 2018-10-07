@@ -381,11 +381,11 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         postedTextView.append(story.getDisplayedAuthor(this, true, 0));
         postedTextView.setMovementMethod(LinkMovementMethod.getInstance());
         switch (story.getType()) {
-            case Item.JOB_TYPE:
+            case WebItem.JOB_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_work_white_18dp, 0, 0, 0);
                 break;
-            case Item.POLL_TYPE:
+            case WebItem.POLL_TYPE:
                 postedTextView.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_poll_white_18dp, 0, 0, 0);
                 break;

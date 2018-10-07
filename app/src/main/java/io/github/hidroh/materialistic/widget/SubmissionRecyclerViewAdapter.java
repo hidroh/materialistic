@@ -28,6 +28,7 @@ import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ThreadPreviewActivity;
 import io.github.hidroh.materialistic.data.Item;
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.WebItem;
 
 public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<SubmissionViewHolder> {
     private final Item[] mItems;
@@ -70,7 +71,7 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
         if (item == null) {
             return;
         }
-        final boolean isComment = TextUtils.equals(item.getType(), Item.COMMENT_TYPE);
+        final boolean isComment = TextUtils.equals(item.getType(), WebItem.COMMENT_TYPE);
         holder.mPostedTextView.setText(item.getDisplayedTime(mContext));
         holder.mPostedTextView.append(item.getDisplayedAuthor(mContext, false, 0));
         if (isComment) {
