@@ -251,11 +251,11 @@ class HackerNewsItem implements Item {
     @Override
     public String getDisplayedTitle() {
         switch (getType()) {
-            case COMMENT_TYPE:
+            case WebItem.COMMENT_TYPE:
                 return text;
-            case JOB_TYPE:
-            case STORY_TYPE:
-            case POLL_TYPE: // TODO poll need to display options
+            case WebItem.JOB_TYPE:
+            case WebItem.STORY_TYPE:
+            case WebItem.POLL_TYPE: // TODO poll need to display options
             default:
                 return title;
         }
@@ -264,7 +264,7 @@ class HackerNewsItem implements Item {
     @NonNull
     @Override
     public String getType() {
-        return !TextUtils.isEmpty(type) ? type : STORY_TYPE;
+        return !TextUtils.isEmpty(type) ? type : WebItem.STORY_TYPE;
     }
 
     @NonNull
@@ -333,9 +333,9 @@ class HackerNewsItem implements Item {
     @Override
     public String getUrl() {
         switch (getType()) {
-            case JOB_TYPE:
-            case POLL_TYPE:
-            case COMMENT_TYPE:
+            case WebItem.JOB_TYPE:
+            case WebItem.POLL_TYPE:
+            case WebItem.COMMENT_TYPE:
                 return getItemUrl(getId());
             default:
                 return TextUtils.isEmpty(url) ? getItemUrl(getId()) : url;
@@ -419,11 +419,11 @@ class HackerNewsItem implements Item {
     @Override
     public boolean isStoryType() {
         switch (getType()) {
-            case STORY_TYPE:
-            case POLL_TYPE:
-            case JOB_TYPE:
+            case WebItem.STORY_TYPE:
+            case WebItem.POLL_TYPE:
+            case WebItem.JOB_TYPE:
                 return true;
-            case COMMENT_TYPE:
+            case WebItem.COMMENT_TYPE:
             default:
                 return false;
         }
