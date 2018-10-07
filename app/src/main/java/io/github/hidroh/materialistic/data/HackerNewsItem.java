@@ -232,6 +232,7 @@ class HackerNewsItem implements Item {
         dest.writeLong(previous);
     }
 
+    @NonNull
     @Override
     public String getId() {
         return String.valueOf(id);
@@ -266,8 +267,9 @@ class HackerNewsItem implements Item {
         return !TextUtils.isEmpty(type) ? type : STORY_TYPE;
     }
 
+    @NonNull
     @Override
-    public Spannable getDisplayedAuthor(Context context, boolean linkify, int color) {
+    public Spannable getDisplayedAuthor(@NonNull Context context, boolean linkify, int color) {
         if (displayedAuthor == null) {
             if (TextUtils.isEmpty(by)) {
                 displayedAuthor = new SpannableString("");
@@ -286,8 +288,9 @@ class HackerNewsItem implements Item {
         return displayedAuthor;
     }
 
+    @NonNull
     @Override
-    public Spannable getDisplayedTime(Context context) {
+    public Spannable getDisplayedTime(@NonNull Context context) {
         if (displayedTime == null) {
             SpannableStringBuilder builder = new SpannableStringBuilder(dead ?
                     context.getString(R.string.dead_prefix) + " " : "");
@@ -356,7 +359,7 @@ class HackerNewsItem implements Item {
             }
 
             @Override
-            public void updateDrawState(TextPaint ds) {
+            public void updateDrawState(@NonNull TextPaint ds) {
                 super.updateDrawState(ds);
                 ds.setUnderlineText(false);
             }
@@ -457,7 +460,7 @@ class HackerNewsItem implements Item {
     }
 
     @Override
-    public void setIsViewed(boolean isViewed) {
+    public void setViewed(boolean isViewed) {
         viewed = isViewed;
     }
 

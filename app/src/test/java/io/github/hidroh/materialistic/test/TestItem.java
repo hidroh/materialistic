@@ -132,7 +132,7 @@ public abstract class TestItem implements Item {
     }
 
     @Override
-    public void setIsViewed(boolean isViewed) {
+    public void setViewed(boolean isViewed) {
         viewed = isViewed;
     }
 

@@ -62,14 +62,14 @@ class FavoriteManagerTest {
   fun setUp() {
     MockitoAnnotations.initMocks(this)
     savedStoriesDao.insert(MaterialisticDatabase.SavedStory.from(object : TestWebItem() {
-      override fun getDisplayedTitle() = "title"
-      override fun getUrl() = "http://example.com"
-      override fun getId() = "1"
+      override val displayedTitle get() = "title"
+      override val url get() = "http://example.com"
+      override val id get() = "1"
     }))
     savedStoriesDao.insert(MaterialisticDatabase.SavedStory.from(object : TestWebItem() {
-      override fun getDisplayedTitle() = "ask HN"
-      override fun getUrl() = "http://example.com"
-      override fun getId() = "2"
+      override val displayedTitle get() = "ask HN"
+      override val url get() = "http://example.com"
+      override val id get() = "2"
     }))
     val cache = Cache(database, savedStoriesDao, readStoriesDao, readableDao, Schedulers.immediate())
     manager = FavoriteManager(cache, Schedulers.immediate(), savedStoriesDao)
@@ -132,9 +132,9 @@ class FavoriteManagerTest {
         .activeNetworkInfo =ShadowNetworkInfo.newInstance(null,
         ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED)
     manager.add(context, object : TestWebItem() {
-      override fun getDisplayedTitle() = "new title"
-      override fun getUrl() = "http://newitem.com"
-      override fun getId() = "3"
+      override val displayedTitle get() = "new title"
+      override val url get() = "http://newitem.com"
+      override val id get() = "3"
     })
     verify(observer).onChanged(eq(Uri.parse("content://${BuildConfig.APPLICATION_ID}/saved/add/3")))
     assertThat(ShadowContentResolver.isSyncActive(Account("Materialistic", BuildConfig.APPLICATION_ID),

@@ -93,7 +93,7 @@ public class HackerNewsClient implements ItemManager, UserManager {
                 (isViewed, favorite, hackerNewsItem) -> {
                     if (hackerNewsItem != null) {
                         hackerNewsItem.preload();
-                        hackerNewsItem.setIsViewed(isViewed);
+                        hackerNewsItem.setViewed(isViewed);
                         hackerNewsItem.setFavorite(favorite);
                     }
                     return hackerNewsItem;
