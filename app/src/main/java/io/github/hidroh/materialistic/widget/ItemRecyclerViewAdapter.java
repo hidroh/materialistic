@@ -20,7 +20,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;

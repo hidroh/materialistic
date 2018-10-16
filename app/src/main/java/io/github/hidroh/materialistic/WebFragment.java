@@ -52,14 +52,21 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
-import io.github.hidroh.materialistic.data.*;
+import io.github.hidroh.materialistic.data.FileDownloader;
+import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 import io.github.hidroh.materialistic.widget.PopupMenu;

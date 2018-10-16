@@ -3,10 +3,10 @@ package io.github.hidroh.materialistic;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.android.controller.ActivityController;
 
 import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertEquals;
 

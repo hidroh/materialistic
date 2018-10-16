@@ -20,12 +20,9 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import io.github.hidroh.materialistic.BuildConfig;
-import io.github.hidroh.materialistic.R;
 
 public class WidgetProvider extends AppWidgetProvider {
 

@@ -9,9 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.android.controller.ActivityController;
 
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.test.TestRunner;
