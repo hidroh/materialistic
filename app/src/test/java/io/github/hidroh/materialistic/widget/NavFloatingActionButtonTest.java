@@ -26,13 +26,13 @@ import android.view.View;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowGestureDetector;
 
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
