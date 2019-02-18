@@ -44,7 +44,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:clipToPadding="false"
             android:scrollbarStyle="outsideInset"
-            android:elevation="@dimen/cardview_default_elevation"
+            android:elevation="@dimen/cardview_elevation"
             android:background="?attr/colorCardBackground"
             android:fillViewport="true"
             android:layout_width="0dp"

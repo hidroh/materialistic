@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
@@ -31,6 +31,7 @@
     <dimen name="divider">1dp</dimen>
     <dimen name="icon_button_width">48dp</dimen>
     <dimen name="padding_widget">0dp</dimen>
+    <dimen name="cardview_elevation">2dp</dimen>
 
     <!-- Text size -->
     <dimen name="text_size_small">14sp</dimen>

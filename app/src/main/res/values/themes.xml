@@ -215,7 +215,7 @@
         <item name="android:textColorSecondary">@color/whiteT50</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
         <item name="android:textColorLink">?colorAccent</item>
-        <item name="colorCardBackground">@color/cardview_dark_background</item>
+        <item name="colorCardBackground">@color/cardDarkBackground</item>
         <item name="colorCardHighlight">@color/grey800</item>
         <item name="backgroundDrawerHeader">@drawable/bg_drawer_dark</item>
     </style>
@@ -264,7 +264,7 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/whiteT50</item>
         <item name="android:textColorTertiary">?android:textColorPrimary</item>
-        <item name="android:colorBackground">@color/cardview_dark_background</item>
+        <item name="android:colorBackground">@color/cardDarkBackground</item>
     </style>
 
     <style name="AppBottomSheetDialog.Sepia">
