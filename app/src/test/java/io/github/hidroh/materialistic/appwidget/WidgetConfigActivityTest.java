@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowJobScheduler;
 
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestRunner;
@@ -73,7 +74,8 @@ public class WidgetConfigActivityTest {
         activity.findViewById(R.id.button_ok).performClick();
         assertThat(shadowOf(activity).getResultCode()).isEqualTo(Activity.RESULT_OK);
         assertThat(activity).isFinishing();
-        assertThat(shadowOf((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE))
+        assertThat(((ShadowJobScheduler.ShadowJobSchedulerImpl)
+                shadowOf((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE)))
                 .getAllPendingJobs()).isNotEmpty();
     }
 

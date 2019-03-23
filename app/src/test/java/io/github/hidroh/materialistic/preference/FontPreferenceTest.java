@@ -60,7 +60,7 @@ public class FontPreferenceTest {
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
                         .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display));
         activity = controller.create().postCreate(null).start().resume().visible().get();
-        RecyclerView list = activity.findViewById(R.id.list);
+        RecyclerView list = activity.findViewById(android.R.id.list_container);
         list.setLayoutManager(new LinearLayoutManager(activity));
         RecyclerView.Adapter adapter = list.getAdapter();
         int position = ShadowSupportPreferenceManager

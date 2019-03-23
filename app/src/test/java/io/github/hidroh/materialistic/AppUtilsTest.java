@@ -4,15 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
-import android.view.ContextThemeWrapper;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,9 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.shadows.ShadowAccountManager;
 import org.robolectric.shadows.ShadowAlertDialog;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNetworkInfo;
 
 import javax.inject.Inject;
@@ -59,41 +53,6 @@ public class AppUtilsTest {
     @Before
     public void setUp() {
         context = Robolectric.buildActivity(Activity.class).create().get();
-    }
-
-    @Test
-    public void testSetTextWithLinks() {
-        TestApplication.addResolver(new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com")));
-        Preferences.set(context, R.string.pref_custom_tab, false);
-        TextView textView = new TextView(context);
-        AppUtils.setTextWithLinks(textView, AppUtils.fromHtml("<a href=\"http://example.com\">http://example.com</a>"));
-        MotionEvent event = mock(MotionEvent.class);
-        when(event.getAction()).thenReturn(MotionEvent.ACTION_DOWN);
-        when(event.getX()).thenReturn(0f);
-        when(event.getY()).thenReturn(0f);
-        assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
-        when(event.getAction()).thenReturn(MotionEvent.ACTION_UP);
-        when(event.getX()).thenReturn(0f);
-        when(event.getY()).thenReturn(0f);
-        assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
-        assertNotNull(ShadowApplication.getInstance().getNextStartedActivity());
-    }
-
-    @Test
-    public void testSetTextWithLinksOpenChromeCustomTabs() {
-        TestApplication.addResolver(new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com")));
-        TextView textView = new TextView(new ContextThemeWrapper(context, R.style.AppTheme));
-        AppUtils.setTextWithLinks(textView, AppUtils.fromHtml("<a href=\"http://example.com\">http://example.com</a>"));
-        MotionEvent event = mock(MotionEvent.class);
-        when(event.getAction()).thenReturn(MotionEvent.ACTION_DOWN);
-        when(event.getX()).thenReturn(0f);
-        when(event.getY()).thenReturn(0f);
-        assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
-        when(event.getAction()).thenReturn(MotionEvent.ACTION_UP);
-        when(event.getX()).thenReturn(0f);
-        when(event.getY()).thenReturn(0f);
-        assertTrue(shadowOf(textView).getOnTouchListener().onTouch(textView, event));
-        assertNotNull(ShadowApplication.getInstance().getNextStartedActivity());
     }
 
     @Test
@@ -212,7 +171,7 @@ public class AppUtilsTest {
     @Test
     public void testLoginStaleAccount() {
         Preferences.setUsername(context, "username");
-        shadowOf(ShadowAccountManager.get(context))
+        shadowOf(AccountManager.get(context))
                 .addAccount(new Account("username", BuildConfig.APPLICATION_ID));
         AppUtils.showLogin(context, null);
         assertThat(shadowOf(context).getNextStartedActivity())
@@ -222,7 +181,7 @@ public class AppUtilsTest {
     @Test
     public void testLoginShowChooser() {
         TestApplication.applicationGraph.inject(this);
-        shadowOf(ShadowAccountManager.get(context))
+        shadowOf(AccountManager.get(context))
                 .addAccount(new Account("username", BuildConfig.APPLICATION_ID));
         AppUtils.showLogin(context, alertDialogBuilder);
         assertNotNull(ShadowAlertDialog.getLatestAlertDialog());

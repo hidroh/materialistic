@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -35,7 +36,6 @@ import org.robolectric.shadows.ShadowPackageManager;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowResolveInfo;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 
 import java.io.IOException;
 
@@ -153,7 +153,7 @@ public class ItemActivityTest {
                         .getCompoundDrawables()[0]).getCreatedFromResId());
         assertThat((TextView) activity.findViewById(R.id.source)).hasText("http://example.com");
         reset(hackerNewsClient);
-        shadowOf(activity).recreate();
+        activity.recreate();
         verify(hackerNewsClient, never()).getItem(any(),
                 eq(ItemManager.MODE_DEFAULT),
                 any(ResponseListener.class));
@@ -634,11 +634,11 @@ public class ItemActivityTest {
         activity = controller.get();
         ShadowFloatingActionButton shadowFab = Shadow.extract(activity.findViewById(R.id.reply_button));
         assertTrue(shadowFab.isVisible());
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         assertFalse(shadowFab.isVisible());
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, false));
         assertTrue(shadowFab.isVisible());
@@ -662,7 +662,7 @@ public class ItemActivityTest {
         controller = Robolectric.buildActivity(ItemActivity.class, intent);
         controller.create().start().resume().visible();
         activity = controller.get();
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         activity.onBackPressed();

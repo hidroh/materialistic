@@ -58,7 +58,7 @@ public class ThemePreferenceTest {
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
                         .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display));
         activity = controller.create().start().resume().visible().get();
-        RecyclerView list = activity.findViewById(R.id.list);
+        RecyclerView list = activity.findViewById(android.R.id.list_container);
         list.setLayoutManager(new LinearLayoutManager(activity));
         RecyclerView.Adapter adapter = list.getAdapter();
         int position = ShadowSupportPreferenceManager
@@ -71,7 +71,7 @@ public class ThemePreferenceTest {
     public void test() {
         preferenceView.findViewById(preferenceId).performClick();
         Preferences.Theme.apply(activity, false, false);
-        shadowOf(activity).recreate();
+        activity.recreate();
         assertThat(shadowOf(activity).callGetThemeResId()).isEqualTo(styleResId);
     }
 

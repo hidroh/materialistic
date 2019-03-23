@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowJobScheduler;
 
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.R;
@@ -72,7 +73,8 @@ public class WidgetProviderTest {
     @Test
     public void testDeleteCancelJob() {
         new WidgetHelper(RuntimeEnvironment.application).configure(appWidgetId);
-        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isNotEmpty();
+        assertThat(((ShadowJobScheduler.ShadowJobSchedulerImpl) shadowOf(jobScheduler))
+                .getAllPendingJobs()).isNotEmpty();
         widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
         // TODO
 //        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isEmpty();
@@ -97,7 +99,8 @@ public class WidgetProviderTest {
         widgetProvider.onReceive(RuntimeEnvironment.application,
                 new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                         .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId}));
-        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isNotEmpty();
+        assertThat(((ShadowJobScheduler.ShadowJobSchedulerImpl) shadowOf(jobScheduler))
+                .getAllPendingJobs()).isNotEmpty();
     }
 
     @Test

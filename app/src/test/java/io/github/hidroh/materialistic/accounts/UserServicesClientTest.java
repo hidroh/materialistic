@@ -1,6 +1,7 @@
 package io.github.hidroh.materialistic.accounts;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowAccountManager;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -55,7 +55,7 @@ public class UserServicesClientTest {
         userServices = new UserServicesClient(callFactory, Schedulers.immediate());
         Preferences.setUsername(RuntimeEnvironment.application, "username");
         account = new Account("username", BuildConfig.APPLICATION_ID);
-        ShadowAccountManager.get(RuntimeEnvironment.application)
+        AccountManager.get(RuntimeEnvironment.application)
                 .addAccountExplicitly(account, "password", null);
     }
 
@@ -152,7 +152,7 @@ public class UserServicesClientTest {
 
     @Test
     public void testVoteNoAccount() {
-        ShadowAccountManager.get(RuntimeEnvironment.application)
+        AccountManager.get(RuntimeEnvironment.application)
                 .removeAccount(account, null, null);
         UserServices.Callback callback = mock(UserServices.Callback.class);
         assertFalse(userServices.voteUp(RuntimeEnvironment.application, "1", callback));
@@ -161,7 +161,7 @@ public class UserServicesClientTest {
 
     @Test
     public void testSubmitNoAccount() {
-        ShadowAccountManager.get(RuntimeEnvironment.application)
+        AccountManager.get(RuntimeEnvironment.application)
                 .removeAccount(account, null, null);
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.submit(RuntimeEnvironment.application, "title", "content", true, callback);
