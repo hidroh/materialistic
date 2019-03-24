@@ -18,7 +18,7 @@
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="@string/pref_category"
         style="@style/Preference.Category.Hint" />
 

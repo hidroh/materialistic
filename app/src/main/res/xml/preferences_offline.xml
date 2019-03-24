@@ -21,13 +21,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
         android:key="@string/pref_saved_item_sync"
         android:title="@string/pref_saved_item_sync_title"
         android:summary="@string/pref_saved_item_sync_summary"
         android:defaultValue="false" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
         android:key="@string/pref_offline_notification"
         android:title="@string/pref_offline_notification_title"
         android:summary="@string/pref_offline_notification_summary"
@@ -42,19 +42,19 @@
         app:entries="@array/offline_data_options"
         app:entryValues="@array/offline_data_values" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:key="@string/pref_offline_comments"
         android:title="@string/pref_offline_comments_title"
         android:dependency="@string/pref_saved_item_sync"
         android:defaultValue="true" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:key="@string/pref_offline_article"
         android:title="@string/pref_offline_article_title"
         android:dependency="@string/pref_saved_item_sync"
         android:defaultValue="true" />
 
-    <android.support.v7.preference.CheckBoxPreference
+    <androidx.preference.CheckBoxPreference
         android:key="@string/pref_offline_readability"
         android:title="@string/pref_offline_readability_title"
         android:dependency="@string/pref_saved_item_sync"
