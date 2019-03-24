@@ -41,11 +41,13 @@
         app:entryValues="@array/comment_max_lines_values" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_color_code"
         android:title="@string/pref_color_code_title"
         android:defaultValue="true" />
 
     <androidx.preference.SeekBarPreference
+        app:iconSpaceReserved="false"
         android:dependency="@string/pref_color_code"
         android:key="@string/pref_color_code_opacity"
         android:title="@string/pref_color_code_opacity_title"
@@ -54,6 +56,7 @@
         android:defaultValue="100" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_thread_indicator"
         android:title="@string/pref_thread_indicator_title"
         android:defaultValue="true" />
@@ -69,17 +72,20 @@
             app:dialogLayout="@layout/help_navigation" />
 
         <androidx.preference.SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
             android:key="@string/pref_navigation"
             android:title="@string/pref_navigation_title"
             android:defaultValue="false" />
 
         <androidx.preference.SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
             android:key="@string/pref_navigation_vibrate"
             android:title="@string/pref_navigation_vibrate_title"
             android:dependency="@string/pref_navigation"
             android:defaultValue="true" />
 
         <androidx.preference.SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
             android:key="@string/pref_smooth_scroll"
             android:title="@string/pref_smooth_scroll_title"
             android:summary="@string/pref_smooth_scroll_summary"

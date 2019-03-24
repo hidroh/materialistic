@@ -35,11 +35,13 @@
         android:defaultValue="@string/pref_multi_window_value_none" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_list_item_view"
         android:title="@string/pref_list_item_view_title"
         android:defaultValue="false" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_highlight_updated"
         android:title="@string/pref_highlight_updated_title"
         android:summary="@string/pref_highlight_updated_summary"
@@ -52,6 +54,7 @@
         app:dialogLayout="@layout/help_list_view" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_auto_viewed"
         android:title="@string/pref_auto_viewed_title"
         android:summary="@string/pref_auto_viewed_summary"

@@ -27,6 +27,7 @@
         android:defaultValue="light" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:dependency="@string/pref_theme"
         android:key="@string/pref_daynight_auto"
         android:title="@string/pref_daynight_title"
@@ -54,6 +55,7 @@
         app:entryValues="@array/pref_launch_screen_values" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_external"
         android:title="@string/pref_external_title"
         android:summary="@string/pref_external_summary"
@@ -61,6 +63,7 @@
         android:defaultValue="false" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:dependency="@string/pref_external"
         android:key="@string/pref_ad_block"
         android:title="@string/pref_ad_block_title"
@@ -68,12 +71,14 @@
         android:defaultValue="true" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_custom_tab"
         android:title="@string/pref_custom_tab_title"
         android:summary="@string/pref_custom_tab_summary"
         android:defaultValue="true" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_lazy_load"
         android:title="@string/pref_lazy_load_title"
         android:summary="@string/pref_lazy_load_summary"
@@ -86,6 +91,7 @@
         app:dialogLayout="@layout/help_lazy_load" />
 
     <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_volume"
         android:title="@string/pref_volume_title"
         android:summary="@string/pref_volume_summary"
