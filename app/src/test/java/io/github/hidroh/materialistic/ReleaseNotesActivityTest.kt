@@ -67,8 +67,8 @@ class ReleaseNotesActivityTest {
   fun testUpdate() {
     Preferences.sReleaseNotesSeen = null
     Preferences.reset(RuntimeEnvironment.application)
-    val info = RuntimeEnvironment.application.packageManager.getPackageInfo(
-        RuntimeEnvironment.application.packageName, 0)
+    val info = shadowOf(RuntimeEnvironment.application.packageManager)
+        .getInternalMutablePackageInfo(RuntimeEnvironment.application.packageName)
     info.firstInstallTime = 0
     info.lastUpdateTime = 1
     assertFalse(Preferences.isReleaseNotesSeen(RuntimeEnvironment.application))

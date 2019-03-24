@@ -27,7 +27,7 @@
         android:background="?attr/colorCardHighlight"
         android:layout_width="match_parent"
         android:layout_height="128dp"
-        android:elevation="@dimen/cardview_default_elevation"
+        android:elevation="@dimen/cardview_elevation"
         tools:targetApi="lollipop">
 
         <ImageView

@@ -54,10 +54,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import rx.schedulers.Schedulers;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -441,19 +439,19 @@ public class ItemSyncAdapterTest {
         setNetworkType(ConnectivityManager.TYPE_MOBILE);
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
-        assertFalse(ShadowContentResolver.isSyncActive(createSyncAccount(),
-                SyncContentProvider.PROVIDER_AUTHORITY));
+        assertThat(ShadowContentResolver.getStatus(createSyncAccount(),
+                SyncContentProvider.PROVIDER_AUTHORITY, true).syncRequests).isEqualTo(0);
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver().onReceive(service, new Intent());
-        assertFalse(ShadowContentResolver.isSyncActive(createSyncAccount(),
-                SyncContentProvider.PROVIDER_AUTHORITY));
+        assertThat(ShadowContentResolver.getStatus(createSyncAccount(),
+                SyncContentProvider.PROVIDER_AUTHORITY, true).syncRequests).isEqualTo(0);
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
-        assertTrue(ShadowContentResolver.isSyncActive(createSyncAccount(),
-                SyncContentProvider.PROVIDER_AUTHORITY));
+        assertThat(ShadowContentResolver.getStatus(createSyncAccount(),
+                SyncContentProvider.PROVIDER_AUTHORITY, true).syncRequests).isGreaterThan(0);
     }
 
     @After

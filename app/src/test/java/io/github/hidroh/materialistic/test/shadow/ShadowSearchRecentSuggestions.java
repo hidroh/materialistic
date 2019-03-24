@@ -24,7 +24,7 @@ import org.robolectric.annotation.Implements;
 import java.util.ArrayList;
 import java.util.List;
 
-@Implements(value = SearchRecentSuggestions.class, inheritImplementationMethods = true)
+@Implements(value = SearchRecentSuggestions.class)
 public class ShadowSearchRecentSuggestions {
     public static int historyClearCount = 0;
     public static List<String> recentQueries = new ArrayList<>();

@@ -28,8 +28,6 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
 import org.robolectric.util.ReflectionHelpers;
 
-import io.github.hidroh.materialistic.R;
-
 // TODO robolectric/robolectric#2520
 @Implements(PreferenceFragmentCompat.class)
 public class ShadowPreferenceFragmentCompat {
@@ -38,7 +36,7 @@ public class ShadowPreferenceFragmentCompat {
     @Implementation
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RecyclerView recyclerView = new RecyclerView(container.getContext());
-        recyclerView.setId(R.id.list);
+        recyclerView.setId(android.R.id.list_container);
         ReflectionHelpers.setField(realObject, "mList", recyclerView);
         return recyclerView;
     }

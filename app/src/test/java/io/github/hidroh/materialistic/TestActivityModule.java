@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowAccountManager;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -101,14 +100,9 @@ import static org.mockito.Mockito.when;
                 SettingsActivityTest.class,
                 SearchActivityTest.class,
                 ItemActivityTest.class,
-                ItemFragmentMultiPageTest.class,
-                ItemFragmentSinglePageTest.class,
-                ItemFragmentMultiPageTest.TestItemActivity.class,
                 TestReadabilityActivity.class,
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
-                ListFragmentViewHolderTest.class,
-                ListFragmentViewHolderEdgeTest.class,
                 FavoriteActivityTest.class,
                 FavoriteActivityEmptyTest.class,
                 FavoriteManagerTest.class,
@@ -116,9 +110,7 @@ import static org.mockito.Mockito.when;
                 WebFragmentLocalTest.class,
                 WebFragmentTest.class,
                 FeedbackActivityTest.class,
-                ListFragmentTest.class,
                 PopularActivityTest.class,
-                ReadabilityFragmentTest.class,
                 ReadabilityFragmentLazyLoadTest.class,
                 DrawerActivityLoginTest.class,
                 ComposeActivityTest.class,
@@ -126,7 +118,6 @@ import static org.mockito.Mockito.when;
                 UserActivityTest.class,
                 ThreadPreviewActivityTest.class,
                 WidgetConfigActivityTest.class,
-                BaseListActivityLandTest.class,
                 PreferencesActivityTest.class,
                 ItemSyncJobServiceTest.TestItemSyncJobService.class
         },
@@ -295,7 +286,7 @@ public class TestActivityModule {
 
     @Provides
     public AccountManager provideAccountManager() {
-        return ShadowAccountManager.get(RuntimeEnvironment.application);
+        return AccountManager.get(RuntimeEnvironment.application);
     }
 
     @Provides @Singleton

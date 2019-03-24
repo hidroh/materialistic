@@ -61,4 +61,7 @@
     <color name="solarizedBase1">#93a1a1</color>
     <color name="solarizedBase2">#eee8d5</color>
     <color name="solarizedBase3">#fdf6e3</color>
+
+    <color name="cardDarkBackground">#FF424242</color>
+
 </resources>

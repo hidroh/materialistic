@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.util.Base64;
 import android.view.View;
@@ -33,7 +34,6 @@ import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowPackageManager;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -197,11 +197,11 @@ public class WebFragmentTest {
 
     @Test
     public void testFullscreen() {
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         assertThat((View) activity.findViewById(R.id.control_switcher)).isVisible();
-        shadowOf(activity).recreate();
+        activity.recreate();
         assertThat((View) activity.findViewById(R.id.control_switcher)).isVisible();
         activity.findViewById(R.id.button_exit).performClick();
         assertThat((View) activity.findViewById(R.id.control_switcher)).isNotVisible();
@@ -209,7 +209,7 @@ public class WebFragmentTest {
 
     @Test
     public void testSearch() {
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         activity.findViewById(R.id.button_find).performClick();
@@ -243,7 +243,7 @@ public class WebFragmentTest {
 
     @Test
     public void testRefresh() {
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView.lastGlobalLoadedUrl = null;
@@ -259,7 +259,7 @@ public class WebFragmentTest {
     @SuppressLint("NewApi")
     @Test
     public void testWebControls() {
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView shadowWebView = Shadow.extract(activity.findViewById(R.id.web_view));
@@ -294,7 +294,7 @@ public class WebFragmentTest {
 
     @Test
     public void testFullScroll() {
-        ShadowLocalBroadcastManager.getInstance(activity)
+        LocalBroadcastManager.getInstance(activity)
                 .sendBroadcast(new Intent(WebFragment.ACTION_FULLSCREEN)
                         .putExtra(WebFragment.EXTRA_FULLSCREEN, true));
         ShadowWebView shadowWebView = Shadow.extract(activity.findViewById(R.id.web_view));

@@ -129,16 +129,16 @@ class FavoriteManagerTest {
         .putBoolean(context.getString(R.string.pref_offline_article), true)
         .apply()
     shadowOf(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-        .activeNetworkInfo =ShadowNetworkInfo.newInstance(null,
-        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED)
+        .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
+        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED))
     manager.add(context, object : TestWebItem() {
       override fun getDisplayedTitle() = "new title"
       override fun getUrl() = "http://newitem.com"
       override fun getId() = "3"
     })
     verify(observer).onChanged(eq(Uri.parse("content://${BuildConfig.APPLICATION_ID}/saved/add/3")))
-    assertThat(ShadowContentResolver.isSyncActive(Account("Materialistic", BuildConfig.APPLICATION_ID),
-        SyncContentProvider.PROVIDER_AUTHORITY)).isTrue()
+    assertThat(ShadowContentResolver.getStatus(Account("Materialistic", BuildConfig.APPLICATION_ID),
+        SyncContentProvider.PROVIDER_AUTHORITY).syncRequests).isGreaterThan(0)
   }
 
   @Test

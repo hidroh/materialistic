@@ -25,7 +25,7 @@ import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
 
-@Implements(value = WebView.class, inheritImplementationMethods = true)
+@Implements(value = WebView.class)
 public class ShadowWebView extends org.robolectric.shadows.ShadowWebView {
     public static final String RELOADED = "reloaded";
     @RealObject WebView realObject;

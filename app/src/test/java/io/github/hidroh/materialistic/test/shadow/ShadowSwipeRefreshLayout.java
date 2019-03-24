@@ -22,7 +22,7 @@ import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowViewGroup;
 
-@Implements(value = SwipeRefreshLayout.class, inheritImplementationMethods = true)
+@Implements(value = SwipeRefreshLayout.class)
 public class ShadowSwipeRefreshLayout extends ShadowViewGroup {
     private SwipeRefreshLayout.OnRefreshListener mListener;
 

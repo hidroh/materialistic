@@ -211,7 +211,7 @@ public class SubmitActivityTest {
                 .create().start().resume().visible().get();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasTextString("title");
         assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
-        shadowOf(activity).recreate();
+        activity.recreate();
         assertThat((EditText) activity.findViewById(R.id.edittext_title)).hasTextString("title");
         assertThat((EditText) activity.findViewById(R.id.edittext_content)).hasTextString("http://example.com");
     }

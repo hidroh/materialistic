@@ -103,7 +103,7 @@ public class UserActivityTest {
                 ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
         assertEquals(2, (((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter())
                 .getItemCount());
-        shadowOf(activity).recreate();
+        activity.recreate();
         assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username (2,016)");
     }
 
