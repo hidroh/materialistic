@@ -440,18 +440,18 @@ public class ItemSyncAdapterTest {
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
         assertThat(ShadowContentResolver.getStatus(createSyncAccount(),
-                SyncContentProvider.PROVIDER_AUTHORITY).syncRequests).isEqualTo(0);
+                SyncContentProvider.PROVIDER_AUTHORITY, true).syncRequests).isEqualTo(0);
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver().onReceive(service, new Intent());
         assertThat(ShadowContentResolver.getStatus(createSyncAccount(),
-                SyncContentProvider.PROVIDER_AUTHORITY).syncRequests).isEqualTo(0);
+                SyncContentProvider.PROVIDER_AUTHORITY, true).syncRequests).isEqualTo(0);
 
         setNetworkType(ConnectivityManager.TYPE_WIFI);
         new ItemSyncWifiReceiver()
                 .onReceive(service, new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
         assertThat(ShadowContentResolver.getStatus(createSyncAccount(),
-                SyncContentProvider.PROVIDER_AUTHORITY).syncRequests).isGreaterThan(0);
+                SyncContentProvider.PROVIDER_AUTHORITY, true).syncRequests).isGreaterThan(0);
     }
 
     @After
