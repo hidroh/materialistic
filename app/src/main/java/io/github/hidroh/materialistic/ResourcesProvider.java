@@ -17,7 +17,7 @@
 package io.github.hidroh.materialistic;
 
 import android.content.res.TypedArray;
-import android.support.annotation.ArrayRes;
+import androidx.annotation.ArrayRes;
 
 public interface ResourcesProvider {
     TypedArray obtainTypedArray(@ArrayRes int resId);

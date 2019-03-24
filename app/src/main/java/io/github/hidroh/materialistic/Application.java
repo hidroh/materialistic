@@ -19,7 +19,7 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.StrictMode;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;

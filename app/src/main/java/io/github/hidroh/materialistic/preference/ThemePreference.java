@@ -18,11 +18,11 @@ package io.github.hidroh.materialistic.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
-import android.support.v4.util.ArrayMap;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
+import androidx.collection.ArrayMap;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;

@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.data
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import io.github.hidroh.materialistic.DataModule
 import rx.Observable
 import rx.Scheduler

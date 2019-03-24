@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
-import android.support.v4.widget.NestedScrollView;
+import androidx.core.widget.NestedScrollView;
 import android.view.View;
 
 import org.junit.Before;

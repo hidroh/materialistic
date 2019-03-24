@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.preference.PreferenceScreen
+<androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -34,12 +34,14 @@
         app:entryValues="@array/pref_multi_window_values"
         android:defaultValue="@string/pref_multi_window_value_none" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_list_item_view"
         android:title="@string/pref_list_item_view_title"
         android:defaultValue="false" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_highlight_updated"
         android:title="@string/pref_highlight_updated_title"
         android:summary="@string/pref_highlight_updated_summary"
@@ -51,7 +53,8 @@
         app:dialogTitle="@string/pref_highlight_updated_title"
         app:dialogLayout="@layout/help_list_view" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_auto_viewed"
         android:title="@string/pref_auto_viewed_title"
         android:summary="@string/pref_auto_viewed_summary"
@@ -71,4 +74,4 @@
         app:entryValues="@array/pref_list_swipe_values"
         android:defaultValue="@string/swipe_vote" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

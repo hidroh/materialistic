@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface UserManager {
     void getUser(String username, final ResponseListener<User> listener);

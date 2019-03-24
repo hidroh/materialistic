@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
-import android.support.design.widget.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowView;

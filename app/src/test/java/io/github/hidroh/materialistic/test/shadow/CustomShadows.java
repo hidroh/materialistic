@@ -16,8 +16,8 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.robolectric.shadow.api.Shadow;
 

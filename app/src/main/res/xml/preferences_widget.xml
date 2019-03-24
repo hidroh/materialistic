@@ -15,11 +15,11 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.preference.PreferenceScreen
+<androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:title="@string/widget_options"
         style="@style/Preference.Category.Hint">
 
@@ -30,7 +30,8 @@
             app:entries="@array/pref_widget_section_options"
             app:entryValues="@array/pref_widget_section_values" />
 
-        <android.support.v7.preference.EditTextPreference
+        <androidx.preference.EditTextPreference
+            app:iconSpaceReserved="false"
             android:key="@string/pref_widget_query"
             android:title="@string/pref_widget_query_title" />
 
@@ -48,6 +49,6 @@
             app:entries="@array/pref_widget_frequency_options"
             app:entryValues="@array/pref_widget_frequency_values" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

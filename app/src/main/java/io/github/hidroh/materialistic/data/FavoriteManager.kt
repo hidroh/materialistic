@@ -22,10 +22,10 @@ import android.content.Intent
 import android.database.CursorWrapper
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.support.annotation.AnyThread
-import android.support.annotation.WorkerThread
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
+import androidx.annotation.AnyThread
+import androidx.annotation.WorkerThread
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import io.github.hidroh.materialistic.DataModule
 import io.github.hidroh.materialistic.FavoriteActivity
 import io.github.hidroh.materialistic.R

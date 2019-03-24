@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
-import android.support.v4.widget.NestedScrollView;
+import androidx.core.widget.NestedScrollView;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;

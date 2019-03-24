@@ -17,7 +17,7 @@
 package io.github.hidroh.materialistic.data;
 
 import android.os.Build;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 import javax.inject.Inject;
 import javax.inject.Named;

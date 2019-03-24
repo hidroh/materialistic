@@ -18,12 +18,12 @@ package io.github.hidroh.materialistic;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.support.annotation.IntDef;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.IntDef;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.core.widget.NestedScrollView;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;

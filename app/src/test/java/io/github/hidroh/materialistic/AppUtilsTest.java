@@ -5,12 +5,11 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +42,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
-import static org.robolectric.shadows.support.v4.Shadows.shadowOf;
 
 @RunWith(TestRunner.class)
 public class AppUtilsTest {
@@ -212,17 +210,6 @@ public class AppUtilsTest {
         assertThat(shadowOf(context).getNextStartedActivity())
                 .hasComponent(context, OfflineWebActivity.class)
                 .hasExtra(OfflineWebActivity.EXTRA_URL, "http://example.com");
-    }
-
-    @Test
-    public void testFullscreenButton() {
-        ActivityController<TestListActivity> controller = Robolectric.buildActivity(TestListActivity.class);
-        TestListActivity activity = controller.create().start().resume().get();
-        FloatingActionButton fab = new FloatingActionButton(activity);
-        AppUtils.toggleFabAction(fab, null, false);
-        fab.performClick();
-        assertThat(shadowOf(LocalBroadcastManager.getInstance(activity)).getSentBroadcastIntents()).isNotEmpty();
-        controller.destroy();
     }
 
     @Test

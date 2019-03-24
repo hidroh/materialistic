@@ -1,7 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.preference.PreferenceManager;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

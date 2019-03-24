@@ -17,12 +17,6 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -32,6 +26,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+
 import java.lang.ref.WeakReference;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -39,6 +37,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.ResponseListener;
@@ -94,6 +95,10 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                         AppUtils.setStatusBarDim(getWindow(), false);
                         mRecyclerView.setLayoutFrozen(false);
                         break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                    case BottomSheetBehavior.STATE_SETTLING:
                     default:
                         AppUtils.setStatusBarDim(getWindow(), true);
                         break;

@@ -18,8 +18,8 @@ package io.github.hidroh.materialistic.data;
 
 import android.content.Context;
 import android.os.Parcel;
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import android.text.format.DateUtils;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;

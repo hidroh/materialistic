@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +43,7 @@ import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.WebItem;
 
 /**
- * Base {@link android.support.v7.widget.RecyclerView.Adapter} class for list items
+ * Base {@link RecyclerView.Adapter} class for list items
  * @param <VH>  view holder type, should contain title, posted, source and comment views
  * @param <T>   item type, should provide title, posted, source
  */
@@ -228,7 +228,7 @@ public abstract class ListRecyclerViewAdapter
     }
 
     /**
-     * Base {@link android.support.v7.widget.RecyclerView.ViewHolder} class for list item view
+     * Base {@link RecyclerView.ViewHolder} class for list item view
      */
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private final StoryView mStoryView;

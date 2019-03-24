@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.preference.PreferenceScreen
+<androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -33,4 +33,4 @@
         app:entries="@array/font_options"
         app:entryValues="@array/font_values" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

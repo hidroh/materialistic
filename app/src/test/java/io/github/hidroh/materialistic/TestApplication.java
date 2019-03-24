@@ -2,7 +2,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.support.v4.util.ArrayMap;
+import androidx.collection.ArrayMap;
 import android.view.View;
 
 import org.robolectric.RuntimeEnvironment;

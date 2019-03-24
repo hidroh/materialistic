@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.preference.PreferenceScreen
+<androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,7 +26,8 @@
         android:title="@string/pref_theme_title"
         android:defaultValue="light" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:dependency="@string/pref_theme"
         android:key="@string/pref_daynight_auto"
         android:title="@string/pref_daynight_title"
@@ -53,27 +54,31 @@
         app:entries="@array/pref_launch_screen_options"
         app:entryValues="@array/pref_launch_screen_values" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_external"
         android:title="@string/pref_external_title"
         android:summary="@string/pref_external_summary"
         android:disableDependentsState="true"
         android:defaultValue="false" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:dependency="@string/pref_external"
         android:key="@string/pref_ad_block"
         android:title="@string/pref_ad_block_title"
         android:summary="@string/pref_ad_block_summary"
         android:defaultValue="true" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_custom_tab"
         android:title="@string/pref_custom_tab_title"
         android:summary="@string/pref_custom_tab_summary"
         android:defaultValue="true" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_lazy_load"
         android:title="@string/pref_lazy_load_title"
         android:summary="@string/pref_lazy_load_summary"
@@ -85,7 +90,8 @@
         app:dialogTitle="@string/pref_lazy_load_title"
         app:dialogLayout="@layout/help_lazy_load" />
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
+        app:iconSpaceReserved="false"
         android:key="@string/pref_volume"
         android:title="@string/pref_volume_title"
         android:summary="@string/pref_volume_summary"
@@ -97,4 +103,4 @@
         app:dialogTitle="@string/pref_volume_title"
         app:dialogLayout="@layout/help_volume" />
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

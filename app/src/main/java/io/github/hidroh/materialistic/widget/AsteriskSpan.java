@@ -19,8 +19,8 @@ package io.github.hidroh.materialistic.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.text.style.ReplacementSpan;
 
 import io.github.hidroh.materialistic.AppUtils;

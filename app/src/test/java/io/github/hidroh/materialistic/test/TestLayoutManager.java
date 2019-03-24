@@ -17,8 +17,8 @@
 package io.github.hidroh.materialistic.test;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class TestLayoutManager extends LinearLayoutManager {
     public int firstVisiblePosition = 0;

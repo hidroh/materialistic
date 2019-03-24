@@ -1,9 +1,9 @@
 package io.github.hidroh.materialistic.preference;
 
 import android.content.Intent;
-import android.support.v7.preference.PreferenceGroupAdapter;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.preference.PreferenceGroupAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Spinner;
 

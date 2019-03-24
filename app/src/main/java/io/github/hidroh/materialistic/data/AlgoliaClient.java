@@ -16,8 +16,8 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import android.text.format.DateUtils;
 
 import java.io.IOException;

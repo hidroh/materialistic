@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import io.github.hidroh.materialistic.data.WebItem;
 

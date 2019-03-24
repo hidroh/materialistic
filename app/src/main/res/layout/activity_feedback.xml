@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatRatingBar
+            <androidx.appcompat.widget.AppCompatRatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?attr/ratingBarStyleSmall"
@@ -76,12 +76,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textinput_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edittext_title"
                 android:hint="@string/title_hint"
                 android:inputType="textCapSentences"
@@ -92,14 +92,14 @@
                 android:layout_height="wrap_content"
                 tools:targetApi="honeycomb"/>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textinput_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edittext_body"
                 android:hint="@string/comment_hint"
                 android:gravity="top"
@@ -109,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/feedback_note"

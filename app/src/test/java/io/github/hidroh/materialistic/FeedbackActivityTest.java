@@ -1,7 +1,7 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
-import android.support.design.widget.TextInputLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import android.widget.EditText;
 
 import org.junit.After;

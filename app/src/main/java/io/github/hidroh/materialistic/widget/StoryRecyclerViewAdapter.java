@@ -16,22 +16,22 @@
 
 package io.github.hidroh.materialistic.widget;
 
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.util.ArrayMap;
-import android.support.v4.util.ArraySet;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.util.ListUpdateCallback;
-import android.support.v7.util.SortedList;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.v7.widget.util.SortedListAdapterCallback;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.collection.ArrayMap;
+import androidx.collection.ArraySet;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListUpdateCallback;
+import androidx.recyclerview.widget.SortedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.SortedListAdapterCallback;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -59,7 +59,7 @@ import io.github.hidroh.materialistic.data.MaterialisticDatabase;
 import io.github.hidroh.materialistic.data.ResponseListener;
 import io.github.hidroh.materialistic.data.SessionManager;
 
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static io.github.hidroh.materialistic.Preferences.SwipeAction.Save;
 
 public class StoryRecyclerViewAdapter extends

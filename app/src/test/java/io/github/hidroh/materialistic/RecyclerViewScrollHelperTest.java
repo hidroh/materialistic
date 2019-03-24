@@ -16,8 +16,8 @@
 
 package io.github.hidroh.materialistic;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.junit.After;
 import org.junit.Before;

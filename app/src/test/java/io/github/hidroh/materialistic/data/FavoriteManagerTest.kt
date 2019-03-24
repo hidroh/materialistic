@@ -18,14 +18,13 @@ package io.github.hidroh.materialistic.data
 
 import android.accounts.Account
 import android.app.NotificationManager
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
 import android.preference.PreferenceManager
-import android.support.v4.content.LocalBroadcastManager
+import androidx.lifecycle.Observer
 import io.github.hidroh.materialistic.BuildConfig
 import io.github.hidroh.materialistic.R
 import io.github.hidroh.materialistic.data.android.Cache
@@ -45,7 +44,6 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowContentResolver
 import org.robolectric.shadows.ShadowNetworkInfo
-import org.robolectric.shadows.support.v4.Shadows.shadowOf
 import rx.schedulers.Schedulers
 
 @RunWith(TestRunner::class)
@@ -161,12 +159,6 @@ class FavoriteManagerTest {
   fun testClearQuery() {
     manager.clear(context, "blah")
     verify(observer).onChanged(eq(Uri.parse("content://${BuildConfig.APPLICATION_ID}/saved/clear")))
-  }
-
-  @Test
-  fun testRemoveNoId() {
-    manager.remove(context, null as String?)
-    assertThat(shadowOf(LocalBroadcastManager.getInstance(context)).sentBroadcastIntents).isEmpty()
   }
 
   @Test

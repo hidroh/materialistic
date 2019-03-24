@@ -16,8 +16,8 @@
 
 package io.github.hidroh.materialistic.data
 
-import android.support.annotation.Nullable
-import android.support.annotation.WorkerThread
+import androidx.annotation.Nullable
+import androidx.annotation.WorkerThread
 
 @WorkerThread
 interface LocalCache {

@@ -17,8 +17,8 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
-import android.support.annotation.CallSuper;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.CallSuper;
+import androidx.recyclerview.widget.RecyclerView;
 
 abstract class RecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
     protected Context mContext;

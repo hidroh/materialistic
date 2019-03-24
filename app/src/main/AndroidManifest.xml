@@ -34,7 +34,7 @@
     <uses-permission android:name="io.github.hidroh.materialistic.permission.SYNC_ITEM" />
     <uses-permission android:name="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS" />
 
-    <uses-sdk tools:overrideLibrary="android.support.customtabs" />
+    <uses-sdk tools:overrideLibrary="androidx.browser" />
 
     <application
         android:name=".Application"
@@ -279,7 +279,7 @@
             android:exported="false" />
         <provider
             android:authorities="io.github.hidroh.materialistic.fileprovider"
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

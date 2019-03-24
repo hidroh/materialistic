@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v4.util.ArrayMap;
+import androidx.collection.ArrayMap;
 import android.text.TextUtils;
 
 public class FontCache {

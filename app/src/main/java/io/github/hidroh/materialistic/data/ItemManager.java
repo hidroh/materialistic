@@ -16,9 +16,9 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.StringDef;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.IntDef;
+import androidx.annotation.StringDef;
+import androidx.annotation.WorkerThread;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

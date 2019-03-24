@@ -17,7 +17,7 @@
 package io.github.hidroh.materialistic.test.shadow;
 
 import android.preference.PreferenceManager;
-import android.support.v7.preference.Preference;
+import androidx.preference.Preference;
 
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Implementation;

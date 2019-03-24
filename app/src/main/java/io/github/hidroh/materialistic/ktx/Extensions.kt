@@ -21,8 +21,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.FileProvider
+import androidx.core.app.NotificationCompat
+import androidx.core.content.FileProvider
 import io.github.hidroh.materialistic.AppUtils
 import okhttp3.internal.Util
 import java.io.Closeable

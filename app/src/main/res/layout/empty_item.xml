@@ -15,15 +15,15 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@id/empty"
-    android:visibility="gone"
-    tools:visibility="visible"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    tools:showIn="@layout/fragment_item">
+<androidx.core.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
+                                       xmlns:android="http://schemas.android.com/apk/res/android"
+                                       xmlns:app="http://schemas.android.com/apk/res-auto"
+                                       android:id="@id/empty"
+                                       android:visibility="gone"
+                                       tools:visibility="visible"
+                                       android:layout_height="match_parent"
+                                       android:layout_width="match_parent"
+                                       tools:showIn="@layout/fragment_item">
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:text="@string/no_comments"
@@ -33,4 +33,4 @@
         style="@style/textEmptyStyle"
         tools:ignore="UnusedAttribute" />
 
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>

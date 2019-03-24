@@ -20,6 +20,6 @@
     <item android:id="@id/menu_search"
         android:title="@string/search"
         android:menuCategory="secondary"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 </menu>

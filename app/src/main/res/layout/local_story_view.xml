@@ -61,7 +61,7 @@
         android:layout_toStartOf="@+id/button_comment"
         style="@style/textSubtitleStyle" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@id/comment"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:background="?attr/selectableItemBackground"

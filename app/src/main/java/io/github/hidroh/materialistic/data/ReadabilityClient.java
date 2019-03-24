@@ -16,9 +16,9 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
 import javax.inject.Inject;
 import javax.inject.Named;
