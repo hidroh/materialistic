@@ -18,14 +18,14 @@ package io.github.hidroh.materialistic.data
 
 import android.accounts.Account
 import android.app.NotificationManager
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
 import android.preference.PreferenceManager
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import io.github.hidroh.materialistic.BuildConfig
 import io.github.hidroh.materialistic.R
 import io.github.hidroh.materialistic.data.android.Cache
@@ -166,7 +166,7 @@ class FavoriteManagerTest {
   @Test
   fun testRemoveNoId() {
     manager.remove(context, null as String?)
-    assertThat(shadowOf(LocalBroadcastManager.getInstance(context)).sentBroadcastIntents).isEmpty()
+    assertThat(shadowOf(androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context)).sentBroadcastIntents).isEmpty()
   }
 
   @Test

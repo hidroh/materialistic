@@ -16,8 +16,8 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;

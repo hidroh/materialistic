@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 import android.text.format.DateUtils;
 
 import java.lang.annotation.Retention;

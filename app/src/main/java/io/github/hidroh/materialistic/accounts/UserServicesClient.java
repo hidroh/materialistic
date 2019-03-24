@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic.accounts;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 import android.text.TextUtils;
 import android.widget.Toast;
 

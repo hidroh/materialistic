@@ -17,7 +17,7 @@
 package io.github.hidroh.materialistic.widget;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
+import androidx.cardview.widget.CardView;
 import android.util.AttributeSet;
 
 public class FlatCardView extends CardView {

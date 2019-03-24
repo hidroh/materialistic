@@ -20,7 +20,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.CallSuper;
+import androidx.annotation.CallSuper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.webkit.WebChromeClient;

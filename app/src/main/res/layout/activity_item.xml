@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,12 +23,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/AppToolbarTheme"
             android:layout_height="wrap_content"
@@ -44,14 +44,14 @@
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             android:id="@id/header_card_view" />
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             app:tabTextColor="?android:attr/textColorPrimary"
             app:layout_scrollFlags="scroll|snap|enterAlways"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <io.github.hidroh.materialistic.widget.ViewPager
         android:id="@+id/view_pager"
@@ -75,4 +75,4 @@
         android:layout_gravity="center_horizontal|bottom"
         tools:ignore="RtlHardcoded"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -65,12 +65,12 @@ ext {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:$supportVersion",
-            "com.android.support:recyclerview-v7:$supportVersion",
-            "com.android.support:cardview-v7:$supportVersion",
-            "com.android.support:design:$supportVersion",
-            "com.android.support:preference-v7:$supportVersion",
-            "com.android.support:customtabs:$supportVersion",
+    implementation 'androidx.appcompat:appcompat:1.0.0',
+            'androidx.recyclerview:recyclerview:1.0.0',
+            'androidx.cardview:cardview:1.0.0',
+            'com.google.android.material:material:1.0.0',
+            'androidx.preference:preference:1.0.0',
+            'androidx.browser:browser:1.0.0',
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
             "com.squareup.retrofit2:converter-gson:$retrofitVersion",
@@ -79,17 +79,17 @@ dependencies {
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
             "io.reactivex:rxandroid:1.2.1",
             "io.reactivex:rxjava:1.1.7",
-            "android.arch.persistence.room:runtime:$roomVersion",
-            "android.arch.lifecycle:extensions:$archVersion",
-            "android.arch.lifecycle:common-java8:$archVersion",
+            'androidx.room:room-runtime:2.0.0',
+            'androidx.lifecycle:lifecycle-extensions:2.0.0',
+            'androidx.lifecycle:lifecycle-common-java8:2.0.0',
             "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    kapt "android.arch.persistence.room:compiler:$roomVersion",
+    kapt 'androidx.room:room-compiler:2.0.0',
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
-    kaptTest "android.arch.persistence.room:compiler:$roomVersion",
+    kaptTest 'androidx.room:room-compiler:2.0.0',
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 

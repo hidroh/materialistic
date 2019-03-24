@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.test;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

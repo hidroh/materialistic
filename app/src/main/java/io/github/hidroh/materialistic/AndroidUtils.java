@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Straight copies of Android's static utilities

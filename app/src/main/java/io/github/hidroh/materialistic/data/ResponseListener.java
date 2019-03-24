@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.data;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Callback interface for requests

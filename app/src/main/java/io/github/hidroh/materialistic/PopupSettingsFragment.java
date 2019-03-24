@@ -19,16 +19,18 @@ package io.github.hidroh.materialistic;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 public class PopupSettingsFragment extends AppCompatDialogFragment {
     static final String EXTRA_TITLE = PopupSettingsFragment.class.getName() + ".EXTRA_TITLE";
@@ -83,7 +85,7 @@ public class PopupSettingsFragment extends AppCompatDialogFragment {
         }
     }
 
-    static class BottomSheetDialog extends android.support.design.widget.BottomSheetDialog {
+    static class BottomSheetDialog extends com.google.android.material.bottomsheet.BottomSheetDialog {
         public BottomSheetDialog(@NonNull Context context, @StyleRes int theme) {
             super(context, theme);
         }

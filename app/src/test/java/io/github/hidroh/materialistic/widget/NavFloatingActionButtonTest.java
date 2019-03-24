@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.v7.view.ContextThemeWrapper;
+import androidx.appcompat.view.ContextThemeWrapper;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;

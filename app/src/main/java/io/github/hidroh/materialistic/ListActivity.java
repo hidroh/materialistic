@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import io.github.hidroh.materialistic.data.ItemManager;
 

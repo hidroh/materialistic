@@ -2,7 +2,7 @@ package io.github.hidroh.materialistic.test;
 
 import android.content.Context;
 import android.os.Parcel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 

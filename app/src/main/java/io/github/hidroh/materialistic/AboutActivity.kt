@@ -18,8 +18,8 @@ package io.github.hidroh.materialistic
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.annotation.IdRes
-import android.support.v7.app.ActionBar
+import androidx.annotation.IdRes
+import androidx.appcompat.app.ActionBar
 import android.view.MenuItem
 
 class AboutActivity : InjectableActivity() {

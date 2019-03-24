@@ -19,7 +19,7 @@ package io.github.hidroh.materialistic.data;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;

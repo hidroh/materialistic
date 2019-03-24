@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic;
 
-import android.arch.persistence.db.SupportSQLiteOpenHelper;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import android.content.Context;
 
 import javax.inject.Named;

@@ -1,6 +1,6 @@
 package io.github.hidroh.materialistic.test;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 import android.content.Context;
 
 import io.github.hidroh.materialistic.data.MaterialisticDatabase;

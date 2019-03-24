@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic;
 
 import android.app.Activity;
 import android.preference.PreferenceManager;
-import android.support.design.widget.AppBarLayout;
+import com.google.android.material.appbar.AppBarLayout;
 import android.view.KeyEvent;
 
 import org.junit.After;

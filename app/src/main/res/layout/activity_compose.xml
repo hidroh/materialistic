@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@id/toolbar"
         android:theme="@style/AppToolbarTheme"
         android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatEditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edittext_body"
                 android:hint="@string/comment_hint"
                 android:inputType="textCapSentences|textMultiLine"

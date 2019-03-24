@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic.widget;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;

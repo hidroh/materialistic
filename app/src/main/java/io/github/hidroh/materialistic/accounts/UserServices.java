@@ -18,7 +18,7 @@ package io.github.hidroh.materialistic.accounts;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import java.io.IOException;
 

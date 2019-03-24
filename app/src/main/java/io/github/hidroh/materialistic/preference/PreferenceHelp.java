@@ -18,9 +18,9 @@ package io.github.hidroh.materialistic.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.PreferenceGroup;
-import android.support.v7.preference.PreferenceViewHolder;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceGroup;
+import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 
 import io.github.hidroh.materialistic.R;

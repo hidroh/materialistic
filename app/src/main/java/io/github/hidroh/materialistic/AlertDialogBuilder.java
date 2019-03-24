@@ -19,14 +19,14 @@ package io.github.hidroh.materialistic;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.StringRes;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.widget.ListView;
 
 /**
  * Injectable alert dialog builder, allowing swapping between
- * {@link android.support.v7.app.AlertDialog.Builder} and {@link android.app.AlertDialog.Builder}
+ * {@link androidx.appcompat.app.AlertDialog.Builder} and {@link android.app.AlertDialog.Builder}
  * @param <T> type of created alert dialog, extends from {@link Dialog}
  */
 public interface AlertDialogBuilder<T extends Dialog> {
@@ -129,7 +129,7 @@ public interface AlertDialogBuilder<T extends Dialog> {
     T show();
 
     /**
-     * {@link android.support.v7.app.AlertDialog.Builder} wrapper
+     * {@link androidx.appcompat.app.AlertDialog.Builder} wrapper
      */
     class Impl implements AlertDialogBuilder<AlertDialog> {
         private AlertDialog.Builder mBuilder;

@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.widget.AppCompatSpinner
+<androidx.appcompat.widget.AppCompatSpinner
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/spinner"
     android:gravity="end"

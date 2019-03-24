@@ -16,7 +16,7 @@
 
 package io.github.hidroh.materialistic.test.shadow;
 
-import android.support.v4.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;

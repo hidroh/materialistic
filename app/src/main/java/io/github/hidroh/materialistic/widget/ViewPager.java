@@ -20,7 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class ViewPager extends android.support.v4.view.ViewPager {
+public class ViewPager extends androidx.viewpager.widget.ViewPager {
     private boolean mSwipeEnabled = true;
 
     public ViewPager(Context context) {

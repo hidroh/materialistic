@@ -9,13 +9,13 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - Latest Android SDK tools
 - Latest Android platform tools
 - Android SDK 28
-- Android Support Repository
+- AndroidX
 
 **Dependencies**
 - [Official Hacker News API][HackerNews/API], user services (e.g. login/create account/vote/comment) rely on redirect requests to Hacker News website
 - [Algolia Hacker News Search API]
 - [Mercury Web Parser API]
-- [AOSP support library]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
+- [Android Jetpack]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [RxJava] & [RxAndroid]
 - [Robolectric]
