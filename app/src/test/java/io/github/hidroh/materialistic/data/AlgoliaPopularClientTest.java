@@ -63,11 +63,11 @@ public class AlgoliaPopularClientTest {
 
     @Test
     public void testGetStories() {
-        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestamp(any()))
+        when(TestRestServiceFactory.algoliaRestService.searchByMinTimestampRx(any()))
                 .thenReturn(Observable.error(new IOException()));
         client.getStories(range, ItemManager.MODE_DEFAULT, mock(ResponseListener.class));
         verify(TestRestServiceFactory.algoliaRestService)
-                .searchByMinTimestamp(contains("created_at_i>"));
+                .searchByMinTimestampRx(contains("created_at_i>"));
     }
 
     @Module(
