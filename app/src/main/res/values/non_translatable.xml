@@ -65,11 +65,30 @@
                 </style>
             </head>
             <body>
-                <h3>3.2</h3>
+                <h3>3.3</h3>
+                <p>
+                    This long overdue update brings major bug fixes and app upgrades to conform to
+                    latest Android release. I apologize for not being able to release this sooner!
+                    There will be more fixes coming to address other bugs, so if you encounter bugs
+                    or issues please do not forget to report them using in-app feedback tool.
+                </p>
+                <h4>Known issues/announcements</h4>
                 <ul>
-                    <li>In-app PDF reader<sup>new!</sup>, many thanks to <a href="https://github.com/astashov">Astashov</a>!</li>
-                    <li>Better Oreo support</sup>
-                    <li>Better custom tabs support for non-Chrome browsers</li>
+                    <li>
+                        Readability mode will stop working on April 15 2019 due to API sunset. I am
+                        actively working on an alternative solution for this.
+                    </li>
+                    <li>
+                        Certain websites don't load or show up blank in-app. You can try to disable
+                        in-app ad blocker to see if it helps. At the same time please file a feedback
+                        with the website/article that fails to load so it can be fixed!
+                    </li>
+                </ul>
+                <h4>Major bug fixes</h4>
+                <ul>
+                    <li>Fix saved story export</li>
+                    <li>Fix broken search/catch up</li>
+                    <li>Fix HTTP articles not loading in-app on Android P</sup>
                 </ul>
             </body>
         </html>

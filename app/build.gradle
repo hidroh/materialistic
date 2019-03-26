@@ -9,9 +9,9 @@ android {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 76
-        versionName "3.2"
-        buildConfigField "int", "LATEST_RELEASE", "75"
+        versionCode 77
+        versionName "3.3"
+        buildConfigField "int", "LATEST_RELEASE", "77"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "MERCURY_TOKEN", "\"\""
         proguardFiles getDefaultProguardFile('proguard-android.txt'),
