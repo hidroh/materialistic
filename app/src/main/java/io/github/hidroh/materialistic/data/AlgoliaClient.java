@@ -16,15 +16,13 @@
 
 package io.github.hidroh.materialistic.data;
 
-import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
-import android.text.format.DateUtils;
-
 import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.DataModule;
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -55,7 +53,7 @@ public class AlgoliaClient implements ItemManager {
         if (listener == null) {
             return;
         }
-        search(filter)
+        searchRx(filter)
                 .map(this::toItems)
                 .observeOn(mMainThreadScheduler)
                 .subscribe(listener::onResponse,
@@ -69,11 +67,8 @@ public class AlgoliaClient implements ItemManager {
 
     @Override
     public Item[] getStories(String filter, @CacheMode int cacheMode) {
-        long timestamp = System.currentTimeMillis() - DateUtils.DAY_IN_MILLIS; // since yesterday
         try {
-            return toItems(mRestService.search(filter, MIN_CREATED_AT + timestamp / 1000)
-                    .execute()
-                    .body());
+            return toItems(search(filter).execute().body());
         } catch (IOException e) {
             return new Item[0];
         }
@@ -84,8 +79,12 @@ public class AlgoliaClient implements ItemManager {
         return mHackerNewsClient.getItem(itemId, cacheMode);
     }
 
-    protected Observable<AlgoliaHits> search(String filter) {
+    protected Observable<AlgoliaHits> searchRx(String filter) {
         // TODO add ETag header
+        return sSortByTime ? mRestService.searchByDateRx(filter) : mRestService.searchRx(filter);
+    }
+
+    protected Call<AlgoliaHits> search(String filter) {
         return sSortByTime ? mRestService.searchByDate(filter) : mRestService.search(filter);
     }
 
@@ -108,16 +107,22 @@ public class AlgoliaClient implements ItemManager {
 
     interface RestService {
         @GET("search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        Observable<AlgoliaHits> searchByDate(@Query("query") String query);
+        Observable<AlgoliaHits> searchByDateRx(@Query("query") String query);
 
         @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        Observable<AlgoliaHits> search(@Query("query") String query);
+        Observable<AlgoliaHits> searchRx(@Query("query") String query);
 
         @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        Observable<AlgoliaHits> searchByMinTimestamp(@Query("numericFilters") String timestampSeconds);
+        Observable<AlgoliaHits> searchByMinTimestampRx(@Query("numericFilters") String timestampSeconds);
 
-        @GET("search?hitsPerPage=10&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
-        Call<AlgoliaHits> search(@Query("query") String query, @Query("numericFilters") String timestampSeconds);
+        @GET("search_by_date?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> searchByDate(@Query("query") String query);
+
+        @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> search(@Query("query") String query);
+
+        @GET("search?hitsPerPage=100&tags=story&attributesToRetrieve=objectID&attributesToHighlight=none")
+        Call<AlgoliaHits> searchByMinTimestamp(@Query("numericFilters") String timestampSeconds);
     }
 
     static class AlgoliaHits {

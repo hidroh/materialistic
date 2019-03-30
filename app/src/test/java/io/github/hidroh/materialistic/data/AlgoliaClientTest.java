@@ -63,7 +63,7 @@ public class AlgoliaClientTest {
     @Test
     public void testGetStoriesNoListener() {
         client.getStories("filter", ItemManager.MODE_DEFAULT, null);
-        verify(TestRestServiceFactory.algoliaRestService, never()).searchByDate(eq("filter"));
+        verify(TestRestServiceFactory.algoliaRestService, never()).searchByDateRx(eq("filter"));
     }
 
     @Test
@@ -71,41 +71,41 @@ public class AlgoliaClientTest {
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson(
                 "{\"hits\":[{\"objectID\":\"1\"}]}",
                 AlgoliaClient.AlgoliaHits.class);
-        when(TestRestServiceFactory.algoliaRestService.searchByDate(eq("filter")))
+        when(TestRestServiceFactory.algoliaRestService.searchByDateRx(eq("filter")))
                 .thenReturn(Observable.just(hits));
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(TestRestServiceFactory.algoliaRestService).searchByDateRx(eq("filter"));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).hasSize(1);
     }
 
     @Test
     public void testGetStoriesSuccessSortByPopularity() {
-        when(TestRestServiceFactory.algoliaRestService.search(eq("filter")))
+        when(TestRestServiceFactory.algoliaRestService.searchRx(eq("filter")))
                 .thenReturn(Observable.error(new IOException()));
         client.sSortByTime = false;
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).search(eq("filter"));
+        verify(TestRestServiceFactory.algoliaRestService).searchRx(eq("filter"));
     }
 
     @Test
     public void testGetStoriesEmpty() {
         AlgoliaClient.AlgoliaHits hits = new GsonBuilder().create().fromJson("{\"hits\":[]}",
                 AlgoliaClient.AlgoliaHits.class);
-        when(TestRestServiceFactory.algoliaRestService.searchByDate(eq("filter")))
+        when(TestRestServiceFactory.algoliaRestService.searchByDateRx(eq("filter")))
                 .thenReturn(Observable.just(hits));
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(TestRestServiceFactory.algoliaRestService).searchByDateRx(eq("filter"));
         verify(storiesListener).onResponse(getStoriesResponse.capture());
         assertThat(getStoriesResponse.getValue()).isEmpty();
     }
 
     @Test
     public void testGetStoriesFailure() {
-        when(TestRestServiceFactory.algoliaRestService.searchByDate(eq("filter")))
+        when(TestRestServiceFactory.algoliaRestService.searchByDateRx(eq("filter")))
                 .thenReturn(Observable.error(new Throwable("message")));
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
-        verify(TestRestServiceFactory.algoliaRestService).searchByDate(eq("filter"));
+        verify(TestRestServiceFactory.algoliaRestService).searchByDateRx(eq("filter"));
         verify(storiesListener).onError(eq("message"));
     }
 

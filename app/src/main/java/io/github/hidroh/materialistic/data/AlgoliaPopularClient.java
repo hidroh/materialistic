@@ -16,7 +16,6 @@
 
 package io.github.hidroh.materialistic.data;
 
-import androidx.annotation.StringDef;
 import android.text.format.DateUtils;
 
 import java.lang.annotation.Retention;
@@ -24,6 +23,8 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Inject;
 
+import androidx.annotation.StringDef;
+import retrofit2.Call;
 import rx.Observable;
 
 public class AlgoliaPopularClient extends AlgoliaClient {
@@ -47,7 +48,16 @@ public class AlgoliaPopularClient extends AlgoliaClient {
     public static final String PAST_YEAR = "past_year";
 
     @Override
-    protected Observable<AlgoliaHits> search(@Range String filter) {
+    protected Observable<AlgoliaHits> searchRx(@Range String filter) {
+        return mRestService.searchByMinTimestampRx(MIN_CREATED_AT + toTimestamp(filter) / 1000);
+    }
+
+    @Override
+    protected Call<AlgoliaHits> search(@Range String filter) {
+        return mRestService.searchByMinTimestamp(MIN_CREATED_AT + toTimestamp(filter) / 1000);
+    }
+
+    private long toTimestamp(@Range String filter) {
         long timestamp = System.currentTimeMillis();
         switch (filter) {
             case LAST_24H:
@@ -64,6 +74,6 @@ public class AlgoliaPopularClient extends AlgoliaClient {
                 timestamp -= DateUtils.YEAR_IN_MILLIS;
                 break;
         }
-        return mRestService.searchByMinTimestamp(MIN_CREATED_AT + timestamp / 1000);
+        return timestamp;
     }
 }
