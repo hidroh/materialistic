@@ -35,6 +35,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -72,14 +74,14 @@ public abstract class DrawerActivity extends InjectableActivity {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 if (drawerView.equals(mDrawer) && mPendingNavigation != null) {
-                    final Intent intent = new Intent(DrawerActivity.this, mPendingNavigation);
+                    WeakReference<Intent> intent = new WeakReference<>(new Intent(DrawerActivity.this, mPendingNavigation));
                     if (mPendingNavigationExtras != null) {
-                        intent.putExtras(mPendingNavigationExtras);
+                        intent.get().putExtras(mPendingNavigationExtras);
                         mPendingNavigationExtras = null;
                     }
                     // TODO M bug https://code.google.com/p/android/issues/detail?id=193822
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
+                    intent.get().setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent.get());
                     mPendingNavigation = null;
                 }
             }

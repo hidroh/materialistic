@@ -30,8 +30,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
@@ -44,6 +42,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -75,7 +75,6 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     @Inject KeyDelegate mKeyDelegate;
-    @Synthetic CoordinatorLayout mCoordinatorLayout;
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
@@ -151,22 +150,8 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 R.string.pref_external,
                 R.string.pref_story_display,
                 R.string.pref_multi_window);
-
-        mCoordinatorLayout = findViewById(R.id.content_frame);
     }
 
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if (!AppUtils.hasConnection(this)) {
-            Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            }).show();
-        }
-    }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -392,9 +377,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         if (mExternalBrowser && mStoryViewMode != Preferences.StoryViewMode.Comment) {
             AppUtils.openWebUrlExternal(this, mSelectedItem, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
         } else {
-            Intent intent = new Intent(this, ItemActivity.class)
+            Intent intent = new WeakReference<>(new Intent(this, ItemActivity.class)
                     .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
-                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem);
+                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem)).get();
             startActivity(mMultiWindowEnabled ? AppUtils.multiWindowIntent(this, intent) : intent);
         }
     }

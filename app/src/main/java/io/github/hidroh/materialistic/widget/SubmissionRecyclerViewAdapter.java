@@ -23,6 +23,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
+
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ThreadPreviewActivity;
@@ -98,12 +100,12 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
     }
 
     private void openItem(Item item) {
-        mContext.startActivity(new Intent(mContext, ItemActivity.class)
-                .putExtra(ItemActivity.EXTRA_ITEM, item));
+        mContext.startActivity(new WeakReference<>(new Intent(mContext, ItemActivity.class)
+                .putExtra(ItemActivity.EXTRA_ITEM, item)).get());
     }
 
     private void openPreview(Item item) {
-        mContext.startActivity(new Intent(mContext, ThreadPreviewActivity.class)
-                .putExtra(ThreadPreviewActivity.EXTRA_ITEM, item));
+        mContext.startActivity(new WeakReference<>(new Intent(mContext, ThreadPreviewActivity.class)
+                .putExtra(ThreadPreviewActivity.EXTRA_ITEM, item)).get());
     }
 }

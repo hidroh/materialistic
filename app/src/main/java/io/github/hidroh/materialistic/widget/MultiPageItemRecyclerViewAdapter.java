@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
 import io.github.hidroh.materialistic.ItemActivity;
@@ -88,8 +89,8 @@ public class MultiPageItemRecyclerViewAdapter
     }
 
     private void openItem(Item item) {
-        mContext.startActivity(new Intent(mContext, ItemActivity.class)
+        mContext.startActivity(new WeakReference<>(new Intent(mContext, ItemActivity.class)
                 .putExtra(ItemActivity.EXTRA_ITEM, item)
-                .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true));
+                .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true)).get());
     }
 }
