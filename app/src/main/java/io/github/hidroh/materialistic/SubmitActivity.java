@@ -188,10 +188,10 @@ public class SubmitActivity extends InjectableActivity {
         } else if (successful) {
             Toast.makeText(this, R.string.submit_successful, Toast.LENGTH_SHORT).show();
             if (!isFinishing()) {
-                WeakReference<Intent> intent = new WeakReference<> (new Intent(this, NewActivity.class));
-                intent.get().putExtra(NewActivity.EXTRA_REFRESH, true);
-                intent.get().setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent.get()); // TODO should go to profile instead?
+                Intent intent = new Intent(this, NewActivity.class);
+                intent.putExtra(NewActivity.EXTRA_REFRESH, true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent); // TODO should go to profile instead?
                 finish();
             }
         } else if (!isFinishing()) {

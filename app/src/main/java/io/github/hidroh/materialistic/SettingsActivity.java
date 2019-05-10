@@ -24,8 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.lang.ref.WeakReference;
-
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.SearchRecentSuggestionsProvider;
@@ -42,29 +40,29 @@ public class SettingsActivity extends DrawerActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         findViewById(R.id.drawer_display).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.display)
-                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display)).get()));
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_display)));
         findViewById(R.id.drawer_offline).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.offline)
-                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_offline)).get()));
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_offline)));
         findViewById(R.id.menu_list).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.list_display_options)
-                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_list)).get()));
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_list)));
         findViewById(R.id.menu_comments).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.comments)
-                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_comments)).get()));
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_comments)));
         findViewById(R.id.menu_readability).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, PreferencesActivity.class)
+                startActivity(new Intent(SettingsActivity.this, PreferencesActivity.class)
                         .putExtra(PreferencesActivity.EXTRA_TITLE, R.string.readability)
-                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_readability)).get()));
+                        .putExtra(PreferencesActivity.EXTRA_PREFERENCES, R.xml.preferences_readability)));
         findViewById(R.id.drawer_about).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, AboutActivity.class)).get()));
+                startActivity(new Intent(SettingsActivity.this, AboutActivity.class)));
         findViewById(R.id.drawer_release).setOnClickListener(v ->
-                startActivity(new WeakReference<>(new Intent(SettingsActivity.this, ReleaseNotesActivity.class)).get()));
+                startActivity(new Intent(SettingsActivity.this, ReleaseNotesActivity.class)));
     }
 
     @Override

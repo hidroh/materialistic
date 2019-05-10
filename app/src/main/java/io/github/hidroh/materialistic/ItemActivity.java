@@ -183,7 +183,12 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
                     new ItemResponseListener(this));
         }
         if (!AppUtils.hasConnection(this)) {
-            Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            }).show();
         }
     }
 
@@ -220,9 +225,22 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             return true;
         }
         if (item.getItemId() == R.id.menu_share) {
-            View anchor = findViewById(R.id.menu_share);
-            AppUtils.share(this, mPopupMenu, anchor == null ?
-                    findViewById(R.id.toolbar) : anchor, mItem);
+
+            if (!AppUtils.hasConnection(this)) {
+                Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }).show();
+            }
+            else
+                {
+                    View anchor = findViewById(R.id.menu_share);
+                    AppUtils.share(this, mPopupMenu, anchor == null ?
+                            findViewById(R.id.toolbar) : anchor, mItem);
+            }
+
             return true;
         }
         return super.onOptionsItemSelected(item);

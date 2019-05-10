@@ -23,7 +23,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +115,7 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     }
 
     private void openItem(Item item) {
-        mContext.startActivity(new WeakReference<>(new Intent(mContext, ItemActivity.class)
-                .putExtra(ItemActivity.EXTRA_ITEM, item)).get());
+        mContext.startActivity(new Intent(mContext, ItemActivity.class)
+                .putExtra(ItemActivity.EXTRA_ITEM, item));
     }
 }

@@ -278,9 +278,9 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
                         return true;
                     }
                     if (menuItem.getItemId() == R.id.menu_contextual_comment) {
-                        mContext.startActivity(new WeakReference<> (new Intent(mContext, ComposeActivity.class)
+                        mContext.startActivity(new Intent(mContext, ComposeActivity.class)
                                 .putExtra(ComposeActivity.EXTRA_PARENT_ID, item.getId())
-                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle())).get());
+                                .putExtra(ComposeActivity.EXTRA_PARENT_TEXT, item.getDisplayedTitle()));
                         return true;
                     }
                     if (menuItem.getItemId() == R.id.menu_contextual_share) {
