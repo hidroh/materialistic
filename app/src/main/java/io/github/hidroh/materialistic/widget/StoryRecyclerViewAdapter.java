@@ -460,15 +460,15 @@ public class StoryRecyclerViewAdapter extends
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_comment) {
-                        mContext.startActivity(new Intent(mContext, ComposeActivity.class)
+                        mContext.startActivity(new WeakReference<> (new Intent(mContext, ComposeActivity.class)
                                 .putExtra(ComposeActivity.EXTRA_PARENT_ID, story.getId())
                                 .putExtra(ComposeActivity.EXTRA_PARENT_TEXT,
-                                        story.getDisplayedTitle()));
+                                        story.getDisplayedTitle())).get());
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_profile) {
-                        mContext.startActivity(new Intent(mContext, UserActivity.class)
-                                .putExtra(UserActivity.EXTRA_USERNAME, story.getBy()));
+                        mContext.startActivity(new WeakReference<> (new Intent(mContext, UserActivity.class)
+                                .putExtra(UserActivity.EXTRA_USERNAME, story.getBy())).get());
                         return true;
                     }
                     if (item.getItemId() == R.id.menu_contextual_share) {
