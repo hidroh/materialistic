@@ -35,6 +35,8 @@ import java.util.List;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
 
+import static android.content.pm.PackageManager.MATCH_DEFAULT_ONLY;
+
 public class CustomTabsDelegate {
     private static final String ACTION_CUSTOM_TABS_CONNECTION =
             "android.support.customtabs.action.CustomTabsService";
@@ -110,8 +112,36 @@ public class CustomTabsDelegate {
     }
 
     private static String getPackageNameToUse(Context context) {
-        // packagesSupportingCustomTabs contains all apps that can handle both VIEW intents
-        // and service calls.
+        List<String> browserWithCustomTabsSupport = getBrowserWithCustomTabsSupport(context);
+        String defaultBrowser = getDefaultBrowser(context);
+
+        for (String browser : browserWithCustomTabsSupport) {
+            if (browser.equals(defaultBrowser)) {
+                return browser;
+            }
+        }
+
+        return browserWithCustomTabsSupport.get(0);
+    }
+
+    /**
+     * Returns the package name of the default browser on the device
+     * @param context Context
+     * @return The package name of the default browser
+     */
+    private static String getDefaultBrowser(Context context) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com/"));
+        PackageManager pm = context.getPackageManager();
+        ResolveInfo resolveInfo = pm.resolveActivity(browserIntent,PackageManager.MATCH_DEFAULT_ONLY);
+        return resolveInfo.activityInfo.packageName;
+    }
+
+    /**
+     * Returns all browsers that support custom tabs
+     * @param context Context
+     * @return List of all Packages with custom Tabs support
+     */
+    private static List<String> getBrowserWithCustomTabsSupport(Context context) {
         List<String> packagesSupportingCustomTabs = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(
@@ -124,7 +154,7 @@ public class CustomTabsDelegate {
                 packagesSupportingCustomTabs.add(info.activityInfo.packageName);
             }
         }
-        return packagesSupportingCustomTabs.isEmpty() ? null : packagesSupportingCustomTabs.get(0);
+        return packagesSupportingCustomTabs;
     }
 
     @Synthetic
