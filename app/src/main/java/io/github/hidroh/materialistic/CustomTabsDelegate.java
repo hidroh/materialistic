@@ -24,9 +24,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
+
 import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
@@ -35,7 +38,6 @@ import java.util.List;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
 
-import static android.content.pm.PackageManager.MATCH_DEFAULT_ONLY;
 
 public class CustomTabsDelegate {
     private static final String ACTION_CUSTOM_TABS_CONNECTION =
@@ -46,6 +48,7 @@ public class CustomTabsDelegate {
 
     /**
      * Binds the Activity to the Custom Tabs Service.
+     *
      * @param activity the activity to be binded to the service.
      */
     void bindCustomTabsService(Activity activity) {
@@ -61,6 +64,7 @@ public class CustomTabsDelegate {
 
     /**
      * Unbinds the Activity from the Custom Tabs Service.
+     *
      * @param activity the activity that is connected to the service.
      */
     void unbindCustomTabsService(Activity activity) {
@@ -74,8 +78,8 @@ public class CustomTabsDelegate {
     }
 
     /**
-     * @see CustomTabsSession#mayLaunchUrl(Uri, Bundle, List)
      * @return true if call to mayLaunchUrl was accepted.
+     * @see CustomTabsSession#mayLaunchUrl(Uri, Bundle, List)
      */
     public boolean mayLaunchUrl(Uri uri, Bundle extras, List<Bundle> otherLikelyBundles) {
         if (mClient == null) {
@@ -111,37 +115,50 @@ public class CustomTabsDelegate {
         mCustomTabsSession = null;
     }
 
+    @Nullable
     private static String getPackageNameToUse(Context context) {
-        List<String> browserWithCustomTabsSupport = getBrowserWithCustomTabsSupport(context);
+        List<String> browsersWithCustomTabsSupport = getBrowsersWithCustomTabsSupport(context);
         String defaultBrowser = getDefaultBrowser(context);
 
-        for (String browser : browserWithCustomTabsSupport) {
-            if (browser.equals(defaultBrowser)) {
+        for (String browser : browsersWithCustomTabsSupport) {
+            if (TextUtils.equals(browser, defaultBrowser)) {
                 return browser;
             }
         }
 
-        return browserWithCustomTabsSupport.get(0);
+        if (browsersWithCustomTabsSupport.isEmpty()) { // If no supported browser were found
+            return null;
+        }
+
+        return browsersWithCustomTabsSupport.get(0);
     }
 
     /**
      * Returns the package name of the default browser on the device
+     *
      * @param context Context
      * @return The package name of the default browser
      */
+    @Nullable
     private static String getDefaultBrowser(Context context) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com/"));
         PackageManager pm = context.getPackageManager();
-        ResolveInfo resolveInfo = pm.resolveActivity(browserIntent,PackageManager.MATCH_DEFAULT_ONLY);
+        ResolveInfo resolveInfo = pm.resolveActivity(browserIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        if (resolveInfo == null) { // If no default browser could be found
+            return null;
+        }
+
         return resolveInfo.activityInfo.packageName;
     }
 
     /**
      * Returns all browsers that support custom tabs
+     *
      * @param context Context
      * @return List of all Packages with custom Tabs support
      */
-    private static List<String> getBrowserWithCustomTabsSupport(Context context) {
+    private static List<String> getBrowsersWithCustomTabsSupport(Context context) {
         List<String> packagesSupportingCustomTabs = new ArrayList<>();
         PackageManager pm = context.getPackageManager();
         List<ResolveInfo> resolvedActivityList = pm.queryIntentActivities(
