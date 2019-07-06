@@ -36,19 +36,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
-import androidx.annotation.AttrRes;
-import androidx.annotation.DimenRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.browser.customtabs.CustomTabsSession;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.util.Pair;
-import androidx.core.view.GravityCompat;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
@@ -67,9 +54,23 @@ import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.DimenRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.customtabs.CustomTabsSession;
+import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
+import androidx.core.view.GravityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.github.hidroh.materialistic.annotation.PublicApi;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
@@ -630,6 +631,15 @@ public class AppUtils {
             //noinspection deprecation
             textView.setTextAppearance(textView.getContext(), textAppearance);
         }
+    }
+
+    public static boolean urlEquals(String thisUrl, String thatUrl) {
+        if (AndroidUtils.TextUtils.isEmpty(thisUrl) || AndroidUtils.TextUtils.isEmpty(thatUrl)) {
+            return false;
+        }
+        thisUrl = thisUrl.endsWith("/") ? thisUrl : thisUrl + "/";
+        thatUrl = thatUrl.endsWith("/") ? thatUrl : thatUrl + "/";
+        return AndroidUtils.TextUtils.equals(thisUrl, thatUrl);
     }
 
     static class SystemUiHelper {
