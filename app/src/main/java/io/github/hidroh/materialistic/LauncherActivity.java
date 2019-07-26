@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 public class LauncherActivity extends Activity {
@@ -36,8 +37,8 @@ public class LauncherActivity extends Activity {
         map.put(getString(R.string.pref_launch_screen_value_jobs), JobsActivity.class);
         map.put(getString(R.string.pref_launch_screen_value_saved), FavoriteActivity.class);
         String launchScreen = Preferences.getLaunchScreen(this);
-        startActivity(new Intent(this, map.containsKey(launchScreen) ?
-                map.get(launchScreen) : ListActivity.class));
+        startActivity(new WeakReference<>(new Intent(this, map.containsKey(launchScreen) ?
+                map.get(launchScreen) : ListActivity.class)).get());
         finish();
     }
 }

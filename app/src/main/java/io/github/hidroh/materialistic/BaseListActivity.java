@@ -43,6 +43,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -375,9 +377,9 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         if (mExternalBrowser && mStoryViewMode != Preferences.StoryViewMode.Comment) {
             AppUtils.openWebUrlExternal(this, mSelectedItem, mSelectedItem.getUrl(), mCustomTabsDelegate.getSession());
         } else {
-            Intent intent = new Intent(this, ItemActivity.class)
+            Intent intent = new WeakReference<>(new Intent(this, ItemActivity.class)
                     .putExtra(ItemActivity.EXTRA_CACHE_MODE, getItemCacheMode())
-                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem);
+                    .putExtra(ItemActivity.EXTRA_ITEM, mSelectedItem)).get();
             startActivity(mMultiWindowEnabled ? AppUtils.multiWindowIntent(this, intent) : intent);
         }
     }
