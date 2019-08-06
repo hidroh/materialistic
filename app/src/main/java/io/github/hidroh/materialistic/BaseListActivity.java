@@ -30,6 +30,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.content.ContextCompat;
@@ -73,6 +75,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     @Inject SessionManager mSessionManager;
     @Inject CustomTabsDelegate mCustomTabsDelegate;
     @Inject KeyDelegate mKeyDelegate;
+    @Synthetic CoordinatorLayout mCoordinatorLayout;
     private AppBarLayout mAppBar;
     private TabLayout mTabLayout;
     private FloatingActionButton mReplyButton;
@@ -148,8 +151,22 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
                 R.string.pref_external,
                 R.string.pref_story_display,
                 R.string.pref_multi_window);
+
+        mCoordinatorLayout = findViewById(R.id.content_frame);
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (!AppUtils.hasConnection(this)) {
+            Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            }).show();
+        }
+    }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
