@@ -1,0 +1,14 @@
+Hacker News client, designed for both phones & tablets, with optimized speed & network.
+
+Features:
+
+    Browse top stories, best, newest, show HN, ask HN, jobs & user profiles
+    Submit story, comment & vote, multiple HN accounts supported
+    Catch up with best stories from past day, week, month or year
+    Search, share stories, save for offline reading
+
+Flexible reading options:
+
+    Multiple themes, adjustable font & text size
+    Colour-coded, collapsible comments thread
+    Readability mode/external browser options
