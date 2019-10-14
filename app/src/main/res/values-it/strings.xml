@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015 Ha Duy Trung
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="app_name">Materialistic</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="title_activity_list">Storie più votate</string>
+    <string name="title_activity_best">Storie più popolari</string>
+    <string name="title_activity_item">Commenti</string>
+    <string name="title_activity_release">Novità</string>
+    <string name="filter_title_item">Materialistic</string>
+    <string name="open_drawer">Apri la barra</string>
+    <string name="close_drawer">Chiudi la barra</string>
+    <string name="view_in_browser">Apri in un browser esterno</string>
+    <string name="share">Condividi</string>
+    <string name="title_activity_about">Informazioni</string>
+    <string name="license_title">Licenza</string>
+    <string name="third_party_licenses_title">Licenze di terze parti</string>
+    <string name="developer_info_title">Informazioni sull'autore</string>
+    <string name="application_info_title">Informazioni sull'applicazione</string>
+    <string name="application_info_text">
+        <![CDATA[
+            <p>Version: %1$s (%2$d)</p>
+            <p>This application is open source at <a href="https://github.com/hidroh/materialistic">github.com/hidroh/materialistic</a></p>
+        ]]>
+    </string>
+    <string name="libraries_title">Librerie &amp; Risorse</string>
+    <string name="title_activity_favorite">Storie salvate</string>
+    <string name="saved">Salvata %1$s fa</string>
+    <string name="toast_saved">Storia salvata</string>
+    <string name="clear_all">Elimina tutte</string>
+    <string name="toast_removed">Storia non salvata</string>
+    <string name="no_saved_stories">Nessuna storia salvata per ora</string>
+    <string name="no_comments">E' ancora vuoto qui</string>
+    <string name="confirm_clear">Sei sicuro di eliminare tutte le storie salvate?</string>
+    <string name="export">Esporta</string>
+    <string name="clear_selected">Elimina le selezionate</string>
+    <string name="confirm_clear_selected">Sei sicuro di eliminare le storie salvate selezionate?</string>
+    <string name="search">Cerca</string>
+    <string name="hint_search_saved_stories">Cerca tra le storie salvate</string>
+    <string name="no_stories_search">Non ho trovato quello che cerchi</string>
+
+    <!-- preferences -->
+    <string name="display">Display</string>
+    <string name="pref_external_title">Usa browser esterno</string>
+    <string name="pref_external_summary">Leggi gli articoli in browser esterno</string>
+    <string name="pref_color_code_title">Codice colore</string>
+    <string name="pref_color_code_opacity_title">Opacità del codice colore</string>
+    <string name="pref_highlight_updated_title">Evidenzia le storie aggiornate</string>
+    <string name="pref_highlight_updated_summary">Mostra le ultime modifiche</string>
+    <string name="pref_custom_tab_title">Usa una tab personalizzata</string>
+    <string name="pref_custom_tab_summary">Apri un browser tab al posto di un full browser</string>
+    <string name="pref_story_display_title">Opzione di default</string>
+    <string name="pref_theme_title">Tema</string>
+    <string name="pref_daynight_title">Automatico giorno-notte</string>
+    <string name="pref_search_sort_title">Ordina per</string>
+    <string name="pref_search_sort_value_recent">recenti</string>
+    <string name="pref_search_sort_value_default">default</string>
+    <string name="pref_text_size_title">Dimensione del testo</string>
+    <string name="pref_font_title">Font</string>
+    <string name="pref_comment_display_title">Discussione</string>
+    <string name="pref_max_lines_title">Commento lungo</string>
+    <string name="pref_multi_window_title">Modalità a più finestre</string>
+    <string name="pref_multi_window_summary">Che finestra utilizzare per aprire la discussione (Android 7+)</string>
+    <string name="pref_multi_window_none">La stessa</string>
+    <string name="pref_multi_window_one">Altro</string>
+    <string name="pref_navigation_title">Navigazione sullo schermo</string>
+    <string name="pref_navigation_vibrate_title">Vibra al tocco</string>
+    <string name="pref_lazy_load_title">Caricare il contenuto in background</string>
+    <string name="pref_lazy_load_summary">Caricare il contenuto solo dopo aver cambiato la tab</string>
+    <string name="pref_saved_item_sync_title">Attiva accesso offline</string>
+    <string name="pref_saved_item_sync_summary">Scarica il contenuto dopo aver salvato la storia</string>
+    <string name="pref_offline_data_title">Quando scaricare</string>
+    <string name="pref_offline_comments_title">Scarica commenti</string>
+    <string name="pref_offline_article_title">Scarica articolo</string>
+    <string name="pref_offline_readability_title">Scarica articolo readibility</string>
+    <string name="pref_offline_data_wifi">Solo con wifi</string>
+    <string name="pref_offline_data_always">Sempre</string>
+    <string name="pref_offline_notification_title">Mostra progresso</string>
+    <string name="pref_offline_notification_summary">Mostra notifiche per download in corso</string>
+    <string name="pref_launch_screen_title">Screen di default</string>
+    <string name="pref_volume_title">Usa i tasti del volume per navigare</string>
+    <string name="pref_volume_summary">Muovi sopra e sotto con i tasti del volume</string>
+    <string name="pref_ad_block_title">Blocca le pubblicità</string>
+    <string name="pref_ad_block_summary">Attiva un adblocker per il browser</string>
+    <string name="pref_line_height_title">Spaziatura del testo</string>
+    <string name="pref_list_item_view_title">Mostra come carte</string>
+    <string name="pref_thread_indicator_title">Indicatore della discussione</string>
+    <string name="pref_widget_section_title">Sezione</string>
+    <string name="pref_widget_query_title">Filtra per query (opzionale)</string>
+    <string name="pref_widget_frequency_title">Aggiorna la frequenza</string>
+    <string name="pref_auto_viewed_title">Segna automaticamente come già visto</string>
+    <string name="pref_auto_viewed_summary">Mostra le storie come già viste muovendosi sopra</string>
+    <string name="pref_smooth_scroll_title">Animare la navigazione</string>
+    <string name="pref_smooth_scroll_summary">Disabilità per migliorare la scrolling</string>
+    <string name="pref_list_swipe_left_title">Scorri verso sinistra per</string>
+    <string name="pref_list_swipe_right_title">Scorri verso destra per</string>
+
+    <string name="connection_error">Impossibile connettersi ad Hacker News. Controlla la tua connessione.</string>
+    <string name="select_story">Seleziona una storia da vedere</string>
+    <string name="download_external">Apri in un'altra applicazione</string>
+    <string name="try_me">Premi a lungo/scorri per salvare per dopo</string>
+    <string name="title_activity_jobs">Jobs</string>
+    <string name="title_activity_show">Show HN</string>
+    <string name="title_activity_ask">Ask HN</string>
+    <string name="title_activity_new">New Stories</string>
+    <string name="title_activity_search">Cerca HN</string>
+    <string name="clear_search_history">Elimina la cronologia delle ricerche</string>
+    <string name="clear_search_history_confirm">Sei sicuro di eliminare la cronologia delle ricerche?</string>
+    <string name="undo">Torna indietro</string>
+    <plurals name="score">
+        <item quantity="other">%1$sp</item>
+    </plurals>
+    <string name="comments">Commenti</string>
+    <plurals name="comments_count">
+        <item quantity="zero">%1$s commenti</item>
+        <item quantity="one">%1$s commento</item>
+        <item quantity="other">%1$s Commenti</item>
+    </plurals>
+    <string name="article">Articolo</string>
+    <string name="reset_settings">Resetta le impostazioni</string>
+    <string name="reset_settings_confirm">Sei sicuro di resettare le impostazioni a default?</string>
+    <string name="last_updated">Ultimo aggiornamento %1$s</string>
+    <string name="feedback">Feedback</string>
+    <string name="send_feedback">Manda Feedback</string>
+    <string name="title_hint">Titolo</string>
+    <string name="comment_hint">Commento</string>
+    <string name="feedback_note">
+        <![CDATA[
+            Your feedback will be made public as a <a href="https://github.com/hidroh/materialistic/issues">Materialistic Github issue</a>.
+        ]]>
+    </string>
+    <string name="title_required">Il titolo è obbligatorio</string>
+    <string name="comment_required">Un commento è obbligatorio</string>
+    <string name="feedback_sent">Feedback mandato! Grazie!</string>
+    <string name="feedback_failed">Impossibile mandare Feedback, prova ancora!</string>
+    <string name="chooser_title">Apri con</string>
+    <string name="title_activity_popular">Catch Up</string>
+    <string name="range">Range</string>
+    <string name="popular_range_last_24h">Ultime 24 ore</string>
+    <string name="popular_range_past_week">Ultima settimana</string>
+    <string name="popular_range_past_month">Ultimo mese</string>
+    <string name="popular_range_past_year">Ultimo anno</string>
+    <plurals name="new_stories_count">
+        <item quantity="zero">%1$s nuove storie</item>
+        <item quantity="one">%1$s nuova storia</item>
+        <item quantity="other">%1$s nuove storie</item>
+    </plurals>
+    <string name="show_me">Mostrami</string>
+    <plurals name="showing_new_stories">
+        <item quantity="zero">Showing %1$s nuove storie</item>
+        <item quantity="one">Showing %1$s nuova storia</item>
+        <item quantity="other">Showing %1$s nuove storie</item>
+    </plurals>
+    <string name="show_all">Show all</string>
+    <string name="whats_this">What\'s this?</string>
+    <string name="got_it">Got it</string>
+    <string name="help_new_story">New story since last refresh</string>
+    <string name="help_promoted_story">Promoted story since last refresh</string>
+    <string name="help_new_comments">Story with new comments since last refresh</string>
+    <string name="help_lazy_load">With lazy loading setting enabled, only your preferred default tab will be loaded when an item is first opened.\n\nIf you are on a slow connection or encounter lagging, turning this on may help.</string>
+    <string name="help_volume_up">Press volume up to scroll up</string>
+    <string name="help_long_volume_up">Long press volume up to quick scroll to top</string>
+    <string name="help_volume_down">Press volume down to scroll down</string>
+    <string name="help_navigate">Display a floating navigation button that responds to swipe gestures to navigate nested comment threads.</string>
+    <string name="help_navigate_up">Swipe \u2191: go to previous comment</string>
+    <string name="help_navigate_down">Swipe \u2193: go to next comment</string>
+    <string name="help_navigate_right">Swipe \u2192: expand &amp; go to 1st reply</string>
+    <string name="help_navigate_left">Swipe \u2190: go back to parent</string>
+    <string name="help_navigate_move">Long press to drag navigation button to new position</string>
+    <string name="readability">Readability</string>
+    <string name="text_size_extra_small">Extra small</string>
+    <string name="text_size_small">Small</string>
+    <string name="text_size_medium">Medium</string>
+    <string name="text_size_large">Large</string>
+    <string name="text_size_extra_large">Extra large</string>
+    <string name="readability_failed">Unable to parse article</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_black">Black</string>
+    <string name="theme_sepia">Sepia</string>
+    <string name="theme_green">Green</string>
+    <string name="theme_transparent">Transparent</string>
+    <string name="theme_solarized_dark">Solarized Dark</string>
+    <string name="theme_solarized">Solarized</string>
+    <string name="comment_display_multiple">Multiple pages</string>
+    <string name="comment_display_single">Single page - auto expand</string>
+    <string name="comment_display_collapsed">Single page - collapsed</string>
+    <string name="story_display_article">Article</string>
+    <string name="story_display_comments">Comments</string>
+    <string name="search_sort_recent">More recent</string>
+    <string name="search_sort_popularity">Popularity</string>
+    <string name="story_display_readability">Readability</string>
+    <string name="font_options">Font options</string>
+    <string name="read_more" tools:ignore="PluralsCandidate">Read all %1$d lines</string>
+    <string name="comment_max_lines_3">Max 3 lines</string>
+    <string name="comment_max_lines_4">Max 4 lines</string>
+    <string name="comment_max_lines_5">Max 5 lines</string>
+    <string name="comment_max_lines_all">Full content</string>
+    <string name="line_height_compact">Compact</string>
+    <string name="line_height_normal">Normal</string>
+    <string name="line_height_cozy">Cozy</string>
+    <string name="line_height_comfortable">Comfortable</string>
+    <string name="frequency_3_hours">3 hours</string>
+    <string name="frequency_6_hours">6 hours</string>
+    <string name="frequency_12_hours">12 hours</string>
+    <string name="frequency_1_day">1 day</string>
+    <string name="file_not_supported">Content type not supported</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="title_activity_login">Login to Hacker News</string>
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="login_failed">Login/create account failed, please try again</string>
+    <string name="welcome">Welcome %1$s!</string>
+    <string name="logout_confirm">Do you want to log out?</string>
+    <string name="choose_account">Choose an account</string>
+    <string name="add_account">Add</string>
+    <string name="remove_account">Remove</string>
+    <string name="login_note">Your credentials will be stored securely under your device\'s Settings / Accounts</string>
+    <string name="save">Save</string>
+    <string name="unsave">Unsave</string>
+    <string name="re_enter_password">Re-enter your password</string>
+    <string name="vote_up">Vote up</string>
+    <string name="voted">Successfully voted</string>
+    <string name="vote_failed">Fail to record vote. Please try again.</string>
+    <string name="sending" tools:ignore="TypographyEllipsis">Sending...</string>
+    <string name="add_comment">Add comment</string>
+    <string name="title_activity_compose">Compose</string>
+    <string name="send">Send</string>
+    <string name="original_content">Original content</string>
+    <string name="quote">Quote</string>
+    <string name="formatting_guidelines">HN formatting guidelines</string>
+    <string name="confirm_save_draft">Save draft?</string>
+    <string name="create_account">Create account</string>
+    <string name="comment_failed">Failed to send comment</string>
+    <string name="comment_successful">Comment added. Please refresh to see.</string>
+    <string name="confirm_no_waiting">Exit without waiting?</string>
+    <string name="rate_app">Rate the app</string>
+    <string name="or">or</string>
+    <string name="leave_feedback">Leave feedback</string>
+    <string name="no_playstore">No Play Store app found</string>
+    <string name="submit_content_hint">URL or text</string>
+    <string name="title_activity_submit">Submit to HN</string>
+    <string name="url_text_required">URL or text is required</string>
+    <string name="submit_failed">Failed to submit. Please try again.</string>
+    <string name="submit_successful">Successfully submitted</string>
+    <string name="confirm_no_submit">Exit without submitting?</string>
+    <string name="submit_note">Enter text to submit a question for discussion, or URL to submit a link. You can also share links directly from other apps</string>
+    <string name="confirm_submit_url">Submit as link?</string>
+    <string name="confirm_submit_question">Submit as question?</string>
+    <string name="submission_guidelines">Submission guidelines</string>
+    <string name="title_activity_user">My Profile</string>
+    <string name="user_info">Created: %1$s</string>
+    <plurals name="submissions_count">
+        <item quantity="zero">%1$s submission</item>
+        <item quantity="one">%1$s submission</item>
+        <item quantity="other">%1$s submissions</item>
+    </plurals>
+    <string name="view_story">View story</string>
+    <string name="user_failed">Unable to load user. Please try again.</string>
+    <string name="dead_prefix">[dead]</string>
+    <string name="title_activity_thread_preview">Thread Preview</string>
+    <string name="view_thread">View thread</string>
+    <string name="view_user">View user</string>
+    <string name="more">More</string>
+    <string name="logout">Logout</string>
+    <string name="offline">Offline</string>
+    <string name="offline_notice">You\'re currently offline</string>
+    <string name="download_in_progress">Download in progress</string>
+    <string name="love_it">I love it!</string>
+    <string name="display_options">Display options</string>
+    <string name="pull_up_hint">Pull up for more</string>
+    <string name="find_in_page">Find in page</string>
+    <string name="no_matches">No matches found</string>
+    <string name="back">Back</string>
+    <string name="forward">Forward</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="refresh">Refresh</string>
+    <string name="exit_fullscreen">Exit</string>
+    <string name="next">Next</string>
+    <string name="list_display_options">List display options</string>
+    <string name="last_screen">Last used screen</string>
+    <string name="widget_options">Widget options</string>
+    <string name="item_exist">Similar story has been submitted</string>
+    <string name="hn_link">Hacker News link</string>
+    <string name="article_link">Article link</string>
+    <string name="hint_drag">Drag to reposition</string>
+    <string name="hint_nav_short">Swipe \u2191 \u2193 \u2192 \u2190 to navigate\nLong press to reposition</string>
+    <string name="konami">You got the Konami code! Give me 5 stars?</string>
+    <string name="end_of_thread">End of thread</string>
+    <string name="save_draft">Save draft</string>
+    <string name="discard_draft">Discard draft</string>
+    <string name="clear_drafts">Clear all drafts</string>
+    <string name="more_sections">More sections</string>
+    <string name="list">List</string>
+    <string name="delete">Delete</string>
+    <string name="full_text">Full text</string>
+    <string name="empty_text">[This story has no content]</string>
+    <string name="none">None</string>
+    <string name="hint_update">Your app has just been updated!</string>
+    <string name="export_saved_stories">Export saved stories</string>
+    <string name="export_notification">Saved to file. Tap for options.</string>
+    <string name="share_file">Share file</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="notification_channel_downloads">Downloads</string>
+
+</resources>
