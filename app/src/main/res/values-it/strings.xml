@@ -31,8 +31,8 @@
     <string name="title_activity_about">Informazioni</string>
     <string name="license_title">Licenza</string>
     <string name="third_party_licenses_title">Licenze di terze parti</string>
-    <string name="developer_info_title">Informazioni sull'autore</string>
-    <string name="application_info_title">Informazioni sull'applicazione</string>
+    <string name="developer_info_title">Informazioni sull\'autore</string>
+    <string name="application_info_title">Informazioni sull\'applicazione</string>
     <string name="application_info_text">
         <![CDATA[
             <p>Version: %1$s (%2$d)</p>
@@ -46,7 +46,7 @@
     <string name="clear_all">Elimina tutte</string>
     <string name="toast_removed">Storia non salvata</string>
     <string name="no_saved_stories">Nessuna storia salvata per ora</string>
-    <string name="no_comments">E' ancora vuoto qui</string>
+    <string name="no_comments">E\' ancora vuoto qui</string>
     <string name="confirm_clear">Sei sicuro di eliminare tutte le storie salvate?</string>
     <string name="export">Esporta</string>
     <string name="clear_selected">Elimina le selezionate</string>
