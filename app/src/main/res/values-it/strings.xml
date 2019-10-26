@@ -251,7 +251,7 @@
     <string name="create_account">Crea account</string>
     <string name="comment_failed">Impossibile mandare il commento</string>
     <string name="comment_successful">Commento aggiunto. Ricarica per vederlo.</string>
-    <string name="confirm_no_waiting">Uscire senza aspettare?</4string>
+    <string name="confirm_no_waiting">Uscire senza aspettare?</string>
     <string name="rate_app">Vota l\'app</string>
     <string name="or">o</string>
     <string name="leave_feedback">Lascia feedback</string>
