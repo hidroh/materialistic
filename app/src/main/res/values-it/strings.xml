@@ -113,7 +113,7 @@
 
     <string name="connection_error">Impossibile connettersi ad Hacker News. Controlla la tua connessione.</string>
     <string name="select_story">Seleziona una storia da vedere</string>
-    <string name="download_external">Apri in un'altra applicazione</string>
+    <string name="download_external">Apri in un\'altra applicazione</string>
     <string name="try_me">Premi a lungo/scorri per salvare per dopo</string>
     <string name="title_activity_jobs">Jobs</string>
     <string name="title_activity_show">Show HN</string>
@@ -170,15 +170,15 @@
     <string name="show_all">Mostra tutte</string>
     <string name="whats_this">Cos\'è questo?</string>
     <string name="got_it">Capito!</string>
-    <string name="help_new_story">Nuova storia dall'ultimo refresh!</string>
-    <string name="help_promoted_story">Storia promossa dall'ultimo refresh!</string>
-    <string name="help_new_comments">Storia con nuovi commenti dall'ultimo refresh!</string>
+    <string name="help_new_story">Nuova storia dall\'ultimo refresh!</string>
+    <string name="help_promoted_story">Storia promossa dall\'ultimo refresh!</string>
+    <string name="help_new_comments">Storia con nuovi commenti dall\'ultimo refresh!</string>
     <string name="help_lazy_load">Con lazy loading attivo, solamente la tua tab preferita verrà caricata. Se hai problemi di connessione o lag, ti può essere utile!</string>
     <string name="help_volume_up">Usa il volume in alto per salire sopra</string>
     <string name="help_long_volume_up">Tieni premuto il tasto del volume sopra per salire in cima</string>
     <string name="help_volume_down">Usa il volume in basso per scendere sotto</string>
     <string name="help_navigate">Mostra un bottone di navigaizone per i sotto-commenti, accessibili tramite gesti</string>
-    <string name="help_navigate_up">Scorri \u2191: vai all'ultimo commento</string>
+    <string name="help_navigate_up">Scorri \u2191: vai all\'ultimo commento</string>
     <string name="help_navigate_down">Scorri \u2193: vai al prossimo commento</string>
     <string name="help_navigate_right">Scorri \u2192: espandi &amp; vai alla prima risposta</string>
     <string name="help_navigate_left">Scorri \u2190: torna al commento padre</string>
@@ -278,7 +278,7 @@
     <string name="dead_prefix">[dead]</string>
     <string name="title_activity_thread_preview">Preview del post</string>
     <string name="view_thread">Vedi il thread</string>
-    <string name="view_user">Vedi l'utente</string>
+    <string name="view_user">Vedi l\'utente</string>
     <string name="more">Carica di piu</string>
     <string name="logout">Esci</string>
     <string name="offline">Offline</string>
