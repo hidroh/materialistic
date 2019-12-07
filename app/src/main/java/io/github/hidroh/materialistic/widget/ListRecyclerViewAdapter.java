@@ -303,7 +303,7 @@ public abstract class ListRecyclerViewAdapter
                     return true;
                 });
             }
-            mStoryView.getMoreOptions().setOnClickListener(v -> listener.showMoreOptions(v));
+            mStoryView.getMoreOptions().setOnClickListener(listener::showMoreOptions);
         }
     }
 }
