@@ -59,7 +59,7 @@ ext {
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.5.4'
     retrofitVersion = '2.3.0'
-    roomVersion = '1.0.0'
+    roomVersion = '2.2.2'
 }
 
 dependencies {
@@ -70,7 +70,7 @@ dependencies {
             "androidx.lifecycle:lifecycle-extensions:2.0.0",
             "androidx.preference:preference:1.0.0",
             "androidx.recyclerview:recyclerview:1.0.0",
-            "androidx.room:room-runtime:2.0.0",
+            "androidx.room:room-runtime:$roomVersion",
             "com.google.android.material:material:1.0.0",
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
@@ -85,9 +85,9 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    kapt "androidx.room:room-compiler:2.0.0",
+    kapt "androidx.room:room-compiler:$roomVersion",
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
-    kaptTest "androidx.room:room-compiler:2.0.0",
+    kaptTest "androidx.room:room-compiler:$roomVersion",
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
 
