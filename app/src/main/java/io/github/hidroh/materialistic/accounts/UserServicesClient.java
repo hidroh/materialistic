@@ -263,17 +263,15 @@ public class UserServicesClient implements UserServices {
     }
 
     private Throwable buildException(Uri uri) {
-        switch (uri.getPath()) {
-            case ITEM_PATH:
-                UserServices.Exception exception = new UserServices.Exception(R.string.item_exist);
-                String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
-                if (!TextUtils.isEmpty(itemId)) {
-                    exception.data = AppUtils.createItemUri(itemId);
-                }
-                return exception;
-            default:
-                return new IOException();
+        if (ITEM_PATH.equals(uri.getPath())) {
+            Exception exception = new Exception(R.string.item_exist);
+            String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
+            if (!TextUtils.isEmpty(itemId)) {
+                exception.data = AppUtils.createItemUri(itemId);
+            }
+            return exception;
         }
+        return new IOException();
     }
 
     private String getInputValue(String html, String name) {
