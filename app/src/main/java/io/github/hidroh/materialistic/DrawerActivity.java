@@ -62,8 +62,8 @@ public abstract class DrawerActivity extends InjectableActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_drawer);
         mDrawer = findViewById(R.id.drawer);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerAccount = (TextView) findViewById(R.id.drawer_account);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerAccount = findViewById(R.id.drawer_account);
         mDrawerLogout = findViewById(R.id.drawer_logout);
         mDrawerUser = findViewById(R.id.drawer_user);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open_drawer,
@@ -129,7 +129,7 @@ public abstract class DrawerActivity extends InjectableActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        ViewGroup drawerLayout = (ViewGroup) findViewById(R.id.drawer_layout);
+        ViewGroup drawerLayout = findViewById(R.id.drawer_layout);
         View view = getLayoutInflater().inflate(layoutResID, drawerLayout, false);
         //noinspection ConstantConditions
         drawerLayout.addView(view, 0);
@@ -140,7 +140,7 @@ public abstract class DrawerActivity extends InjectableActivity {
         mDrawerAccount.setOnClickListener(v -> showLogin());
         mDrawerLogout.setOnClickListener(v -> confirmLogout());
         View moreContainer = findViewById(R.id.drawer_more_container);
-        TextView moreToggle = (TextView) findViewById(R.id.drawer_more);
+        TextView moreToggle = findViewById(R.id.drawer_more);
         moreToggle.setOnClickListener(v -> {
             if (moreContainer.getVisibility() == View.VISIBLE) {
                 moreToggle.setTextColor(ContextCompat.getColor(DrawerActivity.this,

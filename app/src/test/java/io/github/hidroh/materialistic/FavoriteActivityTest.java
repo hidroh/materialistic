@@ -112,7 +112,7 @@ public class FavoriteActivityTest {
         when(favoriteManager.getItem(eq(1))).thenReturn(new TestFavorite(
                 "2", "http://example.com", "ask HN", System.currentTimeMillis()));
         activity = controller.create().postCreate(null).start().resume().visible().get(); // skip menu due to search view
-        recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        recyclerView = activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         shadowAdapter = customShadowOf(adapter);
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);

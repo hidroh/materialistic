@@ -49,11 +49,11 @@ public class ThreadPreviewActivity extends InjectableActivity {
         }
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_thread_preview);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new SnappyLinearLayoutManager(this, false));
         recyclerView.addItemDecoration(new CommentItemDecoration(this));
         recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(mItemManager, item));

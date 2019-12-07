@@ -50,9 +50,9 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         String username = Preferences.getUsername(this);
         boolean addAccount = getIntent().getBooleanExtra(EXTRA_ADD_ACCOUNT, false);
         setContentView(R.layout.activity_login);
-        mUsernameLayout = (TextInputLayout) findViewById(R.id.textinput_username);
-        mPasswordLayout = (TextInputLayout) findViewById(R.id.textinput_password);
-        mUsernameEditText = (EditText) findViewById(R.id.edittext_username);
+        mUsernameLayout = findViewById(R.id.textinput_username);
+        mPasswordLayout = findViewById(R.id.textinput_password);
+        mUsernameEditText = findViewById(R.id.edittext_username);
         mLoginButton = findViewById(R.id.login_button);
         mRegisterButton = findViewById(R.id.register_button);
         if (!addAccount && !TextUtils.isEmpty(username)) {
@@ -60,7 +60,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             mUsernameEditText.setText(username);
             mRegisterButton.setVisibility(View.GONE);
         }
-        mPasswordEditText = (EditText) findViewById(R.id.edittext_password);
+        mPasswordEditText = findViewById(R.id.edittext_password);
         mLoginButton.setOnClickListener(v -> {
             if (!validate()) {
                 return;

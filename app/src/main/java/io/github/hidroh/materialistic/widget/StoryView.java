@@ -103,14 +103,14 @@ public class StoryView extends RelativeLayout implements Checkable {
         inflate(context, mIsLocal ? R.layout.local_story_view : R.layout.story_view, this);
         mBackground = findViewById(R.id.background);
         mBackground.setBackgroundColor(mBackgroundColor);
-        mVoteSwitcher = (ViewSwitcher) findViewById(R.id.vote_switcher);
-        mRankTextView = (TextView) findViewById(R.id.rank);
-        mScoreTextView = (TextView) findViewById(R.id.score);
+        mVoteSwitcher = findViewById(R.id.vote_switcher);
+        mRankTextView = findViewById(R.id.rank);
+        mScoreTextView = findViewById(R.id.score);
         mBookmarked = findViewById(R.id.bookmarked);
-        mPostedTextView = (TextView) findViewById(R.id.posted);
-        mTitleTextView = (TextView) findViewById(R.id.title);
-        mSourceTextView = (TextView) findViewById(R.id.source);
-        mCommentButton = (TextView) findViewById(R.id.comment);
+        mPostedTextView = findViewById(R.id.posted);
+        mTitleTextView = findViewById(R.id.title);
+        mSourceTextView = findViewById(R.id.source);
+        mCommentButton = findViewById(R.id.comment);
         mCommentButton.setCompoundDrawablesWithIntrinsicBounds(mCommentDrawable, null, null, null);
         mMoreButton = findViewById(R.id.button_more);
         // replace with bounded ripple as unbounded ripple requires container bg

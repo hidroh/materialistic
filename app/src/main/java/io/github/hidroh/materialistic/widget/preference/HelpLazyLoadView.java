@@ -34,7 +34,7 @@ public class HelpLazyLoadView extends ScrollView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.comments));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.article));
         Preferences.StoryViewMode defaultView = Preferences.getDefaultStoryView(getContext());

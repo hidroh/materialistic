@@ -283,11 +283,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
         ItemViewHolder(View itemView) {
             super(itemView);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
+            mPostedTextView = itemView.findViewById(R.id.posted);
             mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
-            mContentTextView = (TextView) itemView.findViewById(R.id.text);
-            mReadMoreTextView = (TextView) itemView.findViewById(R.id.more);
-            mCommentButton = (TextView) itemView.findViewById(R.id.comment);
+            mContentTextView = itemView.findViewById(R.id.text);
+            mReadMoreTextView = itemView.findViewById(R.id.more);
+            mCommentButton = itemView.findViewById(R.id.comment);
             mCommentButton.setVisibility(View.GONE);
             mMoreButton = itemView.findViewById(R.id.button_more);
             mContentView = itemView.findViewById(R.id.content);
