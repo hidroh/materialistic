@@ -17,12 +17,12 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.RecyclerView;
 
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -54,12 +54,6 @@ import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
@@ -71,6 +65,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.core.view.GravityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.hidroh.materialistic.annotation.PublicApi;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
@@ -201,16 +202,22 @@ public class AppUtils {
         // share receivers that accept only EXTRA_TEXT but not EXTRA_STREAM
         return Intent.createChooser(new Intent(Intent.ACTION_SEND_MULTIPLE)
                         .setType("text/plain")
-                        .putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-                                new ArrayList<Uri>(){{add(data);}}),
+                        .putParcelableArrayListExtra(
+                                Intent.EXTRA_STREAM,
+                                new ArrayList<Uri>() {{
+                                    add(data);
+                                }}
+                        ),
                 context.getString(R.string.share_file));
     }
 
-    public static void openExternal(@NonNull final Context context,
-                             @NonNull PopupMenu popupMenu,
-                             @NonNull View anchor,
-                             @NonNull final WebItem item,
-                             final CustomTabsSession session) {
+    public static void openExternal(
+            @NonNull final Context context,
+            @NonNull PopupMenu popupMenu,
+            @NonNull View anchor,
+            @NonNull final WebItem item,
+            final CustomTabsSession session
+    ) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
@@ -272,7 +279,7 @@ public class AppUtils {
 
     public static int getDimensionInDp(Context context, @DimenRes int dimenResId) {
         return (int) (context.getResources().getDimension(dimenResId) /
-                        context.getResources().getDisplayMetrics().density);
+                context.getResources().getDisplayMetrics().density);
     }
 
     public static void restart(Activity activity, boolean transition) {
@@ -331,7 +338,8 @@ public class AppUtils {
      * If no accounts exist in user's device, regardless of login status, prompt to login again
      * If 1 or more accounts in user's device, and already logged in, prompt to update password
      * If 1 or more accounts in user's device, and logged out, show account chooser
-     * @param context activity context
+     *
+     * @param context            activity context
      * @param alertDialogBuilder dialog builder
      */
     @SuppressLint("MissingPermission")
@@ -380,8 +388,11 @@ public class AppUtils {
     }
 
     @SuppressLint("MissingPermission")
-    public static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
-                                           Account[] accounts) {
+    public static void showAccountChooser(
+            final Context context,
+            AlertDialogBuilder alertDialogBuilder,
+            Account[] accounts
+    ) {
         String username = Preferences.getUsername(context);
         final String[] items = new String[accounts.length];
         int checked = -1;
@@ -529,6 +540,7 @@ public class AppUtils {
             context.startActivity(intent);
         }
     }
+
     public static Uri createItemUri(@NonNull String itemId) {
         return new Uri.Builder()
                 .scheme(BuildConfig.APPLICATION_ID)

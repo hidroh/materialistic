@@ -20,10 +20,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.os.Build;
-import androidx.annotation.CallSuper;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
@@ -31,6 +27,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -309,8 +309,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         private final Item mPartialItem;
 
         @Synthetic
-        ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
-                                    Item partialItem) {
+        ItemResponseListener(ItemRecyclerViewAdapter adapter, int position, Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;
             mPartialItem = partialItem;

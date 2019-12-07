@@ -18,9 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +26,9 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.core.content.ContextCompat;
 
 import java.lang.ref.WeakReference;
 
@@ -163,8 +163,8 @@ public class ComposeActivity extends InjectableActivity {
                 .setNegativeButton(android.R.string.no, (dialog, which) ->
                         ComposeActivity.super.onBackPressed())
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        Preferences.saveDraft(this, mParentId, mEditText.getText().toString());
-                        ComposeActivity.super.onBackPressed();
+                    Preferences.saveDraft(this, mParentId, mEditText.getText().toString());
+                    ComposeActivity.super.onBackPressed();
                 })
                 .show();
     }

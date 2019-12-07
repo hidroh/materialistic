@@ -1,8 +1,9 @@
 package io.github.hidroh.materialistic;
 
 import android.annotation.SuppressLint;
-import com.google.android.material.textfield.TextInputLayout;
 import android.widget.EditText;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,18 +13,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import io.github.hidroh.materialistic.test.TestRunner;
-import org.robolectric.shadows.ShadowToast;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowToast;
 
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.data.FeedbackClient;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.assertj.android.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;

@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import androidx.core.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -29,6 +28,8 @@ import android.text.style.ForegroundColorSpan;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -36,7 +37,6 @@ import javax.inject.Named;
 
 import io.github.hidroh.materialistic.ActivityModule;
 import io.github.hidroh.materialistic.AppUtils;
-import io.github.hidroh.materialistic.Application;
 import io.github.hidroh.materialistic.Injectable;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.data.Item;

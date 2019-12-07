@@ -24,24 +24,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import javax.inject.Inject;
 
@@ -216,9 +217,13 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
         }
         if (item.getItemId() == R.id.menu_external) {
             View anchor = findViewById(R.id.menu_external);
-            AppUtils.openExternal(this, mPopupMenu, anchor == null ?
-                    findViewById(R.id.toolbar) : anchor,
-                    mSelectedItem, mCustomTabsDelegate.getSession());
+            AppUtils.openExternal(
+                    this,
+                    mPopupMenu,
+                    anchor == null ? findViewById(R.id.toolbar) : anchor,
+                    mSelectedItem,
+                    mCustomTabsDelegate.getSession()
+            );
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -246,6 +251,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
         }
     }
+
     @Override
     public void onBackPressed() {
         if (!mIsMultiPane || !mFullscreen) {
@@ -314,6 +320,7 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     /**
      * Checks if activity should have search view
+     *
      * @return true if is searchable, false otherwise
      */
     protected boolean isSearchable() {
@@ -322,19 +329,22 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
 
     /**
      * Gets default title to be displayed in list-only layout
+     *
      * @return displayed title
      */
     protected abstract String getDefaultTitle();
 
     /**
      * Creates list fragment to host list data
+     *
      * @return list fragment
      */
     protected abstract Fragment instantiateListFragment();
 
     /**
      * Gets cache mode for {@link ItemManager}
-     * @return  cache mode
+     *
+     * @return cache mode
      */
     @ItemManager.CacheMode
     protected int getItemCacheMode() {
