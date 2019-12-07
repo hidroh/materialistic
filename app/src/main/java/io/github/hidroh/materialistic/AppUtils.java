@@ -95,8 +95,12 @@ public class AppUtils {
     private static final String HOST_ITEM = "item";
     private static final String HOST_USER = "user";
 
-    public static void openWebUrlExternal(Context context, @Nullable WebItem item,
-                                          String url, @Nullable CustomTabsSession session) {
+    public static void openWebUrlExternal(
+            Context context,
+            @Nullable WebItem item,
+            String url,
+            @Nullable CustomTabsSession session
+    ) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
@@ -111,13 +115,17 @@ public class AppUtils {
         }
         List<ResolveInfo> activities = context.getPackageManager()
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
         ArrayList<Intent> intents = new ArrayList<>();
+
         for (ResolveInfo info : activities) {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, item, url, session)
-                    .setPackage(info.activityInfo.packageName));
+            intents.add(
+                    createViewIntent(context, item, url, session)
+                            .setPackage(info.activityInfo.packageName)
+            );
         }
         if (intents.isEmpty()) {
             return;
