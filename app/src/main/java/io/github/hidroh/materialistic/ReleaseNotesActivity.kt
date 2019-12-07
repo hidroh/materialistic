@@ -30,8 +30,8 @@ class ReleaseNotesActivity : InjectableActivity() {
     super.onCreate(savedInstanceState)
     supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
     setContentView(R.layout.activity_release)
-    findViewById<View>(R.id.button_ok).setOnClickListener { _ -> finish() }
-    findViewById<View>(R.id.button_rate).setOnClickListener { _ ->
+    findViewById<View>(R.id.button_ok).setOnClickListener { finish() }
+    findViewById<View>(R.id.button_rate).setOnClickListener {
       AppUtils.openPlayStore(this)
       finish()
     }
