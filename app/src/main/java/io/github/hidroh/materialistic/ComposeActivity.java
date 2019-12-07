@@ -18,9 +18,6 @@ package io.github.hidroh.materialistic;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +26,9 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.core.content.ContextCompat;
 
 import java.lang.ref.WeakReference;
 
@@ -62,11 +62,11 @@ public class ComposeActivity extends InjectableActivity {
         }
         AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_compose);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
-        mEditText = (EditText) findViewById(R.id.edittext_body);
+        mEditText = findViewById(R.id.edittext_body);
         if (savedInstanceState == null) {
             mEditText.setText(Preferences.getDraft(this, mParentId));
         }
@@ -78,8 +78,8 @@ public class ComposeActivity extends InjectableActivity {
         mParentText = getIntent().getStringExtra(EXTRA_PARENT_TEXT);
         if (!TextUtils.isEmpty(mParentText)) {
             findViewById(R.id.quote).setVisibility(View.VISIBLE);
-            final TextView toggle = (TextView) findViewById(R.id.toggle);
-            final TextView textView = (TextView) findViewById(R.id.text);
+            final TextView toggle = findViewById(R.id.toggle);
+            final TextView textView = findViewById(R.id.text);
             AppUtils.setTextWithLinks(textView, AppUtils.fromHtml(mParentText));
             toggle.setOnClickListener(v -> {
                 if (textView.getVisibility() == View.VISIBLE) {
@@ -163,8 +163,8 @@ public class ComposeActivity extends InjectableActivity {
                 .setNegativeButton(android.R.string.no, (dialog, which) ->
                         ComposeActivity.super.onBackPressed())
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        Preferences.saveDraft(this, mParentId, mEditText.getText().toString());
-                        ComposeActivity.super.onBackPressed();
+                    Preferences.saveDraft(this, mParentId, mEditText.getText().toString());
+                    ComposeActivity.super.onBackPressed();
                 })
                 .show();
     }

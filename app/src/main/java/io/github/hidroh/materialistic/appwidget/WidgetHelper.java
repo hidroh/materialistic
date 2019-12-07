@@ -161,7 +161,6 @@ class WidgetHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             remoteViews.setRemoteAdapter(android.R.id.list, intent);
         } else {
-            //noinspection deprecation
             remoteViews.setRemoteAdapter(appWidgetId, android.R.id.list, intent);
         }
         remoteViews.setEmptyView(android.R.id.list, R.id.empty);

@@ -145,16 +145,16 @@ public class WebFragment extends LazyLoadFragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (isNewInstance()) {
             mFragmentView = inflater.inflate(R.layout.fragment_web, container, false);
-            mFullscreenView = (ViewGroup) mFragmentView.findViewById(R.id.fullscreen);
-            mScrollViewContent = (ViewGroup) mFragmentView.findViewById(R.id.scroll_view_content);
-            mScrollView = (NestedScrollView) mFragmentView.findViewById(R.id.nested_scroll_view);
-            mControls = (ViewSwitcher) mFragmentView.findViewById(R.id.control_switcher);
-            mWebView = (WebView) mFragmentView.findViewById(R.id.web_view);
-            mButtonRefresh = (ImageButton) mFragmentView.findViewById(R.id.button_refresh);
+            mFullscreenView = mFragmentView.findViewById(R.id.fullscreen);
+            mScrollViewContent = mFragmentView.findViewById(R.id.scroll_view_content);
+            mScrollView = mFragmentView.findViewById(R.id.nested_scroll_view);
+            mControls = mFragmentView.findViewById(R.id.control_switcher);
+            mWebView = mFragmentView.findViewById(R.id.web_view);
+            mButtonRefresh = mFragmentView.findViewById(R.id.button_refresh);
             mButtonMore = mFragmentView.findViewById(R.id.button_more);
             mButtonNext = mFragmentView.findViewById(R.id.button_next);
             mButtonNext.setEnabled(false);
-            mEditText = (EditText) mFragmentView.findViewById(R.id.edittext);
+            mEditText = mFragmentView.findViewById(R.id.edittext);
             setUpWebControls(mFragmentView);
             setUpWebView(mFragmentView);
         }
@@ -423,7 +423,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void setUpWebView(View view) {
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
+        mProgressBar = view.findViewById(R.id.progress);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setWebViewClient(new AdBlockWebViewClient(Preferences.adBlockEnabled(getActivity())) {
             @Override
@@ -561,7 +561,6 @@ public class WebFragment extends LazyLoadFragment
             });
             mWebView.findAllAsync(query);
         } else {
-            //noinspection deprecation
             handleFindResults(mWebView.findAll(query));
         }
     }

@@ -67,7 +67,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private View mEmpty;
     private BottomSheetBehavior<View> mBottomSheetBehavior;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,12 +109,12 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                 // no op
             }
         });
-        mTitle = (TextView) findViewById(R.id.title);
+        mTitle = findViewById(R.id.title);
         mTitle.setText(mUsername);
-        mInfo = (TextView) findViewById(R.id.user_info);
-        mAbout = (TextView) findViewById(R.id.about);
+        mInfo = findViewById(R.id.user_info);
+        mAbout = findViewById(R.id.about);
         mEmpty = findViewById(R.id.empty);
-        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout = findViewById(R.id.tab_layout);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -132,7 +131,7 @@ public class UserActivity extends InjectableActivity implements Scrollable {
                 scrollToTop();
             }
         });
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(this, true));
         mRecyclerView.addItemDecoration(new CommentItemDecoration(this));
         mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,

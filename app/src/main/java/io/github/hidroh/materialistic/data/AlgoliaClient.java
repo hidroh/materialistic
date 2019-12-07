@@ -96,7 +96,6 @@ public class AlgoliaClient implements ItemManager {
         Hit[] hits = algoliaHits.hits;
         Item[] stories = new Item[hits == null ? 0 : hits.length];
         for (int i = 0; i < stories.length; i++) {
-            //noinspection ConstantConditions
             HackerNewsItem item = new HackerNewsItem(
                     Long.parseLong(hits[i].objectID));
             item.rank = i + 1;

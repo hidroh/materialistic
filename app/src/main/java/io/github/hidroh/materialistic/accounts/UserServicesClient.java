@@ -18,9 +18,10 @@ package io.github.hidroh.materialistic.accounts;
 
 import android.content.Context;
 import android.net.Uri;
-import androidx.core.util.Pair;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.core.util.Pair;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -140,9 +141,9 @@ public class UserServicesClient implements UserServices {
          */
         // fetch submit page with given credentials
         execute(postSubmitForm(credentials.first, credentials.second))
-                .flatMap(response -> response.code() != HttpURLConnection.HTTP_MOVED_TEMP ?
-                        Observable.just(response) :
-                        Observable.error(new IOException()))
+                .flatMap(response -> response.code() != HttpURLConnection.HTTP_MOVED_TEMP
+                        ? Observable.just(response)
+                        : Observable.error(new IOException()))
                 .flatMap(response -> {
                     try {
                         return Observable.just(new String[]{
@@ -159,16 +160,16 @@ public class UserServicesClient implements UserServices {
                     array[1] = getInputValue(array[1], SUBMIT_PARAM_FNID);
                     return array;
                 })
-                .flatMap(array -> !TextUtils.isEmpty(array[1]) ?
-                        Observable.just(array) :
-                        Observable.error(new IOException()))
+                .flatMap(array -> !TextUtils.isEmpty(array[1])
+                        ? Observable.just(array)
+                        : Observable.error(new IOException()))
                 .flatMap(array -> execute(postSubmit(title, content, isUrl, array[0], array[1])))
-                .flatMap(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP ?
-                        Observable.just(Uri.parse(response.header(HEADER_LOCATION))) :
-                        Observable.error(new IOException()))
-                .flatMap(uri -> TextUtils.equals(uri.getPath(), DEFAULT_SUBMIT_REDIRECT) ?
-                        Observable.just(true) :
-                        Observable.error(buildException(uri)))
+                .flatMap(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP
+                        ? Observable.just(Uri.parse(response.header(HEADER_LOCATION)))
+                        : Observable.error(new IOException()))
+                .flatMap(uri -> TextUtils.equals(uri.getPath(), DEFAULT_SUBMIT_REDIRECT)
+                        ? Observable.just(true)
+                        : Observable.error(buildException(uri)))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(callback::onDone, callback::onError);
     }
@@ -262,17 +263,15 @@ public class UserServicesClient implements UserServices {
     }
 
     private Throwable buildException(Uri uri) {
-        switch (uri.getPath()) {
-            case ITEM_PATH:
-                UserServices.Exception exception = new UserServices.Exception(R.string.item_exist);
-                String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
-                if (!TextUtils.isEmpty(itemId)) {
-                    exception.data = AppUtils.createItemUri(itemId);
-                }
-                return exception;
-            default:
-                return new IOException();
+        if (ITEM_PATH.equals(uri.getPath())) {
+            Exception exception = new Exception(R.string.item_exist);
+            String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
+            if (!TextUtils.isEmpty(itemId)) {
+                exception.data = AppUtils.createItemUri(itemId);
+            }
+            return exception;
         }
+        return new IOException();
     }
 
     private String getInputValue(String html, String name) {

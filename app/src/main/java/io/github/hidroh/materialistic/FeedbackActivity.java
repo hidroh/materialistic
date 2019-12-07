@@ -17,12 +17,12 @@
 package io.github.hidroh.materialistic;
 
 import android.os.Bundle;
-import com.google.android.material.textfield.TextInputLayout;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.lang.ref.WeakReference;
 
@@ -34,20 +34,17 @@ import io.github.hidroh.materialistic.data.FeedbackClient;
 public class FeedbackActivity extends InjectableActivity {
     @Inject FeedbackClient mFeedbackClient;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_feedback);
-        AppUtils.setTextWithLinks((TextView) findViewById(R.id.feedback_note),
+        AppUtils.setTextWithLinks(findViewById(R.id.feedback_note),
                 AppUtils.fromHtml(getString(R.string.feedback_note)));
-        final TextInputLayout titleLayout = (TextInputLayout)
-                findViewById(R.id.textinput_title);
-        final TextInputLayout bodyLayout = (TextInputLayout)
-                findViewById(R.id.textinput_body);
-        final EditText title = (EditText) findViewById(R.id.edittext_title);
-        final EditText body = (EditText) findViewById(R.id.edittext_body);
+        final TextInputLayout titleLayout = findViewById(R.id.textinput_title);
+        final TextInputLayout bodyLayout = findViewById(R.id.textinput_body);
+        final EditText title = findViewById(R.id.edittext_title);
+        final EditText body = findViewById(R.id.edittext_body);
         final View sendButton = findViewById(R.id.feedback_button);
         findViewById(R.id.button_rate).setOnClickListener(v -> {
             AppUtils.openPlayStore(FeedbackActivity.this);
@@ -85,7 +82,6 @@ public class FeedbackActivity extends InjectableActivity {
         if (success) {
             finish();
         } else {
-            //noinspection ConstantConditions
             findViewById(R.id.feedback_button).setEnabled(true);
         }
     }

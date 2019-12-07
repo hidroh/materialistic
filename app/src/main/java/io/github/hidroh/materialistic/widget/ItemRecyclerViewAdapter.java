@@ -20,10 +20,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.os.Build;
-import androidx.annotation.CallSuper;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
@@ -31,6 +27,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -283,11 +283,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
 
         ItemViewHolder(View itemView) {
             super(itemView);
-            mPostedTextView = (TextView) itemView.findViewById(R.id.posted);
+            mPostedTextView = itemView.findViewById(R.id.posted);
             mPostedTextView.setMovementMethod(LinkMovementMethod.getInstance());
-            mContentTextView = (TextView) itemView.findViewById(R.id.text);
-            mReadMoreTextView = (TextView) itemView.findViewById(R.id.more);
-            mCommentButton = (TextView) itemView.findViewById(R.id.comment);
+            mContentTextView = itemView.findViewById(R.id.text);
+            mReadMoreTextView = itemView.findViewById(R.id.more);
+            mCommentButton = itemView.findViewById(R.id.comment);
             mCommentButton.setVisibility(View.GONE);
             mMoreButton = itemView.findViewById(R.id.button_more);
             mContentView = itemView.findViewById(R.id.content);
@@ -309,8 +309,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
         private final Item mPartialItem;
 
         @Synthetic
-        ItemResponseListener(ItemRecyclerViewAdapter adapter, int position,
-                                    Item partialItem) {
+        ItemResponseListener(ItemRecyclerViewAdapter adapter, int position, Item partialItem) {
             mAdapter = new WeakReference<>(adapter);
             mPosition = position;
             mPartialItem = partialItem;

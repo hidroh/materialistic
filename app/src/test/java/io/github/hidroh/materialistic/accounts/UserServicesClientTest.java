@@ -80,7 +80,6 @@ public class UserServicesClientTest {
         UserServices.Callback callback = mock(UserServices.Callback.class);
         userServices.login("username", "password", true, callback);
         verify(callback).onError(throwableCaptor.capture());
-        //noinspection ThrowableResultOfMethodCallIgnored
         assertThat(throwableCaptor.getValue().getMessage()).contains("Message");
     }
 

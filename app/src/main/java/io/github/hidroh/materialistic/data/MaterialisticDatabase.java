@@ -1,8 +1,16 @@
 package io.github.hidroh.materialistic.data;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.BaseColumns;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Database;
@@ -14,15 +22,10 @@ import androidx.room.Query;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.BaseColumns;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.List;
+import java.util.Objects;
 
 @Database(
         entities = {
@@ -132,7 +135,13 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
             ReadStory readStory = (ReadStory) o;
 
             if (id != readStory.id) return false;
-            return itemId != null ? itemId.equals(readStory.itemId) : readStory.itemId == null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                return Objects.equals(itemId, readStory.itemId);
+            } else {
+                return itemId != null
+                        ? itemId.equals(readStory.itemId)
+                        : readStory.itemId == null;
+            }
         }
 
         @Override
@@ -189,9 +198,16 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
             Readable readable = (Readable) o;
 
             if (id != readable.id) return false;
-            if (itemId != null ? !itemId.equals(readable.itemId) : readable.itemId != null)
-                return false;
-            return content != null ? content.equals(readable.content) : readable.content == null;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (!Objects.equals(itemId, readable.itemId)) return false;
+                return Objects.equals(content, readable.content);
+            } else {
+                if (itemId != null ? !itemId.equals(readable.itemId) : readable.itemId != null) {
+                    return false;
+                }
+                return content != null ? content.equals(readable.content) : readable.content == null;
+            }
         }
 
         @Override

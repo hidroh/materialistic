@@ -19,11 +19,6 @@ package io.github.hidroh.materialistic;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +26,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.SearchView;
 
 import javax.inject.Inject;
 
@@ -68,14 +68,17 @@ public class FavoriteFragment extends BaseListFragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         mEmptySearchView = view.findViewById(R.id.empty_search);
         mEmptyView = view.findViewById(R.id.empty);
         mEmptyView.findViewById(R.id.header_card_view)
                 .setOnLongClickListener(v -> {
                     View bookmark = mEmptyView.findViewById(R.id.bookmarked);
-                    bookmark.setVisibility(bookmark.getVisibility() == View.VISIBLE ?
-                                    View.INVISIBLE : View.VISIBLE);
+                    bookmark.setVisibility(
+                            bookmark.getVisibility() == View.VISIBLE
+                                    ? View.INVISIBLE
+                                    : View.VISIBLE
+                    );
                     return true;
                 });
         mEmptyView.setVisibility(View.INVISIBLE);
@@ -149,6 +152,7 @@ public class FavoriteFragment extends BaseListFragment
 
     /**
      * Filters list data by given query
+     *
      * @param query query used to filter data
      */
     public void filter(String query) {

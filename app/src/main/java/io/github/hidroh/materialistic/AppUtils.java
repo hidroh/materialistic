@@ -54,12 +54,6 @@ import android.webkit.WebSettings;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
@@ -71,6 +65,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.core.view.GravityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.hidroh.materialistic.annotation.PublicApi;
 import io.github.hidroh.materialistic.data.HackerNewsClient;
 import io.github.hidroh.materialistic.data.Item;
@@ -94,8 +95,12 @@ public class AppUtils {
     private static final String HOST_ITEM = "item";
     private static final String HOST_USER = "user";
 
-    public static void openWebUrlExternal(Context context, @Nullable WebItem item,
-                                          String url, @Nullable CustomTabsSession session) {
+    public static void openWebUrlExternal(
+            Context context,
+            @Nullable WebItem item,
+            String url,
+            @Nullable CustomTabsSession session
+    ) {
         if (!hasConnection(context)) {
             context.startActivity(new Intent(context, OfflineWebActivity.class)
                     .putExtra(OfflineWebActivity.EXTRA_URL, url));
@@ -110,24 +115,29 @@ public class AppUtils {
         }
         List<ResolveInfo> activities = context.getPackageManager()
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
         ArrayList<Intent> intents = new ArrayList<>();
+
         for (ResolveInfo info : activities) {
             if (info.activityInfo.packageName.equalsIgnoreCase(context.getPackageName())) {
                 continue;
             }
-            intents.add(createViewIntent(context, item, url, session)
-                    .setPackage(info.activityInfo.packageName));
+            intents.add(
+                    createViewIntent(context, item, url, session)
+                            .setPackage(info.activityInfo.packageName)
+            );
         }
         if (intents.isEmpty()) {
             return;
         }
-        if (intents.size() == 1) {
+        final int size = intents.size();
+        if (size == 1) {
             context.startActivity(intents.remove(0));
         } else {
             context.startActivity(Intent.createChooser(intents.remove(0),
                     context.getString(R.string.chooser_title))
                     .putExtra(Intent.EXTRA_INITIAL_INTENTS,
-                            intents.toArray(new Parcelable[intents.size()])));
+                            intents.toArray(new Parcelable[size])));
         }
     }
 
@@ -191,7 +201,6 @@ public class AppUtils {
             spanned = Html.fromHtml(htmlText, compact ?
                     Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY);
         } else {
-            //noinspection deprecation
             spanned = Html.fromHtml(htmlText);
         }
         return trim(spanned);
@@ -202,16 +211,22 @@ public class AppUtils {
         // share receivers that accept only EXTRA_TEXT but not EXTRA_STREAM
         return Intent.createChooser(new Intent(Intent.ACTION_SEND_MULTIPLE)
                         .setType("text/plain")
-                        .putParcelableArrayListExtra(Intent.EXTRA_STREAM,
-                                new ArrayList<Uri>(){{add(data);}}),
+                        .putParcelableArrayListExtra(
+                                Intent.EXTRA_STREAM,
+                                new ArrayList<Uri>() {{
+                                    add(data);
+                                }}
+                        ),
                 context.getString(R.string.share_file));
     }
 
-    public static void openExternal(@NonNull final Context context,
-                             @NonNull PopupMenu popupMenu,
-                             @NonNull View anchor,
-                             @NonNull final WebItem item,
-                             final CustomTabsSession session) {
+    public static void openExternal(
+            @NonNull final Context context,
+            @NonNull PopupMenu popupMenu,
+            @NonNull View anchor,
+            @NonNull final WebItem item,
+            final CustomTabsSession session
+    ) {
         if (TextUtils.isEmpty(item.getUrl()) ||
                 item.getUrl().startsWith(HackerNewsClient.BASE_WEB_URL)) {
             openWebUrlExternal(context,
@@ -273,7 +288,7 @@ public class AppUtils {
 
     public static int getDimensionInDp(Context context, @DimenRes int dimenResId) {
         return (int) (context.getResources().getDimension(dimenResId) /
-                        context.getResources().getDisplayMetrics().density);
+                context.getResources().getDisplayMetrics().density);
     }
 
     public static void restart(Activity activity, boolean transition) {
@@ -332,7 +347,8 @@ public class AppUtils {
      * If no accounts exist in user's device, regardless of login status, prompt to login again
      * If 1 or more accounts in user's device, and already logged in, prompt to update password
      * If 1 or more accounts in user's device, and logged out, show account chooser
-     * @param context activity context
+     *
+     * @param context            activity context
      * @param alertDialogBuilder dialog builder
      */
     @SuppressLint("MissingPermission")
@@ -363,7 +379,6 @@ public class AppUtils {
         }, null, true);
     }
 
-    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void openPlayStore(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
@@ -382,8 +397,11 @@ public class AppUtils {
     }
 
     @SuppressLint("MissingPermission")
-    public static void showAccountChooser(final Context context, AlertDialogBuilder alertDialogBuilder,
-                                           Account[] accounts) {
+    public static void showAccountChooser(
+            final Context context,
+            AlertDialogBuilder alertDialogBuilder,
+            Account[] accounts
+    ) {
         String username = Preferences.getUsername(context);
         final String[] items = new String[accounts.length];
         int checked = -1;
@@ -422,7 +440,6 @@ public class AppUtils {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                             AccountManager.get(context).removeAccount(accounts[selection], null, null, null);
                         } else {
-                            //noinspection deprecation
                             AccountManager.get(context).removeAccount(accounts[selection], null, null);
                         }
                         dialog.dismiss();
@@ -532,6 +549,7 @@ public class AppUtils {
             context.startActivity(intent);
         }
     }
+
     public static Uri createItemUri(@NonNull String itemId) {
         return new Uri.Builder()
                 .scheme(BuildConfig.APPLICATION_ID)
@@ -628,7 +646,6 @@ public class AppUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             textView.setTextAppearance(textAppearance);
         } else {
-            //noinspection deprecation
             textView.setTextAppearance(textView.getContext(), textAppearance);
         }
     }

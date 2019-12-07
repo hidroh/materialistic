@@ -22,7 +22,7 @@ public class HackerNewsItemTest {
 
     @Before
     public void setUp() {
-        item = new HackerNewsItem(1l);
+        item = new HackerNewsItem(1L);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class HackerNewsItemTest {
 
             @Override
             public long[] getKids() {
-                return new long[]{1l};
+                return new long[]{1L};
             }
 
             @Override
@@ -88,7 +88,7 @@ public class HackerNewsItemTest {
 
             @Override
             public long getTime() {
-                return 1234l;
+                return 1234L;
             }
 
             @Override
@@ -210,7 +210,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long getTime() {
-                return 1429027200l; // Apr 15 2015
+                return 1429027200L; // Apr 15 2015
             }
 
             @Override
@@ -303,7 +303,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
-                return new long[]{1l, 2l};
+                return new long[]{1L, 2L};
             }
         });
         assertEquals(2, item.getKidCount());
@@ -365,7 +365,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
-                return new long[]{1l, 2l};
+                return new long[]{1L, 2L};
             }
         });
         assertThat(item.getKidItems()).hasSize(2);
@@ -429,8 +429,8 @@ public class HackerNewsItemTest {
     public void testEquals() {
         assertFalse(item.equals(null));
         assertFalse(item.equals(new TestItem(){}));
-        assertFalse(item.equals(new HackerNewsItem(2l)));
-        assertTrue(item.equals(item));
-        assertTrue(item.equals(new HackerNewsItem(1l)));
+        assertFalse(item.equals(new HackerNewsItem(2L)));
+        assertEquals(item, item);
+        assertTrue(item.equals(new HackerNewsItem(1L)));
     }
 }

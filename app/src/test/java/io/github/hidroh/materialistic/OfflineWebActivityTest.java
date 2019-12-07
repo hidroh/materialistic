@@ -38,7 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(shadows = ShadowNestedScrollView.class)
-@SuppressWarnings("ConstantConditions")
 @RunWith(TestRunner.class)
 public class OfflineWebActivityTest {
     private ActivityController<OfflineWebActivity> controller;
