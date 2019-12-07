@@ -110,7 +110,6 @@ public class WebView extends android.webkit.WebView {
         }
 
         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-        @SuppressWarnings("deprecation")
         @Override
         public WebResourceResponse shouldInterceptRequest(android.webkit.WebView view, String url) {
             return mClient != null ? mClient.shouldInterceptRequest(view, url) :

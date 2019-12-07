@@ -348,7 +348,6 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         });
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void bindData(@Nullable final WebItem story) {
         if (story == null) {
             return;

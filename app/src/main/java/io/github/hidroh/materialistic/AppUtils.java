@@ -191,7 +191,6 @@ public class AppUtils {
             spanned = Html.fromHtml(htmlText, compact ?
                     Html.FROM_HTML_MODE_COMPACT : Html.FROM_HTML_MODE_LEGACY);
         } else {
-            //noinspection deprecation
             spanned = Html.fromHtml(htmlText);
         }
         return trim(spanned);
@@ -363,7 +362,6 @@ public class AppUtils {
         }, null, true);
     }
 
-    @SuppressWarnings("deprecation")
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void openPlayStore(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
@@ -422,7 +420,6 @@ public class AppUtils {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                             AccountManager.get(context).removeAccount(accounts[selection], null, null, null);
                         } else {
-                            //noinspection deprecation
                             AccountManager.get(context).removeAccount(accounts[selection], null, null);
                         }
                         dialog.dismiss();
@@ -628,7 +625,6 @@ public class AppUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             textView.setTextAppearance(textAppearance);
         } else {
-            //noinspection deprecation
             textView.setTextAppearance(textView.getContext(), textAppearance);
         }
     }

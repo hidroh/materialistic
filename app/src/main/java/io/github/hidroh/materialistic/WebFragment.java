@@ -561,7 +561,6 @@ public class WebFragment extends LazyLoadFragment
             });
             mWebView.findAllAsync(query);
         } else {
-            //noinspection deprecation
             handleFindResults(mWebView.findAll(query));
         }
     }

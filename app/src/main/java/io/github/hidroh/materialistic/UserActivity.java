@@ -67,7 +67,6 @@ public class UserActivity extends InjectableActivity implements Scrollable {
     private View mEmpty;
     private BottomSheetBehavior<View> mBottomSheetBehavior;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

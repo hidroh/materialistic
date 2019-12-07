@@ -31,7 +31,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("ConstantConditions")
 @SuppressLint("SetTextI18n")
 @RunWith(TestRunner.class)
 public class FeedbackActivityTest {

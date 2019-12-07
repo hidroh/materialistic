@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportDrawerLayout.class})
 @RunWith(TestRunner.class)
 public class DrawerActivityLoginTest {
