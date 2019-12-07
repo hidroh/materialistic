@@ -17,10 +17,12 @@
 package io.github.hidroh.materialistic
 
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.appcompat.app.ActionBar
+import androidx.core.content.pm.PackageInfoCompat
 
 class AboutActivity : InjectableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +36,13 @@ class AboutActivity : InjectableActivity() {
         var versionName = ""
         var versionCode = 0
         try {
-            versionName = packageManager.getPackageInfo(packageName, 0).versionName
-            versionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            versionName = packageInfo.versionName
+            versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                packageInfo.longVersionCode.toInt()
+            } else {
+                PackageInfoCompat.getLongVersionCode(packageInfo).toInt()
+            }
         } catch (e: PackageManager.NameNotFoundException) {
             // do nothing
         }
