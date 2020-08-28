@@ -24,11 +24,11 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import io.github.hidroh.materialistic.AppUtils
-import okhttp3.internal.Util
+import okhttp3.internal.closeQuietly
 import java.io.Closeable
 import java.io.File
 
-inline fun Closeable.closeQuietly() = Util.closeQuietly(this)
+inline fun Closeable.closeQuietly() = this.closeQuietly()
 
 inline fun File.getUri(context: Context, authority: String) =
     FileProvider.getUriForFile(context, authority, this)!!
