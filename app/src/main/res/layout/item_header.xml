@@ -15,41 +15,40 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/header_card_view"
-    android:paddingTop="@dimen/margin"
-    android:paddingBottom="@dimen/margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingVertical="@dimen/margin"
+    android:paddingHorizontal="@dimen/activity_horizontal_margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:background="?attr/colorPrimary">
+
     <io.github.hidroh.materialistic.widget.TextView
         android:id="@android:id/text2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="@string/loading_text"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         android:maxLines="@integer/header_max_lines"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:textSize="?attr/titleTextSize"
         android:ellipsize="end"
-        android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/meta_container"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:layout_below="@android:id/text2"
-        android:layout_toLeftOf="@+id/action_container"
-        android:layout_toStartOf="@+id/action_container"
-        android:layout_alignTop="@id/action_container"
-        android:layout_alignBottom="@id/action_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/source_time_buttons_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@android:id/text2">
 
         <TextView
             android:id="@id/source"
@@ -62,7 +61,12 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="?attr/subtitleTextSize"
-            android:textStyle="italic" />
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/vote_button"
+            app:layout_constraintBottom_toTopOf="@id/posted"
+            app:layout_constraintVertical_chainStyle="packed"/>
 
         <TextView
             android:id="@id/posted"
@@ -73,18 +77,12 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             android:textSize="?attr/subtitleTextSize"
-            android:textColor="?android:attr/textColorPrimary"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@id/action_container"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_below="@android:id/text2"
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+            android:textColor="?android:attr/textColorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/source"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/vote_button"
+            app:layout_constraintVertical_chainStyle="packed"/>
 
         <io.github.hidroh.materialistic.widget.IconButton
             android:id="@+id/vote_button"
@@ -93,9 +91,12 @@
             android:visibility="invisible"
             android:src="@drawable/ic_thumb_up_white_24dp"
             android:padding="@dimen/padding"
-            android:layout_margin="@dimen/margin"
+            android:layout_marginHorizontal="@dimen/margin"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bookmarked"/>
 
         <io.github.hidroh.materialistic.widget.IconButton
             android:id="@id/bookmarked"
@@ -104,30 +105,28 @@
             tools:visibility="visible"
             android:src="@drawable/ic_bookmark_border_white_24dp"
             android:padding="@dimen/padding"
-            android:layout_margin="@dimen/margin"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <io.github.hidroh.materialistic.widget.TintableTextView
         android:id="@+id/button_article"
         android:text="@string/article"
-        android:layout_below="@id/meta_container"
         app:iconEnd="@drawable/ic_open_in_browser_white_24dp"
         android:gravity="center_vertical"
         android:drawablePadding="@dimen/padding"
         android:background="?attr/selectableItemBackground"
-        android:paddingLeft="24dp"
-        android:paddingStart="24dp"
-        android:paddingRight="24dp"
-        android:paddingEnd="24dp"
-        android:layout_alignRight="@+id/action_container"
-        android:layout_alignEnd="@+id/action_container"
+        android:padding="@dimen/padding"
         android:visibility="gone"
         tools:visibility="visible"
         app:textAllCaps="true"
         android:layout_width="wrap_content"
-        android:layout_height="?attr/listPreferredItemHeightSmall" />
+        android:layout_height="?attr/listPreferredItemHeightSmall"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/source_time_buttons_container" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

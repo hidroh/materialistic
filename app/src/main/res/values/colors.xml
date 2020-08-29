@@ -64,4 +64,6 @@
 
     <color name="cardDarkBackground">#FF424242</color>
 
+    <color name="status_bar_background">#52000000</color>
+
 </resources>

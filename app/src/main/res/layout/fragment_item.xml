@@ -31,7 +31,8 @@
             android:id="@id/recycler_view"
             android:scrollbars="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
 
         <include layout="@layout/empty_item"
                  android:layout_height="match_parent"

@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 79
         versionName "3.3"
@@ -64,6 +64,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0',
             'androidx.recyclerview:recyclerview:1.1.0',
             'androidx.cardview:cardview:1.0.0',
+            'androidx.constraintlayout:constraintlayout:2.0.0',
             'com.google.android.material:material:1.2.0',
             'androidx.preference:preference:1.1.1',
             'androidx.browser:browser:1.2.0',

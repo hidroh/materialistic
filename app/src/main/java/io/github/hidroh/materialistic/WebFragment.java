@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -157,6 +158,10 @@ public class WebFragment extends LazyLoadFragment
             mEditText = (EditText) mFragmentView.findViewById(R.id.edittext);
             setUpWebControls(mFragmentView);
             setUpWebView(mFragmentView);
+            mScrollViewContent.setOnApplyWindowInsetsListener((View.OnApplyWindowInsetsListener) (view, windowInsets) -> {
+                mScrollViewContent.setPadding(0, 0, 0, windowInsets.getSystemWindowInsetBottom());
+                return windowInsets;
+            });
         }
         return mFragmentView;
     }

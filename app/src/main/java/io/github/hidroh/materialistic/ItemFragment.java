@@ -116,6 +116,10 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
             mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), true));
             mItemDecoration = new CommentItemDecoration(getActivity());
             mRecyclerView.addItemDecoration(mItemDecoration);
+            mRecyclerView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+                view.setPadding(0, 0, 0, windowInsets.getSystemWindowInsetBottom());
+                return windowInsets;
+            });
             mSwipeRefreshLayout = (SwipeRefreshLayout) mFragmentView.findViewById(R.id.swipe_layout);
             mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
             mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);

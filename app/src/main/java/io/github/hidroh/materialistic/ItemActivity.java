@@ -16,11 +16,15 @@
 
 package io.github.hidroh.materialistic;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.Observer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,6 +71,10 @@ import io.github.hidroh.materialistic.widget.NavFloatingActionButton;
 import io.github.hidroh.materialistic.widget.PopupMenu;
 import io.github.hidroh.materialistic.widget.ViewPager;
 
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
 public class ItemActivity extends InjectableActivity implements ItemFragment.ItemChangedListener {
 
     public static final String EXTRA_ITEM = ItemActivity.class.getName() + ".EXTRA_ITEM";
@@ -91,12 +99,15 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
     @Inject KeyDelegate mKeyDelegate;
     private TabLayout mTabLayout;
     @Synthetic AppBarLayout mAppBar;
+    @Synthetic Toolbar mToolbar;
+    @Synthetic ConstraintLayout mHeaderCardView;
     @Synthetic CoordinatorLayout mCoordinatorLayout;
     private ImageButton mVoteButton;
     private FloatingActionButton mReplyButton;
     private NavFloatingActionButton mNavButton;
     private ItemPagerAdapter mAdapter;
     private ViewPager mViewPager;
+    private AppBarLayout.OnOffsetChangedListener mAppBarOffsetChangedListener = null;
     @Synthetic boolean mFullscreen;
     private final Observer<Uri> mObserver = uri -> {
         if (mItem == null) {
@@ -152,6 +163,8 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         mBookmark = findViewById(R.id.bookmarked);
         mCoordinatorLayout = findViewById(R.id.content_frame);
         mAppBar = findViewById(R.id.appbar);
+        mToolbar = findViewById(R.id.toolbar);
+        mHeaderCardView = findViewById(R.id.header_card_view);
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
         AppUtils.toggleFab(mNavButton, false);
@@ -185,6 +198,43 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
         if (!AppUtils.hasConnection(this)) {
             Snackbar.make(mCoordinatorLayout, R.string.offline_notice, Snackbar.LENGTH_LONG).show();
         }
+
+        // Setup transparent status/navigation bar
+        mCoordinatorLayout.setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_STABLE | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        getWindow().setStatusBarColor(ResourcesCompat.getColor(getResources(), R.color.status_bar_background, null));
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        mToolbar.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            mToolbar.setPadding(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
+
+            AppBarLayout.LayoutParams tabLayoutParams = (AppBarLayout.LayoutParams) mTabLayout.getLayoutParams();
+            tabLayoutParams.topMargin = windowInsets.getSystemWindowInsetTop();
+            mTabLayout.setLayoutParams(tabLayoutParams);
+
+            AppBarLayout.LayoutParams headerCardViewParams = (AppBarLayout.LayoutParams) mHeaderCardView.getLayoutParams();
+            headerCardViewParams.bottomMargin = -windowInsets.getSystemWindowInsetTop();
+            mHeaderCardView.setLayoutParams(headerCardViewParams);
+
+            int fabMargin = getResources().getDimensionPixelSize(R.dimen.fab_margin);
+            CoordinatorLayout.LayoutParams fabLayoutParams = (CoordinatorLayout.LayoutParams) mReplyButton.getLayoutParams();
+            fabLayoutParams.bottomMargin = fabMargin + windowInsets.getSystemWindowInsetBottom();
+            mReplyButton.setLayoutParams(fabLayoutParams);
+            fabLayoutParams = (CoordinatorLayout.LayoutParams) mNavButton.getLayoutParams();
+            fabLayoutParams.bottomMargin = fabMargin + windowInsets.getSystemWindowInsetBottom();
+            mNavButton.setLayoutParams(fabLayoutParams);
+
+            if (mAppBarOffsetChangedListener != null) {
+                mAppBar.removeOnOffsetChangedListener(mAppBarOffsetChangedListener);
+                mAppBarOffsetChangedListener = null;
+            }
+            mAppBarOffsetChangedListener = (appBarLayout, verticalOffset) -> {
+                int scrollRange = appBarLayout.getTotalScrollRange() - windowInsets.getSystemWindowInsetTop() - mTabLayout.getHeight();
+                float alpha = Math.max(1.0f - Math.abs(verticalOffset / (float) scrollRange), 0.0f);
+                mToolbar.setAlpha(alpha);
+                mHeaderCardView.setAlpha(alpha);
+            };
+            mAppBar.addOnOffsetChangedListener(mAppBarOffsetChangedListener);
+            return windowInsets;
+        });
     }
 
     @Override
