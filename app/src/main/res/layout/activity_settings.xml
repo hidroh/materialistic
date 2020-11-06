@@ -91,6 +91,17 @@
                 android:layout_height="@dimen/divider" />
 
             <io.github.hidroh.materialistic.widget.TintableTextView
+                android:id="@id/menu_proxy"
+                android:text="@string/title_activity_proxy"
+                app:iconStart="@drawable/ic_baseline_language_24"
+                style="@style/DrawerTextStyle"/>
+
+            <View
+                android:background="@color/blackT12"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider" />
+
+            <io.github.hidroh.materialistic.widget.TintableTextView
                 android:id="@id/drawer_about"
                 android:text="@string/title_activity_about"
                 app:iconStart="@drawable/ic_info_white_24dp"

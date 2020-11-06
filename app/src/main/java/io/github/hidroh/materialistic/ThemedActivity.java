@@ -40,6 +40,11 @@ public abstract class ThemedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTaskTitle(getTitle());
         mMenuTintDelegate.onActivityCreated(this);
+
+        // Maybe not the right place to do this but this needs to run
+        // after the app starts and ThemedActivity is a common base
+        // class for activities
+        DelegatingProxy.updateFromPreferences(this);
     }
 
     @Override

@@ -23,6 +23,7 @@
     <string name="title_activity_best">Best Stories</string>
     <string name="title_activity_item">Comments</string>
     <string name="title_activity_release">What\'s New</string>
+    <string name="title_activity_proxy">Proxy</string>
     <string name="filter_title_item">Materialistic</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
@@ -110,6 +111,13 @@
     <string name="pref_smooth_scroll_summary">Disable to improve scroll accuracy</string>
     <string name="pref_list_swipe_left_title">Swipe left to</string>
     <string name="pref_list_swipe_right_title">Swipe right to</string>
+    <string name="pref_proxy_enabled_title">Use proxy</string>
+    <string name="pref_proxy_enabled_summary">Use a proxy server for all network requests not made via an external browser</string>
+    <string name="pref_proxy_protocol_title">Proxy protocol</string>
+    <string name="pref_proxy_protocol_socks">SOCKS</string>
+    <string name="pref_proxy_protocol_http">HTTP</string>
+    <string name="pref_proxy_host_title">Proxy server host</string>
+    <string name="pref_proxy_port_title">Proxy server port</string>
 
     <string name="connection_error">Unable to connect to Hacker News. Check your connection or try again.</string>
     <string name="select_story">Select a story to view</string>
@@ -321,5 +329,6 @@
     <string name="share_file">Share file</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="notification_channel_downloads">Downloads</string>
+    <string name="proxy">Proxy</string>
 
 </resources>
