@@ -23,6 +23,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import java.net.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -304,11 +305,37 @@ public class Preferences {
         return new SwipeAction[]{parseSwipeAction(left), parseSwipeAction(right)};
     }
 
+    public static Proxy getProxy(Context context) {
+        boolean isEnabled = get(context, R.string.pref_proxy_enabled, false);
+        if (!isEnabled)
+            return Proxy.NO_PROXY;
+        Proxy.Type type = getProxyType(context);
+        String host = get(context, R.string.pref_proxy_host, R.string.pref_proxy_host_default);
+        int port = Integer.parseInt(get(context, R.string.pref_proxy_port, R.string.pref_proxy_port_default));
+        try {
+            return new Proxy(type, new InetSocketAddress(InetAddress.getByName(host), port));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return Proxy.NO_PROXY;
+        }
+    }
+
     public static void reset(Context context) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .clear()
                 .apply();
+    }
+
+    private static Proxy.Type getProxyType(Context context) {
+        String protocolStr = get(context, R.string.pref_proxy_protocol, R.string.pref_proxy_protocol_socks);
+        if (context.getResources().getString(R.string.pref_proxy_protocol_value_socks).equals(protocolStr)) {
+            return Proxy.Type.SOCKS;
+        } else if (context.getResources().getString(R.string.pref_proxy_protocol_value_http).equals(protocolStr)) {
+            return Proxy.Type.HTTP;
+        } else {
+            throw new IllegalArgumentException("Invalid proxy protocol: " + protocolStr);
+        }
     }
 
     private static SwipeAction parseSwipeAction(String value) {

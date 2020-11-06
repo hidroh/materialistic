@@ -24,7 +24,8 @@ import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
-import okhttp3.Call;
+import io.github.hidroh.materialistic.*;
+import okhttp3.*;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -72,6 +73,10 @@ public interface RestServiceFactory {
             builder.callFactory(mCallFactory)
                     .callbackExecutor(callbackExecutor != null ?
                             callbackExecutor : new MainThreadExecutor());
+            OkHttpClient httpClient = new OkHttpClient.Builder()
+                    .proxy(new DelegatingProxy())
+                    .build();
+            builder.client(httpClient);
             return builder.baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()

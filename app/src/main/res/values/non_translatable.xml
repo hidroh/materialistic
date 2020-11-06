@@ -95,5 +95,7 @@
         ]]>
     </string>
     <string name="fab_scrolling_view_behavior" translatable="false">io.github.hidroh.materialistic.FabAwareScrollBehavior</string>
+    <string name="pref_proxy_host_default" translatable="false">127.0.0.1</string>
+    <string name="pref_proxy_port_default" translatable="false">9050</string>
 
 </resources>

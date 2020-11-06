@@ -66,4 +66,9 @@
     <string translatable="false" name="pref_username">pref_username</string>
     <string translatable="false" name="pref_volume">pref_volume</string>
     <string translatable="false" name="pref_volume_help">pref_volume_help</string>
+    <string translatable="false" name="pref_proxy">pref_proxy</string>
+    <string translatable="false" name="pref_proxy_enabled">pref_proxy_enabled</string>
+    <string translatable="false" name="pref_proxy_protocol">pref_proxy_protocol</string>
+    <string translatable="false" name="pref_proxy_host">pref_proxy_host</string>
+    <string translatable="false" name="pref_proxy_port">pref_proxy_port</string>
 </resources>

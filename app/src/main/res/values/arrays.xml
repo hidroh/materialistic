@@ -78,6 +78,18 @@
     <string name="pref_story_display_value_article" translatable="false">article</string>
     <string name="pref_story_display_value_readability" translatable="false">readability</string>
 
+    <!-- Proxy -->
+    <string-array name="pref_proxy_protocol_options">
+        <item>@string/pref_proxy_protocol_socks</item>
+        <item>@string/pref_proxy_protocol_http</item>
+    </string-array>
+    <string-array name="pref_proxy_protocol_values">
+        <item>@string/pref_proxy_protocol_value_socks</item>
+        <item>@string/pref_proxy_protocol_value_http</item>
+    </string-array>
+    <string name="pref_proxy_protocol_value_socks" translatable="false">socks</string>
+    <string name="pref_proxy_protocol_value_http" translatable="false">http</string>
+
     <!-- Comment max lines -->
     <string-array name="comment_max_lines_options">
         <item>@string/comment_max_lines_3</item>
