@@ -442,7 +442,7 @@ public class StoryRecyclerViewAdapter extends
                         story.isFavorite() ? R.string.unsave : R.string.save)
                 .setMenuItemVisible(R.id.menu_contextual_save,
                         !mCallback.hasAction(Preferences.SwipeAction.Save))
-                .setMenuItemVisible(R.id.menu_contextual_vote,
+                .setMenuItemVisible(R.id.menu_contextual_vote_up,
                         !mCallback.hasAction(Preferences.SwipeAction.Vote))
                 .setMenuItemVisible(R.id.menu_contextual_refresh,
                         !mCallback.hasAction(Preferences.SwipeAction.Refresh))
@@ -451,7 +451,7 @@ public class StoryRecyclerViewAdapter extends
                         toggleSave(story);
                         return true;
                     }
-                    if (item.getItemId() == R.id.menu_contextual_vote) {
+                    if (item.getItemId() == R.id.menu_contextual_vote_up) {
                         vote(story, holder);
                         return true;
                     }
