@@ -302,7 +302,7 @@ public class FavoriteActivityTest {
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
-                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote_up));
         verify(userServices).voteUp(any(Context.class), any(), userServicesCallback.capture());
         userServicesCallback.getValue().onDone(true);
         assertEquals(activity.getString(R.string.voted), ShadowToast.getTextOfLatestToast());
@@ -315,7 +315,7 @@ public class FavoriteActivityTest {
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
-                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote_up));
         verify(userServices).voteUp(any(Context.class), any(), userServicesCallback.capture());
         userServicesCallback.getValue().onDone(false);
         assertThat(shadowOf(activity).getNextStartedActivity())
@@ -329,7 +329,7 @@ public class FavoriteActivityTest {
         PopupMenu popupMenu = ShadowPopupMenu.getLatestPopupMenu();
         Assert.assertNotNull(popupMenu);
         shadowOf(popupMenu).getOnMenuItemClickListener()
-                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote));
+                .onMenuItemClick(new RoboMenuItem(R.id.menu_contextual_vote_up));
         verify(userServices).voteUp(any(Context.class), any(), userServicesCallback.capture());
         userServicesCallback.getValue().onError(new IOException());
         assertEquals(activity.getString(R.string.vote_failed), ShadowToast.getTextOfLatestToast());

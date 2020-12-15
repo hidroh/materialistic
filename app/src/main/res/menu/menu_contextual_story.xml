@@ -20,7 +20,7 @@
         android:id="@id/menu_contextual_save"
         android:title="@string/save" />
     <item
-        android:id="@id/menu_contextual_vote"
+        android:id="@id/menu_contextual_vote_up"
         android:title="@string/vote_up" />
     <item
         android:id="@id/menu_contextual_refresh"

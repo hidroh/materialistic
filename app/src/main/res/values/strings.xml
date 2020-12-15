@@ -238,6 +238,7 @@
     <string name="unsave">Unsave</string>
     <string name="re_enter_password">Re-enter your password</string>
     <string name="vote_up">Vote up</string>
+    <string name="vote_down">Vote down</string>
     <string name="voted">Successfully voted</string>
     <string name="vote_failed">Fail to record vote. Please try again.</string>
     <string name="sending" tools:ignore="TypographyEllipsis">Sending...</string>

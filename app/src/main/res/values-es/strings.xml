@@ -191,6 +191,7 @@
     <string name="unsave">Quitar de guardados</string>
     <string name="re_enter_password">Vuelve a escribir tu contraseña</string>
     <string name="vote_up">Votar arriba</string>
+    <string name="vote_down">Votar abajo</string>
     <string name="voted">Votada correctamente</string>
     <string name="vote_failed">Ha sido imposible contabilizar tu voto. Intentalo de nuevo por favor.</string>
     <string name="sending">Enviando…</string>
