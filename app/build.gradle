@@ -66,7 +66,7 @@ ext {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0',
-            'androidx.recyclerview:recyclerview:1.0.0',
+            'androidx.recyclerview:recyclerview:1.1.0',
             'androidx.cardview:cardview:1.0.0',
             'com.google.android.material:material:1.0.0',
             'androidx.preference:preference:1.0.0',
