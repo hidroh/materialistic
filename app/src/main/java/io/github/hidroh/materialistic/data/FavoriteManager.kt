@@ -29,11 +29,12 @@ import androidx.core.app.NotificationManagerCompat
 import io.github.hidroh.materialistic.DataModule
 import io.github.hidroh.materialistic.FavoriteActivity
 import io.github.hidroh.materialistic.R
-import io.github.hidroh.materialistic.ktx.closeQuietly
 import io.github.hidroh.materialistic.ktx.getUri
 import io.github.hidroh.materialistic.ktx.setChannel
 import io.github.hidroh.materialistic.ktx.toSendIntentChooser
-import okio.Okio
+import okhttp3.internal.closeQuietly
+import okio.buffer
+import okio.sink
 import rx.Observable
 import rx.Scheduler
 import rx.android.schedulers.AndroidSchedulers
@@ -205,7 +206,7 @@ class FavoriteManager @Inject constructor(
     if (!dir.exists() && !dir.mkdir()) return null
     val file = File(dir, FILENAME_EXPORT)
     if (!file.exists() && !file.createNewFile()) return null
-    val bufferedSink = Okio.buffer(Okio.sink(file))
+    val bufferedSink = file.sink().buffer()
     with(bufferedSink) {
       do {
         val item = cursor.favorite
