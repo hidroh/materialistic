@@ -81,7 +81,7 @@ dependencies {
             "io.reactivex:rxjava:1.3.8",
             'androidx.room:room-runtime:2.0.0',
             'androidx.lifecycle:lifecycle-extensions:2.0.0',
-            'androidx.lifecycle:lifecycle-common-java8:2.0.0',
+            'androidx.lifecycle:lifecycle-common-java8:2.3.0',
             "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
