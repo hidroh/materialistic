@@ -131,7 +131,7 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MaterialisticDatabase.getInstance(getContext()).getLiveData().observe(this, mObserver);
+        MaterialisticDatabase.getInstance(getContext()).getLiveData().observe(getViewLifecycleOwner(), mObserver);
         String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
         ItemManager itemManager;
         if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
@@ -175,7 +175,7 @@ public class ListFragment extends BaseListFragment {
         });
         mStoryListViewModel = ViewModelProviders.of(this).get(StoryListViewModel.class);
         mStoryListViewModel.inject(itemManager, mIoThreadScheduler);
-        mStoryListViewModel.getStories(mFilter, mCacheMode).observe(this, itemLists -> {
+        mStoryListViewModel.getStories(mFilter, mCacheMode).observe(getViewLifecycleOwner(), itemLists -> {
             if (itemLists == null) {
                 return;
             }
