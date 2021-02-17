@@ -22,6 +22,8 @@ android:
   licenses:
     - 'android-sdk-license-.+'
 before_install:
+  - yes | sdkmanager "platforms;android-28" # https://github.com/travis-ci/travis-ci/issues/8874
+  - yes | sdkmanager "platforms;android-29" # https://github.com/travis-ci/travis-ci/issues/8874
   - yes | sdkmanager "platforms;android-30" # https://github.com/travis-ci/travis-ci/issues/8874
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock

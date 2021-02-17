@@ -432,25 +432,20 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
-        switch (key) {
-            case R.string.pref_external:
-                mExternalBrowser = Preferences.externalBrowserEnabled(this);
-                break;
-            case R.string.pref_story_display:
-                mStoryViewMode = Preferences.getDefaultStoryView(this);
-                break;
-            case R.string.pref_navigation:
-                boolean enabled = Preferences.navigationEnabled(this);
-                if (!enabled) {
-                    NavFloatingActionButton.resetPosition(this);
-                }
-                if (mNavButton != null) {
-                    AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 && enabled);
-                }
-                break;
-            case R.string.pref_multi_window:
-                mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
-                break;
+        if (key == R.string.pref_external) {
+            mExternalBrowser = Preferences.externalBrowserEnabled(this);
+        } else if (key == R.string.pref_story_display) {
+            mStoryViewMode = Preferences.getDefaultStoryView(this);
+        } else if (key == R.string.pref_navigation) {
+            boolean enabled = Preferences.navigationEnabled(this);
+            if (!enabled) {
+                NavFloatingActionButton.resetPosition(this);
+            }
+            if (mNavButton != null) {
+                AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 && enabled);
+            }
+        } else if (key == R.string.pref_multi_window) {
+            mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
         }
     }
 }

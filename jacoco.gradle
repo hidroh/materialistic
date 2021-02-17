@@ -11,7 +11,7 @@ task jacocoTestReport(type: JacocoReport) {
         html.destination file("${buildDir}/reports/coverage")
     }
 
-    classDirectories = fileTree(
+    getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}/intermediates/classes/debug",
             exclude: [
                     '**/R.class',
@@ -35,9 +35,10 @@ task jacocoTestReport(type: JacocoReport) {
                     '**/SinglePageItemRecyclerViewAdapter$SavedState*.class',
                     '**/*Dummy*.class',
                     '**/*ItemDecoration.class'
-            ])
-    sourceDirectories = files android.sourceSets.main.java.srcDirs
-    executionData = files "${buildDir}/jacoco/testDebugUnitTest.exec"
+            ]))
+
+    getSourceDirectories().setFrom(android.sourceSets.main.java.srcDirs)
+    getExecutionData().setFrom("${buildDir}/jacoco/testDebugUnitTest.exec")
 
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
     // We iterate through the compiled .class tree and rename $$ to $.

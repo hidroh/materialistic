@@ -23,4 +23,5 @@
     android:layout_height="wrap_content"
     android:src="@drawable/ic_reply_white_24dp"
     app:fabSize="mini"
-    tools:showIn="@layout/activity_item"/>
+    tools:showIn="@layout/activity_item"
+    android:contentDescription="@string/add_comment_description" />
