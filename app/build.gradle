@@ -70,7 +70,7 @@ dependencies {
             'androidx.cardview:cardview:1.0.0',
             'com.google.android.material:material:1.0.0',
             'androidx.preference:preference:1.0.0',
-            'androidx.browser:browser:1.0.0',
+            'androidx.browser:browser:1.3.0',
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
             "com.squareup.retrofit2:converter-gson:$retrofitVersion",
