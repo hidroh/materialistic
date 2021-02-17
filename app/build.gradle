@@ -59,7 +59,7 @@ ext {
     okHttpVersion = '3.9.1'
     daggerVersion = '1.2.5'
     leakCanaryVersion = '1.6.3'
-    retrofitVersion = '2.3.0'
+    retrofitVersion = '2.9.0'
     roomVersion = '1.0.0'
     archVersion = '1.1.0'
 }
