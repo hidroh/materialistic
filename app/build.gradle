@@ -68,7 +68,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0',
             'androidx.recyclerview:recyclerview:1.1.0',
             'androidx.cardview:cardview:1.0.0',
-            'com.google.android.material:material:1.0.0',
+            'com.google.android.material:material:1.3.0',
             'androidx.preference:preference:1.0.0',
             'androidx.browser:browser:1.3.0',
             "com.squareup.dagger:dagger:$daggerVersion",
@@ -82,7 +82,8 @@ dependencies {
             'androidx.room:room-runtime:2.2.6',
             'androidx.lifecycle:lifecycle-extensions:2.2.0',
             'androidx.lifecycle:lifecycle-common-java8:2.3.0',
-            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
+            'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
