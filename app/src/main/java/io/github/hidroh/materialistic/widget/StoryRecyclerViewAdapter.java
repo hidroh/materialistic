@@ -206,7 +206,7 @@ public class StoryRecyclerViewAdapter extends
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         MaterialisticDatabase.getInstance(recyclerView.getContext()).getLiveData().observeForever(mObserver);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
@@ -222,7 +222,7 @@ public class StoryRecyclerViewAdapter extends
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         MaterialisticDatabase.getInstance(recyclerView.getContext()).getLiveData().removeObserver(mObserver);
         mItemTouchHelper.attachToRecyclerView(null);

@@ -221,7 +221,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_FULLSCREEN, mFullscreen);
         outState.putString(STATE_CONTENT, mContent);

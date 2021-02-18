@@ -162,7 +162,7 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(ToggleItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ToggleItemViewHolder holder, int position) {
         if (holder.isFooter()) {
             return;
         }

@@ -31,6 +31,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -128,7 +130,7 @@ public class FavoriteFragment extends BaseListFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, mFilter);
         outState.putBoolean(STATE_SEARCH_VIEW_EXPANDED, mSearchViewExpanded);

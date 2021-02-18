@@ -153,13 +153,13 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
     }
 
     @Override
-    public void onAttachedToRecyclerView(final RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NotNull final RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mItemTouchHelper.attachToRecyclerView(null);
     }
@@ -348,7 +348,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         }
 
         @Override
-        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        public void onChildDraw(@NotNull Canvas c, @NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
             float alpha = 1 - Math.abs(dX) / viewHolder.itemView.getWidth();
             viewHolder.itemView.setAlpha(alpha);
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);

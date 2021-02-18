@@ -156,7 +156,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_ITEM, mItem);
         outState.putString(STATE_ITEM_ID, mItemId);

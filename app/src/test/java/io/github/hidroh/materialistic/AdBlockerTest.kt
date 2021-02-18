@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.AssetManager
-import okio.Okio
 import okio.buffer
 import okio.source
 import org.assertj.core.api.Assertions.assertThat

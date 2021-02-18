@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -191,7 +193,7 @@ public class ListFragment extends BaseListFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, mFilter);
         outState.putInt(STATE_CACHE_MODE, mCacheMode);

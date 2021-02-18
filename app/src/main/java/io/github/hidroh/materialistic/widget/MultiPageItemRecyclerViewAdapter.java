@@ -50,7 +50,7 @@ public class MultiPageItemRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ItemViewHolder holder, int position) {
         if (!holder.isFooter()) {
             super.onBindViewHolder(holder, position);
         }
