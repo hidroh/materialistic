@@ -243,7 +243,6 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             getViewTreeObserver().removeOnGlobalLayoutListener(this);
         } else {
-            //noinspection deprecation
             getViewTreeObserver().removeGlobalOnLayoutListener(this);
         }
     }
