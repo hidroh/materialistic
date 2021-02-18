@@ -24,6 +24,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -130,6 +132,7 @@ public class Favorite implements WebItem {
         this.favorite = favorite;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return String.format("%s (%s) - %s", title, url, String.format(HackerNewsClient.WEB_ITEM_PATH, itemId));

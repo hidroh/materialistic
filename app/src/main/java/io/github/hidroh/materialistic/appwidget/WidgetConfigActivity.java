@@ -25,6 +25,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import android.text.TextUtils;
 import android.view.Window;
 
+import java.util.Objects;
+
 import io.github.hidroh.materialistic.InjectableActivity;
 import io.github.hidroh.materialistic.R;
 
@@ -80,7 +82,7 @@ public class WidgetConfigActivity extends InjectableActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(WidgetHelper.getConfigName(
-                    getArguments().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)));
+                    Objects.requireNonNull(getArguments()).getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)));
             getPreferenceManager().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(mListener);
             setFilterQuery();

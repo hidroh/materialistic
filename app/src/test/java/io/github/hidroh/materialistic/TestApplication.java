@@ -15,6 +15,7 @@ import org.robolectric.util.ReflectionHelpers;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import dagger.ObjectGraph;
 import io.github.hidroh.materialistic.test.InMemoryDatabase;
@@ -68,7 +69,7 @@ public class TestApplication extends Application implements TestLifecycleApplica
 
     // TODO https://github.com/robolectric/robolectric/issues/2068
     private void resetWindowManager() {
-        Class clazz = ReflectionHelpers.loadClass(getClass().getClassLoader(), "android.view.WindowManagerGlobal");
+        Class clazz = ReflectionHelpers.loadClass(Objects.requireNonNull(getClass().getClassLoader()), "android.view.WindowManagerGlobal");
         Object instance = ReflectionHelpers.callStaticMethod(clazz, "getInstance");
 
         // We essentially duplicate what's in {@link WindowManagerGlobal#closeAll} with what's below.

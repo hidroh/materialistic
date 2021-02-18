@@ -27,6 +27,7 @@ import org.robolectric.util.ReflectionHelpers;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.robolectric.shadow.api.Shadow.directlyOn;
@@ -47,7 +48,7 @@ public class ShadowRecyclerViewAdapter {
 
     @Implementation
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        recyclerView.getLayoutManager().removeAllViews();
+        Objects.requireNonNull(recyclerView.getLayoutManager()).removeAllViews();
         this.recyclerView = null;
         directly().onDetachedFromRecyclerView(recyclerView);
     }

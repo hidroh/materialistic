@@ -28,6 +28,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.widget.ListRecyclerViewAdapter;
@@ -56,7 +58,7 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), false));
         final int verticalMargin = getResources()
@@ -66,8 +68,8 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
         final int divider = getResources().getDimensionPixelSize(R.dimen.divider);
         mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                                       RecyclerView.State state) {
+            public void getItemOffsets(@NotNull Rect outRect, @NotNull View view, @NotNull RecyclerView parent,
+                                       @NotNull RecyclerView.State state) {
                 if (getAdapter().isCardViewEnabled()) {
                     outRect.set(horizontalMargin, verticalMargin, horizontalMargin, 0);
                 } else {
@@ -117,7 +119,7 @@ abstract class BaseListFragment extends BaseFragment implements Scrollable {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle(STATE_ADAPTER, getAdapter().saveState());
     }

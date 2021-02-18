@@ -19,7 +19,6 @@ package io.github.hidroh.materialistic.accounts;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Bundle;
 

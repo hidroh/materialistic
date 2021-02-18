@@ -30,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Objects;
+
 public class PopupSettingsFragment extends AppCompatDialogFragment {
     static final String EXTRA_TITLE = PopupSettingsFragment.class.getName() + ".EXTRA_TITLE";
     static final String EXTRA_SUMMARY = PopupSettingsFragment.class.getName() + ".EXTRA_SUMMARY";
@@ -45,7 +47,7 @@ public class PopupSettingsFragment extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new BottomSheetDialog(getActivity(), getTheme());
+        return new BottomSheetDialog(Objects.requireNonNull(getActivity()), getTheme());
     }
 
     @Override
@@ -68,7 +70,7 @@ public class PopupSettingsFragment extends AppCompatDialogFragment {
             addPreferencesFromResource(R.xml.preferences_category);
             Preference category = findPreference(getString(R.string.pref_category));
             int summary, title;
-            if ((title = getArguments().getInt(EXTRA_TITLE, 0)) != 0) {
+            if ((title = Objects.requireNonNull(getArguments()).getInt(EXTRA_TITLE, 0)) != 0) {
                 category.setTitle(title);
             }
             if ((summary = getArguments().getInt(EXTRA_SUMMARY, 0)) != 0) {

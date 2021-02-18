@@ -52,8 +52,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.*;
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -136,13 +139,13 @@ public class WebFragment extends LazyLoadFragment
         } else {
             mReadability = Preferences.getDefaultStoryView(getActivity()) ==
                     Preferences.StoryViewMode.Readability;
-            mItem = getArguments().getParcelable(EXTRA_ITEM);
+            mItem = Objects.requireNonNull(getArguments()).getParcelable(EXTRA_ITEM);
         }
         mIsHackerNewsUrl = AppUtils.isHackerNewsUrl(mItem);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (isNewInstance()) {
             mFragmentView = inflater.inflate(R.layout.fragment_web, container, false);
             mFullscreenView = mFragmentView.findViewById(R.id.fullscreen);
@@ -162,12 +165,12 @@ public class WebFragment extends LazyLoadFragment
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
         if (isNewInstance()) {
             mScrollableHelper = new KeyDelegate.NestedScrollViewHelper(mScrollView);
-            mSystemUiHelper = new AppUtils.SystemUiHelper(getActivity().getWindow());
+            mSystemUiHelper = new AppUtils.SystemUiHelper(Objects.requireNonNull(getActivity()).getWindow());
             mSystemUiHelper.setEnabled(!getResources().getBoolean(R.bool.multi_pane));
             if (mFullscreen) {
                 setFullscreen(true);
@@ -240,7 +243,7 @@ public class WebFragment extends LazyLoadFragment
     public void onDetach() {
         super.onDetach();
         mPreferenceObservable.unsubscribe(getActivity());
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity())).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -343,7 +346,7 @@ public class WebFragment extends LazyLoadFragment
     @Synthetic
     void loadContent() {
         setWebSettings(false);
-        mWebView.reloadHtml(AppUtils.wrapHtml(getActivity(), mContent));
+        mWebView.reloadHtml(AppUtils.wrapHtml(Objects.requireNonNull(getActivity()), mContent));
     }
 
     private void parse() {
@@ -395,7 +398,7 @@ public class WebFragment extends LazyLoadFragment
             }
         });
         view.findViewById(R.id.button_exit).setOnClickListener(v ->
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
+                LocalBroadcastManager.getInstance(Objects.requireNonNull(getActivity())).sendBroadcast(
                         new Intent(WebFragment.ACTION_FULLSCREEN)
                                 .putExtra(EXTRA_FULLSCREEN, false)));
         mButtonNext.setOnClickListener(v -> mWebView.findNext(true));
@@ -468,7 +471,7 @@ public class WebFragment extends LazyLoadFragment
 
     private void offerExternalApp() {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mItem.getUrl()));
-        if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+        if (intent.resolveActivity(Objects.requireNonNull(getActivity()).getPackageManager()) == null) {
             return;
         }
         mExternalRequired = true;
@@ -491,7 +494,7 @@ public class WebFragment extends LazyLoadFragment
         mWebView.getSettings().setLoadWithOverviewMode(isRemote);
         mWebView.getSettings().setUseWideViewPort(isRemote);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        getActivity().invalidateOptionsMenu();
+        Objects.requireNonNull(getActivity()).invalidateOptionsMenu();
     }
 
     @Synthetic
@@ -575,7 +578,7 @@ public class WebFragment extends LazyLoadFragment
     }
 
     private void toggleSoftKeyboard(boolean visible) {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+        InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         if (visible) {
             imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
@@ -602,7 +605,7 @@ public class WebFragment extends LazyLoadFragment
 
     @Synthetic
     void onItemLoaded(@NonNull Item response) {
-        getActivity().invalidateOptionsMenu();
+        Objects.requireNonNull(getActivity()).invalidateOptionsMenu();
         mItem = response;
         bindContent();
     }
@@ -676,15 +679,11 @@ public class WebFragment extends LazyLoadFragment
                 if (mRandomAccessFile == null) {
                     mRandomAccessFile = new RandomAccessFile(mFile, "r");
                 }
-                if (mRandomAccessFile != null) {
-                    final int bufferSize = (int)(end - begin);
-                    byte[] data = new byte[bufferSize];
-                    mRandomAccessFile.seek(begin);
-                    mRandomAccessFile.read(data);
-                    return Base64.encodeToString(data, Base64.DEFAULT);
-                } else {
-                    return "";
-                }
+                final int bufferSize = (int)(end - begin);
+                byte[] data = new byte[bufferSize];
+                mRandomAccessFile.seek(begin);
+                mRandomAccessFile.read(data);
+                return Base64.encodeToString(data, Base64.DEFAULT);
             } catch (IOException e) {
                 Log.e("Exception", e.toString());
                 return "";

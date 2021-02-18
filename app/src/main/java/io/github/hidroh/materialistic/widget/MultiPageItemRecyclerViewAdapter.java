@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 
 import io.github.hidroh.materialistic.ItemActivity;
@@ -38,8 +40,9 @@ public class MultiPageItemRecyclerViewAdapter
         mItems[items.length] = null; // footer
     }
 
+    @NotNull
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ItemViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_FOOTER) {
             return new ItemViewHolder(mLayoutInflater.inflate(R.layout.item_footer, parent, false), null);
         }

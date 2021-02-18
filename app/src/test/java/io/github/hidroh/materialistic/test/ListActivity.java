@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic.test;
 
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 
 import io.github.hidroh.materialistic.InjectableActivity;
 import io.github.hidroh.materialistic.MultiPaneListener;

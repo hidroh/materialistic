@@ -28,10 +28,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -51,7 +54,7 @@ public class SinglePageItemRecyclerViewAdapter
     private final Object TOGGLE = new Object();
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 unlockBinding();
             }
@@ -83,12 +86,12 @@ public class SinglePageItemRecyclerViewAdapter
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder, @NotNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            public int getSwipeDirs(@NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder) {
                 Item item = getItem(viewHolder.getAdapterPosition());
                 if (item == null || item.getKidCount() == 0) {
                     return 0;
@@ -97,7 +100,7 @@ public class SinglePageItemRecyclerViewAdapter
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 Item item = getItem(position);
                 if (item != null) {
@@ -107,7 +110,7 @@ public class SinglePageItemRecyclerViewAdapter
             }
 
             @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            public void onChildDraw(@NotNull Canvas c, @NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 float swipeWidth = viewHolder.itemView.getWidth() * getSwipeThreshold(viewHolder);
                 dX = Math.max(dX, -swipeWidth);
                 dX = Math.min(dX, swipeWidth);
@@ -115,7 +118,7 @@ public class SinglePageItemRecyclerViewAdapter
             }
 
             @Override
-            public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+            public float getSwipeThreshold(@NotNull RecyclerView.ViewHolder viewHolder) {
                 return 0.1f;
             }
         });
@@ -131,8 +134,9 @@ public class SinglePageItemRecyclerViewAdapter
         mItemTouchHelper.attachToRecyclerView(null);
     }
 
+    @NotNull
     @Override
-    public ToggleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ToggleItemViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_FOOTER) {
             return new ToggleItemViewHolder(mLayoutInflater.inflate(R.layout.item_footer, parent, false), null);
         }
@@ -146,7 +150,7 @@ public class SinglePageItemRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(ToggleItemViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(@NotNull ToggleItemViewHolder holder, int position, List<Object> payloads) {
         if (payloads.contains(TOGGLE)) {
             Item item = getItem(position);
             if (item != null) {
@@ -344,7 +348,7 @@ public class SinglePageItemRecyclerViewAdapter
             int index = mState.expand(item);
             notifyItemRangeInserted(index, item.getKidCount());
             notifyItemChanged(index - 1, TOGGLE);
-            mRecyclerView.getItemAnimator().isRunning(() -> setSelectedPosition(index, callback));
+            Objects.requireNonNull(mRecyclerView.getItemAnimator()).isRunning(() -> setSelectedPosition(index, callback));
         });
     }
 

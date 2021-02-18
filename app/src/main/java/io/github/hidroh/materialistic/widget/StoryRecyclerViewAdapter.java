@@ -38,8 +38,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,9 +72,9 @@ public class StoryRecyclerViewAdapter extends
     private final Object VOTED = new Object();
     private final RecyclerView.OnScrollListener mAutoViewScrollListener = new RecyclerView.OnScrollListener() {
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
             if (dy > 0) { // scrolling down
-                markAsViewed(((LinearLayoutManager) recyclerView.getLayoutManager())
+                markAsViewed(((LinearLayoutManager) Objects.requireNonNull(recyclerView.getLayoutManager()))
                         .findFirstVisibleItemPosition() - 1);
             }
         }
@@ -147,7 +150,7 @@ public class StoryRecyclerViewAdapter extends
         mCallback = new ItemTouchHelperCallback(context,
                 Preferences.getListSwipePreferences(context)) {
             @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            public int getSwipeDirs(@NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder) {
                 Item item = getItem(viewHolder.getAdapterPosition());
                 if (item == null) {
                     return 0;
@@ -158,7 +161,7 @@ public class StoryRecyclerViewAdapter extends
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Preferences.SwipeAction action = direction == ItemTouchHelper.LEFT ?
                         getLeftSwipeAction() : getRightSwipeAction();
                 Item item = getItem(viewHolder.getAdapterPosition());
@@ -232,7 +235,7 @@ public class StoryRecyclerViewAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(@NotNull ItemViewHolder holder, int position, List<Object> payloads) {
         if (payloads.contains(VOTED)) {
             holder.animateVote(getItem(position).getScore());
         } else {

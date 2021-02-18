@@ -32,6 +32,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -127,8 +129,8 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         mMenuTintDelegate.onActivityCreated(mContext);
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelperCallback(mContext) {
             @Override
-            public int getSwipeDirs(RecyclerView recyclerView,
-                                    RecyclerView.ViewHolder viewHolder) {
+            public int getSwipeDirs(@NotNull RecyclerView recyclerView,
+                                    @NotNull RecyclerView.ViewHolder viewHolder) {
                 if (mActionModeDelegate != null && mActionModeDelegate.isInActionMode()) {
                     return 0;
                 }
@@ -136,7 +138,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
                 if (direction == ItemTouchHelper.LEFT) {
                     dismiss(viewHolder.itemView, viewHolder.getAdapterPosition());
                 } else {

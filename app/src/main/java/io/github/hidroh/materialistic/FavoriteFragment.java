@@ -22,7 +22,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -31,6 +30,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -60,7 +61,7 @@ public class FavoriteFragment extends BaseListFragment
             mFilter = savedInstanceState.getString(STATE_FILTER);
             mSearchViewExpanded = savedInstanceState.getBoolean(STATE_SEARCH_VIEW_EXPANDED);
         } else {
-            mFilter = getArguments().getString(EXTRA_FILTER);
+            mFilter = Objects.requireNonNull(getArguments()).getString(EXTRA_FILTER);
         }
     }
 
@@ -120,7 +121,7 @@ public class FavoriteFragment extends BaseListFragment
             return true;
         }
         if (item.getItemId() == R.id.menu_export) {
-            mFavoriteManager.export(getActivity(), mFilter);
+            mFavoriteManager.export(Objects.requireNonNull(getActivity()), mFilter);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -171,7 +172,7 @@ public class FavoriteFragment extends BaseListFragment
             return false;
         }
         if (mActionMode == null) {
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(callback);
+            mActionMode = ((AppCompatActivity) Objects.requireNonNull(getActivity())).startSupportActionMode(callback);
         }
         return true;
     }
@@ -191,7 +192,7 @@ public class FavoriteFragment extends BaseListFragment
         getAdapter().notifyChanged();
         if (!isDetached()) {
             toggleEmptyView(getAdapter().getItemCount() == 0, mFilter);
-            getActivity().invalidateOptionsMenu();
+            Objects.requireNonNull(getActivity()).invalidateOptionsMenu();
         }
     }
 
@@ -215,7 +216,7 @@ public class FavoriteFragment extends BaseListFragment
     private void createSearchView(MenuItem menuSearch) {
         final SearchView searchView = (SearchView) mActionViewResolver.getActionView(menuSearch);
         searchView.setQueryHint(getString(R.string.hint_search_saved_stories));
-        searchView.setSearchableInfo(((SearchManager) getActivity()
+        searchView.setSearchableInfo(((SearchManager) Objects.requireNonNull(getActivity())
                 .getSystemService(Context.SEARCH_SERVICE))
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setIconified(!mSearchViewExpanded);
@@ -236,7 +237,7 @@ public class FavoriteFragment extends BaseListFragment
                 .init(getActivity())
                 .setMessage(R.string.confirm_clear)
                 .setPositiveButton(android.R.string.ok,
-                        (dialog, which) -> mFavoriteManager.clear(getActivity(), mFilter))
+                        (dialog, which) -> mFavoriteManager.clear(Objects.requireNonNull(getActivity()), mFilter))
                 .setNegativeButton(android.R.string.cancel, null)
                 .create().show();
     }

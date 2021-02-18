@@ -20,11 +20,14 @@ import android.content.Context;
 import android.net.TrafficStats;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Singleton;
 import javax.net.SocketFactory;
@@ -126,6 +129,7 @@ class NetworkModule {
             mContext = context.getApplicationContext();
         }
 
+        @NotNull
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
@@ -141,6 +145,7 @@ class NetworkModule {
 
     static class CacheOverrideNetworkInterceptor implements Interceptor {
 
+        @NotNull
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
@@ -151,8 +156,8 @@ class NetworkModule {
             } else {
                 return response.newBuilder()
                         .header("Cache-Control",
-                                ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS
-                                        .get(request.url().host()))
+                                Objects.requireNonNull(ConnectionAwareInterceptor.CACHE_ENABLED_HOSTS
+                                        .get(request.url().host())))
                         .build();
             }
         }
@@ -165,8 +170,9 @@ class NetworkModule {
                         HttpLoggingInterceptor.Level.BODY :
                         HttpLoggingInterceptor.Level.NONE);
 
+        @NotNull
         @Override
-        public Response intercept(Chain chain) throws IOException {
+        public Response intercept(@NotNull Chain chain) throws IOException {
             return debugInterceptor.intercept(chain);
         }
     }

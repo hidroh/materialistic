@@ -29,7 +29,7 @@ public class AccountAuthenticatorTest {
     }
 
     @Test
-    public void testAddAccount() throws NetworkErrorException {
+    public void testAddAccount() {
         Bundle actual = authenticator.addAccount(mock(AccountAuthenticatorResponse.class),
                 BuildConfig.APPLICATION_ID, null, null, null);
         assertThat(actual).hasKey(AccountManager.KEY_INTENT);
@@ -40,7 +40,7 @@ public class AccountAuthenticatorTest {
     }
 
     @Test
-    public void testUnimplemented() throws NetworkErrorException {
+    public void testUnimplemented() {
         assertNull(authenticator.editProperties(null, null));
         assertNull(authenticator.confirmCredentials(null, null, null));
         assertNull(authenticator.getAuthToken(null, null, null, null));

@@ -46,6 +46,8 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.webkit.WebView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -185,8 +187,8 @@ public class SyncDelegate {
             // TODO defer on low battery as well?
             mHnRestService.networkItem(itemId).enqueue(new Callback<HackerNewsItem>() {
                 @Override
-                public void onResponse(Call<HackerNewsItem> call,
-                                       retrofit2.Response<HackerNewsItem> response) {
+                public void onResponse(@NotNull Call<HackerNewsItem> call,
+                                       @NotNull retrofit2.Response<HackerNewsItem> response) {
                     HackerNewsItem item;
                     if ((item = response.body()) != null) {
                         sync(item);
@@ -194,7 +196,7 @@ public class SyncDelegate {
                 }
 
                 @Override
-                public void onFailure(Call<HackerNewsItem> call, Throwable t) {
+                public void onFailure(@NotNull Call<HackerNewsItem> call, @NotNull Throwable t) {
                     notifyItem(itemId, null);
                 }
             });

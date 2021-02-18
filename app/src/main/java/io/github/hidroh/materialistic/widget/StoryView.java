@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.R;
@@ -97,8 +98,8 @@ public class StoryView extends RelativeLayout implements Checkable {
         mHotColorResId = ContextCompat.getColor(context, R.color.orange500);
         mAccentColorResId = ContextCompat.getColor(getContext(),
                 AppUtils.getThemedResId(getContext(), R.attr.colorAccent));
-        mCommentDrawable = DrawableCompat.wrap(ContextCompat.getDrawable(context,
-                R.drawable.ic_comment_white_24dp).mutate());
+        mCommentDrawable = DrawableCompat.wrap(Objects.requireNonNull(ContextCompat.getDrawable(context,
+                R.drawable.ic_comment_white_24dp)).mutate());
         DrawableCompat.setTint(mCommentDrawable, mAccentColorResId);
         inflate(context, mIsLocal ? R.layout.local_story_view : R.layout.story_view, this);
         mBackground = findViewById(R.id.background);

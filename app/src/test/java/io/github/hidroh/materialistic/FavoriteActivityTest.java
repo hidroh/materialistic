@@ -39,6 +39,7 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.android.controller.ActivityController;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -289,8 +290,8 @@ public class FavoriteActivityTest {
                 .start()
                 .resume()
                 .visible();
-        assertEquals(2, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
-                .getAdapter().getItemCount());
+        assertEquals(2, Objects.requireNonNull(((RecyclerView) controller.get().findViewById(R.id.recycler_view))
+                .getAdapter()).getItemCount());
         controller.pause().stop().destroy();
         reset(keyDelegate);
     }

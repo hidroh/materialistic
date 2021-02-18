@@ -19,6 +19,10 @@ package io.github.hidroh.materialistic;
 import android.content.Context;
 import android.os.Bundle;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 /**
  * Base fragment that controls load timing depends on WIFI and visibility
  */
@@ -39,7 +43,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(getArguments().getBoolean(EXTRA_RETAIN_INSTANCE, false));
+        setRetainInstance(Objects.requireNonNull(getArguments()).getBoolean(EXTRA_RETAIN_INSTANCE, false));
         mNewInstance = true;
         if (savedInstanceState != null) {
             mEagerLoad = savedInstanceState.getBoolean(STATE_EAGER_LOAD);
@@ -60,7 +64,7 @@ public abstract class LazyLoadFragment extends BaseFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EAGER_LOAD, mEagerLoad);
         outState.putBoolean(STATE_LOADED, false); // allow re-loading on state restoration

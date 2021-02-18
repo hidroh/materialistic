@@ -25,6 +25,8 @@ import android.graphics.Rect;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
@@ -49,12 +51,12 @@ public class CommentItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(Rect outRect, @NotNull View view, @NotNull RecyclerView parent, @NotNull RecyclerView.State state) {
         outRect.set(mHorizontalMargin, 0, mHorizontalMargin, 0);
     }
 
     @Override
-    public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+    public void onDrawOver(@NotNull Canvas c, @NotNull RecyclerView parent, @NotNull RecyclerView.State state) {
         if (!mThreadIndicatorEnabled) {
             return;
         }

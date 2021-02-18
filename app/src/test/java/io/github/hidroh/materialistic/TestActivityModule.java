@@ -331,7 +331,7 @@ public class TestActivityModule {
             @SuppressLint("NewApi")
             @Override
             public PopupMenu setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
-                popupMenu.setOnMenuItemClickListener(item -> listener.onMenuItemClick(item));
+                popupMenu.setOnMenuItemClickListener(listener::onMenuItemClick);
                 return this;
             }
 

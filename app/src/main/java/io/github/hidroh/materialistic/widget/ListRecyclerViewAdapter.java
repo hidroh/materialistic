@@ -26,6 +26,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.inject.Inject;
 
 import io.github.hidroh.materialistic.AlertDialogBuilder;
@@ -77,7 +79,7 @@ public abstract class ListRecyclerViewAdapter
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mPreferenceObservable.subscribe(mContext, (key, contextChanged) ->
                 mMultiWindowEnabled = Preferences.multiWindowEnabled(mContext),
@@ -85,13 +87,14 @@ public abstract class ListRecyclerViewAdapter
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mPreferenceObservable.unsubscribe(mContext);
     }
 
+    @NotNull
     @Override
-    public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final VH onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         VH holder = create(parent, viewType);
         if (viewType == VIEW_TYPE_FLAT) {
             holder.flatten();
@@ -100,7 +103,7 @@ public abstract class ListRecyclerViewAdapter
     }
 
     @Override
-    public final void onBindViewHolder(final VH holder, int position) {
+    public final void onBindViewHolder(@NotNull final VH holder, int position) {
         final T item = getItem(position);
         clearViewHolder(holder);
         if (!isItemAvailable(item)) {
