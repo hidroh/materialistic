@@ -20,6 +20,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.AssetManager
 import okio.Okio
+import okio.buffer
+import okio.source
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,6 +54,6 @@ class AdBlockerTest {
   @Throws(IOException::class)
   fun testCreateEmptyResource() {
     val resource = AdBlocker.createEmptyResource()
-    assertThat(Okio.buffer(Okio.source(resource.data)).readUtf8()).isEmpty()
+    assertThat(resource.data.source().buffer().readUtf8()).isEmpty()
   }
 }
