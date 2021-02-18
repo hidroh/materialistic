@@ -14,22 +14,7 @@ android {
         buildConfigField "int", "LATEST_RELEASE", "77"
         buildConfigField "String", "GITHUB_TOKEN", "\"\""
         buildConfigField "String", "MERCURY_TOKEN", "\"\""
-        proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                'proguard-rules.pro',
-                'proguard-square.pro',
-                'proguard-support.pro',
-                'proguard-rx.pro'
-        resConfigs "en", "zh-rCN", "es"
-    }
-
-    buildTypes {
-        debug {
-            minifyEnabled !rootProject.ext.ci
-        }
-        release {
-            minifyEnabled true
-            shrinkResources true
-        }
+        resConfigs "en" //, "zh-rCN", "es"
     }
 
     lintOptions {
@@ -46,10 +31,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    aaptOptions {
-        cruncherEnabled = false
     }
 }
 
