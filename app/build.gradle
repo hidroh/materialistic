@@ -87,7 +87,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    kapt 'androidx.room:room-compiler:2.0.0',
+    kapt 'androidx.room:room-compiler:2.2.6',
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
     kaptTest 'androidx.room:room-compiler:2.0.0',
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
