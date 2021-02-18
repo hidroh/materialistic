@@ -274,4 +274,5 @@
     <string name="privacy_policy">Política de privacidad</string>
     <string name="notification_channel_downloads">Descargas</string>
     <string name="hint_nav_short">Deslizar \\u2191 \\u2193 \\u2192 \\u2190 parra navegar Pulsación larga para volver a posicionar</string>
+    <string name="add_comment_description">Añadir descripción</string>
 </resources>

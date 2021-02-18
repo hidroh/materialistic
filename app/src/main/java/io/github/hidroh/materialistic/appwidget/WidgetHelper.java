@@ -95,7 +95,7 @@ class WidgetHelper {
     private void scheduleUpdate(int appWidgetId) {
         String frequency = getConfig(appWidgetId, R.string.pref_widget_frequency);
         long frequencyHourMillis = DateUtils.HOUR_IN_MILLIS * (TextUtils.isEmpty(frequency) ?
-                DEFAULT_FREQUENCY_HOUR : Integer.valueOf(frequency));
+                DEFAULT_FREQUENCY_HOUR : Integer.parseInt(frequency));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getJobScheduler().schedule(new JobInfo.Builder(appWidgetId,
                     new ComponentName(mContext.getPackageName(), WidgetRefreshJobService.class.getName()))
@@ -161,7 +161,6 @@ class WidgetHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             remoteViews.setRemoteAdapter(android.R.id.list, intent);
         } else {
-            //noinspection deprecation
             remoteViews.setRemoteAdapter(appWidgetId, android.R.id.list, intent);
         }
         remoteViews.setEmptyView(android.R.id.list, R.id.empty);

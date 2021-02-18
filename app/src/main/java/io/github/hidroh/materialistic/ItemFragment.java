@@ -32,9 +32,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -98,7 +101,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
             mItemId = savedInstanceState.getString(STATE_ITEM_ID);
             mAdapterItems = savedInstanceState.getParcelable(STATE_ADAPTER_ITEMS);
         } else {
-            mCacheMode = getArguments().getInt(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT);
+            mCacheMode = Objects.requireNonNull(getArguments()).getInt(EXTRA_CACHE_MODE, ItemManager.MODE_DEFAULT);
             WebItem item = getArguments().getParcelable(EXTRA_ITEM);
             if (item instanceof Item) {
                 mItem = (Item) item;
@@ -108,15 +111,15 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         if (isNewInstance()) {
             mFragmentView = inflater.inflate(R.layout.fragment_item, container, false);
             mEmptyView = mFragmentView.findViewById(R.id.empty);
-            mRecyclerView = (RecyclerView) mFragmentView.findViewById(R.id.recycler_view);
+            mRecyclerView = mFragmentView.findViewById(R.id.recycler_view);
             mRecyclerView.setLayoutManager(new SnappyLinearLayoutManager(getActivity(), true));
-            mItemDecoration = new CommentItemDecoration(getActivity());
+            mItemDecoration = new CommentItemDecoration(Objects.requireNonNull(getActivity()));
             mRecyclerView.addItemDecoration(mItemDecoration);
-            mSwipeRefreshLayout = (SwipeRefreshLayout) mFragmentView.findViewById(R.id.swipe_layout);
+            mSwipeRefreshLayout = mFragmentView.findViewById(R.id.swipe_layout);
             mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
             mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.redA200);
             mSwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -134,7 +137,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (isNewInstance()) {
             mScrollableHelper = new KeyDelegate.RecyclerViewHelper(mRecyclerView,
@@ -236,7 +239,7 @@ public class ItemFragment extends LazyLoadFragment implements Scrollable, Naviga
 
         mEmptyView.setVisibility(View.GONE);
         String displayOption = Preferences.getCommentDisplayOption(getActivity());
-        if (Preferences.isSinglePage(getActivity(), displayOption)) {
+        if (Preferences.isSinglePage(Objects.requireNonNull(getActivity()), displayOption)) {
             boolean autoExpand = Preferences.isAutoExpand(getActivity(), displayOption);
             // if collapsed or no saved state then start a fresh (adapter items all collapsed)
             if (!autoExpand || mAdapterItems == null) {

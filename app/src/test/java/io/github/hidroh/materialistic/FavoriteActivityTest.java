@@ -39,6 +39,7 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.android.controller.ActivityController;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -112,7 +113,7 @@ public class FavoriteActivityTest {
         when(favoriteManager.getItem(eq(1))).thenReturn(new TestFavorite(
                 "2", "http://example.com", "ask HN", System.currentTimeMillis()));
         activity = controller.create().postCreate(null).start().resume().visible().get(); // skip menu due to search view
-        recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        recyclerView = activity.findViewById(R.id.recycler_view);
         adapter = recyclerView.getAdapter();
         shadowAdapter = customShadowOf(adapter);
         fragment = activity.getSupportFragmentManager().findFragmentById(android.R.id.list);
@@ -289,8 +290,8 @@ public class FavoriteActivityTest {
                 .start()
                 .resume()
                 .visible();
-        assertEquals(2, ((RecyclerView) controller.get().findViewById(R.id.recycler_view))
-                .getAdapter().getItemCount());
+        assertEquals(2, Objects.requireNonNull(((RecyclerView) controller.get().findViewById(R.id.recycler_view))
+                .getAdapter()).getItemCount());
         controller.pause().stop().destroy();
         reset(keyDelegate);
     }

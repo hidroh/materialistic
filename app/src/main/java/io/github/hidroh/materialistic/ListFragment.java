@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -102,7 +104,7 @@ public class ListFragment extends BaseListFragment {
             mFilter = savedInstanceState.getString(STATE_FILTER);
             mCacheMode = savedInstanceState.getInt(STATE_CACHE_MODE);
         } else {
-            mFilter = getArguments().getString(EXTRA_FILTER);
+            mFilter = Objects.requireNonNull(getArguments()).getString(EXTRA_FILTER);
         }
     }
 
@@ -116,7 +118,7 @@ public class ListFragment extends BaseListFragment {
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_layout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.white);
         mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(
-                AppUtils.getThemedResId(getActivity(), R.attr.colorAccent));
+                AppUtils.getThemedResId(Objects.requireNonNull(getActivity()), R.attr.colorAccent));
         if (savedInstanceState == null) {
             mSwipeRefreshLayout.setRefreshing(true);
         }
@@ -132,7 +134,7 @@ public class ListFragment extends BaseListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MaterialisticDatabase.getInstance(getContext()).getLiveData().observe(this, mObserver);
-        String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
+        String managerClassName = Objects.requireNonNull(getArguments()).getString(EXTRA_ITEM_MANAGER);
         ItemManager itemManager;
         if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
             itemManager = mAlgoliaItemManager;

@@ -71,13 +71,13 @@ class CacheTest {
   @Test
   fun testIsViewedNoItem() {
     `when`(readStoriesDao.selectByItemId(anyString())).thenReturn(null)
-    assertThat(cache.isViewed("1")).isFalse()
+    assertThat(cache.isViewed("1")).isFalse
   }
 
   @Test
   fun testIsViewedWithItem() {
     `when`(readStoriesDao.selectByItemId(anyString())).thenReturn(MaterialisticDatabase.ReadStory("1"))
-    assertThat(cache.isViewed("1")).isTrue()
+    assertThat(cache.isViewed("1")).isTrue
   }
 
   @Test
@@ -92,13 +92,13 @@ class CacheTest {
   @Test
   fun testIsFavoriteNoItem() {
     `when`(savedStoriesDao.selectByItemId(anyString())).thenReturn(null)
-    assertThat(cache.isFavorite("1")).isFalse()
+    assertThat(cache.isFavorite("1")).isFalse
   }
 
   @Test
   fun testIsFavoriteWithItem() {
     val savedStory = mock(MaterialisticDatabase.SavedStory::class.java)
     `when`(savedStoriesDao.selectByItemId(anyString())).thenReturn(savedStory)
-    assertThat(cache.isFavorite("1")).isTrue()
+    assertThat(cache.isFavorite("1")).isTrue
   }
 }

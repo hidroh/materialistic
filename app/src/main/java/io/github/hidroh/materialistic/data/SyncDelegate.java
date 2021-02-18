@@ -46,6 +46,8 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.webkit.WebView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -156,7 +158,7 @@ public class SyncDelegate {
         mJob = job;
         if (!TextUtils.isEmpty(mJob.id)) {
             Message message = Message.obtain(mHandler, this::stopSync);
-            message.what = Integer.valueOf(mJob.id);
+            message.what = Integer.parseInt(mJob.id);
             mHandler.sendMessageDelayed(message, TIMEOUT_MILLIS);
             mSyncProgress = new SyncProgress(mJob);
             sync(mJob.id);
@@ -185,8 +187,8 @@ public class SyncDelegate {
             // TODO defer on low battery as well?
             mHnRestService.networkItem(itemId).enqueue(new Callback<HackerNewsItem>() {
                 @Override
-                public void onResponse(Call<HackerNewsItem> call,
-                                       retrofit2.Response<HackerNewsItem> response) {
+                public void onResponse(@NotNull Call<HackerNewsItem> call,
+                                       @NotNull retrofit2.Response<HackerNewsItem> response) {
                     HackerNewsItem item;
                     if ((item = response.body()) != null) {
                         sync(item);
@@ -194,7 +196,7 @@ public class SyncDelegate {
                 }
 
                 @Override
-                public void onFailure(Call<HackerNewsItem> call, Throwable t) {
+                public void onFailure(@NotNull Call<HackerNewsItem> call, @NotNull Throwable t) {
                     notifyItem(itemId, null);
                 }
             });
@@ -291,7 +293,7 @@ public class SyncDelegate {
     }
 
     private void showProgress() {
-        mNotificationManager.notify(Integer.valueOf(mJob.id), mNotificationBuilder
+        mNotificationManager.notify(Integer.parseInt(mJob.id), mNotificationBuilder
                 .setContentTitle(mSyncProgress.title)
                 .setContentText(mContext.getString(R.string.download_in_progress))
                 .setContentIntent(getItemActivity(mJob.id))
@@ -312,7 +314,7 @@ public class SyncDelegate {
     void stopSync() {
         // TODO
         mJob.connectionEnabled = false;
-        int id = Integer.valueOf(mJob.id);
+        int id = Integer.parseInt(mJob.id);
         mNotificationManager.cancel(id);
         mHandler.removeMessages(id);
     }

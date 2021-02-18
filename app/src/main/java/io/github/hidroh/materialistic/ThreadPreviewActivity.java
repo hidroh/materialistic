@@ -19,7 +19,7 @@ package io.github.hidroh.materialistic;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
+
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
@@ -49,11 +49,10 @@ public class ThreadPreviewActivity extends InjectableActivity {
         }
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_thread_preview);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        //noinspection ConstantConditions
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new SnappyLinearLayoutManager(this, false));
         recyclerView.addItemDecoration(new CommentItemDecoration(this));
         recyclerView.setAdapter(new ThreadPreviewRecyclerViewAdapter(mItemManager, item));

@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 
 import io.github.hidroh.materialistic.AppUtils;
@@ -46,13 +48,13 @@ abstract class PeekabooTouchHelperCallback extends ItemTouchHelper.SimpleCallbac
     }
 
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                          RecyclerView.ViewHolder target) {
+    public boolean onMove(@NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder,
+                          @NotNull RecyclerView.ViewHolder target) {
         return false;
     }
 
     @Override
-    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+    public void onChildDraw(@NotNull Canvas c, @NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder,
                             float dX, float dY, int actionState, boolean isCurrentlyActive) {
         drawPeekingText(c, viewHolder, dX);
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -78,7 +80,7 @@ abstract class PeekabooTouchHelperCallback extends ItemTouchHelper.SimpleCallbac
     }
 
     @Override
-    public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+    public float getSwipeThreshold(@NotNull RecyclerView.ViewHolder viewHolder) {
         return 1f/3;
     }
 

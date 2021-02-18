@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic.accounts;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +33,7 @@ public class AccountAuthenticator extends EmptyAccountAuthenticator {
     }
 
     @Override
-    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
+    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) {
         Intent intent = new Intent(mContext, LoginActivity.class);
         intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
         Bundle bundle = new Bundle();

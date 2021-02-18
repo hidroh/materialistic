@@ -33,6 +33,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -139,7 +141,7 @@ public class ThreadPreviewActivityTest {
         });
         RecyclerView.ViewHolder viewHolder1 = CustomShadows.customShadowOf(recyclerView.getAdapter())
                 .getViewHolder(0);
-        recyclerView.getAdapter().bindViewHolder(viewHolder1, 0); // TODO should not need this
+        Objects.requireNonNull(recyclerView.getAdapter()).bindViewHolder(viewHolder1, 0); // TODO should not need this
         assertThat((View) viewHolder1.itemView.findViewById(R.id.comment)).isVisible();
         assertEquals(0, recyclerView.getAdapter().getItemViewType(0));
         RecyclerView.ViewHolder viewHolder2 = CustomShadows.customShadowOf(recyclerView.getAdapter())

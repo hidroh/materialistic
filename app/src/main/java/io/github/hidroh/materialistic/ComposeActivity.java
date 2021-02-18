@@ -20,7 +20,7 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
+
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,11 +62,10 @@ public class ComposeActivity extends InjectableActivity {
         }
         AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_compose);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        //noinspection ConstantConditions
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP);
-        mEditText = (EditText) findViewById(R.id.edittext_body);
+        mEditText = findViewById(R.id.edittext_body);
         if (savedInstanceState == null) {
             mEditText.setText(Preferences.getDraft(this, mParentId));
         }
@@ -78,8 +77,8 @@ public class ComposeActivity extends InjectableActivity {
         mParentText = getIntent().getStringExtra(EXTRA_PARENT_TEXT);
         if (!TextUtils.isEmpty(mParentText)) {
             findViewById(R.id.quote).setVisibility(View.VISIBLE);
-            final TextView toggle = (TextView) findViewById(R.id.toggle);
-            final TextView textView = (TextView) findViewById(R.id.text);
+            final TextView toggle = findViewById(R.id.toggle);
+            final TextView textView = findViewById(R.id.text);
             AppUtils.setTextWithLinks(textView, AppUtils.fromHtml(mParentText));
             toggle.setOnClickListener(v -> {
                 if (textView.getVisibility() == View.VISIBLE) {

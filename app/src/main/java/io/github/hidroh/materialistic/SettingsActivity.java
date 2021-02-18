@@ -20,7 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,8 +35,7 @@ public class SettingsActivity extends DrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        //noinspection ConstantConditions
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         findViewById(R.id.drawer_display).setOnClickListener(v ->

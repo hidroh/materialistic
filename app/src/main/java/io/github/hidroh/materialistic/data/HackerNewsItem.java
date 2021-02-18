@@ -70,7 +70,6 @@ class HackerNewsItem implements Item {
     // The title of the story or poll.
     @Keep private String title;
     // A list of related pollopts, in display order.
-    @SuppressWarnings("unused")
     @Keep private long[] parts;
     // In the case of stories or polls, the total comment count.
     @Keep private int descendants = -1;

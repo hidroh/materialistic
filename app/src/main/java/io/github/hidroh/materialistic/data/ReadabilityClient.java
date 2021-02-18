@@ -63,7 +63,7 @@ public interface ReadabilityClient {
             Observable<Readable> parse(@Query("url") String url);
         }
 
-        class Readable {
+        static class Readable {
             @Keep @Synthetic
             String content;
         }

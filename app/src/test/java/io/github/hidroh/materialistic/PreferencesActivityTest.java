@@ -29,6 +29,8 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowDialog;
 
+import java.util.Objects;
+
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import io.github.hidroh.materialistic.test.TestRunner;
 import io.github.hidroh.materialistic.test.shadow.ShadowPreferenceFragmentCompat;
@@ -66,8 +68,8 @@ public class PreferencesActivityTest {
 
     @Test
     public void testHelp() {
-        ((PreferencesActivity.SettingsFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag(PreferencesActivity.SettingsFragment.class.getName()))
+        ((PreferencesActivity.SettingsFragment) Objects.requireNonNull(activity.getSupportFragmentManager()
+                .findFragmentByTag(PreferencesActivity.SettingsFragment.class.getName())))
                 .getPreferenceScreen()
                 .findPreference(activity.getString(R.string.pref_volume_help))
                 .performClick();
@@ -79,8 +81,8 @@ public class PreferencesActivityTest {
 
     @Test
     public void testLazyLoadHelp() {
-        ((PreferencesActivity.SettingsFragment) activity.getSupportFragmentManager()
-                .findFragmentByTag(PreferencesActivity.SettingsFragment.class.getName()))
+        ((PreferencesActivity.SettingsFragment) Objects.requireNonNull(activity.getSupportFragmentManager()
+                .findFragmentByTag(PreferencesActivity.SettingsFragment.class.getName())))
                 .getPreferenceScreen()
                 .findPreference(activity.getString(R.string.pref_lazy_load_help))
                 .performClick();

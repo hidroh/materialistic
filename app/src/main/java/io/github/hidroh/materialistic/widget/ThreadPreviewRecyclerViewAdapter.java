@@ -23,6 +23,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,20 +47,21 @@ public class ThreadPreviewRecyclerViewAdapter extends ItemRecyclerViewAdapter<Su
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         attach(recyclerView.getContext(), recyclerView);
         mLevelIndicatorWidth = AppUtils.getDimensionInDp(mContext, R.dimen.level_indicator_width);
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         detach(recyclerView.getContext(), recyclerView);
     }
 
+    @NotNull
     @Override
-    public SubmissionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SubmissionViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         SubmissionViewHolder holder = new SubmissionViewHolder(mLayoutInflater
                 .inflate(R.layout.item_submission, parent, false));
         final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams)

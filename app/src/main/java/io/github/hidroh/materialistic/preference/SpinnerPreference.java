@@ -42,7 +42,6 @@ public abstract class SpinnerPreference extends Preference {
     @Synthetic String[] mEntryValues = new String[0];
     @Synthetic int mSelection = 0;
 
-    @SuppressWarnings("unused")
     public SpinnerPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }

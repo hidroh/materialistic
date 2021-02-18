@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
+
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +35,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,14 +63,13 @@ public class SubmitActivity extends InjectableActivity {
         super.onCreate(savedInstanceState);
         AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_submit);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        //noinspection ConstantConditions
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
-        mTitleLayout = (TextInputLayout) findViewById(R.id.textinput_title);
-        mContentLayout = (TextInputLayout) findViewById(R.id.textinput_content);
-        mTitleEditText = (TextView) findViewById(R.id.edittext_title);
-        mContentEditText = (TextView) findViewById(R.id.edittext_content);
+        mTitleLayout = findViewById(R.id.textinput_title);
+        mContentLayout = findViewById(R.id.textinput_content);
+        mTitleEditText = findViewById(R.id.edittext_title);
+        mContentEditText = findViewById(R.id.edittext_content);
         String text, subject;
         if (savedInstanceState == null) {
             subject = getIntent().getStringExtra(Intent.EXTRA_SUBJECT);
@@ -219,7 +219,7 @@ public class SubmitActivity extends InjectableActivity {
     private void extractUrl(String text) {
         Matcher matcher = Pattern.compile(REGEX_FUZZY_URL).matcher(text);
         if (matcher.find() && matcher.groupCount() >= 3) { // group 1: title, group 2: url, group 3: scheme
-            mTitleEditText.setText(trimTitle(matcher.group(1).trim()));
+            mTitleEditText.setText(trimTitle(Objects.requireNonNull(matcher.group(1)).trim()));
             mContentEditText.setText(matcher.group(2));
         }
     }

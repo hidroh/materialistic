@@ -23,6 +23,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.github.hidroh.materialistic.ItemActivity;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.ThreadPreviewActivity;
@@ -38,19 +40,20 @@ public class SubmissionRecyclerViewAdapter extends ItemRecyclerViewAdapter<Submi
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         attach(recyclerView.getContext(), recyclerView);
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NotNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         detach(recyclerView.getContext(), recyclerView);
     }
 
+    @NotNull
     @Override
-    public SubmissionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SubmissionViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         return new SubmissionViewHolder(mLayoutInflater.inflate(R.layout.item_submission, parent, false));
     }
 

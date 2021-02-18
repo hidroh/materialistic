@@ -20,8 +20,10 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.appcompat.widget.Toolbar;
+
 import android.view.MenuItem;
+
+import java.util.Objects;
 
 public class PreferencesActivity extends ThemedActivity {
     public static final String EXTRA_TITLE = PreferencesActivity.class.getName() + ".EXTRA_TITLE";
@@ -32,8 +34,7 @@ public class PreferencesActivity extends ThemedActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
         setTitle(getIntent().getIntExtra(EXTRA_TITLE, 0));
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        //noinspection ConstantConditions
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         if (savedInstanceState == null) {
@@ -67,7 +68,7 @@ public class PreferencesActivity extends ThemedActivity {
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
-            addPreferencesFromResource(getArguments().getInt(EXTRA_PREFERENCES));
+            addPreferencesFromResource(Objects.requireNonNull(getArguments()).getInt(EXTRA_PREFERENCES));
         }
     }
 }

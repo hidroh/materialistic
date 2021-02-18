@@ -27,6 +27,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.ItemFragment;
 import io.github.hidroh.materialistic.LazyLoadFragment;
@@ -80,8 +82,9 @@ public class ItemPagerAdapter extends FragmentStatePagerAdapter {
         return Fragment.instantiate(mContext, fragmentName, args);
     }
 
+    @NotNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NotNull ViewGroup container, int position) {
         mFragments[position] = (Fragment) super.instantiateItem(container, position);
         return mFragments[position];
     }

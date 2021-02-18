@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -162,7 +163,7 @@ public class UserServicesClient implements UserServices {
                     try {
                         return Observable.just(new String[]{
                                 response.header(HEADER_SET_COOKIE),
-                                response.body().string()
+                                Objects.requireNonNull(response.body()).string()
                         });
                     } catch (IOException e) {
                         return Observable.error(e);
@@ -197,7 +198,7 @@ public class UserServicesClient implements UserServices {
             formBuilder.add(LOGIN_PARAM_CREATING, CREATING_TRUE);
         }
         return new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
+                .url(Objects.requireNonNull(HttpUrl.parse(BASE_WEB_URL))
                         .newBuilder()
                         .addPathSegment(LOGIN_PATH)
                         .build())
@@ -215,7 +216,7 @@ public class UserServicesClient implements UserServices {
 
     private Request postVote(String username, String password, String itemId, String upOrDown) {
         return new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
+                .url(Objects.requireNonNull(HttpUrl.parse(BASE_WEB_URL))
                         .newBuilder()
                         .addPathSegment(VOTE_PATH)
                         .build())
@@ -231,7 +232,7 @@ public class UserServicesClient implements UserServices {
 
     private Request postReply(String parentId, String text, String username, String password) {
         return new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
+                .url(Objects.requireNonNull(HttpUrl.parse(BASE_WEB_URL))
                         .newBuilder()
                         .addPathSegment(COMMENT_PATH)
                         .build())
@@ -246,7 +247,7 @@ public class UserServicesClient implements UserServices {
 
     private Request postSubmitForm(String username, String password) {
         return new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
+                .url(Objects.requireNonNull(HttpUrl.parse(BASE_WEB_URL))
                         .newBuilder()
                         .addPathSegment(SUBMIT_PATH)
                         .build())
@@ -259,7 +260,7 @@ public class UserServicesClient implements UserServices {
 
     private Request postSubmit(String title, String content, boolean isUrl, String cookie, String fnid) {
         Request.Builder builder = new Request.Builder()
-                .url(HttpUrl.parse(BASE_WEB_URL)
+                .url(Objects.requireNonNull(HttpUrl.parse(BASE_WEB_URL))
                         .newBuilder()
                         .addPathSegment(SUBMIT_POST_PATH)
                         .build())
@@ -286,17 +287,15 @@ public class UserServicesClient implements UserServices {
     }
 
     private Throwable buildException(Uri uri) {
-        switch (uri.getPath()) {
-            case ITEM_PATH:
-                UserServices.Exception exception = new UserServices.Exception(R.string.item_exist);
-                String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
-                if (!TextUtils.isEmpty(itemId)) {
-                    exception.data = AppUtils.createItemUri(itemId);
-                }
-                return exception;
-            default:
-                return new IOException();
+        if (ITEM_PATH.equals(uri.getPath())) {
+            Exception exception = new Exception(R.string.item_exist);
+            String itemId = uri.getQueryParameter(ITEM_PARAM_ID);
+            if (!TextUtils.isEmpty(itemId)) {
+                exception.data = AppUtils.createItemUri(itemId);
+            }
+            return exception;
         }
+        return new IOException();
     }
 
     private String getInputValue(String html, String name) {
@@ -315,8 +314,8 @@ public class UserServicesClient implements UserServices {
 
     private String parseLoginError(Response response) {
         try {
-            Matcher matcher = Pattern.compile(REGEX_CREATE_ERROR_BODY).matcher(response.body().string());
-            return matcher.find() ? matcher.group(1).replaceAll("\\n|\\r|\\t|\\s+", " ").trim() : null;
+            Matcher matcher = Pattern.compile(REGEX_CREATE_ERROR_BODY).matcher(Objects.requireNonNull(response.body()).string());
+            return matcher.find() ? Objects.requireNonNull(matcher.group(1)).replaceAll("\\n|\\r|\\t|\\s+", " ").trim() : null;
         } catch (IOException e) {
             return null;
         }

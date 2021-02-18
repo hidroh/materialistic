@@ -30,6 +30,7 @@ import android.view.View;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Objects;
 
 /**
  * Helper that intercepts key events and interprets them into navigation actions
@@ -259,7 +260,7 @@ public class KeyDelegate {
                     next = pos != RecyclerView.NO_POSITION ?
                             pos + 1 : RecyclerView.NO_POSITION;
             if (next != RecyclerView.NO_POSITION &&
-                    next < mRecyclerView.getAdapter().getItemCount()) {
+                    next < Objects.requireNonNull(mRecyclerView.getAdapter()).getItemCount()) {
                 mRecyclerView.smoothScrollToPosition(next);
                 return true;
             } else {
@@ -301,7 +302,7 @@ public class KeyDelegate {
         }
 
         int[] scrollToPosition(int position) {
-            if (position >= 0 && position < mRecyclerView.getAdapter().getItemCount()) {
+            if (position >= 0 && position < Objects.requireNonNull(mRecyclerView.getAdapter()).getItemCount()) {
                 if (!mSmoothScroll) {
                     getLinearLayoutManager().scrollToPositionWithOffset(position, 0);
                     return null;

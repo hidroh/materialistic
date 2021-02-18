@@ -83,7 +83,7 @@ public class AlgoliaClientTest {
     public void testGetStoriesSuccessSortByPopularity() {
         when(TestRestServiceFactory.algoliaRestService.searchRx(eq("filter")))
                 .thenReturn(Observable.error(new IOException()));
-        client.sSortByTime = false;
+        AlgoliaClient.sSortByTime = false;
         client.getStories("filter", ItemManager.MODE_DEFAULT, storiesListener);
         verify(TestRestServiceFactory.algoliaRestService).searchRx(eq("filter"));
     }

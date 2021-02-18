@@ -5,8 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.WorkerThread;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -44,15 +47,15 @@ public class FileDownloader {
 
         mCallFactory.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 mMainHandler.post(() -> callback.onFailure(call, e));
             }
 
             @Override
-            public void onResponse(Call call, Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
                 try {
                     BufferedSink sink = Okio.buffer(Okio.sink(outputFile));
-                    sink.writeAll(response.body().source());
+                    sink.writeAll(Objects.requireNonNull(response.body()).source());
                     sink.close();
                     mMainHandler.post(() -> callback.onSuccess(outputFile.getPath()));
                 } catch (IOException e) {

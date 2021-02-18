@@ -26,7 +26,7 @@ class SubmissionViewHolder extends ItemRecyclerViewAdapter.ItemViewHolder {
 
     SubmissionViewHolder(View itemView) {
         super(itemView);
-        mTitleTextView = (android.widget.TextView) itemView.findViewById(R.id.title);
+        mTitleTextView = itemView.findViewById(R.id.title);
         mCommentButton.setText(R.string.view_story);
     }
 }

@@ -27,6 +27,8 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.Objects;
+
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.annotation.Synthetic;
@@ -65,10 +67,9 @@ public class ThemePreference extends Preference {
 
     public static ThemeSpec getTheme(String value, boolean isTranslucent) {
         ThemeSpec themeSpec = VALUES.get(VALUES.containsKey(value) ? value : LIGHT);
-        return isTranslucent ? themeSpec.getTranslucent() : themeSpec;
+        return isTranslucent ? Objects.requireNonNull(themeSpec).getTranslucent() : themeSpec;
     }
 
-    @SuppressWarnings("unused")
     public ThemePreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -90,7 +91,7 @@ public class ThemePreference extends Preference {
         if (TextUtils.isEmpty(mSelectedTheme)) {
             mSelectedTheme = LIGHT;
         }
-        setSummary(VALUES.get(mSelectedTheme).summary);
+        setSummary(Objects.requireNonNull(VALUES.get(mSelectedTheme)).summary);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class ThemePreference extends Preference {
                 if (shouldDisableDependents()) {
                     Preferences.Theme.disableAutoDayNight(getContext());
                 }
-                setSummary(VALUES.get(value).summary);
+                setSummary(Objects.requireNonNull(VALUES.get(value)).summary);
                 persistString(value);
             });
         }

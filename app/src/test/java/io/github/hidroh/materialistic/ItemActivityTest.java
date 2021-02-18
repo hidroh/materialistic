@@ -73,7 +73,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("ConstantConditions")
 @RunWith(TestRunner.class)
 public class ItemActivityTest {
     private ActivityController<ItemActivity> controller;

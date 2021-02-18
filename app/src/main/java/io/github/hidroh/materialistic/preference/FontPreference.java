@@ -31,7 +31,6 @@ import io.github.hidroh.materialistic.R;
 public class FontPreference extends SpinnerPreference {
     private final LayoutInflater mLayoutInflater;
 
-    @SuppressWarnings("unused")
     public FontPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -48,7 +47,7 @@ public class FontPreference extends SpinnerPreference {
 
     @Override
     protected void bindDropDownView(int position, View view) {
-        TextView textView = (TextView) view.findViewById(android.R.id.text1);
+        TextView textView = view.findViewById(android.R.id.text1);
         textView.setTypeface(FontCache.getInstance().get(getContext(), mEntryValues[position]));
         textView.setText(mEntries[position]);
     }

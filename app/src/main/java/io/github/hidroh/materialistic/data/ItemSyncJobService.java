@@ -26,6 +26,7 @@ import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -66,7 +67,7 @@ public class ItemSyncJobService extends JobService {
     public boolean onStopJob(JobParameters jobParameters) {
         String key = String.valueOf(jobParameters.getJobId());
         if (mSyncDelegates.containsKey(key)) {
-            mSyncDelegates.remove(key).stopSync();
+            Objects.requireNonNull(mSyncDelegates.remove(key)).stopSync();
         }
         return true;
     }

@@ -22,6 +22,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.android.controller.ActivityController;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -100,8 +102,8 @@ public class UserActivityTest {
         assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username (2,016)");
         assertThat((TextView) activity.findViewById(R.id.about)).hasTextString("about");
         assertEquals(activity.getResources().getQuantityString(R.plurals.submissions_count, 2, 2),
-                ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0).getText());
-        assertEquals(2, (((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter())
+                Objects.requireNonNull(((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0)).getText());
+        assertEquals(2, (Objects.requireNonNull(((RecyclerView) activity.findViewById(R.id.recycler_view)).getAdapter()))
                 .getItemCount());
         activity.recreate();
         assertThat((TextView) activity.findViewById(R.id.title)).hasTextString("username (2,016)");
@@ -134,11 +136,11 @@ public class UserActivityTest {
     public void testScrollToTop() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         recyclerView.smoothScrollToPosition(1);
         assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         TabLayout.Tab tab = ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0);
-        tab.select();
+        Objects.requireNonNull(tab).select();
         tab.select();
         assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(0);
     }
@@ -181,7 +183,7 @@ public class UserActivityTest {
     public void testCommentBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -211,7 +213,7 @@ public class UserActivityTest {
     public void testStoryBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("2"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -250,7 +252,7 @@ public class UserActivityTest {
     public void testDeletedItemBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());

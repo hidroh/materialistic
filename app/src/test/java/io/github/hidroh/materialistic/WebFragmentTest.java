@@ -67,7 +67,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowWebView.class})
 @RunWith(TestRunner.class)
 public class WebFragmentTest {

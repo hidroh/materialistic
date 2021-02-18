@@ -18,6 +18,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import io.github.hidroh.materialistic.Preferences;
 import io.github.hidroh.materialistic.PreferencesActivity;
@@ -66,7 +67,7 @@ public class FontSizePreferenceTest {
         list.setLayoutManager(new LinearLayoutManager(activity));
         RecyclerView.Adapter adapter = list.getAdapter();
         int position = ShadowSupportPreferenceManager
-                .getPreferencePosition((PreferenceGroupAdapter) adapter, FontSizePreference.class);
+                .getPreferencePosition((PreferenceGroupAdapter) Objects.requireNonNull(adapter), FontSizePreference.class);
         RecyclerView.ViewHolder holder = CustomShadows.customShadowOf(adapter).getViewHolder(position);
         preferenceView = holder.itemView;
     }

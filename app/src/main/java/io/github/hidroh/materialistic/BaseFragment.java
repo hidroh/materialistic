@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment;
 import android.view.Menu;
 import android.view.MenuInflater;
 
+import java.util.Objects;
+
 /**
  * Base fragment which performs injection using parent's activity object graphs if any
  */
@@ -68,7 +70,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Application.getRefWatcher(getActivity()).watch(this);
+        Application.getRefWatcher(Objects.requireNonNull(getActivity())).watch(this);
     }
 
     public boolean isAttached() {

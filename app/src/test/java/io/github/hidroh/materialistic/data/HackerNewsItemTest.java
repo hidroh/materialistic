@@ -5,16 +5,17 @@ import android.os.Parcel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(TestRunner.class)
 public class HackerNewsItemTest {
@@ -22,7 +23,7 @@ public class HackerNewsItemTest {
 
     @Before
     public void setUp() {
-        item = new HackerNewsItem(1l);
+        item = new HackerNewsItem(1L);
     }
 
     @Test
@@ -78,7 +79,7 @@ public class HackerNewsItemTest {
 
             @Override
             public long[] getKids() {
-                return new long[]{1l};
+                return new long[]{1L};
             }
 
             @Override
@@ -88,7 +89,7 @@ public class HackerNewsItemTest {
 
             @Override
             public long getTime() {
-                return 1234l;
+                return 1234L;
             }
 
             @Override
@@ -126,7 +127,7 @@ public class HackerNewsItemTest {
         assertEquals("rawType", item.getRawType());
         assertEquals("rawUrl", item.getRawUrl());
         assertEquals("by", item.getBy());
-        assertEquals(1234l, item.getTime());
+        assertEquals(1234L, item.getTime());
         assertEquals(1, item.getDescendants());
         assertEquals(1, item.getLastKidCount());
         assertEquals(5, item.getScore());
@@ -210,7 +211,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long getTime() {
-                return 1429027200l; // Apr 15 2015
+                return 1429027200L; // Apr 15 2015
             }
 
             @Override
@@ -303,7 +304,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
-                return new long[]{1l, 2l};
+                return new long[]{1L, 2L};
             }
         });
         assertEquals(2, item.getKidCount());
@@ -365,7 +366,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
-                return new long[]{1l, 2l};
+                return new long[]{1L, 2L};
             }
         });
         assertThat(item.getKidItems()).hasSize(2);
@@ -427,10 +428,11 @@ public class HackerNewsItemTest {
 
     @Test
     public void testEquals() {
-        assertFalse(item.equals(null));
-        assertFalse(item.equals(new TestItem(){}));
-        assertFalse(item.equals(new HackerNewsItem(2l)));
-        assertTrue(item.equals(item));
-        assertTrue(item.equals(new HackerNewsItem(1l)));
+        assertNotEquals(null, item);
+        assertNotEquals(item, new TestItem() {
+        });
+        assertNotEquals(item, new HackerNewsItem(2L));
+        assertEquals(item, item);
+        assertEquals(item, new HackerNewsItem(1L));
     }
 }

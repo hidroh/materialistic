@@ -32,6 +32,8 @@ import androidx.browser.customtabs.CustomTabsSession;
 
 import android.text.TextUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -184,7 +186,7 @@ public class CustomTabsDelegate {
         }
 
         @Override
-        public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+        public void onCustomTabsServiceConnected(@NotNull ComponentName name, @NotNull CustomTabsClient client) {
             CustomTabsDelegate delegate = mDelegate.get();
             if (delegate != null) {
                 delegate.onServiceConnected(client);

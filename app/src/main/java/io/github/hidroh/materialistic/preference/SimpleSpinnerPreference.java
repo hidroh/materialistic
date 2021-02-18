@@ -29,7 +29,6 @@ public class SimpleSpinnerPreference extends SpinnerPreference {
 
     private final LayoutInflater mLayoutInflater;
 
-    @SuppressWarnings("unused")
     public SimpleSpinnerPreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -47,7 +46,7 @@ public class SimpleSpinnerPreference extends SpinnerPreference {
 
     @Override
     protected void bindDropDownView(int position, View view) {
-        TextView textView = (TextView) view.findViewById(android.R.id.text1);
+        TextView textView = view.findViewById(android.R.id.text1);
         textView.setText(mEntries[position]);
     }
 }

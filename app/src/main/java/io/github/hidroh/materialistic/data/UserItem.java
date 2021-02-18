@@ -44,7 +44,7 @@ class UserItem implements UserManager.User {
     @Keep private int[] submitted;
 
     // view state
-    private HackerNewsItem[] submittedItems = new HackerNewsItem[0];
+    private HackerNewsItem[] submittedItems;
 
     @Synthetic
     UserItem(Parcel source) {
