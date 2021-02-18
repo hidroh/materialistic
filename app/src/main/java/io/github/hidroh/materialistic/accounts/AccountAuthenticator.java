@@ -34,7 +34,7 @@ public class AccountAuthenticator extends EmptyAccountAuthenticator {
     }
 
     @Override
-    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
+    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) {
         Intent intent = new Intent(mContext, LoginActivity.class);
         intent.putExtra(LoginActivity.EXTRA_ADD_ACCOUNT, true);
         Bundle bundle = new Bundle();

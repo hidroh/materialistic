@@ -34,7 +34,6 @@ import io.github.hidroh.materialistic.data.FeedbackClient;
 public class FeedbackActivity extends InjectableActivity {
     @Inject FeedbackClient mFeedbackClient;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +82,6 @@ public class FeedbackActivity extends InjectableActivity {
         if (success) {
             finish();
         } else {
-            //noinspection ConstantConditions
             findViewById(R.id.feedback_button).setEnabled(true);
         }
     }

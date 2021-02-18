@@ -92,7 +92,6 @@ public class PopupSettingsFragment extends AppCompatDialogFragment {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             int width = getContext().getResources().getDimensionPixelSize(R.dimen.bottom_sheet_width);
-            //noinspection ConstantConditions
             getWindow().setLayout(
                     width > 0 ? width : ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);

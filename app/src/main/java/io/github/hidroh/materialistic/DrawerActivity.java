@@ -131,11 +131,9 @@ public abstract class DrawerActivity extends InjectableActivity {
     public void setContentView(int layoutResID) {
         ViewGroup drawerLayout = findViewById(R.id.drawer_layout);
         View view = getLayoutInflater().inflate(layoutResID, drawerLayout, false);
-        //noinspection ConstantConditions
         drawerLayout.addView(view, 0);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void setUpDrawer() {
         mDrawerAccount.setOnClickListener(v -> showLogin());
         mDrawerLogout.setOnClickListener(v -> confirmLogout());

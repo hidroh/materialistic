@@ -2,16 +2,14 @@ package io.github.hidroh.materialistic.data;
 
 import android.os.Parcel;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import io.github.hidroh.materialistic.R;
 import io.github.hidroh.materialistic.test.TestItem;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -25,7 +23,7 @@ public class HackerNewsItemTest {
 
     @Before
     public void setUp() {
-        item = new HackerNewsItem(1l);
+        item = new HackerNewsItem(1L);
     }
 
     @Test
@@ -81,7 +79,7 @@ public class HackerNewsItemTest {
 
             @Override
             public long[] getKids() {
-                return new long[]{1l};
+                return new long[]{1L};
             }
 
             @Override
@@ -91,7 +89,7 @@ public class HackerNewsItemTest {
 
             @Override
             public long getTime() {
-                return 1234l;
+                return 1234L;
             }
 
             @Override
@@ -129,7 +127,7 @@ public class HackerNewsItemTest {
         assertEquals("rawType", item.getRawType());
         assertEquals("rawUrl", item.getRawUrl());
         assertEquals("by", item.getBy());
-        assertEquals(1234l, item.getTime());
+        assertEquals(1234L, item.getTime());
         assertEquals(1, item.getDescendants());
         assertEquals(1, item.getLastKidCount());
         assertEquals(5, item.getScore());
@@ -213,7 +211,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long getTime() {
-                return 1429027200l; // Apr 15 2015
+                return 1429027200L; // Apr 15 2015
             }
 
             @Override
@@ -306,7 +304,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
-                return new long[]{1l, 2l};
+                return new long[]{1L, 2L};
             }
         });
         assertEquals(2, item.getKidCount());
@@ -368,7 +366,7 @@ public class HackerNewsItemTest {
         item.populate(new TestItem() {
             @Override
             public long[] getKids() {
-                return new long[]{1l, 2l};
+                return new long[]{1L, 2L};
             }
         });
         assertThat(item.getKidItems()).hasSize(2);

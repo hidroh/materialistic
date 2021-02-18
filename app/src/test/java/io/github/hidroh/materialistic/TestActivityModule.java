@@ -331,12 +331,7 @@ public class TestActivityModule {
             @SuppressLint("NewApi")
             @Override
             public PopupMenu setOnMenuItemClickListener(final OnMenuItemClickListener listener) {
-                popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        return listener.onMenuItemClick(item);
-                    }
-                });
+                popupMenu.setOnMenuItemClickListener(item -> listener.onMenuItemClick(item));
                 return this;
             }
 

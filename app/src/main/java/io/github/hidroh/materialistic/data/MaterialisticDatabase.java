@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.util.List;
+import java.util.Objects;
 
 @Database(
         entities = {
@@ -132,7 +133,7 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
             ReadStory readStory = (ReadStory) o;
 
             if (id != readStory.id) return false;
-            return itemId != null ? itemId.equals(readStory.itemId) : readStory.itemId == null;
+            return Objects.equals(itemId, readStory.itemId);
         }
 
         @Override
@@ -189,9 +190,9 @@ public abstract class MaterialisticDatabase extends RoomDatabase {
             Readable readable = (Readable) o;
 
             if (id != readable.id) return false;
-            if (itemId != null ? !itemId.equals(readable.itemId) : readable.itemId != null)
+            if (!Objects.equals(itemId, readable.itemId))
                 return false;
-            return content != null ? content.equals(readable.content) : readable.content == null;
+            return Objects.equals(content, readable.content);
         }
 
         @Override

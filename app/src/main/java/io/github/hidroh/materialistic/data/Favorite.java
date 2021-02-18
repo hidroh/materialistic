@@ -86,7 +86,7 @@ public class Favorite implements WebItem {
 
     @Override
     public long getLongId() {
-        return Long.valueOf(itemId);
+        return Long.parseLong(itemId);
     }
 
     @Override

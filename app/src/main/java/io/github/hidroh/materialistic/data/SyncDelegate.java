@@ -156,7 +156,7 @@ public class SyncDelegate {
         mJob = job;
         if (!TextUtils.isEmpty(mJob.id)) {
             Message message = Message.obtain(mHandler, this::stopSync);
-            message.what = Integer.valueOf(mJob.id);
+            message.what = Integer.parseInt(mJob.id);
             mHandler.sendMessageDelayed(message, TIMEOUT_MILLIS);
             mSyncProgress = new SyncProgress(mJob);
             sync(mJob.id);
@@ -291,7 +291,7 @@ public class SyncDelegate {
     }
 
     private void showProgress() {
-        mNotificationManager.notify(Integer.valueOf(mJob.id), mNotificationBuilder
+        mNotificationManager.notify(Integer.parseInt(mJob.id), mNotificationBuilder
                 .setContentTitle(mSyncProgress.title)
                 .setContentText(mContext.getString(R.string.download_in_progress))
                 .setContentIntent(getItemActivity(mJob.id))
@@ -312,7 +312,7 @@ public class SyncDelegate {
     void stopSync() {
         // TODO
         mJob.connectionEnabled = false;
-        int id = Integer.valueOf(mJob.id);
+        int id = Integer.parseInt(mJob.id);
         mNotificationManager.cancel(id);
         mHandler.removeMessages(id);
     }

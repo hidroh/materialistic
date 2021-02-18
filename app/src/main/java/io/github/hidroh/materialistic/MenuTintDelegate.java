@@ -54,7 +54,6 @@ public class MenuTintDelegate {
         }
     }
 
-    @SuppressWarnings("unused")
     public void setIcon(MenuItem item, @DrawableRes int icon) {
         item.setIcon(icon);
         Drawable drawable = item.getIcon();

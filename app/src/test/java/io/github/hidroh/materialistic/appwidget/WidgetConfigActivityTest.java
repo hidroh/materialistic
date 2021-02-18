@@ -41,7 +41,6 @@ import static org.assertj.android.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowPreferenceFragmentCompat.class})
 @RunWith(TestRunner.class)
 public class WidgetConfigActivityTest {

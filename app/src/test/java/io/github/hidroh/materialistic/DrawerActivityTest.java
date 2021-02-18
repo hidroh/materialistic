@@ -23,7 +23,6 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.robolectric.Shadows.shadowOf;
 
-@SuppressWarnings("ConstantConditions")
 @Config(shadows = {ShadowSupportDrawerLayout.class})
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class DrawerActivityTest {

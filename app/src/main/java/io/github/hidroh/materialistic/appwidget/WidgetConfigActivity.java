@@ -53,7 +53,6 @@ public class WidgetConfigActivity extends InjectableActivity {
                             WidgetConfigurationFragment.class.getName())
                     .commit();
         }
-        //noinspection ConstantConditions
         findViewById(R.id.button_ok).setOnClickListener(v -> configure());
     }
 

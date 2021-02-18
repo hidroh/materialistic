@@ -68,7 +68,6 @@ public class ThemePreference extends Preference {
         return isTranslucent ? themeSpec.getTranslucent() : themeSpec;
     }
 
-    @SuppressWarnings("unused")
     public ThemePreference(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
