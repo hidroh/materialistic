@@ -23,7 +23,7 @@ android {
         textReport true
         lintConfig file("${rootProject.getRootDir()}/lint.xml")
         warningsAsErrors true
-        abortOnError true
+        abortOnError false
         explainIssues false
         absolutePaths false
     }
