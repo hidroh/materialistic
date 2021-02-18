@@ -28,12 +28,12 @@ import okhttp3.internal.Util
 import java.io.Closeable
 import java.io.File
 
-inline fun Closeable.closeQuietly() = Util.closeQuietly(this)
+fun Closeable.closeQuietly() = Util.closeQuietly(this)
 
-inline fun File.getUri(context: Context, authority: String) =
+fun File.getUri(context: Context, authority: String) =
     FileProvider.getUriForFile(context, authority, this)!!
 
-inline fun Uri.toSendIntentChooser(context: Context) =
+fun Uri.toSendIntentChooser(context: Context) =
     AppUtils.makeSendIntentChooser(context, this)!!
 
 fun NotificationCompat.Builder.setChannel(context: Context,
