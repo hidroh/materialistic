@@ -38,23 +38,23 @@ class SessionManagerTest {
 
   @Test
   fun testIsViewedNull() {
-    assertThat(manager.isViewed(null).toBlocking().single()).isFalse()
+    assertThat(manager.isViewed(null).toBlocking().single()).isFalse
   }
 
   @Test
   fun testIsViewedTrue() {
-    assertThat(manager.isViewed("1").toBlocking().single()).isTrue()
+    assertThat(manager.isViewed("1").toBlocking().single()).isTrue
   }
 
   @Test
   fun testIsViewedFalse() {
-    assertThat(manager.isViewed("-1").toBlocking().single()).isFalse()
+    assertThat(manager.isViewed("-1").toBlocking().single()).isFalse
   }
 
   @Test
   fun testView() {
-    assertThat(manager.isViewed("3").toBlocking().single()).isFalse()
+    assertThat(manager.isViewed("3").toBlocking().single()).isFalse
     manager.view("3")
-    assertThat(manager.isViewed("3").toBlocking().single()).isTrue()
+    assertThat(manager.isViewed("3").toBlocking().single()).isTrue
   }
 }

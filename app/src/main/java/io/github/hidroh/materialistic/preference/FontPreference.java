@@ -48,7 +48,7 @@ public class FontPreference extends SpinnerPreference {
 
     @Override
     protected void bindDropDownView(int position, View view) {
-        TextView textView = (TextView) view.findViewById(android.R.id.text1);
+        TextView textView = view.findViewById(android.R.id.text1);
         textView.setTypeface(FontCache.getInstance().get(getContext(), mEntryValues[position]));
         textView.setText(mEntries[position]);
     }

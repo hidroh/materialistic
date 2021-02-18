@@ -64,14 +64,14 @@ class LauncherActivityTest(private val choice: Int, private val startedActivity:
     @JvmStatic @ParameterizedRobolectricTestRunner.Parameters
     fun provideParameters(): Collection<Array<Any>> {
       return listOf(
-          arrayOf<Any>(R.string.pref_launch_screen_value_top, ListActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_best, BestActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_hot, PopularActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_new, NewActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_ask, AskActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_show, ShowActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_jobs, JobsActivity::class.java),
-          arrayOf<Any>(R.string.pref_launch_screen_value_saved, FavoriteActivity::class.java)
+          arrayOf(R.string.pref_launch_screen_value_top, ListActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_best, BestActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_hot, PopularActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_new, NewActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_ask, AskActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_show, ShowActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_jobs, JobsActivity::class.java),
+          arrayOf(R.string.pref_launch_screen_value_saved, FavoriteActivity::class.java)
       )
     }
   }

@@ -406,7 +406,7 @@ public class ItemActivity extends InjectableActivity implements ItemFragment.Ite
             }
         });
         if (story.isStoryType() && mExternalBrowser && !hasText) {
-            TextView buttonArticle = (TextView) findViewById(R.id.button_article);
+            TextView buttonArticle = findViewById(R.id.button_article);
             buttonArticle.setVisibility(View.VISIBLE);
             buttonArticle.setOnClickListener(v ->
                     AppUtils.openWebUrlExternal(ItemActivity.this,

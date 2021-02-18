@@ -91,7 +91,7 @@ class FavoriteManagerTest {
     val notifications = shadowOf(context
         .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
         .allNotifications
-    assertThat(notifications).isNotEmpty()
+    assertThat(notifications).isNotEmpty
     assertThat(shadowOf(notifications[0].contentIntent).savedIntent.action).isEqualTo(Intent.ACTION_CHOOSER)
   }
 
@@ -106,17 +106,17 @@ class FavoriteManagerTest {
 
   @Test
   fun testCheckNoId() {
-    assertThat(manager.check(null).toBlocking().single()).isFalse()
+    assertThat(manager.check(null).toBlocking().single()).isFalse
   }
 
   @Test
   fun testCheckTrue() {
-    assertThat(manager.check("1").toBlocking().single()).isTrue()
+    assertThat(manager.check("1").toBlocking().single()).isTrue
   }
 
   @Test
   fun testCheckFalse() {
-    assertThat(manager.check("-1").toBlocking().single()).isFalse()
+    assertThat(manager.check("-1").toBlocking().single()).isFalse
   }
 
   @Test @Config(sdk = [18])

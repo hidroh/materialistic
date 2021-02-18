@@ -134,7 +134,7 @@ public class UserActivityTest {
     public void testScrollToTop() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         recyclerView.smoothScrollToPosition(1);
         assertThat(customShadowOf(recyclerView).getScrollPosition()).isEqualTo(1);
         TabLayout.Tab tab = ((TabLayout) activity.findViewById(R.id.tab_layout)).getTabAt(0);
@@ -181,7 +181,7 @@ public class UserActivityTest {
     public void testCommentBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -211,7 +211,7 @@ public class UserActivityTest {
     public void testStoryBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("2"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());
@@ -250,7 +250,7 @@ public class UserActivityTest {
     public void testDeletedItemBinding() {
         verify(userManager).getUser(eq("username"), userCaptor.capture());
         userCaptor.getValue().onResponse(user);
-        RecyclerView recyclerView = (RecyclerView) activity.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
         verify(itemManager).getItem(eq("1"),
                 eq(ItemManager.MODE_DEFAULT),
                 itemCaptor.capture());

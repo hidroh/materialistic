@@ -18,7 +18,7 @@ public class ListActivity extends InjectableActivity implements MultiPaneListene
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
     }
 
     @Override

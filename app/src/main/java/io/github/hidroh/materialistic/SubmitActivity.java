@@ -62,14 +62,14 @@ public class SubmitActivity extends InjectableActivity {
         super.onCreate(savedInstanceState);
         AppUtils.setStatusBarColor(getWindow(), ContextCompat.getColor(this, R.color.blackT12));
         setContentView(R.layout.activity_submit);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME |
                 ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_HOME_AS_UP);
-        mTitleLayout = (TextInputLayout) findViewById(R.id.textinput_title);
-        mContentLayout = (TextInputLayout) findViewById(R.id.textinput_content);
-        mTitleEditText = (TextView) findViewById(R.id.edittext_title);
-        mContentEditText = (TextView) findViewById(R.id.edittext_content);
+        mTitleLayout = findViewById(R.id.textinput_title);
+        mContentLayout = findViewById(R.id.textinput_content);
+        mTitleEditText = findViewById(R.id.edittext_title);
+        mContentEditText = findViewById(R.id.edittext_content);
         String text, subject;
         if (savedInstanceState == null) {
             subject = getIntent().getStringExtra(Intent.EXTRA_SUBJECT);

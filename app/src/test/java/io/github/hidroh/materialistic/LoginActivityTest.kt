@@ -45,15 +45,15 @@ class LoginActivityTest {
   @Test
   fun testEmptyLoginInput() {
     activity.findViewById<View>(R.id.login_button).performClick()
-    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_username).error).isNotNull()
-    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_password).error).isNotNull()
+    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_username).error).isNotNull
+    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_password).error).isNotNull
   }
 
   @Test
   fun testEmptyRegisterInput() {
     activity.findViewById<View>(R.id.register_button).performClick()
-    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_username).error).isNotNull()
-    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_password).error).isNotNull()
+    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_username).error).isNotNull
+    assertThat(activity.findViewById<TextInputLayout>(R.id.textinput_password).error).isNotNull
   }
 
   @Test
@@ -67,7 +67,7 @@ class LoginActivityTest {
     callback.value.onDone(true)
     assertThat(activity).isFinishing
     assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(activity.getString(R.string.welcome, "username"))
-    assertThat<Account>(AccountManager.get(activity).accounts).hasSize(1)
+    assertThat(AccountManager.get(activity).accounts).hasSize(1)
     assertThat(Preferences.getUsername(activity)).isEqualTo("username")
   }
 

@@ -2,6 +2,8 @@ package io.github.hidroh.materialistic.data;
 
 import android.os.Parcel;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(TestRunner.class)
 public class HackerNewsItemTest {
@@ -427,10 +430,11 @@ public class HackerNewsItemTest {
 
     @Test
     public void testEquals() {
-        assertFalse(item.equals(null));
-        assertFalse(item.equals(new TestItem(){}));
-        assertFalse(item.equals(new HackerNewsItem(2l)));
-        assertTrue(item.equals(item));
-        assertTrue(item.equals(new HackerNewsItem(1l)));
+        assertNotEquals(null, item);
+        assertNotEquals(item, new TestItem() {
+        });
+        assertNotEquals(item, new HackerNewsItem(2L));
+        assertEquals(item, item);
+        assertEquals(item, new HackerNewsItem(1L));
     }
 }

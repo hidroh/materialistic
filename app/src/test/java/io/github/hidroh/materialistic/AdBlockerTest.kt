@@ -41,10 +41,10 @@ class AdBlockerTest {
     val context = mock(Context::class.java)
     `when`(context.assets).thenReturn(assetManager)
     AdBlocker.init(context, Schedulers.immediate())
-    assertThat(AdBlocker.isAd("")).isFalse()
-    assertThat(AdBlocker.isAd("http://localhost")).isFalse()
-    assertThat(AdBlocker.isAd("http://google.com")).isFalse()
-    assertThat(AdBlocker.isAd("http://pagead2.g.doubleclick.net")).isTrue()
+    assertThat(AdBlocker.isAd("")).isFalse
+    assertThat(AdBlocker.isAd("http://localhost")).isFalse
+    assertThat(AdBlocker.isAd("http://google.com")).isFalse
+    assertThat(AdBlocker.isAd("http://pagead2.g.doubleclick.net")).isTrue
   }
 
   @SuppressLint("NewApi")

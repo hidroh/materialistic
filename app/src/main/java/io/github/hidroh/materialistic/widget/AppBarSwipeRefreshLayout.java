@@ -44,7 +44,7 @@ public class AppBarSwipeRefreshLayout extends SwipeRefreshLayout implements AppB
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (getContext() instanceof Activity) {
-            mAppBar = (AppBarLayout) ((Activity) getContext()).findViewById(R.id.appbar);
+            mAppBar = ((Activity) getContext()).findViewById(R.id.appbar);
             if (mAppBar != null) {
                 mAppBar.addOnOffsetChangedListener(this);
             }

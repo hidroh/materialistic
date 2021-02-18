@@ -30,8 +30,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 public class PopupSettingsFragment extends AppCompatDialogFragment {
     static final String EXTRA_TITLE = PopupSettingsFragment.class.getName() + ".EXTRA_TITLE";
     static final String EXTRA_SUMMARY = PopupSettingsFragment.class.getName() + ".EXTRA_SUMMARY";
