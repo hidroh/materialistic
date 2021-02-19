@@ -45,24 +45,24 @@ ext {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.0',
-            'androidx.recyclerview:recyclerview:1.1.0',
-            'androidx.cardview:cardview:1.0.0',
-            'com.google.android.material:material:1.0.0',
-            'androidx.preference:preference:1.0.0',
-            'androidx.browser:browser:1.3.0',
-            "com.squareup.dagger:dagger:$daggerVersion",
-            "com.squareup.retrofit2:retrofit:$retrofitVersion",
-            "com.squareup.retrofit2:converter-gson:$retrofitVersion",
-            "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion",
-            "com.squareup.okhttp3:okhttp:$okHttpVersion",
-            "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
-            "io.reactivex:rxandroid:1.2.1",
-            "io.reactivex:rxjava:1.3.8",
-            'androidx.room:room-runtime:2.2.6',
-            'androidx.lifecycle:lifecycle-extensions:2.0.0',
-            'androidx.lifecycle:lifecycle-common-java8:2.3.0',
-            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.browser:browser:1.3.0'
+    implementation "com.squareup.dagger:dagger:$daggerVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation "io.reactivex:rxandroid:1.2.1"
+    implementation "io.reactivex:rxjava:1.3.8"
+    implementation 'androidx.room:room-runtime:2.2.6'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.3.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
