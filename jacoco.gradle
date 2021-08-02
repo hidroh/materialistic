@@ -1,8 +1,6 @@
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
-def jacocoDaggerMap = [:]
-
 task jacocoTestReport(type: JacocoReport) {
     reports {
         xml.enabled true
@@ -12,50 +10,15 @@ task jacocoTestReport(type: JacocoReport) {
     }
 
     classDirectories.from = fileTree(
-            dir: "${buildDir}/intermediates/classes/debug",
-            exclude: [
-                    '**/R.class',
-                    '**/R$*.class',
-                    '**/*$InjectAdapter.class',
-                    '**/*$ModuleAdapter.class',
-                    '**/*$ViewInjector*.class',
-                    '**/RestServiceFactory*.class',
-                    '**/*Module*.class',
-                    '**/AndroidUtils$*.class',
-                    '**/data/android/*.class',
-                    '**/AlertDialogBuilder.class',
-                    '**/AlertDialogBuilder$Impl.class',
-                    '**/PopupMenu*.class',
-                    '**/ImageUtils$PicassoImpl.class',
-                    '**/ActionViewResolver.class',
-                    '**/SpinnerPreference$*.class',
-                    '**/AsteriskSpan.class',
-                    '**/ImageGetter$URLDrawable.class',
-                    '**/ScrollAwareFABBehavior.class',
-                    '**/SinglePageItemRecyclerViewAdapter$SavedState*.class',
-                    '**/*Dummy*.class',
-                    '**/*ItemDecoration.class'
+            dir: "${buildDir}",
+            include: [
+                    '**/intermediates/javac/debug/classes/**/*.class',
+                    '**/tmp/kotlin-classes/debug/**/*.class'
             ])
     sourceDirectories.from = files android.sourceSets.main.java.srcDirs
     executionData.from = files "${buildDir}/jacoco/testDebugUnitTest.exec"
 
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
-    doFirst {
-        new File("${buildDir}/intermediates/classes/debug").eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                def renamed = file.path.replace '$$', '$'
-                jacocoDaggerMap[renamed] = file.path
-                file.renameTo renamed
-            }
-        }
-    }
-
     doLast {
-        // Revert renamed files back to their generated names
-        jacocoDaggerMap.each { renamed, original ->
-            new File(renamed).renameTo original
-        }
         println "coveralls report has been generated to file://${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         println "jacoco report has been generated to file://${reports.html.destination}/index.html"
     }

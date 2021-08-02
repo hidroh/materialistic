@@ -1,5 +1,5 @@
 #!/bin/bash
 set -v
-if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${TRAVIS_BRANCH}" = "master" ] && [ "${TASK}" = "test1" ]; then
+if [ "${TRAVIS_BRANCH}" = "master" ] && [ "${TASK}" = "test" ]; then
     ./gradlew -Pci --console=plain jacocoTestReport coveralls
 fi
