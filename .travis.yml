@@ -22,3 +22,6 @@ env:
         - TASK=test
 after_success:
     - .travis/coverage.sh
+branches:
+  only:
+  - master
