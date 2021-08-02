@@ -16,6 +16,7 @@
 
 package io.github.hidroh.materialistic.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -101,6 +102,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
             return false;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             if (!isAttached()) {
@@ -215,6 +217,7 @@ public class FavoriteRecyclerViewAdapter extends ListRecyclerViewAdapter
         return ItemManager.MODE_CACHE;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void notifyChanged() {
         if (getItemCount() == 0) {
             notifyDataSetChanged();

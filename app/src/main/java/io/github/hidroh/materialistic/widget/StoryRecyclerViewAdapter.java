@@ -17,6 +17,8 @@
 package io.github.hidroh.materialistic.widget;
 
 import androidx.lifecycle.Observer;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -105,6 +107,7 @@ public class StoryRecyclerViewAdapter extends
     private int mCacheMode = ItemManager.MODE_DEFAULT;
     private ItemTouchHelper mItemTouchHelper;
     @Synthetic ItemTouchHelperCallback mCallback;
+    @SuppressLint("NotifyDataSetChanged")
     private final Observer<Uri> mObserver = uri -> {
         if (uri == null) {
             return;
@@ -202,6 +205,7 @@ public class StoryRecyclerViewAdapter extends
         mItemTouchHelper = new ItemTouchHelper(mCallback);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -289,6 +293,7 @@ public class StoryRecyclerViewAdapter extends
         mShowAll = showAll;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void initDisplayOptions(RecyclerView recyclerView) {
         mHighlightUpdated = Preferences.highlightUpdatedEnabled(recyclerView.getContext());
         mUsername = Preferences.getUsername(recyclerView.getContext());
@@ -414,6 +419,7 @@ public class StoryRecyclerViewAdapter extends
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Synthetic
     void notifyUpdated() {
         if (mUpdateListener != null) {

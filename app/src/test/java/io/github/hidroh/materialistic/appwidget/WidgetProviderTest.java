@@ -60,15 +60,6 @@ public class WidgetProviderTest {
         appWidgetId = shadowOf(widgetManager).createWidget(WidgetProvider.class, R.layout.appwidget);
     }
 
-    @Config(sdk = 18)
-    @Test
-    public void testDeleteCancelAlarm() {
-        new WidgetHelper(RuntimeEnvironment.application).configure(appWidgetId);
-        assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNotNull();
-        widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
-        assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNull();
-    }
-
     @Config(sdk = 21)
     @Test
     public void testDeleteCancelJob() {
@@ -78,18 +69,6 @@ public class WidgetProviderTest {
         widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
         // TODO
 //        assertThat(shadowOf(jobScheduler).getAllPendingJobs()).isEmpty();
-    }
-
-    @Config(sdk = 18)
-    @Test
-    public void testAlarmAfterReboot() {
-        // rebooting should update widget again via update broadcast
-        widgetProvider.onReceive(RuntimeEnvironment.application,
-                new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
-                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId}));
-        assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNotNull();
-        widgetProvider.onDeleted(RuntimeEnvironment.application, new int[]{appWidgetId});
-        assertThat(shadowOf(alarmManager).getNextScheduledAlarm()).isNull();
     }
 
     @Config(sdk = 21)

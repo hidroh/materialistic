@@ -1,7 +1,6 @@
 package io.github.hidroh.materialistic;
 
 import android.preference.PreferenceManager;
-import androidx.annotation.StringRes;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +9,8 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.StringRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;

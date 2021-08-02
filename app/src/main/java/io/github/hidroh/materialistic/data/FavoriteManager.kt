@@ -22,6 +22,7 @@ import android.content.Intent
 import android.database.CursorWrapper
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.AnyThread
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
@@ -227,14 +228,23 @@ class FavoriteManager @Inject constructor(
 
   private fun notifyExportStart(context: Context) {
     NotificationManagerCompat.from(context)
-        .notify(notificationId, createNotificationBuilder(context)
-            .setCategory(NotificationCompat.CATEGORY_PROGRESS)
-            .setProgress(0, 0, true)
-            .setContentIntent(PendingIntent.getActivity(context, 0,
-                Intent(context, FavoriteActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                PendingIntent.FLAG_UPDATE_CURRENT))
-            .build())
+      .notify(
+        notificationId, createNotificationBuilder(context)
+          .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+          .setProgress(0, 0, true)
+          .setContentIntent(
+            PendingIntent.getActivity(
+              context, 0,
+              Intent(context, FavoriteActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+              when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                else -> PendingIntent.FLAG_UPDATE_CURRENT
+              }
+            )
+          )
+          .build()
+      )
   }
 
   private fun notifyExportDone(context: Context, uri: Uri?) {
@@ -243,14 +253,23 @@ class FavoriteManager @Inject constructor(
       cancel(notificationId)
       if (uri == null) return
       context.grantUriPermission(context.packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-      notify(notificationId, createNotificationBuilder(context)
+      notify(
+        notificationId, createNotificationBuilder(context)
           .setPriority(NotificationCompat.PRIORITY_HIGH)
           .setVibrate(longArrayOf(0L))
           .setContentText(context.getString(R.string.export_notification))
-          .setContentIntent(PendingIntent.getActivity(context, 0,
+          .setContentIntent(
+            PendingIntent.getActivity(
+              context, 0,
               uri.toSendIntentChooser(context).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-              PendingIntent.FLAG_UPDATE_CURRENT))
-          .build())
+              when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                else -> PendingIntent.FLAG_UPDATE_CURRENT
+              }
+            )
+          )
+          .build()
+      )
     }
   }
 

@@ -10,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.LooperMode;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@LooperMode(LooperMode.Mode.LEGACY)
 @RunWith(TestRunner.class)
 public class UserServicesClientTest {
     private UserServices userServices;

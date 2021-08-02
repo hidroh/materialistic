@@ -368,12 +368,9 @@ public class AppUtils {
     public static void openPlayStore(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        } else {
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        }
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
@@ -488,9 +485,7 @@ public class AppUtils {
     }
 
     public static void setStatusBarColor(Window window, int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(color);
-        }
+        window.setStatusBarColor(color);
     }
 
     public static void navigate(int direction, AppBarLayout appBarLayout, Navigable navigable) {
@@ -606,7 +601,9 @@ public class AppUtils {
                                 new Intent(context, ItemActivity.class)
                                         .putExtra(ItemActivity.EXTRA_ITEM, item)
                                         .putExtra(ItemActivity.EXTRA_OPEN_COMMENTS, true),
-                                PendingIntent.FLAG_ONE_SHOT));
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+                                        PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE :
+                                        PendingIntent.FLAG_ONE_SHOT));
             }
             return builder.build().intent.setData(Uri.parse(url));
         } else {
@@ -655,9 +652,6 @@ public class AppUtils {
         @SuppressLint("InlinedApi")
         void setFullscreen(boolean fullscreen) {
             if (!enabled) {
-                return;
-            }
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                 return;
             }
             if (fullscreen) {

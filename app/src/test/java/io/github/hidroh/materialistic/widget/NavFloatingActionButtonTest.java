@@ -18,7 +18,6 @@ package io.github.hidroh.materialistic.widget;
 
 import android.app.Dialog;
 import android.content.Intent;
-import androidx.appcompat.view.ContextThemeWrapper;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,13 +25,15 @@ import android.view.View;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import io.github.hidroh.materialistic.test.TestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowGestureDetector;
 
+import androidx.appcompat.view.ContextThemeWrapper;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.R;
+import io.github.hidroh.materialistic.test.TestRunner;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -90,6 +91,7 @@ public class NavFloatingActionButtonTest {
         verify(navigable).onNavigate(eq(Navigable.DIRECTION_RIGHT));
     }
 
+    @LooperMode(LooperMode.Mode.LEGACY)
     @Test
     public void testKonami() {
         gestureListener.onFling(null, null, 0f, 1f); // down, invalid, should ignore

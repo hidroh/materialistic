@@ -23,10 +23,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Vibrator;
-import androidx.annotation.RequiresApi;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.appcompat.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
@@ -36,8 +32,13 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Locale;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.GestureDetectorCompat;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.Navigable;
 import io.github.hidroh.materialistic.Preferences;
@@ -240,12 +241,7 @@ public class NavFloatingActionButton extends FloatingActionButton implements Vie
     }
 
     private void stopObservingViewTree() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        } else {
-            //noinspection deprecation
-            getViewTreeObserver().removeGlobalOnLayoutListener(this);
-        }
+        getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
     @SuppressLint("CommitPrefEdits")

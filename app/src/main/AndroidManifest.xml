@@ -49,7 +49,8 @@
         tools:ignore="UnusedAttribute" >
         <activity
             android:name=".LauncherActivity"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@android:style/Theme.NoDisplay"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,7 +66,8 @@
         </activity>
         <activity
             android:name=".ItemActivity"
-            android:label="@string/title_activity_item">
+            android:label="@string/title_activity_item"
+            android:exported="true">
             <intent-filter android:label="@string/filter_title_item" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -103,7 +105,8 @@
         <activity
             android:name=".FavoriteActivity"
             android:label="@string/title_activity_favorite"
-            android:launchMode="singleTop"> <!-- required to get search intents -->
+            android:launchMode="singleTop"
+            android:exported="true"> <!-- required to get search intents -->
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable_favorite" />
             <intent-filter>
@@ -136,7 +139,8 @@
         </activity>
         <activity
             android:name=".SearchActivity"
-            android:label="@string/title_activity_search" >
+            android:label="@string/title_activity_search"
+            android:exported="true">
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable_stories" />
             <intent-filter>
@@ -150,7 +154,8 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings"
-            android:permission="android.permission.WRITE_SECURE_SETTINGS">
+            android:permission="android.permission.WRITE_SECURE_SETTINGS"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -177,7 +182,8 @@
         </activity>
         <activity
             android:name=".SubmitActivity"
-            android:label="@string/title_activity_submit">
+            android:label="@string/title_activity_submit"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -191,7 +197,8 @@
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user"
-            android:theme="@style/AppTheme.Translucent">
+            android:theme="@style/AppTheme.Translucent"
+            android:exported="true">
             <intent-filter android:label="@string/filter_title_item" >
                 <action android:name="android.intent.action.VIEW" />
 
@@ -233,13 +240,15 @@
         </activity>
         <activity
             android:name=".appwidget.WidgetConfigActivity"
-            android:theme="@style/AppAlertDialog">
+            android:theme="@style/AppAlertDialog"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
         <service android:name=".accounts.AuthenticatorService"
-            android:permission="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS">
+            android:permission="io.github.hidroh.materialistic.permission.AUTHENTICATE_ACCOUNTS"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -249,7 +258,8 @@
         </service>
         <service android:name=".data.ItemSyncService"
             android:process=":sync"
-            android:permission="io.github.hidroh.materialistic.permission.SYNC_ITEM">
+            android:permission="io.github.hidroh.materialistic.permission.SYNC_ITEM"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -287,15 +297,18 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <receiver android:name=".data.ItemSyncWifiReceiver">
+        <receiver android:name=".data.ItemSyncWifiReceiver"
+            android:exported="true">
             <intent-filter>
                 <action
                     android:name="android.net.conn.CONNECTIVITY_CHANGE"
                     tools:ignore="BatteryLife"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".appwidget.WidgetProvider"
-                  tools:ignore="ExportedReceiver">
+        <receiver
+            android:name=".appwidget.WidgetProvider"
+            tools:ignore="ExportedReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="io.github.hidroh.materialistic.ACTION_REFRESH_WIDGET" />
             </intent-filter>

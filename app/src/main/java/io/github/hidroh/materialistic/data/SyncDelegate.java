@@ -36,12 +36,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.PersistableBundle;
 import android.os.Process;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.UiThread;
-import androidx.annotation.VisibleForTesting;
-import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.webkit.WebView;
@@ -52,6 +46,12 @@ import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
+import androidx.core.app.NotificationCompat;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.BuildConfig;
 import io.github.hidroh.materialistic.ItemActivity;
@@ -118,7 +118,7 @@ public class SyncDelegate {
         if (!Preferences.Offline.isEnabled(context)) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !TextUtils.isEmpty(job.id)) {
+        if (!TextUtils.isEmpty(job.id)) {
             JobInfo.Builder builder = new JobInfo.Builder(Long.valueOf(job.id).intValue(),
                     new ComponentName(context.getPackageName(),
                             ItemSyncJobService.class.getName()))
@@ -323,7 +323,9 @@ public class SyncDelegate {
                         .setData(AppUtils.createItemUri(itemId))
                         .putExtra(ItemActivity.EXTRA_CACHE_MODE, ItemManager.MODE_CACHE)
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                PendingIntent.FLAG_ONE_SHOT);
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+                        PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE :
+                        PendingIntent.FLAG_ONE_SHOT);
     }
 
     private static class SyncProgress {

@@ -24,7 +24,6 @@ import dagger.Module;
 import dagger.Provides;
 import io.github.hidroh.materialistic.accounts.UserServices;
 import io.github.hidroh.materialistic.appwidget.WidgetConfigActivity;
-import io.github.hidroh.materialistic.appwidget.WidgetConfigActivityTest;
 import io.github.hidroh.materialistic.data.FavoriteManager;
 import io.github.hidroh.materialistic.data.FavoriteManagerTest;
 import io.github.hidroh.materialistic.data.FeedbackClient;
@@ -97,28 +96,11 @@ import static org.mockito.Mockito.when;
                 ItemSyncService.class,
                 // test classes
                 AppUtilsTest.class,
-                SettingsActivityTest.class,
-                SearchActivityTest.class,
-                ItemActivityTest.class,
                 TestReadabilityActivity.class,
                 TestListActivity.class,
                 io.github.hidroh.materialistic.test.ListActivity.class,
-                FavoriteActivityTest.class,
-                FavoriteActivityEmptyTest.class,
                 FavoriteManagerTest.class,
                 TestFavoriteActivity.class,
-                WebFragmentLocalTest.class,
-                WebFragmentTest.class,
-                FeedbackActivityTest.class,
-                PopularActivityTest.class,
-                ReadabilityFragmentLazyLoadTest.class,
-                DrawerActivityLoginTest.class,
-                ComposeActivityTest.class,
-                SubmitActivityTest.class,
-                UserActivityTest.class,
-                ThreadPreviewActivityTest.class,
-                WidgetConfigActivityTest.class,
-                PreferencesActivityTest.class,
                 ItemSyncJobServiceTest.TestItemSyncJobService.class
         },
         library = true,

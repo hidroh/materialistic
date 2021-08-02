@@ -24,27 +24,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.github.hidroh.materialistic.annotation.Synthetic;
 import io.github.hidroh.materialistic.data.ItemManager;
 import io.github.hidroh.materialistic.data.SessionManager;
@@ -432,25 +433,20 @@ public abstract class BaseListActivity extends DrawerActivity implements MultiPa
     }
 
     private void onPreferenceChanged(int key, boolean contextChanged) {
-        switch (key) {
-            case R.string.pref_external:
-                mExternalBrowser = Preferences.externalBrowserEnabled(this);
-                break;
-            case R.string.pref_story_display:
-                mStoryViewMode = Preferences.getDefaultStoryView(this);
-                break;
-            case R.string.pref_navigation:
-                boolean enabled = Preferences.navigationEnabled(this);
-                if (!enabled) {
-                    NavFloatingActionButton.resetPosition(this);
-                }
-                if (mNavButton != null) {
-                    AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 && enabled);
-                }
-                break;
-            case R.string.pref_multi_window:
-                mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
-                break;
+        if (key == R.string.pref_external) {
+            mExternalBrowser = Preferences.externalBrowserEnabled(this);
+        } else if (key == R.string.pref_story_display) {
+            mStoryViewMode = Preferences.getDefaultStoryView(this);
+        } else if (key == R.string.pref_navigation) {
+            boolean enabled = Preferences.navigationEnabled(this);
+            if (!enabled) {
+                NavFloatingActionButton.resetPosition(this);
+            }
+            if (mNavButton != null) {
+                AppUtils.toggleFab(mNavButton, mViewPager.getCurrentItem() == 0 && enabled);
+            }
+        } else if (key == R.string.pref_multi_window) {
+            mMultiWindowEnabled = Preferences.multiWindowEnabled(this);
         }
     }
 }

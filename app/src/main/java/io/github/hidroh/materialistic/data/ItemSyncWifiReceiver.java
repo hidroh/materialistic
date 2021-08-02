@@ -31,7 +31,7 @@ public class ItemSyncWifiReceiver extends BroadcastReceiver {
         if (!TextUtils.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
             return;
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && AppUtils.isOnWiFi(context)) {
+        if (AppUtils.isOnWiFi(context)) {
             SyncDelegate.scheduleSync(context, new SyncDelegate.JobBuilder(context, null).build());
         }
     }

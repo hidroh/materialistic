@@ -17,12 +17,13 @@
 package io.github.hidroh.materialistic;
 
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -131,7 +132,7 @@ public class ListFragment extends BaseListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MaterialisticDatabase.getInstance(getContext()).getLiveData().observe(this, mObserver);
+        MaterialisticDatabase.getInstance(getContext()).getLiveData().observe(getViewLifecycleOwner(), mObserver);
         String managerClassName = getArguments().getString(EXTRA_ITEM_MANAGER);
         ItemManager itemManager;
         if (TextUtils.equals(managerClassName, AlgoliaClient.class.getName())) {
@@ -173,9 +174,9 @@ public class ListFragment extends BaseListFragment {
             }
 
         });
-        mStoryListViewModel = ViewModelProviders.of(this).get(StoryListViewModel.class);
+        mStoryListViewModel = new ViewModelProvider(this).get(StoryListViewModel.class);
         mStoryListViewModel.inject(itemManager, mIoThreadScheduler);
-        mStoryListViewModel.getStories(mFilter, mCacheMode).observe(this, itemLists -> {
+        mStoryListViewModel.getStories(mFilter, mCacheMode).observe(getViewLifecycleOwner(), itemLists -> {
             if (itemLists == null) {
                 return;
             }
