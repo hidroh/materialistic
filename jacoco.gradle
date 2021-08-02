@@ -23,3 +23,8 @@ task jacocoTestReport(type: JacocoReport) {
         println "jacoco report has been generated to file://${reports.html.destination}/index.html"
     }
 }
+
+coveralls {
+    saveAsFile = true
+    sendToCoveralls = false
+}
