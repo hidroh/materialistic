@@ -1,28 +1,10 @@
+os: linux
 language: android
-jdk:
-  - oraclejdk8
-sudo: required
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-android:
-  components:
-    # Uncomment the lines below if you want to
-    # use the latest revision of Android SDK Tools
-    - tools
-    - tools # TODO force travis to fetch latest tools
-    - platform-tools
-
-    # The BuildTools version used by your project
-    - build-tools-28.0.3
-
-    # The SDK version used to compile your project
-    - android-28
-  licenses:
-    - 'android-sdk-license-.+'
+jdk: openjdk11
 before_install:
-  - yes | sdkmanager "platforms;android-28" # https://github.com/travis-ci/travis-ci/issues/8874
+  - wget "https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip" -O commandlinetools.zip
+  - unzip commandlinetools.zip -d $ANDROID_HOME/
+  - yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager "platforms;android-30" --sdk_root=$ANDROID_HOME
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
@@ -33,7 +15,10 @@ cache:
 script:
     - .travis/${TASK}.sh
 env:
-    - TASK=lint
-    - TASK=test
+    global:
+        - ANDROID_HOME=~/sdk
+    jobs:
+        - TASK=lint
+        - TASK=test
 after_success:
     - .travis/coverage.sh
