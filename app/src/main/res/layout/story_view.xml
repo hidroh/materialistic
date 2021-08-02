@@ -16,11 +16,12 @@
   -->
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       tools:parentTag="android.widget.RelativeLayout"
-       tools:layout_width="match_parent"
-       tools:layout_height="match_parent"
-       tools:ignore="HardcodedText">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:parentTag="android.widget.RelativeLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent"
+    tools:ignore="HardcodedText">
 
     <View
         android:id="@+id/background"
@@ -102,7 +103,7 @@
         <ImageView
             android:src="@drawable/ic_thumb_up_white_24dp"
             android:contentDescription="@string/voted"
-            android:tint="@color/greenA700"
+            app:tint="@color/greenA700"
             android:layout_gravity="bottom|center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -117,7 +118,7 @@
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tint="@color/orange400" />
+        app:tint="@color/orange400" />
 
     <TextView
         android:id="@id/score"

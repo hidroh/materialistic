@@ -42,10 +42,12 @@ import org.mockito.MockitoAnnotations
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.LooperMode
 import org.robolectric.shadows.ShadowContentResolver
 import org.robolectric.shadows.ShadowNetworkInfo
 import rx.schedulers.Schedulers
 
+@LooperMode(LooperMode.Mode.LEGACY)
 @RunWith(TestRunner::class)
 class FavoriteManagerTest {
   private val context = RuntimeEnvironment.application
@@ -117,26 +119,6 @@ class FavoriteManagerTest {
   @Test
   fun testCheckFalse() {
     assertThat(manager.check("-1").toBlocking().single()).isFalse()
-  }
-
-  @Test @Config(sdk = [18])
-  fun testAdd() {
-    PreferenceManager.getDefaultSharedPreferences(context)
-        .edit()
-        .putBoolean(context.getString(R.string.pref_saved_item_sync), true)
-        .putBoolean(context.getString(R.string.pref_offline_article), true)
-        .apply()
-    shadowOf(context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-        .setActiveNetworkInfo(ShadowNetworkInfo.newInstance(null,
-        ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.CONNECTED))
-    manager.add(context, object : TestWebItem() {
-      override fun getDisplayedTitle() = "new title"
-      override fun getUrl() = "http://newitem.com"
-      override fun getId() = "3"
-    })
-    verify(observer).onChanged(eq(Uri.parse("content://${BuildConfig.APPLICATION_ID}/saved/add/3")))
-    assertThat(ShadowContentResolver.getStatus(Account("Materialistic", BuildConfig.APPLICATION_ID),
-        SyncContentProvider.PROVIDER_AUTHORITY).syncRequests).isGreaterThan(0)
   }
 
   @Test

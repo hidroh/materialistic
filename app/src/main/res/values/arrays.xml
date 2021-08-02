@@ -188,10 +188,12 @@
     <string-array name="pref_widget_theme_options" tools:ignore="InconsistentArrays">
         <item>@string/theme_transparent</item>
         <item>@string/theme_dark</item>
+        <item>@string/theme_light</item>
     </string-array>
     <string-array name="pref_widget_theme_values" tools:ignore="InconsistentArrays">
         <item>@string/pref_widget_theme_value_transparent</item>
         <item>@string/pref_widget_theme_value_dark</item>
+        <item>@string/pref_widget_theme_value_light</item>
     </string-array>
     <string name="pref_widget_theme_value_transparent" translatable="false">transparent</string>
     <string name="pref_widget_theme_value_dark" translatable="false">dark</string>

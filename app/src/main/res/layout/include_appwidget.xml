@@ -16,8 +16,9 @@
   -->
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       tools:showIn="@layout/appwidget">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="@layout/appwidget">
 
     <TextView
         android:id="@+id/title"
@@ -60,7 +61,7 @@
         android:scaleType="center"
         android:src="@drawable/ic_refresh_white_24dp"
         style="@style/Widget.AppCompat.Button.Borderless"
-        android:tint="?android:attr/colorForeground"
+        app:tint="?android:attr/colorForeground"
         android:minWidth="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

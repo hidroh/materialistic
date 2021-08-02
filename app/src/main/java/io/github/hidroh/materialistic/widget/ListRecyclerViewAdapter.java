@@ -16,18 +16,19 @@
 
 package io.github.hidroh.materialistic.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import androidx.recyclerview.widget.RecyclerView;
 import io.github.hidroh.materialistic.AlertDialogBuilder;
 import io.github.hidroh.materialistic.AppUtils;
 import io.github.hidroh.materialistic.CustomTabsDelegate;
@@ -132,6 +133,7 @@ public abstract class ListRecyclerViewAdapter
         return mCardViewEnabled;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public final void setCardViewEnabled(boolean cardViewEnabled) {
         this.mCardViewEnabled = cardViewEnabled;
         notifyDataSetChanged();

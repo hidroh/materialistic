@@ -24,16 +24,9 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -52,14 +45,27 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.github.hidroh.materialistic.annotation.Synthetic;
-import io.github.hidroh.materialistic.data.*;
+import io.github.hidroh.materialistic.data.FileDownloader;
+import io.github.hidroh.materialistic.data.Item;
+import io.github.hidroh.materialistic.data.ItemManager;
+import io.github.hidroh.materialistic.data.ReadabilityClient;
+import io.github.hidroh.materialistic.data.ResponseListener;
+import io.github.hidroh.materialistic.data.WebItem;
 import io.github.hidroh.materialistic.widget.AdBlockWebViewClient;
 import io.github.hidroh.materialistic.widget.CacheableWebView;
 import io.github.hidroh.materialistic.widget.PopupMenu;
@@ -313,7 +319,7 @@ public class WebFragment extends LazyLoadFragment
             mPdfAndroidJavascriptBridge.cleanUp();
             mWebView.removeJavascriptInterface("PdfAndroidJavascriptBridge");
         }
-        if (pdfFilePath != null && isPdfRenderingSupported() && TextUtils.equals(PDF_LOADER_URL, url)) {
+        if (pdfFilePath != null && TextUtils.equals(PDF_LOADER_URL, url)) {
             setProgress(80);
             mIsPdf = true;
             mPdfAndroidJavascriptBridge = new PdfAndroidJavascriptBridge(pdfFilePath, new PdfAndroidJavascriptBridge.Callbacks() {
@@ -332,12 +338,6 @@ public class WebFragment extends LazyLoadFragment
             mWebView.setInitialScale(1);
         }
         mWebView.reloadUrl(url);
-    }
-
-    // We can't use @JavascriptInterface for the API versions < 17 because there were security issues -
-    // JS would manipulate the app via reflection via the bridge object
-    private boolean isPdfRenderingSupported() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
     }
 
     @Synthetic
@@ -455,7 +455,7 @@ public class WebFragment extends LazyLoadFragment
             if (getActivity() == null) {
                 return;
             }
-            if (isPdfRenderingSupported() && mimetype.equals(PDF_MIME_TYPE)) {
+            if (mimetype.equals(PDF_MIME_TYPE)) {
                 setProgress(10);
                 mIsPdf = true;
                 downloadFileAndRenderPdf();
@@ -553,17 +553,12 @@ public class WebFragment extends LazyLoadFragment
         if (TextUtils.isEmpty(query)) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mWebView.setFindListener((activeMatchOrdinal, numberOfMatches, isDoneCounting) -> {
-                if (isDoneCounting) {
-                    handleFindResults(numberOfMatches);
-                }
-            });
-            mWebView.findAllAsync(query);
-        } else {
-            //noinspection deprecation
-            handleFindResults(mWebView.findAll(query));
-        }
+        mWebView.setFindListener((activeMatchOrdinal, numberOfMatches, isDoneCounting) -> {
+            if (isDoneCounting) {
+                handleFindResults(numberOfMatches);
+            }
+        });
+        mWebView.findAllAsync(query);
     }
 
     private void handleFindResults(int numberOfMatches) {

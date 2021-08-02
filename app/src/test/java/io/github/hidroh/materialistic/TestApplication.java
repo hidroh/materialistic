@@ -18,7 +18,6 @@ import java.util.Collection;
 
 import dagger.ObjectGraph;
 import io.github.hidroh.materialistic.test.InMemoryDatabase;
-import io.github.hidroh.materialistic.test.shadow.ShadowSnackbar;
 
 import static org.mockito.Mockito.mock;
 import static org.robolectric.Shadows.shadowOf;
@@ -57,7 +56,6 @@ public class TestApplication extends Application implements TestLifecycleApplica
 
     @Override
     public void afterTest(Method method) {
-        ShadowSnackbar.reset();
         try {
             InMemoryDatabase.reset();
             resetWindowManager();

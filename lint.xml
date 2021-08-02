@@ -29,4 +29,5 @@
     <issue id="RestrictedApi" severity="ignore" /> <!-- TODO http://b.android.com/230387 -->
     <issue id="ClickableViewAccessibility" severity="informational" />
     <issue id="OldTargetApi" severity="informational" />
+    <issue id="QueryPermissionsNeeded" severity="informational" />
 </lint>

@@ -143,8 +143,7 @@ public class CacheableWebView extends WebView {
             if (view.getSettings().getCacheMode() == WebSettings.LOAD_CACHE_ONLY) {
                 return;
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-                    cacheFileName != null && lastProgress != 100 && newProgress == 100) {
+            if (cacheFileName != null && lastProgress != 100 && newProgress == 100) {
                 lastProgress = newProgress;
                 view.saveWebArchive(cacheFileName);
             }
