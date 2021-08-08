@@ -41,6 +41,8 @@ Run all/selective tests:
 
     ./gradlew jacocoTestReport
 
+Disable `instant run` when building from Android Studio.
+
 ### Articles
 - [Supporting multiple themes in your Android app (Part 1)][article-theme1]
 - [Supporting multiple themes in your Android app (Part 2)][article-theme2] [![][Android Weekly 144 Badge]][Android Weekly 144]
