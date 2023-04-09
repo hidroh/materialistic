@@ -65,12 +65,6 @@ public abstract class BaseFragment extends Fragment {
         mAttached = false;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Application.getRefWatcher(getActivity()).watch(this);
-    }
-
     public boolean isAttached() {
         return mAttached;
     }

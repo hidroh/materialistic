@@ -92,10 +92,8 @@ public class CacheableWebView extends WebView {
 
     private void enableCache() {
         WebSettings webSettings = getSettings();
-        webSettings.setAppCacheEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setAllowFileAccess(true);
-        webSettings.setAppCachePath(getContext().getApplicationContext()
-                .getCacheDir().getAbsolutePath());
         setCacheModeInternal();
     }
 

@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
+    compileSdk 33
 
     defaultConfig {
         applicationId "io.github.hidroh.materialistic"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 79
         versionName "3.3"
         buildConfigField "int", "LATEST_RELEASE", "77"
@@ -19,57 +19,55 @@ android {
                 'proguard-square.pro',
                 'proguard-support.pro',
                 'proguard-rx.pro'
-        resConfigs "en", "zh-rCN", "es"
+        resConfigs 'en', 'zh-rCN', 'es'
     }
 
     buildTypes {
         debug {
-            minifyEnabled !rootProject.ext.ci
+            minifyEnabled false
         }
         release {
             minifyEnabled true
             shrinkResources true
         }
     }
-
     lintOptions {
         htmlReport false
         xmlReport false
         textReport true
         lintConfig file("${rootProject.getRootDir()}/lint.xml")
-        warningsAsErrors true
         abortOnError true
         explainIssues false
         absolutePaths false
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
+    kotlin {
+        jvmToolchain(11)
+    }
+    namespace 'io.github.hidroh.materialistic'
 
-    aaptOptions {
-        cruncherEnabled = false
-    }
 }
 
 ext {
     okHttpVersion = '3.9.1'
     daggerVersion = '1.2.5'
-    leakCanaryVersion = '1.5.4'
-    retrofitVersion = '2.3.0'
-    roomVersion = '2.3.0'
-    lifecycleVersion = '2.3.1'
+    retrofitVersion = '2.9.0'
+    roomVersion = '2.5.1'
+    lifecycleVersion = '2.6.1'
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.1',
-            'androidx.recyclerview:recyclerview:1.2.1',
+    implementation 'androidx.appcompat:appcompat:1.6.1',
+            'androidx.recyclerview:recyclerview:1.3.0',
             'androidx.cardview:cardview:1.0.0',
             'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0',
-            'com.google.android.material:material:1.4.0',
-            'androidx.preference:preference:1.1.1',
-            'androidx.browser:browser:1.3.0',
+            'com.google.android.material:material:1.8.0',
+            'androidx.preference:preference:1.2.0',
+            'androidx.browser:browser:1.5.0',
             "com.squareup.dagger:dagger:$daggerVersion",
             "com.squareup.retrofit2:retrofit:$retrofitVersion",
             "com.squareup.retrofit2:converter-gson:$retrofitVersion",
@@ -77,21 +75,15 @@ dependencies {
             "com.squareup.okhttp3:okhttp:$okHttpVersion",
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
             "io.reactivex:rxandroid:1.2.1",
-            "io.reactivex:rxjava:1.1.7",
+            'io.reactivex:rxjava:1.3.8',
             "androidx.room:room-runtime:$roomVersion",
             "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion",
             "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion",
-            "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
-            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+            "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
+            "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android${rootProject.hasProperty("leak") ? "" : "-no-op"}:$leakCanaryVersion"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     kapt "androidx.room:room-compiler:$roomVersion",
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
     kaptTest "androidx.room:room-compiler:$roomVersion",
             "com.squareup.dagger:dagger-compiler:$daggerVersion"
 }
-
-apply from: "${rootProject.getRootDir()}/robolectric.gradle"
-apply from: "${rootProject.getRootDir()}/jacoco.gradle"

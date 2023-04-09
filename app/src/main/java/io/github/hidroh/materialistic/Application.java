@@ -21,9 +21,6 @@ import android.graphics.Typeface;
 import android.os.StrictMode;
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
-
 import dagger.ObjectGraph;
 import io.github.hidroh.materialistic.data.AlgoliaClient;
 import rx.schedulers.Schedulers;
@@ -31,13 +28,7 @@ import rx.schedulers.Schedulers;
 public class Application extends android.app.Application implements Injectable {
 
     public static Typeface TYPE_FACE = null;
-    private RefWatcher mRefWatcher;
     private ObjectGraph mApplicationGraph;
-
-    public static RefWatcher getRefWatcher(Context context) {
-        Application application = (Application) context.getApplicationContext();
-        return application.mRefWatcher;
-    }
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -50,7 +41,6 @@ public class Application extends android.app.Application implements Injectable {
         super.onCreate();
         AppCompatDelegate.setDefaultNightMode(Preferences.Theme.getAutoDayNightMode(this));
         AlgoliaClient.sSortByTime = Preferences.isSortByRecent(this);
-        mRefWatcher = LeakCanary.install(this);
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()

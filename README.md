@@ -1,5 +1,5 @@
 ## Materialistic for Hacker News
-Material design [Hacker News] client for Android, uses official [HackerNews/API], [Dagger] for dependency injection and [Robolectric] for unit testing.
+Material design [Hacker News] client for Android, uses official [HackerNews/API], [Dagger] for dependency injection.
 
 [![Get it on Google Play][Play Store Badge]][Play Store]
 
@@ -17,7 +17,6 @@ Material design [Hacker News] client for Android, uses official [HackerNews/API]
 - [Android Jetpack]: appcompat-v7 / recyclerview-v7 / design / cardview-v7 / preference-v7 / customtabs
 - Square [Retrofit] / [OkHttp] / [AssertJ] / [Dagger] / [LeakCanary]
 - [RxJava] & [RxAndroid]
-- [Robolectric]
 - [PDF.js]
 
 **Build**
@@ -29,17 +28,6 @@ Build with LeakCanary on
     ./gradlew assembleDebug -Pleak
 
 Grab your Mercury Web Parser API key [here][mercury] if you want to connect to Mercury.
-
-**Test** [![Build Status]][Travis]
-
-Run all/selective tests:
-
-    ./gradlew testDebug
-    ./gradlew testDebug --tests "*HackerNewsClientTest"
-
-**Coverage** [![Coverage Status]][Coveralls]
-
-    ./gradlew jacocoTestReport
 
 ### Articles
 - [Supporting multiple themes in your Android app (Part 1)][article-theme1]
@@ -72,10 +60,6 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
     See the License for the specific language governing permissions and
     limitations under the License.
 
-[Build Status]: https://travis-ci.org/hidroh/materialistic.svg?branch=master
-[Travis]: https://travis-ci.org/hidroh/materialistic
-[Coverage Status]: https://coveralls.io/repos/hidroh/materialistic/badge.svg?branch=master
-[Coveralls]: https://coveralls.io/r/hidroh/materialistic?branch=master
 [Hacker News]: https://news.ycombinator.com/
 [HackerNews/API]: https://github.com/HackerNews/API
 [Play Store]: https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic&referrer=utm_source%3Dgithub
@@ -90,7 +74,6 @@ Contributions are always welcome. Please make sure you read [Contributing notes]
 [LeakCanary]: https://github.com/square/leakcanary
 [RxJava]: https://github.com/ReactiveX/RxJava
 [RxAndroid]: https://github.com/ReactiveX/RxAndroid
-[Robolectric]: https://github.com/robolectric/robolectric
 [mercury]: https://mercury.postlight.com/web-parser/
 [article-theme1]: http://www.hidroh.com/2015/02/16/support-multiple-themes-android-app/
 [article-theme2]: http://www.hidroh.com/2015/02/25/support-multiple-themes-android-app-part-2/
