@@ -211,13 +211,13 @@ class FavoriteManager @Inject constructor(
       do {
         val item = cursor.favorite
         writeUtf8(item.displayedTitle)
-        writeByte('\n'.toInt())
+        writeByte('\n'.code)
         writeUtf8(item.url)
-        writeByte('\n'.toInt())
+        writeByte('\n'.code)
         writeUtf8(HackerNewsClient.WEB_ITEM_PATH.format(item.id))
         if (!cursor.isLast) {
-          writeByte('\n'.toInt())
-          writeByte('\n'.toInt())
+          writeByte('\n'.code)
+          writeByte('\n'.code)
         }
       } while (cursor.moveToNext())
       flush()
@@ -273,12 +273,13 @@ class FavoriteManager @Inject constructor(
     }
   }
 
-  private fun createNotificationBuilder(context: Context) = NotificationCompat.Builder(context, CHANNEL_EXPORT)
-      .setChannel(context, CHANNEL_EXPORT, context.getString(R.string.export_saved_stories))
-      .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
-      .setSmallIcon(R.drawable.ic_notification)
-      .setContentTitle(context.getString(R.string.export_saved_stories))
-      .setAutoCancel(true)!!
+  private fun createNotificationBuilder(context: Context) =
+      NotificationCompat.Builder(context, CHANNEL_EXPORT)
+          .setChannel(context, CHANNEL_EXPORT, context.getString(R.string.export_saved_stories))
+          .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
+          .setSmallIcon(R.drawable.ic_notification)
+          .setContentTitle(context.getString(R.string.export_saved_stories))
+          .setAutoCancel(true)
 
   @WorkerThread
   private fun query(filter: String?): android.database.Cursor = if (filter.isNullOrEmpty()) {
