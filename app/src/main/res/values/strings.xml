@@ -319,6 +319,7 @@
     <string name="export_saved_stories">Export saved stories</string>
     <string name="export_notification">Saved to file. Tap for options.</string>
     <string name="share_file">Share file</string>
+    <string name="share_text">Share link</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="notification_channel_downloads">Downloads</string>
     <string name="reply">Reply</string>
