@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/grey100" />
+    <foreground>
+        <!-- 10dp padding on each side of 108dp asset -->
+        <inset
+            android:drawable="@drawable/ic_trending_up_red_a200_24dp"
+            android:inset="@fraction/adaptive_icon_padding" />
+    </foreground>
+</adaptive-icon>
