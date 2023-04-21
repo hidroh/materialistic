@@ -296,5 +296,9 @@
     <string name="more_sections">更多节点</string>
     <string name="list">列表</string>
     <string name="delete">删除</string>
+    <string name="full_text">全文</string>
+    <string name="notification_channel_downloads">下载</string>
+    <string name="empty_text">【帖子暂无内容】</string>
+    <string name="privacy_policy">隐私政策</string>
 
 </resources>
