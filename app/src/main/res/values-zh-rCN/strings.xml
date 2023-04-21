@@ -17,13 +17,13 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="app_name">骇客资讯</string>
+    <string name="app_name">黑客资讯</string>
     <string name="action_settings">设置</string>
     <string name="title_activity_list">置顶帖子</string>
     <string name="title_activity_best">最佳帖子</string>
     <string name="title_activity_item">评论</string>
     <string name="title_activity_release">更新内容</string>
-    <string name="filter_title_item">骇客资讯</string>
+    <string name="filter_title_item">黑客资讯</string>
     <string name="open_drawer">打开侧边栏</string>
     <string name="close_drawer">关闭侧边栏</string>
     <string name="view_in_browser">使用浏览器打开</string>
