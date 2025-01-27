@@ -19,7 +19,7 @@ android {
                 'proguard-square.pro',
                 'proguard-support.pro',
                 'proguard-rx.pro'
-        resConfigs 'en', 'zh-rCN', 'es'
+        resourceConfigurations += ['en', 'zh-rCN', 'es']
     }
 
     buildTypes {
@@ -31,24 +31,24 @@ android {
             shrinkResources true
         }
     }
-    lintOptions {
-        htmlReport false
-        xmlReport false
-        textReport true
-        lintConfig file("${rootProject.getRootDir()}/lint.xml")
-        abortOnError true
-        explainIssues false
-        absolutePaths false
-    }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(21)
     }
     namespace 'io.github.hidroh.materialistic'
+    lint {
+        abortOnError true
+        absolutePaths false
+        explainIssues false
+        htmlReport false
+        lintConfig file("${rootProject.getRootDir()}/lint.xml")
+        textReport true
+        xmlReport false
+    }
 
 }
 

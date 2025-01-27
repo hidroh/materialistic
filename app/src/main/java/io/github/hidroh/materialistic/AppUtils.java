@@ -520,13 +520,13 @@ public class AppUtils {
     public static void share(Context context, String subject, String text) {
         Intent intent = new Intent(Intent.ACTION_SEND)
                 .setType("text/plain")
-                .putExtra(Intent.EXTRA_SUBJECT, subject)
-                .putExtra(Intent.EXTRA_TEXT, !TextUtils.isEmpty(subject) ?
-                        TextUtils.join(" - ", new String[]{subject, text}) : text);
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(intent);
-        }
+                .putExtra(Intent.EXTRA_TEXT, text)
+                .putExtra(Intent.EXTRA_TITLE, subject);
+
+        Intent shareIntent = Intent.createChooser(intent, null);
+        context.startActivity(shareIntent);
     }
+
     public static Uri createItemUri(@NonNull String itemId) {
         return new Uri.Builder()
                 .scheme(BuildConfig.APPLICATION_ID)
